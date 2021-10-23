@@ -179,6 +179,30 @@ data class FileDoc(
     fun readBytes(): ByteArray {
         return uri.readBytes(appCtx)
     }
+
+    companion object {
+
+        fun fromDocumentFile(doc: DocumentFile): FileDoc {
+            return FileDoc(
+                name = doc.name ?: "",
+                isDir = doc.isDirectory,
+                size = doc.length(),
+                date = Date(doc.lastModified()),
+                uri = doc.uri
+            )
+        }
+
+        fun fromFile(file: File): FileDoc {
+            return FileDoc(
+                name = file.name,
+                isDir = file.isDirectory,
+                size = file.length(),
+                date = Date(file.lastModified()),
+                uri = Uri.fromFile(file)
+            )
+        }
+
+    }
 }
 
 @Throws(Exception::class)

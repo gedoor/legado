@@ -42,21 +42,18 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     override val binding by viewBinding(ActivityImportBookBinding::inflate)
     override val viewModel by viewModels<ImportBookViewModel>()
     private val bookFileRegex = Regex("(?i).*\\.(txt|epub|umd)")
-    private var rootDoc: DocumentFile? = null
-    private val subDocs = arrayListOf<DocumentFile>()
+    private var rootDoc: FileDoc? = null
+    private val subDocs = arrayListOf<FileDoc>()
     private val adapter by lazy { ImportBookAdapter(this, this) }
-    private val sdPath = FileUtils.getSdCardPath()
-    private var path = sdPath
+
     private val selectFolder = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             if (uri.isContentScheme()) {
                 AppConfig.importBookPath = uri.toString()
                 initRootDoc()
             } else {
-                uri.path?.let { path ->
-                    AppConfig.importBookPath = path
-                    initRootDoc()
-                }
+                AppConfig.importBookPath = uri.path
+                initRootDoc()
             }
         }
     }
@@ -140,45 +137,56 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             }
             lastPath.isContentScheme() -> {
                 val rootUri = Uri.parse(lastPath)
-                rootDoc = DocumentFile.fromTreeUri(this, rootUri)
-                if (rootDoc == null) {
+                kotlin.runCatching {
+                    DocumentFile.fromTreeUri(this, rootUri)?.let {
+                        subDocs.clear()
+                        rootDoc = FileDoc.fromDocumentFile(it)
+                        upDocs(rootDoc!!)
+                    } ?: let {
+                        binding.tvEmptyMsg.visible()
+                        selectFolder.launch(null)
+                    }
+                }.onFailure {
                     binding.tvEmptyMsg.visible()
                     selectFolder.launch(null)
-                } else {
-                    subDocs.clear()
-                    upPath()
                 }
             }
             Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
                 binding.tvEmptyMsg.visible()
                 selectFolder.launch(null)
             }
-            else -> {
-                binding.tvEmptyMsg.visible()
-                PermissionsCompat.Builder(this)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted {
-                        rootDoc = null
-                        subDocs.clear()
-                        path = lastPath
-                        upPath()
-                    }
-                    .request()
-            }
+            else -> initRootPath(lastPath)
         }
+    }
+
+    private fun initRootPath(path: String) {
+        binding.tvEmptyMsg.visible()
+        PermissionsCompat.Builder(this)
+            .addPermissions(*Permissions.Group.STORAGE)
+            .rationale(R.string.tip_perm_request_storage)
+            .onGranted {
+                kotlin.runCatching {
+                    rootDoc = FileDoc.fromFile(File(path))
+                    subDocs.clear()
+                    upPath()
+                }.onFailure {
+                    binding.tvEmptyMsg.visible()
+                    selectFolder.launch(null)
+                }
+            }
+            .request()
     }
 
     @Synchronized
     private fun upPath() {
         rootDoc?.let {
             upDocs(it)
-        } ?: upFiles()
+        }
     }
 
-    private fun upDocs(rootDoc: DocumentFile) {
+    private fun upDocs(rootDoc: FileDoc) {
         binding.tvEmptyMsg.gone()
-        var path = rootDoc.name.toString() + File.separator
+        var path = rootDoc.name + File.separator
         var lastDoc = rootDoc
         for (doc in subDocs) {
             lastDoc = doc
@@ -206,29 +214,6 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         }
     }
 
-    private fun upFiles() {
-        binding.tvEmptyMsg.gone()
-        binding.tvPath.text = path.replace(sdPath, "SD")
-        adapter.clearItems()
-        launch(IO) {
-            kotlin.runCatching {
-                val docList = DocumentUtils.listFiles(path) {
-                    when {
-                        it.name.startsWith(".") -> false
-                        it.isDir -> true
-                        else -> it.name.matches(bookFileRegex)
-                    }
-                }
-                docList.sortWith(compareBy({ !it.isDir }, { it.name }))
-                withContext(Main) {
-                    adapter.setItems(docList)
-                }
-            }.onFailure {
-                toastOnUi("获取文件列表出错\n${it.localizedMessage}")
-            }
-        }
-    }
-
     /**
      * 扫描当前文件夹
      */
@@ -241,22 +226,6 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                 viewModel.scanDoc(lastDoc, true, find) {
                     launch {
                         binding.refreshProgressBar.isAutoLoading = false
-                    }
-                }
-            }
-        } ?: let {
-            val lastPath = AppConfig.importBookPath
-            if (lastPath.isNullOrEmpty()) {
-                toastOnUi(R.string.empty_msg_import_book)
-            } else {
-                adapter.clearItems()
-                val file = File(path)
-                binding.refreshProgressBar.isAutoLoading = true
-                launch(IO) {
-                    viewModel.scanFile(file, true, find) {
-                        launch {
-                            binding.refreshProgressBar.isAutoLoading = false
-                        }
                     }
                 }
             }
@@ -285,27 +254,13 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     @Synchronized
-    override fun nextDoc(uri: Uri) {
-        if (uri.toString().isContentScheme()) {
-            subDocs.add(DocumentFile.fromSingleUri(this, uri)!!)
-        } else {
-            path = uri.path.toString()
-        }
+    override fun nextDoc(fileDoc: FileDoc) {
+        subDocs.add(fileDoc)
         upPath()
     }
 
     @Synchronized
     private fun goBackDir(): Boolean {
-        if (rootDoc == null) {
-            if (path != sdPath) {
-                File(path).parent?.let {
-                    path = it
-                    upPath()
-                    return true
-                }
-            }
-            return false
-        }
         return if (subDocs.isNotEmpty()) {
             subDocs.removeAt(subDocs.lastIndex)
             upPath()

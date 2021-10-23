@@ -66,7 +66,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
-                    callBack.nextDoc(it.uri)
+                    callBack.nextDoc(it)
                 } else if (!bookFileNames.contains(it.name)) {
                     if (!selectedUris.contains(it.toString())) {
                         selectedUris.add(it.toString())
@@ -138,7 +138,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
-        fun nextDoc(uri: Uri)
+        fun nextDoc(fileDoc: FileDoc)
         fun upCountView()
     }
 

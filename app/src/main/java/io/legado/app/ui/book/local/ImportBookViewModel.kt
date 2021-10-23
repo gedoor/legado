@@ -43,17 +43,15 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun scanDoc(
-        documentFile: DocumentFile,
+        fileDoc: FileDoc,
         isRoot: Boolean,
         find: (docItem: FileDoc) -> Unit,
         finally: (() -> Unit)? = null
     ) {
         kotlin.runCatching {
-            DocumentUtils.listFiles(documentFile.uri).forEach { docItem ->
+            DocumentUtils.listFiles(fileDoc.uri).forEach { docItem ->
                 if (docItem.isDir) {
-                    DocumentFile.fromSingleUri(context, docItem.uri)?.let {
-                        scanDoc(it, false, find)
-                    }
+                    scanDoc(docItem, false, find)
                 } else if (docItem.name.endsWith(".txt", true)
                     || docItem.name.endsWith(".epub", true)
                 ) {
@@ -62,34 +60,6 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
             }
         }.onFailure {
             context.toastOnUi("扫描文件夹出错\n${it.localizedMessage}")
-        }
-        if (isRoot) {
-            finally?.invoke()
-        }
-    }
-
-    fun scanFile(
-        file: File,
-        isRoot: Boolean,
-        find: (docItem: FileDoc) -> Unit,
-        finally: (() -> Unit)? = null
-    ) {
-        file.listFiles()?.forEach {
-            if (it.isDirectory) {
-                scanFile(it, false, find)
-            } else if (it.name.endsWith(".txt", true)
-                || it.name.endsWith(".epub", true)
-            ) {
-                find(
-                    FileDoc(
-                        it.name,
-                        it.isDirectory,
-                        it.length(),
-                        Date(it.lastModified()),
-                        Uri.parse(it.absolutePath)
-                    )
-                )
-            }
         }
         if (isRoot) {
             finally?.invoke()
