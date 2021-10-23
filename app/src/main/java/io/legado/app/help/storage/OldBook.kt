@@ -1,10 +1,9 @@
 package io.legado.app.help.storage
 
-import android.util.Log
-import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.utils.*
+import timber.log.Timber
 
 object OldBook {
 
@@ -19,7 +18,7 @@ object OldBook {
             if (book.bookUrl.isBlank()) continue
             book.name = jsonItem.readString("$.bookInfoBean.name") ?: ""
             if (book.bookUrl in existingBooks) {
-                Log.d(AppConst.APP_TAG, "Found existing book: ${book.name}")
+                Timber.d("Found existing book: " + book.name)
                 continue
             }
             book.origin = jsonItem.readString("$.tag") ?: ""

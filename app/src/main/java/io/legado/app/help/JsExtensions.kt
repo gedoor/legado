@@ -2,7 +2,6 @@ package io.legado.app.help
 
 import android.net.Uri
 import android.util.Base64
-import android.util.Log
 import androidx.annotation.Keep
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst.dateFormat
@@ -482,7 +481,7 @@ interface JsExtensions {
             Debug.log(it.getKey(), msg)
         } ?: Debug.log(msg)
         if (BuildConfig.DEBUG) {
-            Log.d("SourceDebugLog", msg)
+            Timber.d(msg)
         }
         return msg
     }
