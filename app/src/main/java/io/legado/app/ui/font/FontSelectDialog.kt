@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.font
+package io.legado.app.ui.font
 
 import android.content.Intent
 import android.net.Uri
