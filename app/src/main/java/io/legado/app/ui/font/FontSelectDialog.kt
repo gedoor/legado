@@ -182,9 +182,9 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         }
     }
 
-    override fun onClick(docItem: FileDoc) {
+    override fun onFontSelect(docItem: FileDoc) {
         execute {
-            callBack?.selectFont(docItem.uri.toString())
+            callBack?.selectFont(docItem.toString())
         }.onSuccess {
             dismissAllowingStateLoss()
         }

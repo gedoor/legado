@@ -41,7 +41,7 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
                         Typeface.createFromFile(RealPathUtil.getPath(context, item.uri))
                     }
                 } else {
-                    Typeface.createFromFile(item.uri.toString())
+                    Typeface.createFromFile(item.uri.path!!)
                 }
                 tvFont.typeface = typeface
             }.onFailure {
@@ -49,7 +49,7 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
                 context.toastOnUi("Read ${item.name} Error: ${it.localizedMessage}")
             }
             tvFont.text = item.name
-            root.setOnClickListener { callBack.onClick(item) }
+            root.setOnClickListener { callBack.onFontSelect(item) }
             if (item.name == curName) {
                 ivChecked.visible()
             } else {
@@ -61,12 +61,12 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
     override fun registerListener(holder: ItemViewHolder, binding: ItemFontBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                callBack.onClick(it)
+                callBack.onFontSelect(it)
             }
         }
     }
 
     interface CallBack {
-        fun onClick(docItem: FileDoc)
+        fun onFontSelect(docItem: FileDoc)
     }
 }

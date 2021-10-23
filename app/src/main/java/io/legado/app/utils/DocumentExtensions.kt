@@ -151,7 +151,7 @@ object DocumentUtils {
                 it.isDirectory,
                 it.length(),
                 Date(it.lastModified()),
-                Uri.parse(it.absolutePath)
+                Uri.fromFile(it)
             )
             if (filter == null || filter.invoke(item)) {
                 docList.add(item)
@@ -169,7 +169,16 @@ data class FileDoc(
     val date: Date,
     val uri: Uri
 ) {
+
+    override fun toString(): String {
+        return if (uri.isContentScheme()) uri.toString() else uri.path!!
+    }
+
     val isContentScheme get() = uri.isContentScheme()
+
+    fun readBytes(): ByteArray {
+        return uri.readBytes(appCtx)
+    }
 }
 
 @Throws(Exception::class)
