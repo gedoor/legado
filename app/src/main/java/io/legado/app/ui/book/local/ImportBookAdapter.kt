@@ -13,7 +13,7 @@ import io.legado.app.utils.*
 
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<DocItem, ItemImportBookBinding>(context) {
+    RecyclerAdapter<FileDoc, ItemImportBookBinding>(context) {
     var selectedUris = hashSetOf<String>()
     var checkableCount = 0
     private var bookFileNames = arrayListOf<String>()
@@ -29,7 +29,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemImportBookBinding,
-        item: DocItem,
+        item: FileDoc,
         payloads: MutableList<Any>
     ) {
         binding.run {

@@ -95,8 +95,8 @@ object DocumentUtils {
     }
 
     @Throws(Exception::class)
-    fun listFiles(uri: Uri, regex: Regex? = null): ArrayList<DocItem> {
-        val docList = arrayListOf<DocItem>()
+    fun listFiles(uri: Uri, filter: ((file: FileDoc) -> Boolean)? = null): ArrayList<FileDoc> {
+        val docList = arrayListOf<FileDoc>()
         var cursor: Cursor? = null
         try {
             val childrenUri = DocumentsContract
@@ -118,16 +118,15 @@ object DocumentUtils {
                 val dci = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
                 if (cursor.moveToFirst()) {
                     do {
-                        val name = cursor.getString(nci)
-                        if (regex == null || regex.matches(name)) {
-                            val item = DocItem(
-                                name = name,
-                                attr = cursor.getString(mci),
-                                size = cursor.getLong(sci),
-                                date = Date(cursor.getLong(dci)),
-                                uri = DocumentsContract
-                                    .buildDocumentUriUsingTree(uri, cursor.getString(ici))
-                            )
+                        val item = FileDoc(
+                            name = cursor.getString(nci),
+                            isDir = cursor.getString(mci) == DocumentsContract.Document.MIME_TYPE_DIR,
+                            size = cursor.getLong(sci),
+                            date = Date(cursor.getLong(dci)),
+                            uri = DocumentsContract
+                                .buildDocumentUriUsingTree(uri, cursor.getString(ici))
+                        )
+                        if (filter == null || filter.invoke(item)) {
                             docList.add(item)
                         }
                     } while (cursor.moveToNext())
@@ -140,18 +139,16 @@ object DocumentUtils {
     }
 
     @Throws(Exception::class)
-    fun listFiles(path: String, regex: Regex? = null): ArrayList<DocItem> {
-        val docItems = arrayListOf<DocItem>()
+    fun listFiles(path: String, filter: ((file: File) -> Boolean)? = null): ArrayList<FileDoc> {
+        val docItems = arrayListOf<FileDoc>()
         val file = File(path)
         file.listFiles { pathName ->
-            regex?.let {
-                pathName.name.matches(it)
-            } ?: true
+            filter?.invoke(pathName) ?: true
         }?.forEach {
             docItems.add(
-                DocItem(
+                FileDoc(
                     it.name,
-                    it.extension,
+                    it.isDirectory,
                     it.length(),
                     Date(it.lastModified()),
                     Uri.parse(it.absolutePath)
@@ -163,18 +160,14 @@ object DocumentUtils {
 
 }
 
-data class DocItem(
+data class FileDoc(
     val name: String,
-    val attr: String,
+    val isDir: Boolean,
     val size: Long,
     val date: Date,
     val uri: Uri
 ) {
-    val isDir: Boolean by lazy {
-        DocumentsContract.Document.MIME_TYPE_DIR == attr
-    }
-
-    val isContentPath get() = uri.isContentScheme()
+    val isContentScheme get() = uri.isContentScheme()
 }
 
 @Throws(Exception::class)

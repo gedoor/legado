@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -31,7 +30,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.*
 
 /**
  * 导入本地书籍界面
@@ -43,7 +41,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     override val binding by viewBinding(ActivityImportBookBinding::inflate)
     override val viewModel by viewModels<ImportBookViewModel>()
-
+    private val bookFileRegex = Regex("(?i).*\\.(txt|epub|umd)")
     private var rootDoc: DocumentFile? = null
     private val subDocs = arrayListOf<DocumentFile>()
     private val adapter by lazy { ImportBookAdapter(this, this) }
@@ -191,17 +189,11 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         adapter.clearItems()
         launch(IO) {
             runCatching {
-                val docList = DocumentUtils.listFiles(lastDoc.uri)
-                for (i in docList.lastIndex downTo 0) {
-                    val item = docList[i]
-                    if (item.name.startsWith(".")) {
-                        docList.removeAt(i)
-                    } else if (!item.isDir
-                        && !item.name.endsWith(".txt", true)
-                        && !item.name.endsWith(".epub", true)
-                        && !item.name.endsWith(".umd", true)
-                    ) {
-                        docList.removeAt(i)
+                val docList = DocumentUtils.listFiles(lastDoc.uri) { item ->
+                    when {
+                        item.name.startsWith(".") -> false
+                        item.isDir -> true
+                        else -> item.name.matches(bookFileRegex)
                     }
                 }
                 docList.sortWith(compareBy({ !it.isDir }, { it.name }))
@@ -217,36 +209,24 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private fun upFiles() {
         binding.tvEmptyMsg.gone()
         binding.tvPath.text = path.replace(sdPath, "SD")
-        val docList = arrayListOf<DocItem>()
-        File(path).listFiles()?.forEach {
-            if (it.isDirectory) {
-                if (!it.name.startsWith("."))
-                    docList.add(
-                        DocItem(
-                            it.name,
-                            DocumentsContract.Document.MIME_TYPE_DIR,
-                            it.length(),
-                            Date(it.lastModified()),
-                            Uri.fromFile(it)
-                        )
-                    )
-            } else if (it.name.endsWith(".txt", true)
-                || it.name.endsWith(".epub", true)
-                || it.name.endsWith(".umd", true)
-            ) {
-                docList.add(
-                    DocItem(
-                        it.name,
-                        it.extension,
-                        it.length(),
-                        Date(it.lastModified()),
-                        Uri.fromFile(it)
-                    )
-                )
+        adapter.clearItems()
+        launch(IO) {
+            kotlin.runCatching {
+                val docList = DocumentUtils.listFiles(path) {
+                    when {
+                        it.name.startsWith(".") -> false
+                        it.isDirectory -> true
+                        else -> it.name.matches(bookFileRegex)
+                    }
+                }
+                docList.sortWith(compareBy({ !it.isDir }, { it.name }))
+                withContext(Main) {
+                    adapter.setItems(docList)
+                }
+            }.onFailure {
+                toastOnUi("获取文件列表出错\n${it.localizedMessage}")
             }
         }
-        docList.sortWith(compareBy({ !it.isDir }, { it.name }))
-        adapter.setItems(docList)
     }
 
     /**
@@ -298,7 +278,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         }
     }
 
-    private val find: (docItem: DocItem) -> Unit = {
+    private val find: (docItem: FileDoc) -> Unit = {
         launch {
             adapter.addItem(it)
         }

@@ -13,7 +13,7 @@ import java.io.File
 import java.net.URLDecoder
 
 class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack) :
-    RecyclerAdapter<DocItem, ItemFontBinding>(context) {
+    RecyclerAdapter<FileDoc, ItemFontBinding>(context) {
 
     private val curName = URLDecoder.decode(curFilePath, "utf-8")
         .substringAfterLast(File.separator)
@@ -25,12 +25,12 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemFontBinding,
-        item: DocItem,
+        item: FileDoc,
         payloads: MutableList<Any>
     ) {
         binding.run {
             kotlin.runCatching {
-                val typeface: Typeface? = if (item.isContentPath) {
+                val typeface: Typeface? = if (item.isContentScheme) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         context.contentResolver
                             .openFileDescriptor(item.uri, "r")
@@ -67,6 +67,6 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
     }
 
     interface CallBack {
-        fun onClick(docItem: DocItem)
+        fun onClick(docItem: FileDoc)
     }
 }

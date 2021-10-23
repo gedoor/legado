@@ -5,8 +5,8 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.utils.DocItem
 import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.FileDoc
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.toastOnUi
 import java.io.File
@@ -45,12 +45,11 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     fun scanDoc(
         documentFile: DocumentFile,
         isRoot: Boolean,
-        find: (docItem: DocItem) -> Unit,
+        find: (docItem: FileDoc) -> Unit,
         finally: (() -> Unit)? = null
     ) {
         kotlin.runCatching {
-            val docList = DocumentUtils.listFiles(documentFile.uri)
-            docList.forEach { docItem ->
+            DocumentUtils.listFiles(documentFile.uri).forEach { docItem ->
                 if (docItem.isDir) {
                     DocumentFile.fromSingleUri(context, docItem.uri)?.let {
                         scanDoc(it, false, find)
@@ -72,7 +71,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     fun scanFile(
         file: File,
         isRoot: Boolean,
-        find: (docItem: DocItem) -> Unit,
+        find: (docItem: FileDoc) -> Unit,
         finally: (() -> Unit)? = null
     ) {
         file.listFiles()?.forEach {
@@ -82,9 +81,9 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                 || it.name.endsWith(".epub", true)
             ) {
                 find(
-                    DocItem(
+                    FileDoc(
                         it.name,
-                        it.extension,
+                        it.isDirectory,
                         it.length(),
                         Date(it.lastModified()),
                         Uri.parse(it.absolutePath)

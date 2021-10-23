@@ -126,29 +126,18 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         }
     }
 
-    private fun getLocalFonts(): ArrayList<DocItem> {
-        val fontItems = arrayListOf<DocItem>()
-        val fontDir =
-            FileUtils.createFolderIfNotExist(requireContext().externalFiles, "font")
-        fontDir.listFiles { pathName ->
-            pathName.name.lowercase(Locale.getDefault()).matches(fontRegex)
-        }?.forEach {
-            fontItems.add(
-                DocItem(
-                    it.name,
-                    it.extension,
-                    it.length(),
-                    Date(it.lastModified()),
-                    Uri.parse(it.absolutePath)
-                )
-            )
+    private fun getLocalFonts(): ArrayList<FileDoc> {
+        val path = FileUtils.getPath(requireContext().externalFiles, "font")
+        return DocumentUtils.listFiles(path) {
+            it.name.matches(fontRegex)
         }
-        return fontItems
     }
 
     private fun loadFontFiles(doc: DocumentFile) {
         execute {
-            val fontItems = DocumentUtils.listFiles(doc.uri, fontRegex)
+            val fontItems = DocumentUtils.listFiles(doc.uri) {
+                it.name.matches(fontRegex)
+            }
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
             adapter.setItems(it)
@@ -169,7 +158,9 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     private fun loadFontFiles(path: String) {
         execute {
-            val fontItems = DocumentUtils.listFiles(path, fontRegex)
+            val fontItems = DocumentUtils.listFiles(path) {
+                it.name.matches(fontRegex)
+            }
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
             adapter.setItems(it)
@@ -179,9 +170,9 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     }
 
     private fun mergeFontItems(
-        items1: ArrayList<DocItem>,
-        items2: ArrayList<DocItem>
-    ): List<DocItem> {
+        items1: ArrayList<FileDoc>,
+        items2: ArrayList<FileDoc>
+    ): List<FileDoc> {
         val items = ArrayList(items1)
         items2.forEach { item2 ->
             var isInFirst = false
@@ -200,7 +191,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         }
     }
 
-    override fun onClick(docItem: DocItem) {
+    override fun onClick(docItem: FileDoc) {
         execute {
             FileUtils.deleteFile(fontFolder.absolutePath)
             callBack?.selectFont(docItem.uri.toString())
