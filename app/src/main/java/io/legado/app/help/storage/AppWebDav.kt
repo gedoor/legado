@@ -29,7 +29,7 @@ object AppWebDav {
 
     private val rootWebDavUrl: String
         get() {
-            var url = appCtx.getPrefString(PreferKey.webDavUrl)
+            var url = appCtx.getPrefString(PreferKey.webDavUrl)?.trim()
             if (url.isNullOrEmpty()) {
                 url = defaultWebDavUrl
             }
