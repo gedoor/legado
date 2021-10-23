@@ -190,22 +190,26 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         adapter.selectedUris.clear()
         adapter.clearItems()
         launch(IO) {
-            val docList = DocumentUtils.listFiles(lastDoc.uri)
-            for (i in docList.lastIndex downTo 0) {
-                val item = docList[i]
-                if (item.name.startsWith(".")) {
-                    docList.removeAt(i)
-                } else if (!item.isDir
-                    && !item.name.endsWith(".txt", true)
-                    && !item.name.endsWith(".epub", true)
-                    && !item.name.endsWith(".umd", true)
-                ) {
-                    docList.removeAt(i)
+            runCatching {
+                val docList = DocumentUtils.listFiles(lastDoc.uri)
+                for (i in docList.lastIndex downTo 0) {
+                    val item = docList[i]
+                    if (item.name.startsWith(".")) {
+                        docList.removeAt(i)
+                    } else if (!item.isDir
+                        && !item.name.endsWith(".txt", true)
+                        && !item.name.endsWith(".epub", true)
+                        && !item.name.endsWith(".umd", true)
+                    ) {
+                        docList.removeAt(i)
+                    }
                 }
-            }
-            docList.sortWith(compareBy({ !it.isDir }, { it.name }))
-            withContext(Main) {
-                adapter.setItems(docList)
+                docList.sortWith(compareBy({ !it.isDir }, { it.name }))
+                withContext(Main) {
+                    adapter.setItems(docList)
+                }
+            }.onFailure {
+                toastOnUi("获取文件列表出错\n${it.localizedMessage}")
             }
         }
     }

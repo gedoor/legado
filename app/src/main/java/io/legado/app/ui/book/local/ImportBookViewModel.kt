@@ -8,6 +8,7 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.DocItem
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.toastOnUi
 import java.io.File
 import java.util.*
 
@@ -47,17 +48,21 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         find: (docItem: DocItem) -> Unit,
         finally: (() -> Unit)? = null
     ) {
-        val docList = DocumentUtils.listFiles(documentFile.uri)
-        docList.forEach { docItem ->
-            if (docItem.isDir) {
-                DocumentFile.fromSingleUri(context, docItem.uri)?.let {
-                    scanDoc(it, false, find)
+        kotlin.runCatching {
+            val docList = DocumentUtils.listFiles(documentFile.uri)
+            docList.forEach { docItem ->
+                if (docItem.isDir) {
+                    DocumentFile.fromSingleUri(context, docItem.uri)?.let {
+                        scanDoc(it, false, find)
+                    }
+                } else if (docItem.name.endsWith(".txt", true)
+                    || docItem.name.endsWith(".epub", true)
+                ) {
+                    find(docItem)
                 }
-            } else if (docItem.name.endsWith(".txt", true)
-                || docItem.name.endsWith(".epub", true)
-            ) {
-                find(docItem)
             }
+        }.onFailure {
+            context.toastOnUi("扫描文件夹出错\n${it.localizedMessage}")
         }
         if (isRoot) {
             finally?.invoke()
