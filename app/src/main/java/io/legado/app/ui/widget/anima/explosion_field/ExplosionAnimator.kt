@@ -16,14 +16,17 @@
 package io.legado.app.ui.widget.anima.explosion_field
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.graphics.*
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import java.util.*
 import kotlin.math.pow
 
+@SuppressLint("Recycle")
 class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rect) :
     ValueAnimator() {
+
     private val mPaint: Paint = Paint()
     private val mParticles: Array<Particle?>
     private val mBound: Rect = Rect(bound)
