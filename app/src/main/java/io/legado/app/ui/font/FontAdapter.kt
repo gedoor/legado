@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.font
+package io.legado.app.ui.font
 
 import android.content.Context
 import android.graphics.Typeface
