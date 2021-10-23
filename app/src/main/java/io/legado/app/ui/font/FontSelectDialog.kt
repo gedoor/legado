@@ -1,6 +1,5 @@
 package io.legado.app.ui.font
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
@@ -46,10 +45,6 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
                 putPrefString(PreferKey.fontFolder, uri.toString())
                 val doc = DocumentFile.fromTreeUri(requireContext(), uri)
                 if (doc != null) {
-                    context?.contentResolver?.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
                     loadFontFiles(doc)
                 } else {
                     RealPathUtil.getPath(requireContext(), uri)?.let { path ->
