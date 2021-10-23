@@ -77,12 +77,11 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
         explosion.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 mExplosions.remove(animation)
-                if (view != null) {
+                view?.let {
                     view.scaleX = 1f
                     view.scaleY = 1f
                     view.alpha = 1f
                     view.setOnClickListener(mOnClickListener)//set event
-
                 }
             }
         })
