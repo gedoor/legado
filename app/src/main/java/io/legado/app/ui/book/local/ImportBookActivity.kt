@@ -45,7 +45,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private var rootDoc: DocumentFile? = null
     private val subDocs = arrayListOf<DocumentFile>()
     private val adapter by lazy { ImportBookAdapter(this, this) }
-    private var sdPath = FileUtils.getSdCardPath()
+    private val sdPath = FileUtils.getSdCardPath()
     private var path = sdPath
     private val selectFolder = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
