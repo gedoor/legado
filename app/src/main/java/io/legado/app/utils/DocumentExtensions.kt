@@ -100,10 +100,10 @@ object DocumentUtils {
             return listFiles(uri.path!!, filter)
         }
         val docList = arrayListOf<FileDoc>()
+        val childrenUri = DocumentsContract
+            .buildChildDocumentsUriUsingTree(uri, DocumentsContract.getDocumentId(uri))
         var cursor: Cursor? = null
         try {
-            val childrenUri = DocumentsContract
-                .buildChildDocumentsUriUsingTree(uri, DocumentsContract.getDocumentId(uri))
             cursor = appCtx.contentResolver.query(
                 childrenUri, arrayOf(
                     DocumentsContract.Document.COLUMN_DOCUMENT_ID,
