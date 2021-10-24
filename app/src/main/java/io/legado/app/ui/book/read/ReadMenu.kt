@@ -185,7 +185,7 @@ class ReadMenu @JvmOverloads constructor(
             if (ReadBook.isLocalBook) {
                 return@OnLongClickListener true
             }
-            context.alert(R.string.Open_fan) {
+            context.alert(R.string.open_fun) {
                 setMessage(R.string.use_browser_open)
                 okButton {
                     AppConfig.readUrlInBrowser = true
