@@ -867,8 +867,8 @@
     <string name="check_source_show_debug_message">Check book source shows debug message</string>
     <string name="check_source_show_debug_message_summary">Show network status and timestamp during source checking</string>
     <string name="need_login">need login</string>
-    <string name="pref_cronet_summary">使用Cronet网络组件</string>
-    <string name="upload_url">上传URL</string>
+    <string name="pref_cronet_summary">use Cronet access network</string>
+    <string name="upload_url">upload url</string>
     <string name="download_url_rule">下载URL规则</string>
     <string name="export_success">export success</string>
     <string name="path">path</string>
@@ -905,6 +905,6 @@
     <string name="show_login_header">show login header</string>
     <string name="login_header">login header</string>
     <string name="font_scale">font scale</string>
-    <string name="font_scale_summary">当前字体大小:%.1f</string>
+    <string name="font_scale_summary">font scale:%.1f</string>
 
 </resources>
