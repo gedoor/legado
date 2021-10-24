@@ -25,6 +25,7 @@ object AppContextWrapper {
             configuration.setLocale(targetLocale)
             configuration.setLocales(LocaleList(targetLocale))
         } else {
+            @Suppress("DEPRECATION")
             configuration.locale = targetLocale
         }
         configuration.fontScale = fontScale

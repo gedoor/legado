@@ -57,7 +57,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             "1" -> false
             "2" -> true
             "3" -> false
-            else -> context.sysIsDarkMode()
+            else -> sysConfiguration.isNightMode
         }
     }
 

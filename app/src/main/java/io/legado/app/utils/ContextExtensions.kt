@@ -10,7 +10,6 @@ import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -248,14 +247,6 @@ fun Context.sendMail(mail: String) {
     } catch (e: Exception) {
         toastOnUi(e.localizedMessage ?: "Error")
     }
-}
-
-/**
- * 系统是否暗色主题
- */
-fun Context.sysIsDarkMode(): Boolean {
-    val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-    return mode == Configuration.UI_MODE_NIGHT_YES
 }
 
 /**
