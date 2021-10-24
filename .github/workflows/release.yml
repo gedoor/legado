@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'CHANGELOG.md'
+  workflow_dispatch:
 #  schedule:
 #    - cron: '0 4 * * *'
 
