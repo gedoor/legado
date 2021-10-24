@@ -26,7 +26,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
     val selectImage = registerForActivityResult(SelectImageContract()) {
-        readUri(it?.second) { name, bytes ->
+        readUri(it?.uri) { name, bytes ->
             var file = requireContext().externalFiles
             file = FileUtils.createFileIfNotExist(file, "covers", name)
             file.writeBytes(bytes)

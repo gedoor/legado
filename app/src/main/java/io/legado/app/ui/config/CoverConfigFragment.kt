@@ -21,10 +21,11 @@ class CoverConfigFragment : BasePreferenceFragment(),
     private val requestCodeCover = 111
     private val requestCodeCoverDark = 112
     private val selectImage = registerForActivityResult(SelectImageContract()) {
-        val uri = it?.second ?: return@registerForActivityResult
-        when (it.first) {
-            requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)
-            requestCodeCoverDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
+        it.uri?.let { uri ->
+            when (it.requestCode) {
+                requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)
+                requestCodeCoverDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
+            }
         }
     }
 

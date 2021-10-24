@@ -48,7 +48,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     private var secondaryTextColor = 0
     private val importFormNet = "网络导入"
     private val selectBgImage = registerForActivityResult(SelectImageContract()) {
-        it?.second?.let { uri ->
+        it.uri?.let { uri ->
             setBgFromUri(uri)
         }
     }
