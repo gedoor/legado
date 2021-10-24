@@ -138,13 +138,14 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             lastPath.isContentScheme() -> {
                 val rootUri = Uri.parse(lastPath)
                 kotlin.runCatching {
-                    DocumentFile.fromTreeUri(this, rootUri)?.let {
-                        subDocs.clear()
-                        rootDoc = FileDoc.fromDocumentFile(it)
-                        upDocs(rootDoc!!)
-                    } ?: let {
+                    val doc = DocumentFile.fromTreeUri(this, rootUri)
+                    if (doc == null || doc.name.isNullOrEmpty()) {
                         binding.tvEmptyMsg.visible()
                         selectFolder.launch(null)
+                    } else {
+                        subDocs.clear()
+                        rootDoc = FileDoc.fromDocumentFile(doc)
+                        upDocs(rootDoc!!)
                     }
                 }.onFailure {
                     binding.tvEmptyMsg.visible()
