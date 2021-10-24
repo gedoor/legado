@@ -9,8 +9,6 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.math.abs
-import kotlin.math.log10
-import kotlin.math.pow
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object StringUtils {
@@ -41,17 +39,6 @@ object StringUtils {
             map['亿'] = 100000000
             return map
         }
-
-    /**
-     * 将时间转换成日期
-     */
-    fun dateConvert(time: Long, pattern: String): String {
-        val date = Date(time)
-
-        @SuppressLint("SimpleDateFormat")
-        val format = SimpleDateFormat(pattern)
-        return format.format(date)
-    }
 
     /**
      * 将日期转换成昨天、今天、明天
@@ -99,20 +86,6 @@ object StringUtils {
             Timber.e(it)
         }
         return ""
-    }
-
-    /**
-     * 单位转换
-     */
-    fun toSize(length: Long): String {
-        if (length <= 0) return "0"
-        val units = arrayOf("b", "kb", "M", "G", "T")
-        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
-        val digitGroups =
-            (log10(length.toDouble()) / log10(1024.0)).toInt()
-        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
-        return DecimalFormat("#,##0.##")
-            .format(length / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
 
     /**
