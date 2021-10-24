@@ -48,7 +48,7 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
     private val viewModel: ChangeSourceViewModel by viewModels()
     private val adapter by lazy { ChangeSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
-        registerForActivityResult(StartActivityForResult(BookSourceEditActivity::class.java)) {
+        registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             viewModel.startSearch()
         }
 

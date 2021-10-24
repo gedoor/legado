@@ -85,7 +85,7 @@ class BookInfoActivity :
         }
     }
     private val infoEditResult = registerForActivityResult(
-        StartActivityForResult(BookInfoEditActivity::class.java)
+        StartActivityContract(BookInfoEditActivity::class.java)
     ) {
         if (it.resultCode == RESULT_OK) {
             viewModel.upEditBook()

@@ -16,7 +16,7 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
-import io.legado.app.utils.StartActivityForResult
+import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.gone
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -33,7 +33,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     private val sortList = mutableListOf<Pair<String, String>>()
     private val fragmentMap = hashMapOf<String, Fragment>()
     private val editSourceResult = registerForActivityResult(
-        StartActivityForResult(RssSourceEditActivity::class.java)
+        StartActivityContract(RssSourceEditActivity::class.java)
     ) {
         if (it.resultCode == RESULT_OK) {
             viewModel.initData(intent) {

@@ -32,7 +32,7 @@ class SelectImageContract : ActivityResultContract<Int, SelectImageContract.Resu
 
 }
 
-class StartActivityForResult(private val cls: Class<*>) :
+class StartActivityContract(private val cls: Class<*>) :
     ActivityResultContract<Intent.() -> Unit, ActivityResult>() {
 
     override fun createIntent(context: Context, input: Intent.() -> Unit): Intent {
