@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.multidex.MultiDexApplication
 import com.jeremyliao.liveeventbus.LiveEventBus
+import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
@@ -35,6 +36,10 @@ class App : MultiDexApplication() {
             .autoClear(false)
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(AppContextWrapper.wrap(base))
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
