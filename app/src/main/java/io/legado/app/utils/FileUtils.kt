@@ -622,7 +622,7 @@ object FileUtils {
      */
     fun getSize(path: String): String {
         val fileSize = getLength(path)
-        return ConvertUtils.toFileSizeString(fileSize)
+        return ConvertUtils.formatFileSize(fileSize)
     }
 
     /**

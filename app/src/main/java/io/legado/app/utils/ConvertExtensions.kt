@@ -9,6 +9,8 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.text.DecimalFormat
+import kotlin.math.log10
+import kotlin.math.pow
 
 /**
  * 数据类型转换、单位转换
@@ -80,15 +82,13 @@ object ConvertUtils {
         return toDrawable(toBitmap(bytes))
     }
 
-    fun toFileSizeString(fileSize: Long): String {
-        val df = DecimalFormat("0.00")
-        val fileSizeString: String = when {
-            fileSize < KB -> fileSize.toString() + "B"
-            fileSize < MB -> df.format(fileSize.toDouble() / KB) + "K"
-            fileSize < GB -> df.format(fileSize.toDouble() / MB) + "M"
-            else -> df.format(fileSize.toDouble() / GB) + "G"
-        }
-        return fileSizeString
+    fun formatFileSize(length: Long): String {
+        if (length <= 0) return "0"
+        val units = arrayOf("b", "kb", "M", "G", "T")
+        //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
+        val digitGroups = (log10(length.toDouble()) / log10(1024.0)).toInt()
+        //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
+        return DecimalFormat("#,##0.##").format(length / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     }
 
     @JvmOverloads
@@ -111,3 +111,20 @@ object ConvertUtils {
     }
 
 }
+
+val Int.dp: Int
+    get() = android.util.TypedValue.applyDimension(
+        android.util.TypedValue.COMPLEX_UNIT_DIP,
+        this.toFloat(),
+        Resources.getSystem().displayMetrics
+    ).toInt()
+
+val Int.sp: Int
+    get() = android.util.TypedValue.applyDimension(
+        android.util.TypedValue.COMPLEX_UNIT_SP,
+        this.toFloat(),
+        Resources.getSystem().displayMetrics
+    ).toInt()
+
+val Int.hexString: String
+    get() = Integer.toHexString(this)
