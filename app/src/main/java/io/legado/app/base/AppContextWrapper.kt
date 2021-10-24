@@ -8,16 +8,15 @@ import android.os.LocaleList
 import io.legado.app.constant.PreferKey
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.sysConfiguration
 import java.util.*
 
 
+@Suppress("unused")
 object AppContextWrapper {
 
     fun wrap(context: Context): Context {
-        var fontScale = context.getPrefInt(PreferKey.fontScale) / 10f
-        if (fontScale !in 0.8f..1.6f) {
-            fontScale = 0f
-        }
+
         val resources: Resources = context.resources
         val configuration: Configuration = resources.configuration
         val targetLocale = getSetLocale(context)
@@ -28,8 +27,16 @@ object AppContextWrapper {
             @Suppress("DEPRECATION")
             configuration.locale = targetLocale
         }
-        configuration.fontScale = fontScale
+        configuration.fontScale = getFontScale(context)
         return context.createConfigurationContext(configuration)
+    }
+
+    fun getFontScale(context: Context): Float {
+        var fontScale = context.getPrefInt(PreferKey.fontScale) / 10f
+        if (fontScale !in 0.8f..1.6f) {
+            fontScale = sysConfiguration.fontScale
+        }
+        return fontScale
     }
 
     /**
@@ -38,10 +45,10 @@ object AppContextWrapper {
     private fun getSystemLocale(): Locale {
         val locale: Locale
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //7.0有多语言设置获取顶部的语言
-            locale = Resources.getSystem().configuration.locales.get(0)
+            locale = sysConfiguration.locales.get(0)
         } else {
             @Suppress("DEPRECATION")
-            locale = Resources.getSystem().configuration.locale
+            locale = sysConfiguration.locale
         }
         return locale
     }

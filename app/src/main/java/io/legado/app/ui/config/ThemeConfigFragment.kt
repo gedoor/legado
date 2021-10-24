@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.preference.Preference
 import io.legado.app.R
+import io.legado.app.base.AppContextWrapper
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
@@ -277,10 +278,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             PreferKey.barElevation -> preference.summary =
                 getString(R.string.bar_elevation_s, value)
             PreferKey.fontScale -> {
-                var fontScale = getPrefInt(PreferKey.fontScale) / 10f
-                if (fontScale !in 0.8f..1.6f) {
-                    fontScale = resources.configuration.fontScale
-                }
+                val fontScale = AppContextWrapper.getFontScale(requireContext())
                 preference.summary = getString(R.string.font_scale_summary, fontScale)
             }
             PreferKey.bgImage,
