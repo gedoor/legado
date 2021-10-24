@@ -69,11 +69,3 @@ object LogUtils {
         return sdf.format(date)
     }
 }
-
-fun dLog(tag: String, msg: String) {
-    LogUtils.d(tag, msg)
-}
-
-fun eLog(tag: String, msg: String) {
-    LogUtils.e(tag, msg)
-}
