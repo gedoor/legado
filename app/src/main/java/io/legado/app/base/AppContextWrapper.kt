@@ -18,25 +18,17 @@ object AppContextWrapper {
         if (fontScale !in 0.8f..1.6f) {
             fontScale = 0f
         }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val resources: Resources = context.resources
-            val configuration: Configuration = resources.configuration
-            val targetLocale = getSetLocale(context)
+        val resources: Resources = context.resources
+        val configuration: Configuration = resources.configuration
+        val targetLocale = getSetLocale(context)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             configuration.setLocale(targetLocale)
             configuration.setLocales(LocaleList(targetLocale))
-            configuration.fontScale = fontScale
-            context.createConfigurationContext(configuration)
         } else {
-            val resources: Resources = context.resources
-            val targetLocale = getSetLocale(context)
-            val configuration: Configuration = resources.configuration
-            @Suppress("DEPRECATION")
             configuration.locale = targetLocale
-            configuration.fontScale = fontScale
-            @Suppress("DEPRECATION")
-            resources.updateConfiguration(configuration, resources.displayMetrics)
-            context
         }
+        configuration.fontScale = fontScale
+        return context.createConfigurationContext(configuration)
     }
 
     /**
