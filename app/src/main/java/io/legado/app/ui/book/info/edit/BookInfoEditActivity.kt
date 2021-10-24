@@ -19,7 +19,7 @@ class BookInfoEditActivity :
     ChangeCoverDialog.CallBack {
 
     private val selectCover = registerForActivityResult(SelectImageContract()) {
-        it?.second?.let { uri ->
+        it.uri?.let { uri ->
             coverChangeTo(uri)
         }
     }

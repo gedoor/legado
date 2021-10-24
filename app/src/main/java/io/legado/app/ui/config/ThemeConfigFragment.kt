@@ -38,13 +38,14 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     private val requestCodeBgLight = 121
     private val requestCodeBgDark = 122
     private val selectImage = registerForActivityResult(SelectImageContract()) {
-        val uri = it?.second ?: return@registerForActivityResult
-        when (it.first) {
-            requestCodeBgLight -> setBgFromUri(uri, PreferKey.bgImage) {
-                upTheme(false)
-            }
-            requestCodeBgDark -> setBgFromUri(uri, PreferKey.bgImageN) {
-                upTheme(true)
+        it.uri?.let { uri ->
+            when (it.requestCode) {
+                requestCodeBgLight -> setBgFromUri(uri, PreferKey.bgImage) {
+                    upTheme(false)
+                }
+                requestCodeBgDark -> setBgFromUri(uri, PreferKey.bgImageN) {
+                    upTheme(true)
+                }
             }
         }
     }
