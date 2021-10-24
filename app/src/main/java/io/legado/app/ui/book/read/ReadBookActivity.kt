@@ -79,8 +79,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
     private val sourceEditActivity =
-        registerForActivityResult(StartActivityForResult(BookSourceEditActivity::class.java)) {
-            it ?: return@registerForActivityResult
+        registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             if (it.resultCode == RESULT_OK) {
                 viewModel.upBookSource {
                     upMenuView()
