@@ -26,6 +26,7 @@ import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.*
+import javax.script.ScriptException
 
 class HttpReadAloudService : BaseReadAloudService(),
     MediaPlayer.OnPreparedListener,
@@ -167,6 +168,12 @@ class HttpReadAloudService : BaseReadAloudService(),
                     } catch (e: ConcurrentException) {
                         removeSpeakCache(fileName)
                         downloadAudio()
+                    } catch (e: ScriptException) {
+                        AppLog.put("tts接口错误\n${e.localizedMessage}", e)
+                        toastOnUi("js错误\n${e.localizedMessage}")
+                        Timber.e(e)
+                        cancel()
+                        stopSelf()
                     } catch (e: SocketTimeoutException) {
                         removeSpeakCache(fileName)
                         downloadErrorNo++
