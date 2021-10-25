@@ -86,6 +86,7 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("update book_sources set loginUi = null where loginUi = 'null'")
                 db.execSQL("update rssSources set loginUi = null where loginUi = 'null'")
                 db.execSQL("update httpTTS set loginUi = null where loginUi = 'null'")
+                db.execSQL("update httpTTS set concurrentRate = '0' where loginUi is null")
             }
         }
 

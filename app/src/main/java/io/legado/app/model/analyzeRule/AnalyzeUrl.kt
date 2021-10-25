@@ -285,9 +285,10 @@ class AnalyzeUrl(
         if (concurrentRate.isNullOrEmpty()) {
             return
         }
-        val fetchRecord = accessTime[source.getKey()]
+        var fetchRecord = accessTime[source.getKey()]
         if (fetchRecord == null) {
-            accessTime[source.getKey()] = FetchRecord(System.currentTimeMillis(), 1)
+            fetchRecord = FetchRecord(System.currentTimeMillis(), 1)
+            accessTime[source.getKey()] = fetchRecord
             return
         }
         val waitTime = synchronized(fetchRecord) {
