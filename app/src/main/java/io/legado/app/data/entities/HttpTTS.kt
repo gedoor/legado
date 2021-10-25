@@ -18,7 +18,7 @@ data class HttpTTS(
     var name: String = "",
     var url: String = "",
     var contentType: String? = null,
-    override var concurrentRate: String? = null,
+    override var concurrentRate: String? = "0",
     override var loginUrl: String? = null,
     override var loginUi: String? = null,
     override var header: String? = null,
