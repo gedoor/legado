@@ -524,7 +524,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    private fun relativePage(relativePos: Int): TextPage {
+    fun relativePage(relativePos: Int): TextPage {
         return when (relativePos) {
             0 -> textPage
             1 -> pageFactory.nextPage
