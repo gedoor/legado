@@ -193,8 +193,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                             else -> {
                                 removeSpeakCache(fileName)
                                 createSilentSound(fileName)
+                                val msg = "tts下载错误\n${it.localizedMessage}"
                                 AppLog.put(msg, it)
-                                toastOnUi(msg)
                                 Timber.e(it)
                             }
                         }
