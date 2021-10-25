@@ -12,26 +12,13 @@
     "searchUrl": "https://www.kaixin7days.com/book-service/bookMgt/findBookName,{\"method\":\"POST\",\"body\":{\"title\": \"searchKey\",\"pageNum\": {{searchPage}},\"pageSize\": 100}}",
     "lastUpdateTime": 1630656684531,
     "loginCheckJs": "var strRes = result\nvar c = JSON.parse(result.body())\nif (c.statusCode == 301) {\n    var loginInfo = source.getLoginInfo()\n    var dl = null\n    if (loginInfo) {\n        dl = java.connect('https://www.kaixin7days.com/login,{\"method\":\"POST\",\"body\":' + loginInfo + '}').body()\n    } else {\n        dl = java.connect('https://www.kaixin7days.com/visitorLogin,{\"method\":\"POST\",\"body\":{}}').body()\n    }\n    c = JSON.parse(dl)\n    var accessToken = {\n        Authorization: \"Bearer \" + c.content.accessToken\n    }\n    var header = JSON.stringify(accessToken)\n    source.putLoginHeader(header)\n    strRes = java.connect(url, header)\n}\nstrRes",
-    "loginUi": [
-      {
-        "name": "telephone",
-        "type": "text"
-      },
-      {
-        "name": "password",
-        "type": "password"
-      },
-      {
-        "name": "注册",
-        "type": "button",
-        "action": "http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C"
-      }
-    ],
+    "loginUi": "[{\"name\": \"telephone\",\"type\": \"text\"},{\"name\": \"password\",\"type\": \"password\"},{\"name\": \"注册\",\"type\": \"button\",\"action\": \"http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C\"}]",
     "loginUrl": "var loginInfo = source.getLoginInfo()\nvar json = java.connect('https://www.kaixin7days.com/login,{\"method\":\"POST\",\"body\":' + loginInfo + '}').body()\nvar loginRes = JSON.parse(json)\nvar header = null\nif (loginRes.statusCode == 200) {\n    var accessToken = {\n        Authorization: \"Bearer \" + loginRes.content.accessToken\n    }\n    header = JSON.stringify(accessToken)\n    source.putLoginHeader(header)\n}\nheader",
     "respondTime": 180000,
     "ruleBookInfo": {},
     "ruleContent": {
-      "content": ""
+      "content": "",
+      "payAction": "var header = JSON.parse(source.getLoginHeader()); var bookId = book.getVariableMap().get('bookId');var chapterId = java.get('chapterId');\n'http://www.shuidi.online/?name=' + book.getName() + '&type=2&cover=' + book.getCoverUrl() + '&chapterId=' + chapterId + '&chapter=203&allNumber=' + book.getTotalChapterNum() + '&bookId=' + bookId + '&chapterIds=' + chapterId + '&number=' + chapter.getIndex() + '&accessToken=' + header.Authorization.substring(7) + '#/pay'"
     },
     "ruleExplore": {
       "author": "$.author",
