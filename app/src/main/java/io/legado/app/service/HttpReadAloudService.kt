@@ -181,14 +181,11 @@ class HttpReadAloudService : BaseReadAloudService(),
                                 removeSpeakCache(fileName)
                                 downloadErrorNo++
                                 if (playErrorNo > 5) {
+                                    downloadErrorNo = 0
+                                    createSilentSound(fileName)
                                     val msg = "tts超时或连接错误超过5次\n${it.localizedMessage}"
                                     AppLog.put(msg, it)
                                     toastOnUi(msg)
-                                    createSilentSound(fileName)
-                                    if (playErrorNo > 10) {
-                                        cancel()
-                                        stopSelf()
-                                    }
                                 } else {
                                     downloadAudio()
                                 }
@@ -196,7 +193,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                             else -> {
                                 removeSpeakCache(fileName)
                                 createSilentSound(fileName)
-                                val msg = "tts下载错误\n${it.localizedMessage}"
                                 AppLog.put(msg, it)
                                 toastOnUi(msg)
                                 Timber.e(it)
