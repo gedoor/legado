@@ -18,11 +18,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Response
+import org.mozilla.javascript.WrappedException
 import timber.log.Timber
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
-import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.*
@@ -123,7 +123,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     createSilentSound(fileName)
                     return@forEachIndexed
                 } else {
-                    try {
+                    runCatching {
                         createSpeakCache(fileName)
                         val analyzeUrl = AnalyzeUrl(
                             httpTts.url,
@@ -162,52 +162,46 @@ class HttpReadAloudService : BaseReadAloudService(),
                             }
                         }
                         downloadErrorNo = 0
-                    } catch (e: CancellationException) {
-                        removeSpeakCache(fileName)
-                        //任务取消,不处理
-                    } catch (e: ConcurrentException) {
-                        removeSpeakCache(fileName)
-                        downloadAudio()
-                    } catch (e: ScriptException) {
-                        AppLog.put("tts接口错误\n${e.localizedMessage}", e)
-                        toastOnUi("js错误\n${e.localizedMessage}")
-                        Timber.e(e)
-                        cancel()
-                        stopSelf()
-                    } catch (e: SocketTimeoutException) {
-                        removeSpeakCache(fileName)
-                        downloadErrorNo++
-                        if (playErrorNo > 5) {
-                            createSilentSound(fileName)
-                        } else {
-                            downloadAudio()
+                    }.onFailure {
+                        when (it) {
+                            is CancellationException -> removeSpeakCache(fileName)
+                            is ConcurrentException -> {
+                                removeSpeakCache(fileName)
+                                delay(it.waitTime.toLong())
+                                downloadAudio()
+                            }
+                            is ScriptException, is WrappedException -> {
+                                AppLog.put("js错误\n${it.localizedMessage}", it)
+                                toastOnUi("js错误\n${it.localizedMessage}")
+                                Timber.e(it)
+                                cancel()
+                                stopSelf()
+                            }
+                            is SocketTimeoutException, is ConnectException -> {
+                                removeSpeakCache(fileName)
+                                downloadErrorNo++
+                                if (playErrorNo > 5) {
+                                    val msg = "tts超时或连接错误超过5次\n${it.localizedMessage}"
+                                    AppLog.put(msg, it)
+                                    toastOnUi(msg)
+                                    createSilentSound(fileName)
+                                    if (playErrorNo > 10) {
+                                        cancel()
+                                        stopSelf()
+                                    }
+                                } else {
+                                    downloadAudio()
+                                }
+                            }
+                            else -> {
+                                removeSpeakCache(fileName)
+                                createSilentSound(fileName)
+                                val msg = "tts下载错误\n${it.localizedMessage}"
+                                AppLog.put(msg, it)
+                                toastOnUi(msg)
+                                Timber.e(it)
+                            }
                         }
-                    } catch (e: ConnectException) {
-                        removeSpeakCache(fileName)
-                        downloadErrorNo++
-                        if (playErrorNo > 5) {
-                            createSilentSound(fileName)
-                        } else {
-                            AppLog.put("tts接口网络错误\n${e.localizedMessage}", e)
-                            toastOnUi("tts接口网络错误\n${e.localizedMessage}")
-                            downloadAudio()
-                        }
-                    } catch (e: IOException) {
-                        removeSpeakCache(fileName)
-                        downloadErrorNo++
-                        if (playErrorNo > 5) {
-                            createSilentSound(fileName)
-                        } else {
-                            AppLog.put("tts下载音频错误\n${e.localizedMessage}", e)
-                            toastOnUi("tts下载音频错误\n${e.localizedMessage}")
-                            downloadAudio()
-                        }
-                    } catch (e: Exception) {
-                        removeSpeakCache(fileName)
-                        createSilentSound(fileName)
-                        AppLog.put("tts接口错误\n${e.localizedMessage}", e)
-                        toastOnUi("tts接口错误\n${e.localizedMessage}")
-                        Timber.e(e)
                     }
                 }
             }
