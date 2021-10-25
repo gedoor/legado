@@ -271,6 +271,10 @@ class PageView(context: Context) : FrameLayout(context) {
         return binding.contentTextView.createBookmark()
     }
 
+    fun relativePage(relativePos: Int): TextPage {
+        return binding.contentTextView.relativePage(relativePos)
+    }
+
     val selectedText: String get() = binding.contentTextView.selectedText
 
     val textPage get() = binding.contentTextView.textPage
