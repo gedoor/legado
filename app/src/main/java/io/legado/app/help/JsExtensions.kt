@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
 import io.legado.app.BuildConfig
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.help.http.*
@@ -642,6 +643,10 @@ interface JsExtensions {
         data: String, key: String, transformation: String, iv: String
     ): String? {
         return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
+    }
+
+    fun android(): String {
+        return AppConst.androidId
     }
 
 }
