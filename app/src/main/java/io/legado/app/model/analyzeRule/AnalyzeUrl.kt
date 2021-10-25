@@ -46,7 +46,7 @@ class AnalyzeUrl(
     companion object {
         val paramPattern: Pattern = Pattern.compile("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
-        private val accessTime = hashMapOf<String, FetchRecord>()
+        private val concurrentRecordMap = hashMapOf<String, ConcurrentRecord>()
     }
 
     var ruleUrl = ""
@@ -277,31 +277,34 @@ class AnalyzeUrl(
     }
 
     /**
-     * 并发判断
+     * 开始访问,并发判断
      */
-    private fun judgmentConcurrent() {
-        source ?: return
+    private fun fetchStart(): ConcurrentRecord? {
+        source ?: return null
         val concurrentRate = source.concurrentRate
         if (concurrentRate.isNullOrEmpty()) {
-            return
+            return null
         }
-        var fetchRecord = accessTime[source.getKey()]
+        val rateIndex = concurrentRate.indexOf("/")
+        var fetchRecord = concurrentRecordMap[source.getKey()]
         if (fetchRecord == null) {
-            fetchRecord = FetchRecord(System.currentTimeMillis(), 1)
-            accessTime[source.getKey()] = fetchRecord
-            return
+            fetchRecord = ConcurrentRecord(rateIndex > 0, System.currentTimeMillis(), 1)
+            concurrentRecordMap[source.getKey()] = fetchRecord
+            return fetchRecord
         }
-        val waitTime = synchronized(fetchRecord) {
+        val waitTime: Int = synchronized(fetchRecord) {
             try {
-                val rateIndex = concurrentRate.indexOf("/")
                 if (rateIndex == -1) {
+                    if (fetchRecord.frequency > 0) {
+                        return@synchronized concurrentRate.toInt()
+                    }
                     val nextTime = fetchRecord.time + concurrentRate.toInt()
                     if (System.currentTimeMillis() >= nextTime) {
                         fetchRecord.time = System.currentTimeMillis()
                         fetchRecord.frequency = 1
                         return@synchronized 0
                     }
-                    return@synchronized nextTime - System.currentTimeMillis()
+                    return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                 } else {
                     val sj = concurrentRate.substring(rateIndex + 1)
                     val nextTime = fetchRecord.time + sj.toInt()
@@ -312,7 +315,7 @@ class AnalyzeUrl(
                     }
                     val cs = concurrentRate.substring(0, rateIndex)
                     if (fetchRecord.frequency > cs.toInt()) {
-                        return@synchronized nextTime - System.currentTimeMillis()
+                        return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                     } else {
                         fetchRecord.frequency = fetchRecord.frequency + 1
                         return@synchronized 0
@@ -324,6 +327,18 @@ class AnalyzeUrl(
         }
         if (waitTime > 0) {
             throw ConcurrentException("根据并发率还需等待${waitTime}毫秒才可以访问", waitTime = waitTime)
+        }
+        return fetchRecord
+    }
+
+    /**
+     * 访问结束
+     */
+    private fun fetchEnd(concurrentRecord: ConcurrentRecord?) {
+        if (concurrentRecord != null && !concurrentRecord.concurrent) {
+            synchronized(concurrentRecord) {
+                concurrentRecord.frequency = concurrentRecord.frequency - 1
+            }
         }
     }
 
@@ -338,10 +353,11 @@ class AnalyzeUrl(
         if (type != null) {
             return StrResponse(url, StringUtils.byteToHexString(getByteArrayAwait()))
         }
-        judgmentConcurrent()
+        val concurrentRecord = fetchStart()
         setCookie(source?.getKey())
+        val strResponse: StrResponse
         if (this.useWebView && useWebView) {
-            return when (method) {
+            strResponse = when (method) {
                 RequestMethod.POST -> {
                     val body = getProxyClient(proxy).newCallStrResponse(retry) {
                         addHeaders(headerMap)
@@ -369,21 +385,24 @@ class AnalyzeUrl(
                     headerMap = headerMap
                 ).getStrResponse()
             }
-        }
-        return getProxyClient(proxy).newCallStrResponse(retry) {
-            addHeaders(headerMap)
-            when (method) {
-                RequestMethod.POST -> {
-                    url(urlNoQuery)
-                    if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                        postForm(fieldMap, true)
-                    } else {
-                        postJson(body)
+        } else {
+            strResponse = getProxyClient(proxy).newCallStrResponse(retry) {
+                addHeaders(headerMap)
+                when (method) {
+                    RequestMethod.POST -> {
+                        url(urlNoQuery)
+                        if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
+                            postForm(fieldMap, true)
+                        } else {
+                            postJson(body)
+                        }
                     }
+                    else -> get(urlNoQuery, fieldMap, true)
                 }
-                else -> get(urlNoQuery, fieldMap, true)
             }
         }
+        fetchEnd(concurrentRecord)
+        return strResponse
     }
 
     @JvmOverloads
@@ -401,10 +420,10 @@ class AnalyzeUrl(
      * 访问网站,返回Response
      */
     suspend fun getResponseAwait(): Response {
-        judgmentConcurrent()
+        val concurrentRecord = fetchStart()
         setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
-        return getProxyClient(proxy).newCallResponse(retry) {
+        val response = getProxyClient(proxy).newCallResponse(retry) {
             addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
@@ -418,6 +437,8 @@ class AnalyzeUrl(
                 else -> get(urlNoQuery, fieldMap, true)
             }
         }
+        fetchEnd(concurrentRecord)
+        return response
     }
 
     fun getResponse(): Response {
@@ -430,10 +451,10 @@ class AnalyzeUrl(
      * 访问网站,返回ByteArray
      */
     suspend fun getByteArrayAwait(): ByteArray {
-        judgmentConcurrent()
+        val concurrentRecord = fetchStart()
         setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
-        return getProxyClient(proxy).newCallResponseBody(retry) {
+        val byteArray = getProxyClient(proxy).newCallResponseBody(retry) {
             addHeaders(headerMap)
             when (method) {
                 RequestMethod.POST -> {
@@ -447,6 +468,8 @@ class AnalyzeUrl(
                 else -> get(urlNoQuery, fieldMap, true)
             }
         }.bytes()
+        fetchEnd(concurrentRecord)
+        return byteArray
     }
 
     fun getByteArray(): ByteArray {
@@ -522,7 +545,8 @@ class AnalyzeUrl(
         val webJs: String?,
     )
 
-    data class FetchRecord(
+    data class ConcurrentRecord(
+        val concurrent: Boolean,
         var time: Long,
         var frequency: Int
     )

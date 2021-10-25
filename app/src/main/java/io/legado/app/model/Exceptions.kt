@@ -40,7 +40,7 @@ class ContentEmptyException(msg: String) : Exception(msg) {
 /**
  * 并发限制
  */
-class ConcurrentException(msg: String, val waitTime: Long) : Exception(msg) {
+class ConcurrentException(msg: String, val waitTime: Int) : Exception(msg) {
 
     override fun fillInStackTrace(): Throwable {
         return this
