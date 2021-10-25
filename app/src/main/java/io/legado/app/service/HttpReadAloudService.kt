@@ -8,6 +8,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.ConcurrentException
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
@@ -163,13 +164,15 @@ class HttpReadAloudService : BaseReadAloudService(),
                     } catch (e: CancellationException) {
                         removeSpeakCache(fileName)
                         //任务取消,不处理
+                    } catch (e: ConcurrentException) {
+                        removeSpeakCache(fileName)
+                        downloadAudio()
                     } catch (e: SocketTimeoutException) {
                         removeSpeakCache(fileName)
                         downloadErrorNo++
                         if (playErrorNo > 5) {
                             createSilentSound(fileName)
                         } else {
-                            toastOnUi("tts接口超时，尝试重新获取")
                             downloadAudio()
                         }
                     } catch (e: ConnectException) {

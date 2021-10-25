@@ -17,7 +17,6 @@ import android.os.BatteryManager
 import android.os.Build
 import android.os.Process
 import android.provider.Settings
-import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -77,30 +76,6 @@ inline fun <reified T : BroadcastReceiver> Context.broadcastPendingIntent(
     intent.action = action
     configIntent.invoke(intent)
     return getBroadcast(this, 0, intent, FLAG_CANCEL_CURRENT)
-}
-
-fun Context.toastOnUi(message: Int) {
-    runOnUI {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-}
-
-fun Context.toastOnUi(message: CharSequence?) {
-    runOnUI {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-}
-
-fun Context.longToastOnUi(message: Int) {
-    runOnUI {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
-}
-
-fun Context.longToastOnUi(message: CharSequence?) {
-    runOnUI {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
 }
 
 val Context.defaultSharedPreferences: SharedPreferences
