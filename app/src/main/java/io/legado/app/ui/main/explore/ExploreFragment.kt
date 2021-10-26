@@ -9,7 +9,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -128,10 +127,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
             }
             exploreFlow.collect {
                 binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
-                val diffResult = DiffUtil
-                    .calculateDiff(ExploreDiffCallBack(ArrayList(adapter.getItems()), it))
-                adapter.setItems(it)
-                diffResult.dispatchUpdatesTo(adapter)
+                adapter.setItems(it, ExploreDiffItemCallBack())
             }
         }
     }
