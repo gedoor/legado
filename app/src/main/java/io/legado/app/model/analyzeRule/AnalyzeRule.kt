@@ -267,8 +267,8 @@ class AnalyzeRule(
         var result: Any? = null
         val content = mContent ?: this.content
         val ruleList = splitSourceRule(ruleStr, true)
-        content?.let { o ->
-            if (ruleList.isNotEmpty()) result = o
+        if (content != null && ruleList.isNotEmpty()) {
+            result = content
             for (sourceRule in ruleList) {
                 putRule(sourceRule.putMap)
                 sourceRule.makeUpRule(result)
@@ -300,8 +300,8 @@ class AnalyzeRule(
         var result: Any? = null
         val content = mContent ?: this.content
         val ruleList = splitSourceRule(ruleStr, true)
-        content?.let { o ->
-            if (ruleList.isNotEmpty()) result = o
+        if (content != null && ruleList.isNotEmpty()) {
+            result = content
             for (sourceRule in ruleList) {
                 putRule(sourceRule.putMap)
                 result?.let {
