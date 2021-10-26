@@ -2,6 +2,7 @@ package io.legado.app.ui.widget.dialog
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogTextViewBinding
@@ -43,7 +44,7 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(0.9f, 0.9f)
+        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 0.9f)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
