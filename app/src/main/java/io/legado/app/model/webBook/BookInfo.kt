@@ -129,7 +129,7 @@ object BookInfo {
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
-        book.tocUrl = analyzeRule.getString(infoRule.tocUrl, true)
+        book.tocUrl = analyzeRule.getString(infoRule.tocUrl, isUrl = true)
         if (book.tocUrl.isEmpty()) book.tocUrl = redirectUrl
         if (book.tocUrl == redirectUrl) {
             book.tocHtml = body
