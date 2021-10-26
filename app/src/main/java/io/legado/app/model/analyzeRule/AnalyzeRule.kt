@@ -129,16 +129,20 @@ class AnalyzeRule(
      * 获取文本列表
      */
     @JvmOverloads
-    fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
+    fun getStringList(rule: String?, mContent: Any? = null, isUrl: Boolean = false): List<String>? {
         if (rule.isNullOrEmpty()) return null
         val ruleList = splitSourceRule(rule, false)
-        return getStringList(ruleList, isUrl)
+        return getStringList(ruleList, mContent, isUrl)
     }
 
     @JvmOverloads
-    fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
+    fun getStringList(
+        ruleList: List<SourceRule>,
+        mContent: Any? = null,
+        isUrl: Boolean = false
+    ): List<String>? {
         var result: Any? = null
-        val content = this.content
+        val content = mContent ?: this.content
         if (content != null && ruleList.isNotEmpty()) {
             result = content
             if (content is NativeObject) {
@@ -194,22 +198,22 @@ class AnalyzeRule(
      * 获取文本
      */
     @JvmOverloads
-    fun getString(ruleStr: String?, isUrl: Boolean = false, value: String? = null): String {
+    fun getString(ruleStr: String?, mContent: Any? = null, isUrl: Boolean = false): String {
         if (TextUtils.isEmpty(ruleStr)) return ""
         val ruleList = splitSourceRule(ruleStr)
-        return getString(ruleList, isUrl, value)
+        return getString(ruleList, mContent, isUrl)
     }
 
     @JvmOverloads
     fun getString(
         ruleList: List<SourceRule>,
-        isUrl: Boolean = false,
-        value: String? = null
+        mContent: Any? = null,
+        isUrl: Boolean = false
     ): String {
-        var result: Any? = value
-        val content = this.content
-        if ((content != null || result != null) && ruleList.isNotEmpty()) {
-            if (result == null) result = content
+        var result: Any? = null
+        val content = mContent ?: this.content
+        if (content != null && ruleList.isNotEmpty()) {
+            result = content
             if (result is NativeObject) {
                 result = result[ruleList[0].rule]?.toString()
             } else {

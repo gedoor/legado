@@ -231,7 +231,7 @@ object BookList {
             }
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取详情页链接", log)
-            searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, true)
+            searchBook.bookUrl = analyzeRule.getString(ruleBookUrl, isUrl = true)
             if (searchBook.bookUrl.isEmpty()) {
                 searchBook.bookUrl = baseUrl
             }
