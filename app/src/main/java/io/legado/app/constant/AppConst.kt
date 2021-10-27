@@ -21,7 +21,7 @@ object AppConst {
 
     const val UA_NAME = "User-Agent"
 
-    const val MAX_THREAD = 6
+    const val MAX_THREAD = 9
 
     val SCRIPT_ENGINE: ScriptEngine by lazy {
         ScriptEngineManager().getEngineByName("rhino")
