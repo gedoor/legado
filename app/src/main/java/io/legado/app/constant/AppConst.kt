@@ -106,6 +106,9 @@ object AppConst {
         var versionName: String = ""
     )
 
+    /**
+     * The authority of a FileProvider defined in a <provider> element in your app's manifest.
+     */
     const val authority = BuildConfig.APPLICATION_ID + ".fileProvider"
 
 }
