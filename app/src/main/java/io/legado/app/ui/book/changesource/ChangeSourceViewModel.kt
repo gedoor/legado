@@ -116,7 +116,12 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             } else {
-                bookSourceList.addAll(appDb.bookSourceDao.getEnabledByGroup(searchGroup))
+                val sources = appDb.bookSourceDao.getEnabledByGroup(searchGroup)
+                if (sources.isEmpty()) {
+                    bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
+                } else {
+                    bookSourceList.addAll(sources)
+                }
             }
             searchStateData.postValue(true)
             initSearchPool()
