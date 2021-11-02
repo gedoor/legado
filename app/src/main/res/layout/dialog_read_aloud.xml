@@ -32,7 +32,8 @@
             android:paddingBottom="10dp"
             android:text="@string/previous_chapter"
             android:textColor="@color/primaryText"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <View
             android:layout_width="0dp"
@@ -109,7 +110,8 @@
             android:paddingBottom="10dp"
             android:text="@string/next_chapter"
             android:textColor="@color/primaryText"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
 
@@ -141,6 +143,7 @@
             android:id="@+id/tv_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/primaryText"
             android:text="@string/timer_m" />
 
     </LinearLayout>
@@ -175,17 +178,46 @@
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/flow_sys"
                 android:text="@string/flow_sys"
-                tools:ignore="RtlHardcoded" />
+                tools:ignore="RtlHardcoded,TouchTargetSizeCheck" />
 
         </LinearLayout>
 
-        <io.legado.app.lib.theme.view.ThemeSeekBar
-            android:id="@+id/seek_tts_SpeechRate"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:max="45" />
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_tts_speech_reduce"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:tooltipText="@string/tts_speech_reduce"
+                android:contentDescription="@string/tts_speech_reduce"
+                android:src="@drawable/ic_reduce"
+                android:tint="@color/primaryText"
+                tools:ignore="UnusedAttribute" />
+
+            <io.legado.app.lib.theme.view.ThemeSeekBar
+                android:id="@+id/seek_tts_speechRate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="45" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_tts_speech_add"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:tooltipText="@string/tts_speech_add"
+                android:contentDescription="@string/tts_speech_add"
+                android:src="@drawable/ic_add"
+                android:tint="@color/primaryText"
+                tools:ignore="UnusedAttribute" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
