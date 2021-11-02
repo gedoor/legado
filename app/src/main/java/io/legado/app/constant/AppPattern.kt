@@ -29,5 +29,5 @@ object AppPattern {
     /**
      * 不发音段落判断
      */
-    val notReadAloudRegex = Regex("^(\\s|\\p{C}|\\p{P}|\\p{Z}|\\p{S})+\$")
+    val notReadAloudRegex = Regex("^(\\s|\\p{C}|\\p{P}|\\p{Z}|\\p{S})+$")
 }
