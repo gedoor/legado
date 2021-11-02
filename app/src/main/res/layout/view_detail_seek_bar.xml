@@ -20,7 +20,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:contentDescription="@string/reduce"
-        android:src="@drawable/ic_remove"
+        android:src="@drawable/ic_reduce"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="@color/primaryText" />
 

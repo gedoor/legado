@@ -906,5 +906,7 @@
     <string name="login_header">登录头</string>
     <string name="font_scale">字体大小</string>
     <string name="font_scale_summary">当前字体大小:%.1f</string>
+    <string name="tts_speech_reduce">语速减</string>
+    <string name="tts_speech_add">语速加</string>
 
 </resources>
