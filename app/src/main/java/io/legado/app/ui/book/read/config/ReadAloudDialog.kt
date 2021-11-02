@@ -64,7 +64,9 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             ivStop.setColorFilter(textColor)
             ivTimer.setColorFilter(textColor)
             tvTimer.setTextColor(textColor)
+            ivTtsSpeechReduce.setColorFilter(textColor)
             tvTtsSpeed.setTextColor(textColor)
+            ivTtsSpeechAdd.setColorFilter(textColor)
             ivCatalog.setColorFilter(textColor)
             tvCatalog.setTextColor(textColor)
             ivMainMenu.setColorFilter(textColor)
@@ -110,6 +112,16 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
         cbTtsFollowSys.setOnCheckedChangeListener { _, isChecked ->
             requireContext().putPrefBoolean("ttsFollowSys", isChecked)
             seekTtsSpeechRate.isEnabled = !isChecked
+            upTtsSpeechRate()
+        }
+        ivTtsSpeechReduce.setOnClickListener {
+            seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate - 1
+            AppConfig.ttsSpeechRate = AppConfig.ttsSpeechRate - 1
+            upTtsSpeechRate()
+        }
+        ivTtsSpeechAdd.setOnClickListener {
+            seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate + 1
+            AppConfig.ttsSpeechRate = AppConfig.ttsSpeechRate + 1
             upTtsSpeechRate()
         }
         //设置保存的默认值
