@@ -44,10 +44,16 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    private lateinit var audioManager: AudioManager
-    private var mFocusRequest: AudioFocusRequestCompat? = null
-    private var broadcastReceiver: BroadcastReceiver? = null
-    private lateinit var mediaSessionCompat: MediaSessionCompat
+    private val audioManager: AudioManager by lazy {
+        getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
+    private val mFocusRequest: AudioFocusRequestCompat by lazy {
+        MediaHelp.getFocusRequest(this)
+    }
+    private val mediaSessionCompat: MediaSessionCompat by lazy {
+        MediaSessionCompat(this, "readAloud")
+    }
+    private var hasFocus = requestFocus()
     internal val contentList = arrayListOf<String>()
     internal var nowSpeak: Int = 0
     internal var readAloudNumber: Int = 0
@@ -55,13 +61,18 @@ abstract class BaseReadAloudService : BaseService(),
     internal var pageIndex = 0
     private var dsJob: Job? = null
 
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
+                pauseReadAloud(true)
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         isRun = true
         pause = false
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        mFocusRequest = MediaHelp.getFocusRequest(this)
-        mediaSessionCompat = MediaSessionCompat(this, "readAloud")
         initMediaSession()
         initBroadcastReceiver()
         upNotification()
@@ -258,13 +269,6 @@ abstract class BaseReadAloudService : BaseService(),
      * 断开耳机监听
      */
     private fun initBroadcastReceiver() {
-        broadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
-                    pauseReadAloud(true)
-                }
-            }
-        }
         val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         registerReceiver(broadcastReceiver, intentFilter)
     }
@@ -276,13 +280,18 @@ abstract class BaseReadAloudService : BaseService(),
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 AppLog.put("重新获得焦点, 恢复播放")
+                hasFocus = true
                 if (!pause) resumeReadAloud()
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 AppLog.put("永久丢失焦点")
+                if (!hasFocus) {
+                    pauseReadAloud(true)
+                }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 AppLog.put("暂时丢失焦点, 暂停播放")
+                hasFocus = false
                 if (!pause) pauseReadAloud(false)
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
@@ -356,4 +365,5 @@ abstract class BaseReadAloudService : BaseService(),
             stopSelf()
         }
     }
+
 }
