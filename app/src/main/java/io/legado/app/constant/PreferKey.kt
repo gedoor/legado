@@ -105,4 +105,5 @@ object PreferKey {
     const val cNBBackground = "colorBottomBackgroundNight"
     const val bgImageN = "backgroundImageNight"
     const val bgImageNBlurring = "backgroundImageNightBlurring"
+    const val longPressEnableInReading = "long_press_enable_in_reading"
 }

@@ -268,5 +268,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
         return ua
     }
+
+    var longPressEnableInReading: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.longPressEnableInReading, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.longPressEnableInReading, value)
+        }
 }
 

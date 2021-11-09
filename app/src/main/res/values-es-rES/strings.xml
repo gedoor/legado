@@ -635,6 +635,8 @@
     <string name="a10_permission_toast">En Android 10+ no puede leer ni guardar archivos debido a restricciones de permisos</string>
     <string name="add_to_text_context_menu_s">Mantenga pulsado para mostrar Legado·Búsqueda en el menú de operaciones</string>
     <string name="add_to_text_context_menu_t">Buscar en pantalla de operación de texto</string>
+    <string name="long_press_enable_in_reading_s">Si el texto es opcional, haga clic para mostrar el menú</string>
+    <string name="long_press_enable_in_reading_t">Duración de la lectura</string>
     <string name="record_log">Registro</string>
     <string name="log">Registro</string>
     <string name="chinese_converter">Conversión a simplificada</string>

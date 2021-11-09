@@ -639,6 +639,8 @@
     <string name="a10_permission_toast">Android 10+ unable to read and write file due to permission restrictions</string>
     <string name="add_to_text_context_menu_s">Long tap to display Legado·Search in the operation menu</string>
     <string name="add_to_text_context_menu_t">Text operation display Search</string>
+    <string name="long_press_enable_in_reading_s">Whether the text is optional, and long press to display the menu</string>
+    <string name="long_press_enable_in_reading_t">Long press enable in reading</string>
     <string name="record_log">Log</string>
     <string name="log">Log</string>
     <string name="chinese_converter">Simplified conversion</string>

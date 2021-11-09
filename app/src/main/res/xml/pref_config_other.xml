@@ -110,6 +110,13 @@
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
+            android:key="long_press_enable_in_reading"
+            android:summary="@string/long_press_enable_in_reading_s"
+            android:title="@string/long_press_enable_in_reading_t"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
             android:key="process_text"
             android:summary="@string/add_to_text_context_menu_s"
             android:title="@string/add_to_text_context_menu_t"
@@ -120,7 +127,6 @@
             android:key="recordLog"
             android:title="@string/record_log"
             app:iconSpaceReserved="false" />
-
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
 

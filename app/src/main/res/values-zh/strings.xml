@@ -638,6 +638,8 @@
     <string name="a10_permission_toast">Android10以上因权限限制可能无法读写文件</string>
     <string name="add_to_text_context_menu_s">长按文字在操作菜单中显示阅读·搜索</string>
     <string name="add_to_text_context_menu_t">文字操作显示搜索</string>
+    <string name="long_press_enable_in_reading_s">文字是否可选，长按是否显示菜单</string>
+    <string name="long_press_enable_in_reading_t">阅读中是否响应长按事件</string>
     <string name="record_log">记录日志</string>
     <string name="log">日志</string>
     <string name="chinese_converter">中文简繁体转换</string>
