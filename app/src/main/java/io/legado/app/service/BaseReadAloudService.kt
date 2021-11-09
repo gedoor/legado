@@ -53,7 +53,7 @@ abstract class BaseReadAloudService : BaseService(),
     private val mediaSessionCompat: MediaSessionCompat by lazy {
         MediaSessionCompat(this, "readAloud")
     }
-    private var hasFocus = requestFocus()
+    private var audioFocusLossTransient = false
     internal val contentList = arrayListOf<String>()
     internal var nowSpeak: Int = 0
     internal var readAloudNumber: Int = 0
@@ -280,18 +280,18 @@ abstract class BaseReadAloudService : BaseService(),
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 AppLog.put("重新获得焦点, 恢复播放")
-                hasFocus = true
+                audioFocusLossTransient = false
                 if (!pause) resumeReadAloud()
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 AppLog.put("永久丢失焦点")
-                if (!hasFocus) {
+                if (audioFocusLossTransient) {
                     pauseReadAloud(true)
                 }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 AppLog.put("暂时丢失焦点, 暂停播放")
-                hasFocus = false
+                audioFocusLossTransient = true
                 if (!pause) pauseReadAloud(false)
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
