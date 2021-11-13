@@ -79,7 +79,17 @@ class HandleFileActivity :
         alert(title) {
             items(selectList) { _, item, _ ->
                 when (item.value) {
-                    HandleFileContract.DIR -> selectDocTree.launch(null)
+                    HandleFileContract.DIR -> kotlin.runCatching {
+                        selectDocTree.launch(null)
+                    }.onFailure {
+                        toastOnUi(R.string.open_sys_dir_picker_error)
+                        checkPermissions {
+                            FilePickerDialog.show(
+                                supportFragmentManager,
+                                mode = HandleFileContract.DIR
+                            )
+                        }
+                    }
                     HandleFileContract.FILE -> selectDoc.launch(typesOfExtensions(allowExtensions))
                     10 -> checkPermissions {
                         FilePickerDialog.show(
