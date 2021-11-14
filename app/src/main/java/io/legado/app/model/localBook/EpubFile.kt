@@ -119,23 +119,18 @@ class EpubFile(var book: Book) {
 
     private fun getContent(chapter: BookChapter): String? {
         /*获取当前章节文本*/
-        return getChildChapter(chapter, chapter.url)
-    }
-
-    private fun getChildChapter(chapter: BookChapter, href: String): String? {
         epubBook?.let {
-            val body = Jsoup.parse(String(it.resources.getByHref(href).data, mCharset)).body()
+            val body =
+                Jsoup.parse(String(it.resources.getByHref(chapter.url).data, mCharset)).body()
 
-            if (chapter.url == href) {
-                val startFragmentId = chapter.startFragmentId
-                val endFragmentId = chapter.endFragmentId
-                /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
-                /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
-                if (!startFragmentId.isNullOrBlank())
-                    body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
-                if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId)
-                    body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
-            }
+            val startFragmentId = chapter.startFragmentId
+            val endFragmentId = chapter.endFragmentId
+            /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
+            /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
+            if (!startFragmentId.isNullOrBlank())
+                body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
+            if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId)
+                body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
 
             /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
             var tag = Book.hTag
