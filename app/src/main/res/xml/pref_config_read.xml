@@ -126,7 +126,7 @@
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="expandTextMenu"
-        android:title="展开文本选择菜单"
+        android:title="@string/expand_text_menu"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
