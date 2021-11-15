@@ -10,6 +10,8 @@ import io.legado.app.databinding.ItemTxtTocRuleBinding
 class TxtTocRuleAdapter(context: Context) :
     RecyclerAdapter<TxtTocRule, ItemTxtTocRuleBinding>(context) {
 
+    private val selected = linkedSetOf<TxtTocRule>()
+
     override fun getViewBinding(parent: ViewGroup): ItemTxtTocRuleBinding {
         return ItemTxtTocRuleBinding.inflate(inflater, parent, false)
     }
@@ -25,7 +27,27 @@ class TxtTocRuleAdapter(context: Context) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemTxtTocRuleBinding) {
-        TODO("Not yet implemented")
+        binding.cbSource.setOnCheckedChangeListener { buttonView, isChecked ->
+            getItem(holder.layoutPosition)?.let {
+                if (buttonView.isPressed) {
+                    if (isChecked) {
+                        selected.add(it)
+                    } else {
+                        selected.remove(it)
+                    }
+                }
+            }
+        }
+        binding.swtEnabled.setOnCheckedChangeListener { buttonView, isChecked ->
+            getItem(holder.layoutPosition)?.let {
+                if (buttonView.isPressed) {
+                    it.enable = isChecked
+                }
+            }
+        }
+        binding.ivEdit.setOnClickListener {
+
+        }
     }
 
 }
