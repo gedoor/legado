@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <io.legado.app.lib.theme.view.ThemeCheckBox
+        android:id="@+id/cb_source"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:textColor="@color/primaryText"
+        tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
+
+    <io.legado.app.lib.theme.view.ThemeSwitch
+        android:id="@+id/swt_enabled"
+        android:name="@string/enable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_edit"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/edit"
+        android:padding="6dp"
+        android:src="@drawable/ic_edit"
+        android:tint="@color/primaryText" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu_more"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        android:src="@drawable/ic_more_vert"
+        android:tint="@color/primaryText"
+        tools:ignore="RtlHardcoded" />
+
+</LinearLayout>
