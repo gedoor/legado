@@ -894,7 +894,7 @@
     <string name="disable_source">disable source</string>
     <string name="delete_source">delete source</string>
     <string name="chapter_pay">pay</string>
-    <string name="double_page_horizontal">横屏双页</string>
+    <string name="double_page_horizontal">平板/横屏双页</string>
     <string name="open_in_browser">open in browser</string>
     <string name="copy_url">copy url</string>
     <string name="open_fun">open function</string>
@@ -909,5 +909,6 @@
     <string name="tts_speech_reduce">语速减</string>
     <string name="tts_speech_add">语速加</string>
     <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>
+    <string name="expand_text_menu">展开文本选择菜单</string>
 
 </resources>

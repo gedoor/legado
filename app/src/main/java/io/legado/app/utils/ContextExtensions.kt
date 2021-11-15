@@ -10,6 +10,7 @@ import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -290,6 +291,11 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
         toastOnUi(e.msg)
     }
 }
+
+val Context.isPad: Boolean
+    get() {
+        return resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
+    }
 
 val Context.channel: String
     get() {
