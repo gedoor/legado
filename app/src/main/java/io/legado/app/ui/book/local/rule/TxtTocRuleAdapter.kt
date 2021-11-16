@@ -2,13 +2,18 @@ package io.legado.app.ui.book.local.rule
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.ItemTxtTocRuleBinding
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 
-class TxtTocRuleAdapter(context: Context, private val callback: Callback) :
-    RecyclerAdapter<TxtTocRule, ItemTxtTocRuleBinding>(context) {
+class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
+    RecyclerAdapter<TxtTocRule, ItemTxtTocRuleBinding>(context),
+    ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<TxtTocRule>()
 
@@ -46,7 +51,7 @@ class TxtTocRuleAdapter(context: Context, private val callback: Callback) :
                     } else {
                         selected.remove(it)
                     }
-                    callback.upCountView()
+                    callBack.upCountView()
                 }
             }
         }
@@ -62,7 +67,79 @@ class TxtTocRuleAdapter(context: Context, private val callback: Callback) :
         }
     }
 
-    interface Callback {
+    fun selectAll() {
+        getItems().forEach {
+            selected.add(it)
+        }
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun revertSelection() {
+        getItems().forEach {
+            if (selected.contains(it)) {
+                selected.remove(it)
+            } else {
+                selected.add(it)
+            }
+        }
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
+        val srcItem = getItem(srcPosition)
+        val targetItem = getItem(targetPosition)
+        if (srcItem != null && targetItem != null) {
+            if (srcItem.serialNumber == targetItem.serialNumber) {
+                callBack.upOrder()
+            } else {
+                val srcOrder = srcItem.serialNumber
+                srcItem.serialNumber = targetItem.serialNumber
+                targetItem.serialNumber = srcOrder
+                movedItems.add(srcItem)
+                movedItems.add(targetItem)
+            }
+        }
+        swapItem(srcPosition, targetPosition)
+        return true
+    }
+
+    private val movedItems = hashSetOf<TxtTocRule>()
+
+    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        if (movedItems.isNotEmpty()) {
+            callBack.update(*movedItems.toTypedArray())
+            movedItems.clear()
+        }
+    }
+
+    val dragSelectCallback: DragSelectTouchHelper.Callback =
+        object : DragSelectTouchHelper.AdvanceCallback<TxtTocRule>(Mode.ToggleAndReverse) {
+            override fun currentSelectedId(): MutableSet<TxtTocRule> {
+                return selected
+            }
+
+            override fun getItemId(position: Int): TxtTocRule {
+                return getItem(position)!!
+            }
+
+            override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
+                getItem(position)?.let {
+                    if (isSelected) {
+                        selected.add(it)
+                    } else {
+                        selected.remove(it)
+                    }
+                    notifyItemChanged(position, bundleOf(Pair("selected", null)))
+                    callBack.upCountView()
+                    return true
+                }
+                return false
+            }
+        }
+
+    interface CallBack {
         fun del(source: TxtTocRule)
         fun edit(source: TxtTocRule)
         fun update(vararg source: TxtTocRule)

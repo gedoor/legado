@@ -12,7 +12,7 @@
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
         app:displayHomeAsUp="true"
-        app:title="@string/book_source" />
+        app:title="@string/txt_toc_regex" />
 
     <FrameLayout
         android:layout_width="match_parent"

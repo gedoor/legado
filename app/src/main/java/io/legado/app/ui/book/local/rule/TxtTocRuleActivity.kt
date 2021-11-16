@@ -5,21 +5,30 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.ActivityTxtTocRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogTocRegexEditBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ACache
+import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.snackbar
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleViewModel>(),
-    TxtTocRuleAdapter.Callback {
+    TxtTocRuleAdapter.CallBack {
 
     override val viewModel: TxtTocRuleViewModel by viewModels()
     override val binding: ActivityTxtTocRuleBinding by viewBinding(ActivityTxtTocRuleBinding::inflate)
@@ -30,11 +39,31 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
+        initData()
     }
 
     private fun initView() = binding.run {
+        recyclerView.setEdgeEffectColor(primaryColor)
+        recyclerView.addItemDecoration(VerticalDivider(this@TxtTocRuleActivity))
         recyclerView.adapter = adapter
+        // When this page is opened, it is in selection mode
+        val dragSelectTouchHelper =
+            DragSelectTouchHelper(adapter.dragSelectCallback).setSlideArea(16, 50)
+        dragSelectTouchHelper.attachToRecyclerView(binding.recyclerView)
+        dragSelectTouchHelper.activeSlideSelect()
+        // Note: need judge selection first, so add ItemTouchHelper after it.
+        val itemTouchCallback = ItemTouchCallback(adapter)
+        itemTouchCallback.isCanDrag = true
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
+    }
 
+    private fun initData() {
+        launch {
+            appDb.txtTocRuleDao.observeAll().collect { tocRules ->
+                adapter.setItems(tocRules)
+                upCountView()
+            }
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
