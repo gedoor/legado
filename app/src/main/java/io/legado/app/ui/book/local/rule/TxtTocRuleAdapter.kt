@@ -7,7 +7,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.ItemTxtTocRuleBinding
 
-class TxtTocRuleAdapter(context: Context) :
+class TxtTocRuleAdapter(context: Context, private val callback: Callback) :
     RecyclerAdapter<TxtTocRule, ItemTxtTocRuleBinding>(context) {
 
     private val selected = linkedSetOf<TxtTocRule>()
@@ -35,6 +35,7 @@ class TxtTocRuleAdapter(context: Context) :
                     } else {
                         selected.remove(it)
                     }
+                    callback.upCountView()
                 }
             }
         }
@@ -48,6 +49,16 @@ class TxtTocRuleAdapter(context: Context) :
         binding.ivEdit.setOnClickListener {
 
         }
+    }
+
+    interface Callback {
+        fun del(source: TxtTocRule)
+        fun edit(source: TxtTocRule)
+        fun update(vararg source: TxtTocRule)
+        fun toTop(source: TxtTocRule)
+        fun toBottom(source: TxtTocRule)
+        fun upOrder()
+        fun upCountView()
     }
 
 }
