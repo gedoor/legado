@@ -12,6 +12,17 @@ class TxtTocRuleAdapter(context: Context, private val callback: Callback) :
 
     private val selected = linkedSetOf<TxtTocRule>()
 
+    val selection: List<TxtTocRule>
+        get() {
+            val selection = arrayListOf<TxtTocRule>()
+            getItems().map {
+                if (selected.contains(it)) {
+                    selection.add(it)
+                }
+            }
+            return selection.sortedBy { it.serialNumber }
+        }
+
     override fun getViewBinding(parent: ViewGroup): ItemTxtTocRuleBinding {
         return ItemTxtTocRuleBinding.inflate(inflater, parent, false)
     }
