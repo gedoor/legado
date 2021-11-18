@@ -115,7 +115,7 @@
     <string name="restore_confirmation">確認還原嗎？</string>
     <string name="restore_message">還原成功會覆蓋原有書架。</string>
     <string name="backup_success">備份成功</string>
-    <string name="backup_fail">備份失敗</string>
+    <string name="backup_fail">備份失敗\n%s</string>
     <string name="on_restore">正在還原</string>
     <string name="restore_success">還原成功</string>
     <string name="restore_fail">還原失敗</string>

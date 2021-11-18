@@ -117,7 +117,7 @@
     <string name="restore_confirmation">确认恢复吗？</string>
     <string name="restore_message">恢复书架会覆盖现有书架。</string>
     <string name="backup_success">备份成功</string>
-    <string name="backup_fail">备份失败</string>
+    <string name="backup_fail">备份失败\n%s</string>
     <string name="on_restore">正在恢复</string>
     <string name="restore_success">恢复成功</string>
     <string name="restore_fail">恢复失败</string>
@@ -856,7 +856,7 @@
     <string name="null_url">url为空</string>
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
-    <string name="autobackup_fail">自动备份失败</string>
+    <string name="autobackup_fail">自动备份失败\n%s</string>
     <string name="end">结束</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
     <string name="pref_media_button_per_next">媒体按钮•上一首|下一首</string>

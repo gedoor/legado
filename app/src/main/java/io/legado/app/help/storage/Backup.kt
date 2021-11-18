@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.DefaultData
@@ -51,7 +52,8 @@ object Backup {
             Coroutine.async {
                 backup(context, context.getPrefString(PreferKey.backupPath) ?: "", true)
             }.onError {
-                appCtx.toastOnUi(R.string.autobackup_fail)
+                AppLog.put("备份出错\n${it.localizedMessage}", it)
+                appCtx.toastOnUi(appCtx.getString(R.string.autobackup_fail, it.localizedMessage))
             }
         }
     }

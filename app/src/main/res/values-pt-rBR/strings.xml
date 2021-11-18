@@ -118,7 +118,7 @@
     <string name="restore_confirmation">Confirmação da Restauração</string>
     <string name="restore_message">A restauração dos dados da estante irá substituir a estante atual.</string>
     <string name="backup_success">Backup bem sucedido</string>
-    <string name="backup_fail">O Backup falhou</string>
+    <string name="backup_fail">O Backup falhou\n%s</string>
     <string name="on_restore">Restaurando</string>
     <string name="restore_success">Restauração bem sucedida</string>
     <string name="restore_fail">A restauração falhou</string>
@@ -861,7 +861,7 @@
     <string name="check_source_show_debug_message">Marcando a fonte do livro mostra uma mensagem de depuração</string>
     <string name="check_source_show_debug_message_summary">Mostrar o status da rede com a data e hora durante a verificação da fonte</string>
     <string name="export_no_chapter_name">Não há nomes de capítulos de exportação</string>
-    <string name="autobackup_fail">Auto-Backup falhou</string>
+    <string name="autobackup_fail">Auto-Backup falhou\n%s</string>
     <string name="background_image_blurring">Desfocagem da imagem de fundo</string>
     <string name="background_image_blurring_radius">Raio da desfocagem</string>
     <string name="background_image_hint">Desativado quando 0, Ativado entre 1 e 25\n Quanto maior o raio, mais forte o efeito de desfocagem</string>

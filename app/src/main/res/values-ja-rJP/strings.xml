@@ -118,7 +118,7 @@
     <string name="restore_confirmation">Restore confirmation</string>
     <string name="restore_message">Restoring the bookshelf data will overwrite the current Bookshelf.</string>
     <string name="backup_success">Backup succeed</string>
-    <string name="backup_fail">Backup failed</string>
+    <string name="backup_fail">Backup failed\n%s</string>
     <string name="on_restore">Restoring</string>
     <string name="restore_success">Restore succeed</string>
     <string name="restore_fail">Backup failed</string>
@@ -861,7 +861,7 @@
     <string name="read_aloud_by_page_summary">及时翻页,翻页时会停顿一下</string>
     <string name="check_source_show_debug_message">Check book source shows debug message</string>
     <string name="check_source_show_debug_message_summary">Show network status and timestamp during source checking</string>
-    <string name="autobackup_fail">Autobackup failed</string>
+    <string name="autobackup_fail">Autobackup failed\n%s</string>
     <string name="background_image_blurring">Background image blurring</string>
     <string name="background_image_blurring_radius">Blurring radius</string>
     <string name="background_image_hint">Disabled when 0, enable range from 1 to 25\nThe greater the radius, the stronger the effect of blurring</string>
