@@ -117,7 +117,7 @@
     <string name="restore_confirmation">確認復原嗎？</string>
     <string name="restore_message">復原書架會覆蓋現有書架。</string>
     <string name="backup_success">備份成功</string>
-    <string name="backup_fail">備份失敗</string>
+    <string name="backup_fail">備份失敗\n%s</string>
     <string name="on_restore">正在復原</string>
     <string name="restore_success">復原成功</string>
     <string name="restore_fail">復原失敗</string>
@@ -856,7 +856,7 @@
     <string name="null_url">url為空</string>
     <string name="dict">字典</string>
     <string name="unknown_error">未知錯誤</string>
-    <string name="autobackup_fail">自動備份失敗</string>
+    <string name="autobackup_fail">自動備份失敗\n%s</string>
     <string name="end">結束</string>
     <string name="custom_group_summary">關閉取代分組/開啟添加分組</string>
     <string name="pref_media_button_per_next">媒體按鈕•上一首|下一首</string>

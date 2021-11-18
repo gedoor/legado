@@ -118,7 +118,7 @@
     <string name="restore_confirmation">Restore confirmation</string>
     <string name="restore_message">Restoring the bookshelf data will overwrite the current Bookshelf.</string>
     <string name="backup_success">Backup succeed</string>
-    <string name="backup_fail">Backup failed</string>
+    <string name="backup_fail">Backup failed\n%s</string>
     <string name="on_restore">Restoring</string>
     <string name="restore_success">Restore succeed</string>
     <string name="restore_fail">Backup failed</string>
@@ -858,7 +858,7 @@
     <string name="dict">dict</string>
     <string name="unknown_error">unknown error</string>
     <string name="export_no_chapter_name">No export chapter names</string>
-    <string name="autobackup_fail">Autobackup failed</string>
+    <string name="autobackup_fail">Autobackup failed\n%s</string>
     <string name="end">end</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
     <string name="pref_media_button_per_next">媒体按钮•上一首|下一首</string>

@@ -114,7 +114,7 @@
     <string name="restore_confirmation">Confirmar restauración</string>
     <string name="restore_message">La restauración de los datos de la estantería reemplazará a los datos de la actual.</string>
     <string name="backup_success">Respaldo completado</string>
-    <string name="backup_fail">Error de respaldo</string>
+    <string name="backup_fail">Error de respaldo\n%s</string>
     <string name="on_restore">Restaurando</string>
     <string name="restore_success">Restauración completada</string>
     <string name="restore_fail">Restauración fallida</string>
@@ -857,7 +857,7 @@
     <string name="check_source_show_debug_message">La fuente del libro de cheques muestra un mensaje de depuración</string>
     <string name="check_source_show_debug_message_summary">Muestra los pasos y el tiempo de la solicitud de red durante la verificación de la fuente del libro</string>
     <string name="export_no_chapter_name">No export chapter names</string>
-    <string name="autobackup_fail">Autobackup failed</string>
+    <string name="autobackup_fail">Autobackup failed\n%s</string>
     <string name="background_image_blurring">Background image blurring</string>
     <string name="background_image_blurring_radius">Blurring radius</string>
     <string name="background_image_hint">Disabled when 0, enable range from 1 to 25\nThe greater the radius, the stronger the effect of blurring</string>
