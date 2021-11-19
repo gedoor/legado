@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
 
 
@@ -114,8 +115,10 @@ object Backup {
 
     private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
         if (list.isNotEmpty()) {
-            val json = GSON.toJson(list)
-            FileUtils.createFileIfNotExist(path + File.separator + fileName).writeText(json)
+            val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
+            FileOutputStream(file).use {
+                GSON.writeToOutputStream(it, list)
+            }
         }
     }
 
