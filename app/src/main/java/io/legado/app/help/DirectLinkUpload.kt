@@ -15,7 +15,7 @@ object DirectLinkUpload {
     private const val downloadUrlRuleKey = "directLinkDownloadUrlRule"
     private const val summaryKey = "directSummary"
 
-    suspend fun upLoad(fileName: String, file: ByteArray, contentType: String): String {
+    suspend fun upLoad(fileName: String, file: Any, contentType: String): String {
         val url = getUploadUrl()
         if (url.isNullOrBlank()) {
             throw NoStackTraceException("上传url未配置")

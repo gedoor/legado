@@ -128,10 +128,10 @@ class HandleFileActivity :
         }
     }
 
-    private fun getFileData(): Triple<String, ByteArray, String>? {
+    private fun getFileData(): Triple<String, Any, String>? {
         val fileName = intent.getStringExtra("fileName")
         val file = intent.getStringExtra("fileKey")?.let {
-            IntentData.get<ByteArray>(it)
+            IntentData.get<Any>(it)
         }
         val contentType = intent.getStringExtra("contentType")
         if (fileName != null && file != null && contentType != null) {

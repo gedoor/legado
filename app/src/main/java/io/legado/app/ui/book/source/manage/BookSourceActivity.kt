@@ -9,11 +9,13 @@ import android.view.SubMenu
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -121,8 +123,19 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         when (item.itemId) {
             R.id.menu_add_book_source -> startActivity<BookSourceEditActivity>()
             R.id.menu_import_qr -> qrResult.launch(null)
-            R.id.menu_share_source -> viewModel.shareSelection(adapter.selection) {
-                startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
+            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
+                val fileUri = FileProvider.getUriForFile(this, AppConst.authority, it)
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "text/*"
+                intent.putExtra(Intent.EXTRA_STREAM, fileUri)
+                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(
+                    Intent.createChooser(
+                        intent,
+                        getString(R.string.share_selected_source)
+                    )
+                )
             }
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             R.id.menu_import_local -> importDoc.launch {
@@ -333,13 +346,15 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
-            R.id.menu_export_selection -> exportDir.launch {
-                mode = HandleFileContract.EXPORT
-                fileData = Triple(
-                    "bookSource.json",
-                    GSON.toJson(adapter.selection).toByteArray(),
-                    "application/json"
-                )
+            R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection) { file ->
+                exportDir.launch {
+                    mode = HandleFileContract.EXPORT
+                    fileData = Triple(
+                        "bookSource.json",
+                        file.readBytes(),
+                        "application/json"
+                    )
+                }
             }
         }
         return true
