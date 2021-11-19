@@ -1,7 +1,6 @@
 package io.legado.app.ui.rss.source.manage
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -117,8 +116,8 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
-            R.id.menu_share_source -> viewModel.shareSelection(adapter.selection) {
-                startActivity(Intent.createChooser(it, getString(R.string.share_selected_source)))
+            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
+                share(it)
             }
             R.id.menu_import_default -> viewModel.importDefault()
             R.id.menu_help -> showHelp()
