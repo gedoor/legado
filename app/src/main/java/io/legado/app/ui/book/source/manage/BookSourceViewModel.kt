@@ -10,6 +10,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.*
+import java.io.FileOutputStream
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -135,13 +136,16 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     fun shareSelection(sources: List<BookSource>, success: ((intent: Intent) -> Unit)) {
         execute {
             val tmpSharePath = "${context.filesDir}/shareBookSource.json"
             FileUtils.delete(tmpSharePath)
             val intent = Intent(Intent.ACTION_SEND)
             val file = FileUtils.createFileWithReplace(tmpSharePath)
-            file.writeText(GSON.toJson(sources))
+            FileOutputStream(file).use {
+                GSON.writeToOutputStream(it, sources)
+            }
             val fileUri = FileProvider.getUriForFile(context, AppConst.authority, file)
             intent.type = "text/*"
             intent.putExtra(Intent.EXTRA_STREAM, fileUri)
