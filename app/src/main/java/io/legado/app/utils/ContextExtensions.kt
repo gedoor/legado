@@ -177,6 +177,21 @@ fun Context.share(text: String, title: String = getString(R.string.share)) {
     }
 }
 
+fun Context.share(file: File, type: String = "text/*") {
+    val fileUri = FileProvider.getUriForFile(this, AppConst.authority, file)
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.type = type
+    intent.putExtra(Intent.EXTRA_STREAM, fileUri)
+    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(
+        Intent.createChooser(
+            intent,
+            getString(R.string.share_selected_source)
+        )
+    )
+}
+
 @SuppressLint("SetWorldReadable")
 fun Context.shareWithQr(
     text: String,
