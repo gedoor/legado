@@ -3,6 +3,7 @@ package io.legado.app.help.http
 import io.legado.app.constant.AppConst
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.EncodingDetect
+import io.legado.app.utils.GSON
 import io.legado.app.utils.UTF8BOMFighter
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -10,7 +11,9 @@ import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import java.io.IOException
 import java.nio.charset.Charset
 import kotlin.coroutines.resume
@@ -152,9 +155,22 @@ fun Request.Builder.postMultipart(type: String?, form: Map<String, Any>) {
         when (val value = it.value) {
             is Map<*, *> -> {
                 val fileName = value["fileName"] as String
-                val file = value["file"] as ByteArray
+                val file = value["file"]
                 val mediaType = (value["contentType"] as? String)?.toMediaType()
-                val requestBody = file.toRequestBody(mediaType)
+                val requestBody = when (file) {
+                    is File -> {
+                        file.asRequestBody(mediaType)
+                    }
+                    is ByteArray -> {
+                        file.toRequestBody(mediaType)
+                    }
+                    is String -> {
+                        file.toRequestBody(mediaType)
+                    }
+                    else -> {
+                        GSON.toJson(file).toRequestBody(mediaType)
+                    }
+                }
                 multipartBody.addFormDataPart(it.key, fileName, requestBody)
             }
             else -> multipartBody.addFormDataPart(it.key, it.value.toString())
