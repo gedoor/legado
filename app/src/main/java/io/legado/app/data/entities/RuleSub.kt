@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "ruleSubs")
@@ -13,4 +14,9 @@ data class RuleSub(
     var customOrder: Int = 0,
     var autoUpdate: Boolean = false,
     var update: Long = System.currentTimeMillis()
-)
+) {
+
+    @Ignore
+    constructor() : this(name = "")
+
+}

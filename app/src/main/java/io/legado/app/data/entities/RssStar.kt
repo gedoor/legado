@@ -25,6 +25,9 @@ data class RssStar(
     var variable: String? = null
 ) : RuleDataInterface {
 
+    @Ignore
+    constructor() : this("")
+
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel

@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
@@ -10,4 +11,9 @@ data class Cache(
     val key: String = "",
     var value: String? = null,
     var deadline: Long = 0L
-)
+) {
+
+    @Ignore
+    constructor() : this(key = "")
+
+}

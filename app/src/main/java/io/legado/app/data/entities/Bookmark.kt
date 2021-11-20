@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
@@ -21,5 +22,9 @@ data class Bookmark(
     var chapterName: String = "",
     var bookText: String = "",
     var content: String = ""
+) : Parcelable {
 
-) : Parcelable
+    @Ignore
+    constructor() : this(bookName = "")
+
+}

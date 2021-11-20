@@ -41,6 +41,9 @@ data class SearchBook(
 ) : Parcelable, BaseBook, Comparable<SearchBook> {
 
     @Ignore
+    constructor() : this(bookUrl = "")
+
+    @Ignore
     @IgnoredOnParcel
     override var infoHtml: String? = null
 
