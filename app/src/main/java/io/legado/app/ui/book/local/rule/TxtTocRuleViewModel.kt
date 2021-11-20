@@ -53,4 +53,34 @@ class TxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
+    fun toTop(vararg rules: TxtTocRule) {
+        execute {
+            val minOrder = appDb.txtTocRuleDao.minOrder - 1
+            rules.forEachIndexed { index, source ->
+                source.serialNumber = minOrder - index
+            }
+            appDb.txtTocRuleDao.update(*rules)
+        }
+    }
+
+    fun toBottom(vararg sources: TxtTocRule) {
+        execute {
+            val maxOrder = appDb.txtTocRuleDao.maxOrder + 1
+            sources.forEachIndexed { index, source ->
+                source.serialNumber = maxOrder + index
+            }
+            appDb.txtTocRuleDao.update(*sources)
+        }
+    }
+
+    fun upOrder() {
+        execute {
+            val sources = appDb.txtTocRuleDao.all
+            for ((index: Int, source: TxtTocRule) in sources.withIndex()) {
+                source.serialNumber = index + 1
+            }
+            appDb.txtTocRuleDao.update(*sources.toTypedArray())
+        }
+    }
+
 }
