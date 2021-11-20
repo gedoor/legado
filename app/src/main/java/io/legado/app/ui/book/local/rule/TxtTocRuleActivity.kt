@@ -108,15 +108,15 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     }
 
     override fun toTop(source: TxtTocRule) {
-
+        viewModel.toTop(source)
     }
 
     override fun toBottom(source: TxtTocRule) {
-
+        viewModel.toBottom(source)
     }
 
     override fun upOrder() {
-
+        viewModel.upOrder()
     }
 
     override fun upCountView() {
