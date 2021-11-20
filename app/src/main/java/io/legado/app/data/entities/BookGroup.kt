@@ -3,6 +3,7 @@ package io.legado.app.data.entities
 import android.content.Context
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import io.legado.app.R
 import io.legado.app.constant.AppConst
@@ -18,6 +19,9 @@ data class BookGroup(
     var order: Int = 0,
     var show: Boolean = true
 ) : Parcelable {
+
+    @Ignore
+    constructor() : this(groupName = "")
 
     fun getManageName(context: Context): String {
         return when (groupId) {

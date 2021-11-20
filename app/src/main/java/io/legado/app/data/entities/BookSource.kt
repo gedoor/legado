@@ -19,10 +19,10 @@ import timber.log.Timber
     indices = [(Index(value = ["bookSourceUrl"], unique = false))]
 )
 data class BookSource(
-    var bookSourceName: String = "",                // 名称
-    var bookSourceGroup: String? = null,            // 分组
     @PrimaryKey
     var bookSourceUrl: String = "",                 // 地址，包括 http/https
+    var bookSourceName: String = "",                // 名称
+    var bookSourceGroup: String? = null,            // 分组
     var bookSourceType: Int = BookType.default,     // 类型，0 文本，1 音频, 3 图片
     var bookUrlPattern: String? = null,             // 详情页url正则
     var customOrder: Int = 0,                       // 手动排序编号
@@ -45,6 +45,9 @@ data class BookSource(
     var ruleToc: TocRule? = null,                   // 目录页规则
     var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, BaseSource {
+
+    @Ignore
+    constructor() : this(bookSourceUrl = "")
 
     override fun getTag(): String {
         return bookSourceName

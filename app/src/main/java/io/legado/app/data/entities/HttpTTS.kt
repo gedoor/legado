@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.jayway.jsonpath.DocumentContext
 import io.legado.app.utils.GSON
@@ -24,6 +25,9 @@ data class HttpTTS(
     override var header: String? = null,
     var loginCheckJs: String? = null,
 ) : BaseSource {
+
+    @Ignore
+    constructor() : this(name = "")
 
     override fun getTag(): String {
         return name
