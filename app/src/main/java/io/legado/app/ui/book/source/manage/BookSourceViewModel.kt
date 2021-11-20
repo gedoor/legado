@@ -32,8 +32,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun del(bookSource: BookSource) {
-        execute { appDb.bookSourceDao.delete(bookSource) }
+    fun del(vararg sources: BookSource) {
+        execute { appDb.bookSourceDao.delete(*sources) }
     }
 
     fun update(vararg bookSource: BookSource) {
@@ -125,12 +125,6 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 list.add(source.copy(bookSourceGroup = newGroup))
             }
             appDb.bookSourceDao.update(*list.toTypedArray())
-        }
-    }
-
-    fun delSelection(sources: List<BookSource>) {
-        execute {
-            appDb.bookSourceDao.delete(*sources.toTypedArray())
         }
     }
 
