@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.local.rule
 
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -11,8 +12,10 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.ItemTxtTocRuleBinding
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.utils.ColorUtils
 
 class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
     RecyclerAdapter<TxtTocRule, ItemTxtTocRuleBinding>(context),
@@ -41,8 +44,21 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
         item: TxtTocRule,
         payloads: MutableList<Any>
     ) {
-        binding.cbSource.text = item.name
-        binding.swtEnabled.isChecked = item.enable
+        binding.run {
+            val bundle = payloads.getOrNull(0) as? Bundle
+            if (bundle == null) {
+                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
+                cbSource.text = item.name
+                swtEnabled.isChecked = item.enable
+                cbSource.isChecked = selected.contains(item)
+            } else {
+                bundle.keySet().map {
+                    when (it) {
+                        "selected" -> cbSource.isChecked = selected.contains(item)
+                    }
+                }
+            }
+        }
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemTxtTocRuleBinding) {
