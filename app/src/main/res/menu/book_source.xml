@@ -89,31 +89,37 @@
 
     <item
         android:id="@+id/menu_add_book_source"
+        android:icon="@drawable/ic_add"
         android:title="@string/add_book_source"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_import_local"
+        android:icon="@drawable/ic_import"
         android:title="@string/import_local"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_import_onLine"
+        android:icon="@drawable/ic_import"
         android:title="@string/import_on_line"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_import_qr"
+        android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_text_toc_rule"
+        android:icon="@drawable/ic_cfg_source"
         android:title="@string/txt_toc_regex"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_help"
+        android:icon="@drawable/ic_help"
         android:title="@string/help"
         app:showAsAction="never" />
 
