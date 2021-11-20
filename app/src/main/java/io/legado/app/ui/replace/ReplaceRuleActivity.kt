@@ -158,7 +158,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         adapter.revertSelection()
     }
 
-    override fun onClickMainAction() {
+    override fun onClickSelectBarMainAction() {
         delSourceDialog()
     }
 

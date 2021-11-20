@@ -306,7 +306,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         adapter.revertSelection()
     }
 
-    override fun onClickMainAction() {
+    override fun onClickSelectBarMainAction() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             okButton { viewModel.delSelection(adapter.selection) }
             noButton()
