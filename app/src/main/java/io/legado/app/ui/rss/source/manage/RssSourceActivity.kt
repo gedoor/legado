@@ -116,9 +116,6 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch(null)
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
-            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
-                share(it)
-            }
             R.id.menu_import_default -> viewModel.importDefault()
             R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.source_group) {
@@ -134,16 +131,17 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.selection)
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
             R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
-            R.id.menu_export_selection -> exportResult.launch {
-                mode = HandleFileContract.EXPORT
-                fileData = Triple(
-                    "exportRssSource.json",
-                    GSON.toJson(adapter.selection).toByteArray(),
-                    "application/json"
-                )
-            }
             R.id.menu_top_sel -> viewModel.topSource(*adapter.selection.toTypedArray())
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
+            R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection) { file ->
+                exportResult.launch {
+                    mode = HandleFileContract.EXPORT
+                    fileData = Triple("exportRssSource.json", file, "application/json")
+                }
+            }
+            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
+                share(it)
+            }
         }
         return true
     }
