@@ -48,6 +48,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_share_source"
+        android:title="@string/share_selected_source"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_check_source"
         android:icon="@drawable/ic_check_source"
         android:title="@string/check_select_source"
