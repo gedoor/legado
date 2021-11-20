@@ -42,7 +42,7 @@ class SelectActionBar @JvmOverloads constructor(
             }
         }
         binding.btnRevertSelection.setOnClickListener { callBack?.revertSelection() }
-        binding.btnSelectActionMain.setOnClickListener { callBack?.onClickMainAction() }
+        binding.btnSelectActionMain.setOnClickListener { callBack?.onClickSelectBarMainAction() }
         binding.ivMenuMore.setOnClickListener { selMenu?.show() }
     }
 
@@ -108,6 +108,6 @@ class SelectActionBar @JvmOverloads constructor(
 
         fun revertSelection()
 
-        fun onClickMainAction() {}
+        fun onClickSelectBarMainAction() {}
     }
 }

@@ -19,9 +19,9 @@ class TxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
-    fun del(txtTocRule: TxtTocRule) {
+    fun del(vararg txtTocRule: TxtTocRule) {
         execute {
-            appDb.txtTocRuleDao.delete(txtTocRule)
+            appDb.txtTocRuleDao.delete(*txtTocRule)
         }
     }
 

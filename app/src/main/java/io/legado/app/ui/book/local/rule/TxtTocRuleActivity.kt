@@ -111,6 +111,10 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
         }
     }
 
+    override fun onClickSelectBarMainAction() {
+        delSourceDialog()
+    }
+
     override fun revertSelection() {
         adapter.revertSelection()
     }
@@ -142,6 +146,13 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     override fun upCountView() {
         binding.selectActionBar
             .upCountView(adapter.selection.size, adapter.itemCount)
+    }
+
+    private fun delSourceDialog() {
+        alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
+            okButton { viewModel.del(*adapter.selection.toTypedArray()) }
+            noButton()
+        }
     }
 
     @SuppressLint("InflateParams")

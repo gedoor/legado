@@ -31,8 +31,8 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun del(rssSource: RssSource) {
-        execute { appDb.rssSourceDao.delete(rssSource) }
+    fun del(vararg rssSource: RssSource) {
+        execute { appDb.rssSourceDao.delete(*rssSource) }
     }
 
     fun update(vararg rssSource: RssSource) {
@@ -66,12 +66,6 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
                 list.add(it.copy(enabled = false))
             }
             appDb.rssSourceDao.update(*list.toTypedArray())
-        }
-    }
-
-    fun delSelection(sources: List<RssSource>) {
-        execute {
-            appDb.rssSourceDao.delete(*sources.toTypedArray())
         }
     }
 

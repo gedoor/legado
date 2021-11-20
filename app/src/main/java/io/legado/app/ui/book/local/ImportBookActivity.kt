@@ -98,7 +98,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onClickMainAction() {
+    override fun onClickSelectBarMainAction() {
         viewModel.addToBookshelf(adapter.selectedUris) {
             adapter.notifyDataSetChanged()
         }
