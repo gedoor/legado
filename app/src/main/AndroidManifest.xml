@@ -236,6 +236,11 @@
             android:name=".ui.rss.source.manage.RssSourceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
+        <!-- txt目录规则管理 -->
+        <activity
+            android:name=".ui.book.local.rule.TxtTocRuleActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" />
         <!-- 替换规则界面 -->
         <activity
             android:name=".ui.replace.ReplaceRuleActivity"
