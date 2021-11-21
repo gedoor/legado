@@ -3,6 +3,7 @@ package io.legado.app.help.http
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import android.util.AndroidRuntimeException
 import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -51,7 +52,11 @@ class BackstageWebView(
             }
         }
         runOnUI {
-            load()
+            try {
+                load()
+            } catch (error: Throwable) {
+                block.cancel(error)
+            }
         }
     }
 
@@ -59,6 +64,7 @@ class BackstageWebView(
         return encode ?: "utf-8"
     }
 
+    @Throws(AndroidRuntimeException::class)
     private fun load() {
         val webView = createWebView()
         mWebView = webView
