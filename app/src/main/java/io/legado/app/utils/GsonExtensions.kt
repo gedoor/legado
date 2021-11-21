@@ -49,12 +49,12 @@ fun Gson.writeToOutputStream(out: OutputStream, any: Any) {
         writer.beginArray()
         any.forEach {
             it?.let {
-                GSON.toJson(it, it::class.java, writer)
+                toJson(it, it::class.java, writer)
             }
         }
         writer.endArray()
     } else {
-        GSON.toJson(any, any::class.java, writer)
+        toJson(any, any::class.java, writer)
     }
     writer.close()
 }
