@@ -15,12 +15,10 @@ class HandleFileContract :
 
     private var requestCode: Int = 0
 
-    override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)?): Intent {
+    override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)): Intent {
         val intent = Intent(context, HandleFileActivity::class.java)
         val handleFileParam = HandleFileParam()
-        input?.let {
-            handleFileParam.apply(input)
-        }
+        handleFileParam.apply(input)
         handleFileParam.let {
             requestCode = it.requestCode
             intent.putExtra("mode", it.mode)

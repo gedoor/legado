@@ -7,7 +7,7 @@ import androidx.activity.result.contract.ActivityResultContract
 
 class QrCodeResult : ActivityResultContract<Unit, String?>() {
 
-    override fun createIntent(context: Context, input: Unit?): Intent {
+    override fun createIntent(context: Context, input: Unit): Intent {
         return Intent(context, QrCodeActivity::class.java)
     }
 

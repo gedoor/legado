@@ -11,7 +11,7 @@ class SelectImageContract : ActivityResultContract<Int, SelectImageContract.Resu
 
     var requestCode: Int? = null
 
-    override fun createIntent(context: Context, input: Int?): Intent {
+    override fun createIntent(context: Context, input: Int): Intent {
         requestCode = input
         return Intent(Intent.ACTION_GET_CONTENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
