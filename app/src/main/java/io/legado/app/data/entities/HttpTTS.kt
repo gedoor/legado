@@ -27,7 +27,7 @@ data class HttpTTS(
 ) : BaseSource {
 
     @Ignore
-    constructor() : this(name = "")
+    constructor() : this(id = System.currentTimeMillis())
 
     override fun getTag(): String {
         return name
