@@ -1,8 +1,7 @@
+[![icon_android](https://github.com/gedoor/gedoor.github.io/blob/master/images/icon_android.png)](https://play.google.com/store/apps/details?id=io.legado.play.release)
 <a href="https://data.newrank.cn/m/s.html?s=NykyOzI9MS5LNQ%3D%3D" target="_blank">
     <img src="https://img.shields.io/badge/-微信关注“开源阅读”公众号-orange.svg" alt="#" align="right">
 </a>
-
-[![Downloads](https://img.shields.io/github/downloads/gedoor/legado/total.svg)](https://github.com/gedoor/legado/releases/latest) [![Telegram](https://img.shields.io/badge/Telegram-channel-blue)](https://t.me/legado_channels)
 
 <div align="center">
 <img width="125" height="125" src="https://github.com/gedoor/legado/raw/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="legado"/>  
@@ -44,21 +43,21 @@ Legado is a free and open source novel reader for Android.
 9.软件开源，持续优化，无广告。
 </details>
 
-
 <a href="#readme">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
 </a>
 
 # Download-下载 [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#Download-下载-)
-#### Android-安卓
+#### Android-安卓 
 * [Releases](https://github.com/gedoor/legado/releases/latest)
 * [Google play - $1.99](https://play.google.com/store/apps/details?id=io.legado.play.release)
 * [Coolapk](https://www.coolapk.com/apk/io.legado.app.release)
 * [Jsdelivr](https://cdn.jsdelivr.net/gh/gedoor/legado@release/)
 * [\#Beta](https://kunfei.lanzoui.com/b0f810h4b)
 
+
 #### IOS-苹果
-* 准备中
+* 准备中(No release) - [Github](https://github.com/gedoor/YueDuFlutter)
 
 <a href="#readme">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
