@@ -16,11 +16,11 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
     fun initData(arguments: Bundle?, success: (httpTTS: HttpTTS) -> Unit) {
         execute {
             if (id == null) {
-                id = arguments?.getLong("id")
-                val httpTTS = id?.let {
-                    return@let appDb.httpTTSDao.get(it)
+                val argumentId = arguments?.getLong("id")
+                if (argumentId != null && argumentId != 0L) {
+                    id = argumentId
+                    return@execute appDb.httpTTSDao.get(argumentId)
                 }
-                return@execute httpTTS
             }
             return@execute null
         }.onSuccess {
