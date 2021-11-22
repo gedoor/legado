@@ -25,6 +25,6 @@ data class Bookmark(
 ) : Parcelable {
 
     @Ignore
-    constructor() : this(bookName = "")
+    constructor() : this(time = System.currentTimeMillis())
 
 }
