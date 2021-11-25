@@ -36,18 +36,17 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
             return selection.sortedBy { it.customOrder }
         }
 
-    val diffItemCallback: DiffUtil.ItemCallback<RssSource>
-        get() = object : DiffUtil.ItemCallback<RssSource>() {
+    val diffItemCallback = object : DiffUtil.ItemCallback<RssSource>() {
 
-            override fun areItemsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
-                return oldItem.sourceUrl == newItem.sourceUrl
-            }
+        override fun areItemsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
+            return oldItem.sourceUrl == newItem.sourceUrl
+        }
 
-            override fun areContentsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
-                return oldItem.sourceName == newItem.sourceName
-                        && oldItem.sourceGroup == newItem.sourceGroup
-                        && oldItem.enabled == newItem.enabled
-            }
+        override fun areContentsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
+            return oldItem.sourceName == newItem.sourceName
+                    && oldItem.sourceGroup == newItem.sourceGroup
+                    && oldItem.enabled == newItem.enabled
+        }
 
             override fun getChangePayload(oldItem: RssSource, newItem: RssSource): Any? {
                 val payload = Bundle()
