@@ -4,9 +4,10 @@ import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.SearchBook
 
-class DiffCallBack(private val oldItems: List<SearchBook>, private val newItems: List<SearchBook>) :
-
-DiffUtil.Callback() {
+class DiffCallBack(
+    private val oldItems: List<SearchBook>,
+    private val newItems: List<SearchBook>
+) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {
         return oldItems.size
