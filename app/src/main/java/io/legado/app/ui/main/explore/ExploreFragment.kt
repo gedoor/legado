@@ -40,6 +40,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
+    private val diffItemCallBack = ExploreDiffItemCallBack()
     private val groups = linkedSetOf<String>()
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
@@ -127,7 +128,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
             }
             exploreFlow.collect {
                 binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
-                adapter.setItems(it, ExploreDiffItemCallBack())
+                adapter.setItems(it, diffItemCallBack)
             }
         }
     }
