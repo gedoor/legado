@@ -2,6 +2,7 @@ package io.legado.app.ui.book.toc
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
@@ -16,6 +17,22 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
+    val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
+
+        override fun areItemsTheSame(oldItem: BookChapter, newItem: BookChapter): Boolean {
+            return oldItem.index == newItem.index
+        }
+
+        override fun areContentsTheSame(oldItem: BookChapter, newItem: BookChapter): Boolean {
+            return oldItem.bookUrl == newItem.bookUrl
+                    && oldItem.url == newItem.url
+                    && oldItem.isVip == newItem.isVip
+                    && oldItem.isPay == newItem.isPay
+                    && oldItem.title == newItem.title
+                    && oldItem.tag == newItem.tag
+        }
+
+    }
 
     override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding {
         return ItemChapterListBinding.inflate(inflater, parent, false)

@@ -112,7 +112,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 searchKey.isNullOrBlank() -> appDb.bookChapterDao.flowByBook(viewModel.bookUrl)
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
             }.collect {
-                adapter.setItems(it)
+                adapter.setItems(it, adapter.diffCallBack)
                 if (searchKey.isNullOrBlank() && !scrollToDurChapter) {
                     mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                     scrollToDurChapter = true
