@@ -17,8 +17,10 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityChapterListBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.gone
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
@@ -80,6 +82,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
                     putExtra("chapterPos", it.durChapterPos)
                 })
             }
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
     }
