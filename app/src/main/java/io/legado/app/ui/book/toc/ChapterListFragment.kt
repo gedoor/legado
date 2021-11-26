@@ -38,7 +38,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     private var durChapterIndex = 0
     private lateinit var mLayoutManager: UpLinearLayoutManager
     private var tocFlowJob: Job? = null
-    private var scrollToDurChapter = false
+    private var isFirstSetData = true
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {
         viewModel.chapterCallBack = this@ChapterListFragment
@@ -63,7 +63,9 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     private fun initView() = binding.run {
-        ivChapterTop.setOnClickListener { mLayoutManager.scrollToPositionWithOffset(0, 0) }
+        ivChapterTop.setOnClickListener {
+            mLayoutManager.scrollToPositionWithOffset(0, 0)
+        }
         ivChapterBottom.setOnClickListener {
             if (adapter.itemCount > 0) {
                 mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
@@ -113,9 +115,9 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
             }.collect {
                 adapter.setItems(it, adapter.diffCallBack)
-                if (searchKey.isNullOrBlank() && !scrollToDurChapter) {
+                if (isFirstSetData) {
                     mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-                    scrollToDurChapter = true
+                    isFirstSetData = false
                 }
             }
         }
