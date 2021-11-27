@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.Charset
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -233,7 +234,14 @@ interface JsExtensions {
      */
     fun timeFormatUTC(time: Long, format: String, sh: Int): String? {
         val utc = SimpleTimeZone(sh, "UTC")
-        return DateFormatUtils.format(Date(time), format, utc, null)
+        return runCatching {
+            DateFormatUtils.format(Date(time), format, utc, null)
+        }.getOrElse {
+            SimpleDateFormat(format, Locale.getDefault()).run {
+                timeZone = utc
+                format(Date(time))
+            }
+        }
     }
 
     /**
