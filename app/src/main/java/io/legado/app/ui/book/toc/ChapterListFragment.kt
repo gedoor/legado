@@ -27,7 +27,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.min
 
 class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
@@ -115,7 +114,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             }.collect {
                 if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
                     adapter.setItems(it, adapter.diffCallBack)
-                    if (searchKey.isNullOrBlank()) {
+                    if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
                         mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                     }
                 }
@@ -127,7 +126,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         get() = viewModel.bookData.value?.isLocalBook() == true
 
     override fun durChapterIndex(): Int {
-        return min(durChapterIndex, adapter.itemCount)
+        return durChapterIndex
     }
 
     override fun openChapter(bookChapter: BookChapter) {
