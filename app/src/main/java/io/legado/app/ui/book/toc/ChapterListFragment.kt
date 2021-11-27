@@ -33,9 +33,9 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     TocViewModel.ChapterListCallBack {
     override val viewModel by activityViewModels<TocViewModel>()
     private val binding by viewBinding(FragmentChapterListBinding::bind)
+    private val mLayoutManager by lazy { UpLinearLayoutManager(requireContext()) }
     private val adapter by lazy { ChapterListAdapter(requireContext(), this) }
     private var durChapterIndex = 0
-    private lateinit var mLayoutManager: UpLinearLayoutManager
     private var tocFlowJob: Job? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {
@@ -54,7 +54,6 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     private fun initRecyclerView() {
-        mLayoutManager = UpLinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = mLayoutManager
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
