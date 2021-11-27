@@ -54,7 +54,12 @@ inline fun <reified T : Service> Context.servicePendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    return getService(this, 0, intent, FLAG_UPDATE_CURRENT)
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+    } else {
+        FLAG_UPDATE_CURRENT
+    }
+    return getService(this, 0, intent, flags)
 }
 
 @SuppressLint("UnspecifiedImmutableFlag")
@@ -65,7 +70,12 @@ inline fun <reified T : Activity> Context.activityPendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    return getActivity(this, 0, intent, FLAG_UPDATE_CURRENT)
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+    } else {
+        FLAG_UPDATE_CURRENT
+    }
+    return getActivity(this, 0, intent, flags)
 }
 
 @SuppressLint("UnspecifiedImmutableFlag")
@@ -76,7 +86,12 @@ inline fun <reified T : BroadcastReceiver> Context.broadcastPendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    return getBroadcast(this, 0, intent, FLAG_CANCEL_CURRENT)
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+    } else {
+        FLAG_UPDATE_CURRENT
+    }
+    return getBroadcast(this, 0, intent, flags)
 }
 
 val Context.defaultSharedPreferences: SharedPreferences
