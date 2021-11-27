@@ -58,7 +58,7 @@ class BookInfoEditActivity :
             }
         }
         tvSelectCover.setOnClickListener {
-            selectCover.launch(null)
+            selectCover.launch()
         }
         tvRefreshCover.setOnClickListener {
             viewModel.book?.customCoverUrl = tieCoverUrl.text?.toString()

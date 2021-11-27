@@ -125,7 +125,7 @@ class RssSourceEditActivity :
                 }
             }
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getRssSource()))
-            R.id.menu_qr_code_camera -> qrCodeResult.launch(null)
+            R.id.menu_qr_code_camera -> qrCodeResult.launch()
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_share_str -> share(GSON.toJson(getRssSource()))
             R.id.menu_share_qr -> shareWithQr(

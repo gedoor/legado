@@ -224,7 +224,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 mode = HandleFileContract.FILE
                 allowExtensions = arrayOf("txt", "json")
             }
-            R.id.menu_import_qr -> qrCodeResult.launch(null)
+            R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_help -> showHelp()
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)

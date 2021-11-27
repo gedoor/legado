@@ -123,7 +123,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
         findPreference<io.legado.app.ui.widget.prefs.Preference>("web_dav_restore")
-            ?.onLongClick = { restoreDir.launch(null) }
+            ?.onLongClick = { restoreDir.launch() }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -206,11 +206,11 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            PreferKey.backupPath -> selectBackupPath.launch(null)
+            PreferKey.backupPath -> selectBackupPath.launch()
             PreferKey.restoreIgnore -> restoreIgnore()
             "web_dav_backup" -> backup()
             "web_dav_restore" -> restore()
-            "import_old" -> restoreOld.launch(null)
+            "import_old" -> restoreOld.launch()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -234,7 +234,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
     fun backup() {
         val backupPath = AppConfig.backupPath
         if (backupPath.isNullOrEmpty()) {
-            backupDir.launch(null)
+            backupDir.launch()
         } else {
             if (backupPath.isContentScheme()) {
                 val uri = Uri.parse(backupPath)
@@ -249,7 +249,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
                         appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
                     }
                 } else {
-                    backupDir.launch(null)
+                    backupDir.launch()
                 }
             } else {
                 backupUsePermission(backupPath)
@@ -301,13 +301,13 @@ class BackupConfigFragment : BasePreferenceFragment(),
                         Restore.restore(requireContext(), backupPath)
                     }
                 } else {
-                    restoreDir.launch(null)
+                    restoreDir.launch()
                 }
             } else {
                 restoreUsePermission(backupPath)
             }
         } else {
-            restoreDir.launch(null)
+            restoreDir.launch()
         }
     }
 
