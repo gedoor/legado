@@ -7,11 +7,11 @@ import android.net.Uri
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 
-class SelectImageContract : ActivityResultContract<Int, SelectImageContract.Result>() {
+class SelectImageContract : ActivityResultContract<Int?, SelectImageContract.Result>() {
 
     var requestCode: Int? = null
 
-    override fun createIntent(context: Context, input: Int): Intent {
+    override fun createIntent(context: Context, input: Int?): Intent {
         requestCode = input
         return Intent(Intent.ACTION_GET_CONTENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
@@ -33,11 +33,13 @@ class SelectImageContract : ActivityResultContract<Int, SelectImageContract.Resu
 }
 
 class StartActivityContract(private val cls: Class<*>) :
-    ActivityResultContract<Intent.() -> Unit, ActivityResult>() {
+    ActivityResultContract<(Intent.() -> Unit)?, ActivityResult>() {
 
-    override fun createIntent(context: Context, input: Intent.() -> Unit): Intent {
+    override fun createIntent(context: Context, input: (Intent.() -> Unit)?): Intent {
         val intent = Intent(context, cls)
-        intent.apply(input)
+        input?.let {
+            intent.apply(input)
+        }
         return intent
     }
 

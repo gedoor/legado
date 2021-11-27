@@ -11,14 +11,16 @@ import io.legado.app.utils.putJson
 
 @Suppress("unused")
 class HandleFileContract :
-    ActivityResultContract<HandleFileContract.HandleFileParam.() -> Unit, HandleFileContract.Result>() {
+    ActivityResultContract<(HandleFileContract.HandleFileParam.() -> Unit)?, HandleFileContract.Result>() {
 
     private var requestCode: Int = 0
 
-    override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)): Intent {
+    override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)?): Intent {
         val intent = Intent(context, HandleFileActivity::class.java)
         val handleFileParam = HandleFileParam()
-        handleFileParam.apply(input)
+        input?.let {
+            handleFileParam.apply(input)
+        }
         handleFileParam.let {
             requestCode = it.requestCode
             intent.putExtra("mode", it.mode)
