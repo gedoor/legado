@@ -30,14 +30,7 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
             } ?: chain.proceed(original)
         } catch (e: Exception) {
             //遇到Cronet处理有问题时的情况，如证书过期等等，回退到okhttp处理
-            if (e.message.toString().contains("ERR_CERT_", true)
-                || e.message.toString().contains("ERR_SSL_", true)
-            ) {
-                chain.proceed(original)
-            } else {
-                throw e
-            }
-
+            chain.proceed(original)
         }
 
     }
