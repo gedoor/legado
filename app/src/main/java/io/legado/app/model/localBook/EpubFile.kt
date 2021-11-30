@@ -2,15 +2,14 @@ package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.HtmlFormatter
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFiles
+import io.legado.app.utils.*
 import me.ag2s.epublib.domain.EpubBook
+import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
 import org.jsoup.Jsoup
 import splitties.init.appCtx
@@ -28,10 +27,30 @@ class EpubFile(var book: Book) {
     companion object {
         private var eFile: EpubFile? = null
 
+        fun getFile(book: Book): File {
+            val file = BookHelp.downloadDir.getFile(
+                BookHelp.cacheFolderName,
+                book.getFolderName(),
+                "index.epubx"
+            )
+            if (!file.exists()) {
+                val input = if (book.bookUrl.isContentScheme()) {
+                    val uri = Uri.parse(book.bookUrl)
+                    appCtx.contentResolver.openInputStream(uri)
+                } else {
+                    File(book.bookUrl).inputStream()
+                }
+                if (input != null) {
+                    FileUtils.writeInputStream(file, input)
+                }
+
+            }
+            return file
+        }
+
         @Synchronized
         private fun getEFile(book: Book): EpubFile {
-            BookHelp.getEpubFile(book)
-
+            getFile(book)
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EpubFile(book)
                 //对于Epub文件默认不启用替换
@@ -105,12 +124,9 @@ class EpubFile(var book: Book) {
     /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
     private fun readEpub(): EpubBook? {
         try {
-
-            val file = BookHelp.getEpubFile(book)
+            val file = getFile(book)
             //通过懒加载读取epub
             return EpubReader().readEpubLazy(ZipFile(file), "utf-8")
-
-
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -193,34 +209,121 @@ class EpubFile(var book: Book) {
 
     private fun getChapterList(): ArrayList<BookChapter> {
         val chapterList = ArrayList<BookChapter>()
-        epubBook?.tableOfContents?.allUniqueResources?.forEachIndexed { index, resource ->
-            var title = resource.title
-            if (TextUtils.isEmpty(title)) {
-                try {
-                    val doc =
-                        Jsoup.parse(String(resource.data, mCharset))
-                    val elements = doc.getElementsByTag("title")
-                    if (elements.size > 0) {
-                        title = elements[0].text()
+        epubBook?.let { eBook ->
+            val refs = eBook.tableOfContents.tocReferences
+            if (refs == null || refs.isEmpty()) {
+                val spineReferences = eBook.spine.spineReferences
+                var i = 0
+                val size = spineReferences.size
+                while (i < size) {
+                    val resource = spineReferences[i].resource
+                    var title = resource.title
+                    if (TextUtils.isEmpty(title)) {
+                        try {
+                            val doc =
+                                Jsoup.parse(String(resource.data, mCharset))
+                            val elements = doc.getElementsByTag("title")
+                            if (elements.size > 0) {
+                                title = elements[0].text()
+                            }
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
                     }
-                } catch (e: IOException) {
-                    Timber.e(e)
+                    val chapter = BookChapter()
+                    chapter.index = i
+                    chapter.bookUrl = book.bookUrl
+                    chapter.url = resource.href
+                    if (i == 0 && title.isEmpty()) {
+                        chapter.title = "封面"
+                    } else {
+                        chapter.title = title
+                    }
+                    chapterList.add(chapter)
+                    i++
+                }
+            } else {
+                parseFirstPage(chapterList, refs)
+                parseMenu(chapterList, refs, 0)
+                for (i in chapterList.indices) {
+                    chapterList[i].index = i
                 }
             }
-            val chapter = BookChapter()
-            chapter.index = index
-            chapter.bookUrl = book.bookUrl
-            chapter.url = resource.href
-            if (index == 0 && title.isEmpty()) {
-                chapter.title = "封面"
-            } else {
-                chapter.title = title
-            }
-            chapterList.add(chapter)
         }
         book.latestChapterTitle = chapterList.lastOrNull()?.title
         book.totalChapterNum = chapterList.size
         return chapterList
+    }
+
+    /*获取书籍起始页内容。部分书籍第一章之前存在封面，引言，扉页等内容*/
+    /*tile获取不同书籍风格杂乱，格式化处理待优化*/
+    private var durIndex = 0
+    private fun parseFirstPage(
+        chapterList: ArrayList<BookChapter>,
+        refs: List<TOCReference>?
+    ) {
+        val contents = epubBook?.contents
+        if (epubBook == null || contents == null || refs == null) return
+        var i = 0
+        durIndex = 0
+        while (i < contents.size) {
+            val content = contents[i]
+            if (!content.mediaType.toString().contains("htm")) continue
+            /*检索到第一章href停止*/
+            if (refs[0].completeHref == content.href) break
+            val chapter = BookChapter()
+            var title = content.title
+            if (TextUtils.isEmpty(title)) {
+                val elements = Jsoup.parse(
+                    String(
+                        epubBook!!.resources.getByHref(content.href).data,
+                        mCharset
+                    )
+                ).getElementsByTag("title")
+                title =
+                    if (elements.size > 0 && elements[0].text()
+                            .isNotBlank()
+                    ) elements[0].text() else "--卷首--"
+            }
+            chapter.bookUrl = book.bookUrl
+            chapter.title = title
+            chapter.url = content.href
+            chapter.startFragmentId =
+                if (content.href.substringAfter("#") == content.href) null
+                else content.href.substringAfter("#")
+            if (durIndex > 0) {
+                val preIndex = durIndex - 1
+                chapterList[preIndex].endFragmentId = chapter.startFragmentId
+            }
+            chapterList.add(chapter)
+            durIndex++
+            i++
+        }
+    }
+
+    private fun parseMenu(
+        chapterList: ArrayList<BookChapter>,
+        refs: List<TOCReference>?,
+        level: Int
+    ) {
+        refs?.forEach { ref ->
+            if (ref.resource != null) {
+                val chapter = BookChapter()
+                chapter.bookUrl = book.bookUrl
+                chapter.title = ref.title
+                chapter.url = ref.completeHref
+                chapter.startFragmentId = ref.fragmentId
+                if (durIndex > 0) {
+                    val preIndex = durIndex - 1
+                    chapterList[preIndex].endFragmentId = chapter.startFragmentId
+                }
+                chapterList.add(chapter)
+                durIndex++
+            }
+            if (ref.children != null && ref.children.isNotEmpty()) {
+                parseMenu(chapterList, ref.children, level + 1)
+            }
+        }
     }
 
 }

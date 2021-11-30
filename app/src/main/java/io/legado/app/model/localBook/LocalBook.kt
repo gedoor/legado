@@ -151,11 +151,10 @@ object LocalBook {
                 bookFile.delete()
             }
             if (book.isEpub()) {
-                val bookFile = BookHelp.getEpubFile(book).parentFile
+                val bookFile = EpubFile.getFile(book).parentFile
                 if (bookFile != null && bookFile.exists()) {
                     FileUtils.delete(bookFile, true)
                 }
-
             }
 
             if (deleteOriginal) {
