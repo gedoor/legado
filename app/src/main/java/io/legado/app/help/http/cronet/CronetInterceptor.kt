@@ -2,11 +2,10 @@ package io.legado.app.help.http.cronet
 
 import io.legado.app.help.http.CookieStore
 import okhttp3.*
-import java.io.IOException
+import timber.log.Timber
 
 class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
 
-    @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val original: Request = chain.request()
         //Cronet未初始化
@@ -29,13 +28,18 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
                 response
             } ?: chain.proceed(original)
         } catch (e: Exception) {
+            //不能抛出错误,抛出错误会导致应用崩溃
             //遇到Cronet处理有问题时的情况，如证书过期等等，回退到okhttp处理
+            if (!e.message.toString().contains("ERR_CERT_", true)
+                && !e.message.toString().contains("ERR_SSL_", true)
+            ) {
+                Timber.e(e)
+            }
             chain.proceed(original)
         }
 
     }
 
-    @Throws(IOException::class)
     private fun proceedWithCronet(request: Request, call: Call): Response? {
         val callback = CronetRequestCallback(request, call)
         buildRequest(request, callback)?.let {
