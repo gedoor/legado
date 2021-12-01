@@ -12,6 +12,7 @@ import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
 import org.jsoup.Jsoup
+import org.jsoup.select.Elements
 import splitties.init.appCtx
 import timber.log.Timber
 import java.io.File
@@ -134,44 +135,48 @@ class EpubFile(var book: Book) {
 
     private fun getContent(chapter: BookChapter): String? {
         /*获取当前章节文本*/
-        epubBook?.let {
-            it.contents
-            val body =
-                Jsoup.parse(String(it.resources.getByHref(chapter.url).data, mCharset)).body()
-
+        epubBook?.let { epubBook ->
+            val nextUrl = chapter.getVariable("nextUrl")
             val startFragmentId = chapter.startFragmentId
             val endFragmentId = chapter.endFragmentId
+            val elements = Elements()
+            var isChapter = false
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
-            if (!startFragmentId.isNullOrBlank())
-                body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
-            if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId)
-                body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
+            for (res in epubBook.contents) {
+                if (res.href == chapter.url) {
+                    isChapter = true
+                } else if (res.href == nextUrl) {
+                    break
+                }
+                if (isChapter) {
+                    val body = Jsoup.parse(String(res.data, mCharset)).body()
+                    if (!startFragmentId.isNullOrBlank()) {
+                        body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
+                    }
+                    if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
+                        body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
+                    }
+                    /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
+                    val tag = Book.hTag
+                    if (book.getDelTag(tag)) {
+                        body.getElementsByTag("h1").remove()
+                        body.getElementsByTag("h2").remove()
+                        body.getElementsByTag("h3").remove()
+                        body.getElementsByTag("h4").remove()
+                        body.getElementsByTag("h5").remove()
+                        body.getElementsByTag("h6").remove()
+                        //body.getElementsMatchingOwnText(chapter.title)?.remove()
+                    }
 
-            /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
-            var tag = Book.hTag
-            if (book.getDelTag(tag)) {
-                body.getElementsByTag("h1").remove()
-                body.getElementsByTag("h2").remove()
-                body.getElementsByTag("h3").remove()
-                body.getElementsByTag("h4").remove()
-                body.getElementsByTag("h5").remove()
-                body.getElementsByTag("h6").remove()
-                //body.getElementsMatchingOwnText(chapter.title)?.remove()
+                    val children = body.children()
+                    children.select("script").remove()
+                    children.select("style").remove()
+                    elements.add(body)
+                }
             }
-
-            /*选择去除正文中的img标签，目前图片支持效果待优化*/
-            tag = Book.imgTag
-            if (book.getDelTag(tag)) {
-                body.getElementsByTag("img").remove()
-            }
-
-            val elements = body.children()
-            elements.select("script").remove()
-            elements.select("style").remove()
-            /*选择去除正文中的ruby标签，目前注释支持效果待优化*/
-            tag = Book.rubyTag
             var html = elements.outerHtml()
+            val tag = Book.rubyTag
             if (book.getDelTag(tag)) {
                 html = html.replace("<ruby>\\s?([\\u4e00-\\u9fa5])\\s?.*?</ruby>".toRegex(), "$1")
             }
@@ -275,15 +280,13 @@ class EpubFile(var book: Book) {
             var title = content.title
             if (TextUtils.isEmpty(title)) {
                 val elements = Jsoup.parse(
-                    String(
-                        epubBook!!.resources.getByHref(content.href).data,
-                        mCharset
-                    )
+                    String(epubBook!!.resources.getByHref(content.href).data, mCharset)
                 ).getElementsByTag("title")
                 title =
-                    if (elements.size > 0 && elements[0].text()
-                            .isNotBlank()
-                    ) elements[0].text() else "--卷首--"
+                    if (elements.size > 0 && elements[0].text().isNotBlank())
+                        elements[0].text()
+                    else
+                        "--卷首--"
             }
             chapter.bookUrl = book.bookUrl
             chapter.title = title
@@ -291,10 +294,9 @@ class EpubFile(var book: Book) {
             chapter.startFragmentId =
                 if (content.href.substringAfter("#") == content.href) null
                 else content.href.substringAfter("#")
-            if (durIndex > 0) {
-                val preIndex = durIndex - 1
-                chapterList[preIndex].endFragmentId = chapter.startFragmentId
-            }
+
+            chapterList.lastOrNull()?.endFragmentId = chapter.startFragmentId
+            chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
             chapterList.add(chapter)
             durIndex++
             i++
@@ -313,10 +315,8 @@ class EpubFile(var book: Book) {
                 chapter.title = ref.title
                 chapter.url = ref.completeHref
                 chapter.startFragmentId = ref.fragmentId
-                if (durIndex > 0) {
-                    val preIndex = durIndex - 1
-                    chapterList[preIndex].endFragmentId = chapter.startFragmentId
-                }
+                chapterList.lastOrNull()?.endFragmentId = chapter.startFragmentId
+                chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
                 chapterList.add(chapter)
                 durIndex++
             }

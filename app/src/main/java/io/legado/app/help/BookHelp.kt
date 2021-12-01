@@ -183,7 +183,7 @@ object BookHelp {
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (book.isLocalTxt() || book.isUmd()) {
             return LocalBook.getContent(book, bookChapter)
-        } else if (book.isEpub() && !hasContent(book, bookChapter)) {
+        } else if (book.isEpub()) {
             val string = LocalBook.getContent(book, bookChapter)
             string?.let {
                 FileUtils.createFileIfNotExist(
