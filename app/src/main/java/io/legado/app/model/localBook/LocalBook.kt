@@ -43,7 +43,7 @@ object LocalBook {
         return chapters
     }
 
-    fun getContext(book: Book, chapter: BookChapter): String? {
+    fun getContent(book: Book, chapter: BookChapter): String? {
         return when {
             book.isEpub() -> {
                 EpubFile.getContent(book, chapter)

@@ -43,7 +43,6 @@ class EpubFile(var book: Book) {
                 if (input != null) {
                     FileUtils.writeInputStream(file, input)
                 }
-
             }
             return file
         }
@@ -136,6 +135,7 @@ class EpubFile(var book: Book) {
     private fun getContent(chapter: BookChapter): String? {
         /*获取当前章节文本*/
         epubBook?.let {
+            it.contents
             val body =
                 Jsoup.parse(String(it.resources.getByHref(chapter.url).data, mCharset)).body()
 
