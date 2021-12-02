@@ -21,6 +21,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentData
 import io.legado.app.help.ReadBookConfig
 import io.legado.app.help.ReadTipConfig
@@ -255,6 +256,9 @@ class ReadBookActivity : BaseReadBookActivity(),
                 TextDialog(ReadBook.curTextChapter?.getContent())
             )
             R.id.menu_update_toc -> ReadBook.book?.let {
+                if (it.isEpub()) {
+                    BookHelp.clearCache(it)
+                }
                 loadChapterList(it)
             }
             R.id.menu_enable_replace -> ReadBook.book?.let {
