@@ -57,8 +57,7 @@ object BookHelp {
         }
     }
 
-    suspend fun saveContent(
-        bookSource: BookSource,
+    fun saveContent(
         book: Book,
         bookChapter: BookChapter,
         content: String
@@ -71,6 +70,15 @@ object BookHelp {
             book.getFolderName(),
             bookChapter.getFileName(),
         ).writeText(content)
+    }
+
+    suspend fun saveContent(
+        bookSource: BookSource,
+        book: Book,
+        bookChapter: BookChapter,
+        content: String
+    ) {
+        saveContent(book, bookChapter, content)
         //保存图片
         content.split("\n").forEach {
             val matcher = AppPattern.imgPattern.matcher(it)
@@ -183,15 +191,10 @@ object BookHelp {
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (book.isLocalTxt() || book.isUmd()) {
             return LocalBook.getContent(book, bookChapter)
-        } else if (book.isEpub()) {
+        } else if (book.isEpub() && !hasContent(book, bookChapter)) {
             val string = LocalBook.getContent(book, bookChapter)
             string?.let {
-                FileUtils.createFileIfNotExist(
-                    downloadDir,
-                    cacheFolderName,
-                    book.getFolderName(),
-                    bookChapter.getFileName(),
-                ).writeText(it)
+                saveContent(book, bookChapter, it)
             }
             return string
         } else {

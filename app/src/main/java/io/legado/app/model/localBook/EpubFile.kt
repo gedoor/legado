@@ -9,9 +9,11 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
 import io.legado.app.utils.*
 import me.ag2s.epublib.domain.EpubBook
+import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import splitties.init.appCtx
 import timber.log.Timber
@@ -145,34 +147,13 @@ class EpubFile(var book: Book) {
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
             for (res in epubBook.contents) {
                 if (res.href == chapter.url) {
+                    elements.add(getBody(res, startFragmentId, endFragmentId))
                     isChapter = true
-                } else if (res.href == nextUrl) {
-                    break
-                }
-                if (isChapter) {
-                    val body = Jsoup.parse(String(res.data, mCharset)).body()
-                    if (!startFragmentId.isNullOrBlank()) {
-                        body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
+                } else if (isChapter) {
+                    if (nextUrl.isNullOrBlank() || res.href == nextUrl) {
+                        break
                     }
-                    if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
-                        body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
-                    }
-                    /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
-                    val tag = Book.hTag
-                    if (book.getDelTag(tag)) {
-                        body.getElementsByTag("h1").remove()
-                        body.getElementsByTag("h2").remove()
-                        body.getElementsByTag("h3").remove()
-                        body.getElementsByTag("h4").remove()
-                        body.getElementsByTag("h5").remove()
-                        body.getElementsByTag("h6").remove()
-                        //body.getElementsMatchingOwnText(chapter.title)?.remove()
-                    }
-
-                    val children = body.children()
-                    children.select("script").remove()
-                    children.select("style").remove()
-                    elements.add(body)
+                    elements.add(getBody(res, startFragmentId, endFragmentId))
                 }
             }
             var html = elements.outerHtml()
@@ -183,6 +164,32 @@ class EpubFile(var book: Book) {
             return HtmlFormatter.formatKeepImg(html)
         }
         return null
+    }
+
+    private fun getBody(res: Resource, startFragmentId: String?, endFragmentId: String?): Element {
+        val body = Jsoup.parse(String(res.data, mCharset)).body()
+        if (!startFragmentId.isNullOrBlank()) {
+            body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
+        }
+        if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
+            body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
+        }
+        /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
+        val tag = Book.hTag
+        if (book.getDelTag(tag)) {
+            body.getElementsByTag("h1").remove()
+            body.getElementsByTag("h2").remove()
+            body.getElementsByTag("h3").remove()
+            body.getElementsByTag("h4").remove()
+            body.getElementsByTag("h5").remove()
+            body.getElementsByTag("h6").remove()
+            //body.getElementsMatchingOwnText(chapter.title)?.remove()
+        }
+
+        val children = body.children()
+        children.select("script").remove()
+        children.select("style").remove()
+        return body
     }
 
     private fun getImage(href: String): InputStream? {
