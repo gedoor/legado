@@ -146,11 +146,11 @@ class EpubFile(var book: Book) {
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
             for (res in epubBook.contents) {
-                if (res.href == chapter.url) {
+                if (chapter.url.substringBeforeLast("#") == res.href) {
                     elements.add(getBody(res, startFragmentId, endFragmentId))
                     isChapter = true
                 } else if (isChapter) {
-                    if (nextUrl.isNullOrBlank() || res.href == nextUrl) {
+                    if (nextUrl.isNullOrBlank() || res.href == nextUrl.substringBeforeLast("#")) {
                         break
                     }
                     elements.add(getBody(res, startFragmentId, endFragmentId))
