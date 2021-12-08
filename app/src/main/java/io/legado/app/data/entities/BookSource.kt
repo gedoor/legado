@@ -46,9 +46,6 @@ data class BookSource(
     var ruleContent: ContentRule? = null            // 正文页规则
 ) : Parcelable, BaseSource {
 
-    @Ignore
-    constructor() : this(bookSourceUrl = "")
-
     override fun getTag(): String {
         return bookSourceName
     }

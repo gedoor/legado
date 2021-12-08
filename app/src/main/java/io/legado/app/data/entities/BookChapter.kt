@@ -47,9 +47,6 @@ data class BookChapter(
     var variable: String? = null        //变量
 ) : Parcelable, RuleDataInterface {
 
-    @Ignore
-    constructor() : this(url = "", bookUrl = "")
-
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel

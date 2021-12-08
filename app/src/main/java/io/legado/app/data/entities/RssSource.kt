@@ -2,7 +2,6 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.jayway.jsonpath.DocumentContext
@@ -43,9 +42,6 @@ data class RssSource(
     var loadWithBaseUrl: Boolean = true,
     var customOrder: Int = 0
 ) : Parcelable, BaseSource {
-
-    @Ignore
-    constructor() : this("")
 
     override fun getTag(): String {
         return sourceName

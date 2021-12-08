@@ -56,9 +56,6 @@ data class Book(
     var readConfig: ReadConfig? = null
 ) : Parcelable, BaseBook {
 
-    @Ignore
-    constructor() : this(bookUrl = "")
-
     fun isLocalBook(): Boolean {
         return origin == BookType.local
     }

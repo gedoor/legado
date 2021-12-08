@@ -2,7 +2,6 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
@@ -15,9 +14,4 @@ data class SearchKeyword(
     var word: String = "",                      // 搜索关键词
     var usage: Int = 1,                         // 使用次数
     var lastUseTime: Long = System.currentTimeMillis()      // 最后一次使用时间
-) : Parcelable {
-
-    @Ignore
-    constructor() : this(word = "")
-
-}
+) : Parcelable

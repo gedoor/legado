@@ -26,9 +26,6 @@ data class RssArticle(
     var variable: String? = null
 ) : RuleDataInterface {
 
-    @Ignore
-    constructor() : this("")
-
     override fun hashCode() = link.hashCode()
 
     override fun equals(other: Any?): Boolean {
