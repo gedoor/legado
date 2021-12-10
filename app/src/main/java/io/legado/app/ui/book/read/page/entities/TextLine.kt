@@ -17,6 +17,8 @@ data class TextLine(
 ) {
 
     val charSize: Int get() = textChars.size
+    val lineStart: Float get() = textChars.firstOrNull()?.start ?: 0f
+    val lineEnd: Float get() = textChars.lastOrNull()?.end ?: 0f
 
     fun upTopBottom(durY: Float, textPaint: TextPaint) {
         lineTop = ChapterProvider.paddingTop + durY
@@ -38,7 +40,10 @@ data class TextLine(
         return textChars.size
     }
 
-    fun isTouch(y: Float, relativeOffset: Float): Boolean {
-        return y > lineTop + relativeOffset && y < lineBottom + relativeOffset
+    fun isTouch(x: Float, y: Float, relativeOffset: Float): Boolean {
+        return y > lineTop + relativeOffset
+                && y < lineBottom + relativeOffset
+                && x >= lineStart
+                && x <= lineEnd
     }
 }
