@@ -185,8 +185,8 @@ object NetworkUtils {
      * @param input the address string to check for validity.
      * @return True if the input parameter is a valid IPv4 address.
      */
-    fun isIPv4Address(input: String): Boolean {
-        return IPV4_PATTERN.matcher(input).matches()
+    fun isIPv4Address(input: String?): Boolean {
+        return input != null && IPV4_PATTERN.matcher(input).matches()
     }
 
     /**
