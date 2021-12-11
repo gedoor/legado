@@ -116,8 +116,9 @@ function uploadError(file, errorCode, message) {
 	removeFileFromFilesUpload(filesUpload, file.id)
 
 	errorMessage = jsonLang.t8;
-
-	$("#handle_button_" + file.id).replaceWith("<dd>" + errorMessage + "</dd>")
+	var dd = document.createElement("dd")
+	dd.innerHTML = errorMessage
+	document.getElementById("handle_button_" + file.id).replaceWith(dd)
 }
 
 
