@@ -91,37 +91,18 @@ function fileQueued(file, type) {
     size = countFileSize(file.size);
     name = substr_string(file.name);
     //创建要插入的元素
-    var HTML =
-      '<li  id="tr_"' +
-      fid +
-      ">" +
-      '<dl class="grybg">' +
-      "<dt>" +
-      name +
-      "</dt>" +
-      "<dd>" +
-      size +
-      "</dd>" +
-      '<dd id="handle_button_' +
-      fid +
-      '"  onclick=userCancelUpload("' +
-      fid +
-      '",' +
-      type +
-      ') class="orange">' +
-      '<span id="progress_bar_span_' +
-      fid +
-      '">0%</span> ' +
-      jsonLang.t9 +
-      "</dd>" +
-      "</dl>" +
-      '<div class="jdt"><p  id="progress_bar_p_' +
-      fid +
-      '" ></p></div>' +
-      "</li>";
-
+    var li = document.createElement("li");
+    li.id = `tr_${fid}`;
+    li.innerHTML = `<dl class="grybg">
+			<dt>${name}</dt>
+			<dd>${size}</dd>
+			<dd id="handle_button_${fid}"  onclick=userCancelUpload("${fid}",${type}) class="orange">
+				<span id="progress_bar_span_${fid}">0%</span> ${jsonLang.t9}
+			</dd>
+		</dl>
+		<div class="jdt"><p  id="progress_bar_p_${fid}" ></p></div>`;
     var table = document.getElementById("tableStyle");
-    table.innerHTML = table.innerHTML + HTML;
+    table.appendChild(li);
     //保存falsh_id，为上传做准备
     //global_flash_id.push(file.id);
     //更改背景颜色
@@ -147,16 +128,18 @@ function uploadProgress(file, bytesLoaded, bytesTotal) {
   if (!progressClass.contains("orange")) {
     progressClass.add("orange");
   }
-  document.getElementById("progress_bar_p_" + file.id).style.width = (bytesLoaded / bytesTotal) * 100 + "%"
-  document.getElementById("progress_bar_span_" + file.id).innerHTML = parseInt((bytesLoaded / bytesTotal) * 100) + "%"
+  document.getElementById("progress_bar_p_" + file.id).style.width =
+    (bytesLoaded / bytesTotal) * 100 + "%";
+  document.getElementById("progress_bar_span_" + file.id).innerHTML =
+    parseInt((bytesLoaded / bytesTotal) * 100) + "%";
 }
 
 //上传成功
 function uploadSuccess(file, serverData, res) {
   var id = "handle_button_" + file.id;
-  var dd = document.createElement("dd")
-  dd.innerHTML = jsonLang.t10
-  document.getElementById(id).replaceWith(dd)
+  var dd = document.createElement("dd");
+  dd.innerHTML = jsonLang.t10;
+  document.getElementById(id).replaceWith(dd);
 }
 
 //取消上传
@@ -166,12 +149,12 @@ function userCancelUpload(file_id, type) {
   } else {
     HTML5Funs.cancelUpload(file_id);
   }
-  var element = document.getElementById("handle_button_" + file_id)
-  element.innerHTML = jsonLang.t14
-  element.classList.remove("orange")
-  element.classList.add("gray")
+  var element = document.getElementById("handle_button_" + file_id);
+  element.innerHTML = jsonLang.t14;
+  element.classList.remove("orange");
+  element.classList.add("gray");
   //如果已经上传一部分了
-  var progressElement = document.getElementById("progress_bar_p_" + file_id)
+  var progressElement = document.getElementById("progress_bar_p_" + file_id);
   if (progressElement.classList.contains("orange")) {
     progressElement.classList.remove("orange");
     progressElement.classList.add("gray");
