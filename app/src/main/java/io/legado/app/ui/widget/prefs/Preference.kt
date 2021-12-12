@@ -116,8 +116,10 @@ class Preference(context: Context, attrs: AttributeSet) :
             isBottomBackground = isBottomBackground
         )
         super.onBindViewHolder(holder)
-        holder.itemView.onLongClick {
-            onLongClick?.invoke(this)
+        onLongClick?.let { listener ->
+            holder.itemView.onLongClick {
+                listener.invoke(this)
+            }
         }
     }
 
