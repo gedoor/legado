@@ -123,7 +123,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
         findPreference<io.legado.app.ui.widget.prefs.Preference>("web_dav_restore")
-            ?.onLongClick = { restoreDir.launch() }
+            ?.onLongClick { restoreDir.launch(); true }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

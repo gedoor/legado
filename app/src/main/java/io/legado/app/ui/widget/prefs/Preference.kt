@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
 class Preference(context: Context, attrs: AttributeSet) :
     androidx.preference.Preference(context, attrs) {
 
-    var onLongClick: (() -> Unit)? = null
+    private var onLongClick: ((preference: Preference) -> Boolean)? = null
     private val isBottomBackground: Boolean
 
     init {
@@ -117,8 +117,12 @@ class Preference(context: Context, attrs: AttributeSet) :
         )
         super.onBindViewHolder(holder)
         holder.itemView.onLongClick {
-            onLongClick?.invoke()
+            onLongClick?.invoke(this)
         }
+    }
+
+    fun onLongClick(listener: (preference: Preference) -> Boolean) {
+        onLongClick = listener
     }
 
 }
