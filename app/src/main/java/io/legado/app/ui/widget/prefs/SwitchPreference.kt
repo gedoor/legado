@@ -36,10 +36,10 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
         if (v is SwitchCompat && !v.isInEditMode) {
             v.applyTint(context.accentColor)
         }
+        super.onBindViewHolder(holder)
         holder.itemView.setOnLongClickListener {
             onLongClick?.invoke(this) ?: false
         }
-        super.onBindViewHolder(holder)
     }
 
     fun onLongClick(listener: (preference: SwitchPreference) -> Boolean) {
