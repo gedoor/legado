@@ -700,6 +700,7 @@
     <string name="switchLayout">Alterar o layout</string>
     <string name="text_font_weight_converter">Alteração de tamanho da fonte de texto</string>
     <string name="full_screen_gestures_support">Suporte aos gestos em tela completa</string>
+    <string name="disable_return_key">禁用返回键</string>
 
     <!--color-->
     <string name="primary">Primário</string>
