@@ -112,6 +112,13 @@
 
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="false"
+        android:key="disableReturnKey"
+        android:title="@string/disable_return_key"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="false"
         android:key="fullScreenGesturesSupport"
         android:title="@string/full_screen_gestures_support"
         app:iconSpaceReserved="false"

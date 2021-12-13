@@ -696,6 +696,7 @@
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
     <string name="full_screen_gestures_support">Full screen gestures support</string>
+    <string name="readpage_disable_return_key">Disable return key</string>
 
     <!--color-->
     <string name="primary">Primario</string>
