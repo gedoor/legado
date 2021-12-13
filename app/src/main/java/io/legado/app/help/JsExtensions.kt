@@ -491,6 +491,17 @@ interface JsExtensions {
     }
 
     /**
+     * 输出对象类型
+     */
+    fun logType(any: Any?) {
+        if (any == null) {
+            log("null")
+        } else {
+            log(any.javaClass.name)
+        }
+    }
+
+    /**
      * 生成UUID
      */
     fun randomUUID(): String {
