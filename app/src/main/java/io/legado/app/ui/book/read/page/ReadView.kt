@@ -48,10 +48,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
     val curPage by lazy { PageView(context) }
     val nextPage by lazy { PageView(context) }
     val defaultAnimationSpeed = 300
-    private var insetLeft: Int = 0
-    private var insetTop: Int = 0
-    private var insetRight: Int = 0
-    private var insetBottom: Int = 0
     private var pressDown = false
     private var isMove = false
 
@@ -122,20 +118,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val insets =
-                this.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemGestures())
-            insetLeft = insets.left
-            insetTop = insets.top
-            insetRight = insets.right
-            insetBottom = insets.bottom
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val insets = this.rootWindowInsets.systemWindowInsets
-            insetLeft = insets.left
-            insetTop = insets.top
-            insetRight = insets.right
-            insetBottom = insets.bottom
-        }
         setRect9x()
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)

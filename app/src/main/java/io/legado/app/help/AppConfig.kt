@@ -255,9 +255,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val replaceEnableDefault get() = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
 
-    val fullScreenGesturesSupport: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.fullScreenGesturesSupport, false)
-
     val doublePageHorizontal: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.doublePageHorizontal, true)
 

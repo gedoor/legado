@@ -17,7 +17,6 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.dp
 import io.legado.app.utils.getPrefBoolean
@@ -137,9 +136,6 @@ class MoreConfigDialog : DialogFragment() {
                 "customPageKey" -> PageKeyDialog(requireContext()).show()
                 "clickRegionalConfig" -> {
                     (activity as? ReadBookActivity)?.showClickRegionalConfig()
-                }
-                "fullScreenGesturesSupport" -> {
-                    ((activity as? ReadBookActivity)?.findViewById(R.id.read_view) as ReadView).setRect9x()
                 }
             }
             return super.onPreferenceTreeClick(preference)
