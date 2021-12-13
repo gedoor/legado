@@ -329,7 +329,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 按键事件
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (menuLayoutIsVisible && !getPrefBoolean("disableReturnKey")) {
+        if (menuLayoutIsVisible) {
             return super.onKeyDown(keyCode, event)
         }
         when {
@@ -366,11 +366,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             keyCode == KeyEvent.KEYCODE_SPACE -> {
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
-            }
-            keyCode == KeyEvent.KEYCODE_BACK -> {
-                if (getPrefBoolean("disableReturnKey")) {
-                    return true
-                }
             }
         }
         return super.onKeyDown(keyCode, event)
@@ -412,6 +407,12 @@ class ReadBookActivity : BaseReadBookActivity(),
                         }
                         if (isAutoPage) {
                             autoPageStop()
+                            return true
+                        }
+                        if (getPrefBoolean("disableReturnKey")) {
+                            if (menuLayoutIsVisible) {
+                                finish()
+                            }
                             return true
                         }
                     }
