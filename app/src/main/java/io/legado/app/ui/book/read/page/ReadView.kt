@@ -48,6 +48,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
     val curPage by lazy { PageView(context) }
     val nextPage by lazy { PageView(context) }
     val defaultAnimationSpeed = 300
+    private var insetLeft: Int = 0
+    private var insetTop: Int = 0
+    private var insetRight: Int = 0
+    private var insetBottom: Int = 0
     private var pressDown = false
     private var isMove = false
 
@@ -102,24 +106,36 @@ class ReadView(context: Context, attrs: AttributeSet) :
             setWillNotDraw(false)
             upPageAnim()
         }
-        setRect9x()
     }
 
     fun setRect9x() {
-        val edge = if (AppConfig.fullScreenGesturesSupport) 200f else 0f
-        tlRect.set(0f + edge, 0f, width * 0.33f, height * 0.33f)
+        tlRect.set(0f, 0f, width * 0.33f, height * 0.33f)
         tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
-        trRect.set(width * 0.36f, 0f, width - 0f - edge, height * 0.33f)
-        mlRect.set(0f + edge, height * 0.33f, width * 0.33f, height * 0.66f)
+        trRect.set(width * 0.36f, 0f, width.toFloat(), height * 0.33f)
+        mlRect.set(0f, height * 0.33f, width * 0.33f, height * 0.66f)
         mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        mrRect.set(width * 0.66f, height * 0.33f, width - 0f - edge, height * 0.66f)
-        blRect.set(0f + edge, height * 0.66f, width * 0.33f, height - 10f - edge)
-        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 0f - edge)
-        brRect.set(width * 0.66f, height * 0.66f, width - 0f - edge, height - 0f - edge)
+        mrRect.set(width * 0.66f, height * 0.33f, width.toFloat(), height * 0.66f)
+        blRect.set(0f, height * 0.66f, width * 0.33f, height.toFloat())
+        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height.toFloat())
+        brRect.set(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val insets =
+                this.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemGestures())
+            insetLeft = insets.left
+            insetTop = insets.top
+            insetRight = insets.right
+            insetBottom = insets.bottom
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val insets = this.rootWindowInsets.systemWindowInsets
+            insetLeft = insets.left
+            insetTop = insets.top
+            insetRight = insets.right
+            insetBottom = insets.bottom
+        }
         setRect9x()
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
@@ -203,7 +219,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     }
                 }
             }
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_UP -> {
                 removeCallbacks(longPressRunnable)
                 if (!pressDown) return true
                 pressDown = false
@@ -213,6 +229,17 @@ class ReadView(context: Context, attrs: AttributeSet) :
                         return true
                     }
                 }
+                if (isTextSelected) {
+                    callBack.showTextActionMenu()
+                } else if (isMove) {
+                    pageDelegate?.onTouch(event)
+                }
+                pressOnTextSelected = false
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                removeCallbacks(longPressRunnable)
+                if (!pressDown) return true
+                pressDown = false
                 if (isTextSelected) {
                     callBack.showTextActionMenu()
                 } else if (isMove) {
