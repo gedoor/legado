@@ -31,6 +31,7 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
     }
 
     fun save(httpTTS: HttpTTS, success: (() -> Unit)? = null) {
+        id = httpTTS.id
         execute {
             appDb.httpTTSDao.insert(httpTTS)
             ReadAloud.upReadAloudClass()
