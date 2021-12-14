@@ -35,11 +35,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             val name = intent.getStringExtra("name") ?: ""
             val author = intent.getStringExtra("author") ?: ""
+            val bookUrl = intent.getStringExtra("bookUrl") ?: ""
             appDb.bookDao.getBook(name, author)?.let { book ->
                 inBookshelf = true
                 setBook(book)
-            } ?: appDb.searchBookDao.getFirstByNameAuthor(name, author)?.toBook()?.let { book ->
-                setBook(book)
+            } ?: let {
+                val searchBook = appDb.searchBookDao.getSearchBook(bookUrl)
+                    ?: appDb.searchBookDao.getFirstByNameAuthor(name, author)
+                searchBook?.toBook()?.let { book ->
+                    setBook(book)
+                }
             }
         }
     }
