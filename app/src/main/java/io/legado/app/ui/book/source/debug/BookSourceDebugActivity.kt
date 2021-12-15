@@ -14,6 +14,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.launch
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
@@ -137,7 +138,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_scan -> qrCodeResult.launch(null)
+            R.id.menu_scan -> qrCodeResult.launch()
             R.id.menu_search_src -> showDialogFragment(TextDialog(viewModel.searchSrc))
             R.id.menu_book_src -> showDialogFragment(TextDialog(viewModel.bookSrc))
             R.id.menu_toc_src -> showDialogFragment(TextDialog(viewModel.tocSrc))

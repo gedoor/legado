@@ -11,7 +11,7 @@ import io.legado.app.utils.putJson
 
 @Suppress("unused")
 class HandleFileContract :
-    ActivityResultContract<HandleFileContract.HandleFileParam.() -> Unit, HandleFileContract.Result>() {
+    ActivityResultContract<(HandleFileContract.HandleFileParam.() -> Unit)?, HandleFileContract.Result>() {
 
     private var requestCode: Int = 0
 
@@ -55,7 +55,7 @@ class HandleFileContract :
         var title: String? = null,
         var allowExtensions: Array<String> = arrayOf(),
         var otherActions: ArrayList<SelectItem<Int>>? = null,
-        var fileData: Triple<String, ByteArray, String>? = null,
+        var fileData: Triple<String, Any, String>? = null,
         var requestCode: Int = 0
     )
 

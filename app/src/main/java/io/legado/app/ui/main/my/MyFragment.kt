@@ -14,6 +14,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.FragmentMyConfigBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ThemeConfig
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -65,6 +66,18 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             putPrefBoolean(PreferKey.webService, WebService.isRun)
             addPreferencesFromResource(R.xml.pref_main)
+            findPreference<SwitchPreference>("webService")?.onLongClick {
+                if (!WebService.isRun) {
+                    return@onLongClick false
+                }
+                context?.selector(arrayListOf("复制地址", "浏览器打开")) { _, i ->
+                    when (i) {
+                        0 -> context?.sendToClip(it.summary.toString())
+                        1 -> context?.openUrl(it.summary.toString())
+                    }
+                }
+                true
+            }
             observeEventSticky<String>(EventBus.WEB_SERVICE) {
                 findPreference<SwitchPreference>(PreferKey.webService)?.let {
                     it.isChecked = WebService.isRun
@@ -137,6 +150,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             }
             return super.onPreferenceTreeClick(preference)
         }
+
 
     }
 }

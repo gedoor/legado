@@ -1,15 +1,14 @@
 package io.legado.app.ui.book.source.manage
 
 import android.app.Application
-import android.content.Intent
 import android.text.TextUtils
-import androidx.core.content.FileProvider
 import io.legado.app.base.BaseViewModel
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.*
+import java.io.File
+import java.io.FileOutputStream
 
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
@@ -33,8 +32,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun del(bookSource: BookSource) {
-        execute { appDb.bookSourceDao.delete(bookSource) }
+    fun del(vararg sources: BookSource) {
+        execute { appDb.bookSourceDao.delete(*sources) }
     }
 
     fun update(vararg bookSource: BookSource) {
@@ -129,25 +128,16 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun delSelection(sources: List<BookSource>) {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    fun saveToFile(sources: List<BookSource>, success: (file: File) -> Unit) {
         execute {
-            appDb.bookSourceDao.delete(*sources.toTypedArray())
-        }
-    }
-
-    fun shareSelection(sources: List<BookSource>, success: ((intent: Intent) -> Unit)) {
-        execute {
-            val tmpSharePath = "${context.filesDir}/shareBookSource.json"
-            FileUtils.delete(tmpSharePath)
-            val intent = Intent(Intent.ACTION_SEND)
-            val file = FileUtils.createFileWithReplace(tmpSharePath)
-            file.writeText(GSON.toJson(sources))
-            val fileUri = FileProvider.getUriForFile(context, AppConst.authority, file)
-            intent.type = "text/*"
-            intent.putExtra(Intent.EXTRA_STREAM, fileUri)
-            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent
+            val path = "${context.filesDir}/shareBookSource.json"
+            FileUtils.delete(path)
+            val file = FileUtils.createFileWithReplace(path)
+            FileOutputStream(file).use {
+                GSON.writeToOutputStream(it, sources)
+            }
+            file
         }.onSuccess {
             success.invoke(it)
         }.onError {

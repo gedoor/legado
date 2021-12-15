@@ -14,7 +14,7 @@ class EditTextPreference(context: Context, attrs: AttributeSet) :
         layoutResource = R.layout.view_preference
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         Preference.bindView<TextView>(context, holder, icon, title, summary, null, null)
         super.onBindViewHolder(holder)
     }

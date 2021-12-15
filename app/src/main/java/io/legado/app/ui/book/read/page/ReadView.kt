@@ -102,20 +102,18 @@ class ReadView(context: Context, attrs: AttributeSet) :
             setWillNotDraw(false)
             upPageAnim()
         }
-        setRect9x()
     }
 
     fun setRect9x() {
-        val edge = if (AppConfig.fullScreenGesturesSupport) 200f else 0f
-        tlRect.set(0f + edge, 0f, width * 0.33f, height * 0.33f)
+        tlRect.set(0f, 0f, width * 0.33f, height * 0.33f)
         tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
-        trRect.set(width * 0.36f, 0f, width - 0f - edge, height * 0.33f)
-        mlRect.set(0f + edge, height * 0.33f, width * 0.33f, height * 0.66f)
+        trRect.set(width * 0.36f, 0f, width.toFloat(), height * 0.33f)
+        mlRect.set(0f, height * 0.33f, width * 0.33f, height * 0.66f)
         mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        mrRect.set(width * 0.66f, height * 0.33f, width - 0f - edge, height * 0.66f)
-        blRect.set(0f + edge, height * 0.66f, width * 0.33f, height - 10f - edge)
-        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height - 0f - edge)
-        brRect.set(width * 0.66f, height * 0.66f, width - 0f - edge, height - 0f - edge)
+        mrRect.set(width * 0.66f, height * 0.33f, width.toFloat(), height * 0.66f)
+        blRect.set(0f, height * 0.66f, width * 0.33f, height.toFloat())
+        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height.toFloat())
+        brRect.set(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -203,7 +201,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     }
                 }
             }
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_UP -> {
                 removeCallbacks(longPressRunnable)
                 if (!pressDown) return true
                 pressDown = false
@@ -213,6 +211,17 @@ class ReadView(context: Context, attrs: AttributeSet) :
                         return true
                     }
                 }
+                if (isTextSelected) {
+                    callBack.showTextActionMenu()
+                } else if (isMove) {
+                    pageDelegate?.onTouch(event)
+                }
+                pressOnTextSelected = false
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                removeCallbacks(longPressRunnable)
+                if (!pressDown) return true
+                pressDown = false
                 if (isTextSelected) {
                     callBack.showTextActionMenu()
                 } else if (isMove) {

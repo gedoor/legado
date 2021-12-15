@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 
@@ -12,4 +13,9 @@ data class TxtTocRule(
     var rule: String = "",
     var serialNumber: Int = -1,
     var enable: Boolean = true
-)
+) {
+
+    @Ignore
+    constructor() : this(name = "")
+
+}

@@ -19,7 +19,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.Debug
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
-import io.legado.app.ui.widget.recycler.ItemTouchCallback.Callback
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
 import io.legado.app.utils.startActivity
@@ -28,7 +28,7 @@ import io.legado.app.utils.visible
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
-    Callback {
+    ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<BookSource>()
 
@@ -110,26 +110,22 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemBookSourceBinding) {
         binding.apply {
             swtEnabled.setOnCheckedChangeListener { view, checked ->
-                if (view.isPressed) {
-                    getItem(holder.layoutPosition)?.let {
-                        if (view.isPressed) {
-                            it.enabled = checked
-                            callBack.update(it)
-                        }
+                getItem(holder.layoutPosition)?.let {
+                    if (view.isPressed) {
+                        it.enabled = checked
+                        callBack.update(it)
                     }
                 }
             }
             cbBookSource.setOnCheckedChangeListener { view, checked ->
-                if (view.isPressed) {
-                    getItem(holder.layoutPosition)?.let {
-                        if (view.isPressed) {
-                            if (checked) {
-                                selected.add(it)
-                            } else {
-                                selected.remove(it)
-                            }
-                            callBack.upCountView()
+                getItem(holder.layoutPosition)?.let {
+                    if (view.isPressed) {
+                        if (checked) {
+                            selected.add(it)
+                        } else {
+                            selected.remove(it)
                         }
+                        callBack.upCountView()
                     }
                 }
             }

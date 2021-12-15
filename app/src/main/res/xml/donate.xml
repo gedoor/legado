@@ -11,14 +11,14 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="gzGzh"
-            android:title="@string/follow_official_account"
             android:summary="@string/follow_public_account_summary"
+            android:title="@string/follow_official_account"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="wxZsm"
-            android:title="@string/weChat_appreciation_code"
             android:summary="@string/click_to_open"
+            android:title="@string/weChat_appreciation_code"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
@@ -34,20 +34,20 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="zfbHbSsm"
-            android:title="@string/alipay_red_envelope_search_code"
             android:summary="@string/alipay_red_envelope_copy"
+            android:title="@string/alipay_red_envelope_search_code"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="zfbHbRwm"
-            android:title="@string/alipay_red_envelope_qr_code"
             android:summary="@string/click_to_open"
+            android:title="@string/alipay_red_envelope_qr_code"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="zfbSkRwm"
-            android:title="@string/alipay_payment_qr_code"
             android:summary="@string/click_to_open"
+            android:title="@string/alipay_payment_qr_code"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
@@ -63,8 +63,8 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="qqSkRwm"
-            android:title="@string/qq_collection_qr_code"
             android:summary="@string/click_to_open"
+            android:title="@string/qq_collection_qr_code"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>

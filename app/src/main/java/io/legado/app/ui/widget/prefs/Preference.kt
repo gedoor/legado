@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
 class Preference(context: Context, attrs: AttributeSet) :
     androidx.preference.Preference(context, attrs) {
 
-    var onLongClick: (() -> Unit)? = null
+    private var onLongClick: ((preference: Preference) -> Boolean)? = null
     private val isBottomBackground: Boolean
 
     init {
@@ -106,7 +106,7 @@ class Preference(context: Context, attrs: AttributeSet) :
 
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         bindView<View>(
             context,
             holder,
@@ -116,9 +116,15 @@ class Preference(context: Context, attrs: AttributeSet) :
             isBottomBackground = isBottomBackground
         )
         super.onBindViewHolder(holder)
-        holder?.itemView?.onLongClick {
-            onLongClick?.invoke()
+        onLongClick?.let { listener ->
+            holder.itemView.onLongClick {
+                listener.invoke(this)
+            }
         }
+    }
+
+    fun onLongClick(listener: (preference: Preference) -> Boolean) {
+        onLongClick = listener
     }
 
 }

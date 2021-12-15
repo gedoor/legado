@@ -118,7 +118,7 @@
     <string name="restore_confirmation">Restore confirmation</string>
     <string name="restore_message">Restoring the bookshelf data will overwrite the current Bookshelf.</string>
     <string name="backup_success">Backup succeed</string>
-    <string name="backup_fail">Backup failed</string>
+    <string name="backup_fail">Backup failed\n%s</string>
     <string name="on_restore">Restoring</string>
     <string name="restore_success">Restore succeed</string>
     <string name="restore_fail">Backup failed</string>
@@ -700,6 +700,7 @@
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
     <string name="full_screen_gestures_support">Full screen gestures support</string>
+    <string name="disable_return_key">Disable return key</string>
 
     <!--color-->
     <string name="primary">Primary</string>
@@ -858,7 +859,7 @@
     <string name="dict">dict</string>
     <string name="unknown_error">unknown error</string>
     <string name="export_no_chapter_name">No export chapter names</string>
-    <string name="autobackup_fail">Autobackup failed</string>
+    <string name="autobackup_fail">Autobackup failed\n%s</string>
     <string name="end">end</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
     <string name="pref_media_button_per_next">媒体按钮•上一首|下一首</string>
@@ -894,7 +895,7 @@
     <string name="disable_source">disable source</string>
     <string name="delete_source">delete source</string>
     <string name="chapter_pay">pay</string>
-    <string name="double_page_horizontal">横屏双页</string>
+    <string name="double_page_horizontal">平板/横屏双页</string>
     <string name="open_in_browser">open in browser</string>
     <string name="copy_url">copy url</string>
     <string name="open_fun">open function</string>
@@ -907,5 +908,9 @@
     <string name="font_scale">font scale</string>
     <string name="font_scale_summary">font scale:%.1f</string>
     <string name="search_content_size">search result</string>
+    <string name="tts_speech_reduce">语速减</string>
+    <string name="tts_speech_add">语速加</string>
+    <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>
+    <string name="expand_text_menu">展开文本选择菜单</string>
 
 </resources>

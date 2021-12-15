@@ -20,21 +20,19 @@ class ChangeSourceAdapter(
     context: Context,
     val viewModel: ChangeSourceViewModel,
     val callBack: CallBack
-) :
-    DiffRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
+) : DiffRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
 
-    override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
-        get() = object : DiffUtil.ItemCallback<SearchBook>() {
-            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-                return oldItem.bookUrl == newItem.bookUrl
-            }
-
-            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-                return oldItem.originName == newItem.originName
-                        && oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle()
-            }
-
+    override val diffItemCallback = object : DiffUtil.ItemCallback<SearchBook>() {
+        override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+            return oldItem.bookUrl == newItem.bookUrl
         }
+
+        override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
+            return oldItem.originName == newItem.originName
+                    && oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle()
+        }
+
+    }
 
     override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding {
         return ItemChangeSourceBinding.inflate(inflater, parent, false)

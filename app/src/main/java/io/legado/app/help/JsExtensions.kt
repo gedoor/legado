@@ -15,7 +15,6 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.apache.commons.lang3.time.DateFormatUtils
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import splitties.init.appCtx
@@ -25,6 +24,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.Charset
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -233,7 +233,10 @@ interface JsExtensions {
      */
     fun timeFormatUTC(time: Long, format: String, sh: Int): String? {
         val utc = SimpleTimeZone(sh, "UTC")
-        return DateFormatUtils.format(Date(time), format, utc, null)
+        return SimpleDateFormat(format, Locale.getDefault()).run {
+            timeZone = utc
+            format(Date(time))
+        }
     }
 
     /**
@@ -485,6 +488,17 @@ interface JsExtensions {
             Timber.d(msg)
         }
         return msg
+    }
+
+    /**
+     * 输出对象类型
+     */
+    fun logType(any: Any?) {
+        if (any == null) {
+            log("null")
+        } else {
+            log(any.javaClass.name)
+        }
     }
 
     /**

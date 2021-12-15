@@ -82,14 +82,10 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             R.id.menu_download -> startActivity<CacheActivity> {
                 putExtra("groupId", groupId)
             }
-            R.id.menu_export_bookshelf -> viewModel.exportBookshelf(books) {
+            R.id.menu_export_bookshelf -> viewModel.exportBookshelf(books) { file ->
                 exportResult.launch {
                     mode = HandleFileContract.EXPORT
-                    fileData = Triple(
-                        "bookshelf.json",
-                        it.toByteArray(),
-                        "application/json"
-                    )
+                    fileData = Triple("bookshelf.json", file, "application/json")
                 }
             }
             R.id.menu_import_bookshelf -> importBookshelfAlert(groupId)

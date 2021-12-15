@@ -112,9 +112,9 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_share_source"
-        android:icon="@drawable/ic_share"
-        android:title="@string/share_selected_source"
+        android:id="@+id/menu_text_toc_rule"
+        android:icon="@drawable/ic_cfg_source"
+        android:title="@string/txt_toc_regex"
         app:showAsAction="never" />
 
     <item

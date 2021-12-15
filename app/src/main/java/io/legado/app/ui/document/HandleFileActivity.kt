@@ -18,6 +18,7 @@ import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.utils.getJsonArray
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.launch
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
@@ -79,7 +80,17 @@ class HandleFileActivity :
         alert(title) {
             items(selectList) { _, item, _ ->
                 when (item.value) {
-                    HandleFileContract.DIR -> selectDocTree.launch(null)
+                    HandleFileContract.DIR -> kotlin.runCatching {
+                        selectDocTree.launch()
+                    }.onFailure {
+                        toastOnUi(R.string.open_sys_dir_picker_error)
+                        checkPermissions {
+                            FilePickerDialog.show(
+                                supportFragmentManager,
+                                mode = HandleFileContract.DIR
+                            )
+                        }
+                    }
                     HandleFileContract.FILE -> selectDoc.launch(typesOfExtensions(allowExtensions))
                     10 -> checkPermissions {
                         FilePickerDialog.show(
@@ -118,10 +129,10 @@ class HandleFileActivity :
         }
     }
 
-    private fun getFileData(): Triple<String, ByteArray, String>? {
+    private fun getFileData(): Triple<String, Any, String>? {
         val fileName = intent.getStringExtra("fileName")
         val file = intent.getStringExtra("fileKey")?.let {
-            IntentData.get<ByteArray>(it)
+            IntentData.get<Any>(it)
         }
         val contentType = intent.getStringExtra("contentType")
         if (fileName != null && file != null && contentType != null) {

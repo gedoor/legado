@@ -117,7 +117,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 ivBg.setImageResource(R.drawable.ic_image)
                 ivBg.setColorFilter(primaryTextColor)
                 root.setOnClickListener {
-                    selectBgImage.launch(null)
+                    selectBgImage.launch()
                 }
             }
         }

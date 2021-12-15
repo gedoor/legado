@@ -23,7 +23,7 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
         typedArray.recycle()
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         val v = Preference.bindView<TextView>(
             context,
             holder,

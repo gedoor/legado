@@ -317,7 +317,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
             val textPage = relativePage(relativePos)
             for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
-                if (textLine.isTouch(y, relativeOffset)) {
+                if (textLine.isTouch(x, y, relativeOffset)) {
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (textChar.isTouch(x)) {
                             touched.invoke(

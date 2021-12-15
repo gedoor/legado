@@ -1,8 +1,7 @@
+[![icon_android](https://github.com/gedoor/gedoor.github.io/blob/master/images/icon_android.png)](https://play.google.com/store/apps/details?id=io.legado.play.release)
 <a href="https://data.newrank.cn/m/s.html?s=NykyOzI9MS5LNQ%3D%3D" target="_blank">
     <img src="https://img.shields.io/badge/-微信关注“开源阅读”公众号-orange.svg" alt="#" align="right">
 </a>
-
-[![Downloads](https://img.shields.io/github/downloads/gedoor/legado/total.svg)](https://github.com/gedoor/legado/releases/latest) [![Telegram](https://img.shields.io/badge/Telegram-channel-blue)](https://t.me/legado_channels)
 
 <div align="center">
 <img width="125" height="125" src="https://github.com/gedoor/legado/raw/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="legado"/>  
@@ -10,6 +9,8 @@
 Legado / 开源阅读
 <br>
 <a href="https://gedoor.github.io" target="_blank">gedoor.github.io</a> / <a href="https://www.legado.top/" target="_blank">legado.top</a>
+<br>
+Legado is a free and open source novel reader for Android.
 </div>
 
 [![](https://img.shields.io/badge/-Contents:-696969.svg)](#contents) [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#Function-主要功能-) [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#Download-下载-) [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#Community-交流社区-) [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-) [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#Other-其他-) [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-感谢-) [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#Interface-界面-)
@@ -20,30 +21,43 @@ Legado / 开源阅读
 >看看 [官方帮助文档](https://www.yuque.com/legado/wiki)，也许里面就有你要的答案。
 
 # Function-主要功能 [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#Function-主要功能-)
-1.  自定义书源，自己设置规则，抓取网页数据，规则简单易懂，软件内有规则说明。
-2.  列表书架，网格书架自由切换。
-3.  书源规则支持搜索及发现，所有找书看书功能全部自定义，找书更方便。
-4.  订阅内容,可以订阅想看的任何内容,看你想看
-5.  支持替换净化，去除广告替换内容很方便。
-6.  支持本地TXT、EPUB阅读，手动浏览，智能扫描。
-7.  支持高度自定义阅读界面，切换字体、颜色、背景、行距、段距、加粗、简繁转换等。
-8.  支持多种翻页模式，覆盖、仿真、滑动、滚动等。
-9.  软件开源，持续优化，无广告。
+<details><summary>English</summary>
+1. Online reading from a variety of sources.<br>
+2. Local reading of downloaded content.<br>
+3. A configurable reader with multiple viewers, reading directions and other settings. <br>
+4. Categories to organize your library.<br>
+5. Light and dark themes.<br>
+6. Schedule updating your library for new chapters.<br>
+7. read offline or to your desired cloud service
+</details>
+
+<details><summary>中文</summary>
+1.自定义书源，自己设置规则，抓取网页数据，规则简单易懂，软件内有规则说明。<br>
+2.列表书架，网格书架自由切换。<br>
+3.书源规则支持搜索及发现，所有找书看书功能全部自定义，找书更方便。<br>
+4.订阅内容,可以订阅想看的任何内容,看你想看<br>
+5.支持替换净化，去除广告替换内容很方便。<br>
+6.支持本地TXT、EPUB阅读，手动浏览，智能扫描。<br>
+7.支持高度自定义阅读界面，切换字体、颜色、背景、行距、段距、加粗、简繁转换等。<br>
+8.支持多种翻页模式，覆盖、仿真、滑动、滚动等。<br>
+9.软件开源，持续优化，无广告。
+</details>
 
 <a href="#readme">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
 </a>
 
 # Download-下载 [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#Download-下载-)
-#### Android-安卓
+#### Android-安卓 
 * [Releases](https://github.com/gedoor/legado/releases/latest)
 * [Google play - $1.99](https://play.google.com/store/apps/details?id=io.legado.play.release)
 * [Coolapk](https://www.coolapk.com/apk/io.legado.app.release)
 * [Jsdelivr](https://cdn.jsdelivr.net/gh/gedoor/legado@release/)
 * [\#Beta](https://kunfei.lanzoui.com/b0f810h4b)
 
+
 #### IOS-苹果
-* 准备中
+* 准备中(No release) - [Github](https://github.com/gedoor/YueDuFlutter)
 
 <a href="#readme">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
@@ -53,7 +67,9 @@ Legado / 开源阅读
 
 #### Telegram
 [![Telegram-group](https://img.shields.io/badge/Telegram-%E7%BE%A4%E7%BB%84-blue)](https://t.me/yueduguanfang) [![Telegram-channel](https://img.shields.io/badge/Telegram-%E9%A2%91%E9%81%93-blue)](https://t.me/legado_channels)
-[![Telegram-group](https://img.shields.io/badge/Telegram-group-blue)](https://t.me/yueduguanfang) [![Telegram-channel](https://img.shields.io/badge/Telegram-channel-blue)](https://t.me/legado_channels)
+
+#### Discord
+[![Discord](https://img.shields.io/discord/560731361414086666?color=%235865f2&label=Discord)](https://discord.gg/VtUfRyzRXn)
 
 #### Other
 https://www.yuque.com/legado/wiki/community

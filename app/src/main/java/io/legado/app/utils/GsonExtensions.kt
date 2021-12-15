@@ -3,7 +3,10 @@ package io.legado.app.utils
 import com.google.gson.*
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonWriter
 import timber.log.Timber
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.math.ceil
@@ -37,6 +40,23 @@ inline fun <reified T> Gson.fromJsonArray(json: String?): List<T>? {
     }.onFailure {
         Timber.e(it, json)
     }.getOrNull()
+}
+
+fun Gson.writeToOutputStream(out: OutputStream, any: Any) {
+    val writer = JsonWriter(OutputStreamWriter(out, "UTF-8"))
+    writer.setIndent("  ")
+    if (any is List<*>) {
+        writer.beginArray()
+        any.forEach {
+            it?.let {
+                toJson(it, it::class.java, writer)
+            }
+        }
+        writer.endArray()
+    } else {
+        toJson(any, any::class.java, writer)
+    }
+    writer.close()
 }
 
 class ParameterizedTypeImpl(private val clazz: Class<*>) : ParameterizedType {

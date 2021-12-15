@@ -55,12 +55,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_share_source"
-        android:icon="@drawable/ic_share"
-        android:title="@string/share_selected_source"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"

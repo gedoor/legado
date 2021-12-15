@@ -43,7 +43,7 @@ object LocalBook {
         return chapters
     }
 
-    fun getContext(book: Book, chapter: BookChapter): String? {
+    fun getContent(book: Book, chapter: BookChapter): String? {
         return when {
             book.isEpub() -> {
                 EpubFile.getContent(book, chapter)
@@ -151,11 +151,10 @@ object LocalBook {
                 bookFile.delete()
             }
             if (book.isEpub()) {
-                val bookFile = BookHelp.getEpubFile(book).parentFile
+                val bookFile = EpubFile.getFile(book).parentFile
                 if (bookFile != null && bookFile.exists()) {
                     FileUtils.delete(bookFile, true)
                 }
-
             }
 
             if (deleteOriginal) {

@@ -29,7 +29,6 @@ data class ReplaceRule(
     var order: Int = 0
 ) : Parcelable {
 
-
     override fun equals(other: Any?): Boolean {
         if (other is ReplaceRule) {
             return other.id == id

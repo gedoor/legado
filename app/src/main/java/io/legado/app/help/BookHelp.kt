@@ -1,6 +1,5 @@
 package io.legado.app.help
 
-import android.net.Uri
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -24,9 +23,9 @@ import kotlin.math.min
 
 @Suppress("unused")
 object BookHelp {
-    private const val cacheFolderName = "book_cache"
+    val downloadDir: File = appCtx.externalFiles
+    const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
-    private val downloadDir: File = appCtx.externalFiles
     private val downloadImages = CopyOnWriteArraySet<String>()
 
     fun clearCache() {
@@ -58,25 +57,7 @@ object BookHelp {
         }
     }
 
-    fun getEpubFile(book: Book): File {
-        val file = downloadDir.getFile(cacheFolderName, book.getFolderName(), "index.epubx")
-        if (!file.exists()) {
-            val input = if (book.bookUrl.isContentScheme()) {
-                val uri = Uri.parse(book.bookUrl)
-                appCtx.contentResolver.openInputStream(uri)
-            } else {
-                File(book.bookUrl).inputStream()
-            }
-            if (input != null) {
-                FileUtils.writeInputStream(file, input)
-            }
-
-        }
-        return file
-    }
-
-    suspend fun saveContent(
-        bookSource: BookSource,
+    fun saveContent(
         book: Book,
         bookChapter: BookChapter,
         content: String
@@ -89,6 +70,15 @@ object BookHelp {
             book.getFolderName(),
             bookChapter.getFileName(),
         ).writeText(content)
+    }
+
+    suspend fun saveContent(
+        bookSource: BookSource,
+        book: Book,
+        bookChapter: BookChapter,
+        content: String
+    ) {
+        saveContent(book, bookChapter, content)
         //保存图片
         content.split("\n").forEach {
             val matcher = AppPattern.imgPattern.matcher(it)
@@ -200,16 +190,11 @@ object BookHelp {
      */
     fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (book.isLocalTxt() || book.isUmd()) {
-            return LocalBook.getContext(book, bookChapter)
+            return LocalBook.getContent(book, bookChapter)
         } else if (book.isEpub() && !hasContent(book, bookChapter)) {
-            val string = LocalBook.getContext(book, bookChapter)
+            val string = LocalBook.getContent(book, bookChapter)
             string?.let {
-                FileUtils.createFileIfNotExist(
-                    downloadDir,
-                    cacheFolderName,
-                    book.getFolderName(),
-                    bookChapter.getFileName(),
-                ).writeText(it)
+                saveContent(book, bookChapter, it)
             }
             return string
         } else {

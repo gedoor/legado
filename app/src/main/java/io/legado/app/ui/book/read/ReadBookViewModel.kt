@@ -69,16 +69,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
             syncBookProgress(book)
         } else {
-            ReadBook.book = book
-            if (ReadBook.durChapterIndex != book.durChapterIndex) {
-                ReadBook.durChapterIndex = book.durChapterIndex
-                ReadBook.durChapterPos = book.durChapterPos
-                ReadBook.clearTextChapter()
-            }
-            ReadBook.callBack?.upMenuView()
-            ReadBook.upWebBook(book)
+            ReadBook.upData(book)
             isInitFinish = true
-            ReadBook.chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
             if (ReadBook.chapterSize == 0) {
                 if (book.tocUrl.isEmpty()) {
                     loadBookInfo(book)

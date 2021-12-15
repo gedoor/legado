@@ -21,5 +21,4 @@ data class Bookmark(
     var chapterName: String = "",
     var bookText: String = "",
     var content: String = ""
-
 ) : Parcelable

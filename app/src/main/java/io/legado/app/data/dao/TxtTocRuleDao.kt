@@ -16,8 +16,11 @@ interface TxtTocRuleDao {
     @get:Query("select * from txtTocRules where enable = 1 order by serialNumber")
     val enabled: List<TxtTocRule>
 
+    @get:Query("select ifNull(min(serialNumber), 0) from txtTocRules")
+    val minOrder: Int
+
     @get:Query("select ifNull(max(serialNumber), 0) from txtTocRules")
-    val lastOrderNum: Int
+    val maxOrder: Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg rule: TxtTocRule)

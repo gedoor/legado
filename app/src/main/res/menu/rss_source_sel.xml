@@ -27,4 +27,11 @@
         android:title="@string/export_selection"
         app:showAsAction="never" />
 
+
+    <item
+        android:id="@+id/menu_share_source"
+        android:title="@string/share_selected_source"
+        app:showAsAction="never" />
+
+
 </menu>

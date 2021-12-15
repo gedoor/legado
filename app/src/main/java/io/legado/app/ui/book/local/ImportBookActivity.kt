@@ -72,7 +72,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_select_folder -> selectFolder.launch(null)
+            R.id.menu_select_folder -> selectFolder.launch()
             R.id.menu_scan_folder -> scanFolder()
             R.id.menu_import_file_name -> alertImportFileName()
         }
@@ -98,7 +98,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onClickMainAction() {
+    override fun onClickSelectBarMainAction() {
         viewModel.addToBookshelf(adapter.selectedUris) {
             adapter.notifyDataSetChanged()
         }
@@ -133,7 +133,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         when {
             lastPath.isNullOrEmpty() -> {
                 binding.tvEmptyMsg.visible()
-                selectFolder.launch(null)
+                selectFolder.launch()
             }
             lastPath.isContentScheme() -> {
                 val rootUri = Uri.parse(lastPath)
@@ -141,7 +141,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                     val doc = DocumentFile.fromTreeUri(this, rootUri)
                     if (doc == null || doc.name.isNullOrEmpty()) {
                         binding.tvEmptyMsg.visible()
-                        selectFolder.launch(null)
+                        selectFolder.launch()
                     } else {
                         subDocs.clear()
                         rootDoc = FileDoc.fromDocumentFile(doc)
@@ -149,12 +149,12 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                     }
                 }.onFailure {
                     binding.tvEmptyMsg.visible()
-                    selectFolder.launch(null)
+                    selectFolder.launch()
                 }
             }
             Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
                 binding.tvEmptyMsg.visible()
-                selectFolder.launch(null)
+                selectFolder.launch()
             }
             else -> initRootPath(lastPath)
         }
@@ -172,7 +172,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                     upPath()
                 }.onFailure {
                     binding.tvEmptyMsg.visible()
-                    selectFolder.launch(null)
+                    selectFolder.launch()
                 }
             }
             .request()

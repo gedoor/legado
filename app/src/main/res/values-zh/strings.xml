@@ -117,7 +117,7 @@
     <string name="restore_confirmation">确认恢复吗？</string>
     <string name="restore_message">恢复书架会覆盖现有书架。</string>
     <string name="backup_success">备份成功</string>
-    <string name="backup_fail">备份失败</string>
+    <string name="backup_fail">备份失败\n%s</string>
     <string name="on_restore">正在恢复</string>
     <string name="restore_success">恢复成功</string>
     <string name="restore_fail">恢复失败</string>
@@ -699,6 +699,7 @@
     <string name="switchLayout">切换布局</string>
     <string name="text_font_weight_converter">文章字重切换</string>
     <string name="full_screen_gestures_support">全面屏手势优化</string>
+    <string name="disable_return_key">禁用返回键</string>
 
     <!--color-->
     <string name="primary">主色调</string>
@@ -857,7 +858,7 @@
     <string name="null_url">url为空</string>
     <string name="dict">字典</string>
     <string name="unknown_error">未知错误</string>
-    <string name="autobackup_fail">自动备份失败</string>
+    <string name="autobackup_fail">自动备份失败\n%s</string>
     <string name="end">结束</string>
     <string name="custom_group_summary">关闭替换分组/开启添加分组</string>
     <string name="pref_media_button_per_next">媒体按钮•上一首|下一首</string>
@@ -894,7 +895,7 @@
     <string name="disable_source">禁用源</string>
     <string name="delete_source">删除源</string>
     <string name="chapter_pay">购买</string>
-    <string name="double_page_horizontal">横屏双页</string>
+    <string name="double_page_horizontal">平板/横屏双页</string>
     <string name="open_in_browser">浏览器打开</string>
     <string name="copy_url">拷贝url</string>
     <string name="open_fun">打开方式</string>
@@ -906,5 +907,9 @@
     <string name="login_header">登录头</string>
     <string name="font_scale">字体大小</string>
     <string name="font_scale_summary">当前字体大小:%.1f</string>
+    <string name="tts_speech_reduce">语速减</string>
+    <string name="tts_speech_add">语速加</string>
+    <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>
+    <string name="expand_text_menu">展开文本选择菜单</string>
 
 </resources>

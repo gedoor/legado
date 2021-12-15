@@ -15,6 +15,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
@@ -47,8 +48,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
             }
         }
     }
-    private val backupDir = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
+    private val backupDir = registerForActivityResult(HandleFileContract()) { result ->
+        result.uri?.let { uri ->
             if (uri.isContentScheme()) {
                 AppConfig.backupPath = uri.toString()
                 Coroutine.async {
@@ -56,7 +57,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
                 }.onSuccess {
                     appCtx.toastOnUi(R.string.backup_success)
                 }.onError {
-                    appCtx.toastOnUi(R.string.backup_fail)
+                    AppLog.put("备份出错\n${it.localizedMessage}", it)
+                    appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
                 }
             } else {
                 uri.path?.let { path ->
@@ -66,7 +68,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     }.onSuccess {
                         appCtx.toastOnUi(R.string.backup_success)
                     }.onError {
-                        appCtx.toastOnUi(R.string.backup_fail)
+                        AppLog.put("备份出错\n${it.localizedMessage}", it)
+                        appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
                     }
                 }
             }
@@ -120,7 +123,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
         findPreference<io.legado.app.ui.widget.prefs.Preference>("web_dav_restore")
-            ?.onLongClick = { restoreDir.launch(null) }
+            ?.onLongClick { restoreDir.launch(); true }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -203,11 +206,11 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
-            PreferKey.backupPath -> selectBackupPath.launch(null)
+            PreferKey.backupPath -> selectBackupPath.launch()
             PreferKey.restoreIgnore -> restoreIgnore()
             "web_dav_backup" -> backup()
             "web_dav_restore" -> restore()
-            "import_old" -> restoreOld.launch(null)
+            "import_old" -> restoreOld.launch()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -231,7 +234,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
     fun backup() {
         val backupPath = AppConfig.backupPath
         if (backupPath.isNullOrEmpty()) {
-            backupDir.launch(null)
+            backupDir.launch()
         } else {
             if (backupPath.isContentScheme()) {
                 val uri = Uri.parse(backupPath)
@@ -242,10 +245,11 @@ class BackupConfigFragment : BasePreferenceFragment(),
                     }.onSuccess {
                         appCtx.toastOnUi(R.string.backup_success)
                     }.onError {
-                        appCtx.toastOnUi(R.string.backup_fail)
+                        AppLog.put("备份出错\n${it.localizedMessage}", it)
+                        appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
                     }
                 } else {
-                    backupDir.launch(null)
+                    backupDir.launch()
                 }
             } else {
                 backupUsePermission(backupPath)
@@ -264,7 +268,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
                 }.onSuccess {
                     appCtx.toastOnUi(R.string.backup_success)
                 }.onError {
-                    appCtx.toastOnUi(R.string.backup_fail)
+                    AppLog.put("备份出错\n${it.localizedMessage}", it)
+                    appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
                 }
             }
             .request()
@@ -296,13 +301,13 @@ class BackupConfigFragment : BasePreferenceFragment(),
                         Restore.restore(requireContext(), backupPath)
                     }
                 } else {
-                    restoreDir.launch(null)
+                    restoreDir.launch()
                 }
             } else {
                 restoreUsePermission(backupPath)
             }
         } else {
-            restoreDir.launch(null)
+            restoreDir.launch()
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.DefaultData
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
 
 
@@ -51,7 +53,8 @@ object Backup {
             Coroutine.async {
                 backup(context, context.getPrefString(PreferKey.backupPath) ?: "", true)
             }.onError {
-                appCtx.toastOnUi(R.string.autobackup_fail)
+                AppLog.put("备份出错\n${it.localizedMessage}", it)
+                appCtx.toastOnUi(appCtx.getString(R.string.autobackup_fail, it.localizedMessage))
             }
         }
     }
@@ -112,8 +115,10 @@ object Backup {
 
     private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
         if (list.isNotEmpty()) {
-            val json = GSON.toJson(list)
-            FileUtils.createFileIfNotExist(path + File.separator + fileName).writeText(json)
+            val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
+            FileOutputStream(file).use {
+                GSON.writeToOutputStream(it, list)
+            }
         }
     }
 

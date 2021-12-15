@@ -13,6 +13,7 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
     SwitchPreferenceCompat(context, attrs) {
 
     private val isBottomBackground: Boolean
+    private var onLongClick: ((preference: SwitchPreference) -> Boolean)? = null
 
     init {
         layoutResource = R.layout.view_preference
@@ -21,7 +22,7 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
         typedArray.recycle()
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         val v = Preference.bindView<SwitchCompat>(
             context,
             holder,
@@ -36,6 +37,15 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
             v.applyTint(context.accentColor)
         }
         super.onBindViewHolder(holder)
+        onLongClick?.let { listener ->
+            holder.itemView.setOnLongClickListener {
+                listener.invoke(this)
+            }
+        }
+    }
+
+    fun onLongClick(listener: (preference: SwitchPreference) -> Boolean) {
+        onLongClick = listener
     }
 
 }

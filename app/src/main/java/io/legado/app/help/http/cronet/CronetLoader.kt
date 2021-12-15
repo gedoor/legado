@@ -261,7 +261,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         downloadTempFile: File,
         destSuccessFile: File
     ) {
-        if (download) {
+        if (download || AppConfig.isGooglePlay) {
             return
         }
         download = true

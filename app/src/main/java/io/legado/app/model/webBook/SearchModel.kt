@@ -56,7 +56,12 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             } else {
-                bookSourceList.addAll(appDb.bookSourceDao.getEnabledByGroup(searchGroup))
+                val sources = appDb.bookSourceDao.getEnabledByGroup(searchGroup)
+                if (sources.isEmpty()) {
+                    bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
+                } else {
+                    bookSourceList.addAll(sources)
+                }
             }
         } else {
             searchPage++
@@ -74,20 +79,22 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
         }
         searchIndex++
         val source = bookSourceList[searchIndex]
-        val task = WebBook.searchBook(
-            scope,
-            source,
-            searchKey,
-            searchPage,
-            context = searchPool!!
-        ).timeout(30000L)
-            .onSuccess(searchPool) {
-                onSuccess(searchId, it)
-            }
-            .onFinally(searchPool) {
-                onFinally(searchId)
-            }
-        tasks.add(task)
+        searchPool?.let { searchPool ->
+            val task = WebBook.searchBook(
+                scope,
+                source,
+                searchKey,
+                searchPage,
+                context = searchPool
+            ).timeout(30000L)
+                .onSuccess(searchPool) {
+                    onSuccess(searchId, it)
+                }
+                .onFinally(searchPool) {
+                    onFinally(searchId)
+                }
+            tasks.add(task)
+        }
     }
 
     @Synchronized

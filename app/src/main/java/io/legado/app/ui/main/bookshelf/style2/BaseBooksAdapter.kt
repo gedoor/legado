@@ -11,18 +11,17 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
     val callBack: CallBack
 ) : RecyclerView.Adapter<VH>() {
 
-    val diffItemCallback: DiffUtil.ItemCallback<Book>
-        get() = object : DiffUtil.ItemCallback<Book>() {
+    val diffItemCallback = object : DiffUtil.ItemCallback<Book>() {
 
-            override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
-                return oldItem.name == newItem.name
-                        && oldItem.author == newItem.author
-            }
+        override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
+            return oldItem.name == newItem.name
+                    && oldItem.author == newItem.author
+        }
 
-            override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
-                return when {
-                    oldItem.durChapterTime != newItem.durChapterTime -> false
-                    oldItem.name != newItem.name -> false
+        override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
+            return when {
+                oldItem.durChapterTime != newItem.durChapterTime -> false
+                oldItem.name != newItem.name -> false
                     oldItem.author != newItem.author -> false
                     oldItem.durChapterTitle != newItem.durChapterTitle -> false
                     oldItem.latestChapterTitle != newItem.latestChapterTitle -> false

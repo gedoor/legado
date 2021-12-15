@@ -46,11 +46,11 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     private val bookGroups = mutableListOf<BookGroup>()
     private val fragmentMap = hashMapOf<Long, BooksFragment>()
     private var groupsFlowJob: Job? = null
-    override val groupId: Long get() = selectedGroup.groupId
+    override val groupId: Long get() = selectedGroup?.groupId ?: 0
 
     override val books: List<Book>
         get() {
-            val fragment = fragmentMap[selectedGroup.groupId]
+            val fragment = fragmentMap[groupId]
             return fragment?.getBooks() ?: emptyList()
         }
 
@@ -60,8 +60,8 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
         initBookGroupData()
     }
 
-    private val selectedGroup: BookGroup
-        get() = bookGroups[tabLayout.selectedTabPosition]
+    private val selectedGroup: BookGroup?
+        get() = bookGroups.getOrNull(tabLayout.selectedTabPosition)
 
     private fun initView() {
         binding.viewPagerBookshelf.setEdgeEffectColor(primaryColor)
@@ -113,8 +113,10 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     }
 
     override fun onTabReselected(tab: TabLayout.Tab) {
-        fragmentMap[selectedGroup.groupId]?.let {
-            toastOnUi("${selectedGroup.groupName}(${it.getBooksCount()})")
+        selectedGroup?.let { group ->
+            fragmentMap[group.groupId]?.let {
+                toastOnUi("${group.groupName}(${it.getBooksCount()})")
+            }
         }
     }
 
@@ -125,7 +127,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     }
 
     override fun gotoTop() {
-        fragmentMap[selectedGroup.groupId]?.gotoTop()
+        fragmentMap[groupId]?.gotoTop()
     }
 
     private inner class TabFragmentPageAdapter(fm: FragmentManager) :

@@ -51,7 +51,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         }
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         val v = Preference.bindView<ImageView>(
             context,

@@ -114,7 +114,7 @@
     <string name="restore_confirmation">Confirmar restauración</string>
     <string name="restore_message">La restauración de los datos de la estantería reemplazará a los datos de la actual.</string>
     <string name="backup_success">Respaldo completado</string>
-    <string name="backup_fail">Error de respaldo</string>
+    <string name="backup_fail">Error de respaldo\n%s</string>
     <string name="on_restore">Restaurando</string>
     <string name="restore_success">Restauración completada</string>
     <string name="restore_fail">Restauración fallida</string>
@@ -678,6 +678,7 @@
     <string name="alouding_disable">The selected text cannot be spoken in full text speech</string>
     <string name="read_body_to_lh">Extend to cutout</string>
     <string name="toc_updateing">Updating Chapters</string>
+  
     <string name="media_button_on_exit_title">Headset buttons are always available</string>
     <string name="media_button_on_exit_summary">Headset buttons are available even exit the app.</string>
     <string name="contributors">Contributors</string>
@@ -696,6 +697,7 @@
     <string name="switchLayout">Switch Layout</string>
     <string name="text_font_weight_converter">Text font weight switching</string>
     <string name="full_screen_gestures_support">Full screen gestures support</string>
+    <string name="disable_return_key">Disable return key</string>
 
     <!--color-->
     <string name="primary">Primario</string>
@@ -857,7 +859,7 @@
     <string name="check_source_show_debug_message">La fuente del libro de cheques muestra un mensaje de depuración</string>
     <string name="check_source_show_debug_message_summary">Muestra los pasos y el tiempo de la solicitud de red durante la verificación de la fuente del libro</string>
     <string name="export_no_chapter_name">No export chapter names</string>
-    <string name="autobackup_fail">Autobackup failed</string>
+    <string name="autobackup_fail">Autobackup failed\n%s</string>
     <string name="background_image_blurring">Background image blurring</string>
     <string name="background_image_blurring_radius">Blurring radius</string>
     <string name="background_image_hint">Disabled when 0, enable range from 1 to 25\nThe greater the radius, the stronger the effect of blurring</string>
@@ -890,7 +892,7 @@
     <string name="disable_source">禁用源</string>
     <string name="delete_source">删除源</string>
     <string name="chapter_pay">购买</string>
-    <string name="double_page_horizontal">横屏双页</string>
+    <string name="double_page_horizontal">平板/横屏双页</string>
     <string name="open_in_browser">浏览器打开</string>
     <string name="copy_url">拷贝url</string>
     <string name="open_fun">打开方式</string>
@@ -903,5 +905,9 @@
     <string name="font_scale">字体大小</string>
     <string name="font_scale_summary">当前字体大小:%.1f</string>
     <string name="search_content_size">search result</string>
+    <string name="tts_speech_reduce">语速减</string>
+    <string name="tts_speech_add">语速加</string>
+    <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>
+    <string name="expand_text_menu">展开文本选择菜单</string>
 
 </resources>

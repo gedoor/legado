@@ -16,7 +16,7 @@ class TocRegexViewModel(application: Application) : BaseViewModel(application) {
     fun saveRule(rule: TxtTocRule) {
         execute {
             if (rule.serialNumber < 0) {
-                rule.serialNumber = appDb.txtTocRuleDao.lastOrderNum + 1
+                rule.serialNumber = appDb.txtTocRuleDao.maxOrder + 1
             }
             appDb.txtTocRuleDao.insert(rule)
         }

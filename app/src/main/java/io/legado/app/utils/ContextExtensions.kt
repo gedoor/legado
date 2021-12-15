@@ -10,6 +10,7 @@ import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -53,7 +54,12 @@ inline fun <reified T : Service> Context.servicePendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    return getService(this, 0, intent, FLAG_UPDATE_CURRENT)
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+    } else {
+        FLAG_UPDATE_CURRENT
+    }
+    return getService(this, 0, intent, flags)
 }
 
 @SuppressLint("UnspecifiedImmutableFlag")
@@ -64,7 +70,12 @@ inline fun <reified T : Activity> Context.activityPendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    return getActivity(this, 0, intent, FLAG_UPDATE_CURRENT)
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+    } else {
+        FLAG_UPDATE_CURRENT
+    }
+    return getActivity(this, 0, intent, flags)
 }
 
 @SuppressLint("UnspecifiedImmutableFlag")
@@ -75,7 +86,12 @@ inline fun <reified T : BroadcastReceiver> Context.broadcastPendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    return getBroadcast(this, 0, intent, FLAG_CANCEL_CURRENT)
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+    } else {
+        FLAG_UPDATE_CURRENT
+    }
+    return getBroadcast(this, 0, intent, flags)
 }
 
 val Context.defaultSharedPreferences: SharedPreferences
@@ -174,6 +190,21 @@ fun Context.share(text: String, title: String = getString(R.string.share)) {
         intent.type = "text/plain"
         startActivity(Intent.createChooser(intent, title))
     }
+}
+
+fun Context.share(file: File, type: String = "text/*") {
+    val fileUri = FileProvider.getUriForFile(this, AppConst.authority, file)
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.type = type
+    intent.putExtra(Intent.EXTRA_STREAM, fileUri)
+    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(
+        Intent.createChooser(
+            intent,
+            getString(R.string.share_selected_source)
+        )
+    )
 }
 
 @SuppressLint("SetWorldReadable")
@@ -290,6 +321,11 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
         toastOnUi(e.msg)
     }
 }
+
+val Context.isPad: Boolean
+    get() {
+        return resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
+    }
 
 val Context.channel: String
     get() {

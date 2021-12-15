@@ -52,7 +52,6 @@ object ReadBook : CoroutineScope by MainScope() {
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
         isLocalBook = book.origin == BookType.local
-        chapterSize = book.totalChapterNum
         clearTextChapter()
         callBack?.upMenuView()
         callBack?.upPageAnim()
@@ -61,6 +60,18 @@ object ReadBook : CoroutineScope by MainScope() {
         synchronized(this) {
             loadingChapters.clear()
         }
+    }
+
+    fun upData(book: Book) {
+        ReadBook.book = book
+        chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
+        if (durChapterIndex != book.durChapterIndex) {
+            durChapterIndex = book.durChapterIndex
+            durChapterPos = book.durChapterPos
+            clearTextChapter()
+        }
+        callBack?.upMenuView()
+        upWebBook(book)
     }
 
     fun upWebBook(book: Book) {
