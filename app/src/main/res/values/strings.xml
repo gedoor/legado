@@ -906,5 +906,6 @@
     <string name="login_header">login header</string>
     <string name="font_scale">font scale</string>
     <string name="font_scale_summary">font scale:%.1f</string>
+    <string name="search_content_size">search result</string>
 
 </resources>

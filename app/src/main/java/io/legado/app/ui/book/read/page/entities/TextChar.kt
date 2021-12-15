@@ -5,7 +5,8 @@ data class TextChar(
     var start: Float,
     var end: Float,
     var selected: Boolean = false,
-    var isImage: Boolean = false
+    var isImage: Boolean = false,
+    var isSearchResult: Boolean = false
 ) {
 
     fun isTouch(x: Float): Boolean {

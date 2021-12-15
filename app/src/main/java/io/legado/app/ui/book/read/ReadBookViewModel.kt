@@ -21,7 +21,8 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.msg
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -270,17 +271,16 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      * 内容搜索跳转
      */
     fun searchResultPositions(
-        pages: List<TextPage>,
-        indexWithinChapter: Int
+        textChapter: TextChapter,
+        searchResult: SearchResult
     ): Array<Int> {
         // calculate search result's pageIndex
-        var content = ""
-        pages.map {
-            content += it.text
-        }
-        var count = 1
+        val pages = textChapter.pages
+        val content = textChapter.getContent()
+
+        var count = 0
         var index = content.indexOf(searchContentQuery)
-        while (count != indexWithinChapter) {
+        while (count != searchResult.resultCountWithinChapter) {
             index = content.indexOf(searchContentQuery, index + 1)
             count += 1
         }
