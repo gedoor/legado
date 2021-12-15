@@ -907,6 +907,7 @@
     <string name="login_header">login header</string>
     <string name="font_scale">font scale</string>
     <string name="font_scale_summary">font scale:%.1f</string>
+    <string name="search_content_size">search result</string>
     <string name="tts_speech_reduce">语速减</string>
     <string name="tts_speech_add">语速加</string>
     <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>

@@ -898,6 +898,7 @@
     <string name="open_fun">打開方式</string>
     <string name="use_browser_open">是否使用外部瀏覽器打開?</string>
     <string name="see">查看</string>
+    <string name="search_content_size">搜索結果</string>
     <string name="open">打開</string>
     <string name="del_login_header">刪除登錄頭</string>
     <string name="show_login_header">查看登錄頭</string>

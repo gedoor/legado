@@ -678,6 +678,7 @@
     <string name="alouding_disable">The selected text cannot be spoken in full text speech</string>
     <string name="read_body_to_lh">Extend to cutout</string>
     <string name="toc_updateing">Updating Chapters</string>
+  
     <string name="media_button_on_exit_title">Headset buttons are always available</string>
     <string name="media_button_on_exit_summary">Headset buttons are available even exit the app.</string>
     <string name="contributors">Contributors</string>
@@ -903,6 +904,7 @@
     <string name="login_header">登录头</string>
     <string name="font_scale">字体大小</string>
     <string name="font_scale_summary">当前字体大小:%.1f</string>
+    <string name="search_content_size">search result</string>
     <string name="tts_speech_reduce">语速减</string>
     <string name="tts_speech_add">语速加</string>
     <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>
