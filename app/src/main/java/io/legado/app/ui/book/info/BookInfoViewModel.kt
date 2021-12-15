@@ -29,7 +29,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var durChapterIndex = 0
     var inBookshelf = false
     var bookSource: BookSource? = null
-    var changeSourceCoroutine: Coroutine<*>? = null
+    private var changeSourceCoroutine: Coroutine<*>? = null
 
     fun initData(intent: Intent) {
         execute {

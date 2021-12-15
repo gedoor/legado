@@ -32,7 +32,7 @@ import kotlinx.coroutines.ensureActive
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var isInitFinish = false
     var searchContentQuery = ""
-    var changeSourceCoroutine: Coroutine<*>? = null
+    private var changeSourceCoroutine: Coroutine<*>? = null
 
     fun initData(intent: Intent) {
         execute {
