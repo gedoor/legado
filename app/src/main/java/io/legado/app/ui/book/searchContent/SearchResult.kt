@@ -4,36 +4,29 @@ import android.text.Spanned
 import androidx.core.text.HtmlCompat
 
 data class SearchResult(
-    var index: Int = 0,
-    var indexWithinChapter: Int = 0,
-    var text: String = "",
-    var chapterTitle: String = "",
+    val resultCount: Int = 0,
+    val resultCountWithinChapter: Int = 0,
+    val resultText: String = "",
+    val chapterTitle: String = "",
     val query: String,
-    var pageSize: Int = 0,
-    var chapterIndex: Int = 0,
-    var pageIndex: Int = 0,
-    var newPosition: Int = 0,
-    var contentPosition: Int = 0
+    val pageSize: Int = 0,
+    val chapterIndex: Int = 0,
+    val pageIndex: Int = 0,
+    val queryIndexInResult: Int = 0,
+    val queryIndexInChapter: Int = 0
 ) {
 
     fun getHtmlCompat(textColor: String, accentColor: String): Spanned {
-        val html = colorPresentText(newPosition, query, text, textColor, accentColor) +
-                "<font color=#${accentColor}>($chapterTitle)</font>"
+        val queryIndexInSurrounding = resultText.indexOf(query)
+        val leftString = resultText.substring(0, queryIndexInSurrounding)
+        val rightString = resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
+        val html = leftString.colorTextForHtml(textColor) +
+                query.colorTextForHtml(accentColor) +
+                rightString.colorTextForHtml(textColor) +
+                chapterTitle.colorTextForHtml(accentColor)
         return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun colorPresentText(
-        position: Int,
-        center: String,
-        targetText: String,
-        textColor: String,
-        accentColor: String
-    ): String {
-        val sub1 = text.substring(0, position)
-        val sub2 = text.substring(position + center.length, targetText.length)
-        return "<font color=#${textColor}>$sub1</font>" +
-                "<font color=#${accentColor}>$center</font>" +
-                "<font color=#${textColor}>$sub2</font>"
-    }
+    private fun String.colorTextForHtml(textColor: String) = "<font color=#${textColor}>$this</font>"
 
 }

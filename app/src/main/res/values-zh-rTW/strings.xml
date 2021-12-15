@@ -910,5 +910,6 @@
     <string name="tts_speech_add">語速加</string>
     <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>
     <string name="expand_text_menu">展开文本选择菜单</string>
+    <string name="search_content_size">搜索結果</string>
 
 </resources>

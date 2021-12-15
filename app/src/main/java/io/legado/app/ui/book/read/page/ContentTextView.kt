@@ -145,7 +145,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (it.isImage) {
                 drawImage(canvas, it, lineTop, lineBottom, isImageLine)
             } else {
+                if(it.isSearchResult) {
+                    textPaint.color = context.accentColor
+                }
                 canvas.drawText(it.charData, it.start, lineBase, textPaint)
+                textPaint.color = ReadBookConfig.textColor
             }
             if (it.selected) {
                 canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
@@ -392,6 +396,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             relativePos in selectStart[0] + 1 until selectEnd[0]
                         }
                     }
+                    textChar.isSearchResult = textChar.selected && callBack.isSelectingSearchResult
                 }
             }
         }
@@ -539,5 +544,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val headerHeight: Int
         val pageFactory: TextPageFactory
         val isScroll: Boolean
+        var isSelectingSearchResult: Boolean
     }
 }
