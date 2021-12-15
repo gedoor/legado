@@ -8,6 +8,7 @@
 /httpRequests/
 # Custom ignored
 /caches/
+/dictionaries/
 /modules/
 /libraries/
 /*.xml
