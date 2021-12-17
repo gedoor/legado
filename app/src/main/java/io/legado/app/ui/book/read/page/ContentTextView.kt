@@ -139,17 +139,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         } else {
             ChapterProvider.contentPaint
         }
-        textPaint.color =
-            if (isReadAloud) context.accentColor else ReadBookConfig.textColor
+        val textColor = if (isReadAloud) context.accentColor else ReadBookConfig.textColor
         textChars.forEach {
             if (it.isImage) {
                 drawImage(canvas, it, lineTop, lineBottom, isImageLine)
             } else {
+                textPaint.color = textColor
                 if(it.isSearchResult) {
                     textPaint.color = context.accentColor
                 }
                 canvas.drawText(it.charData, it.start, lineBase, textPaint)
-                textPaint.color = ReadBookConfig.textColor
             }
             if (it.selected) {
                 canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
