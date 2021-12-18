@@ -17,6 +17,8 @@ import io.legado.app.help.http.*
 import io.legado.app.model.ConcurrentException
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.net.URLEncoder
 import java.util.*
@@ -207,7 +209,7 @@ class AnalyzeUrl(
                 }
             }
             RequestMethod.POST -> body?.let {
-                if (!it.isJson()) {
+                if (!it.isJson() && !it.isXml()) {
                     analyzeFields(it)
                 }
             }
@@ -391,8 +393,13 @@ class AnalyzeUrl(
                 when (method) {
                     RequestMethod.POST -> {
                         url(urlNoQuery)
+                        val contentType = headerMap["Content-Type"]
+                        val body = body
                         if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                             postForm(fieldMap, true)
+                        } else if (!contentType.isNullOrBlank()) {
+                            val requestBody = body.toRequestBody(contentType.toMediaType())
+                            post(requestBody)
                         } else {
                             postJson(body)
                         }
