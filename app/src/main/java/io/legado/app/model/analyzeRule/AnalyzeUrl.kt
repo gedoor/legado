@@ -435,8 +435,13 @@ class AnalyzeUrl(
             when (method) {
                 RequestMethod.POST -> {
                     url(urlNoQuery)
+                    val contentType = headerMap["Content-Type"]
+                    val body = body
                     if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                         postForm(fieldMap, true)
+                    } else if (!contentType.isNullOrBlank()) {
+                        val requestBody = body.toRequestBody(contentType.toMediaType())
+                        post(requestBody)
                     } else {
                         postJson(body)
                     }
@@ -466,8 +471,13 @@ class AnalyzeUrl(
             when (method) {
                 RequestMethod.POST -> {
                     url(urlNoQuery)
+                    val contentType = headerMap["Content-Type"]
+                    val body = body
                     if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
                         postForm(fieldMap, true)
+                    } else if (!contentType.isNullOrBlank()) {
+                        val requestBody = body.toRequestBody(contentType.toMediaType())
+                        post(requestBody)
                     } else {
                         postJson(body)
                     }
