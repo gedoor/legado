@@ -209,7 +209,7 @@ class AnalyzeUrl(
                 }
             }
             RequestMethod.POST -> body?.let {
-                if (!it.isJson() && !it.isXml()) {
+                if (!it.isJson() && !it.isXml() && headerMap["Content-Type"].isNullOrEmpty()) {
                     analyzeFields(it)
                 }
             }
