@@ -976,6 +976,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         textActionMenu.dismiss()
         binding.readView.onDestroy()
         ReadBook.msg = null
+        ReadBook.callBack = null
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
