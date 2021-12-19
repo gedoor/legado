@@ -43,7 +43,7 @@ val okHttpClient: OkHttpClient by lazy {
                 .build()
             chain.proceed(request)
         })
-    if (AppConfig.isCronet && CronetLoader.install() && !AppConfig.isGooglePlay) {
+    if (!AppConfig.isGooglePlay && AppConfig.isCronet && CronetLoader.install()) {
         builder.addInterceptor(CronetInterceptor(null))
     }
     builder.build()

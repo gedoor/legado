@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Build
 import android.text.TextUtils
-import com.google.android.gms.net.CronetProviderInstaller
 import io.legado.app.BuildConfig
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -57,9 +56,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             return true
         }
         if (AppConfig.isGooglePlay) {
-            //检查GMS的Cronet服务是否安装
-            cacheInstall = CronetProviderInstaller.isInstalled()
-            return cacheInstall
+            return false
         }
         if (md5.length != 32 || !soFile.exists() || md5 != getFileMD5(soFile)) {
             cacheInstall = false
@@ -75,7 +72,6 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
      */
     fun preDownload() {
         if (AppConfig.isGooglePlay) {
-            CronetProviderInstaller.installProvider(appCtx)
             return
         }
         Coroutine.async {

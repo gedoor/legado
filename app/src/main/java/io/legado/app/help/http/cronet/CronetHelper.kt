@@ -1,6 +1,5 @@
 package io.legado.app.help.http.cronet
 
-import com.google.android.gms.net.CronetProviderInstaller
 import io.legado.app.constant.AppLog
 import io.legado.app.help.AppConfig
 import okhttp3.Headers
@@ -20,9 +19,7 @@ import java.util.concurrent.Executors
 val executor: ExecutorService by lazy { Executors.newCachedThreadPool() }
 
 val cronetEngine: ExperimentalCronetEngine? by lazy {
-    if (AppConfig.isGooglePlay) {
-        CronetProviderInstaller.installProvider(appCtx)
-    } else {
+    if (!AppConfig.isGooglePlay) {
         CronetLoader.preDownload()
     }
     val builder = ExperimentalCronetEngine.Builder(appCtx).apply {
