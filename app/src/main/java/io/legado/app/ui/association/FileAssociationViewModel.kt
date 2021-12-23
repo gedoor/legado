@@ -4,16 +4,14 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.base.BaseViewModel
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
-
 import io.legado.app.utils.readText
 import timber.log.Timber
 import java.io.File
 
-class FileAssociationViewModel(application: Application) : BaseViewModel(application) {
+class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val onLineImportLive = MutableLiveData<Uri>()
     val importBookSourceLive = MutableLiveData<String>()
     val importRssSourceLive = MutableLiveData<String>()
@@ -21,7 +19,7 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
     val openBookLiveData = MutableLiveData<String>()
     val errorLiveData = MutableLiveData<String>()
 
-    fun dispatchIndent(uri: Uri) {
+    fun dispatchIndent(uri: Uri, finally: (title: String, msg: String) -> Unit) {
         execute {
             //如果是普通的url，需要根据返回的内容判断是什么
             if (uri.scheme == "file" || uri.scheme == "content") {
@@ -46,6 +44,13 @@ class FileAssociationViewModel(application: Application) : BaseViewModel(applica
                                 importReplaceRuleLive.postValue(it)
                                 return@execute
                             }
+                            content.contains("themeName") ->
+                                importTheme(content, finally)
+                            content.contains("name") && content.contains("rule") ->
+                                importTextTocRule(content, finally)
+                            content.contains("name") && content.contains("url") ->
+                                importHttpTTS(content, finally)
+                            else -> errorLiveData.postValue("格式不对")
                         }
                     }
                     val book = LocalBook.importFile(uri)

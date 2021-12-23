@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityTranslucenceBinding
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
@@ -50,7 +51,16 @@ class FileAssociationActivity :
             finish()
         })
         intent.data?.let { data ->
-            viewModel.dispatchIndent(data)
+            viewModel.dispatchIndent(data, this::finallyDialog)
+        }
+    }
+
+    private fun finallyDialog(title: String, msg: String) {
+        alert(title, msg) {
+            okButton()
+            onDismiss {
+                finish()
+            }
         }
     }
 
