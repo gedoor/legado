@@ -159,11 +159,11 @@ class OnLineImportViewModel(app: Application) : BaseViewModel(app) {
                         json.contains("replacement") ->
                             successLive.postValue(Pair("replaceRule", json))
                         json.contains("themeName") ->
-                            importTextTocRule(json, finally)
+                            importTheme(json, finally)
                         json.contains("name") && json.contains("rule") ->
                             importTextTocRule(json, finally)
                         json.contains("name") && json.contains("url") ->
-                            importTextTocRule(json, finally)
+                            importHttpTTS(json, finally)
                         else -> errorLive.postValue("格式不对")
                     }
                 }
