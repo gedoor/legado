@@ -1,5 +1,6 @@
 package io.legado.app.data.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookGroup
@@ -26,7 +27,7 @@ interface BookGroupDao {
         or (groupId = -1 and show > 0)
         ORDER BY `order`"""
     )
-    val show: Flow<List<BookGroup>>
+    val show: LiveData<List<BookGroup>>
 
     @Query("SELECT * FROM book_groups where groupId >= 0 ORDER BY `order`")
     fun flowSelect(): Flow<List<BookGroup>>
