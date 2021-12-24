@@ -17,7 +17,6 @@ import io.legado.app.model.CacheBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
-
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.concurrent.CopyOnWriteArraySet

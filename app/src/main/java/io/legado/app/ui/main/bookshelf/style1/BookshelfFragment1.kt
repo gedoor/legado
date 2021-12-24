@@ -76,7 +76,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     private fun initBookGroupData() {
         groupsFlowJob?.cancel()
         groupsFlowJob = launch {
-            appDb.bookGroupDao.flowShow().collect {
+            appDb.bookGroupDao.show.collect {
                 upGroup(it)
             }
         }

@@ -100,7 +100,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     private fun initGroupData() {
         groupsFlowJob?.cancel()
         groupsFlowJob = launch {
-            appDb.bookGroupDao.flowShow().collect {
+            appDb.bookGroupDao.show.collect {
                 if (it != bookGroups) {
                     bookGroups = it
                     booksAdapter.notifyDataSetChanged()

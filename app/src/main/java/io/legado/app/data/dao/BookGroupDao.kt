@@ -17,7 +17,7 @@ interface BookGroupDao {
     @Query("SELECT * FROM book_groups ORDER BY `order`")
     fun flowAll(): Flow<List<BookGroup>>
 
-    @Query(
+    @get:Query(
         """
         SELECT * FROM book_groups where (groupId >= 0 and show > 0)
         or (groupId = -4 and show > 0 and (select count(bookUrl) from books where type != ${BookType.audio} and origin != '${BookType.local}' and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0) > 0)
@@ -26,7 +26,7 @@ interface BookGroupDao {
         or (groupId = -1 and show > 0)
         ORDER BY `order`"""
     )
-    fun flowShow(): Flow<List<BookGroup>>
+    val show: Flow<List<BookGroup>>
 
     @Query("SELECT * FROM book_groups where groupId >= 0 ORDER BY `order`")
     fun flowSelect(): Flow<List<BookGroup>>
