@@ -14,13 +14,13 @@ import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class TextFile {
+class TextFile(private val book: Book) {
 
     private val tocRules = arrayListOf<TxtTocRule>()
     private lateinit var charset: Charset
 
     @Throws(Exception::class)
-    fun analyze(book: Book): ArrayList<BookChapter> {
+    fun getChapterList(): ArrayList<BookChapter> {
         val bookFile = getBookFile(book)
         if (book.charset == null) {
             book.charset = EncodingDetect.getEncode(bookFile)
@@ -248,6 +248,10 @@ class TextFile {
 
         //没有标题的时候，每个章节的最大长度
         private const val MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024
+
+        fun getChapterList(book: Book): ArrayList<BookChapter> {
+            return TextFile(book).getChapterList()
+        }
 
         fun getContent(book: Book, bookChapter: BookChapter): String {
             val bookFile = getBookFile(book)

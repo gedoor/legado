@@ -34,7 +34,7 @@ object LocalBook {
                 UmdFile.getChapterList(book)
             }
             else -> {
-                TextFile().analyze(book)
+                TextFile.getChapterList(book)
             }
         }
         if (chapters.isEmpty()) {
