@@ -1,6 +1,8 @@
 package io.legado.app.model.localBook
 
 import android.net.Uri
+import android.system.Os
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -8,8 +10,7 @@ import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.*
 import splitties.init.appCtx
-import java.io.File
-import java.io.RandomAccessFile
+import java.io.*
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -253,22 +254,33 @@ class TextFile(private val book: Book) {
             return TextFile(book).getChapterList()
         }
 
+        @Throws(FileNotFoundException::class)
         fun getContent(book: Book, bookChapter: BookChapter): String {
-            val bookFile = getBookFile(book)
-            //获取文件流
-            val bookStream = RandomAccessFile(bookFile, "r")
-            val content = ByteArray((bookChapter.end!! - bookChapter.start!!).toInt())
-            bookStream.seek(bookChapter.start!!)
-            bookStream.read(content)
+            val count = (bookChapter.end!! - bookChapter.start!!).toInt()
+            val content = ByteArray(count)
+            Os.read(getBookFD(book), content, bookChapter.start!!.toInt(), count)
             return String(content, book.fileCharset())
                 .substringAfter(bookChapter.title)
                 .replace("^[\\n\\s]+".toRegex(), "　　")
+        }
+
+        @Throws(FileNotFoundException::class)
+        private fun getBookFD(book: Book): FileDescriptor? {
+            if (book.bookUrl.isContentScheme()) {
+                val uri = Uri.parse(book.bookUrl)
+                return appCtx.contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor
+            }
+            return FileInputStream(File(book.bookUrl)).fd
         }
 
         private fun getBookFile(book: Book): File {
             if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
                 val bookFile = LocalBook.cacheFolder.getFile(book.originName)
+                val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
+                if (bookFile.exists() && bookFile.lastModified() >= doc.lastModified()) {
+                    return bookFile
+                }
                 if (!bookFile.exists()) {
                     bookFile.createNewFile()
                     DocumentUtils.readBytes(appCtx, uri).let {

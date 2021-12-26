@@ -44,16 +44,20 @@ object LocalBook {
     }
 
     fun getContent(book: Book, chapter: BookChapter): String? {
-        return when {
-            book.isEpub() -> {
-                EpubFile.getContent(book, chapter)
+        return try {
+            when {
+                book.isEpub() -> {
+                    EpubFile.getContent(book, chapter)
+                }
+                book.isUmd() -> {
+                    UmdFile.getContent(book, chapter)
+                }
+                else -> {
+                    TextFile.getContent(book, chapter)
+                }
             }
-            book.isUmd() -> {
-                UmdFile.getContent(book, chapter)
-            }
-            else -> {
-                TextFile.getContent(book, chapter)
-            }
+        } catch (e: Exception) {
+            e.localizedMessage
         }
     }
 
