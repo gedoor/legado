@@ -32,18 +32,12 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                     if (it.isJson()) {
                         //暂时根据文件内容判断属于什么
                         when {
-                            content.contains("bookSourceUrl") -> {
+                            content.contains("bookSourceUrl") ->
                                 importBookSourceLive.postValue(it)
-                                return@execute
-                            }
-                            content.contains("sourceUrl") -> {
+                            content.contains("sourceUrl") ->
                                 importRssSourceLive.postValue(it)
-                                return@execute
-                            }
-                            content.contains("pattern") -> {
+                            content.contains("pattern") ->
                                 importReplaceRuleLive.postValue(it)
-                                return@execute
-                            }
                             content.contains("themeName") ->
                                 importTheme(content, finally)
                             content.contains("name") && content.contains("rule") ->
@@ -52,9 +46,10 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                                 importHttpTTS(content, finally)
                             else -> errorLiveData.postValue("格式不对")
                         }
+                    } else {
+                        val book = LocalBook.importFile(uri)
+                        openBookLiveData.postValue(book.bookUrl)
                     }
-                    val book = LocalBook.importFile(uri)
-                    openBookLiveData.postValue(book.bookUrl)
                 } ?: throw NoStackTraceException("文件不存在")
             } else {
                 onLineImportLive.postValue(uri)
