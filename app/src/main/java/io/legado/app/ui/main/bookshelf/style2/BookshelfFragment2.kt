@@ -52,7 +52,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         }
     }
     private var bookGroups: List<BookGroup> = emptyList()
-    private var groupsFlowJob: Job? = null
     private var booksFlowJob: Job? = null
     override var groupId = AppConst.bookGroupNoneId
     override var books: List<Book> = emptyList()
@@ -60,7 +59,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(binding.titleBar.toolbar)
         initRecyclerView()
-        initGroupData()
+        initBookGroupData()
         initBooksData()
     }
 
@@ -97,16 +96,11 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun initGroupData() {
-        groupsFlowJob?.cancel()
-        groupsFlowJob = launch {
-            appDb.bookGroupDao.flowShow().collect {
-                if (it != bookGroups) {
-                    bookGroups = it
-                    booksAdapter.notifyDataSetChanged()
-                    binding.tvEmptyMsg.isGone = getItemCount() > 0
-                }
-            }
+    override fun upGroup(data: List<BookGroup>) {
+        if (data != bookGroups) {
+            bookGroups = data
+            booksAdapter.notifyDataSetChanged()
+            binding.tvEmptyMsg.isGone = getItemCount() > 0
         }
     }
 

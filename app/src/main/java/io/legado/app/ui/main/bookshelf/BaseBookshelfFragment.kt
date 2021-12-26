@@ -5,11 +5,14 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.DialogBookshelfConfigBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
@@ -60,6 +63,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     }
     abstract val groupId: Long
     abstract val books: List<Book>
+    private var groupsLiveData: LiveData<List<BookGroup>>? = null
 
     abstract fun gotoTop()
 
@@ -92,6 +96,17 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
     }
+
+    protected fun initBookGroupData() {
+        groupsLiveData?.removeObservers(viewLifecycleOwner)
+        groupsLiveData = appDb.bookGroupDao.show.apply {
+            observe(viewLifecycleOwner) {
+                upGroup(it)
+            }
+        }
+    }
+
+    abstract fun upGroup(data: List<BookGroup>)
 
     @SuppressLint("InflateParams")
     fun addBookByUrl() {
