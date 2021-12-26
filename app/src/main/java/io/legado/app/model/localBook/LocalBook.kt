@@ -34,7 +34,7 @@ object LocalBook {
                 UmdFile.getChapterList(book)
             }
             else -> {
-                TextFile().analyze(book)
+                TextFile.getChapterList(book)
             }
         }
         if (chapters.isEmpty()) {
@@ -59,23 +59,25 @@ object LocalBook {
 
     fun importFile(uri: Uri): Book {
         val path: String
+        val updateTime: Long
         //这个变量不要修改,否则会导致读取不到缓存
         val fileName = (if (uri.isContentScheme()) {
             path = uri.toString()
-            val doc = DocumentFile.fromSingleUri(appCtx, uri)
-            doc?.let {
-                val bookFile = cacheFolder.getFile(it.name!!)
-                if (!bookFile.exists()) {
-                    bookFile.createNewFile()
-                    doc.readBytes(appCtx).let { bytes ->
-                        bookFile.writeBytes(bytes)
-                    }
+            val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
+            updateTime = doc.lastModified()
+            val bookFile = cacheFolder.getFile(doc.name!!)
+            if (!bookFile.exists()) {
+                bookFile.createNewFile()
+                doc.readBytes(appCtx).let { bytes ->
+                    bookFile.writeBytes(bytes)
                 }
             }
-            doc?.name!!
+            doc.name!!
         } else {
             path = uri.path!!
-            File(path).name
+            val file = File(path)
+            updateTime = file.lastModified()
+            file.name
         })
         var book = appDb.bookDao.getBook(path)
         if (book == null) {
@@ -89,7 +91,8 @@ object LocalBook {
                     appCtx.externalFiles,
                     "covers",
                     "${MD5Utils.md5Encode16(path)}.jpg"
-                )
+                ),
+                latestChapterTime = updateTime
             )
             if (book.isEpub()) EpubFile.upBookInfo(book)
             if (book.isUmd()) UmdFile.upBookInfo(book)
