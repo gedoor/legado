@@ -13,6 +13,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.TocEmptyException
 import io.legado.app.utils.*
 import splitties.init.appCtx
+import timber.log.Timber
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -57,6 +58,7 @@ object LocalBook {
                 }
             }
         } catch (e: Exception) {
+            Timber.e(e)
             e.localizedMessage
         }
     }

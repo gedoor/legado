@@ -223,5 +223,5 @@ dependencies {
     //epubLib集成到应用内
 
     // LeakCanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }
