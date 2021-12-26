@@ -121,7 +121,7 @@ object BookContent {
         if (contentStr.isBlank()) {
             throw ContentEmptyException("内容为空")
         }
-        BookHelp.saveContent(bookSource, book, bookChapter, contentStr)
+        BookHelp.saveContent(scope, bookSource, book, bookChapter, contentStr)
         return contentStr
     }
 

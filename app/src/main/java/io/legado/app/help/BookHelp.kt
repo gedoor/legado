@@ -10,6 +10,9 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
@@ -57,7 +60,19 @@ object BookHelp {
         }
     }
 
-    fun saveContent(
+    suspend fun saveContent(
+        scope: CoroutineScope,
+        bookSource: BookSource,
+        book: Book,
+        bookChapter: BookChapter,
+        content: String
+    ) {
+        saveText(book, bookChapter, content)
+        saveImages(scope, bookSource, book, bookChapter, content)
+        postEvent(EventBus.SAVE_CONTENT, bookChapter)
+    }
+
+    private fun saveText(
         book: Book,
         bookChapter: BookChapter,
         content: String
@@ -72,24 +87,28 @@ object BookHelp {
         ).writeText(content)
     }
 
-    suspend fun saveContent(
+    private suspend fun saveImages(
+        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
         content: String
     ) {
-        saveContent(book, bookChapter, content)
-        //保存图片
+        val awaitList = arrayListOf<Deferred<Unit>>()
         content.split("\n").forEach {
             val matcher = AppPattern.imgPattern.matcher(it)
             if (matcher.find()) {
                 matcher.group(1)?.let { src ->
                     val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                    saveImage(bookSource, book, mSrc)
+                    awaitList.add(scope.async {
+                        saveImage(bookSource, book, mSrc)
+                    })
                 }
             }
         }
-        postEvent(EventBus.SAVE_CONTENT, bookChapter)
+        awaitList.forEach {
+            it.await()
+        }
     }
 
     suspend fun saveImage(bookSource: BookSource?, book: Book, src: String) {
@@ -194,7 +213,7 @@ object BookHelp {
         } else if (book.isEpub() && !hasContent(book, bookChapter)) {
             val string = LocalBook.getContent(book, bookChapter)
             string?.let {
-                saveContent(book, bookChapter, it)
+                saveText(book, bookChapter, it)
             }
             return string
         } else {
