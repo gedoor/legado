@@ -22,7 +22,7 @@ class TextFile(private val book: Book) {
     private val tocRules = arrayListOf<TxtTocRule>()
     private lateinit var charset: Charset
 
-    @Throws(Exception::class)
+    @Throws(FileNotFoundException::class)
     fun getChapterList(): ArrayList<BookChapter> {
         val bookFile = getBookFile(book)
         if (book.charset == null) {
@@ -40,7 +40,7 @@ class TextFile(private val book: Book) {
         }
     }
 
-    @Throws(Exception::class)
+    @Throws(FileNotFoundException::class)
     private fun analyze(
         bookIs: InputStream,
         book: Book,
@@ -249,6 +249,7 @@ class TextFile(private val book: Book) {
         //没有标题的时候，每个章节的最大长度
         private const val MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024
 
+        @Throws(FileNotFoundException::class)
         fun getChapterList(book: Book): ArrayList<BookChapter> {
             return TextFile(book).getChapterList()
         }

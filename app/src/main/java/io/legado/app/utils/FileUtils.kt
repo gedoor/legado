@@ -295,7 +295,7 @@ object FileUtils {
             //返回当前目录所有以某些扩展名结尾的文件
             val extension = getExtension(name)
             allowExtensions?.contentDeepToString()?.contains(extension) == true
-                    || allowExtensions == null
+                || allowExtensions == null
         }
     }
 
@@ -382,21 +382,14 @@ object FileUtils {
     fun copy(src: File, tar: File): Boolean {
         try {
             if (src.isFile) {
-                val `is` = FileInputStream(src)
-                val op = FileOutputStream(tar)
-                val bis = BufferedInputStream(`is`)
-                val bos = BufferedOutputStream(op)
-                val bt = ByteArray(1024 * 8)
-                while (true) {
-                    val len = bis.read(bt)
-                    if (len == -1) {
-                        break
-                    } else {
-                        bos.write(bt, 0, len)
+                val inputStream = FileInputStream(src)
+                val outputStream = FileOutputStream(tar)
+                inputStream.use {
+                    outputStream.use {
+                        inputStream.copyTo(outputStream)
+                        outputStream.flush()
                     }
                 }
-                bis.close()
-                bos.close()
             } else if (src.isDirectory) {
                 tar.mkdirs()
                 src.listFiles()?.forEach { file ->
@@ -461,18 +454,18 @@ object FileUtils {
         var fis: FileInputStream? = null
         try {
             fis = FileInputStream(filepath)
-            val baos = ByteArrayOutputStream()
+            val outputStream = ByteArrayOutputStream()
             val buffer = ByteArray(1024)
             while (true) {
                 val len = fis.read(buffer, 0, buffer.size)
                 if (len == -1) {
                     break
                 } else {
-                    baos.write(buffer, 0, len)
+                    outputStream.write(buffer, 0, len)
                 }
             }
-            val data = baos.toByteArray()
-            baos.close()
+            val data = outputStream.toByteArray()
+            outputStream.close()
             return data
         } catch (e: IOException) {
             return null
@@ -527,30 +520,20 @@ object FileUtils {
      * 保存文件内容
      */
     fun writeInputStream(file: File, data: InputStream): Boolean {
-        var fos: FileOutputStream? = null
         return try {
             if (!file.exists()) {
                 file.parentFile?.mkdirs()
                 file.createNewFile()
             }
-            val buffer = ByteArray(1024 * 4)
-            fos = FileOutputStream(file)
-            while (true) {
-                val len = data.read(buffer, 0, buffer.size)
-                if (len == -1) {
-                    break
-                } else {
-                    fos.write(buffer, 0, len)
+            data.use {
+                FileOutputStream(file).use { fos ->
+                    data.copyTo(fos)
+                    fos.flush()
                 }
             }
-            data.close()
-            fos.flush()
-
             true
         } catch (e: IOException) {
             false
-        } finally {
-            closeSilently(fos)
         }
     }
 
@@ -562,7 +545,6 @@ object FileUtils {
         var writer: FileWriter? = null
         return try {
             if (!file.exists()) {
-
                 file.createNewFile()
             }
             writer = FileWriter(file, true)
@@ -671,15 +653,9 @@ object FileUtils {
         val stamp1 = File(path1).lastModified()
         val stamp2 = File(path2).lastModified()
         return when {
-            stamp1 > stamp2 -> {
-                1
-            }
-            stamp1 < stamp2 -> {
-                -1
-            }
-            else -> {
-                0
-            }
+            stamp1 > stamp2 -> 1
+            stamp1 < stamp2 -> -1
+            else -> 0
         }
     }
 
@@ -701,11 +677,7 @@ object FileUtils {
 
         override fun compare(f1: File?, f2: File?): Int {
             return if (f1 == null || f2 == null) {
-                if (f1 == null) {
-                    -1
-                } else {
-                    1
-                }
+                if (f1 == null) -1 else 1
             } else {
                 if (f1.isDirectory && f2.isFile) {
                     -1

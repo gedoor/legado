@@ -104,13 +104,7 @@ class FileAssociationActivity :
                         val nDoc = treeDoc.createFile(FileUtils.getMimeType(name), name)!!
                         contentResolver.openOutputStream(nDoc.uri)!!.use { oStream ->
                             contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
-                                val brr = ByteArray(1024)
-                                var len: Int
-                                while ((iStream.read(brr, 0, brr.size)
-                                        .also { len = it }) != -1
-                                ) {
-                                    oStream.write(brr, 0, len)
-                                }
+                                iStream.copyTo(oStream)
                                 oStream.flush()
                             }
                         }
