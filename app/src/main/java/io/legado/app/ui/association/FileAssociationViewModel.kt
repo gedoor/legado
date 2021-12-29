@@ -1,30 +1,24 @@
 package io.legado.app.ui.association
 
 import android.app.Application
-import android.app.RecoverableSecurityException
-import android.content.IntentSender
 import android.net.Uri
-import android.os.Build
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.help.BookMediaStore
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isJson
 import io.legado.app.utils.readText
-import splitties.init.appCtx
 import timber.log.Timber
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
+    val importBookLiveData = MutableLiveData<Uri>()
     val onLineImportLive = MutableLiveData<Uri>()
     val importBookSourceLive = MutableLiveData<String>()
     val importRssSourceLive = MutableLiveData<String>()
     val importReplaceRuleLive = MutableLiveData<String>()
     val openBookLiveData = MutableLiveData<String>()
     val errorLiveData = MutableLiveData<String>()
-    val recoverErrorLiveData = MutableLiveData<IntentSender>()
 
     @Suppress("BlockingMethodInNonBlockingContext")
     fun dispatchIndent(uri: Uri, finally: (title: String, msg: String) -> Unit) {
@@ -54,51 +48,19 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                         else -> errorLiveData.postValue("格式不对")
                     }
                 } else {
-                    if (uri.isContentScheme()) {
-                        val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
-                        val bookDoc = BookMediaStore.getBook(doc.name!!)
-                        if (bookDoc == null) {
-                            val bookUri = BookMediaStore.insertBook(doc)
-                            val book = LocalBook.importFile(bookUri!!)
-                            openBookLiveData.postValue(book.bookUrl)
-                        } else {
-                            if (doc.lastModified() > bookDoc.date.time) {
-                                context.contentResolver.openOutputStream(bookDoc.uri)
-                                    .use { outputStream ->
-                                        val brr = ByteArray(1024)
-                                        var len: Int
-                                        val bufferedInputStream =
-                                            appCtx.contentResolver.openInputStream(doc.uri)!!
-                                        while ((bufferedInputStream.read(brr, 0, brr.size)
-                                                .also { len = it }) != -1
-                                        ) {
-                                            outputStream?.write(brr, 0, len)
-                                        }
-                                        outputStream?.flush()
-                                        bufferedInputStream.close()
-                                    }
-                            }
-                            val book = LocalBook.importFile(bookDoc.uri)
-                            openBookLiveData.postValue(book.bookUrl)
-                        }
-                    } else {
-                        val book = LocalBook.importFile(uri)
-                        openBookLiveData.postValue(book.bookUrl)
-                    }
+                    importBookLiveData.postValue(uri)
                 }
             } else {
                 onLineImportLive.postValue(uri)
             }
         }.onError {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                if (it is RecoverableSecurityException) {
-                    val intentSender = it.userAction.actionIntent.intentSender
-                    recoverErrorLiveData.postValue(intentSender)
-                    return@onError
-                }
-            }
             Timber.e(it)
             errorLiveData.postValue(it.localizedMessage)
         }
+    }
+
+    fun importBook(uri: Uri) {
+        val book = LocalBook.importFile(uri)
+        openBookLiveData.postValue(book.bookUrl)
     }
 }

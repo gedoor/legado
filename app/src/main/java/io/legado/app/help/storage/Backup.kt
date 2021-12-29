@@ -20,7 +20,7 @@ import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
 
 
-object Backup {
+object Backup : BackupRestore() {
 
     val backupPath: String by lazy {
         appCtx.filesDir.getFile("backup").absolutePath
@@ -90,12 +90,14 @@ object Backup {
             Preferences.getSharedPreferences(appCtx, backupPath, "config")?.let { sp ->
                 val edit = sp.edit()
                 appCtx.defaultSharedPreferences.all.forEach { (key, value) ->
-                    when (value) {
-                        is Int -> edit.putInt(key, value)
-                        is Boolean -> edit.putBoolean(key, value)
-                        is Long -> edit.putLong(key, value)
-                        is Float -> edit.putFloat(key, value)
-                        is String -> edit.putString(key, value)
+                    if (keyIsNotIgnore(key)) {
+                        when (value) {
+                            is Int -> edit.putInt(key, value)
+                            is Boolean -> edit.putBoolean(key, value)
+                            is Long -> edit.putLong(key, value)
+                            is Float -> edit.putFloat(key, value)
+                            is String -> edit.putString(key, value)
+                        }
                     }
                 }
                 edit.commit()

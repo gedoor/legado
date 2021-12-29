@@ -90,6 +90,7 @@ object PreferKey {
     const val expandTextMenu = "expandTextMenu"
     const val doublePageHorizontal = "doublePageHorizontal"
     const val readUrlOpenInBrowser = "readUrlInBrowser"
+    const val defaultBookTreeUri = "defaultBookTreeUri"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

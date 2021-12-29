@@ -20,6 +20,7 @@ import java.util.regex.Pattern
 import javax.script.SimpleBindings
 
 object LocalBook {
+
     private const val folderName = "bookTxt"
     val cacheFolder: File by lazy {
         FileUtils.createFolderIfNotExist(appCtx.externalFiles, folderName)

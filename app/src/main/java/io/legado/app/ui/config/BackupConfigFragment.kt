@@ -207,7 +207,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             PreferKey.backupPath -> selectBackupPath.launch()
-            PreferKey.restoreIgnore -> restoreIgnore()
+            PreferKey.restoreIgnore -> backupIgnore()
             "web_dav_backup" -> backup()
             "web_dav_restore" -> restore()
             "import_old" -> restoreOld.launch()
@@ -216,16 +216,16 @@ class BackupConfigFragment : BasePreferenceFragment(),
     }
 
 
-    private fun restoreIgnore() {
-        val checkedItems = BooleanArray(Restore.ignoreKeys.size) {
-            Restore.ignoreConfig[Restore.ignoreKeys[it]] ?: false
+    private fun backupIgnore() {
+        val checkedItems = BooleanArray(Backup.ignoreKeys.size) {
+            Backup.ignoreConfig[Backup.ignoreKeys[it]] ?: false
         }
         alert(R.string.restore_ignore) {
-            multiChoiceItems(Restore.ignoreTitle, checkedItems) { _, which, isChecked ->
-                Restore.ignoreConfig[Restore.ignoreKeys[which]] = isChecked
+            multiChoiceItems(Backup.ignoreTitle, checkedItems) { _, which, isChecked ->
+                Backup.ignoreConfig[Backup.ignoreKeys[which]] = isChecked
             }
             onDismiss {
-                Restore.saveIgnoreConfig()
+                Backup.saveIgnoreConfig()
             }
         }
     }
