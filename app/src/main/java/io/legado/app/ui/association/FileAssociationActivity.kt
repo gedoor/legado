@@ -27,7 +27,7 @@ class FileAssociationActivity :
             intent.data?.let { uri ->
                 importBook(treeUri, uri)
             }
-        }
+        } ?: finish()
     }
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
