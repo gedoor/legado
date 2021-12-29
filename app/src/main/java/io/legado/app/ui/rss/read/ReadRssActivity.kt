@@ -101,6 +101,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 putExtra("type", "rssSource")
                 putExtra("key", viewModel.rssSource?.loginUrl)
             }
+            R.id.menu_browser_open -> binding.webView.url?.let {
+                openUrl(it)
+            } ?: toastOnUi("url null")
         }
         return super.onCompatOptionsItemSelected(item)
     }

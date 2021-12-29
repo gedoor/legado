@@ -30,4 +30,9 @@
         android:title="@string/login"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_browser_open"
+        android:title="@string/open_in_browser"
+        app:showAsAction="never" />
+
 </menu>
