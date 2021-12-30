@@ -1,13 +1,15 @@
 package io.legado.app.model.localBook
 
 import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
-import io.legado.app.utils.*
+import io.legado.app.utils.EncodingDetect
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.StringUtils
+import io.legado.app.utils.isContentScheme
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileInputStream
@@ -24,18 +26,19 @@ class TextFile(private val book: Book) {
 
     @Throws(FileNotFoundException::class)
     fun getChapterList(): ArrayList<BookChapter> {
-        val bookFile = getBookFile(book)
-        if (book.charset == null) {
-            book.charset = EncodingDetect.getEncode(bookFile)
-        }
-        charset = book.fileCharset()
-        val rulePattern = if (book.tocUrl.isNotEmpty()) {
-            Pattern.compile(book.tocUrl, Pattern.MULTILINE)
-        } else {
-            tocRules.addAll(getTocRules())
-            null
-        }
         return getBookInputStream(book).use {
+            val buffer = ByteArray(BUFFER_SIZE)
+            it.read(buffer, 0, buffer.size)
+            if (book.charset == null) {
+                book.charset = EncodingDetect.getEncode(buffer)
+            }
+            charset = book.fileCharset()
+            val rulePattern = if (book.tocUrl.isNotEmpty()) {
+                Pattern.compile(book.tocUrl, Pattern.MULTILINE)
+            } else {
+                tocRules.addAll(getTocRules())
+                null
+            }
             analyze(it, book, rulePattern)
         }
     }
@@ -274,25 +277,6 @@ class TextFile(private val book: Book) {
                 return appCtx.contentResolver.openInputStream(uri)!!
             }
             return FileInputStream(File(book.bookUrl))
-        }
-
-        private fun getBookFile(book: Book): File {
-            if (book.bookUrl.isContentScheme()) {
-                val uri = Uri.parse(book.bookUrl)
-                val bookFile = LocalBook.cacheFolder.getFile(book.originName)
-                val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
-                if (bookFile.exists() && bookFile.lastModified() >= doc.lastModified()) {
-                    return bookFile
-                }
-                if (!bookFile.exists()) {
-                    bookFile.createNewFile()
-                    DocumentUtils.readBytes(appCtx, uri).let {
-                        bookFile.writeBytes(it)
-                    }
-                }
-                return bookFile
-            }
-            return File(book.bookUrl)
         }
 
         private fun getTocRules(): List<TxtTocRule> {
