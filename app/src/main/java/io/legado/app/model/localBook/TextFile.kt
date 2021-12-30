@@ -28,7 +28,7 @@ class TextFile(private val book: Book) {
     fun getChapterList(): ArrayList<BookChapter> {
         return getBookInputStream(book).use {
             val buffer = ByteArray(BUFFER_SIZE)
-            it.read(buffer, 0, buffer.size)
+            it.read(buffer)
             if (book.charset == null) {
                 book.charset = EncodingDetect.getEncode(buffer)
             }
@@ -54,7 +54,7 @@ class TextFile(private val book: Book) {
         val buffer = ByteArray(BUFFER_SIZE)
         val rulePattern = pattern ?: let {
             bookIs.skip(0)
-            val length = bookIs.read(buffer, 0, buffer.size)
+            val length = bookIs.read(buffer)
             val content = String(buffer, 0, length, charset)
             tocRule = getTocRule(content)
             tocRule?.let {
@@ -72,7 +72,7 @@ class TextFile(private val book: Book) {
         var allLength = 0
 
         //获取文件中的数据到buffer，直到没有数据为止
-        while (bookIs.read(buffer, 0, BUFFER_SIZE).also { length = it } > 0) {
+        while (bookIs.read(buffer).also { length = it } > 0) {
             blockPos++
             //如果存在Chapter
             if (rulePattern != null) {
@@ -263,7 +263,7 @@ class TextFile(private val book: Book) {
             val content = ByteArray(count)
             getBookInputStream(book).use {
                 it.skip(bookChapter.start!!)
-                it.read(content, 0, count)
+                it.read(content)
             }
             return String(content, book.fileCharset())
                 .substringAfter(bookChapter.title)
