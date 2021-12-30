@@ -26,6 +26,7 @@ class FileAssociationActivity :
 
     private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { treeUri ->
+            AppConfig.defaultBookTreeUri = treeUri.toString()
             intent.data?.let { uri ->
                 importBook(treeUri, uri)
             }
