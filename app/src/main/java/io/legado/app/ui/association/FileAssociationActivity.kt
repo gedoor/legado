@@ -18,6 +18,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 class FileAssociationActivity :
     VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>() {
@@ -91,23 +93,42 @@ class FileAssociationActivity :
     }
 
     private fun importBook(treeUri: Uri, uri: Uri) {
-        val treeDoc = DocumentFile.fromTreeUri(this, treeUri)
-        val bookDoc = DocumentFile.fromSingleUri(this, uri)
         launch {
             runCatching {
-                withContext(IO) {
-                    val name = bookDoc?.name!!
-                    val doc = treeDoc!!.findFile(name)
-                    if (doc != null) {
-                        viewModel.importBook(doc.uri)
-                    } else {
-                        val nDoc = treeDoc.createFile(FileUtils.getMimeType(name), name)!!
-                        contentResolver.openOutputStream(nDoc.uri)!!.use { oStream ->
-                            contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
-                                iStream.copyTo(oStream)
-                                oStream.flush()
+                if (treeUri.isContentScheme()) {
+                    val treeDoc = DocumentFile.fromTreeUri(this@FileAssociationActivity, treeUri)
+                    val bookDoc = DocumentFile.fromSingleUri(this@FileAssociationActivity, uri)
+                    withContext(IO) {
+                        val name = bookDoc?.name!!
+                        val doc = treeDoc!!.findFile(name)
+                        if (doc != null) {
+                            viewModel.importBook(doc.uri)
+                        } else {
+                            val nDoc = treeDoc.createFile(FileUtils.getMimeType(name), name)!!
+                            contentResolver.openOutputStream(nDoc.uri)!!.use { oStream ->
+                                contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
+                                    iStream.copyTo(oStream)
+                                    oStream.flush()
+                                }
+                            }
+                            viewModel.importBook(nDoc.uri)
+                        }
+                    }
+                } else {
+                    val treeFile = File(treeUri.path!!)
+                    val bookDoc = DocumentFile.fromSingleUri(this@FileAssociationActivity, uri)
+                    withContext(IO) {
+                        val name = bookDoc?.name!!
+                        val file = treeFile.getFile(name)
+                        if (!file.exists() || file.lastModified() < bookDoc.lastModified()) {
+                            FileOutputStream(file).use { oStream ->
+                                contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
+                                    iStream.copyTo(oStream)
+                                    oStream.flush()
+                                }
                             }
                         }
+                        viewModel.importBook(Uri.fromFile(file))
                     }
                 }
             }.onFailure {
