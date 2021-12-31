@@ -51,7 +51,6 @@ class TextFile(private val book: Book) {
         }
     }
 
-    @Throws(FileNotFoundException::class)
     private fun analyze(
         bookFd: FileDescriptor,
         book: Book,

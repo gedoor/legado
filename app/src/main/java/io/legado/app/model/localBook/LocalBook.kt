@@ -72,13 +72,6 @@ object LocalBook {
             path = uri.toString()
             val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
             updateTime = doc.lastModified()
-            val bookFile = cacheFolder.getFile(doc.name!!)
-            if (!bookFile.exists()) {
-                bookFile.createNewFile()
-                doc.readBytes(appCtx).let { bytes ->
-                    bookFile.writeBytes(bytes)
-                }
-            }
             doc.name!!
         } else {
             path = uri.path!!
