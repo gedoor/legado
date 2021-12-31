@@ -8,15 +8,11 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
-import io.legado.app.utils.EncodingDetect
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.StringUtils
-import io.legado.app.utils.isContentScheme
+import io.legado.app.model.localBook.LocalBook.cacheFolder
+import io.legado.app.utils.*
 import splitties.init.appCtx
-import java.io.File
-import java.io.FileDescriptor
-import java.io.FileInputStream
-import java.io.FileNotFoundException
+import java.io.*
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -55,6 +51,7 @@ class TextFile(private val book: Book) {
         val buffer = ByteArray(BUFFER_SIZE)
         var blockContent = ""
         if (book.charset == null) {
+            Os.lseek(bookFd, 0, SEEK_SET)
             val length = Os.read(bookFd, buffer, 0, BUFFER_SIZE)
             book.charset = EncodingDetect.getEncode(buffer)
             blockContent = String(buffer, 0, length, charset)
@@ -80,14 +77,14 @@ class TextFile(private val book: Book) {
         //读取的长度
         var length: Int
         var allLength = 0
-
+        val xx = ByteBuffer.allocate(BUFFER_SIZE)
         //获取文件中的数据到buffer，直到没有数据为止
-        while (Os.read(bookFd, buffer, 0, BUFFER_SIZE).also { length = it } > 0) {
+        while (Os.read(bookFd, xx).also { length = it } > 0) {
             blockPos++
             //如果存在Chapter
             if (rulePattern != null) {
                 //将数据转换成String, 不能超过length
-                blockContent = String(buffer, 0, length, charset)
+                blockContent = String(xx.array(), 0, length, charset)
                 val lastN = blockContent.lastIndexOf("\n")
                 if (lastN > 0) {
                     blockContent = blockContent.substring(0, lastN)
@@ -238,17 +235,24 @@ class TextFile(private val book: Book) {
         return toc
     }
 
+    /**
+     * 获取匹配次数最多的目录规则
+     */
     private fun getTocRule(content: String): TxtTocRule? {
         var txtTocRule: TxtTocRule? = null
+        var maxCs = 0
         for (tocRule in tocRules) {
             val pattern = Pattern.compile(tocRule.rule, Pattern.MULTILINE)
             val matcher = pattern.matcher(content)
-            if (matcher.find()) {
+            var cs = 0
+            while (matcher.find()) {
+                cs++
+            }
+            if (cs > maxCs) {
+                maxCs = cs
                 txtTocRule = tocRule
-                break
             }
         }
-
         return txtTocRule
     }
 
@@ -288,7 +292,18 @@ class TextFile(private val book: Book) {
         private fun getBookFD(book: Book): FileDescriptor {
             if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
-                return appCtx.contentResolver.openFileDescriptor(uri, "r")!!.fileDescriptor
+                val bookFile = cacheFolder.getFile(book.name)
+                if (!bookFile.exists()) {
+                    bookFile.createNewFile()
+                    appCtx.contentResolver.openInputStream(uri).use { iStream ->
+                        FileOutputStream(bookFile).use { oStream ->
+                            iStream?.copyTo(oStream)
+                            oStream.flush()
+                        }
+                    }
+                }
+                return FileInputStream(bookFile).fd
+                //return appCtx.contentResolver.openFileDescriptor(uri, "r")!!.fileDescriptor
             }
             return FileInputStream(File(book.bookUrl)).fd
         }
