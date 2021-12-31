@@ -24,18 +24,12 @@ import java.util.regex.Pattern
 class TextFile(private val book: Book) {
 
     private val tocRules = arrayListOf<TxtTocRule>()
-    private lateinit var charset: Charset
+    private var charset: Charset = book.fileCharset()
 
     @Throws(FileNotFoundException::class)
     fun getChapterList(): ArrayList<BookChapter> {
         return getBookFD(book).let { fd ->
             try {
-                val buffer = ByteArray(BUFFER_SIZE)
-                Os.read(fd, buffer, 0, BUFFER_SIZE)
-                if (book.charset == null) {
-                    book.charset = EncodingDetect.getEncode(buffer)
-                }
-                charset = book.fileCharset()
                 val rulePattern = if (book.tocUrl.isNotEmpty()) {
                     Pattern.compile(book.tocUrl, Pattern.MULTILINE)
                 } else {
@@ -59,11 +53,20 @@ class TextFile(private val book: Book) {
         val toc = arrayListOf<BookChapter>()
         var tocRule: TxtTocRule? = null
         val buffer = ByteArray(BUFFER_SIZE)
-        val rulePattern = pattern ?: let {
-            Os.lseek(bookFd, 0, SEEK_SET)
+        var blockContent = ""
+        if (book.charset == null) {
             val length = Os.read(bookFd, buffer, 0, BUFFER_SIZE)
-            val content = String(buffer, 0, length, charset)
-            tocRule = getTocRule(content)
+            book.charset = EncodingDetect.getEncode(buffer)
+            blockContent = String(buffer, 0, length, charset)
+            charset = book.fileCharset()
+        }
+        val rulePattern = pattern ?: let {
+            if (blockContent.isEmpty()) {
+                Os.lseek(bookFd, 0, SEEK_SET)
+                val length = Os.read(bookFd, buffer, 0, BUFFER_SIZE)
+                blockContent = String(buffer, 0, length, charset)
+            }
+            tocRule = getTocRule(blockContent)
             tocRule?.let {
                 Pattern.compile(it.rule, Pattern.MULTILINE)
             }
@@ -84,7 +87,7 @@ class TextFile(private val book: Book) {
             //如果存在Chapter
             if (rulePattern != null) {
                 //将数据转换成String, 不能超过length
-                var blockContent = String(buffer, 0, length, charset)
+                blockContent = String(buffer, 0, length, charset)
                 val lastN = blockContent.lastIndexOf("\n")
                 if (lastN > 0) {
                     blockContent = blockContent.substring(0, lastN)
