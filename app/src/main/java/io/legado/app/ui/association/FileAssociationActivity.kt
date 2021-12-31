@@ -25,12 +25,15 @@ class FileAssociationActivity :
     VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>() {
 
     private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { treeUri ->
-            AppConfig.defaultBookTreeUri = treeUri.toString()
-            intent.data?.let { uri ->
+        intent.data?.let { uri ->
+            it.uri?.let { treeUri ->
+                AppConfig.defaultBookTreeUri = treeUri.toString()
                 importBook(treeUri, uri)
+            } ?: let {
+                toastOnUi("不选择文件夹重启应用后可能没有权限访问")
+                viewModel.importBook(uri)
             }
-        } ?: finish()
+        }
     }
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
