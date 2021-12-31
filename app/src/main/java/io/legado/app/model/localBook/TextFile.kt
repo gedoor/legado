@@ -44,7 +44,9 @@ class TextFile(private val book: Book) {
                 }
                 analyze(fd, book, rulePattern)
             } finally {
-                Os.close(fd)
+                if (fd.valid()) {
+                    Os.close(fd)
+                }
             }
         }
     }
