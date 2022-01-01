@@ -15,6 +15,9 @@ import io.legado.app.utils.*
 import splitties.init.appCtx
 import timber.log.Timber
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.InputStream
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
@@ -24,6 +27,15 @@ object LocalBook {
     private const val folderName = "bookTxt"
     val cacheFolder: File by lazy {
         FileUtils.createFolderIfNotExist(appCtx.externalFiles, folderName)
+    }
+
+    @Throws(FileNotFoundException::class)
+    fun getBookInputStream(book: Book): InputStream {
+        if (book.bookUrl.isContentScheme()) {
+            val uri = Uri.parse(book.bookUrl)
+            return appCtx.contentResolver.openInputStream(uri)!!
+        }
+        return FileInputStream(File(book.bookUrl))
     }
 
     @Throws(Exception::class)
@@ -150,14 +162,12 @@ object LocalBook {
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
             if (book.isLocalTxt() || book.isUmd()) {
-                val bookFile = cacheFolder.getFile(book.originName)
-                bookFile.delete()
+                cacheFolder.getFile(book.originName).delete()
             }
             if (book.isEpub()) {
-                val bookFile = EpubFile.getFile(book).parentFile
-                if (bookFile != null && bookFile.exists()) {
-                    FileUtils.delete(bookFile, true)
-                }
+                FileUtils.delete(
+                    cacheFolder.getFile(book.getFolderName())
+                )
             }
 
             if (deleteOriginal) {

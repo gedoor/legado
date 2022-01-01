@@ -2,12 +2,13 @@ package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.externalFiles
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
@@ -23,36 +24,14 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
-import java.util.zip.ZipFile
 
 class EpubFile(var book: Book) {
 
     companion object {
         private var eFile: EpubFile? = null
 
-        fun getFile(book: Book): File {
-            val file = BookHelp.downloadDir.getFile(
-                BookHelp.cacheFolderName,
-                book.getFolderName(),
-                "index.epubx"
-            )
-            if (!file.exists()) {
-                val input = if (book.bookUrl.isContentScheme()) {
-                    val uri = Uri.parse(book.bookUrl)
-                    appCtx.contentResolver.openInputStream(uri)
-                } else {
-                    File(book.bookUrl).inputStream()
-                }
-                if (input != null) {
-                    FileUtils.writeInputStream(file, input)
-                }
-            }
-            return file
-        }
-
         @Synchronized
         private fun getEFile(book: Book): EpubFile {
-            getFile(book)
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EpubFile(book)
                 //对于Epub文件默认不启用替换
@@ -126,9 +105,9 @@ class EpubFile(var book: Book) {
     /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
     private fun readEpub(): EpubBook? {
         try {
-            val file = getFile(book)
+            val bis = LocalBook.getBookInputStream(book)
             //通过懒加载读取epub
-            return EpubReader().readEpubLazy(ZipFile(file), "utf-8")
+            return EpubReader().readEpub(bis, "utf-8")
         } catch (e: Exception) {
             Timber.e(e)
         }

@@ -1,6 +1,5 @@
 package io.legado.app.model.localBook
 
-import android.net.Uri
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -9,12 +8,7 @@ import io.legado.app.help.DefaultData
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.StringUtils
-import io.legado.app.utils.isContentScheme
-import splitties.init.appCtx
-import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
-import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -28,7 +22,7 @@ class TextFile(private val book: Book) {
     fun getChapterList(): ArrayList<BookChapter> {
         var rulePattern: Pattern? = null
         if (book.charset == null || book.tocUrl.isNotEmpty()) {
-            getBookInputStream(book).use { bis ->
+            LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(BUFFER_SIZE)
                 var blockContent: String
                 bis.read(buffer)
@@ -55,7 +49,7 @@ class TextFile(private val book: Book) {
 
     private fun analyze(pattern: Pattern?): ArrayList<BookChapter> {
         val toc = arrayListOf<BookChapter>()
-        getBookInputStream(book).use { bis ->
+        LocalBook.getBookInputStream(book).use { bis ->
             var tocRule: TxtTocRule? = null
             val buffer = ByteArray(BUFFER_SIZE)
             var blockContent: String
@@ -279,22 +273,13 @@ class TextFile(private val book: Book) {
         fun getContent(book: Book, bookChapter: BookChapter): String {
             val count = (bookChapter.end!! - bookChapter.start!!).toInt()
             val buffer = ByteArray(count)
-            getBookInputStream(book).use { bis ->
+            LocalBook.getBookInputStream(book).use { bis ->
                 bis.skip(bookChapter.start!!)
                 bis.read(buffer)
             }
             return String(buffer, book.fileCharset())
                 .substringAfter(bookChapter.title)
                 .replace("^[\\n\\s]+".toRegex(), "　　")
-        }
-
-        @Throws(FileNotFoundException::class)
-        private fun getBookInputStream(book: Book): InputStream {
-            if (book.bookUrl.isContentScheme()) {
-                val uri = Uri.parse(book.bookUrl)
-                return appCtx.contentResolver.openInputStream(uri)!!
-            }
-            return FileInputStream(File(book.bookUrl))
         }
 
         private fun getTocRules(): List<TxtTocRule> {

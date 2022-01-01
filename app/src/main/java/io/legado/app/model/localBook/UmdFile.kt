@@ -1,12 +1,10 @@
 package io.legado.app.model.localBook
 
-import android.net.Uri
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.externalFiles
-import io.legado.app.utils.isContentScheme
 import me.ag2s.umdlib.domain.UmdBook
 import me.ag2s.umdlib.umd.UmdReader
 import splitties.init.appCtx
@@ -87,12 +85,7 @@ class UmdFile(var book: Book) {
     }
 
     private fun readUmd(): UmdBook? {
-        val input = if (book.bookUrl.isContentScheme()) {
-            val uri = Uri.parse(book.bookUrl)
-            appCtx.contentResolver.openInputStream(uri)
-        } else {
-            File(book.bookUrl).inputStream()
-        }
+        val input = LocalBook.getBookInputStream(book)
         return UmdReader().read(input)
     }
 
