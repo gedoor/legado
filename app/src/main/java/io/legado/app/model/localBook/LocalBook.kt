@@ -29,7 +29,7 @@ object LocalBook {
         FileUtils.createFolderIfNotExist(appCtx.externalFiles, folderName)
     }
 
-    @Throws(FileNotFoundException::class)
+    @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
         if (book.bookUrl.isContentScheme()) {
             val uri = Uri.parse(book.bookUrl)

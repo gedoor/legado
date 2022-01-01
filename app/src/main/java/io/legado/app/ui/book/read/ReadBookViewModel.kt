@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read
 
 import android.app.Application
 import android.content.Intent
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
@@ -30,6 +31,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
+    val permissionDenialLiveData = MutableLiveData<Int>()
     var isInitFinish = false
     var searchContentQuery = ""
     private var changeSourceCoroutine: Coroutine<*>? = null
@@ -121,7 +123,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     ReadBook.loadContent(resetPageOffset = true)
                 }
             }.onError {
-                ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
+                when (it) {
+                    is SecurityException -> {
+                        permissionDenialLiveData.postValue(1)
+                    }
+                    else -> ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
+                }
             }
         } else {
             ReadBook.bookSource?.let {

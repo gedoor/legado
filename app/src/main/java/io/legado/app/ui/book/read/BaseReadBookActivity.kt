@@ -29,6 +29,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -41,6 +42,13 @@ abstract class BaseReadBookActivity :
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
     override val viewModel by viewModels<ReadBookViewModel>()
     var bottomDialog = 0
+    private val selectBookFolderResult = registerForActivityResult(HandleFileContract()){
+        it.uri?.let {
+            ReadBook.book?.let { book ->
+                viewModel.loadChapterList(book)
+            }
+        } ?: ReadBook.upMsg("没有权限访问")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ReadBook.msg = null
@@ -51,6 +59,12 @@ abstract class BaseReadBookActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.navigationBar.setBackgroundColor(bottomBackground)
+        viewModel.permissionDenialLiveData.observe(this) {
+            selectBookFolderResult.launch {
+                mode = HandleFileContract.SYS_DIR
+                title = "选择书籍所在文件夹"
+            }
+        }
         if (!LocalConfig.readHelpVersionIsLast) {
             showClickRegionalConfig()
         }

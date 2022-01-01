@@ -46,6 +46,7 @@ class HandleFileContract :
     companion object {
         const val DIR = 0
         const val FILE = 1
+        const val SYS_DIR = 2
         const val EXPORT = 3
     }
 

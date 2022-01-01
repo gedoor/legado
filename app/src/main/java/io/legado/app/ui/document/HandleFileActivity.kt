@@ -58,6 +58,7 @@ class HandleFileActivity :
         }
         val allowExtensions = intent.getStringArrayExtra("allowExtensions")
         val selectList: ArrayList<SelectItem<Int>> = when (mode) {
+            HandleFileContract.SYS_DIR -> getDirActions(true)
             HandleFileContract.DIR -> getDirActions()
             HandleFileContract.FILE -> getFileActions()
             HandleFileContract.EXPORT -> arrayListOf(
@@ -141,14 +142,14 @@ class HandleFileActivity :
         return null
     }
 
-    private fun getDirActions(): ArrayList<SelectItem<Int>> {
-        return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+    private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q || onlySys) {
+            arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
+        } else {
             arrayListOf(
                 SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
                 SelectItem(getString(R.string.app_folder_picker), 10)
             )
-        } else {
-            arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
         }
     }
 
