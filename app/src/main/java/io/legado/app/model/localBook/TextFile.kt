@@ -6,13 +6,15 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
-import io.legado.app.model.localBook.LocalBook.cacheFolder
-import io.legado.app.utils.*
+import io.legado.app.utils.EncodingDetect
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.StringUtils
+import io.legado.app.utils.isContentScheme
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
+import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -287,21 +289,10 @@ class TextFile(private val book: Book) {
         }
 
         @Throws(FileNotFoundException::class)
-        private fun getBookInputStream(book: Book): FileInputStream {
+        private fun getBookInputStream(book: Book): InputStream {
             if (book.bookUrl.isContentScheme()) {
                 val uri = Uri.parse(book.bookUrl)
-                val bookFile = cacheFolder.getFile(book.name)
-                if (!bookFile.exists()) {
-                    bookFile.createNewFile()
-                    appCtx.contentResolver.openInputStream(uri).use { iStream ->
-                        FileOutputStream(bookFile).use { oStream ->
-                            iStream?.copyTo(oStream)
-                            oStream.flush()
-                        }
-                    }
-                }
-                return FileInputStream(bookFile)
-                //return appCtx.contentResolver.openFileDescriptor(uri, "r")!!.fileDescriptor
+                return appCtx.contentResolver.openInputStream(uri)!!
             }
             return FileInputStream(File(book.bookUrl))
         }
