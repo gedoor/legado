@@ -188,7 +188,7 @@ dependencies {
     implementation('com.github.gedoor:rhino-android:1.6')
 
     //网络
-    implementation('com.squareup.okhttp3:okhttp:4.9.2')
+    implementation('com.squareup.okhttp3:okhttp:4.9.3')
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide

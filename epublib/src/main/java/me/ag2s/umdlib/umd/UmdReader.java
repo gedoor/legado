@@ -1,5 +1,8 @@
 package me.ag2s.umdlib.umd;
 
+
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -46,7 +49,7 @@ public class UmdReader {
 
             System.out.println("块标识:" + segType);
             //short length1 = reader.readByte();
-            ReadSection(segType, segFlag, len, reader, umdHeader);
+            readSection(segType, segFlag, len, reader, umdHeader);
 
             if ((int) segType == 241 || (int) segType == 10) {
                 segType = num1;
@@ -56,7 +59,7 @@ public class UmdReader {
                 System.out.println(ch);
                 int additionalCheckNumber = reader.readIntLe();
                 int length2 = (reader.readIntLe() - 9);
-                ReadAdditionalSection(segType, additionalCheckNumber, length2, reader);
+                readAdditionalSection(segType, additionalCheckNumber, length2, reader);
             }
             num1 = segType;
 
@@ -66,7 +69,7 @@ public class UmdReader {
 
     }
 
-    private void ReadAdditionalSection(short segType, int additionalCheckNumber, int length, StreamReader reader) throws Exception {
+    private void readAdditionalSection(short segType, int additionalCheckNumber, int length, StreamReader reader) throws Exception {
         switch (segType) {
             case 14:
                 //this._TotalImageList.Add((object) Image.FromStream((Stream) new MemoryStream(reader.ReadBytes((int) length))));
@@ -118,7 +121,7 @@ public class UmdReader {
         }
     }
 
-    public void ReadSection(short segType, byte segFlag, short length, StreamReader reader, UmdHeader header) throws IOException {
+    public void readSection(short segType, byte segFlag, short length, StreamReader reader, UmdHeader header) throws IOException {
         switch (segType) {
             case 1://umd文件头 DCTS_CMD_ID_VERSION
                 header.setUmdType(reader.readByte());
@@ -214,6 +217,7 @@ public class UmdReader {
 
 
     @Override
+    @NonNull
     public String toString() {
         return "UmdReader{" +
                 "book=" + book +

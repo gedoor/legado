@@ -157,8 +157,6 @@ class CronetRequestCallback @JvmOverloads internal constructor(
 
         private fun protocolFromNegotiatedProtocol(responseInfo: UrlResponseInfo): Protocol {
             val negotiatedProtocol = responseInfo.negotiatedProtocol.lowercase(Locale.getDefault())
-//            Log.e("Cronet", responseInfo.url)
-//            Log.e("Cronet", negotiatedProtocol)
             return when {
                 negotiatedProtocol.contains("h3") -> {
                     return Protocol.QUIC
