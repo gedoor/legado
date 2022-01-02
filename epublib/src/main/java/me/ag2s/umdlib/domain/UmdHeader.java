@@ -1,6 +1,8 @@
 package me.ag2s.umdlib.domain;
 
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 
 import me.ag2s.umdlib.tool.UmdUtils;
@@ -146,6 +148,7 @@ public class UmdHeader {
 	}
 	
 	@Override
+	@NonNull
 	public String toString() {
 		return "UmdHeader{" +
 				"umdType=" + umdType +

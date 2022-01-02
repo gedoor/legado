@@ -117,19 +117,15 @@ public class UmdUtils {
 
 	
 	public static void saveFile(File f, byte[] content) throws IOException {
-		FileOutputStream fos = new FileOutputStream(f);
-		try {
+		try (FileOutputStream fos = new FileOutputStream(f)) {
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			bos.write(content);
 			bos.flush();
-		} finally {
-			fos.close();
 		}
 	}
 	
 	public static byte[] readFile(File f) throws IOException {
-		FileInputStream fis = new FileInputStream(f);
-		try {
+		try (FileInputStream fis = new FileInputStream(f)) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			BufferedInputStream bis = new BufferedInputStream(fis);
 			int ch;
@@ -138,12 +134,10 @@ public class UmdUtils {
 			}
 			baos.flush();
 			return baos.toByteArray();
-		} finally {
-			fis.close();
 		}
 	}
 	
-	private static Random random = new Random();
+	private static final Random random = new Random();
 	
 	public static byte[] genRandomBytes(int len) {
 		if (len <= 0) {

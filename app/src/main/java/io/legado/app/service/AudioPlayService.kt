@@ -13,9 +13,9 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.AudioFocusRequestCompat
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
@@ -56,8 +56,8 @@ class AudioPlayService : BaseService(),
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.getFocusRequest(this)
     }
-    private val exoPlayer: SimpleExoPlayer by lazy {
-        SimpleExoPlayer.Builder(this).build()
+    private val exoPlayer: ExoPlayer by lazy {
+        ExoPlayer.Builder(this).build()
     }
     private var title: String = ""
     private var subtitle: String = ""

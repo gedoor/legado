@@ -34,7 +34,7 @@ public class UmdBook {
 
     /**
      * Build the UMD file.
-     * @param os
+     * @param os OutputStream
      * @throws IOException
      */
     public void buildUmd(OutputStream os) throws IOException {

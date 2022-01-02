@@ -27,7 +27,7 @@ public class UmdChapters {
 		return titles;
 	}
 
-	private List<byte[]> titles = new ArrayList<>();
+	private final List<byte[]> titles = new ArrayList<>();
 	public List<Integer> contentLengths = new ArrayList<>();
 	public ByteArrayOutputStream contents = new ByteArrayOutputStream();
 
@@ -129,7 +129,7 @@ public class UmdChapters {
 		
 		while(startPos < allContents.length) {
 			left = allContents.length - startPos;
-			len = DEFAULT_CHUNK_INIT_SIZE < left ? DEFAULT_CHUNK_INIT_SIZE : left; 
+			len = Math.min(DEFAULT_CHUNK_INIT_SIZE, left);
 			
 			bos.reset();
 			DeflaterOutputStream zos = new DeflaterOutputStream(bos);

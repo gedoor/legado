@@ -2,7 +2,7 @@ package io.legado.app.help.exoplayer
 
 import android.net.Uri
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -49,7 +49,7 @@ object ExoPlayerHelper {
      * Exoplayer 内置的缓存
      */
     private val cache: Cache by lazy {
-        val databaseProvider = ExoDatabaseProvider(appCtx)
+        val databaseProvider = StandaloneDatabaseProvider(appCtx)
         return@lazy SimpleCache(
             //Exoplayer的缓存路径
             File(appCtx.externalCacheDir, "exoplayer"),
