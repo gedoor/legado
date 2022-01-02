@@ -92,6 +92,7 @@ class ContentProcessor private constructor(
                             mContent.replace(item.pattern, item.replacement)
                         }
                     } catch (e: Exception) {
+                        AppLog.put("${item.name}替换出错\n${e.localizedMessage}")
                         appCtx.toastOnUi("${item.name}替换出错")
                     }
                 }
