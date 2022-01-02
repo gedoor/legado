@@ -45,7 +45,7 @@ abstract class CharsetRecog_2022 extends CharsetRecognizer {
                     byte[] seq = escapeSequences[escN];
 
                     if ((textLen - i) < seq.length) {
-                        continue checkEscapes;
+                        continue;
                     }
 
                     for (j = 1; j < seq.length; j++) {

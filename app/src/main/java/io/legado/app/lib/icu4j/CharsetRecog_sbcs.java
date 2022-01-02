@@ -263,6 +263,7 @@ abstract class CharsetRecog_sbcs extends CharsetRecognizer {
         return parser.parse(det, spaceChar);
     }
 
+    @SuppressWarnings("SameParameterValue")
     int matchIBM420(CharsetDetector det, int[] ngrams, byte[] byteMap, byte spaceChar) {
         NGramParser_IBM420 parser = new NGramParser_IBM420(ngrams, byteMap);
         return parser.parse(det, spaceChar);

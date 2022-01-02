@@ -1,6 +1,6 @@
 // © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-/**
+/*
  * ******************************************************************************
  * Copyright (C) 2005-2016, International Business Machines Corporation and    *
  * others. All Rights Reserved.                                                *
@@ -85,13 +85,13 @@ public class CharsetMatch implements Comparable<CharsetMatch> {
      * @stable ICU 3.4
      */
     public String getString(int maxLength) throws java.io.IOException {
-        String result = null;
+        String result;
         if (fInputStream != null) {
             StringBuilder sb = new StringBuilder();
             char[] buffer = new char[1024];
             Reader reader = getReader();
             int max = maxLength < 0 ? Integer.MAX_VALUE : maxLength;
-            int bytesRead = 0;
+            int bytesRead;
 
             while ((bytesRead = reader.read(buffer, 0, Math.min(max, 1024))) >= 0) {
                 sb.append(buffer, 0, bytesRead);
@@ -231,7 +231,7 @@ public class CharsetMatch implements Comparable<CharsetMatch> {
     //  If user gave us a byte array, this is it.
     private int fRawLength;           // Length of data in fRawInput array.
 
-    private InputStream fInputStream = null;  // User's input stream, or null if the user
+    private final InputStream fInputStream;  // User's input stream, or null if the user
     //   gave us a byte array.
 
     private final String fCharsetName;         // The name of the charset this CharsetMatch

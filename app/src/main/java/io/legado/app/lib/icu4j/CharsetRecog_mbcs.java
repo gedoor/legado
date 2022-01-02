@@ -159,8 +159,7 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                 done = true;
                 return -1;
             }
-            int byteValue = det.fRawInput[nextIndex++] & 0x00ff;
-            return byteValue;
+            return det.fRawInput[nextIndex++] & 0x00ff;
         }
     }
 
@@ -322,9 +321,9 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
         @Override
         boolean nextChar(iteratedChar it, CharsetDetector det) {
             it.error = false;
-            int firstByte = 0;
-            int secondByte = 0;
-            int thirdByte = 0;
+            int firstByte;
+            int secondByte;
+            int thirdByte;
             //int fourthByte = 0;
 
             buildChar:
@@ -374,7 +373,7 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                 }
             }
 
-            return (it.done == false);
+            return (!it.done);
         }
 
         /**
@@ -466,10 +465,10 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
         @Override
         boolean nextChar(iteratedChar it, CharsetDetector det) {
             it.error = false;
-            int firstByte = 0;
-            int secondByte = 0;
-            int thirdByte = 0;
-            int fourthByte = 0;
+            int firstByte;
+            int secondByte;
+            int thirdByte;
+            int fourthByte;
 
             buildChar:
             {
@@ -510,11 +509,10 @@ abstract class CharsetRecog_mbcs extends CharsetRecognizer {
                     }
 
                     it.error = true;
-                    break buildChar;
                 }
             }
 
-            return (it.done == false);
+            return (!it.done);
         }
 
         static int[] commonChars =
