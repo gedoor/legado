@@ -6,6 +6,9 @@ import java.util.regex.Pattern
 
 @Suppress("RegExpRedundantEscape")
 object HtmlFormatter {
+    private val nbspRegex = "(&nbsp;)+".toRegex()
+    private val espRegex = "(&ensp;|&emsp;)".toRegex()
+    private val noPrintRegex = "(&thinsp;|&zwnj;|&zwj;)".toRegex()
     private val wrapHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
     private val commentRegex = "<!--[^>]*-->".toRegex() //注释
     private val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
@@ -17,7 +20,10 @@ object HtmlFormatter {
 
     fun format(html: String?, otherRegex: Regex = otherHtmlRegex): String {
         html ?: return ""
-        return html.replace(wrapHtmlRegex, "\n")
+        return html.replace(nbspRegex, " ")
+            .replace(espRegex, " ")
+            .replace(noPrintRegex, "")
+            .replace(wrapHtmlRegex, "\n")
             .replace(commentRegex, "")
             .replace(otherRegex, "")
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
