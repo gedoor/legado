@@ -8,6 +8,8 @@
  */
 package io.legado.app.lib.icu4j;
 
+import androidx.annotation.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -150,6 +152,7 @@ public class CharsetDetector {
      * <code>null</code> if there are no matches.
      * @stable ICU 3.4
      */
+    @Nullable
     public CharsetMatch detect() {
 //   TODO:  A better implementation would be to copy the detect loop from
 //          detectAll(), and cut it short as soon as a match with a high confidence

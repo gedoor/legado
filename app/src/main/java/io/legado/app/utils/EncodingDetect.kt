@@ -46,10 +46,8 @@ object EncodingDetect {
     }
 
     fun getEncode(bytes: ByteArray): String {
-        val detector = CharsetDetector()
-        detector.setText(bytes)
-        val match = detector.detect()
-        return match.name
+        val match = CharsetDetector().setText(bytes).detect()
+        return match?.name ?: "UTF-8"
     }
 
     /**
@@ -67,13 +65,12 @@ object EncodingDetect {
         return getEncode(tempByte)
     }
 
-    private fun getFileBytes(testFile: File?): ByteArray {
-        val fis: FileInputStream
-        val byteArray = ByteArray(2000)
+    private fun getFileBytes(file: File?): ByteArray {
+        val byteArray = ByteArray(8000)
         try {
-            fis = FileInputStream(testFile)
-            fis.read(byteArray)
-            fis.close()
+            FileInputStream(file).use {
+                it.read(byteArray)
+            }
         } catch (e: Exception) {
             System.err.println("Error: $e")
         }
