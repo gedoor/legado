@@ -1,0 +1,227 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'de.timfreiheit.resourceplaceholders'
+apply from: 'download.gradle'
+
+static def releaseTime() {
+    return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))
+}
+
+def name = "legado"
+def version = "3." + releaseTime()
+def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
+
+android {
+    compileSdkVersion 32
+    buildToolsVersion '32.0.0'
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    signingConfigs {
+        if (project.hasProperty("RELEASE_STORE_FILE")) {
+            myConfig {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+                v1SigningEnabled true
+                v2SigningEnabled true
+            }
+        }
+    }
+    defaultConfig {
+        applicationId "io.legado.app"
+        minSdkVersion 21
+        targetSdkVersion 32
+        versionCode gitCommits
+        versionName version
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        project.ext.set("archivesBaseName", name + "_" + version)
+        multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.incremental"     : "true",
+                        "room.expandProjection": "true",
+                        "room.schemaLocation"  : "$projectDir/schemas".toString()
+                ]
+            }
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    buildTypes {
+        release {
+            buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.myConfig
+            }
+            applicationIdSuffix '.release'
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.myConfig
+            }
+            applicationIdSuffix '.debug'
+            versionNameSuffix 'debug'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                def flavor = variant.productFlavors[0].name
+                outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
+            }
+        }
+    }
+    flavorDimensions "mode"
+    productFlavors {
+        app {
+            dimension "mode"
+            manifestPlaceholders = [APP_CHANNEL_VALUE: "app"]
+        }
+        google {
+            dimension "mode"
+            applicationId "io.legado.play"
+            manifestPlaceholders = [APP_CHANNEL_VALUE: "google"]
+        }
+    }
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+        // Sets Java compatibility to Java 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    sourceSets {
+        // Adds exported schema location as test app assets.
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+    tasks.withType(JavaCompile) {
+        //options.compilerArgs << "-Xlint:unchecked"
+    }
+}
+
+resourcePlaceholders {
+    files = ['xml/shortcuts.xml']
+}
+
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.1.5')
+    testImplementation('junit:junit:4.13.2')
+    androidTestImplementation('androidx.test:runner:1.4.0')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0')
+    implementation('androidx.multidex:multidex:2.0.1')
+    //kotlin
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    //Kotlin反射
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    //协程
+    def coroutines_version = '1.6.0'
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
+
+    //androidX
+    implementation('androidx.core:core-ktx:1.7.0')
+    implementation('androidx.appcompat:appcompat:1.4.0')
+    implementation('androidx.activity:activity-ktx:1.4.0')
+    implementation('androidx.fragment:fragment-ktx:1.4.0')
+    implementation('androidx.preference:preference-ktx:1.1.1')
+    implementation('androidx.constraintlayout:constraintlayout:2.1.2')
+    implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
+    implementation('androidx.viewpager2:viewpager2:1.0.0')
+    implementation('com.google.android.material:material:1.4.0')
+    implementation('com.google.android.flexbox:flexbox:3.0.0')
+    implementation('com.google.code.gson:gson:2.8.9')
+    implementation('androidx.webkit:webkit:1.4.0')
+
+    implementation('com.jakewharton.timber:timber:5.0.1')
+
+    //media
+    implementation("androidx.media:media:1.4.3")
+    def exoplayer_version = '2.16.1'
+    implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
+    implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
+
+    //Splitties
+    def splitties_version = '3.0.0'
+    implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-systemservices:$splitties_version")
+    implementation("com.louiscad.splitties:splitties-views:$splitties_version")
+
+    //lifecycle
+    def lifecycle_version = '2.4.0'
+    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
+
+    //room
+    def room_version = '2.4.0'
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    testImplementation("androidx.room:room-testing:$room_version")
+
+    //liveEventBus
+    implementation('io.github.jeremyliao:live-event-bus-x:1.8.0')
+
+    //规则相关
+    implementation('org.jsoup:jsoup:1.14.3')
+    implementation('com.jayway.jsonpath:json-path:2.6.0')
+    implementation('cn.wanghaomiao:JsoupXpath:2.5.1')
+    implementation(project(path: ':epublib'))
+
+    //JS rhino
+    implementation('com.github.gedoor:rhino-android:1.6')
+
+    //网络
+    implementation('com.squareup.okhttp3:okhttp:4.9.3')
+    implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+
+    //Glide
+    implementation('com.github.bumptech.glide:glide:4.12.0')
+    kapt('com.github.bumptech.glide:compiler:4.12.0')
+
+    //webServer
+    def nanoHttpdVersion = "2.3.1"
+    implementation("org.nanohttpd:nanohttpd:$nanoHttpdVersion")
+    implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
+
+    //二维码
+    implementation('com.github.jenly1314:zxing-lite:2.1.1')
+
+    //颜色选择
+    implementation('com.jaredrummler:colorpicker:1.1.0')
+
+    //apache
+    implementation('org.apache.commons:commons-text:1.9')
+
+    //MarkDown
+    def markwonVersion = "4.6.2"
+    implementation("io.noties.markwon:core:$markwonVersion")
+    implementation("io.noties.markwon:image-glide:$markwonVersion")
+    implementation("io.noties.markwon:ext-tables:$markwonVersion")
+    implementation("io.noties.markwon:html:$markwonVersion")
+
+    //转换繁体
+    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
+
+    //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
+    //epubLib集成到应用内
+
+    // LeakCanary
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+}

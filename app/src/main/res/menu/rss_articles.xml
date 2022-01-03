@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_set_source_variable"
+        android:title="@string/set_source_variable"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_edit_source"
+        android:title="@string/edit_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_switch_layout"
+        android:title="@string/switchLayout"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_clear"
+        android:title="@string/clear"
+        app:showAsAction="never" />
+
+</menu>

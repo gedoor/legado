@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_del_selection"
+        android:title="@string/delete" />
+
+    <item
+        android:id="@+id/menu_update_enable"
+        android:title="@string/allow_update" />
+
+    <item
+        android:id="@+id/menu_update_disable"
+        android:title="@string/disable_update" />
+
+    <item
+        android:id="@+id/menu_add_to_group"
+        android:title="@string/add_to_group" />
+
+</menu>

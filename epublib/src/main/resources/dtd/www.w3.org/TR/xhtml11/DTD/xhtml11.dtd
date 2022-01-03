@@ -1,0 +1,294 @@
+<!-- ....................................................................... -->
+<!-- XHTML 1.1 DTD  ........................................................ -->
+<!-- file: xhtml11.dtd
+-->
+
+<!-- XHTML 1.1 DTD
+
+     This is XHTML, a reformulation of HTML as a modular XML application.
+
+     The Extensible HyperText Markup Language (XHTML)
+     Copyright 1998-2001 World Wide Web Consortium
+        (Massachusetts Institute of Technology, Institut National de
+         Recherche en Informatique et en Automatique, Keio University).
+         All Rights Reserved.
+
+     Permission to use, copy, modify and distribute the XHTML DTD and its 
+     accompanying documentation for any purpose and without fee is hereby 
+     granted in perpetuity, provided that the above copyright notice and 
+     this paragraph appear in all copies.  The copyright holders make no 
+     representation about the suitability of the DTD for any purpose.
+
+     It is provided "as is" without expressed or implied warranty.
+
+        Author:     Murray M. Altheim <altheim@eng.sun.com>
+        Revision:   $Id: xhtml11.dtd,v 1.21 2001/05/29 16:37:01 ahby Exp $
+
+-->
+<!-- This is the driver file for version 1.1 of the XHTML DTD.
+
+     Please use this formal public identifier to identify it:
+
+         "-//W3C//DTD XHTML 1.1//EN"
+-->
+<!ENTITY % XHTML.version  "-//W3C//DTD XHTML 1.1//EN" >
+
+<!-- Use this URI to identify the default namespace:
+
+         "http://www.w3.org/1999/xhtml"
+
+     See the Qualified Names module for information
+     on the use of namespace prefixes in the DTD.
+-->
+<!ENTITY % NS.prefixed "IGNORE" >
+<!ENTITY % XHTML.prefix "" >
+
+<!-- Reserved for use with the XLink namespace:
+-->
+<!ENTITY % XLINK.xmlns "" >
+<!ENTITY % XLINK.xmlns.attrib "" >
+
+<!-- For example, if you are using XHTML 1.1 directly, use the FPI
+     in the DOCTYPE declaration, with the xmlns attribute on the
+     document element to identify the default namespace:
+
+       <?xml version="1.0"?>
+       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+       <html xmlns="http://www.w3.org/1999/xhtml"
+             xml:lang="en">
+       ...
+       </html>
+
+     Revisions:
+     (none)
+-->
+
+<!-- reserved for future use with document profiles -->
+<!ENTITY % XHTML.profile  "" >
+
+<!-- Bidirectional Text features
+     This feature-test entity is used to declare elements
+     and attributes used for bidirectional text support.
+-->
+<!ENTITY % XHTML.bidi  "INCLUDE" >
+
+<?doc type="doctype" role="title" { XHTML 1.1 } ?>
+
+<!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+<!-- Pre-Framework Redeclaration placeholder  .................... -->
+<!-- this serves as a location to insert markup declarations
+     into the DTD prior to the framework declarations.
+-->
+<!ENTITY % xhtml-prefw-redecl.module "IGNORE" >
+<![%xhtml-prefw-redecl.module;[
+%xhtml-prefw-redecl.mod;
+<!-- end of xhtml-prefw-redecl.module -->]]>
+
+<!ENTITY % xhtml-events.module "INCLUDE" >
+
+<!-- Inline Style Module  ........................................ -->
+<!ENTITY % xhtml-inlstyle.module "INCLUDE" >
+<![%xhtml-inlstyle.module;[
+<!ENTITY % xhtml-inlstyle.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Inline Style 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-inlstyle-1.mod" >
+%xhtml-inlstyle.mod;]]>
+
+<!-- declare Document Model module instantiated in framework
+-->
+<!ENTITY % xhtml-model.mod
+     PUBLIC "-//W3C//ENTITIES XHTML 1.1 Document Model 1.0//EN"
+            "xhtml11-model-1.mod" >
+
+<!-- Modular Framework Module (required) ......................... -->
+<!ENTITY % xhtml-framework.module "INCLUDE" >
+<![%xhtml-framework.module;[
+<!ENTITY % xhtml-framework.mod
+     PUBLIC "-//W3C//ENTITIES XHTML Modular Framework 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-framework-1.mod" >
+%xhtml-framework.mod;]]>
+
+<!-- Post-Framework Redeclaration placeholder  ................... -->
+<!-- this serves as a location to insert markup declarations
+     into the DTD following the framework declarations.
+-->
+<!ENTITY % xhtml-postfw-redecl.module "IGNORE" >
+<![%xhtml-postfw-redecl.module;[
+%xhtml-postfw-redecl.mod;
+<!-- end of xhtml-postfw-redecl.module -->]]>
+
+<!-- Text Module (Required)  ..................................... -->
+<!ENTITY % xhtml-text.module "INCLUDE" >
+<![%xhtml-text.module;[
+<!ENTITY % xhtml-text.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Text 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-text-1.mod" >
+%xhtml-text.mod;]]>
+
+<!-- Hypertext Module (required) ................................. -->
+<!ENTITY % xhtml-hypertext.module "INCLUDE" >
+<![%xhtml-hypertext.module;[
+<!ENTITY % xhtml-hypertext.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Hypertext 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-hypertext-1.mod" >
+%xhtml-hypertext.mod;]]>
+
+<!-- Lists Module (required)  .................................... -->
+<!ENTITY % xhtml-list.module "INCLUDE" >
+<![%xhtml-list.module;[
+<!ENTITY % xhtml-list.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Lists 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-list-1.mod" >
+%xhtml-list.mod;]]>
+
+<!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+<!-- Edit Module  ................................................ -->
+<!ENTITY % xhtml-edit.module "INCLUDE" >
+<![%xhtml-edit.module;[
+<!ENTITY % xhtml-edit.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Editing Elements 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-edit-1.mod" >
+%xhtml-edit.mod;]]>
+
+<!-- BIDI Override Module  ....................................... -->
+<!ENTITY % xhtml-bdo.module "%XHTML.bidi;" >
+<![%xhtml-bdo.module;[
+<!ENTITY % xhtml-bdo.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML BIDI Override Element 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-bdo-1.mod" >
+%xhtml-bdo.mod;]]>
+
+<!-- Ruby Module  ................................................ -->
+<!ENTITY % Ruby.common.attlists "INCLUDE" >
+<!ENTITY % Ruby.common.attrib "%Common.attrib;" >
+<!ENTITY % xhtml-ruby.module "INCLUDE" >
+<![%xhtml-ruby.module;[
+<!ENTITY % xhtml-ruby.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Ruby 1.0//EN"
+            "http://www.w3.org/TR/ruby/xhtml-ruby-1.mod" >
+%xhtml-ruby.mod;]]>
+
+<!-- Presentation Module  ........................................ -->
+<!ENTITY % xhtml-pres.module "INCLUDE" >
+<![%xhtml-pres.module;[
+<!ENTITY % xhtml-pres.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Presentation 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-pres-1.mod" >
+%xhtml-pres.mod;]]>
+
+<!-- Link Element Module  ........................................ -->
+<!ENTITY % xhtml-link.module "INCLUDE" >
+<![%xhtml-link.module;[
+<!ENTITY % xhtml-link.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Link Element 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-link-1.mod" >
+%xhtml-link.mod;]]>
+
+<!-- Document Metainformation Module  ............................ -->
+<!ENTITY % xhtml-meta.module "INCLUDE" >
+<![%xhtml-meta.module;[
+<!ENTITY % xhtml-meta.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Metainformation 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-meta-1.mod" >
+%xhtml-meta.mod;]]>
+
+<!-- Base Element Module  ........................................ -->
+<!ENTITY % xhtml-base.module "INCLUDE" >
+<![%xhtml-base.module;[
+<!ENTITY % xhtml-base.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Base Element 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-base-1.mod" >
+%xhtml-base.mod;]]>
+
+<!-- Scripting Module  ........................................... -->
+<!ENTITY % xhtml-script.module "INCLUDE" >
+<![%xhtml-script.module;[
+<!ENTITY % xhtml-script.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Scripting 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-script-1.mod" >
+%xhtml-script.mod;]]>
+
+<!-- Style Sheets Module  ......................................... -->
+<!ENTITY % xhtml-style.module "INCLUDE" >
+<![%xhtml-style.module;[
+<!ENTITY % xhtml-style.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Style Sheets 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-style-1.mod" >
+%xhtml-style.mod;]]>
+
+<!-- Image Module  ............................................... -->
+<!ENTITY % xhtml-image.module "INCLUDE" >
+<![%xhtml-image.module;[
+<!ENTITY % xhtml-image.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Images 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-image-1.mod" >
+%xhtml-image.mod;]]>
+
+<!-- Client-side Image Map Module  ............................... -->
+<!ENTITY % xhtml-csismap.module "INCLUDE" >
+<![%xhtml-csismap.module;[
+<!ENTITY % xhtml-csismap.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Client-side Image Maps 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-csismap-1.mod" >
+%xhtml-csismap.mod;]]>
+
+<!-- Server-side Image Map Module  ............................... -->
+<!ENTITY % xhtml-ssismap.module "INCLUDE" >
+<![%xhtml-ssismap.module;[
+<!ENTITY % xhtml-ssismap.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Server-side Image Maps 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-ssismap-1.mod" >
+%xhtml-ssismap.mod;]]>
+
+<!-- Param Element Module  ....................................... -->
+<!ENTITY % xhtml-param.module "INCLUDE" >
+<![%xhtml-param.module;[
+<!ENTITY % xhtml-param.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Param Element 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-param-1.mod" >
+%xhtml-param.mod;]]>
+
+<!-- Embedded Object Module  ..................................... -->
+<!ENTITY % xhtml-object.module "INCLUDE" >
+<![%xhtml-object.module;[
+<!ENTITY % xhtml-object.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Embedded Object 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-object-1.mod" >
+%xhtml-object.mod;]]>
+
+<!-- Tables Module ............................................... -->
+<!ENTITY % xhtml-table.module "INCLUDE" >
+<![%xhtml-table.module;[
+<!ENTITY % xhtml-table.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Tables 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-table-1.mod" >
+%xhtml-table.mod;]]>
+
+<!-- Forms Module  ............................................... -->
+<!ENTITY % xhtml-form.module "INCLUDE" >
+<![%xhtml-form.module;[
+<!ENTITY % xhtml-form.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Forms 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-form-1.mod" >
+%xhtml-form.mod;]]>
+
+<!-- Legacy Markup ............................................... -->
+<!ENTITY % xhtml-legacy.module "IGNORE" >
+<![%xhtml-legacy.module;[
+<!ENTITY % xhtml-legacy.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Legacy Markup 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-legacy-1.mod" >
+%xhtml-legacy.mod;]]>
+
+<!-- Document Structure Module (required)  ....................... -->
+<!ENTITY % xhtml-struct.module "INCLUDE" >
+<![%xhtml-struct.module;[
+<!ENTITY % xhtml-struct.mod
+     PUBLIC "-//W3C//ELEMENTS XHTML Document Structure 1.0//EN"
+            "http://www.w3.org/TR/xhtml-modularization/DTD/xhtml-struct-1.mod" >
+%xhtml-struct.mod;]]>
+
+<!-- end of XHTML 1.1 DTD  ................................................. -->
+<!-- ....................................................................... -->

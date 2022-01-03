@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/menu_group"
+        android:icon="@drawable/ic_groups"
+        android:title="@string/menu_action_group"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_group_manage"
+                android:title="@string/group_manage" />
+
+            <item
+                android:id="@+id/action_sort"
+                android:title="@string/sort">
+
+                <menu>
+                    <group
+                        android:id="@+id/menu_group_sort"
+                        android:checkableBehavior="single">
+
+                        <item
+                            android:id="@+id/menu_sort_manual"
+                            android:checkable="true"
+                            android:checked="true"
+                            android:title="@string/sort_manual" />
+
+                        <item
+                            android:id="@+id/menu_sort_auto"
+                            android:checkable="true"
+                            android:title="@string/sort_auto" />
+
+                        <item
+                            android:id="@+id/menu_sort_name"
+                            android:checkable="true"
+                            android:title="@string/sort_name" />
+
+                        <item
+                            android:id="@+id/menu_sort_url"
+                            android:checkable="true"
+                            android:title="@string/sort_by_url" />
+
+                        <item
+                            android:id="@+id/menu_sort_time"
+                            android:checkable="true"
+                            android:title="@string/sort_by_lastUpdateTime" />
+
+                        <item
+                            android:id="@+id/menu_sort_respondTime"
+                            android:checkable="true"
+                            android:title="@string/sort_by_respondTime" />
+
+                        <item
+                            android:id="@+id/menu_sort_enable"
+                            android:checkable="true"
+                            android:title="@string/is_enabled" />
+
+                    </group>
+
+                </menu>
+
+            </item>
+
+            <item
+                android:id="@+id/menu_enabled_group"
+                android:title="@string/enabled" />
+
+            <item
+                android:id="@+id/menu_disabled_group"
+                android:title="@string/disabled" />
+
+            <item
+                android:id="@+id/menu_group_login"
+                android:title="@string/need_login" />
+
+            <group android:id="@+id/source_group">
+
+            </group>
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/menu_add_book_source"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add_book_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_local"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_local"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_onLine"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_on_line"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_qr"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_by_qr_code"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_text_toc_rule"
+        android:icon="@drawable/ic_cfg_source"
+        android:title="@string/txt_toc_regex"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:icon="@drawable/ic_help"
+        android:title="@string/help"
+        app:showAsAction="never" />
+
+</menu>

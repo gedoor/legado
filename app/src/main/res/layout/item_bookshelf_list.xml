@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cv_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    tools:ignore="UnusedAttribute">
+
+    <io.legado.app.ui.widget.image.CoverImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="66dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:contentDescription="@string/img_cover"
+        android:scaleType="centerCrop"
+        android:src="@drawable/image_cover_default"
+        android:transitionName="img_cover"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+    <FrameLayout
+        android:id="@+id/fl_has_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_cover">
+
+        <io.legado.app.ui.widget.text.BadgeView
+            android:id="@+id/bv_unread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="5dp"
+            android:includeFontPadding="false"
+            tools:ignore="RtlHardcoded" />
+
+        <io.legado.app.ui.widget.anima.RotateLoading
+            android:id="@+id/rl_loading"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_gravity="right"
+            android:visibility="invisible"
+            app:loading_width="2dp"
+            tools:ignore="RtlHardcoded" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="12dp"
+        android:includeFontPadding="false"
+        android:paddingBottom="4dp"
+        android:paddingLeft="2dp"
+        android:singleLine="true"
+        android:text="@string/book_name"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_author"
+        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
+        app:layout_constraintRight_toLeftOf="@id/fl_has_new"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_author"
+        android:layout_width="@dimen/desc_icon_size"
+        android:layout_height="@dimen/desc_icon_size"
+        android:contentDescription="@string/author"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:src="@drawable/ic_author"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_author"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintTop_toTopOf="@+id/tv_author"
+        app:tint="@color/tv_text_summary"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/tv_author"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:paddingEnd="6dp"
+        android:text="@string/author"
+        android:textColor="@color/tv_text_summary"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_read"
+        app:layout_constraintLeft_toRightOf="@+id/iv_author"
+        app:layout_constraintRight_toRightOf="@id/fl_has_new"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name"
+        tools:ignore="RtlSymmetry,TextContrastCheck" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_read"
+        android:layout_width="@dimen/desc_icon_size"
+        android:layout_height="@dimen/desc_icon_size"
+        android:contentDescription="@string/read_dur_progress"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:src="@drawable/ic_history"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_read"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintTop_toTopOf="@+id/tv_read"
+        app:tint="@color/tv_text_summary"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/tv_read"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:text="@string/read_dur_progress"
+        android:textColor="@color/tv_text_summary"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/tv_last"
+        app:layout_constraintLeft_toRightOf="@+id/iv_read"
+        app:layout_constraintRight_toRightOf="@+id/fl_has_new"
+        app:layout_constraintTop_toBottomOf="@+id/tv_author"
+        tools:ignore="TextContrastCheck" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_last"
+        android:layout_width="@dimen/desc_icon_size"
+        android:layout_height="@dimen/desc_icon_size"
+        android:contentDescription="@string/lasted_show"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:src="@drawable/ic_book_last"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_last"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintTop_toTopOf="@+id/tv_last"
+        app:tint="@color/tv_text_summary"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/tv_last"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:singleLine="true"
+        android:text="@string/lasted_show"
+        android:textColor="@color/tv_text_summary"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/iv_last"
+        app:layout_constraintRight_toRightOf="@id/fl_has_new"
+        app:layout_constraintTop_toBottomOf="@+id/tv_read"
+        tools:ignore="TextContrastCheck" />
+
+    <View
+        android:id="@+id/vw_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

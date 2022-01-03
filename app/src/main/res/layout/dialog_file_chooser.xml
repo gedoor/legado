@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="?attr/actionBarStyle"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_path"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@color/background_card"
+        android:elevation="5dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_card">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_file"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</LinearLayout>

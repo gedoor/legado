@@ -1,0 +1,26 @@
+[
+  {
+    "themeName": "典雅蓝",
+    "isNightTheme": false,
+    "primaryColor": "#03A9F4",
+    "accentColor": "#AD1457",
+    "backgroundColor": "#F5F5F5",
+    "bottomBackground": "#EEEEEE"
+  },
+  {
+    "themeName": "黑白",
+    "isNightTheme": true,
+    "primaryColor": "#303030",
+    "accentColor": "#E0E0E0",
+    "backgroundColor": "#424242",
+    "bottomBackground": "#424242"
+  },
+  {
+    "themeName": "A屏黑",
+    "isNightTheme": true,
+    "primaryColor": "#000000",
+    "accentColor": "#FFFFFF",
+    "backgroundColor": "#000000",
+    "bottomBackground": "#000000"
+  }
+]

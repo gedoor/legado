@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:contentDescription="ICON"
+        android:padding="10dip"
+        tools:ignore="HardcodedText" />
+
+    <CheckedTextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/icon"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorAlertDialogListItem"
+        android:textIsSelectable="false"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+</RelativeLayout>

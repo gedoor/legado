@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="files_cache"
+        path="Android/data/com.kunfei.bookshelf/cache" />
+    <external-path
+        name="external_storage_root"
+        path="." />
+    <files-path
+        name="share"
+        path="." />
+    <external-files-path
+        name="external_files"
+        path="." />
+    <cache-path
+        name="cache"
+        path="." />
+    <external-cache-path
+        name="external_cache"
+        path="." />
+    <files-path
+        name="files"
+        path="." />
+</paths>

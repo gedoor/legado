@@ -1,0 +1,110 @@
+import java.security.MessageDigest
+
+apply plugin: 'de.undercouch.download'
+
+def BASE_PATH = "https://storage.googleapis.com/chromium-cronet/android/" + CronetVersion + "/Release/cronet/"
+def assetsDir = projectDir.toString() + "/src/main/assets"
+def libPath = projectDir.toString() + "/cronetlib"
+def soPath = projectDir.toString() + "/so"
+
+/**
+ * 从文件生成MD5
+ * @param file
+ * @return
+ */
+static def generateMD5(final file) {
+    MessageDigest digest = MessageDigest.getInstance("MD5")
+    file.withInputStream() { is ->
+        byte[] buffer = new byte[1024]
+        int numRead = 0
+        while ((numRead = is.read(buffer)) > 0) {
+            digest.update(buffer, 0, numRead)
+        }
+    }
+    return String.format("%032x", new BigInteger(1, digest.digest())).toLowerCase()
+}
+
+/**
+ * 下载Cronet相关的jar
+ */
+task downloadJar(type: Download) {
+    src([
+            BASE_PATH + "cronet_api.jar",
+            BASE_PATH + "cronet_impl_common_java.jar",
+            BASE_PATH + "cronet_impl_native_java.jar",
+            BASE_PATH + "cronet_impl_platform_java.jar",
+    ])
+    dest libPath
+    overwrite true
+    onlyIfModified true
+}
+/**
+ * 下载Cronet的arm64-v8a so
+ */
+task downloadARM64(type: Download) {
+    src BASE_PATH + "libs/arm64-v8a/libcronet." + CronetVersion + ".so"
+    dest soPath + "/arm64-v8a.so"
+    overwrite true
+    onlyIfModified true
+}
+/**
+ * 下载Cronet的armeabi-v7a so
+ */
+task downloadARMv7(type: Download) {
+    src BASE_PATH + "libs/armeabi-v7a/libcronet." + CronetVersion + ".so"
+    dest soPath + "/armeabi-v7a.so"
+    overwrite true
+    onlyIfModified true
+}
+/**
+ * 下载Cronet的x86_64 so
+ */
+task downloadX86_64(type: Download) {
+    src BASE_PATH + "libs/x86_64/libcronet." + CronetVersion + ".so"
+    dest soPath + "/x86_64.so"
+    overwrite true
+    onlyIfModified true
+}
+/**
+ * 下载Cronet的x86 so
+ */
+task downloadX86(type: Download) {
+    src BASE_PATH + "libs/x86/libcronet." + CronetVersion + ".so"
+    dest soPath + "/x86.so"
+    overwrite true
+    onlyIfModified true
+}
+
+/**
+ * 更新Cronet版本时执行这个task
+ * 先更改gradle.properties 里面的版本号，然后再执行
+ * gradlew app:downloadCronet
+ */
+task downloadCronet() {
+    dependsOn downloadJar, downloadARM64, downloadARMv7, downloadX86_64, downloadX86
+
+    doLast {
+        StringBuilder sb = new StringBuilder("{")
+        def files = new File(soPath).listFiles()
+        for (File file : files) {
+            println file.name.replace(".so", "")
+            sb.append("\"").append(file.name.replace(".so", "")).append("\":\"").append(generateMD5(file)).append("\",")
+        }
+        sb.append("\"version\":\"").append(CronetVersion).append("\"}")
+
+        println sb.toString()
+
+        println assetsDir
+        def f1 = new File(assetsDir + "/cronet.json")
+        if (!f1.exists()) {
+            f1.parentFile.mkdirs()
+            f1.createNewFile()
+        }
+        f1.text = sb.toString()
+
+    }
+
+
+}
+
+

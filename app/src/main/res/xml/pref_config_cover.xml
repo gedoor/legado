@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="useDefaultCover"
+        android:summary="@string/use_default_cover_s"
+        android:title="@string/use_default_cover"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:key="dayThemeCategory"
+        android:title="@string/day"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="defaultCover"
+            android:title="@string/default_cover"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="coverShowName"
+            android:title="@string/cover_show_name"
+            android:summary="@string/cover_show_name_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="coverShowAuthor"
+            android:title="@string/cover_show_author"
+            android:summary="@string/cover_show_author_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:key="nightThemeCategory"
+        android:title="@string/night"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="defaultCoverDark"
+            android:title="@string/default_cover"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="coverShowNameN"
+            android:title="@string/cover_show_name"
+            android:summary="@string/cover_show_name_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="coverShowAuthorN"
+            android:title="@string/cover_show_author"
+            android:summary="@string/cover_show_author_summary"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

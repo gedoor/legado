@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/text_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:ellipsize="end"
+    android:gravity="center"
+    android:padding="5dp"
+    android:maxLines="1"
+    android:scrollbars="none"
+    android:textColor="@color/primaryText"
+    android:textSize="14sp"
+    tools:ignore="UnusedAttribute" />

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.book.audio.AudioPlayActivity">
+
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription" />
+
+    <View
+        android:id="@+id/vw_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#50000000" />
+
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:themeMode="dark" />
+
+    <TextView
+        android:id="@+id/tv_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/shape_fillet_btn_press"
+        android:textColor="@color/md_white_1000"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:visibility="invisible"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar" />
+
+    <io.legado.app.ui.widget.image.CircleImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:contentDescription="@string/img_cover"
+        android:scaleType="centerCrop"
+        app:civ_border_color="@color/accent"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
+
+    <TextView
+        android:id="@+id/tv_sub_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:textColor="@color/md_white_1000"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/ll_player_progress" />
+
+    <LinearLayout
+        android:id="@+id/ll_player_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/ll_play_menu">
+
+        <TextView
+            android:id="@+id/tv_dur_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/md_white_1000"
+            tools:ignore="HardcodedText,RtlSymmetry" />
+
+        <io.legado.app.lib.theme.view.ThemeSeekBar
+            android:id="@+id/player_progress"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:progressBackgroundTint="@color/md_dark_secondary" />
+
+        <TextView
+            android:id="@+id/tv_all_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/md_white_1000"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_play_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_timer"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/set_timer"
+            android:src="@drawable/ic_timer_black_24dp"
+            app:tint="@color/md_white_1000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_fast_rewind"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/skip_previous"
+            android:src="@drawable/ic_fast_rewind"
+            app:tint="@color/md_white_1000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_skip_previous"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/skip_previous"
+            android:src="@drawable/ic_skip_previous"
+            app:tint="@color/md_white_1000" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_play_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/audio_play"
+            android:src="@drawable/ic_play_24dp"
+            android:tint="@color/md_black_1000"
+            app:backgroundTint="@color/md_white_1000"
+            app:elevation="2dp"
+            app:fabSize="normal"
+            app:pressedTranslationZ="2dp" />
+
+        <ImageView
+            android:id="@+id/iv_skip_next"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/skip_next"
+            android:src="@drawable/ic_skip_next"
+            app:tint="@color/md_white_1000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_fast_forward"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/skip_next"
+            android:src="@drawable/ic_fast_forward"
+            app:tint="@color/md_white_1000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_chapter"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_chapter_list"
+            android:contentDescription="@string/chapter_list"
+            app:tint="@color/md_white_1000" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

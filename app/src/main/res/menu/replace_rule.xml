@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/menu_group"
+        android:icon="@drawable/ic_groups"
+        android:title="@string/menu_action_group"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_group_manage"
+                android:title="@string/group_manage" />
+
+            <group android:id="@+id/replace_group">
+
+            </group>
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/menu_add_replace_rule"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add_replace_rule"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_local"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_local"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_onLine"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_on_line"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_qr"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_by_qr_code"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:icon="@drawable/ic_help"
+        android:title="@string/help"
+        app:showAsAction="never" />
+
+</menu>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.legado.app.ui.widget.text.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textInputLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="3dp">
+
+    <io.legado.app.ui.widget.code.CodeView
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine" />
+
+</io.legado.app.ui.widget.text.TextInputLayout>

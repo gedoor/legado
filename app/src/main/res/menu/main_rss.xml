@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_rss_star"
+        android:title="@string/favorite"
+        android:icon="@drawable/ic_star"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_group"
+        android:title="@string/group"
+        android:icon="@drawable/ic_groups"
+        app:showAsAction="always">
+
+        <menu />
+
+    </item>
+
+    <item
+        android:id="@+id/menu_rss_config"
+        android:title="@string/setting"
+        android:icon="@drawable/ic_settings"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+</menu>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<remote-actions
+    actionset_label="@string/app_name"
+    version="1.2">
+    <action
+        id="next_page"
+        label="@string/next_page"
+        priority="1"
+        repeatable="true"
+        repeatable_interval="short"
+        trigger_key="PAGE_DOWN">
+        <preference name="gesture" value="click" />
+    </action>
+    <action
+        id="prev_page"
+        label="@string/prev_page"
+        priority="2"
+        repeatable="true"
+        repeatable_interval="short"
+        trigger_key="PAGE_UP">
+        <preference name="gesture" value="double_click" />
+    </action>
+</remote-actions>

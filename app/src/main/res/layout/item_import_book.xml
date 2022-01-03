@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal"
+    android:baselineAligned="false">
+
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="match_parent">
+        <!--选择是否添加文件-->
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/cb_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:enabled="true"
+            android:focusable="true" />
+        <!--文件夹标识或已选文件标识-->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:visibility="invisible"
+            android:src="@drawable/ic_folder"
+            app:tint="@color/primaryText" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            tools:ignore="NestedWeights" />
+
+        <LinearLayout
+            android:id="@+id/ll_brief"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <io.legado.app.ui.widget.text.AccentBgTextView
+                android:id="@+id/tv_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="TXT"
+                android:maxLines="1"
+                android:maxWidth="50dp"
+                app:radius="2dp"
+                tools:ignore="HardcodedText,RtlHardcoded" />
+
+            <TextView
+                android:id="@+id/tv_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                tools:ignore="RtlHardcoded"
+                tools:text="324kb" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2017-05-22" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

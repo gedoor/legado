@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_save"
+        android:icon="@drawable/ic_save"
+        android:title="@string/action_save"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_show_login_header"
+        android:title="@string/show_login_header"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_del_login_header"
+        android:title="@string/del_login_header"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_copy_source"
+        android:title="@string/copy_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_paste_source"
+        android:title="@string/paste_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/help"
+        app:showAsAction="never" />
+
+</menu>

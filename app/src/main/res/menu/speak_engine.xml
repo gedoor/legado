@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_add"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_default"
+        android:title="@string/import_default_rule"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_local"
+        android:title="@string/import_local"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_onLine"
+        android:title="@string/import_on_line"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export"
+        android:title="@string/export"
+        app:showAsAction="never" />
+
+</menu>

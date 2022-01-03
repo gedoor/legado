@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_ok"
+        android:icon="@drawable/ic_check"
+        android:title="@string/ok"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_show_login_header"
+        android:title="@string/show_login_header"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_del_login_header"
+        android:title="@string/del_login_header"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
+        app:showAsAction="never" />
+
+</menu>

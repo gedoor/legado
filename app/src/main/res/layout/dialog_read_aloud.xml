@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_menu"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/previous_chapter"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/iv_play_prev"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:tooltipText="@string/prev_sentence"
+            android:contentDescription="@string/prev_sentence"
+            android:src="@drawable/ic_skip_previous"
+            app:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <ImageView
+            android:id="@+id/iv_play_pause"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:tooltipText="@string/audio_play"
+            android:contentDescription="@string/audio_play"
+            android:src="@drawable/ic_play_24dp"
+            app:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <ImageView
+            android:id="@+id/iv_stop"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/stop"
+            android:tooltipText="@string/stop"
+            android:src="@drawable/ic_stop_black_24dp"
+            app:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <ImageView
+            android:id="@+id/iv_play_next"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/next_sentence"
+            android:tooltipText="@string/next_sentence"
+            android:src="@drawable/ic_skip_next"
+            app:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/next_chapter"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="6dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_timer"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:tooltipText="@string/set_timer"
+            android:contentDescription="@string/set_timer"
+            android:src="@drawable/ic_time_add_24dp"
+            android:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <io.legado.app.lib.theme.view.ThemeSeekBar
+            android:id="@+id/seek_timer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="180" />
+
+        <TextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primaryText"
+            android:text="@string/timer_m" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_tts_SpeechRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tv_tts_speed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/read_aloud_speed"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
+
+            <io.legado.app.lib.theme.view.ThemeSwitch
+                android:id="@+id/cb_tts_follow_sys"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/flow_sys"
+                android:text="@string/flow_sys"
+                tools:ignore="RtlHardcoded,TouchTargetSizeCheck" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_tts_speech_reduce"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:tooltipText="@string/tts_speech_reduce"
+                android:contentDescription="@string/tts_speech_reduce"
+                android:src="@drawable/ic_reduce"
+                android:tint="@color/primaryText"
+                tools:ignore="UnusedAttribute" />
+
+            <io.legado.app.lib.theme.view.ThemeSeekBar
+                android:id="@+id/seek_tts_speechRate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="45" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_tts_speech_add"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:tooltipText="@string/tts_speech_add"
+                android:contentDescription="@string/tts_speech_add"
+                android:src="@drawable/ic_add"
+                android:tint="@color/primaryText"
+                tools:ignore="UnusedAttribute" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!--目录按钮-->
+        <LinearLayout
+            android:id="@+id/ll_catalog"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/chapter_list"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:paddingBottom="7dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_catalog"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/chapter_list"
+                android:src="@drawable/ic_toc"
+                app:tint="@color/primaryText"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/tv_catalog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:text="@string/chapter_list"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="@color/primaryText"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
+        <!--调节按钮-->
+        <LinearLayout
+            android:id="@+id/ll_main_menu"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/read_aloud"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:paddingBottom="7dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_main_menu"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/main_menu"
+                android:src="@drawable/ic_menu"
+                app:tint="@color/primaryText"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/tv_main_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:text="@string/main_menu"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="@color/primaryText"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
+        <!--界面按钮-->
+        <LinearLayout
+            android:id="@+id/ll_to_backstage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/to_backstage"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:paddingBottom="7dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_to_backstage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/to_backstage"
+                android:src="@drawable/ic_visibility_off"
+                app:tint="@color/primaryText"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/tv_to_backstage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:text="@string/to_backstage"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="@color/primaryText"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
+        <!--设置按钮-->
+        <LinearLayout
+            android:id="@+id/ll_setting"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/setting"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:paddingBottom="7dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_setting"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/aloud_config"
+                android:src="@drawable/ic_settings"
+                app:tint="@color/primaryText"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/tv_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:text="@string/setting"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="@color/primaryText"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

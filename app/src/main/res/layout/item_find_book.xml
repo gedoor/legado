@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:background="@drawable/bg_find_book_group"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/primaryText"
+            tools:text="起点中文" />
+
+        <io.legado.app.ui.widget.anima.RotateLoading
+            android:id="@+id/rotate_loading"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginRight="4dp"
+            app:hide_mode="gone"
+            app:loading_width="1dp"
+            tools:ignore="RtlHardcoded" />
+
+        <ImageView
+            android:id="@+id/iv_status"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="@color/secondaryText"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_gravity="center">
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/flexbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:padding="3dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:dividerDrawable="@drawable/shape_space_divider"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:showDivider="middle" />
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_top_source"
+        android:title="@string/to_top" />
+
+    <item
+        android:id="@+id/menu_bottom_source"
+        android:title="@string/to_bottom" />
+
+    <item
+        android:id="@+id/menu_edit_source"
+        android:title="@string/edit_source" />
+
+    <item
+        android:id="@+id/menu_disable_source"
+        android:title="@string/disable_source" />
+
+    <item
+        android:id="@+id/menu_delete_source"
+        android:title="@string/delete_source" />
+
+</menu>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <io.legado.app.ui.book.read.page.ReadView
+        android:id="@+id/read_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <View
+        android:id="@+id/text_menu_position"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/cursor_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/select_start"
+        android:src="@drawable/ic_cursor_left"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/cursor_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/select_end"
+        android:src="@drawable/ic_cursor_right"
+        android:visibility="invisible" />
+
+    <io.legado.app.ui.book.read.ReadMenu
+        android:id="@+id/read_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <io.legado.app.ui.book.read.SearchMenu
+        android:id="@+id/search_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/background_menu"
+        android:layout_gravity="bottom" />
+
+</FrameLayout>

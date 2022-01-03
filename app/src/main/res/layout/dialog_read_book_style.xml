@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+        <io.legado.app.ui.book.read.config.TextFontWeightConverter
+            android:id="@+id/text_font_weight_converter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            app:isBottomBackground="true"
+            app:radius="3dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_text_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/text_font"
+            android:gravity="center"
+            android:textSize="14sp"
+            app:isBottomBackground="true"
+            app:radius="3dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_text_indent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/text_indent"
+            android:gravity="center"
+            android:textSize="14sp"
+            app:isBottomBackground="true"
+            app:radius="3dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.book.read.config.ChineseConverter
+            android:id="@+id/chinese_converter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            app:isBottomBackground="true"
+            app:radius="3dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/padding"
+            android:gravity="center"
+            android:textSize="14sp"
+            app:isBottomBackground="true"
+            app:radius="3dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.legado.app.ui.widget.text.StrokeTextView
+            android:id="@+id/tv_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/information"
+            android:gravity="center"
+            android:textSize="14sp"
+            app:isBottomBackground="true"
+            app:radius="3dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:isBottomBackground="true"
+        app:max="45"
+        app:title="@string/text_size" />
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_text_letter_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:isBottomBackground="true"
+        app:max="100"
+        app:title="@string/text_letter_spacing" />
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_line_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:isBottomBackground="true"
+        app:max="20"
+        app:title="@string/line_size" />
+
+    <io.legado.app.ui.widget.DetailSeekBar
+        android:id="@+id/dsb_paragraph_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:isBottomBackground="true"
+        app:max="20"
+        app:title="@string/paragraph_size" />
+
+    <View
+        android:id="@+id/vw_bg_fg"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/btn_bg_press" />
+
+    <TextView
+        android:id="@+id/tv_page_anim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:text="@string/page_anim" />
+
+    <RadioGroup
+        android:id="@+id/rg_page_anim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_anim0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:button="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/page_anim_cover"
+            app:isBottomBackground="true" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_anim1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:button="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/page_anim_slide"
+            app:isBottomBackground="true" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_simulation_anim"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:button="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/page_anim_simulation"
+            app:isBottomBackground="true" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_scroll_anim"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:button="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/page_anim_scroll"
+            app:isBottomBackground="true" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_no_anim"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:button="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/page_anim_none"
+            app:isBottomBackground="true" />
+
+    </RadioGroup>
+
+    <View
+        android:id="@+id/vw_bg_fg1"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/btn_bg_press" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_bg_ts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/text_bg_style" />
+
+        <TextView
+            android:id="@+id/tv_share_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share_layout" />
+
+        <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+            android:id="@+id/cb_share_layout"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginLeft="6dp" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tool:listitem="@layout/item_read_style" />
+
+</LinearLayout>

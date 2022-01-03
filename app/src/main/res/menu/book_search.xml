@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.activity.MainActivity">
+
+    <item
+        android:id="@+id/menu_source_manage"
+        android:title="@string/book_source_manage"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_precision_search"
+        android:title="@string/precision_search"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+</menu>

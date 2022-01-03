@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_menu"
+        android:elevation="5dp"
+        android:theme="?attr/actionBarStyle"
+        app:displayHomeAsUp="false"
+        app:fitStatusBar="false"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/flexbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:padding="3dp"
+        android:layout_marginTop="8dp"
+        app:dividerDrawable="@drawable/shape_space_divider"
+        app:flexDirection="row"
+        app:flexWrap="wrap"
+        app:showDivider="middle" />
+
+</LinearLayout>

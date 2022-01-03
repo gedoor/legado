@@ -1,0 +1,48 @@
+[
+  {
+    "bookSourceComment": "",
+    "bookSourceGroup": "听书",
+    "bookSourceName": "消消乐听书",
+    "bookSourceType": 1,
+    "bookSourceUrl": "https://www.kaixin7days.com",
+    "customOrder": 0,
+    "enabled": true,
+    "enabledExplore": true,
+    "exploreUrl": "@js:var header = JSON.parsesource.getLoginHeader()\nvar json = ''\nvar j = null\nif (header != null) {\n    json = java.connect('https://www.kaixin7days.com/book-service/bookMgt/getBookCategroy,{\"method\":\"POST\",\"body\":{}}', header).body()\n    j = JSON.parse(json)\n}\nif (j == null || j.statusCode != 200) {\n    json = java.connect('https://www.kaixin7days.com/visitorLogin,{\"method\":\"POST\", \"body\":{} }').body()\n    j = JSON.parse(json)\n    var accessToken = {\n        Authorization: 'Bearer ' + j.content.accessToken\n    }\n    header = JSON.stringify(accessToken)\n    source.putLoginHeader(header)\n    json = java.connect('https://www.kaixin7days.com/book-service/bookMgt/getBookCategroy,{\"method\":\"POST\",\"body\":{} }', header).body()\n    j = JSON.parse(json)\n}\nvar fls = j.content\nvar fx = []\nfor (var i = 0; i < fls.length; i++) {\n    fx.push({\n        title: fls[i].categoryName,\n        url: '/book-service/bookMgt/getAllBookByCategroyId,{\"method\":\"POST\",\"body\":{\"categoryIds\": \"' + fls[i].associationCategoryIDs + '\",\"pageNum\": {{page}},\"pageSize\": 100}}'\n    })\n}\nJSON.stringify(fx)",
+    "searchUrl": "https://www.kaixin7days.com/book-service/bookMgt/findBookName,{\"method\":\"POST\",\"body\":{\"title\": \"searchKey\",\"pageNum\": {{searchPage}},\"pageSize\": 100}}",
+    "lastUpdateTime": 1630656684531,
+    "loginCheckJs": "var strRes = result\nvar c = JSON.parse(result.body())\nif (c.statusCode == 301) {\n    var loginInfo = source.getLoginInfo()\n    var dl = null\n    if (loginInfo) {\n        dl = java.connect('https://www.kaixin7days.com/login,{\"method\":\"POST\",\"body\":' + loginInfo + '}').body()\n    } else {\n        dl = java.connect('https://www.kaixin7days.com/visitorLogin,{\"method\":\"POST\",\"body\":{}}').body()\n    }\n    c = JSON.parse(dl)\n    var accessToken = {\n        Authorization: \"Bearer \" + c.content.accessToken\n    }\n    var header = JSON.stringify(accessToken)\n    source.putLoginHeader(header)\n    strRes = java.connect(url, header)\n}\nstrRes",
+    "loginUi": "[{\"name\": \"telephone\",\"type\": \"text\"},{\"name\": \"password\",\"type\": \"password\"},{\"name\": \"注册\",\"type\": \"button\",\"action\": \"http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C\"}]",
+    "loginUrl": "var loginInfo = source.getLoginInfo()\nvar json = java.connect('https://www.kaixin7days.com/login,{\"method\":\"POST\",\"body\":' + loginInfo + '}').body()\nvar loginRes = JSON.parse(json)\nvar header = null\nif (loginRes.statusCode == 200) {\n    var accessToken = {\n        Authorization: \"Bearer \" + loginRes.content.accessToken\n    }\n    header = JSON.stringify(accessToken)\n    source.putLoginHeader(header)\n}\nheader",
+    "respondTime": 180000,
+    "ruleBookInfo": {},
+    "ruleContent": {
+      "content": "",
+      "payAction": "var header = JSON.parse(source.getLoginHeader()); var bookId = book.getVariableMap().get('bookId');var chapterId = java.get('chapterId');\n'http://www.shuidi.online/?name=' + book.getName() + '&type=2&cover=' + book.getCoverUrl() + '&chapterId=' + chapterId + '&chapter=203&allNumber=' + book.getTotalChapterNum() + '&bookId=' + bookId + '&chapterIds=' + chapterId + '&number=' + chapter.getIndex() + '&accessToken=' + header.Authorization.substring(7) + '#/pay'"
+    },
+    "ruleExplore": {
+      "author": "$.author",
+      "bookList": "$.content.content",
+      "bookUrl": "$.id@js:java.put('bookId', result);'https://www.kaixin7days.com/book-service/bookMgt/getAllChapterByBookId,{ \"method\": \"POST\",\"body\": {\"bookId\": \"'+result+'\",\"pageNum\": \"1\",\"pageSize\": \"10000\"} }'",
+      "coverUrl": "$.cover@js:var cover = JSON.parse(result);'https://www.shuidi.online/fileMgt/getPicture?filePath='+cover.storeFilePath",
+      "intro": "$.desc",
+      "lastChapter": "$.newestChapter",
+      "name": "$.title"
+    },
+    "ruleSearch": {
+      "author": "$.author",
+      "bookList": "$.content.content",
+      "bookUrl": "$.id@js:java.put('bookId', result);'https://www.kaixin7days.com/book-service/bookMgt/getAllChapterByBookId,{ \"method\": \"POST\",\"body\": {\"bookId\": \"'+result+'\",\"pageNum\": \"1\",\"pageSize\": \"10000\"} }'",
+      "coverUrl": "$.cover@js:var cover = JSON.parse(result);'https://www.shuidi.online/fileMgt/getPicture?filePath='+cover.storeFilePath",
+      "intro": "$.desc",
+      "lastChapter": "$.newestChapter",
+      "name": "$.title"
+    },
+    "ruleToc": {
+      "chapterList": "$.content.content",
+      "chapterName": "$.chapterTitle",
+      "chapterUrl": "$.id@js:java.put('chapterId', result);'https://www.shuidi.online/fileMgt/getAudioByChapterId?bookId=' + java.get('bookId') + '&chapterId=' + result + \"&pageNum=1&pageSize=50&keyId={{var header = JSON.parse(source.getLoginHeader());var keyId = '1632746188011002';var ks = java.md5Encode(keyId + java.get('chapterId') + header.Authorization);keyId + '&keySecret=' + ks}\" + '}'"
+    },
+    "weight": 0
+  }
+]

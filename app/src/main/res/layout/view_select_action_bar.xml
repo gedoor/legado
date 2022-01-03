@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="2dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingTop="6dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="6dp"
+    tools:ignore="RtlHardcoded">
+
+    <io.legado.app.lib.theme.view.ThemeCheckBox
+        android:id="@+id/cb_selected_all"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:text="@string/select_all" />
+
+    <io.legado.app.ui.widget.text.AccentStrokeTextView
+        android:id="@+id/btn_revert_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:minWidth="72dp"
+        android:padding="5dp"
+        android:text="@string/revert_selection"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.ui.widget.text.AccentStrokeTextView
+        android:id="@+id/btn_select_action_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:minWidth="72dp"
+        android:padding="5dp"
+        android:text="@string/app_name"
+        android:visibility="gone"
+        app:isBottomBackground="true" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu_more"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/more_menu"
+        android:padding="6dp"
+        android:src="@drawable/ic_more_vert"
+        android:tint="@color/primaryText"
+        android:tooltipText="@string/more_menu"
+        android:visibility="gone"
+        tools:ignore="RtlHardcoded,UnusedAttribute" />
+
+</LinearLayout>

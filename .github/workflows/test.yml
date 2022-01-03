@@ -1,0 +1,161 @@
+name: Test Build
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set-ver.outputs.version }}
+      versionL: ${{ steps.set-ver.outputs.versionL }}
+      lanzou: ${{ steps.check.outputs.lanzou }}
+      telegram: ${{ steps.check.outputs.telegram }}
+    steps:
+    - id: set-ver
+      run: |
+        echo "::set-output name=version::$(date -d "8 hour" -u +3.%y.%m%d%H)"
+        echo "::set-output name=versionL::$(date -d "8 hour" -u +3.%y.%m%d%H%M)"
+    - id: check
+      run: |
+        if [ ${{ secrets.LANZOU_ID }} ]; then
+          echo "::set-output name=lanzou::yes"
+        fi
+        if [ ${{ secrets.BOT_TOKEN }} ]; then
+          echo "::set-output name=telegram::yes"
+        fi
+      
+  build:
+    needs: prepare
+    strategy:
+      matrix:
+        product: [app, google]
+        type: [release, releaseA]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    env:
+      product: ${{ matrix.product }}
+      type: ${{ matrix.type }}
+      VERSION: ${{ needs.prepare.outputs.version }}
+      VERSIONL: ${{ needs.prepare.outputs.versionL }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-
+      - name: Clear 18PlusList.txt
+        run: |
+          echo "清空18PlusList.txt"
+          echo "">$GITHUB_WORKSPACE/app/src/main/assets/18PlusList.txt
+      - name: Release Apk Sign
+        run: |
+          echo "给apk增加签名"
+          cp $GITHUB_WORKSPACE/.github/workflows/legado.jks $GITHUB_WORKSPACE/app/legado.jks
+          sed '$a\RELEASE_STORE_FILE=./legado.jks'          $GITHUB_WORKSPACE/gradle.properties -i
+          sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
+          sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
+          sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
+      - name: Build With Gradle
+        run: |
+          if [ ${{ env.type }} == 'release' ]; then
+            typeName="原包名"
+          else
+            typeName="共存"
+            sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
+            sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
+          fi
+          echo "统一版本号"
+          sed "/def version/c def version = \"${{ env.VERSION }}\"" $GITHUB_WORKSPACE/app/build.gradle  -i
+          echo "开始${{ env.product }}$typeName构建"
+          chmod +x gradlew
+          ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
+          echo "修改文件名"
+          mkdir -p ${{ github.workspace }}/apk/
+          for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
+            mv "$file" ${{ github.workspace }}/apk/legado_${{ env.product }}_${{ env.VERSIONL }}_$typeName.apk
+          done
+      - name: Upload App To Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: legado.${{ env.product }}.${{ env.type }}
+          path: ${{ github.workspace }}/apk/*.apk
+
+  lanzou:
+    needs: [prepare, build]
+    if: ${{ needs.prepare.outputs.lanzou }}
+    runs-on: ubuntu-latest
+    env:
+      # 登录蓝奏云后在控制台运行document.cookie
+      ylogin: ${{ secrets.LANZOU_ID }}
+      phpdisk_info: ${{ secrets.LANZOU_PSD }}
+      # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
+      LANZOU_FOLDER_ID: '2670621'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          path: apk/
+      - working-directory: apk/
+        run: mv */*.apk . ;rm -rf */
+      - name: Upload To Lanzou
+        continue-on-error: true
+        run: |
+          path="$GITHUB_WORKSPACE/apk/"
+          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
+          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f810h4b"
+
+  test_Branch:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          path: apk/
+      - working-directory: apk/
+        run: mv */*.apk . ;rm -rf */
+      - name: Push To "test" Branch
+        run: |
+          cd $GITHUB_WORKSPACE/apk
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b test
+          git add *.apk
+          git commit -m "${{ needs.prepare.outputs.versionL }}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f -u origin test
+
+  telegram:
+    needs: [prepare, build]
+    if: ${{ needs.prepare.outputs.telegram }}
+    runs-on: ubuntu-latest
+    env:
+      CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          path: apk/
+      - working-directory: apk/
+        run: |
+          for file in `ls */*.apk`; do
+            mv "$file" "$(echo "$file"|sed -e 's#.*\/##g' -e "s/_/ /g" -e 's/legado/阅读/')"
+          done
+          rm -rf */
+      - name: Post to channel
+        run: |
+          pip install pyTelegramBotAPI
+          path="$GITHUB_WORKSPACE/apk/"
+          python3 $GITHUB_WORKSPACE/.github/scripts/tg_bot.py "$BOT_TOKEN" "$CHANNEL_ID" "$path"

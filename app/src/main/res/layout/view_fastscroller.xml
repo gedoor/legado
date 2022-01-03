@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/fastscroll_bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textSize="@dimen/fastscroll_bubble_textsize"
+        android:visibility="gone"
+        tools:background="@drawable/fastscroll_bubble"
+        tools:text="A"
+        tools:textColor="#ffffff"
+        tools:visibility="visible" />
+
+    <FrameLayout
+        android:id="@+id/fastscroll_scrollbar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/fastscroll_track"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/fastscroll_track" />
+
+        <ImageView
+            android:id="@+id/fastscroll_handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingEnd="@dimen/fastscroll_scrollbar_padding_end"
+            android:paddingStart="@dimen/fastscroll_scrollbar_padding_start"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/fastscroll_handle" />
+
+    </FrameLayout>
+
+</merge>

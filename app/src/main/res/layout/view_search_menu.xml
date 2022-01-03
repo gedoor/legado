@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/vw_menu_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/content"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:visibility="invisible"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="上个结果"
+        android:rotation="180"
+        android:src="@drawable/ic_arrow_right"
+        android:tint="@color/primaryText"
+        android:tooltipText="@string/search_content"
+        app:backgroundTint="@color/background_menu"
+        app:elevation="2dp"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:pressedTranslationZ="2dp"
+        tools:ignore="UnusedAttribute" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="下个结果"
+        android:src="@drawable/ic_arrow_right"
+        android:tint="@color/primaryText"
+        android:tooltipText="@string/search_content"
+        app:backgroundTint="@color/background_menu"
+        app:elevation="2dp"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:pressedTranslationZ="2dp"
+        tools:ignore="UnusedAttribute" />
+
+    <LinearLayout
+        android:id="@+id/ll_search_base_info"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/background_menu"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:layout_constraintBottom_toTopOf="@id/ll_bottom_bg">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_search_content_up"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/go_to_top"
+            android:src="@drawable/ic_arrow_drop_up"
+            android:tooltipText="@string/go_to_top"
+            app:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_search_content_down"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/go_to_bottom"
+            android:src="@drawable/ic_arrow_drop_down"
+            android:tooltipText="@string/go_to_bottom"
+            app:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/tv_current_search_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:ellipsize="middle"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:textColor="@color/primaryText"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_bottom_bg"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:importantForAccessibility="no" />
+
+        <!--结果按钮-->
+        <LinearLayout
+            android:id="@+id/ll_search_results"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="结果"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:paddingBottom="7dp">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="结果"
+                android:src="@drawable/ic_toc"
+                app:tint="@color/primaryText"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/tv_search_results"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:maxLines="1"
+                android:text="结果"
+                android:textColor="@color/primaryText"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
+        <!--调节按钮-->
+        <LinearLayout
+            android:id="@+id/ll_main_menu"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/read_aloud"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:paddingBottom="7dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_main_menu"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/main_menu"
+                android:src="@drawable/ic_menu"
+                app:tint="@color/primaryText"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/tv_main_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:maxLines="1"
+                android:text="@string/main_menu"
+                android:textColor="@color/primaryText"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
+        <!--界面按钮-->
+        <LinearLayout
+            android:id="@+id/ll_search_exit"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="退出"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:paddingBottom="7dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_search_exit"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="退出"
+                android:src="@drawable/ic_auto_page_stop"
+                app:tint="@color/primaryText"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/tv_search_exit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="3dp"
+                android:maxLines="1"
+                android:text="退出"
+                android:textColor="@color/primaryText"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="2" />-->
+<!--        &lt;!&ndash;设置按钮&ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/ll_setting"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:background="?android:attr/selectableItemBackgroundBorderless"-->
+<!--            android:clickable="true"-->
+<!--            android:contentDescription="@string/setting"-->
+<!--            android:focusable="true"-->
+<!--            android:orientation="vertical"-->
+<!--            android:paddingBottom="7dp">-->
+
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:id="@+id/iv_setting"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:contentDescription="@string/aloud_config"-->
+<!--                android:src="@drawable/ic_settings"-->
+<!--                app:tint="@color/primaryText"-->
+<!--                tools:ignore="NestedWeights" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/tv_setting"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginTop="3dp"-->
+<!--                android:maxLines="1"-->
+<!--                android:text="@string/setting"-->
+<!--                android:textColor="@color/primaryText"-->
+<!--                android:textSize="12sp" />-->
+<!--        </LinearLayout>-->
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:importantForAccessibility="no" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

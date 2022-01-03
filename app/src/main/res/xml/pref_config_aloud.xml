@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.ui.widget.prefs.PreferenceCategory
+        android:title="@string/aloud_config"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:title="@string/pref_media_button_per_next"
+            android:summary="@string/pref_media_button_per_next_summary"
+            android:key="mediaButtonPerNext"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:title="@string/read_aloud_by_page"
+            android:summary="@string/read_aloud_by_page_summary"
+            android:key="readAloudByPage"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:defaultValue="false"
+            android:title="@string/speak_engine"
+            android:summary="TTS"
+            android:key="appTtsEngine"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

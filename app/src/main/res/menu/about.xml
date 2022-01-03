@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_share_it"
+        android:title="@string/share"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_scoring"
+        android:title="@string/scoring"
+        android:icon="@drawable/ic_scoring"
+        app:showAsAction="always" />
+</menu>

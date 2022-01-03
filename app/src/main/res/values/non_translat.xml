@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="pk_bookshelf_px">bookshelf_px</string>
+    <string name="legado_gzh">开源阅读</string>
+
+    <string name="source_rule_url">https://alanskycn.gitee.io/teachme/</string>
+    <string name="this_github_url">https://github.com/gedoor/legado</string>
+    <string name="contributors_url">https://github.com/gedoor/legado/graphs/contributors</string>
+    <string name="disclaimer_url">https://gedoor.github.io/MyBookshelf/disclaimer.html</string>
+    <string name="home_page_url">https://gedoor.github.io/MyBookshelf/</string>
+    <string name="latest_release_url">https://github.com/gedoor/legado/releases/latest</string>
+    <string name="latest_release_api">https://api.github.com/repos/gedoor/legado/releases/latest</string>
+    <string name="tg_url">https://t.me/legado_channels</string>
+    <string name="discord_url">https://discord.gg/qDE52P5xGW</string>
+
+    <string name="http_ip">http://%1$s:%2$d</string>
+    <string name="git_hub">GitHub</string>
+    <string name="diy_edit_source_group_title">【%s】</string>
+    <string name="vip_title">🔒%s</string>
+    <string name="payed_title">🔓%s</string>
+
+</resources>

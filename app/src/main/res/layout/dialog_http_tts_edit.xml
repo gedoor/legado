@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="?attr/actionBarStyle"
+        app:title="@string/speak_engine"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name">
+
+                <io.legado.app.lib.theme.view.ThemeEditText
+                    android:id="@+id/tv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="url"
+                tools:ignore="HardcodedText">
+
+                <io.legado.app.ui.widget.code.CodeView
+                    android:id="@+id/tv_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Content-Type"
+                tools:ignore="HardcodedText">
+
+                <io.legado.app.ui.widget.code.CodeView
+                    android:id="@+id/tv_content_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_url"
+                tools:ignore="HardcodedText">
+
+                <io.legado.app.ui.widget.code.CodeView
+                    android:id="@+id/tv_login_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_ui"
+                tools:ignore="HardcodedText">
+
+                <io.legado.app.ui.widget.code.CodeView
+                    android:id="@+id/tv_login_ui"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_check_js"
+                tools:ignore="HardcodedText">
+
+                <io.legado.app.ui.widget.code.CodeView
+                    android:id="@+id/tv_login_check_js"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/source_http_header"
+                tools:ignore="HardcodedText">
+
+                <io.legado.app.ui.widget.code.CodeView
+                    android:id="@+id/tv_headers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            </io.legado.app.ui.widget.text.TextInputLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
