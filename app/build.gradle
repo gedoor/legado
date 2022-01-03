@@ -35,7 +35,7 @@ android {
         applicationId "io.legado.app"
         minSdkVersion 21
         targetSdkVersion 32
-        versionCode gitCommits
+        versionCode 10000 + gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", name + "_" + version)
