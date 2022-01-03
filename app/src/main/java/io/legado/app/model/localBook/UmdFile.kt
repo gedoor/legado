@@ -19,7 +19,6 @@ class UmdFile(var book: Book) {
 
         @Synchronized
         private fun getUFile(book: Book): UmdFile {
-
             if (uFile == null || uFile?.book?.bookUrl != book.bookUrl) {
                 uFile = UmdFile(book)
                 return uFile!!
@@ -76,7 +75,6 @@ class UmdFile(var book: Book) {
                 }
                 if (!File(book.coverUrl!!).exists()) {
                     FileUtils.writeBytes(book.coverUrl!!, it.cover.coverData)
-
                 }
             }
         } catch (e: Exception) {
