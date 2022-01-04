@@ -8,6 +8,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.help.http.*
+import io.legado.app.help.CacheManager
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
@@ -125,6 +126,26 @@ interface JsExtensions {
         }
     }
 
+     /**
+     * 缓存网络文件
+     * @param url 网络文件的链接
+     * @param saveTime 缓存时间，单位：秒
+     * @return 返回缓存后的文件内容
+     */
+    fun cacheFile(url: String): String? {
+        return cacheFile(url, 0)
+    }
+
+    fun cacheFile(url: String, saveTime: Int = 0): String? {
+        val key = md5Encode16(url)
+	    val _cache = CacheManager.get(key)
+	    val value = ajax(url) ?: ""
+	if(_cache.isNullOrBlank()) {
+            CacheManager.put(key, value as Any, saveTime)
+         }
+         return _cache
+    }
+
     /**
      * 实现16进制字符串转文件
      * @param content 需要转成文件的16进制字符串
@@ -172,19 +193,6 @@ interface JsExtensions {
             .headers(headers)
             .method(Connection.Method.POST)
             .execute()
-    }
-
-    /**
-     *js实现读取cookie
-     */
-    fun getCookie(tag: String, key: String? = null): String {
-        val cookie = CookieStore.getCookie(tag)
-        val cookieMap = CookieStore.cookieToMap(cookie)
-        return if (key != null) {
-            cookieMap[key] ?: ""
-        } else {
-            cookie
-        }
     }
 
     /**
