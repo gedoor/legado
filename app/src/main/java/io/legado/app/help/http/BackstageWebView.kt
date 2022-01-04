@@ -202,7 +202,7 @@ class BackstageWebView(
     ) : Runnable {
         private val mWebView: WeakReference<WebView> = WeakReference(webView)
         override fun run() {
-            mWebView.get()?.loadUrl("javascript:${mJavaScript ?: ""}")
+            mWebView.get()?.loadUrl("javascript:${mJavaScript}")
         }
     }
 
