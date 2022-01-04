@@ -139,8 +139,9 @@ interface JsExtensions {
     fun cacheFile(url: String, saveTime: Int = 0): String? {
         val key = md5Encode16(url)
 	    val _cache = CacheManager.get(key)
-	    val value = ajax(url) ?: ""
-	if(_cache.isNullOrBlank()) {
+	    if(_cache.isNullOrBlank()) {
+	        log("首次下载${url}...")
+	        val value = ajax(url) ?: ""
             CacheManager.put(key, value as Any, saveTime)
          }
          return _cache

@@ -31,8 +31,21 @@
 
 * 获取登录后的cookie
 ```
-java.getCookie("http://baidu.com", null) => userid=1234;pwd=adbcd
-java.getCookie("http://baidu.com", "userid") => 1234
+获取全部
+cookie.getCookie(url)
+获取某一键值
+cookie.getKey(url,key)
+```
+
+* 缓存网络文件
+```
+获取
+java.cacheFile(url)
+java.cacheFile(url,saveTime)
+执行内容
+eval(String(java.cacheFile(url)))
+删除缓存文件
+cache.delete(java.md5Encode16(url))
 ```
 
 * 请求头,支持http代理,socks4 socks5代理设置
