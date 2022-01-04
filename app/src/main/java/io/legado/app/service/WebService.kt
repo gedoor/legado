@@ -128,13 +128,16 @@ class WebService : BaseService() {
 
     private fun upTile(active: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            startService<WebTileService> {
-                action = if (active) {
-                    IntentAction.start
-                } else {
-                    IntentAction.stop
+            kotlin.runCatching {
+                startService<WebTileService> {
+                    action = if (active) {
+                        IntentAction.start
+                    } else {
+                        IntentAction.stop
+                    }
                 }
             }
+
         }
     }
 }
