@@ -58,7 +58,7 @@ class HandleFileActivity :
         }
         val allowExtensions = intent.getStringArrayExtra("allowExtensions")
         val selectList: ArrayList<SelectItem<Int>> = when (mode) {
-            HandleFileContract.SYS_DIR -> getDirActions(true)
+            HandleFileContract.DIR_SYS -> getDirActions(true)
             HandleFileContract.DIR -> getDirActions()
             HandleFileContract.FILE -> getFileActions()
             HandleFileContract.EXPORT -> arrayListOf(

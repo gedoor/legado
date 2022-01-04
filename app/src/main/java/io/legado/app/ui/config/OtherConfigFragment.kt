@@ -19,6 +19,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 import splitties.init.appCtx
@@ -32,7 +33,11 @@ class OtherConfigFragment : BasePreferenceFragment(),
         appCtx,
         SharedReceiverActivity::class.java.name
     )
-    private val webPort get() = getPrefInt(PreferKey.webPort, 1122)
+    private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { treeUri ->
+            AppConfig.defaultBookTreeUri = treeUri.toString()
+        }
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
@@ -43,7 +48,10 @@ class OtherConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
         upPreferenceSummary(PreferKey.preDownloadNum, AppConfig.preDownloadNum.toString())
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
-        upPreferenceSummary(PreferKey.webPort, webPort.toString())
+        upPreferenceSummary(PreferKey.webPort, AppConfig.webPort.toString())
+        AppConfig.defaultBookTreeUri?.let {
+            upPreferenceSummary(PreferKey.defaultBookTreeUri, it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,6 +69,10 @@ class OtherConfigFragment : BasePreferenceFragment(),
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             PreferKey.userAgent -> showUserAgentDialog()
+            PreferKey.defaultBookTreeUri -> localBookTreeSelect.launch {
+                title = "选择保存书籍的文件夹"
+                mode = HandleFileContract.DIR_SYS
+            }
             PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.pre_download))
                 .setMaxValue(9999)
@@ -81,9 +93,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 .setTitle(getString(R.string.web_port_title))
                 .setMaxValue(60000)
                 .setMinValue(1024)
-                .setValue(webPort)
+                .setValue(AppConfig.webPort)
                 .show {
-                    putPrefInt(PreferKey.webPort, it)
+                    AppConfig.webPort = it
                 }
             PreferKey.cleanCache -> clearCache()
             "uploadRule" -> DirectLinkUploadConfig().show(childFragmentManager, "uploadRuleConfig")
@@ -101,11 +113,14 @@ class OtherConfigFragment : BasePreferenceFragment(),
                 postEvent(PreferKey.threadCount, "")
             }
             PreferKey.webPort -> {
-                upPreferenceSummary(key, webPort.toString())
+                upPreferenceSummary(key, AppConfig.webPort.toString())
                 if (WebService.isRun) {
                     WebService.stop(requireContext())
                     WebService.start(requireContext())
                 }
+            }
+            PreferKey.defaultBookTreeUri -> {
+                upPreferenceSummary(key, AppConfig.defaultBookTreeUri)
             }
             PreferKey.recordLog -> LogUtils.upLevel()
             PreferKey.processText -> sharedPreferences?.let {

@@ -244,6 +244,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefString(PreferKey.ttsEngine, value)
         }
 
+    var webPort: Int
+        get() = appCtx.getPrefInt(PreferKey.webPort, 1122)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.webPort, value)
+        }
+
     val autoChangeSource: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
 

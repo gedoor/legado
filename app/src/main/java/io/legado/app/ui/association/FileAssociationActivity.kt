@@ -48,6 +48,7 @@ class FileAssociationActivity :
                 if (treeUriStr.isNullOrEmpty()) {
                     localBookTreeSelect.launch {
                         title = "选择保存书籍的文件夹"
+                        mode = HandleFileContract.DIR_SYS
                     }
                 } else {
                     importBook(Uri.parse(treeUriStr), uri)

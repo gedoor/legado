@@ -61,7 +61,7 @@ abstract class BaseReadBookActivity :
         binding.navigationBar.setBackgroundColor(bottomBackground)
         viewModel.permissionDenialLiveData.observe(this) {
             selectBookFolderResult.launch {
-                mode = HandleFileContract.SYS_DIR
+                mode = HandleFileContract.DIR_SYS
                 title = "选择书籍所在文件夹"
             }
         }
