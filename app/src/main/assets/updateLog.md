@@ -11,6 +11,14 @@
 * 正文出现缺字漏字、内容缺失、排版错乱等情况，有可能是净化规则或简繁转换出现问题。
 * 漫画源看书显示乱码，**阅读与其他软件的源并不通用**，请导入阅读的支持的漫画源！
 
+**2022/01/04**
+
+* 弃用java.getCookie(tag,key)，请使用cookie.getKey(url,key)
+* js添加java.cacheFile(url, saveTime),缓存网络链接，返回文件内容，可实现代码共用和减少代码量
+```js
+eval(String(java.cacheFile(url)))
+```
+
 **2022/01/03**
 
 * 修复打开Web服务，切出app后很快崩溃 #1489
