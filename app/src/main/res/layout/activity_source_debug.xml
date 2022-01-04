@@ -176,7 +176,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/secondaryText"
-                android:text="调试详情页>>输入详情页URL，如："
+                android:text="调试正文页>>输入正文页URL，如："
                 tools:ignore="HardcodedText" />
 
             <TextView
