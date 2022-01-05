@@ -43,11 +43,11 @@ object BookContent {
         )
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         Debug.log(bookSource.bookSourceUrl, body, state = 40)
-        val mNextChapterUrl = if (!nextChapterUrl.isNullOrEmpty()) {
-            nextChapterUrl
-        } else {
+        val mNextChapterUrl = if (nextChapterUrl.isNullOrEmpty()) {
             appDb.bookChapterDao.getChapter(book.bookUrl, bookChapter.index + 1)?.url
                 ?: appDb.bookChapterDao.getChapter(book.bookUrl, 0)?.url
+        } else {
+            nextChapterUrl
         }
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)
