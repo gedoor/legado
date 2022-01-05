@@ -35,7 +35,8 @@ object BookContent {
         redirectUrl: String,
         baseUrl: String,
         body: String?,
-        nextChapterUrl: String? = null
+        nextChapterUrl: String? = null,
+        needSave: Boolean = true
     ): String {
         body ?: throw NoStackTraceException(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
@@ -121,7 +122,9 @@ object BookContent {
         if (contentStr.isBlank()) {
             throw ContentEmptyException("内容为空")
         }
-        BookHelp.saveContent(scope, bookSource, book, bookChapter, contentStr)
+        if (needSave) {
+            BookHelp.saveContent(scope, bookSource, book, bookChapter, contentStr)
+        }
         return contentStr
     }
 

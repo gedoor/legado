@@ -57,13 +57,13 @@ object WebBook {
                 }
             }
             return BookList.analyzeBookList(
-                scope,
-                bookSource,
-                variableBook,
-                analyzeUrl,
-                res.url,
-                res.body,
-                true
+                scope = scope,
+                bookSource = bookSource,
+                variableBook = variableBook,
+                analyzeUrl = analyzeUrl,
+                baseUrl = res.url,
+                body = res.body,
+                isSearch = true
             )
         }
         return arrayListOf()
@@ -107,13 +107,13 @@ object WebBook {
             }
         }
         return BookList.analyzeBookList(
-            scope,
-            bookSource,
-            variableBook,
-            analyzeUrl,
-            res.url,
-            res.body,
-            false
+            scope = scope,
+            bookSource = bookSource,
+            variableBook = variableBook,
+            analyzeUrl = analyzeUrl,
+            baseUrl = res.url,
+            body = res.body,
+            isSearch = false
         )
     }
 
@@ -141,13 +141,13 @@ object WebBook {
         book.type = bookSource.bookSourceType
         if (!book.infoHtml.isNullOrEmpty()) {
             BookInfo.analyzeBookInfo(
-                scope,
-                bookSource,
-                book,
-                book.bookUrl,
-                book.bookUrl,
-                book.infoHtml,
-                canReName
+                scope = scope,
+                bookSource = bookSource,
+                book = book,
+                redirectUrl = book.bookUrl,
+                baseUrl = book.bookUrl,
+                body = book.infoHtml,
+                canReName = canReName
             )
         } else {
             val analyzeUrl = AnalyzeUrl(
@@ -165,13 +165,13 @@ object WebBook {
                 }
             }
             BookInfo.analyzeBookInfo(
-                scope,
-                bookSource,
-                book,
-                book.bookUrl,
-                res.url,
-                res.body,
-                canReName
+                scope = scope,
+                bookSource = bookSource,
+                book = book,
+                redirectUrl = book.bookUrl,
+                baseUrl = res.url,
+                body = res.body,
+                canReName = canReName
             )
         }
         return book
@@ -199,12 +199,12 @@ object WebBook {
         book.type = bookSource.bookSourceType
         return if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
             BookChapterList.analyzeChapterList(
-                scope,
-                bookSource,
-                book,
-                book.tocUrl,
-                book.tocUrl,
-                book.tocHtml
+                scope = scope,
+                bookSource = bookSource,
+                book = book,
+                redirectUrl = book.tocUrl,
+                baseUrl = book.tocUrl,
+                body = book.tocHtml
             )
         } else {
             val analyzeUrl = AnalyzeUrl(
@@ -222,12 +222,12 @@ object WebBook {
                 }
             }
             BookChapterList.analyzeChapterList(
-                scope,
-                bookSource,
-                book,
-                book.tocUrl,
-                res.url,
-                res.body
+                scope = scope,
+                bookSource = bookSource,
+                book = book,
+                redirectUrl = book.tocUrl,
+                baseUrl = res.url,
+                body = res.body
             )
         }
     }
@@ -241,10 +241,11 @@ object WebBook {
         book: Book,
         bookChapter: BookChapter,
         nextChapterUrl: String? = null,
+        needSave: Boolean = true,
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            getContentAwait(scope, bookSource, book, bookChapter, nextChapterUrl)
+            getContentAwait(scope, bookSource, book, bookChapter, nextChapterUrl, needSave)
         }
     }
 
@@ -253,7 +254,8 @@ object WebBook {
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
-        nextChapterUrl: String? = null
+        nextChapterUrl: String? = null,
+        needSave: Boolean = true
     ): String {
         if (bookSource.getContentRule().content.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
@@ -261,14 +263,15 @@ object WebBook {
         }
         return if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
             BookContent.analyzeContent(
-                scope,
-                bookSource,
-                book,
-                bookChapter,
-                bookChapter.getAbsoluteURL(),
-                bookChapter.getAbsoluteURL(),
-                book.tocHtml,
-                nextChapterUrl
+                scope = scope,
+                bookSource = bookSource,
+                book = book,
+                bookChapter = bookChapter,
+                redirectUrl = bookChapter.getAbsoluteURL(),
+                baseUrl = bookChapter.getAbsoluteURL(),
+                body = book.tocHtml,
+                nextChapterUrl = nextChapterUrl,
+                needSave = needSave
             )
         } else {
             val analyzeUrl = AnalyzeUrl(
@@ -290,14 +293,15 @@ object WebBook {
                 }
             }
             BookContent.analyzeContent(
-                scope,
-                bookSource,
-                book,
-                bookChapter,
-                bookChapter.getAbsoluteURL(),
-                res.url,
-                res.body,
-                nextChapterUrl
+                scope = scope,
+                bookSource = bookSource,
+                book = book,
+                bookChapter = bookChapter,
+                redirectUrl = bookChapter.getAbsoluteURL(),
+                baseUrl = res.url,
+                body = res.body,
+                nextChapterUrl = nextChapterUrl,
+                needSave = needSave
             )
         }
     }

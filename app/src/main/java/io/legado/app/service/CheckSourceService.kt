@@ -135,8 +135,14 @@ class CheckSourceService : BaseService() {
             }
             val book = WebBook.getBookInfoAwait(this, source, books.first().toBook())
             val toc = WebBook.getChapterListAwait(this, source, book)
-            val content =
-                WebBook.getContentAwait(this, source, book, toc.first(), toc.getOrNull(1)?.url)
+            val content = WebBook.getContentAwait(
+                this,
+                bookSource = source,
+                book = book,
+                bookChapter = toc.first(),
+                nextChapterUrl = toc.getOrNull(1)?.url,
+                needSave = false
+            )
             if (content.isBlank()) {
                 throw NoStackTraceException("正文内容为空")
             }
@@ -144,7 +150,8 @@ class CheckSourceService : BaseService() {
             .onError(searchCoroutine) {
                 source.addGroup("失效")
                 if (source.bookSourceComment?.contains("Error: ") == false) {
-                    source.bookSourceComment = "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
+                    source.bookSourceComment =
+                        "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
                 }
                 Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)

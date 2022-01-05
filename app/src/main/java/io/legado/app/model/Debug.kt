@@ -94,7 +94,7 @@ object Debug {
     fun updateFinalMessage(sourceUrl: String, state: String) {
         if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
             val spendingTime = System.currentTimeMillis() - debugTimeMap[sourceUrl]!!
-            debugTimeMap[sourceUrl] = if(state == "成功") spendingTime else 180000L
+            debugTimeMap[sourceUrl] = if (state == "成功") spendingTime else 180000L
             val printTime = debugTimeFormat.format(Date(spendingTime))
             val originalMessage = debugMessageMap[sourceUrl]!!.substringAfter("] ")
             debugMessageMap[sourceUrl] = "$printTime $originalMessage $state"
@@ -270,13 +270,18 @@ object Debug {
         nextChapterUrl: String?
     ) {
         log(debugSource, "︾开始解析正文页")
-        val content = WebBook.getContent(scope, bookSource, book, bookChapter, nextChapterUrl)
-            .onSuccess {
-                log(debugSource, "︽正文页解析完成", state = 1000)
-            }
-            .onError {
-                log(debugSource, it.msg, state = -1)
-            }
+        val content = WebBook.getContent(
+            scope = scope,
+            bookSource = bookSource,
+            book = book,
+            bookChapter = bookChapter,
+            nextChapterUrl = nextChapterUrl,
+            needSave = false
+        ).onSuccess {
+            log(debugSource, "︽正文页解析完成", state = 1000)
+        }.onError {
+            log(debugSource, it.msg, state = -1)
+        }
         tasks.add(content)
     }
 
