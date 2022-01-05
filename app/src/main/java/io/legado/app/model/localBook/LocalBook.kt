@@ -35,7 +35,11 @@ object LocalBook {
         if (uri.isContentScheme()) {
             return appCtx.contentResolver.openInputStream(uri)!!
         }
-        return FileInputStream(File(uri.path!!))
+        val file = File(uri.path!!)
+        if (file.exists()) {
+            return FileInputStream(File(uri.path!!))
+        }
+        throw FileNotFoundException("${uri.path} 文件不存在")
     }
 
     @Throws(Exception::class)
