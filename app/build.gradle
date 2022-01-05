@@ -14,8 +14,8 @@ def version = "3." + releaseTime()
 def gitCommits = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion '32.0.0'
+    compileSdkVersion 31
+    buildToolsVersion '31.0.0'
     kotlinOptions {
         jvmTarget = "11"
     }
@@ -34,7 +34,7 @@ android {
     defaultConfig {
         applicationId "io.legado.app"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 31
         versionCode 10000 + gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
