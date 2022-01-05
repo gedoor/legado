@@ -144,10 +144,24 @@ object NetworkUtils {
         } else url.substring(0, index)
     }
 
+    /**
+     * 获取二级域名，供cookie保存和读取
+     * 
+     * 1.2.3.4 => 1.2.3.4
+     * www.example.com =>  example.com
+     * www.example.com.cn => example.com.cn
+     * 未实现www.content.example.com => example.com
+     */
     fun getSubDomain(url: String?): String {
         val baseUrl = getBaseUrl(url) ?: return ""
+        //baseUrl为IPv4时，直接返回
+        //IPv6暂时不考虑支持
+        if (isIPv4Address(baseUrl)) {
+            return baseUrl
+        }
+        //td do:利用https://github.com/publicsuffix/list，https://github.com/Kevin-Sangeelee/PublicSuffixList实现二级域名返回
         return if (baseUrl.indexOf(".") == baseUrl.lastIndexOf(".")) {
-            baseUrl.substring(baseUrl.lastIndexOf("/") + 1)
+            baseUrl
         } else baseUrl.substring(baseUrl.indexOf(".") + 1)
     }
 
