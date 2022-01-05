@@ -181,7 +181,8 @@ object BookController {
         if (ReadBook.book?.bookUrl == book.bookUrl) {
             ReadBook.book = book
             ReadBook.durChapterIndex = index
-            ReadBook.loadContent(index)
+            ReadBook.clearTextChapter()
+            ReadBook.loadContent(true)
         }
     }
 
