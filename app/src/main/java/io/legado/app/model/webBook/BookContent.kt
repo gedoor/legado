@@ -35,7 +35,7 @@ object BookContent {
         redirectUrl: String,
         baseUrl: String,
         body: String?,
-        nextChapterUrl: String? = null,
+        nextChapterUrl: String?,
         needSave: Boolean = true
     ): String {
         body ?: throw NoStackTraceException(
@@ -47,6 +47,7 @@ object BookContent {
             nextChapterUrl
         } else {
             appDb.bookChapterDao.getChapter(book.bookUrl, bookChapter.index + 1)?.url
+                ?: appDb.bookChapterDao.getChapter(book.bookUrl, 0)?.url
         }
         val content = StringBuilder()
         val nextUrlList = arrayListOf(baseUrl)

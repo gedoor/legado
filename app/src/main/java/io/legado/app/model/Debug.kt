@@ -253,8 +253,8 @@ object Debug {
             .onSuccess {
                 log(debugSource, "︽目录页解析完成")
                 log(debugSource, showTime = false)
-                val nextChapterUrl = it.getOrNull(1)?.url
-                contentDebug(scope, bookSource, book, it[0], nextChapterUrl)
+                val nextChapterUrl = it.getOrNull(1)?.url ?: it.first().url
+                contentDebug(scope, bookSource, book, it.first(), nextChapterUrl)
             }
             .onError {
                 log(debugSource, it.msg, state = -1)
