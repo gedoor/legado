@@ -31,11 +31,11 @@ object LocalBook {
 
     @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
-        if (book.bookUrl.isContentScheme()) {
-            val uri = Uri.parse(book.bookUrl)
+        val uri = Uri.parse(book.bookUrl)
+        if (uri.isContentScheme()) {
             return appCtx.contentResolver.openInputStream(uri)!!
         }
-        return FileInputStream(File(book.bookUrl))
+        return FileInputStream(File(uri.path!!))
     }
 
     @Throws(Exception::class)
