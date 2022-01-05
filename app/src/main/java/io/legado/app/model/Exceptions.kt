@@ -2,12 +2,10 @@
 
 package io.legado.app.model
 
-class AppException(msg: String) : Exception(msg)
-
 /**
- *
+ * 不记录错误堆栈的报错
  */
-class NoStackTraceException(msg: String) : Exception(msg) {
+open class NoStackTraceException(msg: String) : Exception(msg) {
 
     override fun fillInStackTrace(): Throwable {
         return this
@@ -18,32 +16,14 @@ class NoStackTraceException(msg: String) : Exception(msg) {
 /**
  * 目录为空
  */
-class TocEmptyException(msg: String) : Exception(msg) {
-
-    override fun fillInStackTrace(): Throwable {
-        return this
-    }
-
-}
+class TocEmptyException(msg: String) : NoStackTraceException(msg)
 
 /**
  * 内容为空
  */
-class ContentEmptyException(msg: String) : Exception(msg) {
-
-    override fun fillInStackTrace(): Throwable {
-        return this
-    }
-
-}
+class ContentEmptyException(msg: String) : NoStackTraceException(msg)
 
 /**
  * 并发限制
  */
-class ConcurrentException(msg: String, val waitTime: Int) : Exception(msg) {
-
-    override fun fillInStackTrace(): Throwable {
-        return this
-    }
-
-}
+class ConcurrentException(msg: String, val waitTime: Int) : NoStackTraceException(msg)
