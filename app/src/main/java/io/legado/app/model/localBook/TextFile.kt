@@ -25,17 +25,17 @@ class TextFile(private val book: Book) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(BUFFER_SIZE)
                 var blockContent: String
-                bis.read(buffer)
+                var length = bis.read(buffer)
                 book.charset = EncodingDetect.getEncode(buffer)
                 charset = book.fileCharset()
-                blockContent = String(buffer, charset)
+                blockContent = String(buffer, 0, length, charset)
                 rulePattern = if (book.tocUrl.isNotEmpty()) {
                     Pattern.compile(book.tocUrl, Pattern.MULTILINE)
                 } else {
                     if (blockContent.isEmpty()) {
-                        bis.read(buffer)
+                        length = bis.read(buffer)
                         book.charset = EncodingDetect.getEncode(buffer)
-                        blockContent = String(buffer, charset)
+                        blockContent = String(buffer, 0, length, charset)
                     }
                     getTocRule(blockContent)?.let {
                         Pattern.compile(it.rule, Pattern.MULTILINE)
