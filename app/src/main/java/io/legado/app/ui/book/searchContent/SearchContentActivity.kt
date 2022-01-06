@@ -170,12 +170,6 @@ class SearchContentActivity :
         IntentData.put("searchResult$key", searchResult)
         IntentData.put("searchResultList$key", viewModel.searchResultList)
         searchData.putExtra("key", key)
-
-        searchData.putExtra("searchResultIndex", viewModel.searchResultList.indexOf(searchResult))
-        searchData.putExtra("chapterIndex", searchResult.chapterIndex)
-        searchData.putExtra("contentPosition", searchResult.queryIndexInChapter)
-        searchData.putExtra("query", searchResult.query)
-        searchData.putExtra("resultCountWithinChapter", searchResult.resultCountWithinChapter)
         setResult(RESULT_OK, searchData)
         finish()
     }
