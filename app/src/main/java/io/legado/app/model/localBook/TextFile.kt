@@ -49,7 +49,6 @@ class TextFile(private val book: Book) {
     private fun analyze(pattern: Pattern?): ArrayList<BookChapter> {
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
-            val buffer = ByteArray(BUFFER_SIZE)
             var blockContent: String
             //加载章节
             var curOffset: Long = 0
@@ -57,18 +56,23 @@ class TextFile(private val book: Book) {
             var blockPos = 0
             //读取的长度
             var length: Int
+            val buffer = ByteArray(BUFFER_SIZE)
+            var bufferStart = 0
             //获取文件中的数据到buffer，直到没有数据为止
-            while (bis.read(buffer).also { length = it } > 0) {
+            while (bis.read(buffer, bufferStart, BUFFER_SIZE - bufferStart)
+                    .also { length = it } > 0
+            ) {
                 blockPos++
                 //如果存在Chapter
                 if (pattern != null) {
                     //将数据转换成String, 不能超过length
-                    blockContent = String(buffer, 0, length, charset)
+                    blockContent = String(buffer, 0, bufferStart + length, charset)
                     val lastN = blockContent.lastIndexOf("\n")
                     if (lastN > 0) {
                         blockContent = blockContent.substring(0, lastN)
                         val blockContentSize = blockContent.toByteArray(charset).size
-                        bis.skip(-(length - blockContentSize).toLong())
+                        buffer.copyInto(buffer, 0, blockContentSize - bufferStart, length)
+                        bufferStart = length + bufferStart - blockContentSize
                         length = blockContentSize
                     }
                     //当前Block下使过的String的指针
@@ -199,7 +203,6 @@ class TextFile(private val book: Book) {
                     System.runFinalization()
                 }
             }
-            book.tocUrl = pattern?.pattern() ?: ""
         }
         for (i in toc.indices) {
             val bean = toc[i]
@@ -212,7 +215,8 @@ class TextFile(private val book: Book) {
 
         System.gc()
         System.runFinalization()
-
+        book.tocUrl = pattern?.pattern() ?: ""
+        book.save()
         return toc
     }
 
