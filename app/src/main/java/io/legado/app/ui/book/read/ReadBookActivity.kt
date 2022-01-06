@@ -99,11 +99,14 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val searchContentActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         it ?: return@registerForActivityResult
         it.data?.let { data ->
-            data.getIntExtra("chapterIndex", ReadBook.durChapterIndex).let {
-                viewModel.searchContentQuery = data.getStringExtra("query") ?: ""
-                val searchResultIndex = data.getIntExtra("searchResultIndex", 0)
+            val key = data.getLongExtra("key", System.currentTimeMillis())
+            val searchResult = IntentData.get<SearchResult>("searchResult$key")
+            val searchResultList = IntentData.get<List<SearchResult>>("searchResultList$key")
+            if (searchResult != null && searchResultList != null) {
+                viewModel.searchContentQuery = searchResult.query
+                binding.searchMenu.upSearchResultList(searchResultList)
                 isShowingSearchResult = true
-                binding.searchMenu.updateSearchResultIndex(searchResultIndex)
+                binding.searchMenu.updateSearchResultIndex(searchResultList.indexOf(searchResult))
                 binding.searchMenu.selectedSearchResult?.let { currentResult ->
                     skipToSearch(currentResult)
                     showActionMenu()

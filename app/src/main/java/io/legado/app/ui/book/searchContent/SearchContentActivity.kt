@@ -13,6 +13,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ActivitySearchContentBinding
 import io.legado.app.help.BookHelp
+import io.legado.app.help.IntentData
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.primaryTextColor
@@ -165,6 +166,11 @@ class SearchContentActivity :
     override fun openSearchResult(searchResult: SearchResult) {
         postEvent(EventBus.SEARCH_RESULT, viewModel.searchResultList as List<SearchResult>)
         val searchData = Intent()
+        val key = System.currentTimeMillis()
+        IntentData.put("searchResult$key", searchResult)
+        IntentData.put("searchResultList$key", viewModel.searchResultList)
+        searchData.putExtra("key", key)
+
         searchData.putExtra("searchResultIndex", viewModel.searchResultList.indexOf(searchResult))
         searchData.putExtra("chapterIndex", searchResult.chapterIndex)
         searchData.putExtra("contentPosition", searchResult.queryIndexInChapter)

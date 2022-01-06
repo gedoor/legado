@@ -10,7 +10,6 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.legado.app.R
-import io.legado.app.constant.EventBus
 import io.legado.app.databinding.ViewSearchMenuBinding
 import io.legado.app.help.*
 import io.legado.app.lib.theme.*
@@ -46,7 +45,7 @@ class SearchMenu @JvmOverloads constructor(
     private val hasSearchResult: Boolean
         get() = searchResultList.isNotEmpty()
     val selectedSearchResult: SearchResult?
-        get() = if (searchResultList.isNotEmpty()) searchResultList[currentSearchResultIndex] else null
+        get() = searchResultList.getOrNull(currentSearchResultIndex)
     val previousSearchResult: SearchResult
         get() = searchResultList[lastSearchResultIndex]
 
@@ -55,17 +54,12 @@ class SearchMenu @JvmOverloads constructor(
         initView()
         bindEvent()
         updateSearchInfo()
-        observeSearchResultList()
     }
 
-    private fun observeSearchResultList() {
-        activity?.let { owner ->
-            eventObservable<List<SearchResult>>(EventBus.SEARCH_RESULT).observe(owner, {
-                searchResultList.clear()
-                searchResultList.addAll(it)
-                updateSearchInfo()
-            })
-        }
+    fun upSearchResultList(resultList: List<SearchResult>) {
+        searchResultList.clear()
+        searchResultList.addAll(resultList)
+        updateSearchInfo()
     }
 
     private fun initView() = binding.run {
