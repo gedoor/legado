@@ -46,8 +46,8 @@ class SearchMenu @JvmOverloads constructor(
         get() = searchResultList.isNotEmpty()
     val selectedSearchResult: SearchResult?
         get() = searchResultList.getOrNull(currentSearchResultIndex)
-    val previousSearchResult: SearchResult
-        get() = searchResultList[lastSearchResultIndex]
+    val previousSearchResult: SearchResult?
+        get() = searchResultList.getOrNull(lastSearchResultIndex)
 
     init {
         initAnimation()

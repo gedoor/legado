@@ -938,7 +938,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
 
-        if (previousResult.chapterIndex != searchResult.chapterIndex) {
+        if (searchResult.chapterIndex != previousResult?.chapterIndex) {
             viewModel.openChapter(searchResult.chapterIndex) {
                 jumpToPosition()
             }
