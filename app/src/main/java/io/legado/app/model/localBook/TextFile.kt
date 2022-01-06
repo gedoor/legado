@@ -21,7 +21,7 @@ class TextFile(private val book: Book) {
     @Throws(FileNotFoundException::class)
     fun getChapterList(): ArrayList<BookChapter> {
         var rulePattern: Pattern? = null
-        if (book.charset == null || book.tocUrl.isNotEmpty()) {
+        if (book.charset == null || book.tocUrl.isEmpty()) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(BUFFER_SIZE)
                 var blockContent: String
@@ -65,16 +65,18 @@ class TextFile(private val book: Book) {
                 blockPos++
                 //如果存在Chapter
                 if (pattern != null) {
-                    //将数据转换成String, 不能超过length
-                    blockContent = String(buffer, 0, bufferStart + length, charset)
-                    val lastN = blockContent.lastIndexOf("\n")
-                    if (lastN > 0) {
-                        blockContent = blockContent.substring(0, lastN)
-                        val blockContentSize = blockContent.toByteArray(charset).size
-                        buffer.copyInto(buffer, 0, blockContentSize - bufferStart, length)
-                        bufferStart = length + bufferStart - blockContentSize
-                        length = blockContentSize
+                    var end = bufferStart + length
+                    for (i in bufferStart + length - 1 downTo 0) {
+                        if (buffer[i] == BLANK) {
+                            end = i
+                            break
+                        }
                     }
+                    //将数据转换成String, 不能超过length
+                    blockContent = String(buffer, 0, end, charset)
+                    buffer.copyInto(buffer, 0, end, bufferStart + length)
+                    bufferStart = bufferStart + length - end
+                    length = end
                     //当前Block下使过的String的指针
                     var seekPos = 0
                     //进行正则匹配
@@ -251,7 +253,7 @@ class TextFile(private val book: Book) {
         private const val BLANK: Byte = 0x0a
 
         //默认从文件中获取数据的长度
-        private const val BUFFER_SIZE = 512 * 1024
+        private const val BUFFER_SIZE = 512000
 
         //没有标题的时候，每个章节的最大长度
         private const val MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024
