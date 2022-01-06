@@ -20,8 +20,7 @@ class TextFile(private val book: Book) {
 
     @Throws(FileNotFoundException::class)
     fun getChapterList(): ArrayList<BookChapter> {
-        var rulePattern: Pattern? = null
-        if (book.charset == null || book.tocUrl.isEmpty()) {
+        val rulePattern: Pattern? = if (book.charset == null || book.tocUrl.isEmpty()) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(BUFFER_SIZE)
                 var blockContent: String
@@ -29,19 +28,19 @@ class TextFile(private val book: Book) {
                 book.charset = EncodingDetect.getEncode(buffer)
                 charset = book.fileCharset()
                 blockContent = String(buffer, 0, length, charset)
-                rulePattern = if (book.tocUrl.isNotEmpty()) {
-                    Pattern.compile(book.tocUrl, Pattern.MULTILINE)
+                if (book.tocUrl.isNotEmpty()) {
+                    book.tocUrl.toPattern(Pattern.MULTILINE)
                 } else {
                     if (blockContent.isEmpty()) {
                         length = bis.read(buffer)
                         book.charset = EncodingDetect.getEncode(buffer)
                         blockContent = String(buffer, 0, length, charset)
                     }
-                    getTocRule(blockContent)?.let {
-                        Pattern.compile(it.rule, Pattern.MULTILINE)
-                    }
+                    getTocRule(blockContent)?.rule?.toPattern(Pattern.MULTILINE)
                 }
             }
+        } else {
+            book.tocUrl.toPattern(Pattern.MULTILINE)
         }
         return analyze(rulePattern)
     }
