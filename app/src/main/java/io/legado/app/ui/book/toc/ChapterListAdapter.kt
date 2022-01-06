@@ -75,7 +75,6 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     private fun upHasCache(binding: ItemChapterListBinding, isDur: Boolean, cached: Boolean) =
         binding.apply {
-            tvChapterName.paint.isFakeBoldText = !cached
             ivChecked.setImageResource(R.drawable.ic_outline_cloud_24)
             ivChecked.visible(!cached)
             if (isDur) {
