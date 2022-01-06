@@ -15,6 +15,14 @@ import java.util.regex.Pattern
 
 class TextFile(private val book: Book) {
 
+    private val blank: Byte = 0x0a
+
+    //默认从文件中获取数据的长度
+    private val bufferSize = 512000
+
+    //没有标题的时候，每个章节的最大长度
+    private val maxLengthWithNoToc = 10 * 1024
+
     private val tocRules = arrayListOf<TxtTocRule>()
     private var charset: Charset = book.fileCharset()
 
@@ -22,7 +30,7 @@ class TextFile(private val book: Book) {
     fun getChapterList(): ArrayList<BookChapter> {
         val rulePattern: Pattern? = if (book.charset == null || book.tocUrl.isEmpty()) {
             LocalBook.getBookInputStream(book).use { bis ->
-                val buffer = ByteArray(BUFFER_SIZE)
+                val buffer = ByteArray(bufferSize)
                 var blockContent: String
                 var length = bis.read(buffer)
                 book.charset = EncodingDetect.getEncode(buffer)
@@ -55,10 +63,10 @@ class TextFile(private val book: Book) {
             var blockPos = 0
             //读取的长度
             var length: Int
-            val buffer = ByteArray(BUFFER_SIZE)
+            val buffer = ByteArray(bufferSize)
             var bufferStart = 0
             //获取文件中的数据到buffer，直到没有数据为止
-            while (bis.read(buffer, bufferStart, BUFFER_SIZE - bufferStart)
+            while (bis.read(buffer, bufferStart, bufferSize - bufferStart)
                     .also { length = it } > 0
             ) {
                 blockPos++
@@ -66,7 +74,7 @@ class TextFile(private val book: Book) {
                 if (pattern != null) {
                     var end = bufferStart + length
                     for (i in bufferStart + length - 1 downTo 0) {
-                        if (buffer[i] == BLANK) {
+                        if (buffer[i] == blank) {
                             end = i
                             break
                         }
@@ -160,11 +168,11 @@ class TextFile(private val book: Book) {
                     while (strLength > 0) {
                         ++chapterPos
                         //是否长度超过一章
-                        if (strLength > MAX_LENGTH_WITH_NO_CHAPTER) { //在buffer中一章的终止点
+                        if (strLength > maxLengthWithNoToc) { //在buffer中一章的终止点
                             var end = length
                             //寻找换行符作为终止点
-                            for (i in chapterOffset + MAX_LENGTH_WITH_NO_CHAPTER until length) {
-                                if (buffer[i] == BLANK) {
+                            for (i in chapterOffset + maxLengthWithNoToc until length) {
+                                if (buffer[i] == blank) {
                                     end = i
                                     break
                                 }
@@ -248,14 +256,6 @@ class TextFile(private val book: Book) {
     }
 
     companion object {
-
-        private const val BLANK: Byte = 0x0a
-
-        //默认从文件中获取数据的长度
-        private const val BUFFER_SIZE = 512000
-
-        //没有标题的时候，每个章节的最大长度
-        private const val MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024
 
         @Throws(FileNotFoundException::class)
         fun getChapterList(book: Book): ArrayList<BookChapter> {
