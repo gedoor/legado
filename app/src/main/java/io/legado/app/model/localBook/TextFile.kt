@@ -32,7 +32,6 @@ class TextFile(private val book: Book) {
                 rulePattern = if (book.tocUrl.isNotEmpty()) {
                     Pattern.compile(book.tocUrl, Pattern.MULTILINE)
                 } else {
-                    tocRules.addAll(getTocRules())
                     if (blockContent.isEmpty()) {
                         bis.read(buffer)
                         book.charset = EncodingDetect.getEncode(buffer)
@@ -50,18 +49,8 @@ class TextFile(private val book: Book) {
     private fun analyze(pattern: Pattern?): ArrayList<BookChapter> {
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
-            var tocRule: TxtTocRule? = null
             val buffer = ByteArray(BUFFER_SIZE)
             var blockContent: String
-            val rulePattern = pattern ?: let {
-                val length = bis.read(buffer)
-                bis.skip(-length.toLong())
-                blockContent = String(buffer, charset)
-                tocRule = getTocRule(blockContent)
-                tocRule?.let {
-                    Pattern.compile(it.rule, Pattern.MULTILINE)
-                }
-            }
             //加载章节
             var curOffset: Long = 0
             //block的个数
@@ -72,7 +61,7 @@ class TextFile(private val book: Book) {
             while (bis.read(buffer).also { length = it } > 0) {
                 blockPos++
                 //如果存在Chapter
-                if (rulePattern != null) {
+                if (pattern != null) {
                     //将数据转换成String, 不能超过length
                     blockContent = String(buffer, 0, length, charset)
                     val lastN = blockContent.lastIndexOf("\n")
@@ -85,7 +74,7 @@ class TextFile(private val book: Book) {
                     //当前Block下使过的String的指针
                     var seekPos = 0
                     //进行正则匹配
-                    val matcher: Matcher = rulePattern.matcher(blockContent)
+                    val matcher: Matcher = pattern.matcher(blockContent)
                     //如果存在相应章节
                     while (matcher.find()) { //获取匹配到的字符在字符串中的起始位置
                         val chapterStart = matcher.start()
@@ -93,11 +82,11 @@ class TextFile(private val book: Book) {
                         val chapterContent = blockContent.substring(seekPos, chapterStart)
                         val chapterLength = chapterContent.toByteArray(charset).size
                         val lastStart = toc.lastOrNull()?.start ?: 0
-                        if (curOffset + chapterLength - lastStart > 50000 && pattern == null) {
-                            //移除不匹配的规则
-                            tocRules.remove(tocRule)
+                        if (curOffset + chapterLength - lastStart > 50000) {
                             bis.close()
-                            return analyze(null)
+                            //移除不匹配的规则
+                            tocRules.removeFirstOrNull()
+                            return analyze(tocRules.firstOrNull()?.rule?.toPattern(Pattern.MULTILINE))
                         }
                         //如果 seekPos == 0 && nextChapterPos != 0 表示当前block处前面有一段内容
                         //第一种情况一定是序章 第二种情况是上一个章节的内容
@@ -150,11 +139,11 @@ class TextFile(private val book: Book) {
                         //设置指针偏移
                         seekPos += chapterContent.length
                     }
-                    if (seekPos == 0 && length > 50000 && pattern == null) {
-                        //移除不匹配的规则
-                        tocRules.remove(tocRule)
+                    if (seekPos == 0 && length > 50000) {
                         bis.close()
-                        return analyze(null)
+                        //移除不匹配的规则
+                        tocRules.remove(tocRules.removeFirstOrNull())
+                        return analyze(tocRules.firstOrNull()?.rule?.toPattern(Pattern.MULTILINE))
                     }
                 } else { //进行本地虚拟分章
                     //章节在buffer的偏移量
@@ -198,7 +187,7 @@ class TextFile(private val book: Book) {
                 //block的偏移点
                 curOffset += length.toLong()
 
-                if (rulePattern != null) {
+                if (pattern != null) {
                     //设置上一章的结尾
                     val lastChapter = toc.last()
                     lastChapter.end = curOffset
@@ -210,9 +199,7 @@ class TextFile(private val book: Book) {
                     System.runFinalization()
                 }
             }
-            tocRule?.let {
-                book.tocUrl = it.rule
-            }
+            book.tocUrl = pattern?.pattern() ?: ""
         }
         for (i in toc.indices) {
             val bean = toc[i]
@@ -233,24 +220,25 @@ class TextFile(private val book: Book) {
      * 获取匹配次数最多的目录规则
      */
     private fun getTocRule(content: String): TxtTocRule? {
+        tocRules.clear()
+        val rules = getTocRules().reversed()
         var txtTocRule: TxtTocRule? = null
         var maxCs = 0
-        val removeRules = hashSetOf<TxtTocRule>()
-        tocRules.forEach { tocRule ->
+        for (tocRule in rules) {
             val pattern = Pattern.compile(tocRule.rule, Pattern.MULTILINE)
             val matcher = pattern.matcher(content)
             var cs = 0
             while (matcher.find()) {
                 cs++
             }
-            if (cs == 0) {
-                removeRules.add(tocRule)
-            } else if (cs > maxCs) {
+            if (cs >= maxCs) {
+                tocRules.add(0, tocRule)
                 maxCs = cs
                 txtTocRule = tocRule
+            } else if (cs > 0) {
+                tocRules.add(tocRule)
             }
         }
-        tocRules.removeAll(removeRules)
         return txtTocRule
     }
 
