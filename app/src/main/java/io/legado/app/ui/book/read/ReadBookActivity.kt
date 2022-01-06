@@ -99,7 +99,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val searchContentActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         it ?: return@registerForActivityResult
         it.data?.let { data ->
-            data.getIntExtra("chapterIndex", ReadBook.durChapterIndex).let { _ ->
+            data.getIntExtra("chapterIndex", ReadBook.durChapterIndex).let {
                 viewModel.searchContentQuery = data.getStringExtra("query") ?: ""
                 val searchResultIndex = data.getIntExtra("searchResultIndex", 0)
                 isShowingSearchResult = true
