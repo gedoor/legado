@@ -11,6 +11,7 @@ import java.net.SocketException
 import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
+import okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
@@ -147,22 +148,21 @@ object NetworkUtils {
     /**
      * 获取二级域名，供cookie保存和读取
      * 
-     * 1.2.3.4 => 1.2.3.4
-     * www.example.com =>  example.com
-     * www.example.com.cn => example.com.cn
-     * 未实现www.content.example.com => example.com
+     * http://1.2.3.4 => http://1.2.3.4
+     * https://www.example.com =>  https://example.com
+     * http://www.biquge.com.cn => http://biquge.com.cn
+     * http://www.content.example.com => http://example.com
      */
     fun getSubDomain(url: String?): String {
         val baseUrl = getBaseUrl(url) ?: return ""
-        //baseUrl为IPv4时，直接返回
-        //IPv6暂时不考虑支持
-        if (isIPv4Address(baseUrl)) {
-            return baseUrl
-        }
-        //td do:利用https://github.com/publicsuffix/list，https://github.com/Kevin-Sangeelee/PublicSuffixList实现二级域名返回
-        return if (baseUrl.indexOf(".") == baseUrl.lastIndexOf(".")) {
-            baseUrl
-        } else baseUrl.substring(baseUrl.indexOf(".") + 1)
+        val url = URL(baseUrl)
+        val schema: String = url.getProtocol()
+        val host: String = url.getHost()
+        //判断是否为ip
+        if(isIPAddress(host)) return baseUrl
+        //PublicSuffixDatabase处理域名
+        val domain = PublicSuffixDatabase.get().getEffectiveTldPlusOne(host)
+        return if (domain == null) baseUrl else "${schema}://${domain}"
     }
 
     /**
@@ -204,11 +204,32 @@ object NetworkUtils {
     }
 
     /**
+     * Check if valid IPV6 address.
+     */
+   fun isIPv6Address(input: String?): Boolean {
+        return input != null && IPV6_PATTERN.matcher(input).matches()
+    }
+
+    /**
+     * Check if valid IP address.
+     */
+    fun isIPAddress(input: String?): Boolean {
+        return isIPv4Address(input) || isIPv6Address(input)
+    }
+
+    /**
      * Ipv4 address check.
      */
     private val IPV4_PATTERN = Pattern.compile(
         "^(" + "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}" +
                 "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
     )
+
+    /**
+     * Ipv6 address check.
+     */
+    private val IPV6_PATTERN = Pattern.compile(
+        "^\\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$"
+     )
 
 }
