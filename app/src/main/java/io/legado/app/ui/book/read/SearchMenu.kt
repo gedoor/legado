@@ -40,8 +40,8 @@ class SearchMenu @JvmOverloads constructor(
     private var onMenuOutEnd: (() -> Unit)? = null
 
     private val searchResultList: MutableList<SearchResult> = mutableListOf()
-    private var currentSearchResultIndex: Int = 0
-    private var lastSearchResultIndex: Int = 0
+    private var currentSearchResultIndex: Int = -1
+    private var lastSearchResultIndex: Int = -1
     private val hasSearchResult: Boolean
         get() = searchResultList.isNotEmpty()
     val selectedSearchResult: SearchResult?
