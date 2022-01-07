@@ -8,6 +8,7 @@ import io.legado.app.help.DefaultData
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.StringUtils
+import io.legado.app.utils.Utf8BomUtils
 import java.io.FileNotFoundException
 import java.nio.charset.Charset
 import java.util.regex.Matcher
@@ -64,7 +65,12 @@ class TextFile(private val book: Book) {
             //读取的长度
             var length: Int
             val buffer = ByteArray(bufferSize)
-            var bufferStart = 0
+            var bufferStart = 3
+            bis.read(buffer, 0, 3)
+            if (Utf8BomUtils.hasBom(buffer)) {
+                bufferStart = 0
+                curOffset = 3
+            }
             //获取文件中的数据到buffer，直到没有数据为止
             while (bis.read(buffer, bufferStart, bufferSize - bufferStart)
                     .also { length = it } > 0
@@ -159,6 +165,7 @@ class TextFile(private val book: Book) {
                         return analyze(tocRules.firstOrNull()?.rule?.toPattern(Pattern.MULTILINE))
                     }
                 } else { //进行本地虚拟分章
+                    bufferStart = 0
                     //章节在buffer的偏移量
                     var chapterOffset = 0
                     //当前剩余可分配的长度
