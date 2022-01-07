@@ -16,6 +16,28 @@ import java.util.regex.Pattern
 
 class TextFile(private val book: Book) {
 
+    companion object {
+
+        @Throws(FileNotFoundException::class)
+        fun getChapterList(book: Book): ArrayList<BookChapter> {
+            return TextFile(book).getChapterList()
+        }
+
+        @Throws(FileNotFoundException::class)
+        fun getContent(book: Book, bookChapter: BookChapter): String {
+            val count = (bookChapter.end!! - bookChapter.start!!).toInt()
+            val buffer = ByteArray(count)
+            LocalBook.getBookInputStream(book).use { bis ->
+                bis.skip(bookChapter.start!!)
+                bis.read(buffer)
+            }
+            return String(buffer, book.fileCharset())
+                .substringAfter(bookChapter.title)
+                .replace("^[\\n\\s]+".toRegex(), "　　")
+        }
+
+    }
+
     private val blank: Byte = 0x0a
 
     //默认从文件中获取数据的长度
@@ -24,7 +46,7 @@ class TextFile(private val book: Book) {
     //没有标题的时候，每个章节的最大长度
     private val maxLengthWithNoToc = 10 * 1024
 
-    private val tocRules = arrayListOf<TxtTocRule>()
+    private val tocRules = arrayListOf<Pattern>()
     private var charset: Charset = book.fileCharset()
 
     @Throws(FileNotFoundException::class)
@@ -45,7 +67,7 @@ class TextFile(private val book: Book) {
                         book.charset = EncodingDetect.getEncode(buffer)
                         blockContent = String(buffer, 0, length, charset)
                     }
-                    getTocRule(blockContent)?.rule?.toPattern(Pattern.MULTILINE)
+                    getTocRule(blockContent)
                 }
             }
         } else {
@@ -183,9 +205,8 @@ class TextFile(private val book: Book) {
     }
 
     private fun analyze(): ArrayList<BookChapter> {
-        tocRules.removeFirstOrNull()
-        tocRules.firstOrNull()?.let {
-            return analyze(it.rule.toPattern(Pattern.MULTILINE))
+        nextTocRule()?.let {
+            return analyze(it)
         }
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
@@ -266,13 +287,24 @@ class TextFile(private val book: Book) {
         return toc
     }
 
-    /**
-     * 获取匹配次数最多的目录规则
-     */
-    private fun getTocRule(content: String): TxtTocRule? {
-        tocRules.clear()
-        val rules = getTocRules().reversed()
-        var txtTocRule: TxtTocRule? = null
+    private fun getTocRule(content: String): Pattern? {
+        tocRules.addAll(getTocRules(content, true))
+        tocRules.addAll(getTocRules(content, false))
+        return tocRules.firstOrNull()
+    }
+
+    private fun nextTocRule(): Pattern? {
+        tocRules.removeFirstOrNull()
+        return tocRules.firstOrNull()
+    }
+
+    private fun getTocRules(content: String, isMain: Boolean): ArrayList<Pattern> {
+        val list = arrayListOf<Pattern>()
+        val rules = if (isMain) {
+            getTocRules().reversed()
+        } else {
+            appDb.txtTocRuleDao.disabled.reversed()
+        }
         var maxCs = 0
         for (tocRule in rules) {
             val pattern = Pattern.compile(tocRule.rule, Pattern.MULTILINE)
@@ -282,48 +314,25 @@ class TextFile(private val book: Book) {
                 cs++
             }
             if (cs >= maxCs) {
-                tocRules.add(0, tocRule)
                 maxCs = cs
-                txtTocRule = tocRule
+                list.add(0, pattern)
             } else if (cs > 0) {
-                tocRules.add(tocRule)
+                list.add(pattern)
             }
         }
-        return txtTocRule
+        return list
     }
 
-    companion object {
-
-        @Throws(FileNotFoundException::class)
-        fun getChapterList(book: Book): ArrayList<BookChapter> {
-            return TextFile(book).getChapterList()
-        }
-
-        @Throws(FileNotFoundException::class)
-        fun getContent(book: Book, bookChapter: BookChapter): String {
-            val count = (bookChapter.end!! - bookChapter.start!!).toInt()
-            val buffer = ByteArray(count)
-            LocalBook.getBookInputStream(book).use { bis ->
-                bis.skip(bookChapter.start!!)
-                bis.read(buffer)
+    private fun getTocRules(): List<TxtTocRule> {
+        var rules = appDb.txtTocRuleDao.enabled
+        if (rules.isEmpty()) {
+            rules = DefaultData.txtTocRules.apply {
+                appDb.txtTocRuleDao.insert(*this.toTypedArray())
+            }.filter {
+                it.enable
             }
-            return String(buffer, book.fileCharset())
-                .substringAfter(bookChapter.title)
-                .replace("^[\\n\\s]+".toRegex(), "　　")
         }
-
-        private fun getTocRules(): List<TxtTocRule> {
-            var rules = appDb.txtTocRuleDao.enabled
-            if (rules.isEmpty()) {
-                rules = DefaultData.txtTocRules.apply {
-                    appDb.txtTocRuleDao.insert(*this.toTypedArray())
-                }.filter {
-                    it.enable
-                }
-            }
-            return rules
-        }
-
+        return rules
     }
 
 }
