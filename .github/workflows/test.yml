@@ -131,7 +131,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git clone "https://${{ github.actor }}:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.actor }}/release" -b test test-branch
-          mv -rf $GITHUB_WORKSPACE/apk/*.apk test-branch
+          mv -f $GITHUB_WORKSPACE/apk/*.apk test-branch
           cd test-branch
           git add *.apk
           git commit -m "${{ needs.prepare.outputs.versionL }}"
