@@ -4,7 +4,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.GSON
-import io.legado.app.utils.UTF8BOMFighter
+import io.legado.app.utils.Utf8BomUtils
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -95,7 +95,7 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
 }
 
 fun ResponseBody.text(encode: String? = null): String {
-    val responseBytes = UTF8BOMFighter.removeUTF8BOM(bytes())
+    val responseBytes = Utf8BomUtils.removeUTF8BOM(bytes())
     var charsetName: String? = encode
 
     charsetName?.let {
