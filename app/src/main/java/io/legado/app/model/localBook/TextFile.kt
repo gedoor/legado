@@ -124,7 +124,7 @@ class TextFile(private val book: Book) {
                         bis.close()
                         return analyze()
                     }
-                    //如果 seekPos == 0 && nextChapterPos != 0 表示当前block处前面有一段内容
+                    //如果 seekPos == 0 && chapterStart != 0 表示当前block处前面有一段内容
                     //第一种情况一定是序章 第二种情况是上一个章节的内容
                     if (seekPos == 0 && chapterStart != 0) { //获取当前章节的内容
                         if (toc.isEmpty()) { //如果当前没有章节，那么就是序章
