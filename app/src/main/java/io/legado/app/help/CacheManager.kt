@@ -29,10 +29,7 @@ object CacheManager {
     }
 
     fun putString2File(key: String, value: String, saveTime: Int = 0) {
-        if (saveTime == 0) {
-            //不设置过期时间
-            ACache.get(appCtx).put(key, value)
-        } else  ACache.get(appCtx).put(key, value, saveTime)
+        ACache.get(appCtx).put(key, value, saveTime)
     }
     
     fun get(key: String): String? {
