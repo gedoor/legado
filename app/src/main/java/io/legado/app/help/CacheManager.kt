@@ -28,6 +28,10 @@ object CacheManager {
         }
     }
 
+    fun putString2File(key: String, value: String, saveTime: Int = 0) {
+        ACache.get(appCtx).put(key, value, saveTime)
+    }
+    
     fun get(key: String): String? {
         return appDb.cacheDao.get(key, System.currentTimeMillis())
     }
@@ -50,6 +54,10 @@ object CacheManager {
 
     fun getByteArray(key: String): ByteArray? {
         return ACache.get(appCtx).getAsBinary(key)
+    }
+
+    fun getString(key: String): String? {
+        return ACache.get(appCtx).getAsString(key)
     }
 
     fun getQueryTTF(key: String): QueryTTF? {
