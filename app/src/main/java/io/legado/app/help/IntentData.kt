@@ -5,10 +5,11 @@ object IntentData {
     private val bigData: MutableMap<String, Any> = mutableMapOf()
 
     @Synchronized
-    fun put(key: String, data: Any?) {
+    fun put(key: String, data: Any?): String {
         data?.let {
             bigData[key] = data
         }
+        return key
     }
 
     @Synchronized

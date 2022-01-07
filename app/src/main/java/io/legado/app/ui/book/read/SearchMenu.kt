@@ -10,7 +10,6 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.legado.app.R
-import io.legado.app.constant.EventBus
 import io.legado.app.databinding.ViewSearchMenuBinding
 import io.legado.app.help.*
 import io.legado.app.lib.theme.*
@@ -29,12 +28,15 @@ class SearchMenu @JvmOverloads constructor(
     private val callBack: CallBack get() = activity as CallBack
     private val binding = ViewSearchMenuBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private val menuBottomIn: Animation = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
-    private val menuBottomOut: Animation = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_out)
+    private val menuBottomIn: Animation =
+        AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
+    private val menuBottomOut: Animation =
+        AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_out)
     private val bgColor: Int = context.bottomBackground
     private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
     private val bottomBackgroundList: ColorStateList =
-        Selector.colorBuild().setDefaultColor(bgColor).setPressedColor(ColorUtils.darkenColor(bgColor)).create()
+        Selector.colorBuild().setDefaultColor(bgColor)
+            .setPressedColor(ColorUtils.darkenColor(bgColor)).create()
     private var onMenuOutEnd: (() -> Unit)? = null
 
     private val searchResultList: MutableList<SearchResult> = mutableListOf()
@@ -43,26 +45,21 @@ class SearchMenu @JvmOverloads constructor(
     private val hasSearchResult: Boolean
         get() = searchResultList.isNotEmpty()
     val selectedSearchResult: SearchResult?
-        get() = if (searchResultList.isNotEmpty()) searchResultList[currentSearchResultIndex] else null
-    val previousSearchResult: SearchResult
-        get() = searchResultList[lastSearchResultIndex]
+        get() = searchResultList.getOrNull(currentSearchResultIndex)
+    val previousSearchResult: SearchResult?
+        get() = searchResultList.getOrNull(lastSearchResultIndex)
 
     init {
         initAnimation()
         initView()
         bindEvent()
         updateSearchInfo()
-        observeSearchResultList()
     }
 
-    private fun observeSearchResultList() {
-        activity?.let { owner ->
-            eventObservable<List<SearchResult>>(EventBus.SEARCH_RESULT).observe(owner, {
-                searchResultList.clear()
-                searchResultList.addAll(it)
-                updateSearchInfo()
-            })
-        }
+    fun upSearchResultList(resultList: List<SearchResult>) {
+        searchResultList.clear()
+        searchResultList.addAll(resultList)
+        updateSearchInfo()
     }
 
     private fun initView() = binding.run {
@@ -104,18 +101,20 @@ class SearchMenu @JvmOverloads constructor(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun updateSearchInfo() {
         ReadBook.curTextChapter?.let {
-            binding.tvCurrentSearchInfo.text = context.getString(R.string.search_content_size) + ": ${searchResultList.size} / 当前章节: ${it.title}"
+            binding.tvCurrentSearchInfo.text =
+                """${context.getString(R.string.search_content_size)}: ${searchResultList.size} / 当前章节: ${it.title}"""
         }
     }
 
     fun updateSearchResultIndex(updateIndex: Int) {
         lastSearchResultIndex = currentSearchResultIndex
         currentSearchResultIndex = when {
-            updateIndex < 0                      -> 0
+            updateIndex < 0 -> 0
             updateIndex >= searchResultList.size -> searchResultList.size - 1
-            else                                 -> updateIndex
+            else -> updateIndex
         }
     }
 
@@ -142,13 +141,6 @@ class SearchMenu @JvmOverloads constructor(
                 this@SearchMenu.invisible()
             }
         }
-
-        //设置
-//        llSetting.setOnClickListener {
-//            runMenuOut {
-//                callBack.showSearchSetting()
-//            }
-//        }
 
         fabLeft.setOnClickListener {
             updateSearchResultIndex(currentSearchResultIndex - 1)
@@ -192,8 +184,8 @@ class SearchMenu @JvmOverloads constructor(
                     root.padding = 0
                     when (activity?.navigationBarGravity) {
                         Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
-                        Gravity.LEFT   -> root.leftPadding = navigationBarHeight
-                        Gravity.RIGHT  -> root.rightPadding = navigationBarHeight
+                        Gravity.LEFT -> root.leftPadding = navigationBarHeight
+                        Gravity.RIGHT -> root.rightPadding = navigationBarHeight
                     }
                 }
                 callBack.upSystemUiVisibility()
