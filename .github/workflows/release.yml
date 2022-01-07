@@ -85,7 +85,7 @@ jobs:
           git init
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git clone "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.actor }}/release" -b release release-branch
+          git clone "https://${{ github.actor }}:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.actor }}/release" -b release release-branch
           mv -rf $GITHUB_WORKSPACE/apk/*.apk release-branch
           cd release-branch
           git add *.apk
