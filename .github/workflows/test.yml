@@ -134,7 +134,7 @@ jobs:
           git checkout -b test
           git add *.apk
           git commit -m "${{ needs.prepare.outputs.versionL }}"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.actor }}/release"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.actor }}/release"
           git push -f -u origin test
 
   telegram:
