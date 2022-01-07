@@ -138,15 +138,14 @@ interface JsExtensions {
      * @param saveTime 缓存时间，单位：秒
      * @return 返回缓存后的文件内容
      */
-    fun cacheFile(url: String, saveTime: Int = 0): String? {
-        val key = md5Encode16(url)
-	    val cache = ACache.get(appCtx).getAsString(key)
+    fun cacheFile(urlStr: String, saveTime: Int = 0): String? {
+        val key = md5Encode16(urlStr)
+	    val cache = CacheManager.getString(key)
 	    if(cache.isNullOrBlank()) {
-	        log("首次下载${url}...")
-	        val value = ajax(url) ?: ""
-	        if (saveTime == 0) {
-	            ACache.get(appCtx).put(key, value)
-	        } else ACache.get(appCtx).put(key, value, saveTime)
+	        log("首次下载 ${urlStr}")
+	        val value = ajax(urlStr) ?: return null
+	        CacheManager.putString2File(key, value, saveTime)
+	        return value
          }
          return cache
     }
