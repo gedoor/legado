@@ -62,8 +62,6 @@ class TextFile(private val book: Book) {
             var blockContent: String
             //加载章节
             var curOffset: Long = 0
-            //block的个数
-            var blockPos = 0
             //读取的长度
             var length: Int
             val buffer = ByteArray(bufferSize)
@@ -77,7 +75,6 @@ class TextFile(private val book: Book) {
             while (bis.read(buffer, bufferStart, bufferSize - bufferStart)
                     .also { length = it } > 0
             ) {
-                blockPos++
                 var end = bufferStart + length
                 for (i in bufferStart + length - 1 downTo 0) {
                     if (buffer[i] == blank) {
@@ -103,11 +100,7 @@ class TextFile(private val book: Book) {
                     val lastStart = toc.lastOrNull()?.start ?: 0
                     if (curOffset + chapterLength - lastStart > 50000) {
                         bis.close()
-                        //移除不匹配的规则
-                        tocRules.removeFirstOrNull()
-                        return tocRules.firstOrNull()?.let {
-                            analyze(it.rule.toPattern(Pattern.MULTILINE))
-                        } ?: analyze()
+                        return analyze()
                     }
                     //如果 seekPos == 0 && nextChapterPos != 0 表示当前block处前面有一段内容
                     //第一种情况一定是序章 第二种情况是上一个章节的内容
@@ -162,11 +155,7 @@ class TextFile(private val book: Book) {
                 }
                 if (seekPos == 0 && length > 50000) {
                     bis.close()
-                    //移除不匹配的规则
-                    tocRules.remove(tocRules.removeFirstOrNull())
-                    return tocRules.firstOrNull()?.let {
-                        analyze(it.rule.toPattern(Pattern.MULTILINE))
-                    } ?: analyze()
+                    return analyze()
                 }
 
                 //block的偏移点
@@ -175,12 +164,6 @@ class TextFile(private val book: Book) {
                 //设置上一章的结尾
                 val lastChapter = toc.last()
                 lastChapter.end = curOffset
-
-                //当添加的block太多的时候，执行GC
-                if (blockPos % 15 == 0) {
-                    System.gc()
-                    System.runFinalization()
-                }
             }
         }
         for (i in toc.indices) {
@@ -200,6 +183,10 @@ class TextFile(private val book: Book) {
     }
 
     private fun analyze(): ArrayList<BookChapter> {
+        tocRules.removeFirstOrNull()
+        tocRules.firstOrNull()?.let {
+            return analyze(it.rule.toPattern(Pattern.MULTILINE))
+        }
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
             //加载章节
@@ -261,11 +248,6 @@ class TextFile(private val book: Book) {
                 //block的偏移点
                 curOffset += length.toLong()
 
-                //当添加的block太多的时候，执行GC
-                if (blockPos % 15 == 0) {
-                    System.gc()
-                    System.runFinalization()
-                }
             }
         }
         for (i in toc.indices) {
