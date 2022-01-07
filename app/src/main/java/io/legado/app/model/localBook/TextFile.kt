@@ -188,11 +188,10 @@ class TextFile(private val book: Book) {
                 lastChapter.end = curOffset
             }
         }
-        for (i in toc.indices) {
-            val bean = toc[i]
-            bean.index = i
-            bean.bookUrl = book.bookUrl
-            bean.url = (MD5Utils.md5Encode16(book.originName + i + bean.title))
+        toc.forEachIndexed { index, bookChapter ->
+            bookChapter.index = index
+            bookChapter.bookUrl = book.bookUrl
+            bookChapter.url = MD5Utils.md5Encode16(book.originName + index + bookChapter.title)
         }
         book.latestChapterTitle = toc.last().title
         book.totalChapterNum = toc.size
@@ -249,7 +248,7 @@ class TextFile(private val book: Book) {
                         }
                         val chapter = BookChapter()
                         chapter.title = "第${blockPos}章($chapterPos)"
-                        chapter.start = curOffset + chapterOffset + 1
+                        chapter.start = curOffset + chapterOffset
                         chapter.end = curOffset + end
                         toc.add(chapter)
                         //减去已经被分配的长度
@@ -259,7 +258,7 @@ class TextFile(private val book: Book) {
                     } else {
                         val chapter = BookChapter()
                         chapter.title = "第" + blockPos + "章" + "(" + chapterPos + ")"
-                        chapter.start = curOffset + chapterOffset + 1
+                        chapter.start = curOffset + chapterOffset
                         chapter.end = curOffset + length
                         toc.add(chapter)
                         strLength = 0
@@ -271,11 +270,10 @@ class TextFile(private val book: Book) {
 
             }
         }
-        for (i in toc.indices) {
-            val bean = toc[i]
-            bean.index = i
-            bean.bookUrl = book.bookUrl
-            bean.url = (MD5Utils.md5Encode16(book.originName + i + bean.title))
+        toc.forEachIndexed { index, bookChapter ->
+            bookChapter.index = index
+            bookChapter.bookUrl = book.bookUrl
+            bookChapter.url = MD5Utils.md5Encode16(book.originName + index + bookChapter.title)
         }
         book.latestChapterTitle = toc.last().title
         book.totalChapterNum = toc.size
@@ -288,8 +286,8 @@ class TextFile(private val book: Book) {
     }
 
     private fun getTocRule(content: String): Pattern? {
-        tocRules.addAll(getTocRules(content, true))
-        tocRules.addAll(getTocRules(content, false))
+        tocRules.addAll(getTocRules(content, getTocRules().reversed()))
+        tocRules.addAll(getTocRules(content, appDb.txtTocRuleDao.disabled.reversed()))
         return tocRules.firstOrNull()
     }
 
@@ -298,13 +296,8 @@ class TextFile(private val book: Book) {
         return tocRules.firstOrNull()
     }
 
-    private fun getTocRules(content: String, isMain: Boolean): ArrayList<Pattern> {
+    private fun getTocRules(content: String, rules: List<TxtTocRule>): ArrayList<Pattern> {
         val list = arrayListOf<Pattern>()
-        val rules = if (isMain) {
-            getTocRules().reversed()
-        } else {
-            appDb.txtTocRuleDao.disabled.reversed()
-        }
         var maxCs = 0
         for (tocRule in rules) {
             val pattern = Pattern.compile(tocRule.rule, Pattern.MULTILINE)
