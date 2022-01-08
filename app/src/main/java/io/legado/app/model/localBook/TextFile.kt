@@ -132,7 +132,7 @@ class TextFile(private val book: Book) {
                             if (StringUtils.trim(chapterContent).isNotEmpty()) {
                                 val qyChapter = BookChapter()
                                 qyChapter.title = "前言"
-                                qyChapter.start = 0
+                                qyChapter.start = curOffset
                                 qyChapter.end = chapterLength.toLong()
                                 toc.add(qyChapter)
                             }
@@ -167,7 +167,7 @@ class TextFile(private val book: Book) {
                         } else { //如果章节不存在则创建章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
-                            curChapter.start = 0
+                            curChapter.start = curOffset
                             curChapter.end = 0
                             toc.add(curChapter)
                         }
@@ -182,10 +182,8 @@ class TextFile(private val book: Book) {
 
                 //block的偏移点
                 curOffset += length.toLong()
-
                 //设置上一章的结尾
-                val lastChapter = toc.last()
-                lastChapter.end = curOffset
+                toc.lastOrNull()?.end = curOffset
             }
         }
         toc.forEachIndexed { index, bookChapter ->
@@ -209,10 +207,10 @@ class TextFile(private val book: Book) {
         }
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
-            //加载章节
-            var curOffset: Long = 0
             //block的个数
             var blockPos = 0
+            //加载章节
+            var curOffset: Long = 0
             //读取的长度
             var length: Int
             val buffer = ByteArray(bufferSize)
@@ -226,7 +224,6 @@ class TextFile(private val book: Book) {
             while (bis.read(buffer, bufferStart, bufferSize - bufferStart)
                     .also { length = it } > 0
             ) {
-                bufferStart = 0
                 blockPos++
                 //章节在buffer的偏移量
                 var chapterOffset = 0
@@ -256,18 +253,15 @@ class TextFile(private val book: Book) {
                         //设置偏移的位置
                         chapterOffset = end
                     } else {
-                        val chapter = BookChapter()
-                        chapter.title = "第" + blockPos + "章" + "(" + chapterPos + ")"
-                        chapter.start = curOffset + chapterOffset
-                        chapter.end = curOffset + length
-                        toc.add(chapter)
-                        strLength = 0
+                        buffer.copyInto(buffer, 0, length - strLength, strLength)
+                        bufferStart = strLength
                     }
                 }
 
                 //block的偏移点
                 curOffset += length.toLong()
-
+                //设置上一章的结尾
+                toc.lastOrNull()?.end = curOffset
             }
         }
         toc.forEachIndexed { index, bookChapter ->
