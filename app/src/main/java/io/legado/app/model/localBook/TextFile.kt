@@ -263,6 +263,7 @@ class TextFile(private val book: Book) {
                             bufferStart + length - strLength,
                             bufferStart + length
                         )
+                        length = bufferStart + length - strLength
                         bufferStart = strLength
                         break
                     }
