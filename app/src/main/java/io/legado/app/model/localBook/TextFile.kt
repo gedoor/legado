@@ -215,6 +215,7 @@ class TextFile(private val book: Book) {
             var blockPos = 0
             //加载章节
             var curOffset: Long = 0
+            var chapterPos = 0
             //读取的长度
             var length: Int
             val buffer = ByteArray(bufferSize)
@@ -232,14 +233,15 @@ class TextFile(private val book: Book) {
                 //章节在buffer的偏移量
                 var chapterOffset = 0
                 //当前剩余可分配的长度
-                var strLength = bufferStart + length
+                length += bufferStart
+                var strLength = length
                 //分章的位置
-                var chapterPos = 0
+                chapterPos = 0
                 while (strLength > 0) {
                     ++chapterPos
                     //是否长度超过一章
                     if (strLength > maxLengthWithNoToc) { //在buffer中一章的终止点
-                        var end = bufferStart + length
+                        var end = length
                         //寻找换行符作为终止点
                         for (i in chapterOffset + maxLengthWithNoToc until length) {
                             if (buffer[i] == blank) {
@@ -257,22 +259,21 @@ class TextFile(private val book: Book) {
                         //设置偏移的位置
                         chapterOffset = end
                     } else {
-                        buffer.copyInto(
-                            buffer,
-                            0,
-                            bufferStart + length - strLength,
-                            bufferStart + length
-                        )
-                        length = bufferStart + length - strLength
+                        buffer.copyInto(buffer, 0, length - strLength, length)
+                        length -= strLength
                         bufferStart = strLength
-                        break
+                        strLength = 0
                     }
                 }
                 //block的偏移点
                 curOffset += length.toLong()
-                //设置上一章的结尾
-                toc.lastOrNull()?.end = curOffset
             }
+            //设置结尾章节
+            val chapter = BookChapter()
+            chapter.title = "第${blockPos}章(${chapterPos + 1})"
+            chapter.start = toc.lastOrNull()?.end ?: curOffset
+            chapter.end = chapter.start!! + bufferStart
+            toc.add(chapter)
         }
         if (toc.isEmpty()) {
             return analyze()
