@@ -2,6 +2,7 @@ package io.legado.app.lib.theme
 
 import android.content.Context
 import androidx.annotation.AttrRes
+import android.graphics.drawable.Drawable
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -27,6 +28,16 @@ object ThemeUtils {
             a.getFloat(0, fallback)
         } catch (e: Exception) {
             fallback
+        } finally {
+            a.recycle()
+        }
+    }
+
+    @JvmOverloads
+    fun resolveDrawable(context: Context, @AttrRes attr: Int): Drawable? {
+        val a = context.theme.obtainStyledAttributes(intArrayOf(attr))
+        return try {
+            a.getDrawable(0)
         } finally {
             a.recycle()
         }
