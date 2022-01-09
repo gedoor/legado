@@ -46,6 +46,9 @@ object BookController {
             }
         }
 
+    /**
+     * 获取封面
+     */
     fun getCover(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
         val coverPath = parameters["path"]?.firstOrNull()
@@ -155,6 +158,9 @@ object BookController {
         return returnData
     }
 
+    /**
+     * 保存书籍
+     */
     fun saveBook(postData: String?): ReturnData {
         val book = GSON.fromJsonObject<Book>(postData)
         val returnData = ReturnData()
@@ -170,6 +176,9 @@ object BookController {
         return returnData.setErrorMsg("格式不对")
     }
 
+    /**
+     * 保存进度
+     */
     private fun saveBookReadIndex(book: Book, index: Int) {
         book.durChapterIndex = index
         book.durChapterTime = System.currentTimeMillis()
@@ -186,6 +195,9 @@ object BookController {
         }
     }
 
+    /**
+     * 添加本地书籍
+     */
     fun addLocalBook(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
         try {
