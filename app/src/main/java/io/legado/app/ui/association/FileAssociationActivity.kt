@@ -107,6 +107,14 @@ class FileAssociationActivity :
                         val name = bookDoc?.name!!
                         val doc = treeDoc!!.findFile(name)
                         if (doc != null) {
+                            if (bookDoc.lastModified() > doc.lastModified()) {
+                                contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
+                                    contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
+                                        iStream.copyTo(oStream)
+                                        oStream.flush()
+                                    }
+                                }
+                            }
                             viewModel.importBook(doc.uri)
                         } else {
                             val nDoc = treeDoc.createFile(FileUtils.getMimeType(name), name)!!
