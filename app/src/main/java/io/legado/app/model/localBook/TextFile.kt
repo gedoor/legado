@@ -269,11 +269,17 @@ class TextFile(private val book: Book) {
                 curOffset += length.toLong()
             }
             //设置结尾章节
-            val chapter = BookChapter()
-            chapter.title = "第${blockPos}章(${chapterPos + 1})"
-            chapter.start = toc.lastOrNull()?.end ?: curOffset
-            chapter.end = chapter.start!! + bufferStart
-            toc.add(chapter)
+            if (bufferStart > 100) {
+                val chapter = BookChapter()
+                chapter.title = "第${blockPos}章(${chapterPos + 1})"
+                chapter.start = toc.lastOrNull()?.end ?: curOffset
+                chapter.end = chapter.start!! + bufferStart
+                toc.add(chapter)
+            } else {
+                toc.lastOrNull()?.let {
+                    it.end = it.end!! + bufferStart
+                }
+            }
         }
         if (toc.isEmpty()) {
             return analyze()
