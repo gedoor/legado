@@ -105,27 +105,19 @@ class FileAssociationActivity :
                     val bookDoc = DocumentFile.fromSingleUri(this@FileAssociationActivity, uri)
                     withContext(IO) {
                         val name = bookDoc?.name!!
-                        val doc = treeDoc!!.findFile(name)
-                        if (doc != null) {
-                            if (bookDoc.lastModified() > doc.lastModified()) {
-                                contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
-                                    contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
-                                        iStream.copyTo(oStream)
-                                        oStream.flush()
-                                    }
-                                }
+                        var doc = treeDoc!!.findFile(name)
+                        if (doc == null || bookDoc.lastModified() > doc.lastModified()) {
+                            if (doc == null) {
+                                doc = treeDoc.createFile(FileUtils.getMimeType(name), name)!!
                             }
-                            viewModel.importBook(doc.uri)
-                        } else {
-                            val nDoc = treeDoc.createFile(FileUtils.getMimeType(name), name)!!
-                            contentResolver.openOutputStream(nDoc.uri)!!.use { oStream ->
+                            contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
                                 contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
                                     iStream.copyTo(oStream)
                                     oStream.flush()
                                 }
                             }
-                            viewModel.importBook(nDoc.uri)
                         }
+                        viewModel.importBook(doc.uri)
                     }
                 } else {
                     val treeFile = File(treeUri.path!!)
