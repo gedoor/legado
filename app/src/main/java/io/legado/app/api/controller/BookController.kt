@@ -8,6 +8,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.help.BookHelp
+import io.legado.app.help.CacheManager
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.storage.AppWebDav
@@ -230,6 +231,20 @@ object BookController {
             )
         }
         return returnData.setData(true)
+    }
+
+    fun saveWebReadConfig(postData: String?): ReturnData {
+        val returnData = ReturnData()
+        postData?.let {
+            CacheManager.put("webReadConfig", postData)
+        }
+        return returnData.setData("")
+    }
+
+    fun getWebReadConfig(): ReturnData {
+        val returnData = ReturnData()
+        val data = CacheManager.get("webReadConfig") ?: "{}"
+        return returnData.setData(data)
     }
 
 }

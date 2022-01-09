@@ -44,6 +44,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/deleteBookSources" -> BookSourceController.deleteSources(postData)
                         "/saveBook" -> BookController.saveBook(postData)
                         "/addLocalBook" -> BookController.addLocalBook(session.parameters)
+                        "/saveReadConfig" -> BookController.saveWebReadConfig(postData)
                         "/saveRssSource" -> RssSourceController.saveSource(postData)
                         "/saveRssSources" -> RssSourceController.saveSources(postData)
                         "/deleteRssSources" -> RssSourceController.deleteSources(postData)
@@ -61,6 +62,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/refreshToc" -> BookController.refreshToc(parameters)
                         "/getBookContent" -> BookController.getBookContent(parameters)
                         "/cover" -> BookController.getCover(parameters)
+                        "/getReadConfig" -> BookController.getWebReadConfig()
                         "/getRssSource" -> RssSourceController.getSource(parameters)
                         "/getRssSources" -> RssSourceController.sources
                         else -> null
