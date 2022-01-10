@@ -90,15 +90,14 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun setProgress(progress: BookProgress) {
-        if (durChapterIndex != progress.durChapterIndex
-            || durChapterPos != progress.durChapterPos
+        if (progress.durChapterIndex > chapterSize &&
+            (durChapterIndex != progress.durChapterIndex
+                || durChapterPos != progress.durChapterPos)
         ) {
-            if (progress.durChapterIndex > chapterSize) {
-                durChapterIndex = progress.durChapterIndex
-                durChapterPos = progress.durChapterPos
-                clearTextChapter()
-                loadContent(resetPageOffset = true)
-            }
+            durChapterIndex = progress.durChapterIndex
+            durChapterPos = progress.durChapterPos
+            clearTextChapter()
+            loadContent(resetPageOffset = true)
         }
     }
 
