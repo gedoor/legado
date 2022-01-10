@@ -33,6 +33,7 @@ import splitties.init.appCtx
 data class BookChapter(
     var url: String = "",               // 章节地址
     var title: String = "",             // 章节标题
+    var isVolume: Boolean = false,    // 是否是卷名
     var baseUrl: String = "",           // 用来拼接相对url
     var bookUrl: String = "",           // 书籍地址
     var index: Int = 0,                 // 章节序号

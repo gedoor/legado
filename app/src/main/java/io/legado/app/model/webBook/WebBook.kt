@@ -261,6 +261,8 @@ object WebBook {
             Debug.log(bookSource.bookSourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
             return bookChapter.url
         }
+        //章节名为卷名时 且 章节url没获取到，返回空白
+        if(bookChapter.isVolume && bookChapter.url == bookChapter.title) return ""
         return if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
             BookContent.analyzeContent(
                 scope = scope,

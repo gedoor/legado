@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:id="@+id/tv_chapter_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
