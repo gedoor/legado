@@ -413,6 +413,7 @@
     <string name="rule_chapter_list">目錄列表規則 (chapterList)</string>
     <string name="rule_chapter_name">章節名稱規則 (ChapterName)</string>
     <string name="rule_chapter_url">章節 URL 規則 (chapterUrl)</string>
+    <string name="rule_is_volume">Volume標識(isVolume)</string>
     <string name="rule_is_vip">VIP 標識 (isVip)</string>
     <string name="rule_update_time">更新時間 (ChapterInfo)</string>
     <string name="rule_book_content">正文規則 (content)</string>

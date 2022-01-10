@@ -177,6 +177,7 @@ object BookChapterList {
             val vipRule = analyzeRule.splitSourceRule(tocRule.isVip)
             val payRule = analyzeRule.splitSourceRule(tocRule.isPay)
             val upTimeRule = analyzeRule.splitSourceRule(tocRule.updateTime)
+            val isVolumeRule = analyzeRule.splitSourceRule(tocRule.isVolume)
             elements.forEachIndexed { index, item ->
                 scope.ensureActive()
                 analyzeRule.setContent(item)
@@ -185,9 +186,19 @@ object BookChapterList {
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule)
                 bookChapter.tag = analyzeRule.getString(upTimeRule)
+                val isVolume = analyzeRule.getString(isVolumeRule)
+                bookChapter.isVolume = false
+                if (isVolume.isNotEmpty() && !isVolume.matches(falseRegex)) {
+                    bookChapter.isVolume = true
+                }
                 if (bookChapter.url.isEmpty()) {
-                    bookChapter.url = baseUrl
-                    Debug.log(bookSource.bookSourceUrl, "目录${index}未获取到url,使用baseUrl替代")
+                    if (bookChapter.isVolume) {
+                        bookChapter.url = bookChapter.title
+                        Debug.log(bookSource.bookSourceUrl, "目录${index}(Volume)未获取到url,使用章节标题替代")
+                    } else {
+                        bookChapter.url = baseUrl
+                        Debug.log(bookSource.bookSourceUrl, "目录${index}未获取到url,使用baseUrl替代")
+                    }
                 }
                 if (bookChapter.title.isNotEmpty()) {
                     val isVip = analyzeRule.getString(vipRule)

@@ -109,6 +109,7 @@ object NetworkUtils {
     fun getAbsoluteURL(baseURL: String?, relativePath: String): String {
         if (baseURL.isNullOrEmpty()) return relativePath
         if (relativePath.isAbsUrl()) return relativePath
+        if (relativePath.startsWith("javascript")) return ""
         var relativeUrl = relativePath
         try {
             val absoluteUrl = URL(baseURL.substringBefore(","))
@@ -126,6 +127,7 @@ object NetworkUtils {
      */
     fun getAbsoluteURL(baseURL: URL?, relativePath: String): String {
         if (baseURL == null) return relativePath
+        if (relativePath.startsWith("javascript")) return ""
         var relativeUrl = relativePath
         try {
             val parseUrl = URL(baseURL, relativePath)

@@ -38,7 +38,8 @@ object DatabaseMigrations {
             migration_38_39,
             migration_39_40,
             migration_40_41,
-            migration_41_42
+            migration_41_42,
+            migration_42_43
         )
     }
 
@@ -334,6 +335,12 @@ object DatabaseMigrations {
     private val migration_41_42 = object : Migration(41, 42) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE 'httpTTS' ADD `contentType` TEXT")
+        }
+    }
+
+    private val migration_42_43 = object : Migration(42, 43) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE `chapters` ADD `isVolume` INTEGER NOT NULL DEFAULT 0")
         }
     }
 }
