@@ -93,10 +93,12 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex != progress.durChapterIndex
             || durChapterPos != progress.durChapterPos
         ) {
-            durChapterIndex = progress.durChapterIndex
-            durChapterPos = progress.durChapterPos
-            clearTextChapter()
-            loadContent(resetPageOffset = true)
+            if (progress.durChapterIndex > chapterSize) {
+                durChapterIndex = progress.durChapterIndex
+                durChapterPos = progress.durChapterPos
+                clearTextChapter()
+                loadContent(resetPageOffset = true)
+            }
         }
     }
 
