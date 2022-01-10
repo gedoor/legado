@@ -81,38 +81,41 @@ object LocalBook {
     }
 
     fun importFile(uri: Uri): Book {
-        val path: String
+        val bookUrl: String
         val updateTime: Long
         //这个变量不要修改,否则会导致读取不到缓存
         val fileName = (if (uri.isContentScheme()) {
-            path = uri.toString()
+            bookUrl = uri.toString()
             val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
             updateTime = doc.lastModified()
             doc.name!!
         } else {
-            path = uri.path!!
-            val file = File(path)
+            bookUrl = uri.path!!
+            val file = File(bookUrl)
             updateTime = file.lastModified()
             file.name
         })
-        var book = appDb.bookDao.getBook(path)
+        var book = appDb.bookDao.getBook(bookUrl)
         if (book == null) {
             val nameAuthor = analyzeNameAuthor(fileName)
             book = Book(
-                bookUrl = path,
+                bookUrl = bookUrl,
                 name = nameAuthor.first,
                 author = nameAuthor.second,
                 originName = fileName,
                 coverUrl = FileUtils.getPath(
                     appCtx.externalFiles,
                     "covers",
-                    "${MD5Utils.md5Encode16(path)}.jpg"
+                    "${MD5Utils.md5Encode16(bookUrl)}.jpg"
                 ),
                 latestChapterTime = updateTime
             )
             if (book.isEpub()) EpubFile.upBookInfo(book)
             if (book.isUmd()) UmdFile.upBookInfo(book)
             appDb.bookDao.insert(book)
+        } else {
+            //已有书籍说明是更新,删除原有目录
+            appDb.bookChapterDao.delByBook(bookUrl)
         }
         return book
     }
