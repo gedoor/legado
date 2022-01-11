@@ -279,18 +279,15 @@ abstract class BaseReadAloudService : BaseService(),
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
-                AppLog.put("重新获得焦点, 恢复播放")
                 audioFocusLossTransient = false
                 if (!pause) resumeReadAloud()
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
-                AppLog.put("永久丢失焦点")
                 if (audioFocusLossTransient) {
                     pauseReadAloud(true)
                 }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                AppLog.put("暂时丢失焦点, 暂停播放")
                 audioFocusLossTransient = true
                 if (!pause) pauseReadAloud(false)
             }

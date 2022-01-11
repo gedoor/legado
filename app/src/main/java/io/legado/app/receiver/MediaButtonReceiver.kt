@@ -42,7 +42,6 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 val keycode: Int = keyEvent.keyCode
                 val action: Int = keyEvent.action
                 if (action == KeyEvent.ACTION_DOWN) {
-                    AppLog.put("mediaButton $action")
                     when (keycode) {
                         KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
                             if (context.getPrefBoolean("mediaButtonPerNext", false)) {
