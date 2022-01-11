@@ -155,16 +155,18 @@ object NetworkUtils {
      * http://www.biquge.com.cn => http://biquge.com.cn
      * http://www.content.example.com => http://example.com
      */
-    fun getSubDomain(url: String?): String {
-        val baseUrl = getBaseUrl(url) ?: return ""
-        val mURL = URL(baseUrl)
-        val schema: String = mURL.protocol
-        val host: String = mURL.host
-        //判断是否为ip
-        if (isIPAddress(host)) return baseUrl
-        //PublicSuffixDatabase处理域名
-        val domain = PublicSuffixDatabase.get().getEffectiveTldPlusOne(host)
-        return if (domain == null) baseUrl else "${schema}://${domain}"
+    fun getSubDomain(url: String): String {
+        return kotlin.runCatching {
+            val baseUrl = getBaseUrl(url) ?: return ""
+            val mURL = URL(baseUrl)
+            val schema: String = mURL.protocol
+            val host: String = mURL.host
+            //判断是否为ip
+            if (isIPAddress(host)) return baseUrl
+            //PublicSuffixDatabase处理域名
+            val domain = PublicSuffixDatabase.get().getEffectiveTldPlusOne(host)
+            if (domain == null) baseUrl else "${schema}://${domain}"
+        }.getOrDefault(url)
     }
 
     /**
