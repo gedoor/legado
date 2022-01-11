@@ -149,11 +149,10 @@ object NetworkUtils {
 
     /**
      * 获取二级域名，供cookie保存和读取
-     *
-     * http://1.2.3.4 => http://1.2.3.4
-     * https://www.example.com =>  https://example.com
-     * http://www.biquge.com.cn => http://biquge.com.cn
-     * http://www.content.example.com => http://example.com
+     * http://1.2.3.4 => 1.2.3.4
+     * https://www.example.com =>  example.com
+     * http://www.biquge.com.cn => biquge.com.cn
+     * http://www.content.example.com => example.com
      */
     fun getSubDomain(url: String): String {
         val baseUrl = getBaseUrl(url) ?: return ""
@@ -164,8 +163,7 @@ object NetworkUtils {
             //判断是否为ip
             if (isIPAddress(host)) return baseUrl
             //PublicSuffixDatabase处理域名
-            val domain = PublicSuffixDatabase.get().getEffectiveTldPlusOne(host)
-            if (domain == null) baseUrl else "${schema}://${domain}"
+            PublicSuffixDatabase.get().getEffectiveTldPlusOne(host) ?: baseUrl
         }.getOrDefault(
             if (baseUrl.indexOf(".") == baseUrl.lastIndexOf(".")) {
                 baseUrl.substring(baseUrl.lastIndexOf("/") + 1)
