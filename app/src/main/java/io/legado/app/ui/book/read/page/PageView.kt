@@ -226,7 +226,8 @@ class PageView(context: Context) : FrameLayout(context) {
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
         tvBookName?.text = ReadBook.book?.name
-        tvTitle?.text = textPage.title
+        val hideTitle = ReadBookConfig.titleMode != 2 && textPage.index == 0
+        tvTitle?.text = if (hideTitle) "" else textPage.title
         tvPage?.text = "${index.plus(1)}/$pageSize"
         tvTotalProgress?.text = readProgress
         tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
