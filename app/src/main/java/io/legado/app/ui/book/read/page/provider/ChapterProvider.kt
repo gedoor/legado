@@ -332,7 +332,7 @@ object ChapterProvider {
                 }
                 lineIndex == layout.lineCount - 1 -> {
                     //最后一行
-                    textLine.text = "$words\n"
+                    textLine.text = if(isVolumeTitle) "" else "$words\n"
                     isLastLine = true
                     //标题居中
                     val startX = if (isTitle && ReadBookConfig.titleMode == 1 || isVolumeTitle)
@@ -349,7 +349,7 @@ object ChapterProvider {
                 }
                 else -> {
                     //中间行
-                    textLine.text = words
+                    textLine.text = if(isVolumeTitle) "" else words
                     addCharsToLineMiddle(
                         absStartX,
                         textLine,

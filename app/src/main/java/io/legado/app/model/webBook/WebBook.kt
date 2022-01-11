@@ -261,8 +261,11 @@ object WebBook {
             Debug.log(bookSource.bookSourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
             return bookChapter.url
         }
-        //章节名为卷名时 且 章节url没获取到，返回空白
-        if(bookChapter.isVolume && bookChapter.url == bookChapter.title) return ""
+        if(bookChapter.isVolume && bookChapter.url == bookChapter.title) {
+            //不返回空值，是为了过书源检测
+            Debug.log(bookSource.bookSourceUrl, "⇒一级目录正文,使用章节标题:${bookChapter.title}")
+            return bookChapter.title
+        }
         return if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
             BookContent.analyzeContent(
                 scope = scope,
