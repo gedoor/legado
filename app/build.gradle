@@ -219,6 +219,9 @@ dependencies {
     //转换繁体
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
 
+    //加解密类库
+    implementation('cn.hutool:hutool-crypto:5.7.19')
+
     //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
     //epubLib集成到应用内
 
