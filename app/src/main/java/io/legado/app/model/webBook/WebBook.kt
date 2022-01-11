@@ -262,9 +262,8 @@ object WebBook {
             return bookChapter.url
         }
         if(bookChapter.isVolume && bookChapter.url == bookChapter.title) {
-            //不返回空值，是为了过书源检测
-            Debug.log(bookSource.bookSourceUrl, "⇒一级目录正文,使用章节标题:${bookChapter.title}")
-            return bookChapter.title
+            Debug.log(bookSource.bookSourceUrl, "⇒一级目录获取链接为空，正文返回空白")
+            return ""
         }
         return if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
             BookContent.analyzeContent(
