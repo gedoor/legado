@@ -140,11 +140,16 @@ object NetworkUtils {
     }
 
     fun getBaseUrl(url: String?): String? {
-        if (url == null || !url.startsWith("http")) return null
-        val index = url.indexOf("/", 9)
-        return if (index == -1) {
-            url
-        } else url.substring(0, index)
+        url ?: return null
+        if (url.startsWith("http://", true)
+            || url.startsWith("https://", true)
+        ) {
+            val index = url.indexOf("/", 9)
+            return if (index == -1) {
+                url
+            } else url.substring(0, index)
+        }
+        return null
     }
 
     /**
@@ -163,7 +168,7 @@ object NetworkUtils {
             if (isIPAddress(host)) return baseUrl
             //PublicSuffixDatabase处理域名
             PublicSuffixDatabase.get().getEffectiveTldPlusOne(host) ?: baseUrl
-        }.getOrDefault(url)
+        }.getOrDefault(baseUrl)
     }
 
     /**

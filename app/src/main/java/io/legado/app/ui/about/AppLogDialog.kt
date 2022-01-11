@@ -50,7 +50,10 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_clear -> AppLog.clear()
+            R.id.menu_clear -> {
+                AppLog.clear()
+                adapter.clearItems()
+            }
         }
         return true
     }
