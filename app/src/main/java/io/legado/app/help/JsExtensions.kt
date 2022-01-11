@@ -3,6 +3,8 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
+import cn.hutool.crypto.symmetric.AES
+import cn.hutool.crypto.symmetric.DESede
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
@@ -686,6 +688,76 @@ interface JsExtensions {
 
     fun android(): String {
         return AppConst.androidId
+    }
+
+    /**
+     * AES解密，算法参数经过Base64加密
+     *
+     * @param data 加密的字符串
+     * @param key Base64后的密钥
+     * @param mode 模式
+     * @param padding 补码方式
+     * @param iv Base64后的加盐
+     * @return 解密后的字符串
+     */
+    fun aesDecodeArgsBase64Str(
+        data: String,
+        key: String,
+        mode: String,
+        padding: String,
+        iv: String
+    ): String? {
+        return AES(
+            mode,
+            padding,
+            Base64.decode(key, Base64.NO_WRAP),
+            Base64.decode(iv, Base64.NO_WRAP)
+        ).decryptStr(data)
+    }
+
+    /**
+     * 3DES解密
+     *
+     * @param data 加密的字符串
+     * @param key 密钥
+     * @param mode 模式
+     * @param padding 补码方式
+     * @param iv 加盐
+     * @return 解密后的字符串
+     */
+    fun tripleDESDecodeStr(
+        data: String,
+        key: String,
+        mode: String,
+        padding: String,
+        iv: String
+    ): String? {
+        return DESede(mode, padding, key.toByteArray(), iv.toByteArray()).decryptStr(data)
+    }
+
+    /**
+     * 3DES解密，算法参数经过Base64加密
+     *
+     * @param data 加密的字符串
+     * @param key Base64后的密钥
+     * @param mode 模式
+     * @param padding 补码方式
+     * @param iv Base64后的加盐
+     * @return 解密后的字符串
+     */
+    fun tripleDESDecodeArgsBase64Str(
+        data: String,
+        key: String,
+        mode: String,
+        padding: String,
+        iv: String
+    ): String? {
+        return DESede(
+            mode,
+            padding,
+            Base64.decode(key, Base64.NO_WRAP),
+            Base64.decode(iv, Base64.NO_WRAP)
+        ).decryptStr(data)
     }
 
 }
