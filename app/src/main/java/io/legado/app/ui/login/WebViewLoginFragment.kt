@@ -27,6 +27,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
     private var checking = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        setSupportToolbar(binding.titleBar.toolbar)
         viewModel.source?.let {
             binding.titleBar.title = getString(R.string.login_source, it.getTag())
             initWebView(it)
