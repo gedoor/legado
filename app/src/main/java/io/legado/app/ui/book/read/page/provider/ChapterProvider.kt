@@ -191,7 +191,7 @@ object ChapterProvider {
             item.pageSize = textPages.size
             item.chapterIndex = bookChapter.index
             item.chapterSize = chapterSize
-            item.title = displayTitle
+            item.title = index == 0 ? '' : displayTitle
             item.upLinesPosition()
         }
 
