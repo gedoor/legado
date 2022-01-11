@@ -153,7 +153,7 @@ object NetworkUtils {
     }
 
     /**
-     * 获取二级域名，供cookie保存和读取
+     * 获取域名，供cookie保存和读取
      * http://1.2.3.4 => 1.2.3.4
      * https://www.example.com =>  example.com
      * http://www.biquge.com.cn => biquge.com.cn
