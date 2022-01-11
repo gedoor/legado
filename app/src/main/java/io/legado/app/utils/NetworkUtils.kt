@@ -140,7 +140,7 @@ object NetworkUtils {
     }
 
     fun getBaseUrl(url: String?): String? {
-        if (url == null || !url.startsWith("http")) return null
+        url ?: return null
         val index = url.indexOf("/", 9)
         return if (index == -1) {
             url
@@ -156,14 +156,20 @@ object NetworkUtils {
      */
     fun getSubDomain(url: String): String {
         val baseUrl = getBaseUrl(url) ?: return url
-        return kotlin.runCatching {
-            val mURL = URL(baseUrl)
-            val host: String = mURL.host
-            //判断是否为ip
-            if (isIPAddress(host)) return baseUrl
-            //PublicSuffixDatabase处理域名
-            PublicSuffixDatabase.get().getEffectiveTldPlusOne(host) ?: baseUrl
-        }.getOrDefault(url)
+        return if (url.startsWith("http://", true)
+            || url.startsWith("https://", true)
+        ) {
+            kotlin.runCatching {
+                val mURL = URL(baseUrl)
+                val host: String = mURL.host
+                //判断是否为ip
+                if (isIPAddress(host)) return baseUrl
+                //PublicSuffixDatabase处理域名
+                PublicSuffixDatabase.get().getEffectiveTldPlusOne(host) ?: baseUrl
+            }.getOrDefault(baseUrl)
+        } else {
+            baseUrl
+        }
     }
 
     /**
