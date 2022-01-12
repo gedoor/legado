@@ -135,23 +135,23 @@ interface JsExtensions {
         return cacheFile(urlStr, 0)
     }
 
-     /**
+    /**
      * 缓存以文本方式保存的文件 如.js .txt等
-      * @param urlStr 网络文件的链接
-      * @param saveTime 缓存时间，单位：秒
-      * @return 返回缓存后的文件内容
+     * @param urlStr 网络文件的链接
+     * @param saveTime 缓存时间，单位：秒
+     * @return 返回缓存后的文件内容
      */
     fun cacheFile(urlStr: String, saveTime: Int = 0): String? {
-         val key = md5Encode16(urlStr)
-         val cache = CacheManager.getFile(key)
-         if (cache.isNullOrBlank()) {
-             log("首次下载 $urlStr")
-             val value = ajax(urlStr) ?: return null
-             CacheManager.putFile(key, value, saveTime)
-             return value
-         }
-         return cache
-     }
+        val key = md5Encode16(urlStr)
+        val cache = CacheManager.getFile(key)
+        if (cache.isNullOrBlank()) {
+            log("首次下载 $urlStr")
+            val value = ajax(urlStr) ?: return null
+            CacheManager.putFile(key, value, saveTime)
+            return value
+        }
+        return cache
+    }
 
     /**
      *js实现读取cookie
@@ -759,6 +759,76 @@ interface JsExtensions {
             Base64.decode(key, Base64.NO_WRAP),
             Base64.decode(iv, Base64.NO_WRAP)
         ).decryptStr(data)
+    }
+
+    /**
+     * AES加密并转为Base64，算法参数经过Base64加密
+     *
+     * @param data 被加密的字符串
+     * @param key Base64后的密钥
+     * @param mode 模式
+     * @param padding 补码方式
+     * @param iv Base64后的加盐
+     * @return 加密后的Base64
+     */
+    fun aesEncodeArgsBase64Str(
+        data: String,
+        key: String,
+        mode: String,
+        padding: String,
+        iv: String
+    ): String? {
+        return AES(
+            mode,
+            padding,
+            Base64.decode(key, Base64.NO_WRAP),
+            Base64.decode(iv, Base64.NO_WRAP)
+        ).encryptBase64(data)
+    }
+
+    /**
+     * 3DES加密并转为Base64
+     *
+     * @param data 被加密的字符串
+     * @param key 密钥
+     * @param mode 模式
+     * @param padding 补码方式
+     * @param iv 加盐
+     * @return 加密后的Base64
+     */
+    fun tripleDESEncodeBase64Str(
+        data: String,
+        key: String,
+        mode: String,
+        padding: String,
+        iv: String
+    ): String? {
+        return DESede(mode, padding, key.toByteArray(), iv.toByteArray()).encryptBase64(data)
+    }
+
+    /**
+     * 3DES加密并转为Base64，算法参数经过Base64加密
+     *
+     * @param data 被加密的字符串
+     * @param key Base64后的密钥
+     * @param mode 模式
+     * @param padding 补码方式
+     * @param iv Base64后的加盐
+     * @return 加密后的Base64
+     */
+    fun tripleDESEncodeArgsBase64Str(
+        data: String,
+        key: String,
+        mode: String,
+        padding: String,
+        iv: String
+    ): String? {
+        return DESede(
+            mode,
+            padding,
+            Base64.decode(key, Base64.NO_WRAP),
+            Base64.decode(iv, Base64.NO_WRAP)
+        ).encryptBase64(data)
     }
 
     /**
