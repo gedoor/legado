@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
+import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.symmetric.AES
 import cn.hutool.crypto.symmetric.DESede
 import io.legado.app.BuildConfig
@@ -758,6 +759,34 @@ interface JsExtensions {
             Base64.decode(key, Base64.NO_WRAP),
             Base64.decode(iv, Base64.NO_WRAP)
         ).decryptStr(data)
+    }
+
+    /**
+     * 生成摘要，并转为16进制字符串
+     *
+     * @param data 被摘要数据
+     * @param algorithm 签名算法
+     * @return 16进制字符串
+     */
+    fun digestHex(
+        data: String,
+        algorithm: String,
+    ): String? {
+        return DigestUtil.digester(algorithm).digestHex(data)
+    }
+
+    /**
+     * 生成摘要，并转为Base64字符串
+     *
+     * @param data 被摘要数据
+     * @param algorithm 签名算法
+     * @return Base64字符串
+     */
+    fun digestBase64Str(
+        data: String,
+        algorithm: String,
+    ): String? {
+        return Base64.encodeToString(DigestUtil.digester(algorithm).digest(data), Base64.NO_WRAP)
     }
 
 }
