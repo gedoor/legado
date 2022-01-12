@@ -129,7 +129,7 @@ object ChapterProvider {
                 matcher.appendTail(sb)
                 text = sb.toString()
                 val isTitle = index == 0
-                val isVolumeTitle = bookChapter.isVolume && isTitle && bookChapter.url == bookChapter.title
+                val isVolumeTitle = bookChapter.isVolume && isTitle && bookChapter.url == bookChapter.title && bookChapter.tag.isNullOrBlank()
                 val textPaint = if (isTitle) titlePaint else contentPaint
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                     setTypeText(
@@ -147,7 +147,7 @@ object ChapterProvider {
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
                         val isTitle = index == 0
-                        val isVolumeTitle = bookChapter.isVolume && isTitle && bookChapter.url == bookChapter.title
+                        val isVolumeTitle = bookChapter.isVolume && isTitle && bookChapter.url == bookChapter.title && bookChapter.tag.isNullOrBlank()
                         val textPaint = if (isTitle) titlePaint else contentPaint
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                             setTypeText(
@@ -169,7 +169,7 @@ object ChapterProvider {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
                         val isTitle = index == 0
-                        val isVolumeTitle = bookChapter.isVolume && isTitle && bookChapter.url == bookChapter.title
+                        val isVolumeTitle = bookChapter.isVolume && isTitle && bookChapter.url == bookChapter.title && bookChapter.tag.isNullOrBlank()
                         val textPaint = if (isTitle) titlePaint else contentPaint
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                             setTypeText(
@@ -579,7 +579,7 @@ object ChapterProvider {
         tPaint.typeface = titleFont
         tPaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
         tPaint.isAntiAlias = true
-        //to do:卷名的标题排版
+        //正文
         val cPaint = TextPaint()
         cPaint.color = ReadBookConfig.textColor
         cPaint.letterSpacing = ReadBookConfig.letterSpacing
