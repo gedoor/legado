@@ -26,8 +26,8 @@ import kotlin.math.min
 
 @Suppress("unused")
 object BookHelp {
-    val downloadDir: File = appCtx.externalFiles
-    const val cacheFolderName = "book_cache"
+    private val downloadDir: File = appCtx.externalFiles
+    private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
     private val downloadImages = CopyOnWriteArraySet<String>()
 
