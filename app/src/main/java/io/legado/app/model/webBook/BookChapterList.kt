@@ -193,8 +193,8 @@ object BookChapterList {
                 }
                 if (bookChapter.url.isEmpty()) {
                     if (bookChapter.isVolume) {
-                        bookChapter.url = bookChapter.title
-                        Debug.log(bookSource.bookSourceUrl, "一级目录${index}未获取到url,使用章节标题替代")
+                        bookChapter.url = bookChapter.title + index
+                        Debug.log(bookSource.bookSourceUrl, "一级目录${index}未获取到url,使用${bookChapter.title}${index}替代")
                     } else {
                         bookChapter.url = baseUrl
                         Debug.log(bookSource.bookSourceUrl, "目录${index}未获取到url,使用baseUrl替代")
