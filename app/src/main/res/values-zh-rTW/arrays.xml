@@ -7,7 +7,7 @@
 
     <string-array name="group_style">
         <item>標籤</item>
-        <item>文件夾</item>
+        <item>資料夾</item>
     </string-array>
 
     <string-array name="text_suffix">
@@ -87,8 +87,8 @@
 
     <string-array name="rule_type">
         <item>書源</item>
-        <item>訂閲源</item>
-        <item>替換規則</item>
+        <item>訂閱源</item>
+        <item>取代規則</item>
     </string-array>
 
 </resources>

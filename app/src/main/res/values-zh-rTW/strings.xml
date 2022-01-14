@@ -231,7 +231,7 @@
     <string name="intro_show_null">簡介: 暫無簡介</string>
     <string name="open_from_other">打開外部書籍</string>
     <string name="origin_show">來源: %s</string>
-    <string name="import_replace_rule">匯入替換規則</string>
+    <string name="import_replace_rule">匯入取代規則</string>
     <string name="import_replace_rule_on_line">匯入線上規則</string>
     <string name="check_update_interval">檢查更新間隔</string>
     <string name="bookshelf_px_0">按閱讀時間</string>
@@ -634,8 +634,8 @@
     <string name="service_start">正在啟動服務\n具體訊息查看通知欄</string>
     <string name="default_path">預設路徑</string>
     <string name="sys_folder_picker">系統資料夾選擇器</string>
-    <string name="app_folder_picker">自帶資料夾選擇器</string>
-    <string name="app_file_picker">自帶資料夾選擇器</string>
+    <string name="app_folder_picker">內建資料夾選擇器</string>
+    <string name="app_file_picker">內建資料夾選擇器</string>
     <string name="a10_permission_toast">Android10以上因權限限制可能無法讀寫文件</string>
     <string name="add_to_text_context_menu_s">長按文字在操作選單中顯示閱讀·搜尋</string>
     <string name="add_to_text_context_menu_t">文字操作顯示搜尋</string>
@@ -678,7 +678,7 @@
     <string name="btn_default_s">預設</string>
     <string name="main_menu">主選單</string>
     <string name="request_permission">點擊授予權限</string>
-    <string name="tip_local_perm_request_storage">閱讀需要存取記憶卡權限，請點擊下方的"授予權限"按鈕，或前往“設定”—“應用權限”—打開所需權限。如果授予權限後仍然不正常，請點擊右上角的“選擇資料夾”，使用系統資料夾選擇器。</string>
+    <string name="tip_local_perm_request_storage">閱讀需要存取記憶卡權限，請點擊下方的"授予權限"按鈕，或前往「設定」—「應用權限」—打開所需權限。如果授予權限後仍然不正常，請點擊右上角的「選擇資料夾」，使用系統資料夾選擇器。</string>
     <string name="alouding_disable">全文朗讀中不能朗讀選中文字</string>
     <string name="read_body_to_lh">擴展到瀏海</string>
     <string name="toc_updateing">更新目錄中</string>
@@ -817,7 +817,7 @@
     <string name="background_image">背景圖片</string>
     <string name="background_image_blurring">背景圖片虛化</string>
     <string name="background_image_blurring_radius">虛化半徑</string>
-    <string name="background_image_hint">0為停用，啓用範圍1~25\n半徑數值越大，虛化效果越高</string>
+    <string name="background_image_hint">0為停用，啟用範圍1~25\n半徑數值越大，虛化效果越高</string>
     <string name="export_folder">匯出資料夾</string>
     <string name="export_charset">匯出編碼</string>
     <string name="export_no_chapter_name">TXT不匯出章節名</string>
@@ -837,7 +837,7 @@
     <string name="list_src">列表原始碼</string>
     <string name="url_already">此url已訂閱</string>
     <string name="high_brush_title">高刷</string>
-    <string name="high_brush_summary">使用螢幕最高刷新率</string>
+    <string name="high_brush_summary">使用螢幕最高更新率</string>
     <string name="export_all">匯出所有</string>
     <string name="complete">完成</string>
     <string name="show_unread">顯示未讀標誌</string>
@@ -879,8 +879,8 @@
     <string name="set_source_variable">設定源變數</string>
     <string name="set_book_variable">設定書籍變數</string>
     <string name="summary">注釋</string>
-    <string name="cover_config">封面設置</string>
-    <string name="cover_config_summary">設置默認封面樣式</string>
+    <string name="cover_config">封面設定</string>
+    <string name="cover_config_summary">設定預設封面樣式</string>
     <string name="cover_show_name">顯示書名</string>
     <string name="cover_show_name_summary">封面上顯示書名</string>
     <string name="cover_show_author">顯示作者</string>
@@ -902,17 +902,17 @@
     <string name="use_browser_open">是否使用外部瀏覽器打開?</string>
     <string name="see">查看</string>
     <string name="open">打開</string>
-    <string name="del_login_header">刪除登錄頭</string>
-    <string name="show_login_header">查看登錄頭</string>
-    <string name="login_header">登錄頭</string>
+    <string name="del_login_header">刪除登入頭</string>
+    <string name="show_login_header">查看登入頭</string>
+    <string name="login_header">登入頭</string>
     <string name="font_scale">字體大小</string>
-    <string name="font_scale_summary">當前字體大小:%.1f</string>
-    <string name="tts_speech_reduce">語速减</string>
+    <string name="font_scale_summary">目前字體大小:%.1f</string>
+    <string name="tts_speech_reduce">語速減</string>
     <string name="tts_speech_add">語速加</string>
-    <string name="open_sys_dir_picker_error">打开系统文件夹选择器出错,自动打开应用文件夹选择器</string>
-    <string name="expand_text_menu">展开文本选择菜单</string>
-    <string name="search_content_size">搜索結果</string>
-    <string name="book_tree_uri_t">书籍保存位置</string>
-    <string name="book_tree_uri_s">从其它应用打开的书籍保存位置</string>
+    <string name="open_sys_dir_picker_error">打開系統資料夾選擇器出錯,自動打開應用程式資料夾選擇器</string>
+    <string name="expand_text_menu">展開文字選擇選單</string>
+    <string name="search_content_size">搜尋結果</string>
+    <string name="book_tree_uri_t">書籍儲存位置</string>
+    <string name="book_tree_uri_s">從其它應用程式打開的書籍儲存位置</string>
 
 </resources>

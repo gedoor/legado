@@ -144,7 +144,7 @@ class CheckSourceService : BaseService() {
                 nextChapterUrl = nextChapterUrl,
                 needSave = false
             )
-            if (content.isBlank()) {
+            if ( !toc.first().isVolume && content.isBlank()) {
                 throw NoStackTraceException("正文内容为空")
             }
         }.timeout(180000L)

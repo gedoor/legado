@@ -109,6 +109,8 @@ data class BookChapter(
     }
 
     fun getAbsoluteURL(): String {
+        //二级目录解析的卷链接为空 返回目录页的链接
+        if (url.startsWith(title) && isVolume) return baseUrl
         val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
         val urlBefore = if (urlMatcher.find()) url.substring(0, urlMatcher.start()) else url
         val urlAbsoluteBefore = NetworkUtils.getAbsoluteURL(baseUrl, urlBefore)
