@@ -15,7 +15,7 @@
 
 ## 当前类对象的可使用的部分方法
 
-### [AnalyzeUrl](https://github.com/gedoor/legado/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeUrl.kt) 部分函数
+### [AnalyzeUrl](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeUrl.kt) 部分函数
 > js中通过java.调用,只在`登录检查JS`规则中有效
 ```
 initUrl() //重新解析url,可以用于登录检测js登录后重新解析url重新访问
@@ -24,7 +24,7 @@ getStrResponse( jsStr: String? = null, sourceRegex: String? = null) //返回访�
 getResponse(): Response //返回访问结果,网络朗读引擎采用的是这个,调用登录后在调用这方法可以重新访问,参考阿里云登录检测
 ```
 
-### [AnalyzeRule](https://github.com/gedoor/legado/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeRule.kt) 部分函数
+### [AnalyzeRule](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeRule.kt) 部分函数
 * 获取文本/文本列表
 > `mContent` 待解析源代码，默认为当前页面  
 > `isUrl` 链接标识，默认为`false`
@@ -204,7 +204,7 @@ cookie.removeCookie(key)
 ```
 
 ## cache对象的部分可用函数
-> saveTime单位:秒，可省略
+> saveTime单位:秒，可省略  
 > 保存至数据库和缓存文件(50M)，保存的内容较大时请使用`getFile putFile`
 ```
 保存
