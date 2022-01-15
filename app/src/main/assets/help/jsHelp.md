@@ -24,6 +24,25 @@ getStrResponse( jsStr: String? = null, sourceRegex: String? = null) //返回访�
 getResponse(): Response //返回访问结果,网络朗读引擎采用的是这个,调用登录后在调用这方法可以重新访问,参考阿里云登录检测
 ```
 
+### [AnalyzeRule](https://github.com/gedoor/legado/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeRule.kt) 部分函数
+* 获取文本/文本列表
+> `mContent` 待解析源代码，默认为当前页面  
+> `isUrl` 链接标识，默认为`false`
+```
+java.getString(ruleStr: String?, mContent: Any? = null, isUrl: Boolean = false)
+java.getStringList(ruleStr: String?, mContent: Any? = null, isUrl: Boolean = false)
+```
+* 设置解析内容
+```
+java.setContent(content: Any?, baseUrl: String? = null):
+```
+* 获取Element/Element列表
+> 如果要改变解析源代码，请先使用`java.setContent`
+```
+java.getElement(ruleStr: String)
+java.getElements(ruleStr: String)
+```
+
 ### [js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt) 部分函数
 * 变量存取
 ```
