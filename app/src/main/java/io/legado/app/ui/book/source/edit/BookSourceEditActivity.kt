@@ -281,6 +281,7 @@ class BookSourceEditActivity :
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
             add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
+            add(EditEntity("payAction", cr?.payAction, R.string.rule_pay_action))
         }
         binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
@@ -376,6 +377,7 @@ class BookSourceEditActivity :
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value
                 "imageStyle" -> contentRule.imageStyle = it.value
+                "payAction" -> contentRule.payAction = it.value
             }
         }
         source.ruleSearch = searchRule
