@@ -95,8 +95,11 @@ java.deleteFile(path: String)
 * @param transformation AES加密的方式 例如AES/ECB/PKCS5Padding
 * @param iv ECB模式的偏移向量
 java.aesDecodeToString(str: String, key: String, transformation: String, iv: String)
+
 java.aesBase64DecodeToString(str: String, key: String, transformation: String, iv: String)
+
 java.aesEncodeToString(str: String, key: String, transformation: String, iv: String)
+
 java.aesEncodeToBase64String(str: String, key: String, transformation: String, iv: String)
 ```
 * 3DES
@@ -107,6 +110,7 @@ java.aesEncodeToBase64String(str: String, key: String, transformation: String, i
 * @param padding 补码方式 NoPadding/PKCS5Padding/
 * @param iv 加盐
 java.tripleDESEncodeBase64Str(data: String,key: String,mode: String,padding: String,iv: String): String?
+
 java.tripleDESDecodeStr(data: String,key: String,mode: String,padding: String,iv: String): String?
 ```
 * 摘要
@@ -114,13 +118,13 @@ java.tripleDESDecodeStr(data: String,key: String,mode: String,padding: String,iv
 * @param data 被摘要数据
 * @param algorithm 签名算法 MD5/SHA1/SHA256/SHA512
 java.digestHex(data: String,algorithm: String,): String?
+
 java.digestBase64Str(data: String,algorithm: String,): String?
 ```
 * md5
 ```
 java.md5Encode(str)
 java.md5Encode16(str)
-
 ```
 
 ## book对象的可用属性
