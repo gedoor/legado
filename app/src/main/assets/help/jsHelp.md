@@ -189,9 +189,16 @@ source.getVariable()
 * 登录头操作
 ```
 source.getLoginHeader()
-source.getLoginHeaderMap(): Map<String, String>?
+source.getLoginHeaderMap().get(key: String)
 source.putLoginHeader(header: String)
 source.removeLoginHeader()
+```
+* 用户登录信息操作
+> 使用`登录UI`规则，并成功登录，阅读自动加密保存登录UI规则中除type为button的信息
+```
+source.getLoginInfo()
+source.getLoginInfoMap().get(key: String)
+source.removeLoginInfo()
 ```
 ## cookie对象的部分可用函数
 ```
