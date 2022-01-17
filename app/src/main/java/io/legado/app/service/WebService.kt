@@ -10,7 +10,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
-import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
@@ -61,6 +60,7 @@ class WebService : BaseService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             IntentAction.stop -> stopSelf()
+            "copyHostAddress" -> sendToClip(hostAddress)
             else -> upWebServer()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -114,7 +114,7 @@ class WebService : BaseService() {
             .setContentTitle(getString(R.string.web_service))
             .setContentText(notificationContent)
             .setContentIntent(
-                activityPendingIntent<MainActivity>("webService")
+                servicePendingIntent<WebService>("copyHostAddress")
             )
         builder.addAction(
             R.drawable.ic_stop_black_24dp,
