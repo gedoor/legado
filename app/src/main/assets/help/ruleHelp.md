@@ -11,6 +11,36 @@
 : regex规则,不可省略,只可以用在书籍列表和目录列表
 ```
 
+* 登录UI
+> 不使用内置webView登录网站，需要使用`登录URL`规则实现登录逻辑，可使用`登录检查JS`检查登录结果
+```
+规则填写示范
+[
+    {
+        name: "telephone",
+        type: "text"
+    },
+    {
+        name: "password",
+        type: "password"
+    },
+    {
+        name: "注册",
+        type: "button",
+        action: "http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C"
+    }
+]
+成功登录后在js中获取读取登录信息
+source.getLoginInfo()
+source.getLoginInfoMap().get("telephone")
+登录信息示范
+{
+    "telephone":"123456",
+    "password":"123456"
+}
+
+```
+
 * 发现url格式
 ```json
 [
@@ -104,3 +134,6 @@ let options = {
 </js>
 ```
 
+* 购买操作
+> 返回购买链接，可直接填写链接或者JavaScript  
+> 可用变量 book chapter
