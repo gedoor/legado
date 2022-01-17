@@ -44,6 +44,15 @@ class WebService : BaseService() {
         upTile(true)
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            IntentAction.stop -> stopSelf()
+            "copyHostAddress" -> sendToClip(hostAddress)
+            else -> upWebServer()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
@@ -55,15 +64,6 @@ class WebService : BaseService() {
         }
         postEvent(EventBus.WEB_SERVICE, "")
         upTile(false)
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
-            IntentAction.stop -> stopSelf()
-            "copyHostAddress" -> sendToClip(hostAddress)
-            else -> upWebServer()
-        }
-        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun upWebServer() {
