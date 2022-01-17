@@ -842,7 +842,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 startActivity<WebViewActivity> {
                     putExtra("title", getString(R.string.chapter_pay))
                     putExtra("url", it)
-                    IntentData.put(it, ReadBook.bookSource)
+                    IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
                 }
             }
         }.onError {
