@@ -27,6 +27,7 @@ import androidx.preference.PreferenceManager
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.help.IntentHelp
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -60,6 +61,20 @@ inline fun <reified T : Service> Context.servicePendingIntent(
         FLAG_UPDATE_CURRENT
     }
     return getService(this, 0, intent, flags)
+}
+
+@SuppressLint("UnspecifiedImmutableFlag")
+fun Context.activityPendingIntent(
+    intent: Intent,
+    action: String
+): PendingIntent? {
+    intent.action = action
+    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+    } else {
+        FLAG_UPDATE_CURRENT
+    }
+    return getActivity(this, 0, intent, flags)
 }
 
 @SuppressLint("UnspecifiedImmutableFlag")
@@ -145,8 +160,8 @@ fun Context.restart() {
     intent?.let {
         intent.addFlags(
             Intent.FLAG_ACTIVITY_NEW_TASK
-                    or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                or Intent.FLAG_ACTIVITY_CLEAR_TOP
         )
         startActivity(intent)
         //杀掉以前进程
@@ -284,25 +299,18 @@ val Context.externalCache: File
     get() = this.externalCacheDir ?: this.cacheDir
 
 fun Context.openUrl(url: String) {
-    openUrl(Uri.parse(url))
+    try {
+        startActivity(IntentHelp.getBrowserIntent(url))
+    } catch (e: Exception) {
+        toastOnUi(e.localizedMessage ?: "open url error")
+    }
 }
 
 fun Context.openUrl(uri: Uri) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = uri
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    if (intent.resolveActivity(packageManager) != null) {
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-            toastOnUi(e.localizedMessage ?: "open url error")
-        }
-    } else {
-        try {
-            startActivity(Intent.createChooser(intent, "请选择浏览器"))
-        } catch (e: Exception) {
-            toastOnUi(e.localizedMessage ?: "open url error")
-        }
+    try {
+        startActivity(IntentHelp.getBrowserIntent(uri))
+    } catch (e: Exception) {
+        toastOnUi(e.localizedMessage ?: "open url error")
     }
 }
 

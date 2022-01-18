@@ -426,6 +426,7 @@
     <string name="rule_image_style">图片样式(imageStyle)</string>
     <string name="rule_replace_regex">替换规则(replaceRegex)</string>
     <string name="rule_source_regex">资源正则(sourceRegex)</string>
+    <string name="rule_pay_action">购买操作(payAction)</string>
 
     <string name="source_icon">图标(sourceIcon)</string>
     <string name="r_articles">列表规则(ruleArticles)</string>

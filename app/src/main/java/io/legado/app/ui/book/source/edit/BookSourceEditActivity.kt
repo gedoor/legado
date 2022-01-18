@@ -77,7 +77,7 @@ class BookSourceEditActivity :
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (!LocalConfig.ruleHelpVersionIsLast) {
-            showRuleHelp()
+            showHelp("ruleHelp")
         }
     }
 
@@ -119,7 +119,7 @@ class BookSourceEditActivity :
                 getString(R.string.share_book_source),
                 ErrorCorrectionLevel.L
             )
-            R.id.menu_help -> showRuleHelp()
+            R.id.menu_help -> showHelp("ruleHelp")
             R.id.menu_login -> getSource().let { source ->
                 if (checkSource(source)) {
                     viewModel.save(source) {
@@ -281,6 +281,7 @@ class BookSourceEditActivity :
             add(EditEntity("sourceRegex", cr?.sourceRegex, R.string.rule_source_regex))
             add(EditEntity("replaceRegex", cr?.replaceRegex, R.string.rule_replace_regex))
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
+            add(EditEntity("payAction", cr?.payAction, R.string.rule_pay_action))
         }
         binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
@@ -376,6 +377,7 @@ class BookSourceEditActivity :
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value
                 "imageStyle" -> contentRule.imageStyle = it.value
+                "payAction" -> contentRule.payAction = it.value
             }
         }
         source.ruleSearch = searchRule
@@ -418,26 +420,23 @@ class BookSourceEditActivity :
     }
 
     private fun showHelpDialog() {
-        val items = arrayListOf("插入URL参数", "书源教程", "正则教程", "选择文件")
+        val items = arrayListOf("插入URL参数", "书源教程", "js教程", "正则教程", "选择文件")
         selector(getString(R.string.help), items) { _, index ->
             when (index) {
                 0 -> insertText(AppConst.urlOption)
-                1 -> showRuleHelp()
-                2 -> showRegexHelp()
-                3 -> selectDoc.launch {
+                1 -> showHelp("ruleHelp")
+                2 -> showHelp("jsHelp")
+                3 -> showHelp("regexHelp")
+                4 -> selectDoc.launch {
                     mode = HandleFileContract.FILE
                 }
             }
         }
     }
 
-    private fun showRuleHelp() {
-        val mdText = String(assets.open("help/ruleHelp.md").readBytes())
-        showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
-    }
-
-    private fun showRegexHelp() {
-        val mdText = String(assets.open("help/regexHelp.md").readBytes())
+    private fun showHelp(fileName: String) {
+        //显示目录help下的帮助文档
+        val mdText = String(assets.open("help/${fileName}.md").readBytes())
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
 
