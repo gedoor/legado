@@ -323,7 +323,7 @@ class TextFile(private val book: Book) {
         val list = arrayListOf<Pattern>()
         var maxCs = 1
         for (tocRule in rules) {
-            val pattern = Pattern.compile(tocRule.rule, Pattern.MULTILINE)
+            val pattern = tocRule.rule.toPattern(Pattern.MULTILINE)
             val matcher = pattern.matcher(content)
             var cs = 0
             while (matcher.find()) {
