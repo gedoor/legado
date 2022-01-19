@@ -92,24 +92,22 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        intent?.action?.let { action ->
-            when (action) {
-                IntentAction.play -> {
-                    textChapter = ReadBook.curTextChapter
-                    pageIndex = ReadBook.durPageIndex()
-                    newReadAloud(
-                        intent.getBooleanExtra("play", true)
-                    )
-                }
-                IntentAction.pause -> pauseReadAloud(true)
-                IntentAction.resume -> resumeReadAloud()
-                IntentAction.upTtsSpeechRate -> upSpeechRate(true)
-                IntentAction.prevParagraph -> prevP()
-                IntentAction.nextParagraph -> nextP()
-                IntentAction.addTimer -> addTimer()
-                IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
-                else -> stopSelf()
+        when (intent?.action) {
+            IntentAction.play -> {
+                textChapter = ReadBook.curTextChapter
+                pageIndex = ReadBook.durPageIndex()
+                newReadAloud(
+                    intent.getBooleanExtra("play", true)
+                )
             }
+            IntentAction.pause -> pauseReadAloud(true)
+            IntentAction.resume -> resumeReadAloud()
+            IntentAction.upTtsSpeechRate -> upSpeechRate(true)
+            IntentAction.prevParagraph -> prevP()
+            IntentAction.nextParagraph -> nextP()
+            IntentAction.addTimer -> addTimer()
+            IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
+            else -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -158,8 +156,12 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
-        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        postEvent(EventBus.ALOUD_STATE, Status.PLAY)
+        if (contentList.isEmpty()) {
+            ReadBook.readAloud()
+        } else {
+            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+            postEvent(EventBus.ALOUD_STATE, Status.PLAY)
+        }
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
