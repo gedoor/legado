@@ -133,7 +133,10 @@ class CheckSourceService : BaseService() {
                 }
                 books = WebBook.exploreBookAwait(this, source, url)
             }
-            val book = WebBook.getBookInfoAwait(this, source, books.first().toBook())
+            var book = books.first().toBook()
+            if (book.tocUrl.isBlank()) {
+                book = WebBook.getBookInfoAwait(this, source, book)
+            }
             val toc = WebBook.getChapterListAwait(this, source, book)
             val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
             val content = WebBook.getContentAwait(
