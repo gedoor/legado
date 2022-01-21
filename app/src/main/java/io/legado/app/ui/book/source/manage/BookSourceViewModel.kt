@@ -94,16 +94,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach { source ->
-                val newGroupList = arrayListOf<String>()
-                source.bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.forEach {
-                    newGroupList.add(it)
-                }
-                groups.splitNotBlank(",", ";", "，").forEach {
-                    newGroupList.add(it)
-                }
-                val lh = LinkedHashSet(newGroupList)
-                val newGroup = ArrayList(lh).joinToString(separator = ",")
-                list.add(source.copy(bookSourceGroup = newGroup))
+                source.addGroup(groups)
+                list.add(source)
             }
             appDb.bookSourceDao.update(*list.toTypedArray())
         }
@@ -113,16 +105,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach { source ->
-                val newGroupList = arrayListOf<String>()
-                source.bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.forEach {
-                    newGroupList.add(it)
-                }
-                groups.splitNotBlank(",", ";", "，").forEach {
-                    newGroupList.remove(it)
-                }
-                val lh = LinkedHashSet(newGroupList)
-                val newGroup = ArrayList(lh).joinToString(separator = ",")
-                list.add(source.copy(bookSourceGroup = newGroup))
+                source.removeGroup(groups)
+                list.add(source)
             }
             appDb.bookSourceDao.update(*list.toTypedArray())
         }

@@ -120,6 +120,7 @@ class CheckSourceService : BaseService() {
             }
             var books = WebBook.searchBookAwait(this, source, searchWord)
             if (books.isEmpty()) {
+                source.addGroup("搜索为空")
                 val exs = source.exploreKinds
                 var url: String? = null
                 for (ex in exs) {
