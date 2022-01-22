@@ -20,7 +20,6 @@ import io.legado.app.utils.*
 class AboutFragment : PreferenceFragmentCompat() {
 
     private val licenseUrl = "https://github.com/gedoor/legado/blob/master/LICENSE"
-    private val disclaimerUrl = "https://gedoor.github.io/MyBookshelf/disclaimer.html"
     private val qqGroups = linkedMapOf(
         Pair("(QQ群1)805192012", "6GlFKjLeIk5RhQnR3PNVDaKB6j10royo"),
         Pair("(QQ群2)773736122", "5Bm5w6OgLupXnICbYvbgzpPUgf0UlsJF"),
@@ -58,7 +57,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "git" -> openUrl(R.string.this_github_url)
             "home_page" -> openUrl(R.string.home_page_url)
             "license" -> requireContext().openUrl(licenseUrl)
-            "disclaimer" -> requireContext().openUrl(disclaimerUrl)
+            "disclaimer" -> showDisclaimer()
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "crashLog" -> showCrashLogs()
@@ -76,6 +75,11 @@ class AboutFragment : PreferenceFragmentCompat() {
     private fun showUpdateLog() {
         val log = String(requireContext().assets.open("updateLog.md").readBytes())
         showDialogFragment(TextDialog(log, TextDialog.Mode.MD))
+    }
+
+    private fun showDisclaimer() {
+        val disclaimer = String(requireContext().assets.open("disclaimer.md").readBytes())
+        showDialogFragment(TextDialog(disclaimer, TextDialog.Mode.MD))
     }
 
     private fun checkUpdate() {
