@@ -3,7 +3,6 @@ package io.legado.app.ui.book.source.manage
 import android.app.Application
 import android.text.TextUtils
 import io.legado.app.base.BaseViewModel
-import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.utils.*
@@ -94,8 +93,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach { source ->
-                source.addGroup(groups)
-                list.add(source)
+                list.add(source.copy().addGroup(groups))
             }
             appDb.bookSourceDao.update(*list.toTypedArray())
         }
@@ -105,8 +103,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute {
             val list = arrayListOf<BookSource>()
             sources.forEach { source ->
-                source.removeGroup(groups)
-                list.add(source)
+                list.add(source.copy().removeGroup(groups))
             }
             appDb.bookSourceDao.update(*list.toTypedArray())
         }
