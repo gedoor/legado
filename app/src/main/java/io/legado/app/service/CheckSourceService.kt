@@ -120,6 +120,7 @@ class CheckSourceService : BaseService() {
             }
             var books = WebBook.searchBookAwait(this, source, searchWord)
             if (books.isEmpty()) {
+                source.addGroup("搜索失效")
                 val exs = source.exploreKinds
                 var url: String? = null
                 for (ex in exs) {
@@ -133,7 +134,11 @@ class CheckSourceService : BaseService() {
                 }
                 books = WebBook.exploreBookAwait(this, source, url)
             }
-            val book = WebBook.getBookInfoAwait(this, source, books.first().toBook())
+            source.removeGroup("搜索失效")
+            var book = books.first().toBook()
+            if (book.tocUrl.isBlank()) {
+                book = WebBook.getBookInfoAwait(this, source, book)
+            }
             val toc = WebBook.getChapterListAwait(this, source, book)
             val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
             val content = WebBook.getContentAwait(
@@ -155,8 +160,6 @@ class CheckSourceService : BaseService() {
                         "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
                 }
                 Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
-                source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
-                appDb.bookSourceDao.update(source)
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("失效")
                 source.bookSourceComment = source.bookSourceComment
@@ -165,9 +168,9 @@ class CheckSourceService : BaseService() {
                         it.startsWith("Error: ")
                     }?.joinToString("\n")
                 Debug.updateFinalMessage(source.bookSourceUrl, "成功")
+            }.onFinally(searchCoroutine) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
-            }.onFinally(searchCoroutine) {
                 onNext(source.bookSourceUrl, source.bookSourceName)
             }
     }

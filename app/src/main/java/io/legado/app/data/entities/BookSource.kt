@@ -3,6 +3,7 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.SourceAnalyzer
@@ -118,17 +119,14 @@ data class BookSource(
     fun getContentRule() = ruleContent ?: ContentRule()
 
     fun addGroup(group: String) {
-        bookSourceGroup?.let {
-            if (!it.contains(group)) {
-                bookSourceGroup = "$it,$group"
-            }
-        } ?: let {
-            bookSourceGroup = group
+        bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
+            it.add(group)
+            bookSourceGroup = TextUtils.join(",", it)
         }
     }
 
     fun removeGroup(group: String) {
-        bookSourceGroup?.splitNotBlank("[,;，；]".toRegex())?.toHashSet()?.let {
+        bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
             it.remove(group)
             bookSourceGroup = TextUtils.join(",", it)
         }
