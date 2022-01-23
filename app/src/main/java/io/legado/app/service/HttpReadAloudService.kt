@@ -180,22 +180,26 @@ class HttpReadAloudService : BaseReadAloudService(),
                             is SocketTimeoutException, is ConnectException -> {
                                 removeSpeakCache(fileName)
                                 downloadErrorNo++
-                                if (playErrorNo > 5) {
-                                    downloadErrorNo = 0
-                                    createSilentSound(fileName)
+                                if (downloadErrorNo > 5) {
                                     val msg = "tts超时或连接错误超过5次\n${it.localizedMessage}"
                                     AppLog.put(msg, it)
                                     toastOnUi(msg)
+                                    pauseReadAloud(true)
                                 } else {
                                     downloadAudio()
                                 }
                             }
                             else -> {
                                 removeSpeakCache(fileName)
-                                createSilentSound(fileName)
+                                downloadErrorNo++
                                 val msg = "tts下载错误\n${it.localizedMessage}"
                                 AppLog.put(msg, it)
                                 Timber.e(it)
+                                if (downloadErrorNo > 5) {
+                                    pauseReadAloud(true)
+                                } else {
+                                    createSilentSound(fileName)
+                                }
                             }
                         }
                     }
