@@ -78,7 +78,6 @@ function rule2json() {
 	Object.keys(RuleJSON).forEach(key => {
 		RuleJSON[key] = $('#' + key).value;
 	});
-    //类型转换
 	RuleJSON.lastUpdateTime = new Date().getTime();
 	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
 	RuleJSON.articleStyle = RuleJSON.articleStyle == '' ? 0 : parseInt(RuleJSON.articleStyle);
