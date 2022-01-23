@@ -91,21 +91,19 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun selectionAddToGroups(sources: List<BookSource>, groups: String) {
         execute {
-            val list = arrayListOf<BookSource>()
             sources.forEach { source ->
-                list.add(source.copy().addGroup(groups))
+                source.addGroup(groups)
             }
-            appDb.bookSourceDao.update(*list.toTypedArray())
+            appDb.bookSourceDao.update(*sources.toTypedArray())
         }
     }
 
     fun selectionRemoveFromGroups(sources: List<BookSource>, groups: String) {
         execute {
-            val list = arrayListOf<BookSource>()
             sources.forEach { source ->
-                list.add(source.copy().removeGroup(groups))
+                source.removeGroup(groups)
             }
-            appDb.bookSourceDao.update(*list.toTypedArray())
+            appDb.bookSourceDao.update(*sources.toTypedArray())
         }
     }
 
