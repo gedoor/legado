@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/page_panel"
@@ -10,13 +11,15 @@
     <FrameLayout
         android:id="@+id/vw_status_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/vw_status_bar">
 
         <io.legado.app.ui.widget.BatteryView
             android:id="@+id/tv_header_left"
@@ -75,26 +78,31 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/divider"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@id/ll_header"/>
 
     <io.legado.app.ui.book.read.page.ContentTextView
         android:id="@+id/content_text_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/vw_top_divider"
+        app:layout_constraintBottom_toTopOf="@id/vw_bottom_divider"/>
 
     <View
         android:id="@+id/vw_bottom_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/divider"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/ll_footer"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <io.legado.app.ui.widget.BatteryView
             android:id="@+id/tv_footer_left"
@@ -148,4 +156,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
