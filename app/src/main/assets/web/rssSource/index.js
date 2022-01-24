@@ -78,13 +78,13 @@ function rule2json() {
 	Object.keys(RuleJSON).forEach(key => {
 		RuleJSON[key] = $('#' + key).value;
 	});
-
 	RuleJSON.lastUpdateTime = new Date().getTime();
 	RuleJSON.customOrder = RuleJSON.customOrder == '' ? 0 : parseInt(RuleJSON.customOrder);
+	RuleJSON.articleStyle = RuleJSON.articleStyle == '' ? 0 : parseInt(RuleJSON.articleStyle);
 	RuleJSON.enabled = RuleJSON.enabled == '' || String(RuleJSON.enabled).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	RuleJSON.enableJs = RuleJSON.enableJs == '' || String(RuleJSON.enableJs).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	RuleJSON.loadWithBaseUrl = RuleJSON.loadWithBaseUrl == '' || String(RuleJSON.loadWithBaseUrl).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
-	RuleJSON.singleUrl = RuleJSON.singleUrl == '' || String(RuleJSON.singleUrl).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	RuleJSON.singleUrl = String(RuleJSON.singleUrl).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	return RuleJSON;
 }
 // 将源对象填充到源表单
