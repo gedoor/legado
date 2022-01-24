@@ -82,8 +82,8 @@ object BookInfo {
                 ?.joinToString(",")
                 ?.let {
                     if (it.isNotEmpty()) book.kind = it
-                }
-            Debug.log(bookSource.bookSourceUrl, "└${book.kind}")
+                    Debug.log(bookSource.bookSourceUrl, "└${it}")
+                } ?: Debug.log(bookSource.bookSourceUrl, "└")
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
@@ -92,8 +92,8 @@ object BookInfo {
         try {
             wordCountFormat(analyzeRule.getString(infoRule.wordCount)).let {
                 if (it.isNotEmpty()) book.wordCount = it
+                Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
-            Debug.log(bookSource.bookSourceUrl, "└${book.wordCount}")
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
@@ -102,18 +102,18 @@ object BookInfo {
         try {
             analyzeRule.getString(infoRule.lastChapter).let {
                 if (it.isNotEmpty()) book.latestChapterTitle = it
+                Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
-            Debug.log(bookSource.bookSourceUrl, "└${book.latestChapterTitle}")
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取简介")
         try {
-            analyzeRule.getString(infoRule.intro).let {
-                if (it.isNotEmpty()) book.intro = HtmlFormatter.format(it)
+            HtmlFormatter.format(analyzeRule.getString(infoRule.intro)).let {
+                if (it.isNotEmpty()) book.intro = it
+                Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
-            Debug.log(bookSource.bookSourceUrl, "└${book.intro}")
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
@@ -122,8 +122,8 @@ object BookInfo {
         try {
             analyzeRule.getString(infoRule.coverUrl).let {
                 if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
+                Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
-            Debug.log(bookSource.bookSourceUrl, "└${book.coverUrl}")
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
         }
