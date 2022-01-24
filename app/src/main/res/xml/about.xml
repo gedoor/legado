@@ -43,7 +43,7 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="mail"
-            android:summary="kunfei.ge@gmail.com"
+            android:summary="@string/email"
             android:title="@string/send_mail"
             app:iconSpaceReserved="false" />
 

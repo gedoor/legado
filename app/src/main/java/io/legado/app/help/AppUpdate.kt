@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.newCallStrResponse
@@ -19,7 +20,7 @@ object AppUpdate {
         callback: (newVersion: String, updateBody: String, url: String, fileName: String) -> Unit
     ) {
         Coroutine.async(scope) {
-            val lastReleaseUrl = "https://api.github.com/repos/gedoor/legado/releases/latest"
+            val lastReleaseUrl = appCtx.getString(R.string.latest_release_api)
             val body = okHttpClient.newCallStrResponse {
                 url(lastReleaseUrl)
             }.body
