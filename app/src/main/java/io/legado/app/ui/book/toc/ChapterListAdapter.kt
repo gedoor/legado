@@ -14,6 +14,7 @@ import io.legado.app.lib.theme.ThemeUtils
 import io.legado.app.help.AppConfig
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.visible
+import io.legado.app.utils.gone
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
@@ -68,6 +69,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 //卷名不显示tag(更新时间规则)
                     tvTag.text = item.tag
                     tvTag.visible()
+                } else {
+                    tvTag.gone()
                 }
                 upHasCache(binding, isDur, cached)
             } else {
