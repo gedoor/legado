@@ -84,7 +84,7 @@ function rule2json() {
 	RuleJSON.enabled = RuleJSON.enabled == '' || String(RuleJSON.enabled).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	RuleJSON.enableJs = RuleJSON.enableJs == '' || String(RuleJSON.enableJs).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	RuleJSON.loadWithBaseUrl = RuleJSON.loadWithBaseUrl == '' || String(RuleJSON.loadWithBaseUrl).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
-	RuleJSON.singleUrl = RuleJSON.singleUrl == '' || String(RuleJSON.singleUrl).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
+	RuleJSON.singleUrl = String(RuleJSON.singleUrl).toLocaleLowerCase().replace(/^\s*|\s*$/g, '') == 'true';
 	return RuleJSON;
 }
 // 将源对象填充到源表单
