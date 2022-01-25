@@ -56,8 +56,8 @@ object Debug {
                 if (showTime && debugTimeMap[sourceUrl] != null) {
                     val time =
                         debugTimeFormat.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
-                    printMsg = "$time $printMsg"
-                    debugMessageMap[sourceUrl] = printMsg
+                    printMsg = printMsg.substring(1)
+                    debugMessageMap[sourceUrl] = "$time $printMsg"
                 }
             }
         }
