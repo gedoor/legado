@@ -133,8 +133,12 @@ class CheckSourceService : BaseService() {
                     throw NoStackTraceException("搜索内容为空并且没有发现")
                 }
                 books = WebBook.exploreBookAwait(this, source, url)
+                if (books.isEmpty()) {
+                    throw NoStackTraceException("发现书籍为空")
+                }
+            } else {
+                source.removeGroup("搜索失效")
             }
-            source.removeGroup("搜索失效")
             var book = books.first().toBook()
             if (book.tocUrl.isBlank()) {
                 book = WebBook.getBookInfoAwait(this, source, book)
