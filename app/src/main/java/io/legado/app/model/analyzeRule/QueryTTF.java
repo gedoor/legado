@@ -235,7 +235,7 @@ public class QueryTTF {
 
     public final Map<Integer, String> codeToGlyph = new HashMap<>();
     public final Map<String, Integer> glyphToCode = new HashMap<>();
-    private int limitMix = 0;
+    private int limitMix = Integer.MAX_VALUE;
     private int limitMax = 0;
 
     /**
@@ -478,10 +478,8 @@ public class QueryTTF {
             for (short b : glyf.get(gid).xCoordinates) sb.append(b);
             for (short b : glyf.get(gid).yCoordinates) sb.append(b);
             String val = sb.toString();
-            if (limitMix == 0) limitMix = key;
             if (limitMix > key) limitMix = key;
             if (limitMax < key) limitMax = key;
-            limitMax = key;
             codeToGlyph.put(key, val);
             if (glyphToCode.containsKey(val)) continue;
             glyphToCode.put(val, key);
