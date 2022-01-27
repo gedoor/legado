@@ -472,7 +472,7 @@ public class QueryTTF {
         for (int key = 0; key < 130000; ++key) {
             if (key == 0xFF) key = 0x3400;
             int gid = getGlyfIndex(key);
-            if (gid == 0) continue;
+            if (gid == 0 || gid >= glyf.size()) continue;
             StringBuilder sb = new StringBuilder();
             // 字型数据转String，方便存HashMap
             for (short b : glyf.get(gid).xCoordinates) sb.append(b);
