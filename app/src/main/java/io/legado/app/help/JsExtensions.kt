@@ -482,21 +482,21 @@ interface JsExtensions {
 
     /**
      * @param text 包含错误字体的内容
-     * @param font1 错误的字体
-     * @param font2 正确的字体
+     * @param errorQueryTTF 错误的字体
+     * @param correctQueryTTF 正确的字体
      */
     fun replaceFont(
         text: String,
-        font1: QueryTTF?,
-        font2: QueryTTF?
+        errorQueryTTF: QueryTTF?,
+        correctQueryTTF: QueryTTF?
     ): String {
-        if (font1 == null || font2 == null) return text
+        if (errorQueryTTF == null || correctQueryTTF == null) return text
         val contentArray = text.toCharArray()
         contentArray.forEachIndexed { index, s ->
             val oldCode = s.code
-            if (font1.inLimit(s)) {
-                val glyf = font1.getGlyfByCode(oldCode)
-                val code = font2.getCodeByGlyf(glyf)
+            if (errorQueryTTF.inLimit(s)) {
+                val glyf = errorQueryTTF.getGlyfByCode(oldCode)
+                val code = correctQueryTTF.getCodeByGlyf(glyf)
                 if (code != 0) {
                     contentArray[index] = code.toChar()
                 }
