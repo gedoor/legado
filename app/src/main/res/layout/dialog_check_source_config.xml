@@ -29,11 +29,17 @@
 
     </io.legado.app.ui.widget.text.TextInputLayout>
 
-    <com.google.android.flexbox.FlexboxLayout
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:paddingLeft="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:text="@string/check_source_item" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_height="wrap_content"
         app:flexWrap="wrap"
         app:justifyContent="space_between">
 
@@ -41,35 +47,33 @@
             android:id="@+id/check_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/check_search" />
+            android:text="@string/search" />
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_discovery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/check_discovery" />
+            android:text="@string/discovery" />
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_wrapBefore="true"
-            android:text="@string/check_info" />
+            android:text="@string/source_tab_info" />
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/check_category" />
+            android:text="@string/chapter_list" />
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/check_content" />
+            android:text="@string/main_body" />
 
     </com.google.android.flexbox.FlexboxLayout>
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
         android:paddingRight="12dp"
         app:flexWrap="wrap"
         app:justifyContent="flex_end">
