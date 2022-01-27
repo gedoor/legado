@@ -577,7 +577,7 @@ public class QueryTTF {
      * @return 返回bool查询结果
      */
     public boolean inLimit(int code) {
-        return (limitMix <= code) && (code < limitMax);
+        return (limitMix <= code) && (code <= limitMax);
     }
 
     /**
