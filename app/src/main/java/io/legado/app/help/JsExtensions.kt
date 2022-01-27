@@ -456,28 +456,33 @@ interface JsExtensions {
      */
     fun queryTTF(str: String?): QueryTTF? {
         str ?: return null
-        val key = md5Encode16(str)
-        var qTTF = CacheManager.getQueryTTF(key)
-        if (qTTF != null) return qTTF
-        val font: ByteArray? = when {
-            str.isAbsUrl() -> runBlocking {
-                var x = CacheManager.getByteArray(key)
-                if (x == null) {
-                    x = okHttpClient.newCallResponseBody { url(str) }.bytes()
-                    x.let {
-                        CacheManager.put(key, it)
+        try {
+            val key = md5Encode16(str)
+            var qTTF = CacheManager.getQueryTTF(key)
+            if (qTTF != null) return qTTF
+            val font: ByteArray? = when {
+                str.isAbsUrl() -> runBlocking {
+                    var x = CacheManager.getByteArray(key)
+                    if (x == null) {
+                        x = okHttpClient.newCallResponseBody { url(str) }.bytes()
+                        x.let {
+                            CacheManager.put(key, it)
+                        }
                     }
+                    return@runBlocking x
                 }
-                return@runBlocking x
+                str.isContentScheme() -> Uri.parse(str).readBytes(appCtx)
+                str.startsWith("/storage") -> File(str).readBytes()
+                else -> base64DecodeToByteArray(str)
             }
-            str.isContentScheme() -> Uri.parse(str).readBytes(appCtx)
-            str.startsWith("/storage") -> File(str).readBytes()
-            else -> base64DecodeToByteArray(str)
+            font ?: return null
+            qTTF = QueryTTF(font)
+            CacheManager.put(key, qTTF)
+            return qTTF
+        } catch (e: Exception) {
+            Timber.e(e, "获取字体处理类出错")
+            throw e
         }
-        font ?: return null
-        qTTF = QueryTTF(font)
-        CacheManager.put(key, qTTF)
-        return qTTF
     }
 
     /**
