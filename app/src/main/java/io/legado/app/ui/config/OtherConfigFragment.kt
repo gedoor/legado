@@ -70,7 +70,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
         when (preference?.key) {
             PreferKey.userAgent -> showUserAgentDialog()
             PreferKey.defaultBookTreeUri -> localBookTreeSelect.launch {
-                title = "选择保存书籍的文件夹"
+                title = getString(R.string.select_book_folder)
                 mode = HandleFileContract.DIR_SYS
             }
             PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
@@ -98,7 +98,8 @@ class OtherConfigFragment : BasePreferenceFragment(),
                     AppConfig.webPort = it
                 }
             PreferKey.cleanCache -> clearCache()
-            "uploadRule" -> DirectLinkUploadConfig().show(childFragmentManager, "uploadRuleConfig")
+            PreferKey.uploadRule -> showDialogFragment<DirectLinkUploadConfig>()
+            PreferKey.checkSource -> showDialogFragment<CheckSourceConfig>()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -155,9 +156,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
 
     @SuppressLint("InflateParams")
     private fun showUserAgentDialog() {
-        alert("UserAgent") {
+        alert(getString(R.string.user_agent)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "UserAgent"
+                editView.hint = getString(R.string.user_agent)
                 editView.setText(AppConfig.userAgent)
             }
             customView { alertBinding.root }

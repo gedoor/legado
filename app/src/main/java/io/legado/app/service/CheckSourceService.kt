@@ -9,6 +9,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.CheckSource
@@ -33,6 +34,8 @@ class CheckSourceService : BaseService() {
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
     private var notificationMsg = ""
+    private var books = ArrayList<SearchBook>()
+
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_network_check)
@@ -118,45 +121,58 @@ class CheckSourceService : BaseService() {
                     searchWord = it
                 }
             }
-            var books = WebBook.searchBookAwait(this, source, searchWord)
-            if (books.isEmpty()) {
-                source.addGroup("搜索失效")
-                val exs = source.exploreKinds
-                var url: String? = null
-                for (ex in exs) {
-                    url = ex.url
-                    if (!url.isNullOrBlank()) {
-                        break
+            //校验搜索
+            if (CheckSource.checkSearch) {
+                books = WebBook.searchBookAwait(this, source, searchWord)
+                if (books.isEmpty()) source.addGroup("搜索失效") else source.removeGroup("搜索失效")
+            }
+            //校验发现
+            if (CheckSource.checkDiscovery) {
+                if (books.isEmpty()) {
+                    val exs = source.exploreKinds
+                    var url: String? = null
+                    for (ex in exs) {
+                        url = ex.url
+                        if (!url.isNullOrBlank()) {
+                            break
+                        }
+                    }
+                    if (url.isNullOrBlank()) {
+                        throw NoStackTraceException("搜索内容为空并且没有发现")
+                    }
+                    books = WebBook.exploreBookAwait(this, source, url)
+                    if (books.isEmpty()) {
+                        throw NoStackTraceException("发现书籍为空")
                     }
                 }
-                if (url.isNullOrBlank()) {
-                    throw NoStackTraceException("搜索内容为空并且没有发现")
+            }
+            //校验详情
+            if (CheckSource.checkInfo) {
+                var book = books.first().toBook()
+                if (book.tocUrl.isBlank()) {
+                    book = WebBook.getBookInfoAwait(this, source, book)
                 }
-                books = WebBook.exploreBookAwait(this, source, url)
-                if (books.isEmpty()) {
-                    throw NoStackTraceException("发现书籍为空")
+                //校验目录
+                if (CheckSource.checkCategory) {
+                    val toc = WebBook.getChapterListAwait(this, source, book)
+                    val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
+                    //校验正文
+                    if (CheckSource.checkContent) {
+                        val content = WebBook.getContentAwait(
+                            this,
+                            bookSource = source,
+                            book = book,
+                            bookChapter = toc.first(),
+                            nextChapterUrl = nextChapterUrl,
+                            needSave = false
+                        )
+                        if ( !toc.first().isVolume && content.isBlank()) {
+                            throw NoStackTraceException("正文内容为空")
+                        }
+                    }
                 }
-            } else {
-                source.removeGroup("搜索失效")
             }
-            var book = books.first().toBook()
-            if (book.tocUrl.isBlank()) {
-                book = WebBook.getBookInfoAwait(this, source, book)
-            }
-            val toc = WebBook.getChapterListAwait(this, source, book)
-            val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
-            val content = WebBook.getContentAwait(
-                this,
-                bookSource = source,
-                book = book,
-                bookChapter = toc.first(),
-                nextChapterUrl = nextChapterUrl,
-                needSave = false
-            )
-            if ( !toc.first().isVolume && content.isBlank()) {
-                throw NoStackTraceException("正文内容为空")
-            }
-        }.timeout(180000L)
+        }.timeout(CheckSource.timeout)
             .onError(searchCoroutine) {
                 source.addGroup("失效")
                 if (source.bookSourceComment?.contains("Error: ") == false) {
