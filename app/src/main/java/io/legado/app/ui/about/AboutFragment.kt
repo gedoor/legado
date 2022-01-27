@@ -46,8 +46,8 @@ class AboutFragment : PreferenceFragmentCompat() {
         listView.overScrollMode = View.OVER_SCROLL_NEVER
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
             "contributors" -> openUrl(R.string.contributors_url)
             "update_log" -> show("updateLog.md")
             "check_update" -> checkUpdate()

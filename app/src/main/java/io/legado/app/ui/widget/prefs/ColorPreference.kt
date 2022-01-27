@@ -138,8 +138,8 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
         }
     }
 
-    override fun onGetDefaultValue(a: TypedArray?, index: Int): Any {
-        return a!!.getInteger(index, Color.BLACK)
+    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
+        return a.getInteger(index, Color.BLACK)
     }
 
     override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {

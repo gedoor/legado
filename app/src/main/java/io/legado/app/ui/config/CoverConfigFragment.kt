@@ -48,12 +48,12 @@ class CoverConfigFragment : BasePreferenceFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -81,8 +81,8 @@ class CoverConfigFragment : BasePreferenceFragment(),
     }
 
     @SuppressLint("PrivateResource")
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
             PreferKey.defaultCover ->
                 if (getPrefString(PreferKey.defaultCover).isNullOrEmpty()) {
                     selectImage.launch(requestCodeCover)

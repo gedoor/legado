@@ -57,17 +57,17 @@ class OtherConfigFragment : BasePreferenceFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.other_setting)
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         listView.setEdgeEffectColor(primaryColor)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
             PreferKey.userAgent -> showUserAgentDialog()
             PreferKey.defaultBookTreeUri -> localBookTreeSelect.launch {
                 title = getString(R.string.select_book_folder)

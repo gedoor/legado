@@ -84,13 +84,13 @@ class MoreConfigDialog : DialogFragment() {
             super.onResume()
             preferenceManager
                 .sharedPreferences
-                .registerOnSharedPreferenceChangeListener(this)
+                ?.registerOnSharedPreferenceChangeListener(this)
         }
 
         override fun onPause() {
             preferenceManager
                 .sharedPreferences
-                .unregisterOnSharedPreferenceChangeListener(this)
+                ?.unregisterOnSharedPreferenceChangeListener(this)
             super.onPause()
         }
 
@@ -131,8 +131,8 @@ class MoreConfigDialog : DialogFragment() {
             }
         }
 
-        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-            when (preference?.key) {
+        override fun onPreferenceTreeClick(preference: Preference): Boolean {
+            when (preference.key) {
                 "customPageKey" -> PageKeyDialog(requireContext()).show()
                 "clickRegionalConfig" -> {
                     (activity as? ReadBookActivity)?.showClickRegionalConfig()

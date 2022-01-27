@@ -107,11 +107,11 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
         override fun onResume() {
             super.onResume()
-            preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+            preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         }
 
         override fun onPause() {
-            preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+            preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
             super.onPause()
         }
 
@@ -131,8 +131,8 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
             }
         }
 
-        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-            when (preference?.key) {
+        override fun onPreferenceTreeClick(preference: Preference): Boolean {
+            when (preference.key) {
                 "bookSourceManage" -> startActivity<BookSourceActivity>()
                 "replaceManage" -> startActivity<ReplaceRuleActivity>()
                 "setting" -> startActivity<ConfigActivity> {

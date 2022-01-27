@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogCheckSourceConfigBinding
-import io.legado.app.model.CheckSource
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.model.CheckSource
 import io.legado.app.utils.setLayout
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
 class CheckSourceConfig : BaseDialogFragment(R.layout.dialog_check_source_config) {
@@ -31,11 +31,11 @@ class CheckSourceConfig : BaseDialogFragment(R.layout.dialog_check_source_config
         binding.toolBar.setBackgroundColor(primaryColor)
         CheckSource.run {
             binding.checkSourceTimeout.setText((timeout / 1000).toString())
-            binding.checkSearch?.isChecked = checkSearch
-            binding.checkDiscovery?.isChecked = checkDiscovery
-            binding.checkInfo?.isChecked = checkInfo
-            binding.checkCategory?.isChecked = checkCategory
-            binding.checkContent?.isChecked = checkContent
+            binding.checkSearch.isChecked = checkSearch
+            binding.checkDiscovery.isChecked = checkDiscovery
+            binding.checkInfo.isChecked = checkInfo
+            binding.checkCategory.isChecked = checkCategory
+            binding.checkContent.isChecked = checkContent
             binding.tvCancel.onClick {
                 dismiss()
             }
@@ -47,22 +47,28 @@ class CheckSourceConfig : BaseDialogFragment(R.layout.dialog_check_source_config
                         return@onClick
                     }
                     text.toLong() < minTimeout -> {
-                        toastOnUi("${getString(R.string.timeout)}${getString(R.string.less_than)}${minTimeout}${getString(R.string.seconds)}")
+                        toastOnUi(
+                            "${getString(R.string.timeout)}${getString(R.string.less_than)}${minTimeout}${
+                                getString(
+                                    R.string.seconds
+                                )
+                            }"
+                        )
                         return@onClick
                     }
                     else -> timeout = text.toLong() * 1000
                 }
-                val _checkSearch = binding.checkSearch?.isChecked
-                val _checkDiscovery = binding.checkDiscovery?.isChecked
-                if (!_checkSearch && !_checkDiscovery) {
-                        toastOnUi(getString(R.string.error_check_source_config))
-                        return@onClick
+                val mCheckSearch = binding.checkSearch.isChecked
+                val mCheckDiscovery = binding.checkDiscovery.isChecked
+                if (!mCheckSearch && !mCheckDiscovery) {
+                    toastOnUi(getString(R.string.error_check_source_config))
+                    return@onClick
                 }
-                checkSearch = _checkSearch
-                checkDiscovery = _checkDiscovery
-                checkInfo = binding.checkInfo?.isChecked
-                checkCategory = binding.checkCategory?.isChecked
-                checkContent = binding.checkContent?.isChecked
+                checkSearch = mCheckSearch
+                checkDiscovery = mCheckDiscovery
+                checkInfo = binding.checkInfo.isChecked
+                checkCategory = binding.checkCategory.isChecked
+                checkContent = binding.checkContent.isChecked
                 putConfig()
                 dismiss()
             }

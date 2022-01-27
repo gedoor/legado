@@ -129,7 +129,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.backup_restore)
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         listView.setEdgeEffectColor(primaryColor)
         setHasOptionsMenu(true)
         if (!LocalConfig.backupHelpVersionIsLast) {
@@ -157,7 +157,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
     override fun onDestroy() {
         super.onDestroy()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -204,8 +204,8 @@ class BackupConfigFragment : BasePreferenceFragment(),
         }
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
             PreferKey.backupPath -> selectBackupPath.launch()
             PreferKey.restoreIgnore -> backupIgnore()
             "web_dav_backup" -> backup()

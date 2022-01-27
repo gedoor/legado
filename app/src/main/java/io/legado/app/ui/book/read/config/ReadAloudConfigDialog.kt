@@ -85,16 +85,16 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onResume() {
             super.onResume()
-            preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+            preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         }
 
         override fun onPause() {
-            preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+            preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
             super.onPause()
         }
 
-        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-            when (preference?.key) {
+        override fun onPreferenceTreeClick(preference: Preference): Boolean {
+            when (preference.key) {
                 PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog())
             }
             return super.onPreferenceTreeClick(preference)

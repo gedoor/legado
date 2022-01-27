@@ -29,8 +29,8 @@ class DonateFragment : PreferenceFragmentCompat() {
         listView.overScrollMode = View.OVER_SCROLL_NEVER
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
             "wxZsm" -> requireContext().openUrl(wxZsRwmUrl)
             "zfbHbRwm" -> requireContext().openUrl(zfbHbRwmUrl)
             "zfbSkRwm" -> requireContext().openUrl(zfbSkRwmUrl)

@@ -90,12 +90,12 @@ class ThemeConfigFragment : BasePreferenceFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -140,8 +140,8 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     @SuppressLint("PrivateResource")
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (val key = preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (val key = preference.key) {
             PreferKey.barElevation -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.bar_elevation))
                 .setMaxValue(32)
