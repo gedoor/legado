@@ -46,6 +46,11 @@ class HandleFileActivity :
 
     private val selectDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
         it?.let {
+            if (it.isContentScheme()) {
+                val modeFlags =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(it, modeFlags)
+            }
             onResult(Intent().setData(it))
         } ?: finish()
     }
