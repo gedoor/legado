@@ -41,11 +41,11 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
             val uploadUrl = binding.editUploadUrl.text?.toString()
             val downloadUrlRule = binding.editDownloadUrlRule.text?.toString()
             val summary = binding.editSummary.text?.toString()
-            uploadUrl ?: let {
+            if (uploadUrl.isNullOrBlank()) {
                 toastOnUi("上传Url不能为空")
                 return@onClick
             }
-            downloadUrlRule ?: let {
+            if (downloadUrlRule.isNullOrBlank()) {
                 toastOnUi("下载Url规则不能为空")
                 return@onClick
             }

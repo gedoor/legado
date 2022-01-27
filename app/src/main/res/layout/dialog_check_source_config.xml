@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="?attr/actionBarStyle"
+        app:title="@string/check_source_config"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dp">
+
+        <io.legado.app.lib.theme.view.ThemeEditText
+            android:id="@+id/check_source_timeout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/check_source_timeout"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        app:flexWrap="wrap"
+        app:justifyContent="space_between">
+
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/check_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_search" />
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/check_discovery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_discovery" />
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/check_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_wrapBefore="true"
+            android:text="@string/check_info" />
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/check_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_category" />
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/check_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_content" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_end">
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="@string/cancel"
+            tools:ignore="RtlHardcoded" />
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/tv_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="@string/ok"
+            tools:ignore="RtlHardcoded" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+</LinearLayout>

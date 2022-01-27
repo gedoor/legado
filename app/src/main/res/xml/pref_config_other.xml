@@ -54,12 +54,16 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="userAgent"
-            android:title="UserAgent" />
+            android:title="@string/user_agent" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="defaultBookTreeUri"
             android:title="@string/book_tree_uri_t"
             android:summary="@string/book_tree_uri_s" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:key="checkSource"
+            android:title="@string/check_source_config" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="uploadRule"
