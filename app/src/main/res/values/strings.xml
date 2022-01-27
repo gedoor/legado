@@ -923,15 +923,11 @@
 
     <!-- check source config string -->
     <string name="check_source_config">校验设置</string>
+    <string name="check_source_item">校验项目</string>
     <string name="check_source_timeout">单个书源校验超时(秒)</string>
     <string name="timeout">超时</string>
     <string name="seconds">秒</string>
     <string name="less_than">小于</string>
-    <string name="check_search">校验搜索</string>
-    <string name="check_discovery">校验发现</string>
-    <string name="check_info">校验详情</string>
-    <string name="check_category">校验目录</string>
-    <string name="check_content">校验正文</string>
     <string name="error_check_source_config">搜索发现至少校验一个</string>
     <!-- string end -->
 </resources>
