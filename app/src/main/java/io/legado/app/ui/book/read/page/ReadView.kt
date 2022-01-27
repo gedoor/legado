@@ -104,7 +104,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    fun setRect9x() {
+    private fun setRect9x() {
         tlRect.set(0f, 0f, width * 0.33f, height * 0.33f)
         tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
         trRect.set(width * 0.36f, 0f, width.toFloat(), height * 0.33f)
@@ -532,6 +532,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
         curPage.setBg(ReadBookConfig.bg)
         prevPage.setBg(ReadBookConfig.bg)
         nextPage.setBg(ReadBookConfig.bg)
+    }
+
+    fun upBgAlpha() {
+        curPage.upBgAlpha()
+        prevPage.upBgAlpha()
+        nextPage.upBgAlpha()
     }
 
     fun upTime() {

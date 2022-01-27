@@ -33,7 +33,6 @@ object ThemeUtils {
         }
     }
 
-    @JvmOverloads
     fun resolveDrawable(context: Context, @AttrRes attr: Int): Drawable? {
         val a = context.theme.obtainStyledAttributes(intArrayOf(attr))
         return try {

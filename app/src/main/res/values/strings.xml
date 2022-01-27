@@ -418,7 +418,7 @@
     <string name="rule_chapter_list">目录列表规则(chapterList)</string>
     <string name="rule_chapter_name">章节名称规则(ChapterName)</string>
     <string name="rule_chapter_url">章节URL规则(chapterUrl)</string>
-    <string name="rule_is_volume">Volume标识(isVolume)</string>
+    <string name="rule_is_volume">卷标识(isVolume)</string>
     <string name="rule_is_vip">VIP标识(isVip)</string>
     <string name="rule_update_time">更新时间(ChapterInfo)</string>
     <string name="rule_book_content">正文规则(content)</string>
@@ -919,6 +919,7 @@
     <string name="book_tree_uri_s">从其它应用打开的书籍保存位置</string>
     <string name="select_book_folder">选择保存书籍的文件夹</string>
     <string name="user_agent">用户代理</string>
+    <string name="bg_alpha">背景透明度</string>
 
     <!-- check source config string -->
     <string name="check_source_config">校验设置</string>

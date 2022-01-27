@@ -12,8 +12,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/tv_name_title"
@@ -36,9 +36,9 @@
             android:id="@+id/iv_edit"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:contentDescription="@string/edit"
             android:src="@drawable/ic_edit"
-            app:tint="@color/secondaryText"
-            android:contentDescription="@string/edit" />
+            app:tint="@color/secondaryText" />
 
         <Space
             android:layout_width="0dp"
@@ -59,7 +59,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="6dp"
-        android:text="@string/dark_status_icon" />
+        android:text="@string/dark_status_icon"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -139,6 +140,23 @@
             tools:ignore="UnusedAttribute" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_bg_alpha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:text="@string/bg_alpha" />
+
+    <io.legado.app.lib.theme.view.ThemeSeekBar
+        android:id="@+id/sb_bg_alpha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:min="10"
+        android:max="100"
+        android:padding="6dp"
+        tools:ignore="UnusedAttribute" />
 
     <TextView
         android:id="@+id/tv_bg_image"

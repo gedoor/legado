@@ -915,5 +915,6 @@
     <string name="search_content_size">搜尋結果</string>
     <string name="book_tree_uri_t">書籍儲存位置</string>
     <string name="book_tree_uri_s">從其它應用程式打開的書籍儲存位置</string>
+    <string name="bg_alpha">背景透明度</string>
 
 </resources>
