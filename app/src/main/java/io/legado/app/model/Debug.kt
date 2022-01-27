@@ -1,6 +1,7 @@
 package io.legado.app.model
 
 import android.annotation.SuppressLint
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.*
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
@@ -56,7 +57,7 @@ object Debug {
                 if (showTime && debugTimeMap[sourceUrl] != null) {
                     val time =
                         debugTimeFormat.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
-                    printMsg = printMsg.substring(1)
+                    printMsg = printMsg.replace(AppPattern.debugMessageSymbolRegex,"")
                     debugMessageMap[sourceUrl] = "$time $printMsg"
                 }
             }

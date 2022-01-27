@@ -16,6 +16,9 @@ object AppPattern {
     val fileNameRegex = Regex("[\\\\/:*?\"<>|.]")
     val splitGroupRegex = Regex("[,;，；]")
 
+    //书源调试信息中的各种符号
+    val debugMessageSymbolRegex = Regex("[⇒◇┌└≡]")
+
     /**
      * 所有标点
      */
