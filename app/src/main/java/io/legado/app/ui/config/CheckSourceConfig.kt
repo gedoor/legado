@@ -12,6 +12,8 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.toastOnUi
 import splitties.views.onClick
+import io.legado.app.constant.PreferKey
+import io.legado.app.utils.putPrefString
 
 class CheckSourceConfig : BaseDialogFragment(R.layout.dialog_check_source_config) {
 
@@ -64,6 +66,7 @@ class CheckSourceConfig : BaseDialogFragment(R.layout.dialog_check_source_config
                 checkCategory = binding.checkCategory?.isChecked
                 checkContent = binding.checkContent?.isChecked
                 putConfig()
+                putPrefString(PreferKey.checkSource, summary)
                 dismiss()
             }
         }
