@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.SeekBar
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
@@ -29,6 +30,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import timber.log.Timber
@@ -108,6 +110,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         ivImport.setColorFilter(primaryTextColor)
         ivExport.setColorFilter(primaryTextColor)
         ivDelete.setColorFilter(primaryTextColor)
+        tvBgAlpha.setTextColor(primaryTextColor)
         tvBgImage.setTextColor(primaryTextColor)
         recyclerView.adapter = adapter
         adapter.addHeaderView {
@@ -130,6 +133,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     private fun initData() = with(ReadBookConfig.durConfig) {
         binding.tvName.text = name.ifBlank { "文字" }
         binding.swDarkStatusIcon.isChecked = curStatusIconDark()
+        binding.sbBgAlpha.progress = bgAlpha
     }
 
     @SuppressLint("InflateParams")
@@ -205,6 +209,15 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 toastOnUi("数量已是最少,不能删除.")
             }
         }
+        binding.sbBgAlpha.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                ReadBookConfig.bgAlpha = progress
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                postEvent(EventBus.UP_CONFIG, false)
+            }
+        })
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")

@@ -3,10 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/page_panel"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <View
+        android:id="@+id/vw_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <FrameLayout
         android:id="@+id/vw_status_bar"

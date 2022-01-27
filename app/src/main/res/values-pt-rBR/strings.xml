@@ -418,6 +418,7 @@
     <string name="rule_chapter_list">目录列表规则(capítuloLista)</string>
     <string name="rule_chapter_name">章节名称规则(capítuloNome)</string>
     <string name="rule_chapter_url">章节URL规则(capítuloUrl)</string>
+    <string name="rule_is_volume">卷标识(isVolume)</string>
     <string name="rule_is_vip">VIP标识(éVip)</string>
     <string name="rule_update_time">更新时间(capítuloInfo)</string>
     <string name="rule_book_content">正文规则(conteúdo)</string>
@@ -426,6 +427,7 @@
     <string name="rule_source_regex">资源正则(fonteRegex)</string>
     <string name="rule_replace_regex">替换规则(substRegex)</string>
     <string name="rule_image_style">图片样式(imagemFormato)</string>
+    <string name="rule_pay_action">购买操作(payAction)</string>
 
     <string name="source_icon">图标(fonteÍcone)</string>
     <string name="r_articles">列表规则(regrasArtigos)</string>
@@ -914,5 +916,6 @@
     <string name="expand_text_menu">展开文本选择菜单</string>
     <string name="book_tree_uri_t">书籍保存位置</string>
     <string name="book_tree_uri_s">从其它应用打开的书籍保存位置</string>
+    <string name="bg_alpha">背景透明度</string>
 
 </resources>

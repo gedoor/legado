@@ -915,5 +915,6 @@
     <string name="expand_text_menu">展开文本选择菜单</string>
     <string name="book_tree_uri_t">书籍保存位置</string>
     <string name="book_tree_uri_s">从其它应用打开的书籍保存位置</string>
+    <string name="bg_alpha">背景透明度</string>
 
 </resources>

@@ -1005,6 +1005,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             upSystemUiVisibility()
             readView.upBg()
             readView.upStyle()
+            readView.upBgAlpha()
             if (it) {
                 ReadBook.loadContent(resetPageOffset = false)
             } else {

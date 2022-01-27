@@ -185,7 +185,12 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun setBg(bg: Drawable?) {
-        binding.pagePanel.background = bg
+        binding.vwBg.background = bg
+        upBgAlpha()
+    }
+
+    fun upBgAlpha() {
+        binding.vwBg.alpha = ReadBookConfig.bgAlpha / 100f
     }
 
     fun upTime() {

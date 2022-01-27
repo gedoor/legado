@@ -163,6 +163,12 @@ object ReadBookConfig {
 
     val config get() = if (shareLayout) shareConfig else durConfig
 
+    var bgAlpha: Int
+        get() = config.bgAlpha
+        set(value) {
+            config.bgAlpha = value
+        }
+
     var pageAnim: Int
         get() = config.curPageAnim()
         set(value) {
@@ -419,7 +425,8 @@ object ReadBookConfig {
         var name: String = "",
         var bgStr: String = "#EEEEEE",//白天背景
         var bgStrNight: String = "#000000",//夜间背景
-        var bgStrEInk: String = "#FFFFFF",
+        var bgStrEInk: String = "#FFFFFF",//EInk背景
+        var bgAlpha: Int = 100,//背景透明度
         var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
         var bgTypeNight: Int = 0,//夜间背景类型
         var bgTypeEInk: Int = 0,
