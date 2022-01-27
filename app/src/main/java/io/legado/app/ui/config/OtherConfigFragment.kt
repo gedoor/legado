@@ -12,6 +12,7 @@ import io.legado.app.R
 import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.model.CheckSource
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
@@ -52,6 +53,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
         AppConfig.defaultBookTreeUri?.let {
             upPreferenceSummary(PreferKey.defaultBookTreeUri, it)
         }
+        upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -133,6 +135,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
             }, 1000)
             PreferKey.userAgent -> listView.post {
                 upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
+            }
+            PreferKey.checkSource -> listView.post {
+                upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
             }
         }
     }
