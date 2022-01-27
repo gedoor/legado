@@ -479,6 +479,8 @@ public class QueryTTF {
             for (short b : glyf.get(gid).yCoordinates) sb.append(b);
             String val = sb.toString();
             if (limitMix == 0) limitMix = key;
+            if (limitMix > key) limitMix = key;
+            if (limitMax < key) limitMax = key;
             limitMax = key;
             codeToGlyph.put(key, val);
             if (glyphToCode.containsKey(val)) continue;
@@ -576,7 +578,7 @@ public class QueryTTF {
      * @param code 传入Unicode十进制值
      * @return 返回bool查询结果
      */
-    public boolean inLimit(char code) {
+    public boolean inLimit(int code) {
         return (limitMix <= code) && (code < limitMax);
     }
 

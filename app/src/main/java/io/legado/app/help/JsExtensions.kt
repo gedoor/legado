@@ -496,14 +496,14 @@ interface JsExtensions {
         correctQueryTTF: QueryTTF?
     ): String {
         if (errorQueryTTF == null || correctQueryTTF == null) return text
-        val contentArray = text.toCharArray()
+        val contentArray = text.toStringArray()
         contentArray.forEachIndexed { index, s ->
-            val oldCode = s.code
-            if (errorQueryTTF.inLimit(s)) {
+            val oldCode = s.codePointAt(0)
+            if (errorQueryTTF.inLimit(oldCode)) {
                 val glyf = errorQueryTTF.getGlyfByCode(oldCode)
                 val code = correctQueryTTF.getCodeByGlyf(glyf)
                 if (code != 0) {
-                    contentArray[index] = code.toChar()
+                    contentArray[index] = code.toChar().toString()
                 }
             }
         }
