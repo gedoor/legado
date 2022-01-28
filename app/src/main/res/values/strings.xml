@@ -928,7 +928,6 @@
     <string name="timeout">超时</string>
     <string name="seconds">秒</string>
     <string name="less_than">小于</string>
-    <string name="error_check_source_config">搜索发现至少校验一个</string>
     <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
     <!-- string end -->
 </resources>
