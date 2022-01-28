@@ -47,7 +47,7 @@ object CheckSource {
     }
 
     fun putConfig() {
-        CacheManager.put("checkSourceTimeout", timeout * 1000)
+        CacheManager.put("checkSourceTimeout", timeout)
         CacheManager.put("checkSearch", checkSearch)
         CacheManager.put("checkDiscovery", checkDiscovery)
         CacheManager.put("checkInfo", checkInfo)
