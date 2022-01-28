@@ -535,19 +535,17 @@ public class QueryTTF {
         } else if (fmt == 4) {
             CmapFormat4 tab = (CmapFormat4) table;
             if (code > tab.endCode[tab.endCode.length - 1]) return 0;
-            // 二分法查找数值索引
-            int start = 0, middle, end = tab.endCode.length - 1;
-            while (start + 1 < end) {
-                middle = (start + end) / 2;
-                if (tab.endCode[middle] <= code) start = middle;
-                else end = middle;
+            for (int i = 0; i < tab.endCode.length; i++) {
+                if (tab.endCode[i] == code) {
+                    if (tab.endCode[i] < code) ++i;
+                    if (code < tab.startCode[i]) return 0;
+                    if (tab.idRangeOffset[i] != 0) {
+                        glyfID = tab.glyphIdArray[code - tab.startCode[i] + (tab.idRangeOffset[i] >> 1) - (tab.idRangeOffset.length - i)];
+                    } else glyfID = code + tab.idDelta[i];
+                    glyfID &= 0xFFFF;
+                    break;
+                }
             }
-            if (tab.endCode[start] < code) ++start;
-            if (code < tab.startCode[start]) return 0;
-            if (tab.idRangeOffset[start] != 0) {
-                glyfID = tab.glyphIdArray[code - tab.startCode[start] + (tab.idRangeOffset[start] >> 1) - (tab.idRangeOffset.length - start)];
-            } else glyfID = code + tab.idDelta[start];
-            glyfID &= 0xFFFF;
         } else if (fmt == 6) {
             CmapFormat6 tab = (CmapFormat6) table;
             int index = code - tab.firstCode;
@@ -556,15 +554,11 @@ public class QueryTTF {
         } else if (fmt == 12) {
             CmapFormat12 tab = (CmapFormat12) table;
             if (code > tab.groups.get(tab.numGroups - 1).getMiddle()) return 0;
-            // 二分法查找数值索引
-            int start = 0, middle, end = tab.numGroups - 1;
-            while (start + 1 < end) {
-                middle = (start + end) / 2;
-                if (tab.groups.get(middle).getLeft() <= code) start = middle;
-                else end = middle;
-            }
-            if (tab.groups.get(start).getLeft() <= code && code <= tab.groups.get(start).getMiddle()) {
-                glyfID = tab.groups.get(start).getRight() + code - tab.groups.get(start).getLeft();
+            for (int i = 0; i < tab.numGroups; i++) {
+                if (tab.groups.get(i).getLeft() <= code && code <= tab.groups.get(i).getMiddle()) {
+                    glyfID = tab.groups.get(i).getRight() + code - tab.groups.get(i).getLeft();
+                    break;
+                }
             }
         }
         return glyfID;
