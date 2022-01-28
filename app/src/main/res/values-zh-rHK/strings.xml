@@ -913,6 +913,17 @@
     <string name="expand_text_menu">展开文本选择菜单</string>
     <string name="book_tree_uri_t">书籍保存位置</string>
     <string name="book_tree_uri_s">从其它应用打开的书籍保存位置</string>
+    <string name="select_book_folder">选择保存书籍的文件夹</string>
+    <string name="user_agent">用户代理</string>
     <string name="bg_alpha">背景透明度</string>
 
+    <!-- check source config string -->
+    <string name="check_source_config">校验设置</string>
+    <string name="check_source_item">校验项目</string>
+    <string name="check_source_timeout">单个书源校验超时(秒)</string>
+    <string name="timeout">超时</string>
+    <string name="seconds">秒</string>
+    <string name="less_than">小于</string>
+    <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
+    <!-- string end -->
 </resources>
