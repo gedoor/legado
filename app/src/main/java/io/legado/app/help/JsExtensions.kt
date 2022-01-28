@@ -496,7 +496,7 @@ interface JsExtensions {
         correctQueryTTF: QueryTTF?
     ): String {
         if (errorQueryTTF == null || correctQueryTTF == null) return text
-        val contentArray = text.toStringArray()
+        val contentArray = text.toStringArray() //这里不能用toCharArray,因为有些文字占多个字节
         contentArray.forEachIndexed { index, s ->
             val oldCode = s.codePointAt(0)
             if (errorQueryTTF.inLimit(oldCode)) {
