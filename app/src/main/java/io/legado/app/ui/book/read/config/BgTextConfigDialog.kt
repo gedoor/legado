@@ -212,6 +212,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         binding.sbBgAlpha.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 ReadBookConfig.bgAlpha = progress
+                postEvent(EventBus.UP_CONFIG, false)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
