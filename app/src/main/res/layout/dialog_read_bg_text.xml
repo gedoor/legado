@@ -153,7 +153,6 @@
         android:id="@+id/sb_bg_alpha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:min="10"
         android:max="100"
         android:padding="6dp"
         tools:ignore="UnusedAttribute" />

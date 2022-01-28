@@ -19,6 +19,7 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.*
+import splitties.views.backgroundColor
 import java.util.*
 
 /**
@@ -185,6 +186,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun setBg(bg: Drawable?) {
+        binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
         binding.vwBg.background = bg
         upBgAlpha()
     }
