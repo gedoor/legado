@@ -124,6 +124,7 @@ class TextFile(private val book: Book) {
                     val chapterStart = matcher.start()
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
+                    var mChapterContent = chapterContent
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
                     if (curOffset + chapterLength - lastStart > 50000) {
@@ -140,12 +141,14 @@ class TextFile(private val book: Book) {
                                 qyChapter.title = "前言"
                                 qyChapter.start = curOffset
                                 qyChapter.end = chapterLength.toLong()
+                                qyChapter.isVolume = mChapterContent.substringAfter(qyChapter.title).isBlank()
                                 toc.add(qyChapter)
                             }
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
                             curChapter.start = chapterLength.toLong()
+                            curChapter.isVolume = mChapterContent.substringAfter(curChapter.title).isBlank()
                             toc.add(curChapter)
                         } else { //否则就block分割之后，上一个章节的剩余内容
                             //获取上一章节
@@ -157,6 +160,7 @@ class TextFile(private val book: Book) {
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
                             curChapter.start = lastChapter.end
+                            curChapter.isVolume = mChapterContent.substringAfter(curChapter.title).isBlank()
                             toc.add(curChapter)
                         }
                     } else {
@@ -169,12 +173,14 @@ class TextFile(private val book: Book) {
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
                             curChapter.start = lastChapter.end
+                            curChapter.isVolume = mChapterContent.substringAfter(curChapter.title).isBlank()
                             toc.add(curChapter)
                         } else { //如果章节不存在则创建章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
                             curChapter.start = curOffset
                             curChapter.end = curOffset
+                            curChapter.isVolume = mChapterContent.substringAfter(curChapter.title).isBlank()
                             toc.add(curChapter)
                         }
                     }
