@@ -129,12 +129,13 @@ object ChapterProvider {
                 matcher.appendTail(sb)
                 text = sb.toString()
                 val isTitle = index == 0
-                val isVolumeTitle = bookChapter.isVolume && isTitle && contents.size == 1
+                val isTitleWithNoContent = isTitle && contents.size == 1
+                val isVolumeTitle = isTitle && bookChapter.isVolume
                 val textPaint = if (isTitle) titlePaint else contentPaint
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                     setTypeText(
                         absStartX, durY, text, textPages, stringBuilder,
-                        isTitle, isVolumeTitle, textPaint, srcList
+                        isTitle, isTitleWithNoContent, isVolumeTitle, textPaint, srcList
                     ).let {
                         absStartX = it.first
                         durY = it.second
@@ -147,12 +148,13 @@ object ChapterProvider {
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
                         val isTitle = index == 0
-                        val isVolumeTitle = bookChapter.isVolume && isTitle && contents.size == 1
+                        val isTitleWithNoContent = isTitle && contents.size == 1
+                        val isVolumeTitle = isTitle && bookChapter.isVolume
                         val textPaint = if (isTitle) titlePaint else contentPaint
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                             setTypeText(
-                                absStartX, durY, text, textPages,
-                                stringBuilder, isTitle, isVolumeTitle, textPaint
+                                absStartX, durY, text, textPages, stringBuilder,
+                                isTitle, isTitleWithNoContent, isVolumeTitle, textPaint
                             ).let {
                                 absStartX = it.first
                                 durY = it.second
@@ -169,12 +171,13 @@ object ChapterProvider {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
                         val isTitle = index == 0
-                        val isVolumeTitle = bookChapter.isVolume && isTitle && contents.size == 1
+                        val isTitleWithNoContent = isTitle && contents.size == 1
+                        val isVolumeTitle = isTitle && bookChapter.isVolume
                         val textPaint = if (isTitle) titlePaint else contentPaint
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                             setTypeText(
-                                absStartX, durY, text, textPages,
-                                stringBuilder, isTitle, isVolumeTitle, textPaint
+                                absStartX, durY, text, textPages, stringBuilder,
+                                isTitle, isTitleWithNoContent, isVolumeTitle, textPaint
                             ).let {
                                 absStartX = it.first
                                 durY = it.second
@@ -277,6 +280,7 @@ object ChapterProvider {
         textPages: ArrayList<TextPage>,
         stringBuilder: StringBuilder,
         isTitle: Boolean,
+        isTitleWithNoContent: Boolean,
         isVolumeTitle: Boolean,
         textPaint: TextPaint,
         srcList: LinkedList<String>? = null
@@ -288,7 +292,8 @@ object ChapterProvider {
             text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         var durY = when {
-            isVolumeTitle -> ((visibleHeight - layout.lineCount * textPaint.textHeight) / 2).toFloat()
+            //标题y轴居中
+            isTitleWithNoContent -> ((visibleHeight - layout.lineCount * textPaint.textHeight) / 2).toFloat()
             isTitle -> y + titleTopSpacing
             else -> y
         }
@@ -334,8 +339,8 @@ object ChapterProvider {
                     //最后一行
                     textLine.text = "$words\n"
                     isLastLine = true
-                    //标题居中
-                    val startX = if (isTitle && ReadBookConfig.titleMode == 1 || isVolumeTitle)
+                    //标题x轴居中
+                    val startX = if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
                         (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                     else 0f
                     addCharsToLineLast(
@@ -368,7 +373,7 @@ object ChapterProvider {
             durY += textPaint.textHeight * lineSpacingExtra
             textPages.last().height = durY
         }
-        if (isTitle && !isVolumeTitle) durY += titleBottomSpacing
+        if (isTitle && !isTitleWithNoContent) durY += titleBottomSpacing
         durY += textPaint.textHeight * paragraphSpacing / 10f
         return Pair(absStartX, durY)
     }

@@ -21,6 +21,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
     var searchResultCounts = 0
     val cacheChapterNames = hashSetOf<String>()
     val searchResultList: MutableList<SearchResult> = mutableListOf()
+    var mContent: String = ""
 
     fun initBook(bookUrl: String, success: () -> Unit) {
         this.bookUrl = bookUrl
@@ -40,21 +41,20 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
             book?.let { book ->
                 val chapterContent = BookHelp.getContent(book, chapter)
                 if (chapterContent != null) {
-                    //搜索替换后的正文
-                    val replaceContent: String
+                    //先搜索没有启用净化的正文
                     withContext(Dispatchers.IO) {
                         chapter.title = when (AppConfig.chineseConverterType) {
                             1    -> ChineseUtils.t2s(chapter.title)
                             2    -> ChineseUtils.s2t(chapter.title)
                             else -> chapter.title
                         }
-                        replaceContent = contentProcessor!!.getContent(
-                            book, chapter, chapterContent, chineseConvert = false, reSegment = false
+                        mContent = contentProcessor!!.getContent(
+                            book, chapter, chapterContent, chineseConvert = false, reSegment = false, useReplace = false
                         ).joinToString("")
                     }
-                    val positions = searchPosition(replaceContent, query)
+                    val positions = searchPosition(query)
                     positions.forEachIndexed { index, position ->
-                        val construct = getResultAndQueryIndex(replaceContent, position, query)
+                        val construct = getResultAndQueryIndex(mContent, position, query)
                         val result = SearchResult(
                             resultCountWithinChapter = index,
                             resultText = construct.second,
@@ -73,12 +73,16 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         return searchResultsWithinChapter
     }
 
-    private fun searchPosition(chapterContent: String, pattern: String): List<Int> {
+    private fun searchPosition(pattern: String): List<Int> {
         val position: MutableList<Int> = mutableListOf()
-        var index = chapterContent.indexOf(pattern)
-        while (index >= 0) {
-            position.add(index)
-            index = chapterContent.indexOf(pattern, index + 1)
+        if (mContent.indexOf(pattern) >= 0) {
+            //搜索到内容允许净化
+            if (book?.getUseReplaceRule() ?: false) mContent = contentProcessor!!.replaceContent(mContent)
+            var index = mContent.indexOf(pattern)
+            while (index >= 0) {
+                position.add(index)
+                index = mContent.indexOf(pattern, index + 1)
+            }
         }
         return position
     }

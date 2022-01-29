@@ -56,7 +56,7 @@ class ContentProcessor private constructor(
 
     fun getContent(
         book: Book,
-        chapter: BookChapter, //已经经过简繁转换
+        chapter: BookChapter,
         content: String,
         includeTitle: Boolean = true,
         useReplace: Boolean = true,
@@ -83,20 +83,7 @@ class ContentProcessor private constructor(
         }
         if (useReplace && book.getUseReplaceRule()) {
             //替换
-            getReplaceRules().forEach { item ->
-                if (item.pattern.isNotEmpty()) {
-                    try {
-                        mContent = if (item.isRegex) {
-                            mContent.replace(item.pattern.toRegex(), item.replacement)
-                        } else {
-                            mContent.replace(item.pattern, item.replacement)
-                        }
-                    } catch (e: Exception) {
-                        AppLog.put("${item.name}替换出错\n${e.localizedMessage}")
-                        appCtx.toastOnUi("${item.name}替换出错")
-                    }
-                }
-            }
+            mContent = replaceContent(mContent)
         }
         if (chineseConvert) {
             //简繁转换
@@ -123,6 +110,25 @@ class ContentProcessor private constructor(
             }
         }
         return contents
+    }
+
+    fun replaceContent(content: String): String {
+        var mContent = content
+        getReplaceRules().forEach { item ->
+            if (item.pattern.isNotEmpty()) {
+                try {
+                    mContent = if (item.isRegex) {
+                        mContent.replace(item.pattern.toRegex(), item.replacement)
+                    } else {
+                        mContent.replace(item.pattern, item.replacement)
+                    }
+                } catch (e: Exception) {
+                    AppLog.put("${item.name}替换出错\n${e.localizedMessage}")
+                    appCtx.toastOnUi("${item.name}替换出错")
+                }
+            }
+        }
+        return mContent
     }
 
 }
