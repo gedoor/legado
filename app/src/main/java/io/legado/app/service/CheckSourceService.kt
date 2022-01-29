@@ -121,8 +121,8 @@ class CheckSourceService : BaseService() {
                     searchWord = it
                 }
             }
-            //校验搜索
-            if (CheckSource.checkSearch) {
+            //校验搜索 用户设置校验搜索 并且 搜索链接不为空
+            if (CheckSource.checkSearch && !source.searchUrl.isNullOrBlank()) {
                 books = WebBook.searchBookAwait(this, source, searchWord)
                 if (books.isEmpty()) source.addGroup("搜索失效") else source.removeGroup("搜索失效")
             }
@@ -187,7 +187,11 @@ class CheckSourceService : BaseService() {
                     ?.filterNot {
                         it.startsWith("Error: ")
                     }?.joinToString("\n")
-                Debug.updateFinalMessage(source.bookSourceUrl, "成功")
+                if (source.hasGroup("搜索失效")) {
+                    Debug.updateFinalMessage(source.bookSourceUrl, "失败")
+                } else {
+                    Debug.updateFinalMessage(source.bookSourceUrl, "成功")
+                }
             }.onFinally(searchCoroutine) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
