@@ -76,8 +76,8 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
     private fun searchPosition(pattern: String): List<Int> {
         val position: MutableList<Int> = mutableListOf()
         if (mContent.indexOf(pattern) >= 0) {
-            //搜索到内容才启用净化
-            mContent = contentProcessor.replaceContent(mContent)
+            //搜索到内容允许净化
+            if (book?.getUseReplaceRule() ?: false) mContent = contentProcessor!!.replaceContent(mContent)
             var index = mContent.indexOf(pattern)
             while (index >= 0) {
                 position.add(index)
