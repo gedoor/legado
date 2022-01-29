@@ -157,6 +157,7 @@ class SearchContentActivity :
                     }
                 }
             }
+            binding.refreshProgressBar.isAutoLoading = false
         }
     }
 
