@@ -382,6 +382,12 @@ class ReadBookActivity : BaseReadBookActivity(),
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
             }
+            keyCode == KeyEvent.KEYCODE_BACK -> {
+                if (isShowingSearchResult) {
+                    exitSearchMenu()
+                    return true
+                }
+            }
         }
         return super.onKeyDown(keyCode, event)
     }
@@ -807,6 +813,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (isShowingSearchResult) {
             isShowingSearchResult = false
             binding.searchMenu.invalidate()
+            binding.searchMenu.invisible()
         }
     }
 
