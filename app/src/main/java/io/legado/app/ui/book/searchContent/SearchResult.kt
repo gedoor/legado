@@ -8,7 +8,7 @@ data class SearchResult(
     val resultCountWithinChapter: Int = 0,
     val resultText: String = "",
     val chapterTitle: String = "",
-    val query: String,
+    val query: String = "",
     val pageSize: Int = 0,
     val chapterIndex: Int = 0,
     val pageIndex: Int = 0,
@@ -17,14 +17,18 @@ data class SearchResult(
 ) {
 
     fun getHtmlCompat(textColor: String, accentColor: String): Spanned {
-        val queryIndexInSurrounding = resultText.indexOf(query)
-        val leftString = resultText.substring(0, queryIndexInSurrounding)
-        val rightString = resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
-        val html = leftString.colorTextForHtml(textColor) +
-                query.colorTextForHtml(accentColor) +
-                rightString.colorTextForHtml(textColor) +
-                chapterTitle.colorTextForHtml(accentColor)
-        return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        if (!query.isBlank()) {
+            val queryIndexInSurrounding = resultText.indexOf(query)
+            val leftString = resultText.substring(0, queryIndexInSurrounding)
+            val rightString = resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
+            val html = leftString.colorTextForHtml(textColor) +
+                    query.colorTextForHtml(accentColor) +
+                    rightString.colorTextForHtml(textColor) +
+                    chapterTitle.colorTextForHtml(accentColor)
+            return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        } else {
+                return HtmlCompat.fromHtml(resultText.colorTextForHtml(textColor), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        }
     }
 
     private fun String.colorTextForHtml(textColor: String) = "<font color=#${textColor}>$this</font>"

@@ -913,6 +913,7 @@
     <string name="open_sys_dir_picker_error">打開系統資料夾選擇器出錯,自動打開應用程式資料夾選擇器</string>
     <string name="expand_text_menu">展開文字選擇選單</string>
     <string name="search_content_size">搜尋結果</string>
+    <string name="search_content_empty">搜尋結果为空</string>
     <string name="book_tree_uri_t">書籍儲存位置</string>
     <string name="book_tree_uri_s">從其它應用程式打開的書籍儲存位置</string>
     <string name="select_book_folder">选择保存书籍的文件夹</string>
