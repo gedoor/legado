@@ -148,16 +148,20 @@ class SearchContentActivity :
                             searchResults = viewModel.searchChapter(query, bookChapter)
                         }
                     }
+                    binding.tvCurrentSearchInfo.text = this@SearchContentActivity.getString(R.string.search_content_size) +": ${viewModel.searchResultCounts}"
                     if (searchResults.isNotEmpty()) {
                         viewModel.searchResultList.addAll(searchResults)
                         binding.refreshProgressBar.isAutoLoading = false
-                        binding.tvCurrentSearchInfo.text = this@SearchContentActivity.getString(R.string.search_content_size) +": ${viewModel.searchResultCounts}"
                         adapter.addItems(searchResults)
                         searchResults = listOf()
                     }
                 }
+                binding.refreshProgressBar.isAutoLoading = false
+                if (viewModel.searchResultCounts == 0) {
+                    val noSearchResult = SearchResult(resultText = getString(R.string.search_content_empty))
+                    adapter.addItem(noSearchResult)
+                }
             }
-            binding.refreshProgressBar.isAutoLoading = false
         }
     }
 
