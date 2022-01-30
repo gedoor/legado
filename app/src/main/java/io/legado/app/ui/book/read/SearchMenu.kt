@@ -119,7 +119,7 @@ class SearchMenu @JvmOverloads constructor(
     }
 
     private fun bindEvent() = binding.run {
-
+        //搜索结果
         llSearchResults.setOnClickListener {
             runMenuOut {
                 callBack.openSearchActivity(selectedSearchResult?.query)
@@ -134,11 +134,10 @@ class SearchMenu @JvmOverloads constructor(
             }
         }
 
-        //目录
+        //退出
         llSearchExit.setOnClickListener {
             runMenuOut {
                 callBack.exitSearchMenu()
-                this@SearchMenu.invisible()
             }
         }
 
