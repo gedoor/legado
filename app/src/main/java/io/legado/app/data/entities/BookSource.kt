@@ -136,7 +136,7 @@ data class BookSource(
 
     fun hasGroup(group: String): Boolean {
         bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
-           return if (it.indexOf(group) != -1) true else false
+           return it.indexOf(group) != -1
         }
         return false
     }

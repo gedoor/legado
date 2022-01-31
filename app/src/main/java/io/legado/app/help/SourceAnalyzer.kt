@@ -7,6 +7,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import timber.log.Timber
 import java.util.regex.Pattern
 
@@ -17,11 +18,13 @@ object SourceAnalyzer {
 
     fun jsonToBookSources(json: String): List<BookSource> {
         val bookSources = mutableListOf<BookSource>()
-        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-        for (item in items) {
-            val jsonItem = jsonPath.parse(item)
-            jsonToBookSource(jsonItem.jsonString())?.let {
-                bookSources.add(it)
+        if (json.isJsonArray()) {
+            val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
+            for (item in items) {
+                val jsonItem = jsonPath.parse(item)
+                jsonToBookSource(jsonItem.jsonString())?.let {
+                    bookSources.add(it)
+                }
             }
         }
         return bookSources
