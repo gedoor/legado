@@ -53,6 +53,13 @@ fun String?.isXml(): Boolean =
         str.startsWith("<") && str.endsWith(">")
     } ?: false
 
+fun String?.isTrue(nullIsTrue: Boolean = false): Boolean {
+    if (this.isNullOrBlank() || this == "null") {
+        return nullIsTrue
+    }
+    return this.matches("\\s*(?i)(true|ok|yes|1)\\s*".toRegex())
+}
+
 fun String.splitNotBlank(vararg delimiter: String): Array<String> = run {
     this.split(*delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }

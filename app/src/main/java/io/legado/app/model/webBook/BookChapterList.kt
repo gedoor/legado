@@ -11,6 +11,7 @@ import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.TocEmptyException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.isTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
@@ -22,8 +23,6 @@ import splitties.init.appCtx
  * 获取目录
  */
 object BookChapterList {
-
-    private val falseRegex = "\\s*(?i)(null|false|0)\\s*".toRegex()
 
     suspend fun analyzeChapterList(
         scope: CoroutineScope,
@@ -188,7 +187,7 @@ object BookChapterList {
                 bookChapter.tag = analyzeRule.getString(upTimeRule)
                 val isVolume = analyzeRule.getString(isVolumeRule)
                 bookChapter.isVolume = false
-                if (isVolume.isNotEmpty() && !isVolume.matches(falseRegex)) {
+                if (isVolume.isTrue()) {
                     bookChapter.isVolume = true
                 }
                 if (bookChapter.url.isEmpty()) {
@@ -203,10 +202,10 @@ object BookChapterList {
                 if (bookChapter.title.isNotEmpty()) {
                     val isVip = analyzeRule.getString(vipRule)
                     val isPay = analyzeRule.getString(payRule)
-                    if (isVip.isNotEmpty() && !isVip.matches(falseRegex)) {
+                    if (isVip.isTrue()) {
                         bookChapter.isVip = true
                     }
-                    if (isPay.isNotEmpty() && !isPay.matches(falseRegex)) {
+                    if (isPay.isTrue()) {
                         bookChapter.isPay = true
                     }
                     chapterList.add(bookChapter)
