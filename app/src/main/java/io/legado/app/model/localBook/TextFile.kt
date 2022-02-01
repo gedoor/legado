@@ -124,7 +124,6 @@ class TextFile(private val book: Book) {
                     val chapterStart = matcher.start()
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
-                    var mChapterContent = chapterContent
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
                     if (curOffset + chapterLength - lastStart > 50000) {
@@ -151,7 +150,7 @@ class TextFile(private val book: Book) {
                         } else { //否则就block分割之后，上一个章节的剩余内容
                             //获取上一章节
                             val lastChapter = toc.last()
-                            toc.last().isVolume = mChapterContent.substringAfter(lastChapter.title).isBlank()
+                            toc.last().isVolume = chapterContent.substringAfter(lastChapter.title).isBlank()
                             //将当前段落添加上一章去
                             lastChapter.end =
                                 lastChapter.end!! + chapterLength.toLong()
@@ -165,7 +164,7 @@ class TextFile(private val book: Book) {
                         if (toc.isNotEmpty()) { //获取章节内容
                             //获取上一章节
                             val lastChapter = toc.last()
-                            toc.last().isVolume = mChapterContent.substringAfter(lastChapter.title).isBlank()
+                            toc.last().isVolume = chapterContent.substringAfter(lastChapter.title).isBlank()
                             lastChapter.end =
                                 lastChapter.start!! + chapterContent.toByteArray(charset).size.toLong()
                             //创建当前章节
