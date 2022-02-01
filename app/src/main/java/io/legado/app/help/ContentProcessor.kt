@@ -94,7 +94,7 @@ class ContentProcessor private constructor(
         }
         if (includeTitle) {
             //重新添加标题
-            mContent = chapter.getDisplayTitle() + "\n" + mContent
+            mContent = chapter.getDisplayTitle(getReplaceRules()) + "\n" + mContent
         }
         val contents = arrayListOf<String>()
         mContent.split("\n").forEach { str ->
