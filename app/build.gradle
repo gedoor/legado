@@ -180,7 +180,7 @@ dependencies {
 
     //规则相关
     implementation('org.jsoup:jsoup:1.14.3')
-    implementation('com.jayway.jsonpath:json-path:2.6.0')
+    implementation('com.jayway.jsonpath:json-path:2.7.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.1')
     implementation(project(path: ':epublib'))
 
