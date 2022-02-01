@@ -6,7 +6,6 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
 import io.legado.app.service.CheckSourceService
 import io.legado.app.utils.startService
-import io.legado.app.utils.toastOnUi
 import io.legado.app.help.CacheManager
 import splitties.init.appCtx
 
@@ -26,10 +25,6 @@ object CheckSource {
     }
 
     fun start(context: Context, sources: List<BookSource>) {
-        if (sources.isEmpty()) {
-            context.toastOnUi(R.string.non_select)
-            return
-        }
         val selectedIds: ArrayList<String> = arrayListOf()
         sources.map {
             selectedIds.add(it.bookSourceUrl)

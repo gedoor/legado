@@ -259,7 +259,6 @@
     <string name="text_bg_style">Color de fondo (mantén pulsado para personalizar)</string>
     <string name="immersion_status_bar">Barra de estado inmersiva</string>
     <string name="un_download">%d capítulo(s) restante(s)</string>
-    <string name="non_select">Ninguno seleccionado</string>
     <string name="long_click_input_color">Mantén pulsado para introducir el valor de color</string>
     <string name="loading">Cargando…</string>
     <string name="group_zg">Preparando</string>

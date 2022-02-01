@@ -262,7 +262,6 @@
     <string name="text_bg_style">文字顏色和背景(長按自訂)</string>
     <string name="immersion_status_bar">沉浸式狀態欄</string>
     <string name="un_download">還剩%d章未下載</string>
-    <string name="non_select">沒有選擇</string>
     <string name="long_click_input_color">長按輸入顏色值</string>
     <string name="loading">載入中…</string>
     <string name="group_zg">追更區</string>

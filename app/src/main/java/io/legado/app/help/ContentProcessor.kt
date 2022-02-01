@@ -77,10 +77,6 @@ class ContentProcessor private constructor(
             //重新分段
             mContent = ContentHelp.reSegment(mContent, chapter.title)
         }
-        if (includeTitle) {
-            //重新添加标题
-            mContent = chapter.getDisplayTitle() + "\n" + mContent
-        }
         if (useReplace && book.getUseReplaceRule()) {
             //替换
             mContent = replaceContent(mContent)
@@ -95,6 +91,10 @@ class ContentProcessor private constructor(
             } catch (e: Exception) {
                 appCtx.toastOnUi("简繁转换出错")
             }
+        }
+        if (includeTitle) {
+            //重新添加标题
+            mContent = chapter.getDisplayTitle(getReplaceRules()) + "\n" + mContent
         }
         val contents = arrayListOf<String>()
         mContent.split("\n").forEach { str ->

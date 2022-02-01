@@ -263,7 +263,6 @@
     <string name="text_bg_style">Color and background (long tap to customize)</string>
     <string name="immersion_status_bar">Immersive status bar</string>
     <string name="un_download">%d chapter(s) left</string>
-    <string name="non_select">No selected</string>
     <string name="long_click_input_color">Long tap to input color value</string>
     <string name="loading">Loading…</string>
     <string name="group_zg">Awaiting</string>

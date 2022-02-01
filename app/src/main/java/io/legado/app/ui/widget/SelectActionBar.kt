@@ -100,6 +100,8 @@ class SelectActionBar @JvmOverloads constructor(
         btnRevertSelection.isClickable = isClickable
         btnSelectActionMain.isEnabled = isClickable
         btnSelectActionMain.isClickable = isClickable
+        ivMenuMore.isEnabled = isClickable
+        ivMenuMore.isClickable = isClickable
     }
 
     interface CallBack {
