@@ -212,12 +212,12 @@ object BookChapterList {
                 }
             }
             Debug.log(bookSource.bookSourceUrl, "└目录列表解析完成", log)
-            Debug.log(bookSource.bookSourceUrl, "┌获取首章名称", log)
-            Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].title}", log)
-            Debug.log(bookSource.bookSourceUrl, "┌获取首章链接", log)
-            Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].url}", log)
-            Debug.log(bookSource.bookSourceUrl, "┌获取首章信息", log)
-            Debug.log(bookSource.bookSourceUrl, "└${chapterList[0].tag}", log)
+            Debug.log(bookSource.bookSourceUrl, "≡首章信息", log)
+            Debug.log(bookSource.bookSourceUrl, "◇章节名称:${chapterList[0].title}", log)
+            Debug.log(bookSource.bookSourceUrl, "◇章节链接:${chapterList[0].url}", log)
+            Debug.log(bookSource.bookSourceUrl, "◇章节信息:${chapterList[0].tag}", log)
+            Debug.log(bookSource.bookSourceUrl, "◇是否VIP:${chapterList[0].isVip}", log)
+            Debug.log(bookSource.bookSourceUrl, "◇是否购买:${chapterList[0].isPay}", log)
         }
         return Pair(chapterList, nextUrlList)
     }
