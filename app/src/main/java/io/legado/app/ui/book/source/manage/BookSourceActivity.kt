@@ -27,6 +27,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
 import io.legado.app.ui.association.ImportBookSourceDialog
+import io.legado.app.ui.config.CheckSourceConfig
 import io.legado.app.ui.book.local.rule.TxtTocRuleActivity
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -361,7 +362,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 CheckSource.start(this@BookSourceActivity, adapter.selection)
                 checkMessageRefreshJob().start()
             }
-            noButton()
+            neutralButton(R.string.check_source_config) {
+                checkSource()
+                showDialogFragment<CheckSourceConfig>()
+            }
+            cancelButton()
         }
     }
 
