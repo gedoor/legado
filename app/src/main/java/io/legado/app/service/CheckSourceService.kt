@@ -124,7 +124,14 @@ class CheckSourceService : BaseService() {
             //校验搜索 用户设置校验搜索 并且 搜索链接不为空
             if (CheckSource.checkSearch && !source.searchUrl.isNullOrBlank()) {
                 books = WebBook.searchBookAwait(this, source, searchWord)
-                if (books.isEmpty()) source.addGroup("搜索失效") else source.removeGroup("搜索失效")
+                if (books.isEmpty()) {
+                    source.addGroup("搜索失效")
+                    if (!CheckSource.checkDiscovery) {
+                        throw NoStackTraceException("搜索书籍为空")
+                    }
+                } else {
+                    source.removeGroup("搜索失效")
+                }
             }
             //校验发现
             if (CheckSource.checkDiscovery) {
