@@ -169,7 +169,7 @@ class CodeView : AppCompatMultiAutoCompleteTextView {
     }
 
     private fun highlight(editable: Editable): Editable {
-        if (editable.isEmpty()) return editable
+        if (editable.isEmpty() || editable.length > 1024) return editable
         try {
             clearSpans(editable)
             highlightErrorLines(editable)
