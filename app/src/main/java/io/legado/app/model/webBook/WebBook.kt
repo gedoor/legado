@@ -144,8 +144,8 @@ object WebBook {
                 scope = scope,
                 bookSource = bookSource,
                 book = book,
-                redirectUrl = book.bookUrl,
                 baseUrl = book.bookUrl,
+                redirectUrl = book.bookUrl,
                 body = book.infoHtml,
                 canReName = canReName
             )
@@ -168,8 +168,8 @@ object WebBook {
                 scope = scope,
                 bookSource = bookSource,
                 book = book,
-                redirectUrl = book.bookUrl,
-                baseUrl = res.url,
+                baseUrl = book.bookUrl,
+                redirectUrl = res.url,
                 body = res.body,
                 canReName = canReName
             )
@@ -202,8 +202,8 @@ object WebBook {
                 scope = scope,
                 bookSource = bookSource,
                 book = book,
-                redirectUrl = book.tocUrl,
                 baseUrl = book.tocUrl,
+                redirectUrl = book.tocUrl,
                 body = book.tocHtml
             )
         } else {
@@ -225,8 +225,8 @@ object WebBook {
                 scope = scope,
                 bookSource = bookSource,
                 book = book,
-                redirectUrl = book.tocUrl,
-                baseUrl = res.url,
+                baseUrl = book.tocUrl,
+                redirectUrl = res.url,
                 body = res.body
             )
         }
@@ -271,8 +271,8 @@ object WebBook {
                 bookSource = bookSource,
                 book = book,
                 bookChapter = bookChapter,
-                redirectUrl = bookChapter.getAbsoluteURL(),
                 baseUrl = bookChapter.getAbsoluteURL(),
+                redirectUrl = bookChapter.getAbsoluteURL(),
                 body = book.tocHtml,
                 nextChapterUrl = nextChapterUrl,
                 needSave = needSave
@@ -301,8 +301,8 @@ object WebBook {
                 bookSource = bookSource,
                 book = book,
                 bookChapter = bookChapter,
-                redirectUrl = bookChapter.getAbsoluteURL(),
-                baseUrl = res.url,
+                baseUrl = bookChapter.getAbsoluteURL(),
+                redirectUrl = res.url,
                 body = res.body,
                 nextChapterUrl = nextChapterUrl,
                 needSave = needSave

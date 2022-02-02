@@ -28,8 +28,8 @@ object BookChapterList {
         scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
-        redirectUrl: String,
         baseUrl: String,
+        redirectUrl: String,
         body: String?
     ): List<BookChapter> {
         body ?: throw NoStackTraceException(
@@ -39,7 +39,7 @@ object BookChapterList {
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
         Debug.log(bookSource.bookSourceUrl, body, state = 30)
         val tocRule = bookSource.getTocRule()
-        val nextUrlList = arrayListOf(baseUrl)
+        val nextUrlList = arrayListOf(redirectUrl)
         var reverse = false
         var listRule = tocRule.chapterList ?: ""
         if (listRule.startsWith("-")) {
@@ -157,7 +157,7 @@ object BookChapterList {
             Debug.log(bookSource.bookSourceUrl, "┌获取目录下一页列表", log)
             analyzeRule.getStringList(nextTocRule, isUrl = true)?.let {
                 for (item in it) {
-                    if (item != baseUrl) {
+                    if (item != redirectUrl) {
                         nextUrlList.add(item)
                     }
                 }
@@ -180,7 +180,7 @@ object BookChapterList {
             elements.forEachIndexed { index, item ->
                 scope.ensureActive()
                 analyzeRule.setContent(item)
-                val bookChapter = BookChapter(bookUrl = book.bookUrl, baseUrl = baseUrl)
+                val bookChapter = BookChapter(bookUrl = book.bookUrl, baseUrl = redirectUrl)
                 analyzeRule.chapter = bookChapter
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule)
