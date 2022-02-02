@@ -694,7 +694,7 @@ interface JsExtensions {
         return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
     }
 
-    fun android(): String {
+    fun androidId(): String {
         return AppConst.androidId
     }
 
