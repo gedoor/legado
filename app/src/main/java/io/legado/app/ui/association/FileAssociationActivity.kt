@@ -18,6 +18,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 
@@ -108,7 +109,8 @@ class FileAssociationActivity :
                         var doc = treeDoc!!.findFile(name)
                         if (doc == null || bookDoc.lastModified() > doc.lastModified()) {
                             if (doc == null) {
-                                doc = treeDoc.createFile(FileUtils.getMimeType(name), name)!!
+                                doc = treeDoc.createFile(FileUtils.getMimeType(name), name)
+                                    ?: throw SecurityException("Permission Denial")
                             }
                             contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
                                 contentResolver.openInputStream(bookDoc.uri)!!.use { iStream ->
@@ -142,7 +144,11 @@ class FileAssociationActivity :
                         title = "选择保存书籍的文件夹"
                         mode = HandleFileContract.DIR_SYS
                     }
-                    else -> toastOnUi(it.localizedMessage)
+                    else -> {
+                        Timber.e(it, "导入书籍失败")
+                        toastOnUi(it.localizedMessage)
+                        finish()
+                    }
                 }
             }
         }
