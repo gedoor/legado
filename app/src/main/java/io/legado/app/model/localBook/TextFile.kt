@@ -126,7 +126,7 @@ class TextFile(private val book: Book) {
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
-                    if (curOffset + chapterLength - lastStart > 50000) {
+                    if (curOffset + chapterLength - lastStart > 102400) {
                         bis.close()
                         return analyze()
                     }

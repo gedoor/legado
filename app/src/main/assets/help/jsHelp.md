@@ -82,8 +82,16 @@ java.base64Encode(str: String, flags: Int)
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
 ```
-java.readTxtFile(path: String): String
-java.deleteFile(path: String) 
+//文件下载,content为十六进制字符串,url用于生成文件名，返回文件路径
+downloadFile(content: String, url: String): String
+//文件解压,zipPath为压缩文件路径，返回解压路径
+unzipFile(zipPath: String): String
+//文件夹内所有文件读取
+getTxtInFolder(unzipPath: String): String
+//读取文本文件
+readTxtFile(path: String): String
+//删除文件
+deleteFile(path: String) 
 ```
 ****
 > [常见加密解密算法介绍](https://www.yijiyong.com/algorithm/encryption/01-intro.html)

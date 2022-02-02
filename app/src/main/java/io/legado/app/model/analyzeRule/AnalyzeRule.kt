@@ -4,12 +4,11 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppPattern.JS_PATTERN
-import io.legado.app.data.entities.BaseBook
-import io.legado.app.data.entities.BaseSource
-import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.*
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Entities
@@ -682,6 +681,39 @@ class AnalyzeRule(
             return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
         }
         return s
+    }
+
+    /**
+     * 更新BookUrl,如果搜索结果有tocUrl也会更新,有些书源bookUrl定期更新,可以在js内调用更新
+     */
+    fun refreshBookUrl() {
+        runBlocking {
+            val bookSource = source as? BookSource
+            val book = book as? Book
+            if (bookSource == null || book == null) return@runBlocking
+            val books = WebBook.searchBookAwait(this, bookSource, book.name)
+            books.forEach {
+                if (it.name == book.name && it.author == book.author) {
+                    book.bookUrl = it.bookUrl
+                    if (it.tocUrl.isNotBlank()) {
+                        book.tocUrl = it.tocUrl
+                    }
+                    return@runBlocking
+                }
+            }
+        }
+    }
+
+    /**
+     * 更新tocUrl,有些书源目录url定期更新,可以在js调用更新
+     */
+    fun refreshTocUrl() {
+        runBlocking {
+            val bookSource = source as? BookSource
+            val book = book as? Book
+            if (bookSource == null || book == null) return@runBlocking
+            WebBook.getBookInfoAwait(this, bookSource, book)
+        }
     }
 
     companion object {

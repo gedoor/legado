@@ -25,8 +25,8 @@ object BookInfo {
         scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
-        redirectUrl: String,
         baseUrl: String,
+        redirectUrl: String,
         body: String?,
         canReName: Boolean,
     ) {
@@ -126,7 +126,7 @@ object BookInfo {
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
         try {
             analyzeRule.getString(infoRule.coverUrl).let {
-                if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
+                if (it.isNotEmpty()) book.coverUrl = NetworkUtils.getAbsoluteURL(redirectUrl, it)
                 Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
         } catch (e: Exception) {
@@ -136,8 +136,8 @@ object BookInfo {
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
         book.tocUrl = analyzeRule.getString(infoRule.tocUrl, isUrl = true)
-        if (book.tocUrl.isEmpty()) book.tocUrl = redirectUrl
-        if (book.tocUrl == redirectUrl) {
+        if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
+        if (book.tocUrl == baseUrl) {
             book.tocHtml = body
         }
         Debug.log(bookSource.bookSourceUrl, "└${book.tocUrl}")

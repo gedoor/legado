@@ -32,8 +32,8 @@ object BookContent {
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
-        redirectUrl: String,
         baseUrl: String,
+        redirectUrl: String,
         body: String?,
         nextChapterUrl: String?,
         needSave: Boolean = true
@@ -50,10 +50,10 @@ object BookContent {
             nextChapterUrl
         }
         val content = StringBuilder()
-        val nextUrlList = arrayListOf(baseUrl)
+        val nextUrlList = arrayListOf(redirectUrl)
         val contentRule = bookSource.getContentRule()
         val analyzeRule = AnalyzeRule(book, bookSource).setContent(body, baseUrl)
-        analyzeRule.setRedirectUrl(baseUrl)
+        analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.nextChapterUrl = mNextChapterUrl
         scope.ensureActive()
         var contentData = analyzeContent(
@@ -64,8 +64,8 @@ object BookContent {
             var nextUrl = contentData.second[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                 if (!mNextChapterUrl.isNullOrEmpty()
-                    && NetworkUtils.getAbsoluteURL(baseUrl, nextUrl)
-                    == NetworkUtils.getAbsoluteURL(baseUrl, mNextChapterUrl)
+                    && NetworkUtils.getAbsoluteURL(redirectUrl, nextUrl)
+                    == NetworkUtils.getAbsoluteURL(redirectUrl, mNextChapterUrl)
                 ) break
                 nextUrlList.add(nextUrl)
                 scope.ensureActive()

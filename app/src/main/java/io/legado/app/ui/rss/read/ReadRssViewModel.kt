@@ -104,17 +104,17 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
-    fun refresh() {
+    fun refresh(finish: () -> Unit) {
         rssArticle?.let { rssArticle ->
             rssSource?.let {
                 val ruleContent = it.ruleContent
                 if (!ruleContent.isNullOrBlank()) {
                     loadContent(rssArticle, ruleContent)
                 } else {
-                    loadUrl(rssArticle.link, rssArticle.origin)
+                    finish.invoke()
                 }
-            } ?: loadUrl(rssArticle.link, rssArticle.origin)
-        }
+            } ?: finish.invoke()
+        } ?: finish.invoke()
     }
 
     fun favorite() {

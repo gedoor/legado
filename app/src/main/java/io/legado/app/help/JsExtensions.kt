@@ -9,6 +9,7 @@ import cn.hutool.crypto.symmetric.DESede
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
+import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.help.http.*
 import io.legado.app.model.Debug
@@ -513,13 +514,14 @@ interface JsExtensions {
     /**
      * 输出调试日志
      */
-    fun log(msg: String): String {
+    fun log(msg: Any?): Any? {
         getSource()?.let {
-            Debug.log(it.getKey(), msg)
-        } ?: Debug.log(msg)
+            Debug.log(it.getKey(), msg.toString())
+        } ?: Debug.log(msg.toString())
         if (BuildConfig.DEBUG) {
-            Timber.d(msg)
+            Timber.d(msg.toString())
         }
+        AppLog.put(msg.toString())
         return msg
     }
 
@@ -692,7 +694,7 @@ interface JsExtensions {
         return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
     }
 
-    fun android(): String {
+    fun androidId(): String {
         return AppConst.androidId
     }
 

@@ -10,49 +10,57 @@ private var toast: Toast? = null
 
 fun Context.toastOnUi(message: Int) {
     runOnUI {
-        if (toast == null) {
-            toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-        } else {
-            toast?.setText(message)
-            toast?.duration = Toast.LENGTH_SHORT
+        kotlin.runCatching {
+            if (toast == null) {
+                toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+            } else {
+                toast?.setText(message)
+                toast?.duration = Toast.LENGTH_SHORT
+            }
+            toast?.show()
         }
-        toast?.show()
     }
 }
 
 fun Context.toastOnUi(message: CharSequence?) {
     runOnUI {
-        if (toast == null) {
-            toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-        } else {
-            toast?.setText(message)
-            toast?.duration = Toast.LENGTH_SHORT
+        kotlin.runCatching {
+            if (toast == null) {
+                toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+            } else {
+                toast?.setText(message)
+                toast?.duration = Toast.LENGTH_SHORT
+            }
+            toast?.show()
         }
-        toast?.show()
     }
 }
 
 fun Context.longToastOnUi(message: Int) {
     runOnUI {
-        if (toast == null) {
-            toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
-        } else {
-            toast?.setText(message)
-            toast?.duration = Toast.LENGTH_LONG
+        kotlin.runCatching {
+            if (toast == null) {
+                toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+            } else {
+                toast?.setText(message)
+                toast?.duration = Toast.LENGTH_LONG
+            }
+            toast?.show()
         }
-        toast?.show()
     }
 }
 
 fun Context.longToastOnUi(message: CharSequence?) {
     runOnUI {
-        if (toast == null) {
-            toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
-        } else {
-            toast?.setText(message)
-            toast?.duration = Toast.LENGTH_LONG
+        kotlin.runCatching {
+            if (toast == null) {
+                toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+            } else {
+                toast?.setText(message)
+                toast?.duration = Toast.LENGTH_LONG
+            }
+            toast?.show()
         }
-        toast?.show()
     }
 }
 
