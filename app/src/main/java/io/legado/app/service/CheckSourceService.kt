@@ -135,22 +135,20 @@ class CheckSourceService : BaseService() {
             }
             //校验发现
             if (CheckSource.checkDiscovery) {
+                val exs = source.exploreKinds
+                var url: String? = null
+                for (ex in exs) {
+                    url = ex.url
+                    if (!url.isNullOrBlank()) {
+                        break
+                    }
+                }
+                if (source.hasGroup("搜索失效") && url.isNullOrBlank()) {
+                    throw NoStackTraceException("搜索内容为空并且没有发现")
+                }
+                books = WebBook.exploreBookAwait(this, source, url)
                 if (books.isEmpty()) {
-                    val exs = source.exploreKinds
-                    var url: String? = null
-                    for (ex in exs) {
-                        url = ex.url
-                        if (!url.isNullOrBlank()) {
-                            break
-                        }
-                    }
-                    if (url.isNullOrBlank()) {
-                        throw NoStackTraceException("搜索内容为空并且没有发现")
-                    }
-                    books = WebBook.exploreBookAwait(this, source, url)
-                    if (books.isEmpty()) {
-                        throw NoStackTraceException("发现书籍为空")
-                    }
+                    throw NoStackTraceException("发现书籍为空")
                 }
             }
             //校验详情
