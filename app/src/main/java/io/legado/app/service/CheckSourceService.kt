@@ -143,12 +143,19 @@ class CheckSourceService : BaseService() {
                         break
                     }
                 }
-                if (source.hasGroup("搜索失效") && url.isNullOrBlank()) {
-                    throw NoStackTraceException("搜索内容为空并且没有发现")
-                }
-                books = WebBook.exploreBookAwait(this, source, url!!)
-                if (books.isEmpty()) {
-                    throw NoStackTraceException("发现书籍为空")
+                if (url.isNullOrBlank()) {
+                    when {
+                        !CheckSource.checkSearch -> throw NoStackTraceException("没有发现")
+                        source.hasGroup("搜索失效") -> throw NoStackTraceException("搜索内容为空并且没有发现")
+                    }
+                } else {
+                    books = WebBook.exploreBookAwait(this, source, url)
+                    if (books.isEmpty()) {
+                        when {
+                            !CheckSource.checkSearch -> throw NoStackTraceException("发现书籍为空")
+                            source.hasGroup("搜索失效") -> throw NoStackTraceException("搜索内容和发现书籍为空")
+                        }
+                    }
                 }
             }
             //校验详情
