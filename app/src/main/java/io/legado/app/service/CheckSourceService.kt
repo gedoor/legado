@@ -146,7 +146,7 @@ class CheckSourceService : BaseService() {
                 if (source.hasGroup("搜索失效") && url.isNullOrBlank()) {
                     throw NoStackTraceException("搜索内容为空并且没有发现")
                 }
-                books = WebBook.exploreBookAwait(this, source, url)
+                books = WebBook.exploreBookAwait(this, source, url!!)
                 if (books.isEmpty()) {
                     throw NoStackTraceException("发现书籍为空")
                 }

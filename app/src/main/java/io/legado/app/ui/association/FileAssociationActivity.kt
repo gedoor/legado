@@ -137,7 +137,13 @@ class FileAssociationActivity :
                     }
                 }
             }.onFailure {
-                toastOnUi(it.localizedMessage)
+                when (it) {
+                    is SecurityException -> localBookTreeSelect.launch {
+                        title = "选择保存书籍的文件夹"
+                        mode = HandleFileContract.DIR_SYS
+                    }
+                    else -> toastOnUi(it.localizedMessage)
+                }
             }
         }
     }
