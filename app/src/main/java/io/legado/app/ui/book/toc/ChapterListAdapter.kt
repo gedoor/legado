@@ -23,6 +23,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         get() = callback.book?.let {
             ContentProcessor.get(it.name, it.origin).getReplaceRules()
         }
+    val useReplace get() = callback.book?.getUseReplaceRule() == true
     val cacheFileNames = hashSetOf<String>()
     val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
 
@@ -61,7 +62,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tvChapterName.text = item.getDisplayTitle(replaceRules)
+                tvChapterName.text = item.getDisplayTitle(replaceRules, useReplace)
                 if (item.isVolume) {
                     //卷名，如第一卷 突出显示
                     tvChapterItem.setBackgroundColor(context.getCompatColor(R.color.btn_bg_press))
