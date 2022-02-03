@@ -640,7 +640,7 @@
     <string name="a10_permission_toast">Android 10+ unable to read and write file due to permission restrictions</string>
     <string name="add_to_text_context_menu_s">Long tap to display Legado·Search in the operation menu</string>
     <string name="add_to_text_context_menu_t">Text operation display Search</string>
-    <string name="record_log">Log</string>
+    <string name="record_log">Record log</string>
     <string name="log">Log</string>
     <string name="chinese_converter">Simplified conversion</string>
     <string name="change_icon_error">The icon is a vector icon, which was not supported before Android 8.0</string>
@@ -876,6 +876,7 @@
     <string name="path">路径</string>
     <string name="direct_link_upload_rule">直链上传规则</string>
     <string name="direct_link_upload_rule_summary">用于导出书源书单时生成直链url</string>
+    <string name="direct_link_upload_config">直链上传配置</string>
     <string name="copy_play_url">拷贝播放Url</string>
     <string name="set_source_variable">设置源变量</string>
     <string name="set_book_variable">设置书籍变量</string>
@@ -928,5 +929,6 @@
     <string name="seconds">秒</string>
     <string name="less_than">小于</string>
     <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
+    <string name="record_debug_log">记录调试日志</string>
     <!-- string end -->
 </resources>

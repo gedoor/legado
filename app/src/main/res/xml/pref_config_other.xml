@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <io.legado.app.ui.widget.prefs.NameListPreference
+        android:defaultValue="auto"
         android:key="language"
         android:title="@string/language"
-        android:defaultValue="auto"
         app:entries="@array/language"
         app:entryValues="@array/language_value" />
 
@@ -58,8 +58,8 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="defaultBookTreeUri"
-            android:title="@string/book_tree_uri_t"
-            android:summary="@string/book_tree_uri_s" />
+            android:summary="@string/book_tree_uri_s"
+            android:title="@string/book_tree_uri_t" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="checkSource"
@@ -67,39 +67,39 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="uploadRule"
-            android:title="@string/direct_link_upload_rule"
-            android:summary="@string/direct_link_upload_rule_summary" />
+            android:summary="@string/direct_link_upload_rule_summary"
+            android:title="@string/direct_link_upload_rule" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:key="Cronet"
             android:defaultValue="false"
-            android:title="Cronet"
-            android:summary="@string/pref_cronet_summary" />
+            android:key="Cronet"
+            android:summary="@string/pref_cronet_summary"
+            android:title="Cronet" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="preDownloadNum"
-            android:title="@string/pre_download"
-            android:summary="@string/pre_download_s" />
+            android:summary="@string/pre_download_s"
+            android:title="@string/pre_download" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="replaceEnableDefault"
-            android:title="@string/replace_enable_default_t"
             android:summary="@string/replace_enable_default_s"
+            android:title="@string/replace_enable_default_t"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="mediaButtonOnExit"
-            android:title="@string/media_button_on_exit_title"
             android:summary="@string/media_button_on_exit_summary"
+            android:title="@string/media_button_on_exit_title"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="autoClearExpired"
-            android:title="@string/auto_clear_expired"
-            android:summary="@string/auto_clear_expired_summary" />
+            android:summary="@string/auto_clear_expired_summary"
+            android:title="@string/auto_clear_expired" />
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="webPort"
@@ -108,8 +108,8 @@
 
         <io.legado.app.ui.widget.prefs.Preference
             android:key="cleanCache"
-            android:title="@string/clear_cache"
             android:summary="@string/clear_cache_summary"
+            android:title="@string/clear_cache"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
@@ -127,6 +127,7 @@
         <io.legado.app.ui.widget.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="recordLog"
+            android:summary="@string/record_debug_log"
             android:title="@string/record_log"
             app:iconSpaceReserved="false" />
 

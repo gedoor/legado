@@ -1,5 +1,7 @@
 package io.legado.app.constant
 
+import io.legado.app.help.AppConfig
+
 object AppLog {
 
     private val mLogs = arrayListOf<Triple<Long, String, Throwable?>>()
@@ -18,6 +20,12 @@ object AppLog {
     @Synchronized
     fun clear() {
         mLogs.clear()
+    }
+
+    fun putDebug(message: String?, throwable: Throwable? = null) {
+        if (AppConfig.recordLog) {
+            put(message, throwable)
+        }
     }
 
 }

@@ -271,6 +271,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val replaceEnableDefault get() = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
 
+    val recordLog get() = appCtx.getPrefBoolean(PreferKey.recordLog)
+
     val doublePageHorizontal: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.doublePageHorizontal, true)
 

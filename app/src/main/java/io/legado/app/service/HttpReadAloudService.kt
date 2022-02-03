@@ -64,8 +64,10 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun play() {
         if (contentList.isEmpty()) {
+            AppLog.putDebug("朗读列表为空")
             ReadBook.readAloud()
         } else {
+            super.play()
             ReadAloud.httpTTS?.let {
                 val fileName =
                     md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), contentList[nowSpeak])

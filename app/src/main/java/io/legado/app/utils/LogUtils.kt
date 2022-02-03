@@ -3,6 +3,7 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
+import io.legado.app.help.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,7 +44,7 @@ object LogUtils {
                     return (getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n")
                 }
             }
-            level = if (appCtx.getPrefBoolean("recordLog")) {
+            level = if (AppConfig.recordLog) {
                 Level.INFO
             } else {
                 Level.OFF
@@ -52,7 +53,7 @@ object LogUtils {
     }
 
     fun upLevel() {
-        fileHandler?.level = if (appCtx.getPrefBoolean("recordLog")) {
+        fileHandler?.level = if (AppConfig.recordLog) {
             Level.INFO
         } else {
             Level.OFF

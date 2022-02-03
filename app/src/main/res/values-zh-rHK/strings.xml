@@ -873,6 +873,7 @@
     <string name="path">路徑</string>
     <string name="direct_link_upload_rule">直鏈上傳規則</string>
     <string name="direct_link_upload_rule_summary">用於導出書源書單時生成直鏈url</string>
+    <string name="direct_link_upload_config">直链上传配置</string>
     <string name="copy_play_url">複製播放Url</string>
     <string name="set_source_variable">設置源變量</string>
     <string name="set_book_variable">設置書籍變量</string>
@@ -925,5 +926,6 @@
     <string name="seconds">秒</string>
     <string name="less_than">小于</string>
     <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
+    <string name="record_debug_log">记录调试日志</string>
     <!-- string end -->
 </resources>

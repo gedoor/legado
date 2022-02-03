@@ -521,7 +521,7 @@ interface JsExtensions {
         if (BuildConfig.DEBUG) {
             Timber.d(msg.toString())
         }
-        AppLog.put(msg.toString())
+        AppLog.putDebug(msg.toString())
         return msg
     }
 

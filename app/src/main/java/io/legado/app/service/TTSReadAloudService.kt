@@ -5,6 +5,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
@@ -68,6 +69,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         if (!ttsInitFinish) return
         if (!requestFocus()) return
         if (contentList.isEmpty()) {
+            AppLog.putDebug("朗读列表为空")
             ReadBook.readAloud()
         } else {
             super.play()
