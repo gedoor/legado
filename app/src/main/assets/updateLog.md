@@ -18,6 +18,7 @@
 * 添加更新bookUrl和更新tocUrl函数
 * 标题单独净化,防止出现正文标题没了的问题
 * 修复一个null报错
+* 修复进度同步bug
 * 按返回键关闭搜索界面 by Xwite
 * 其它一些优化 by Xwite
 
