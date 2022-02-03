@@ -63,18 +63,21 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun play() {
-        if (contentList.isEmpty()) return
-        ReadAloud.httpTTS?.let {
-            val fileName =
-                md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), contentList[nowSpeak])
-            if (nowSpeak == 0) {
-                downloadAudio()
-            } else {
-                val file = getSpeakFileAsMd5(fileName)
-                if (file.exists()) {
-                    playAudio(FileInputStream(file).fd)
-                } else {
+        if (contentList.isEmpty()) {
+            ReadBook.readAloud()
+        } else {
+            ReadAloud.httpTTS?.let {
+                val fileName =
+                    md5SpeakFileName(it.url, AppConfig.ttsSpeechRate.toString(), contentList[nowSpeak])
+                if (nowSpeak == 0) {
                     downloadAudio()
+                } else {
+                    val file = getSpeakFileAsMd5(fileName)
+                    if (file.exists()) {
+                        playAudio(FileInputStream(file).fd)
+                    } else {
+                        downloadAudio()
+                    }
                 }
             }
         }

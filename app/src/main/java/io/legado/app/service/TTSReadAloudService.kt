@@ -65,7 +65,11 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
     @Synchronized
     override fun play() {
-        if (contentList.isNotEmpty() && ttsInitFinish && requestFocus()) {
+        if (!ttsInitFinish) return
+        if (!requestFocus()) return
+        if (contentList.isEmpty()) {
+            ReadBook.readAloud()
+        } else {
             super.play()
             execute {
                 MediaHelp.playSilentSound(this@TTSReadAloudService)

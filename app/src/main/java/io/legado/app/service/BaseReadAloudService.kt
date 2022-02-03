@@ -156,12 +156,8 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
-        if (contentList.isEmpty()) {
-            ReadBook.readAloud()
-        } else {
-            upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-            postEvent(EventBus.ALOUD_STATE, Status.PLAY)
-        }
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
