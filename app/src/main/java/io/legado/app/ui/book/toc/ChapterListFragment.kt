@@ -121,6 +121,9 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         }
     }
 
+    override val book: Book?
+        get() = viewModel.bookData.value
+
     override val isLocalBook: Boolean
         get() = viewModel.bookData.value?.isLocalBook() == true
 

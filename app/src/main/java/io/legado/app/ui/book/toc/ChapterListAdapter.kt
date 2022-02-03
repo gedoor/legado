@@ -6,19 +6,23 @@ import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.help.ContentProcessor
 import io.legado.app.lib.theme.ThemeUtils
-import io.legado.app.help.AppConfig
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.visible
 import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
+    val replaceRules
+        get() = callback.book?.let {
+            ContentProcessor.get(it.name, it.origin).getReplaceRules()
+        }
     val cacheFileNames = hashSetOf<String>()
     val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
 
@@ -28,12 +32,12 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
         override fun areContentsTheSame(oldItem: BookChapter, newItem: BookChapter): Boolean {
             return oldItem.bookUrl == newItem.bookUrl
-                    && oldItem.url == newItem.url
-                    && oldItem.isVip == newItem.isVip
-                    && oldItem.isPay == newItem.isPay
-                    && oldItem.title == newItem.title
-                    && oldItem.tag == newItem.tag
-                    && oldItem.isVolume == newItem.isVolume
+                && oldItem.url == newItem.url
+                && oldItem.isVip == newItem.isVip
+                && oldItem.isPay == newItem.isPay
+                && oldItem.title == newItem.title
+                && oldItem.tag == newItem.tag
+                && oldItem.isVolume == newItem.isVolume
         }
 
     }
@@ -57,16 +61,17 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tvChapterName.text = item.getDisplayTitle()
+                tvChapterName.text = item.getDisplayTitle(replaceRules)
                 if (item.isVolume) {
                     //卷名，如第一卷 突出显示
                     tvChapterItem.setBackgroundColor(context.getCompatColor(R.color.btn_bg_press))
                 } else {
                     //普通章节 保持不变
-                    tvChapterItem.setBackground(ThemeUtils.resolveDrawable(context, android.R.attr.selectableItemBackground))
+                    tvChapterItem.background =
+                        ThemeUtils.resolveDrawable(context, android.R.attr.selectableItemBackground)
                 }
                 if (!item.tag.isNullOrEmpty() && !item.isVolume) {
-                //卷名不显示tag(更新时间规则)
+                    //卷名不显示tag(更新时间规则)
                     tvTag.text = item.tag
                     tvTag.visible()
                 } else {
@@ -98,6 +103,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
 
     interface Callback {
+        val book: Book?
         val isLocalBook: Boolean
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
