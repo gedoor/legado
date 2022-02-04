@@ -18,11 +18,7 @@ object CheckSource {
     var checkInfo = CacheManager.get("checkInfo")?.toBoolean() ?: true
     var checkCategory = CacheManager.get("checkCategory")?.toBoolean() ?: true
     var checkContent = CacheManager.get("checkContent")?.toBoolean() ?: true
-    var summary = ""
-
-    init {
-        upSummary()
-    }
+    val summary get() = upSummary()
 
     fun start(context: Context, sources: List<BookSource>) {
         val selectedIds: ArrayList<String> = arrayListOf()
@@ -48,16 +44,15 @@ object CheckSource {
         CacheManager.put("checkInfo", checkInfo)
         CacheManager.put("checkCategory", checkCategory)
         CacheManager.put("checkContent", checkContent)
-        upSummary()
     }
 
-    fun upSummary() {
-        summary = ""
-        if (checkSearch) summary = "${summary} ${appCtx.getString(R.string.search)}"
-        if (checkDiscovery) summary = "${summary} ${appCtx.getString(R.string.discovery)}"
-        if (checkInfo) summary = "${summary} ${appCtx.getString(R.string.source_tab_info)}"
-        if (checkCategory) summary = "${summary} ${appCtx.getString(R.string.chapter_list)}"
-        if (checkContent) summary = "${summary} ${appCtx.getString(R.string.main_body)}"
-        summary = appCtx.getString(R.string.check_source_config_summary, (timeout / 1000).toString(), summary)
+    fun upSummary(): String {
+        var checkItem = ""
+        if (checkSearch) checkItem = "${checkItem} ${appCtx.getString(R.string.search)}"
+        if (checkDiscovery) checkItem = "${checkItem} ${appCtx.getString(R.string.discovery)}"
+        if (checkInfo) checkItem = "${checkItem} ${appCtx.getString(R.string.source_tab_info)}"
+        if (checkCategory) checkItem = "${checkItem} ${appCtx.getString(R.string.chapter_list)}"
+        if (checkContent) checkItem = "${checkItem} ${appCtx.getString(R.string.main_body)}"
+        return appCtx.getString(R.string.check_source_config_summary, (timeout / 1000).toString(), checkItem)
     }
 }
