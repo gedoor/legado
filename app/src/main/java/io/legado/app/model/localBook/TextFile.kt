@@ -306,7 +306,7 @@ class TextFile(private val book: Book) {
      */
     private fun getTocRule(content: String): Pattern? {
         tocRules.addAll(getTocRules(content, getTocRules().reversed()))
-        tocRules.addAll(getTocRules(content, appDb.txtTocRuleDao.disabled.reversed()))
+        //tocRules.addAll(getTocRules(content, appDb.txtTocRuleDao.disabled.reversed()))
         return tocRules.firstOrNull()
     }
 
