@@ -11,6 +11,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.help.AppConfig
 import io.legado.app.help.MediaHelp
 import io.legado.app.lib.dialogs.SelectItem
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.*
 import java.util.*
@@ -75,12 +76,11 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             super.play()
             kotlin.runCatching {
                 MediaHelp.playSilentSound(this@TTSReadAloudService)
-                textToSpeech!!.let {
-                    it.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
-                    for (i in nowSpeak until contentList.size) {
-                        val text = contentList[i].replace(AppPattern.notReadAloudRegex, "")
-                        it.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
-                    }
+                val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
+                tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
+                for (i in nowSpeak until contentList.size) {
+                    val text = contentList[i].replace(AppPattern.notReadAloudRegex, "")
+                    tts.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
                 }
             }.onFailure {
                 AppLog.put("tts朗读出错", it)
