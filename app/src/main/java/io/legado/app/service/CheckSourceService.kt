@@ -189,6 +189,8 @@ class CheckSourceService : BaseService() {
                     }
                 }
             }
+            if (source.hasGroup("搜索失效")) throw NoStackTraceException("搜索失效")
+            if (source.hasGroup("发现失效")) throw NoStackTraceException("发现失效")
         }.timeout(CheckSource.timeout)
             .onError(searchCoroutine) {
                 source.addGroup("失效")
@@ -204,11 +206,7 @@ class CheckSourceService : BaseService() {
                     ?.filterNot {
                         it.startsWith("Error: ")
                     }?.joinToString("\n")
-                if (source.hasGroup("搜索失效") || source.hasGroup("发现失效")) {
-                    Debug.updateFinalMessage(source.bookSourceUrl, "失败")
-                } else {
-                    Debug.updateFinalMessage(source.bookSourceUrl, "成功")
-                }
+                Debug.updateFinalMessage(source.bookSourceUrl, "成功")
             }.onFinally(searchCoroutine) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
