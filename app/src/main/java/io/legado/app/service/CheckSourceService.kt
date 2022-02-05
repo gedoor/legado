@@ -123,14 +123,15 @@ class CheckSourceService : BaseService() {
             }
             //校验搜索 用户设置校验搜索 并且 搜索链接不为空
             if (CheckSource.checkSearch && !source.searchUrl.isNullOrBlank()) {
-                books = WebBook.searchBookAwait(this, source, searchWord)
-                if (books.isEmpty()) {
+                val searchBooks = WebBook.searchBookAwait(this, source, searchWord)
+                if (searchBooks.isEmpty()) {
                     source.addGroup("搜索失效")
                     if (!CheckSource.checkDiscovery) {
                         throw NoStackTraceException("搜索书籍为空")
                     }
                 } else {
                     source.removeGroup("搜索失效")
+                    books = searchBooks
                 }
             }
             //校验发现
@@ -149,12 +150,16 @@ class CheckSourceService : BaseService() {
                         source.hasGroup("搜索失效") -> throw NoStackTraceException("搜索内容为空并且没有发现")
                     }
                 } else {
-                    books = WebBook.exploreBookAwait(this, source, url)
-                    if (books.isEmpty()) {
+                    val exploreBooks = WebBook.exploreBookAwait(this, source, url)
+                    if (exploreBooks.isEmpty()) {
+                        source.addGroup("发现失效")
                         when {
                             !CheckSource.checkSearch -> throw NoStackTraceException("发现书籍为空")
                             source.hasGroup("搜索失效") -> throw NoStackTraceException("搜索内容和发现书籍为空")
                         }
+                    } else {
+                        source.removeGroup("发现失效")
+                        books = exploreBooks
                     }
                 }
             }
@@ -199,7 +204,7 @@ class CheckSourceService : BaseService() {
                     ?.filterNot {
                         it.startsWith("Error: ")
                     }?.joinToString("\n")
-                if (source.hasGroup("搜索失效")) {
+                if (source.hasGroup("搜索失效") || source.hasGroup("发现失效")) {
                     Debug.updateFinalMessage(source.bookSourceUrl, "失败")
                 } else {
                     Debug.updateFinalMessage(source.bookSourceUrl, "成功")
