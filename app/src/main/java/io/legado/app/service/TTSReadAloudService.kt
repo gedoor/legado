@@ -73,16 +73,18 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             ReadBook.readAloud()
         } else {
             super.play()
-            execute {
+            kotlin.runCatching {
                 MediaHelp.playSilentSound(this@TTSReadAloudService)
-            }.onFinally {
-                textToSpeech?.let {
+                textToSpeech!!.let {
                     it.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
                     for (i in nowSpeak until contentList.size) {
                         val text = contentList[i].replace(AppPattern.notReadAloudRegex, "")
                         it.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
                     }
                 }
+            }.onFailure {
+                AppLog.put("tts朗读出错", it)
+                toastOnUi(it.localizedMessage)
             }
         }
     }
