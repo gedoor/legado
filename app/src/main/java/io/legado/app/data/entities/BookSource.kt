@@ -118,17 +118,18 @@ data class BookSource(
 
     fun getContentRule() = ruleContent ?: ContentRule()
 
-    fun addGroup(group: String): BookSource {
+    fun addGroup(groups: String): BookSource {
         bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
-            it.add(group)
+            it.addAll(groups.splitNotBlank(AppPattern.splitGroupRegex))
             bookSourceGroup = TextUtils.join(",", it)
         }
+        if (bookSourceGroup.isNullOrBlank()) bookSourceGroup = groups
         return this
     }
 
-    fun removeGroup(group: String): BookSource {
+    fun removeGroup(groups: String): BookSource {
         bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
-            it.remove(group)
+            it.removeAll(groups.splitNotBlank(AppPattern.splitGroupRegex))
             bookSourceGroup = TextUtils.join(",", it)
         }
         return this
