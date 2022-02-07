@@ -77,10 +77,16 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             kotlin.runCatching {
                 MediaHelp.playSilentSound(this@TTSReadAloudService)
                 val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
-                tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
+                var result = tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
+                if (result == TextToSpeech.ERROR) {
+                    throw NoStackTraceException("朗读出错:空")
+                }
                 for (i in nowSpeak until contentList.size) {
                     val text = contentList[i].replace(AppPattern.notReadAloudRegex, "")
-                    tts.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                    result = tts.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                    if (result == TextToSpeech.ERROR) {
+                        AppLog.put("tts朗读出错:$text")
+                    }
                 }
             }.onFailure {
                 AppLog.put("tts朗读出错", it)
