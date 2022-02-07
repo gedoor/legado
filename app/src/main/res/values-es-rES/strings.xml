@@ -9,8 +9,6 @@
     <string name="menu_backup">Inicio</string>
     <string name="menu_restore">Restaurar</string>
     <string name="menu_import_old">Importar datos de Legado</string>
-    <string name="mkdirs">Crear carpeta</string>
-    <string name="mkdirs_description">Crea una carpeta de respaldo bajo el nombre de Legado.</string>
     <string name="webdav_cache_backup">Respaldo de caché de libros sin conexión</string>
     <string name="webdav_cache_backup_s">Exporta localmente lo respalda para su exportación</string>
     <string name="backup_path">Respaldar para</string>
@@ -927,5 +925,6 @@
     <string name="less_than">小于</string>
     <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
     <string name="record_debug_log">记录调试日志</string>
+    <string name="sub_dir">子文件夹</string>
     <!-- string end -->
 </resources>

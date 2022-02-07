@@ -9,8 +9,6 @@
     <string name="menu_backup">Home</string>
     <string name="menu_restore">Restore</string>
     <string name="menu_import_old">Import Legado data</string>
-    <string name="mkdirs">Create a subfolder</string>
-    <string name="mkdirs_description">Create a folder named Legado as the backup folder.</string>
     <string name="webdav_cache_backup">Offline cache book backup</string>
     <string name="webdav_cache_backup_s">Export to local and back up to the exports directory under the legado folder</string>
     <string name="backup_path">Backup to</string>
@@ -930,5 +928,6 @@
     <string name="less_than">小于</string>
     <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
     <string name="record_debug_log">记录调试日志</string>
+    <string name="sub_dir">Sub dir</string>
     <!-- string end -->
 </resources>

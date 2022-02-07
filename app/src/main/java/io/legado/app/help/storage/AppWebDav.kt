@@ -29,13 +29,13 @@ object AppWebDav {
 
     private val rootWebDavUrl: String
         get() {
-            var url = appCtx.getPrefString(PreferKey.webDavUrl)?.trim()
-            if (url.isNullOrEmpty()) {
-                url = defaultWebDavUrl
-            }
+            val configUrl = appCtx.getPrefString(PreferKey.webDavUrl)?.trim()
+            var url = if (configUrl.isNullOrEmpty()) defaultWebDavUrl else configUrl
             if (!url.endsWith("/")) url = "${url}/"
-            if (appCtx.getPrefBoolean(PreferKey.webDavCreateDir, true)) {
-                url = "${url}legado/"
+            AppConfig.webDavDir?.trim()?.let {
+                if (it.isNotEmpty()) {
+                    url = "${url}${it}/"
+                }
             }
             return url
         }

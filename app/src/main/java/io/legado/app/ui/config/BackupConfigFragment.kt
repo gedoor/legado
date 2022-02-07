@@ -121,6 +121,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         upPreferenceSummary(PreferKey.webDavUrl, getPrefString(PreferKey.webDavUrl))
         upPreferenceSummary(PreferKey.webDavAccount, getPrefString(PreferKey.webDavAccount))
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
+        upPreferenceSummary(PreferKey.webDavDir, AppConfig.webDavDir)
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
         findPreference<io.legado.app.ui.widget.prefs.Preference>("web_dav_restore")
             ?.onLongClick { restoreDir.launch(); true }
@@ -168,6 +169,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
             PreferKey.backupPath -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
+            PreferKey.webDavDir -> upPreferenceSummary(key, AppConfig.webDavDir)
         }
     }
 
@@ -192,6 +194,11 @@ class BackupConfigFragment : BasePreferenceFragment(),
                 } else {
                     preference.summary = "*".repeat(value.toString().length)
                 }
+            PreferKey.webDavDir -> if (value.isNullOrBlank()) {
+                preference.summary = "null"
+            } else {
+                preference.summary = value
+            }
             else -> {
                 if (preference is ListPreference) {
                     val index = preference.findIndexOfValue(value)

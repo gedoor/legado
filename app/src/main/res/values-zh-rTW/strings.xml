@@ -8,8 +8,6 @@
     <string name="menu_backup">備份</string>
     <string name="menu_restore">復原</string>
     <string name="menu_import_old">匯入閱讀資料</string>
-    <string name="mkdirs">建立子資料夾</string>
-    <string name="mkdirs_description">建立legado資料夾作為備份資料夾</string>
     <string name="webdav_cache_backup">離線快取書籍備份</string>
     <string name="webdav_cache_backup_s">匯出本機同時備份到legado資料夾下exports目錄</string>
     <string name="backup_path">備份路徑</string>
@@ -929,5 +927,6 @@
     <string name="less_than">小于</string>
     <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
     <string name="record_debug_log">记录调试日志</string>
+    <string name="sub_dir">子文件夹</string>
     <!-- string end -->
 </resources>
