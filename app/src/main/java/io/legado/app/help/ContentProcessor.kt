@@ -77,10 +77,6 @@ class ContentProcessor private constructor(
             //重新分段
             mContent = ContentHelp.reSegment(mContent, chapter.title)
         }
-        if (useReplace && book.getUseReplaceRule()) {
-            //替换
-            mContent = replaceContent(mContent)
-        }
         if (chineseConvert) {
             //简繁转换
             try {
@@ -91,6 +87,10 @@ class ContentProcessor private constructor(
             } catch (e: Exception) {
                 appCtx.toastOnUi("简繁转换出错")
             }
+        }
+        if (useReplace && book.getUseReplaceRule()) {
+            //替换
+            mContent = replaceContent(mContent)
         }
         if (includeTitle) {
             //重新添加标题
