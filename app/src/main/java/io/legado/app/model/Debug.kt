@@ -97,8 +97,7 @@ object Debug {
             val spendingTime = System.currentTimeMillis() - debugTimeMap[sourceUrl]!!
             debugTimeMap[sourceUrl] = if (state == "成功") spendingTime else 180000L
             val printTime = debugTimeFormat.format(Date(spendingTime))
-            val originalMessage = debugMessageMap[sourceUrl]!!.substringAfter("] ")
-            debugMessageMap[sourceUrl] = "$printTime $originalMessage $state"
+            debugMessageMap[sourceUrl] = "$printTime $state"
         }
     }
 
