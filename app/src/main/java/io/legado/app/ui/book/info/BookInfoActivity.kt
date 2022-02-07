@@ -118,12 +118,16 @@ class BookInfoActivity :
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_can_update)?.isChecked =
             viewModel.bookData.value?.canUpdate ?: true
+        menu.findItem(R.id.menu_limit_content_length)?.isChecked =
+            viewModel.bookData.value?.getLimitContentLength() ?: false
         menu.findItem(R.id.menu_login)?.isVisible =
             !viewModel.bookSource?.loginUrl.isNullOrBlank()
         menu.findItem(R.id.menu_set_source_variable)?.isVisible =
             viewModel.bookSource != null
         menu.findItem(R.id.menu_set_book_variable)?.isVisible =
             viewModel.bookSource != null
+        menu.findItem(R.id.menu_limit_content_length)?.isVisible =
+            viewModel.bookSource == null
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -183,6 +187,14 @@ class BookInfoActivity :
             }
             R.id.menu_clear_cache -> viewModel.clearCache()
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
+            R.id.menu_limit_content_length -> {
+                upLoading(true)
+                viewModel.bookData.value?.let {
+                    it.setLimitContentLength(!item.isChecked)
+                    viewModel.loadBookInfo(it, false)
+                }
+                if (item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }

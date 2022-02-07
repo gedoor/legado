@@ -160,6 +160,14 @@ data class Book(
         config().reSegment = reSegment
     }
 
+    fun getLimitContentLength(): Boolean {
+        return config().limitContentLength
+    }
+
+    fun setLimitContentLength(limitContentLength: Boolean) {
+        config().limitContentLength = limitContentLength
+    }
+
     fun getPageAnim(): Int {
         return config().pageAnim
     }
@@ -270,6 +278,7 @@ data class Book(
         var reverseToc: Boolean = false,
         var pageAnim: Int = -1,
         var reSegment: Boolean = false,
+        var limitContentLength: Boolean = true, //txt规则解析目录时超过规定的最大字数时均分txt
         var imageStyle: String? = null,
         var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,// 正文使用净化替换规则
         var delTag: Long = 0L,//去除标签
