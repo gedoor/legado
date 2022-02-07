@@ -45,6 +45,8 @@ class TextFile(private val book: Book) {
 
     //没有标题的时候，每个章节的最大长度
     private val maxLengthWithNoToc = 10 * 1024
+    //使用正则划分目录，每个章节的最大允许长度
+    private val maxLengthWithToc = 102400
 
     private val tocRules = arrayListOf<Pattern>()
     private var charset: Charset = book.fileCharset()
@@ -126,7 +128,7 @@ class TextFile(private val book: Book) {
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
-                    if (curOffset + chapterLength - lastStart > 102400) {
+                    if (curOffset + chapterLength - lastStart > maxLengthWithToc) {
                         bis.close()
                         return analyze()
                     }
