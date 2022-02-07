@@ -128,9 +128,9 @@ object LocalBook {
         val m1 = Pattern
             .compile("(.*?)《([^《》]+)》(.*)")
             .matcher(tempFileName)
-        //匹配 书名 by 作者名.txt
+        //匹配 书名 作者：作者名.txt
         val m2 = Pattern
-            .compile("(^)(.+) by (.+)$")
+            .compile("(^)(.+) 作者：(.+)$")
             .matcher(tempFileName)
 
         (m1.takeIf { m1.find() } ?: m2.takeIf { m2.find() }).run {
@@ -152,13 +152,13 @@ object LocalBook {
                     name = bookMess["name"] ?: tempFileName
                     author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
                 } catch (e: Exception) {
-                    name = tempFileName.replace(AppPattern.nameRegex, "")
-                    author = tempFileName.replace(AppPattern.authorRegex, "")
+                    name = BookHelp.formatBookName(tempFileName)
+                    author = BookHelp.formatBookAuthor(tempFileName.replace(name, ""))
                         .takeIf { it.length != tempFileName.length } ?: ""
                 }
             } else {
-                name = tempFileName.replace(AppPattern.nameRegex, "")
-                author = tempFileName.replace(AppPattern.authorRegex, "")
+                name = BookHelp.formatBookName(tempFileName)
+                author = BookHelp.formatBookAuthor(tempFileName.replace(name, ""))
                     .takeIf { it.length != tempFileName.length } ?: ""
             }
 
