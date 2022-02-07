@@ -26,9 +26,9 @@ fun Context.toastOnUi(message: CharSequence?) {
     runOnUI {
         kotlin.runCatching {
             if (toast == null) {
-                toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+                toast = Toast.makeText(this, message.toString(), Toast.LENGTH_SHORT)
             } else {
-                toast?.setText(message)
+                toast?.setText(message.toString())
                 toast?.duration = Toast.LENGTH_SHORT
             }
             toast?.show()
@@ -54,9 +54,9 @@ fun Context.longToastOnUi(message: CharSequence?) {
     runOnUI {
         kotlin.runCatching {
             if (toast == null) {
-                toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+                toast = Toast.makeText(this, message.toString(), Toast.LENGTH_LONG)
             } else {
-                toast?.setText(message)
+                toast?.setText(message.toString())
                 toast?.duration = Toast.LENGTH_LONG
             }
             toast?.show()

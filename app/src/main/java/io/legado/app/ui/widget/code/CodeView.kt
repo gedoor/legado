@@ -20,7 +20,9 @@ import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
 @Suppress("unused")
-class CodeView : AppCompatMultiAutoCompleteTextView {
+class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    AppCompatMultiAutoCompleteTextView(context, attrs) {
+
     private var tabWidth = 0
     private var tabWidthInCharacters = 0
     private var mUpdateDelayTime = 500
@@ -35,23 +37,53 @@ class CodeView : AppCompatMultiAutoCompleteTextView {
     private val mSyntaxPatternMap: MutableMap<Pattern, Int> = HashMap()
     private var mIndentCharacterList = mutableListOf('{', '+', '-', '*', '/', '=')
 
-    constructor(context: Context?) : super(context!!) {
-        initEditorView()
+    private val mUpdateRunnable = Runnable {
+        val source = text
+        highlightWithoutChange(source)
     }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(
-        context!!, attrs
-    ) {
-        initEditorView()
+    private val mEditorTextWatcher: TextWatcher = object : TextWatcher {
+        private var start = 0
+        private var count = 0
+        override fun beforeTextChanged(
+            charSequence: CharSequence,
+            start: Int,
+            before: Int,
+            count: Int
+        ) {
+            this.start = start
+            this.count = count
+        }
+
+        override fun onTextChanged(
+            charSequence: CharSequence,
+            start: Int,
+            before: Int,
+            count: Int
+        ) {
+            if (!modified) return
+            if (highlightWhileTextChanging) {
+                if (mSyntaxPatternMap.isNotEmpty()) {
+                    convertTabs(editableText, start, count)
+                    mUpdateHandler.postDelayed(mUpdateRunnable, mUpdateDelayTime.toLong())
+                }
+            }
+            if (mRemoveErrorsWhenTextChanged) removeAllErrorLines()
+        }
+
+        override fun afterTextChanged(editable: Editable) {
+            if (!highlightWhileTextChanging) {
+                if (!modified) return
+                cancelHighlighterRender()
+                if (mSyntaxPatternMap.isNotEmpty()) {
+                    convertTabs(editableText, start, count)
+                    mUpdateHandler.postDelayed(mUpdateRunnable, mUpdateDelayTime.toLong())
+                }
+            }
+        }
     }
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context!!, attrs, defStyleAttr
-    ) {
-        initEditorView()
-    }
-
-    private fun initEditorView() {
+    init {
         if (mAutoCompleteTokenizer == null) {
             mAutoCompleteTokenizer = KeywordTokenizer()
         }
@@ -169,7 +201,10 @@ class CodeView : AppCompatMultiAutoCompleteTextView {
     }
 
     private fun highlight(editable: Editable): Editable {
-        if (editable.isEmpty() || editable.length > 1024) return editable
+        // if (editable.isEmpty() || editable.length > 1024) return editable
+        if (editable.length !in 1..1024) {
+            return editable
+        }
         try {
             clearSpans(editable)
             highlightErrorLines(editable)
@@ -343,51 +378,6 @@ class CodeView : AppCompatMultiAutoCompleteTextView {
         val horizontalDistanceInDp = layout.getPrimaryHorizontal(position) / displayDensity
         dropDownHorizontalOffset = horizontalDistanceInDp.toInt()
         super.showDropDown()
-    }
-
-    private val mUpdateRunnable = Runnable {
-        val source = text
-        highlightWithoutChange(source)
-    }
-    private val mEditorTextWatcher: TextWatcher = object : TextWatcher {
-        private var start = 0
-        private var count = 0
-        override fun beforeTextChanged(
-            charSequence: CharSequence,
-            start: Int,
-            before: Int,
-            count: Int
-        ) {
-            this.start = start
-            this.count = count
-        }
-
-        override fun onTextChanged(
-            charSequence: CharSequence,
-            start: Int,
-            before: Int,
-            count: Int
-        ) {
-            if (!modified) return
-            if (highlightWhileTextChanging) {
-                if (mSyntaxPatternMap.isNotEmpty()) {
-                    convertTabs(editableText, start, count)
-                    mUpdateHandler.postDelayed(mUpdateRunnable, mUpdateDelayTime.toLong())
-                }
-            }
-            if (mRemoveErrorsWhenTextChanged) removeAllErrorLines()
-        }
-
-        override fun afterTextChanged(editable: Editable) {
-            if (!highlightWhileTextChanging) {
-                if (!modified) return
-                cancelHighlighterRender()
-                if (mSyntaxPatternMap.isNotEmpty()) {
-                    convertTabs(editableText, start, count)
-                    mUpdateHandler.postDelayed(mUpdateRunnable, mUpdateDelayTime.toLong())
-                }
-            }
-        }
     }
 
     private inner class TabWidthSpan : ReplacementSpan() {

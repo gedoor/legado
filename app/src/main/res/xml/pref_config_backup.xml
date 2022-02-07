@@ -27,11 +27,9 @@
             android:summary="@string/web_dav_pw_s"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
-            android:key="webDavCreateDir"
-            android:defaultValue="true"
-            android:title="@string/mkdirs"
-            android:summary="@string/mkdirs_description"
+        <io.legado.app.ui.widget.prefs.EditTextPreference
+            android:key="webDavDir"
+            android:title="@string/sub_dir"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
