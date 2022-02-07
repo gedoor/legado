@@ -95,10 +95,9 @@ object Debug {
     fun updateFinalMessage(sourceUrl: String, state: String) {
         if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
             val spendingTime = System.currentTimeMillis() - debugTimeMap[sourceUrl]!!
-            debugTimeMap[sourceUrl] = if (state == "成功") spendingTime else 180000L
+            debugTimeMap[sourceUrl] = if (state == "校验成功") spendingTime else 180000L
             val printTime = debugTimeFormat.format(Date(spendingTime))
-            val originalMessage = debugMessageMap[sourceUrl]!!.substringAfter("] ")
-            debugMessageMap[sourceUrl] = "$printTime $originalMessage $state"
+            debugMessageMap[sourceUrl] = "$printTime $state"
         }
     }
 

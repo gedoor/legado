@@ -15,6 +15,8 @@ import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
 import io.legado.app.model.NoStackTraceException
+import io.legado.app.model.ContentEmptyException
+import io.legado.app.model.TocEmptyException
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.activityPendingIntent
@@ -121,6 +123,11 @@ class CheckSourceService : BaseService() {
                     searchWord = it
                 }
             }
+            source.bookSourceComment = source.bookSourceComment
+                ?.split("\n\n")
+                ?.filterNot {
+                    it.startsWith("Error: ")
+                }?.joinToString("\n")
             //校验搜索 用户设置校验搜索 并且 搜索链接不为空
             if (CheckSource.checkSearch && !source.searchUrl.isNullOrBlank()) {
                 val searchBooks = WebBook.searchBookAwait(this, source, searchWord)
@@ -173,9 +180,10 @@ class CheckSourceService : BaseService() {
                 if (CheckSource.checkCategory) {
                     val toc = WebBook.getChapterListAwait(this, source, book)
                     val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
+                    source.removeGroup("目录失效")
                     //校验正文
                     if (CheckSource.checkContent) {
-                        val content = WebBook.getContentAwait(
+                        WebBook.getContentAwait(
                             this,
                             bookSource = source,
                             book = book,
@@ -183,9 +191,7 @@ class CheckSourceService : BaseService() {
                             nextChapterUrl = nextChapterUrl,
                             needSave = false
                         )
-                        if ( !toc.first().isVolume && content.isBlank()) {
-                            throw NoStackTraceException("正文内容为空")
-                        }
+                        source.removeGroup("正文失效")
                     }
                 }
             }
@@ -193,20 +199,15 @@ class CheckSourceService : BaseService() {
             if (source.hasGroup("发现失效")) throw NoStackTraceException("发现失效")
         }.timeout(CheckSource.timeout)
             .onError(searchCoroutine) {
-                source.addGroup("失效")
-                if (source.bookSourceComment?.contains("Error: ") == false) {
-                    source.bookSourceComment =
-                        "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
+                when(it) {
+                    is ContentEmptyException -> source.addGroup("正文失效")
+                    is TocEmptyException -> source.addGroup("目录失效")
                 }
+                source.bookSourceComment =
+                    "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
                 Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
             }.onSuccess(searchCoroutine) {
-                source.removeGroup("失效")
-                source.bookSourceComment = source.bookSourceComment
-                    ?.split("\n\n")
-                    ?.filterNot {
-                        it.startsWith("Error: ")
-                    }?.joinToString("\n")
-                Debug.updateFinalMessage(source.bookSourceUrl, "成功")
+                Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
             }.onFinally(searchCoroutine) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)

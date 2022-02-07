@@ -81,6 +81,12 @@ data class BookChapter(
     ): String {
         var displayTitle = title.replace(AppPattern.rnRegex, "")
         val mDisplayTitle = displayTitle
+        if (chineseConvert) {
+            when (AppConfig.chineseConverterType) {
+                1 -> displayTitle = ChineseUtils.t2s(displayTitle)
+                2 -> displayTitle = ChineseUtils.s2t(displayTitle)
+            }
+        }
         if (useReplace && replaceRules != null) {
             replaceRules.forEach { item ->
                 if (item.pattern.isNotEmpty()) {
@@ -97,12 +103,6 @@ data class BookChapter(
             }
         }
         if (displayTitle.isBlank()) displayTitle = mDisplayTitle
-        if (chineseConvert) {
-            when (AppConfig.chineseConverterType) {
-                1 -> displayTitle = ChineseUtils.t2s(displayTitle)
-                2 -> displayTitle = ChineseUtils.s2t(displayTitle)
-            }
-        }
         return when {
             !isVip -> displayTitle
             isPay -> appCtx.getString(R.string.payed_title, displayTitle)
