@@ -91,6 +91,7 @@ class BookInfoActivity :
             viewModel.upEditBook()
         }
     }
+    private var tocChanged = false
 
     override val binding by viewBinding(ActivityBookInfoBinding::inflate)
     override val viewModel by viewModels<BookInfoViewModel>()
@@ -189,6 +190,7 @@ class BookInfoActivity :
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_limit_content_length -> {
                 upLoading(true)
+                tocChanged = true
                 viewModel.bookData.value?.let {
                     it.setLimitContentLength(!item.isChecked)
                     viewModel.loadBookInfo(it, false)
@@ -441,8 +443,10 @@ class BookInfoActivity :
                 Intent(this, ReadBookActivity::class.java)
                     .putExtra("bookUrl", book.bookUrl)
                     .putExtra("inBookshelf", viewModel.inBookshelf)
+                    .putExtra("tocChanged", tocChanged)
             )
         }
+        tocChanged = false
     }
 
     override val oldBook: Book?
