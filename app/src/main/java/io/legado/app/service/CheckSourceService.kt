@@ -123,6 +123,11 @@ class CheckSourceService : BaseService() {
                     searchWord = it
                 }
             }
+            source.bookSourceComment = source.bookSourceComment
+                ?.split("\n\n")
+                ?.filterNot {
+                    it.startsWith("Error: ")
+                }?.joinToString("\n")
             //校验搜索 用户设置校验搜索 并且 搜索链接不为空
             if (CheckSource.checkSearch && !source.searchUrl.isNullOrBlank()) {
                 val searchBooks = WebBook.searchBookAwait(this, source, searchWord)
@@ -198,17 +203,10 @@ class CheckSourceService : BaseService() {
                     is ContentEmptyException -> source.addGroup("正文失效")
                     is TocEmptyException -> source.addGroup("目录失效")
                 }
-                if (source.bookSourceComment?.contains("Error: ") == false) {
-                    source.bookSourceComment =
-                        "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
-                }
+                source.bookSourceComment =
+                    "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
                 Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
             }.onSuccess(searchCoroutine) {
-                source.bookSourceComment = source.bookSourceComment
-                    ?.split("\n\n")
-                    ?.filterNot {
-                        it.startsWith("Error: ")
-                    }?.joinToString("\n")
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
             }.onFinally(searchCoroutine) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
