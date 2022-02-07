@@ -79,7 +79,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
                 var result = tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
                 if (result == TextToSpeech.ERROR) {
-                    throw NoStackTraceException("朗读出错:空")
+                    clearTTS()
+                    initTts()
+                    return
                 }
                 for (i in nowSpeak until contentList.size) {
                     val text = contentList[i].replace(AppPattern.notReadAloudRegex, "")
