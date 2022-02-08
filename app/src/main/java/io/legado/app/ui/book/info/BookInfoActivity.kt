@@ -198,7 +198,7 @@ class BookInfoActivity :
                     viewModel.loadBookInfo(it, false)
                 }
                 item.isChecked = !item.isChecked
-                if (item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
+                if (!item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
             }
         }
         return super.onCompatOptionsItemSelected(item)
