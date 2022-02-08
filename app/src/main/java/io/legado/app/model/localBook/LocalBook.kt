@@ -24,11 +24,6 @@ import javax.script.SimpleBindings
 
 object LocalBook {
 
-    private const val folderName = "bookTxt"
-    val cacheFolder: File by lazy {
-        FileUtils.createFolderIfNotExist(appCtx.externalFiles, folderName)
-    }
-
     @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
         val uri = Uri.parse(book.bookUrl)
@@ -168,15 +163,6 @@ object LocalBook {
 
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
-            if (book.isLocalTxt() || book.isUmd()) {
-                cacheFolder.getFile(book.originName).delete()
-            }
-            if (book.isEpub()) {
-                FileUtils.delete(
-                    cacheFolder.getFile(book.getFolderName())
-                )
-            }
-
             if (deleteOriginal) {
                 if (book.bookUrl.isContentScheme()) {
                     val uri = Uri.parse(book.bookUrl)
