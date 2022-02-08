@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -207,27 +208,31 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun upBookSource(searchKey: String? = null) {
         sourceFlowJob?.cancel()
         sourceFlowJob = launch {
-            when {
-                searchKey.isNullOrEmpty() -> {
-                    appDb.bookSourceDao.flowAll()
+            runCatching {
+                when {
+                    searchKey.isNullOrEmpty() -> {
+                        appDb.bookSourceDao.flowAll()
+                    }
+                    searchKey == getString(R.string.enabled) -> {
+                        appDb.bookSourceDao.flowEnabled()
+                    }
+                    searchKey == getString(R.string.disabled) -> {
+                        appDb.bookSourceDao.flowDisabled()
+                    }
+                    searchKey == getString(R.string.need_login) -> {
+                        appDb.bookSourceDao.flowLogin()
+                    }
+                    searchKey.startsWith("group:") -> {
+                        val key = searchKey.substringAfter("group:")
+                        appDb.bookSourceDao.flowGroupSearch("%$key%")
+                    }
+                    else -> {
+                        appDb.bookSourceDao.flowSearch("%$searchKey%")
+                    }
                 }
-                searchKey == getString(R.string.enabled) -> {
-                    appDb.bookSourceDao.flowEnabled()
-                }
-                searchKey == getString(R.string.disabled) -> {
-                    appDb.bookSourceDao.flowDisabled()
-                }
-                searchKey == getString(R.string.need_login) -> {
-                    appDb.bookSourceDao.flowLogin()
-                }
-                searchKey.startsWith("group:") -> {
-                    val key = searchKey.substringAfter("group:")
-                    appDb.bookSourceDao.flowGroupSearch("%$key%")
-                }
-                else -> {
-                    appDb.bookSourceDao.flowSearch("%$searchKey%")
-                }
-            }.collect { data ->
+            }.onFailure {
+                AppLog.put("更新书源出错", it)
+            }.getOrNull()?.collect { data ->
                 val sourceList =
                     if (sortAscending) when (sort) {
                         Sort.Weight -> data.sortedBy { it.weight }
