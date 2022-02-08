@@ -48,18 +48,17 @@ object Debug {
             }
             it.printLog(state, printMsg)
         }
-        if (isChecking) {
-            if (sourceUrl != null && (msg ?: "").length < 30) {
-                var printMsg = msg ?: ""
-                if (isHtml) {
-                    printMsg = HtmlFormatter.format(msg)
-                }
-                if (showTime && debugTimeMap[sourceUrl] != null) {
-                    val time =
-                        debugTimeFormat.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
-                    printMsg = printMsg.replace(AppPattern.debugMessageSymbolRegex,"")
-                    debugMessageMap[sourceUrl] = "$time $printMsg"
-                }
+        if (isChecking && sourceUrl != null && (msg ?: "").length < 30) {
+            var printMsg = msg ?: ""
+            if (isHtml) {
+                printMsg = HtmlFormatter.format(msg)
+            }
+            if (showTime && debugTimeMap[sourceUrl] != null) {
+                val time =
+                    debugTimeFormat.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
+                printMsg = printMsg.replace(AppPattern.debugMessageSymbolRegex,"")
+
+                debugMessageMap[sourceUrl] = "$time $printMsg"
             }
         }
     }
@@ -89,13 +88,13 @@ object Debug {
     }
 
     fun getRespondTime(sourceUrl: String): Long {
-        return debugTimeMap[sourceUrl] ?: 180000L
+        return debugTimeMap[sourceUrl] ?: CheckSource.timeout
     }
 
     fun updateFinalMessage(sourceUrl: String, state: String) {
         if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
             val spendingTime = System.currentTimeMillis() - debugTimeMap[sourceUrl]!!
-            debugTimeMap[sourceUrl] = if (state == "校验成功") spendingTime else 180000L
+            debugTimeMap[sourceUrl] = if (state == "校验成功") spendingTime else CheckSource.timeout + spendingTime
             val printTime = debugTimeFormat.format(Date(spendingTime))
             debugMessageMap[sourceUrl] = "$printTime $state"
         }

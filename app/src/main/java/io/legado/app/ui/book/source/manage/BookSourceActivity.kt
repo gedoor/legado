@@ -360,7 +360,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     }
                 }
                 CheckSource.start(this@BookSourceActivity, adapter.selection)
-                checkMessageRefreshJob().start()
+                val firstItem = adapter.getItems().indexOf(adapter.selection.firstOrNull())
+                val lastItem = adapter.getItems().indexOf(adapter.selection.lastOrNull())
+                Debug.isChecking = firstItem >= 0 && lastItem >= 0
+                checkMessageRefreshJob(firstItem, lastItem).start()
             }
             neutralButton(R.string.check_source_config) {
                 checkSource()
@@ -478,26 +481,20 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
-    private fun checkMessageRefreshJob(): Job {
-        val firstIndex = adapter.getItems().indexOf(adapter.selection.firstOrNull())
-        val lastIndex = adapter.getItems().indexOf(adapter.selection.lastOrNull())
-        var refreshCount = 0
-        Debug.isChecking = firstIndex >= 0 && lastIndex >= 0
+    private fun checkMessageRefreshJob(firstItem: Int, lastItem: Int): Job {
         return async(start = CoroutineStart.LAZY) {
             flow {
                 while (true) {
-                    refreshCount += 1
-                    emit(refreshCount)
+                    emit(Debug.isChecking)
                     delay(300L)
                 }
             }.collect {
                 adapter.notifyItemRangeChanged(
-                    firstIndex,
-                    lastIndex + 1,
+                    firstItem,
+                    lastItem + 1,
                     bundleOf(Pair("checkSourceMessage", null))
                 )
-                if (!Debug.isChecking) {
-                    Debug.finishChecking()
+                if (!it) {
                     this.cancel()
                 }
             }

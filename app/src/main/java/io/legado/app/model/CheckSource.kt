@@ -46,13 +46,13 @@ object CheckSource {
         CacheManager.put("checkContent", checkContent)
     }
 
-    fun upSummary(): String {
+    private fun upSummary(): String {
         var checkItem = ""
-        if (checkSearch) checkItem = "${checkItem} ${appCtx.getString(R.string.search)}"
-        if (checkDiscovery) checkItem = "${checkItem} ${appCtx.getString(R.string.discovery)}"
-        if (checkInfo) checkItem = "${checkItem} ${appCtx.getString(R.string.source_tab_info)}"
-        if (checkCategory) checkItem = "${checkItem} ${appCtx.getString(R.string.chapter_list)}"
-        if (checkContent) checkItem = "${checkItem} ${appCtx.getString(R.string.main_body)}"
+        if (checkSearch) checkItem = "$checkItem ${appCtx.getString(R.string.search)}"
+        if (checkDiscovery) checkItem = "$checkItem ${appCtx.getString(R.string.discovery)}"
+        if (checkInfo) checkItem = "$checkItem ${appCtx.getString(R.string.source_tab_info)}"
+        if (checkCategory) checkItem = "$checkItem ${appCtx.getString(R.string.chapter_list)}"
+        if (checkContent) checkItem = "$checkItem ${appCtx.getString(R.string.main_body)}"
         return appCtx.getString(R.string.check_source_config_summary, (timeout / 1000).toString(), checkItem)
     }
 }
