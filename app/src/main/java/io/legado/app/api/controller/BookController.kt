@@ -7,6 +7,7 @@ import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.CacheManager
 import io.legado.app.help.ContentProcessor
@@ -206,7 +207,8 @@ object BookController {
                 ?: return returnData.setErrorMsg("fileName 不能为空")
             val fileData = parameters["fileData"]?.firstOrNull()
                 ?: return returnData.setErrorMsg("fileData 不能为空")
-            val file = FileUtils.createFileIfNotExist(LocalBook.cacheFolder, fileName)
+            if (AppConfig.defaultBookTreeUri == null) return returnData.setErrorMsg("没有设置书籍保存位置!")
+            val file = FileUtils.createFileIfNotExist(AppConfig.defaultBookTreeUri!!, fileName)
             val fileBytes = Base64.decode(fileData.substringAfter("base64,"), Base64.DEFAULT)
             file.writeBytes(fileBytes)
             val nameAuthor = LocalBook.analyzeNameAuthor(fileName)
