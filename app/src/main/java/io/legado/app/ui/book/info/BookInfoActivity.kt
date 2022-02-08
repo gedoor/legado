@@ -127,8 +127,10 @@ class BookInfoActivity :
             viewModel.bookSource != null
         menu.findItem(R.id.menu_set_book_variable)?.isVisible =
             viewModel.bookSource != null
+        menu.findItem(R.id.menu_can_update)?.isVisible =
+            viewModel.bookSource != null
         menu.findItem(R.id.menu_limit_content_length)?.isVisible =
-            viewModel.bookSource == null
+            viewModel.bookData.value?.isLocalTxt() ?: false
         return super.onMenuOpened(featureId, menu)
     }
 
