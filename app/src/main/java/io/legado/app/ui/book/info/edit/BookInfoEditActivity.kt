@@ -28,7 +28,7 @@ class BookInfoEditActivity :
     override val viewModel by viewModels<BookInfoEditViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel.bookData.observe(this, { upView(it) })
+        viewModel.bookData.observe(this) { upView(it) }
         if (viewModel.bookData.value == null) {
             intent.getStringExtra("bookUrl")?.let {
                 viewModel.loadBook(it)

@@ -20,4 +20,10 @@
         android:title="@string/import_replace_rule_on_line"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_limit_content_length"
+        android:title="@string/limit_content_length"
+        android:checkable="true"
+        app:showAsAction="never" />
+
 </menu>

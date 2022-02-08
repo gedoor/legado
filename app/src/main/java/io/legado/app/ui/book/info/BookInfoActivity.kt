@@ -105,8 +105,8 @@ class BookInfoActivity :
         binding.flAction.setBackgroundColor(bottomBackground)
         binding.tvShelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
         binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
-        viewModel.bookData.observe(this, { showBook(it) })
-        viewModel.chapterListData.observe(this, { upLoading(false, it) })
+        viewModel.bookData.observe(this) { showBook(it) }
+        viewModel.chapterListData.observe(this) { upLoading(false, it) }
         viewModel.initData(intent)
         initOnClick()
     }
@@ -197,6 +197,7 @@ class BookInfoActivity :
                     it.setLimitContentLength(!item.isChecked)
                     viewModel.loadBookInfo(it, false)
                 }
+                item.isChecked = !item.isChecked
                 if (item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
             }
         }
