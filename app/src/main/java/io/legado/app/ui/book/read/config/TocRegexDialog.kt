@@ -118,7 +118,7 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             R.id.menu_limit_content_length -> {
                 ReadBook.book?.setLimitContentLength(!item.isChecked)
                 item.isChecked = !item.isChecked
-                if (item.isChecked) context?.longToastOnUi(R.string.need_more_time_load_content)
+                if (!item.isChecked) context?.longToastOnUi(R.string.need_more_time_load_content)
             }
         }
         return false
