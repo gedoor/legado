@@ -31,6 +31,7 @@ object ReadBook : CoroutineScope by MainScope() {
     var book: Book? = null
     var callBack: CallBack? = null
     var inBookshelf = false
+    var tocChanged = false
     var chapterSize = 0
     var durChapterIndex = 0
     var durChapterPos = 0
@@ -65,7 +66,7 @@ object ReadBook : CoroutineScope by MainScope() {
     fun upData(book: Book) {
         ReadBook.book = book
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
-        if (durChapterIndex != book.durChapterIndex) {
+        if (durChapterIndex != book.durChapterIndex || tocChanged) {
             durChapterIndex = book.durChapterIndex
             durChapterPos = book.durChapterPos
             clearTextChapter()

@@ -118,6 +118,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocalBook()) {
                 LocalBook.getChapterList(book).let {
                     appDb.bookDao.update(book)
+                    appDb.bookChapterDao.delByBook(book.bookUrl)
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     chapterListData.postValue(it)
                 }
@@ -127,6 +128,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                         .onSuccess(IO) {
                             if (inBookshelf) {
                                 appDb.bookDao.update(book)
+                                appDb.bookChapterDao.delByBook(book.bookUrl)
                                 appDb.bookChapterDao.insert(*it.toTypedArray())
                             }
                             if (changeDruChapterIndex == null) {

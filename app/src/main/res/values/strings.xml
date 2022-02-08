@@ -336,6 +336,8 @@
     <string name="tip_margin_change">Margin adjustment</string>
     <string name="allow_update">Enable update</string>
     <string name="disable_update">Disable update</string>
+    <string name="limit_content_length">限制正文长度</string>
+    <string name="need_more_time_load_content">正文长度过长时，加载正文可能会花费更多时间</string>
     <string name="revert_selection">Inverse</string>
     <string name="search_book_key">Search book name/author</string>
     <string name="debug_hint">Book name,Author,URL</string>
