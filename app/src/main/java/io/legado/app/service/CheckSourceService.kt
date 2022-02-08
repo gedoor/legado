@@ -12,11 +12,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
-import io.legado.app.model.CheckSource
-import io.legado.app.model.Debug
-import io.legado.app.model.NoStackTraceException
-import io.legado.app.model.ContentEmptyException
-import io.legado.app.model.TocEmptyException
+import io.legado.app.model.*
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.activityPendingIntent
@@ -204,8 +200,9 @@ class CheckSourceService : BaseService() {
                     is TocEmptyException -> source.addGroup("目录失效")
                 }
                 source.bookSourceComment =
-                    "Error: ${it.localizedMessage} \n\n" + "${source.bookSourceComment}"
-                Debug.updateFinalMessage(source.bookSourceUrl, "失败:${it.localizedMessage}")
+                    "Error: ${it.localizedMessage}" + if (source.bookSourceComment.isNullOrBlank())
+                        "" else "\n\n${source.bookSourceComment}"
+                Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
             }.onSuccess(searchCoroutine) {
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
             }.onFinally(searchCoroutine) {

@@ -80,7 +80,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 cbBookSource.isChecked = selected.contains(item)
                 ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
                 ivDebugText.visibility =
-                    if (ivDebugText.text.toString().length > 1) View.VISIBLE else View.GONE
+                    if (ivDebugText.text.toString().isNotBlank()) View.VISIBLE else View.GONE
                 upShowExplore(ivExplore, item)
             } else {
                 payload.keySet().map {
@@ -91,7 +91,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                             val isEmpty = ivDebugText.text.toString().isEmpty()
                             var isFinalMessage =
                                 ivDebugText.text.toString().contains(Regex("成功|失败"))
-                            if (!isEmpty && !Debug.isChecking && !isFinalMessage) {
+                            if (!Debug.isChecking && !isFinalMessage) {
                                 Debug.updateFinalMessage(item.bookSourceUrl, "校验失败")
                                 ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
                                 isFinalMessage = true
@@ -99,7 +99,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                             ivDebugText.visibility =
                                 if (!isEmpty) View.VISIBLE else View.GONE
                             ivProgressBar.visibility =
-                                if (isFinalMessage || isEmpty) View.GONE else View.VISIBLE
+                                if (isFinalMessage || isEmpty || !Debug.isChecking) View.GONE else View.VISIBLE
                         }
                     }
                 }
