@@ -22,12 +22,9 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
@@ -119,7 +116,11 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                         }
                         val useReplace = viewModel.bookData.value?.getUseReplaceRule() == true
                         it.map { chapter ->
-                            Pair(chapter, async { chapter.getDisplayTitle(replaces, useReplace) })
+                            Pair(
+                                chapter,
+                                async(start = CoroutineStart.LAZY) {
+                                    chapter.getDisplayTitle(replaces, useReplace)
+                                })
                         }
                     }
                     adapter.setItems(data, adapter.diffCallBack)
