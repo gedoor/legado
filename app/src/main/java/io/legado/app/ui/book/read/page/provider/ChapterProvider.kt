@@ -114,6 +114,10 @@ object ChapterProvider {
         var durY = 0f
         textPages.add(TextPage())
         contents.forEachIndexed { index, content ->
+            val isTitle = index == 0
+            val isTitleWithNoContent = isTitle && contents.size == 1
+            val isVolumeTitle = isTitle && bookChapter.isVolume
+            val textPaint = if (isTitle) titlePaint else contentPaint
             if (book.getImageStyle() == Book.imgStyleText) {
                 var text = content.replace(srcReplaceChar, "▣")
                 val srcList = LinkedList<String>()
@@ -128,10 +132,6 @@ object ChapterProvider {
                 }
                 matcher.appendTail(sb)
                 text = sb.toString()
-                val isTitle = index == 0
-                val isTitleWithNoContent = isTitle && contents.size == 1
-                val isVolumeTitle = isTitle && bookChapter.isVolume
-                val textPaint = if (isTitle) titlePaint else contentPaint
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                     setTypeText(
                         absStartX, durY, text, textPages, stringBuilder,
@@ -147,10 +147,6 @@ object ChapterProvider {
                 while (matcher.find()) {
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
-                        val isTitle = index == 0
-                        val isTitleWithNoContent = isTitle && contents.size == 1
-                        val isVolumeTitle = isTitle && bookChapter.isVolume
-                        val textPaint = if (isTitle) titlePaint else contentPaint
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                             setTypeText(
                                 absStartX, durY, text, textPages, stringBuilder,
@@ -170,10 +166,6 @@ object ChapterProvider {
                 if (start < content.length) {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
-                        val isTitle = index == 0
-                        val isTitleWithNoContent = isTitle && contents.size == 1
-                        val isVolumeTitle = isTitle && bookChapter.isVolume
-                        val textPaint = if (isTitle) titlePaint else contentPaint
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
                             setTypeText(
                                 absStartX, durY, text, textPages, stringBuilder,
