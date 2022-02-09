@@ -10,20 +10,22 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.help.ContentProcessor
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
+import kotlinx.coroutines.CoroutineScope
 
-class ChapterListAdapter(context: Context, val callback: Callback) :
+class ChapterListAdapter(context: Context, private val scope: CoroutineScope, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
-    val replaceRules
+    private val replaceRules
         get() = callback.book?.let {
             ContentProcessor.get(it.name, it.origin).getReplaceRules()
         }
-    val useReplace get() = callback.book?.getUseReplaceRule() == true
+    private val useReplace get() = callback.book?.getUseReplaceRule() == true
     val cacheFileNames = hashSetOf<String>()
     val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
 
@@ -62,7 +64,11 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tvChapterName.text = item.getDisplayTitle(replaceRules, useReplace)
+                Coroutine.async(scope) {
+                    item.getDisplayTitle(replaceRules, useReplace)
+                }.onSuccess {
+                    tvChapterName.text = it
+                }
                 if (item.isVolume) {
                     //卷名，如第一卷 突出显示
                     tvChapterItem.setBackgroundColor(context.getCompatColor(R.color.btn_bg_press))

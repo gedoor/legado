@@ -16,7 +16,6 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 
-@Suppress("unused")
 @Parcelize
 @Entity(
     tableName = "chapters",
@@ -124,8 +123,10 @@ data class BookChapter(
         }
     }
 
+    @Suppress("unused")
     fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))
 
+    @Suppress("unused")
     fun getFontName(): String = String.format("%05d-%s.ttf", index, MD5Utils.md5Encode16(title))
 }
 
