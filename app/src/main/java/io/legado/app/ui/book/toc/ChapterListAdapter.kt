@@ -13,23 +13,26 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
 
-class ChapterListAdapter(context: Context, val callback: Callback) :
-    RecyclerAdapter<Pair<BookChapter, String>, ItemChapterListBinding>(context) {
+class ChapterListAdapter(context: Context, val callback: Callback, private val scope: CoroutineScope) :
+    RecyclerAdapter<Pair<BookChapter, Deferred<String>>, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
-    val diffCallBack = object : DiffUtil.ItemCallback<Pair<BookChapter, String>>() {
+    val diffCallBack = object : DiffUtil.ItemCallback<Pair<BookChapter, Deferred<String>>>() {
 
         override fun areItemsTheSame(
-            oldItem: Pair<BookChapter, String>,
-            newItem: Pair<BookChapter, String>
+            oldItem: Pair<BookChapter, Deferred<String>>,
+            newItem: Pair<BookChapter, Deferred<String>>
         ): Boolean {
             return oldItem.first.index == newItem.first.index
         }
 
         override fun areContentsTheSame(
-            oldItem: Pair<BookChapter, String>,
-            newItem: Pair<BookChapter, String>
+            oldItem: Pair<BookChapter, Deferred<String>>,
+            newItem: Pair<BookChapter, Deferred<String>>
         ): Boolean {
             return oldItem.first.bookUrl == newItem.first.bookUrl
                 && oldItem.first.url == newItem.first.url
@@ -49,7 +52,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemChapterListBinding,
-        item: Pair<BookChapter, String>,
+        item: Pair<BookChapter, Deferred<String>>,
         payloads: MutableList<Any>
     ) {
         binding.run {
@@ -61,7 +64,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tvChapterName.text = item.second
+                scope.launch {
+                    tvChapterName.text = item.second.await()
+                }
                 if (item.first.isVolume) {
                     //卷名，如第一卷 突出显示
                     tvChapterItem.setBackgroundColor(context.getCompatColor(R.color.btn_bg_press))

@@ -25,6 +25,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -34,7 +35,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     override val viewModel by activityViewModels<TocViewModel>()
     private val binding by viewBinding(FragmentChapterListBinding::bind)
     private val mLayoutManager by lazy { UpLinearLayoutManager(requireContext()) }
-    private val adapter by lazy { ChapterListAdapter(requireContext(), this) }
+    private val adapter by lazy { ChapterListAdapter(requireContext(), this, this) }
     private var durChapterIndex = 0
     private var tocFlowJob: Job? = null
 
@@ -118,7 +119,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                         }
                         val useReplace = viewModel.bookData.value?.getUseReplaceRule() == true
                         it.map { chapter ->
-                            Pair(chapter, chapter.getDisplayTitle(replaces, useReplace))
+                            Pair(chapter, async { chapter.getDisplayTitle(replaces, useReplace) })
                         }
                     }
                     adapter.setItems(data, adapter.diffCallBack)
