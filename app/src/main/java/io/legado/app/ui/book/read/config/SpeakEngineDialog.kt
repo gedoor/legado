@@ -17,6 +17,7 @@ import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -30,7 +31,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+class SpeakEngineDialog(val callBack: CallBack? = null) : BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -88,6 +89,8 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         tvOk.visible()
         tvOk.setOnClickListener {
             ReadBook.book?.ttsEngine = ttsEngine
+            callBack?.upSummary()
+            if (callBack == null) AppConfig.ttsEngine = ttsEngine
             dismissAllowingStateLoss()
         }
         tvCancel.visible()
@@ -137,6 +140,8 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         }
         context?.selector(R.string.system_tts, ttsItems) { _, item, _ ->
             ReadBook.book?.ttsEngine = GSON.toJson(item)
+            callBack?.upSummary()
+            if (callBack == null) AppConfig.ttsEngine = GSON.toJson(item)
             ttsEngine = null
             adapter.notifyItemRangeChanged(0, adapter.itemCount)
             dismissAllowingStateLoss()
@@ -212,4 +217,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     }
 
+    interface CallBack {
+        fun upSummary()
+    }
 }

@@ -192,7 +192,6 @@ data class Book(
         get() = config().ttsEngine
         set(value) {
             config().ttsEngine = value
-            AppConfig.ttsEngine = value
             save()
         }
 

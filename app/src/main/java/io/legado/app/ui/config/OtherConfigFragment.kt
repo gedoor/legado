@@ -13,13 +13,16 @@ import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.model.CheckSource
+import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
+import io.legado.app.ui.book.read.config.SpeakEngineDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
@@ -39,6 +42,17 @@ class OtherConfigFragment : BasePreferenceFragment(),
             AppConfig.defaultBookTreeUri = treeUri.toString()
         }
     }
+    private val speakEngineSummary: String
+        get() {
+            val ttsEngine = AppConfig.ttsEngine
+                ?: return getString(R.string.system_tts)
+            if (StringUtils.isNumeric(ttsEngine)) {
+                return appDb.httpTTSDao.getName(ttsEngine.toLong())
+                    ?: getString(R.string.system_tts)
+            }
+            return GSON.fromJsonObject<SelectItem<String>>(ttsEngine)?.title
+                ?: getString(R.string.system_tts)
+        }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
@@ -54,6 +68,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
             upPreferenceSummary(PreferKey.defaultBookTreeUri, it)
         }
         upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
+        upPreferenceSummary(PreferKey.ttsEngine, speakEngineSummary)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -102,6 +117,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
             PreferKey.cleanCache -> clearCache()
             PreferKey.uploadRule -> showDialogFragment<DirectLinkUploadConfig>()
             PreferKey.checkSource -> showDialogFragment<CheckSourceConfig>()
+            PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog())
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -138,6 +154,9 @@ class OtherConfigFragment : BasePreferenceFragment(),
             }
             PreferKey.checkSource -> listView.post {
                 upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
+            }
+            PreferKey.ttsEngine -> {
+                upPreferenceSummary(PreferKey.ttsEngine, speakEngineSummary)
             }
         }
     }
