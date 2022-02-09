@@ -36,7 +36,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     @Synchronized
     private fun initTts() {
         ttsInitFinish = false
-        val engine = GSON.fromJsonObject<SelectItem<String>>(AppConfig.ttsEngine)?.value
+        val engine = GSON.fromJsonObject<SelectItem<String>>(ReadBook.book?.ttsEngine)?.value
         textToSpeech = if (engine.isNullOrBlank()) {
             TextToSpeech(this, this)
         } else {

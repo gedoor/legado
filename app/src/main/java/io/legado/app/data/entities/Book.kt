@@ -188,6 +188,14 @@ data class Book(
         return config().delTag and tag == tag
     }
 
+    var ttsEngine: String?
+        get() = config().ttsEngine
+        set(value) {
+            config().ttsEngine = value
+            AppConfig.ttsEngine = value
+            save()
+        }
+
     fun getFolderName(): String {
         //防止书名过长,只取9位
         var folderName = name.replace(AppPattern.fileNameRegex, "")
@@ -277,6 +285,7 @@ data class Book(
     data class ReadConfig(
         var reverseToc: Boolean = false,
         var pageAnim: Int = -1,
+        var ttsEngine: String? = AppConfig.ttsEngine,
         var reSegment: Boolean = false,
         var limitContentLength: Boolean = true, //txt规则解析目录时超过规定的最大字数时均分txt
         var imageStyle: String? = null,

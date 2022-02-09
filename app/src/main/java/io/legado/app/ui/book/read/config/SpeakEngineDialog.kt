@@ -17,12 +17,12 @@ import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemHttpTtsBinding
-import io.legado.app.help.AppConfig
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -37,7 +37,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     private val viewModel: SpeakEngineViewModel by viewModels()
     private val ttsUrlKey = "ttsUrlKey"
     private val adapter by lazy { Adapter(requireContext()) }
-    private var ttsEngine: String? = AppConfig.ttsEngine
+    private var ttsEngine: String? = ReadBook.book?.ttsEngine
     private val importDocResult = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             viewModel.importLocal(uri)
@@ -87,7 +87,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         }
         tvOk.visible()
         tvOk.setOnClickListener {
-            AppConfig.ttsEngine = ttsEngine
+            ReadBook.book?.ttsEngine = ttsEngine
             dismissAllowingStateLoss()
         }
         tvCancel.visible()
@@ -136,7 +136,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             SelectItem(it.label, it.name)
         }
         context?.selector(R.string.system_tts, ttsItems) { _, item, _ ->
-            AppConfig.ttsEngine = GSON.toJson(item)
+            ReadBook.book?.ttsEngine = GSON.toJson(item)
             ttsEngine = null
             adapter.notifyItemRangeChanged(0, adapter.itemCount)
             dismissAllowingStateLoss()
