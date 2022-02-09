@@ -14,6 +14,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.FragmentChapterListBinding
 import io.legado.app.help.BookHelp
+import io.legado.app.help.ContentProcessor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
@@ -33,7 +34,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     override val viewModel by activityViewModels<TocViewModel>()
     private val binding by viewBinding(FragmentChapterListBinding::bind)
     private val mLayoutManager by lazy { UpLinearLayoutManager(requireContext()) }
-    private val adapter by lazy { ChapterListAdapter(requireContext(), this, this) }
+    private val adapter by lazy { ChapterListAdapter(requireContext(), this) }
     private var durChapterIndex = 0
     private var tocFlowJob: Job? = null
 
@@ -111,7 +112,16 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
             }.collect {
                 if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
-                    adapter.setItems(it, adapter.diffCallBack)
+                    val data = withContext(IO) {
+                        val replaces = viewModel.bookData.value?.let { book ->
+                            ContentProcessor.get(book.name, book.origin).getReplaceRules()
+                        }
+                        val useReplace = viewModel.bookData.value?.getUseReplaceRule() == true
+                        it.map { chapter ->
+                            Pair(chapter, chapter.getDisplayTitle(replaces, useReplace))
+                        }
+                    }
+                    adapter.setItems(data, adapter.diffCallBack)
                     if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
                         mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                     }
@@ -119,9 +129,6 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             }
         }
     }
-
-    override val book: Book?
-        get() = viewModel.bookData.value
 
     override val isLocalBook: Boolean
         get() = viewModel.bookData.value?.isLocalBook() == true
