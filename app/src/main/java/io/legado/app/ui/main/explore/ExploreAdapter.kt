@@ -23,7 +23,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import splitties.views.onLongClick
 
-class ExploreAdapter(context: Context, private val scope: CoroutineScope, val callBack: CallBack) :
+class ExploreAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<BookSource, ItemFindBookBinding>(context) {
 
     private val recycler = arrayListOf<View>()
@@ -56,7 +56,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                 if (scrollTo >= 0) {
                     callBack.scrollTo(scrollTo)
                 }
-                Coroutine.async(scope) {
+                Coroutine.async(callBack.scope) {
                     item.exploreKinds
                 }.onSuccess { kindList ->
                     upKindList(flexbox, item.bookSourceUrl, kindList)
@@ -167,12 +167,12 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
                     putExtra("type", "bookSource")
                     putExtra("key", source.bookSourceUrl)
                 }
-                R.id.menu_refresh -> Coroutine.async(scope) {
+                R.id.menu_refresh -> Coroutine.async(callBack.scope) {
                     ACache.get(context, "explore").remove(source.bookSourceUrl)
                 }.onSuccess {
                     callBack.refreshData()
                 }
-                R.id.menu_del -> Coroutine.async(scope) {
+                R.id.menu_del -> Coroutine.async(callBack.scope) {
                     appDb.bookSourceDao.delete(source)
                 }
             }
@@ -183,6 +183,7 @@ class ExploreAdapter(context: Context, private val scope: CoroutineScope, val ca
     }
 
     interface CallBack {
+        val scope: CoroutineScope
         fun refreshData()
         fun scrollTo(pos: Int)
         fun openExplore(sourceUrl: String, title: String, exploreUrl: String?)
