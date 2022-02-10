@@ -19,7 +19,7 @@ class CheckSourceConfig : BaseDialogFragment(R.layout.dialog_check_source_config
 
     private val binding by viewBinding(DialogCheckSourceConfigBinding::bind)
     //允许的最小超时时间，秒
-    private val minTimeout = 60L
+    private val minTimeout = 0L
 
     override fun onStart() {
         super.onStart()
@@ -80,7 +80,7 @@ class CheckSourceConfig : BaseDialogFragment(R.layout.dialog_check_source_config
                         toastOnUi("${getString(R.string.timeout)}${getString(R.string.cannot_empty)}")
                         return@onClick
                     }
-                    text.toLong() < minTimeout -> {
+                    text.toLong() <= minTimeout -> {
                         toastOnUi(
                             "${getString(R.string.timeout)}${getString(R.string.less_than)}${minTimeout}${
                                 getString(
