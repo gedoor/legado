@@ -113,6 +113,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             }.collect {
                 if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
                     adapter.setItems(it, adapter.diffCallBack)
+                    adapter.upDisplayTile()
                     if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
                         mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                     }
@@ -123,10 +124,14 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
 
     override fun clearDisplayTitle() {
         adapter.displayTileMap.clear()
+        adapter.upDisplayTile()
     }
 
     override val scope: CoroutineScope
         get() = this
+
+    override val book: Book?
+        get() = viewModel.bookData.value
 
     override val isLocalBook: Boolean
         get() = viewModel.bookData.value?.isLocalBook() == true

@@ -6,14 +6,19 @@ import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
+import io.legado.app.help.AppConfig
+import io.legado.app.help.ContentProcessor
 import io.legado.app.lib.theme.ThemeUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
@@ -44,6 +49,25 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     }
 
+    private val replaceRules
+        get() = callback.book?.let {
+            ContentProcessor.get(it.name, it.origin).getReplaceRules()
+        }
+    private val useReplace
+        get() = AppConfig.tocUiUseReplace && callback.book?.getUseReplaceRule() == true
+
+    fun upDisplayTile() {
+        callback.scope.launch(IO) {
+            val replaceRules = replaceRules
+            val useReplace = useReplace
+            getItems().forEach {
+                if (displayTileMap[it.index] == null) {
+                    displayTileMap[it.index] = it.getDisplayTitle(replaceRules, useReplace)
+                }
+            }
+        }
+    }
+
     override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding {
         return ItemChapterListBinding.inflate(inflater, parent, false)
     }
@@ -53,7 +77,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         if (displayTile != null) {
             return displayTile
         }
-        displayTile = chapter.getDisplayTitle()
+        displayTile = chapter.getDisplayTitle(replaceRules, useReplace)
         displayTileMap[chapter.index] = displayTile
         return displayTile
     }
@@ -116,6 +140,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     interface Callback {
         val scope: CoroutineScope
+        val book: Book?
         val isLocalBook: Boolean
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
