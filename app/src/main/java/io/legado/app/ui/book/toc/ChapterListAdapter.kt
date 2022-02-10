@@ -11,6 +11,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.ContentProcessor
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
@@ -58,16 +59,16 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
     private val useReplace
         get() = AppConfig.tocUiUseReplace && callback.book?.getUseReplaceRule() == true
-    private var upDisplayTileJob: Job? = null
+    private var upDisplayTileJob: Coroutine<*>? = null
 
     fun upDisplayTile() {
         upDisplayTileJob?.cancel()
-        upDisplayTileJob = callback.scope.launch(IO) {
+        upDisplayTileJob = Coroutine.async(callback.scope) {
             val replaceRules = replaceRules
             val useReplace = useReplace
             getItems().forEach {
                 if (!isActive) {
-                    return@launch
+                    return@async
                 }
                 if (displayTileMap[it.index] == null) {
                     displayTileMap[it.index] = it.getDisplayTitle(replaceRules, useReplace)
