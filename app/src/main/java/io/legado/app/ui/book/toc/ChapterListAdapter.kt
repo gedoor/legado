@@ -19,6 +19,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
+    val displayTileMap = hashMapOf<Int, String>()
     val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
 
         override fun areItemsTheSame(
@@ -47,6 +48,16 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         return ItemChapterListBinding.inflate(inflater, parent, false)
     }
 
+    private fun getDisplayTile(chapter: BookChapter): String {
+        var displayTile = displayTileMap[chapter.index]
+        if (displayTile != null) {
+            return displayTile
+        }
+        displayTile = chapter.getDisplayTitle()
+        displayTileMap[chapter.index] = displayTile
+        return displayTile
+    }
+
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemChapterListBinding,
@@ -62,7 +73,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tvChapterName.text = item.getDisplayTitle()
+                tvChapterName.text = getDisplayTile(item)
                 if (item.isVolume) {
                     //卷名，如第一卷 突出显示
                     tvChapterItem.setBackgroundColor(context.getCompatColor(R.color.btn_bg_press))
