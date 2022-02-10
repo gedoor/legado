@@ -106,6 +106,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             ReadBook.book?.setTtsEngine(ttsEngine)
             dismissAllowingStateLoss()
         }
+        tvOk.setText(R.string.general)
         tvOk.visible()
         tvOk.setOnClickListener {
             ReadBook.book?.setTtsEngine(null)
