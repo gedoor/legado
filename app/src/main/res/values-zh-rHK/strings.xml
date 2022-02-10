@@ -929,5 +929,6 @@
     <string name="record_debug_log">记录调试日志</string>
     <string name="sub_dir">子文件夹</string>
     <string name="general">全局</string>
+    <string name="use_replace">使用替换</string>
     <!-- string end -->
 </resources>
