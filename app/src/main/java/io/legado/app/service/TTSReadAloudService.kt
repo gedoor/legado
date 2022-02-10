@@ -12,6 +12,7 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.MediaHelp
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.model.NoStackTraceException
+import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.*
 import java.util.*
@@ -36,7 +37,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     @Synchronized
     private fun initTts() {
         ttsInitFinish = false
-        val engine = GSON.fromJsonObject<SelectItem<String>>(AppConfig.ttsEngine)?.value
+        val engine = GSON.fromJsonObject<SelectItem<String>>(ReadAloud.ttsEngine)?.value
         textToSpeech = if (engine.isNullOrBlank()) {
             TextToSpeech(this, this)
         } else {

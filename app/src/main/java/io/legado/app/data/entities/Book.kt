@@ -189,6 +189,14 @@ data class Book(
         config().imageStyle = imageStyle
     }
 
+    fun setTtsEngine(ttsEngine: String?) {
+        config().ttsEngine = ttsEngine
+    }
+
+    fun getTtsEngine(): String? {
+        return config().ttsEngine
+    }
+
     fun getDelTag(tag: Long): Boolean {
         return config().delTag and tag == tag
     }
@@ -287,6 +295,7 @@ data class Book(
         var imageStyle: String? = null,
         var useReplaceRule: Boolean? = null,// 正文使用净化替换规则
         var delTag: Long = 0L,//去除标签
+        var ttsEngine: String? = null,
     ) : Parcelable
 
     class Converters {
