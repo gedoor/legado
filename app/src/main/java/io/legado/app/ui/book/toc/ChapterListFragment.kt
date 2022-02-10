@@ -13,9 +13,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.FragmentChapterListBinding
-import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
-import io.legado.app.help.ContentProcessor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
@@ -23,9 +21,12 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
@@ -111,21 +112,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
             }.collect {
                 if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
-                    val data = withContext(IO) {
-                        val replaces = viewModel.bookData.value?.let { book ->
-                            ContentProcessor.get(book.name, book.origin).getReplaceRules()
-                        }
-                        val useReplace =
-                            AppConfig.tocUiUseReplace && viewModel.bookData.value?.getUseReplaceRule() == true
-                        it.map { chapter ->
-                            Pair(
-                                chapter,
-                                async(IO) {
-                                    chapter.getDisplayTitle(replaces, useReplace)
-                                })
-                        }
-                    }
-                    adapter.setItems(data, adapter.diffCallBack)
+                    adapter.setItems(it, adapter.diffCallBack)
                     if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
                         mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                     }
