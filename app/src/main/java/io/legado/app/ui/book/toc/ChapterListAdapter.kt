@@ -19,12 +19,13 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
-    val displayTileMap = hashMapOf<Int, String>()
+    val displayTileMap = ConcurrentHashMap<Int, String>()
     val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
 
         override fun areItemsTheSame(
