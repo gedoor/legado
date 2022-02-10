@@ -19,6 +19,7 @@ import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -204,8 +205,9 @@ class CheckSourceService : BaseService() {
                         "" else "\n\n${source.bookSourceComment}"
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
             }.onSuccess(searchCoroutine) {
+                source.removeGroup("失效")
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
-            }.onFinally(searchCoroutine) {
+            }.onFinally(IO) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
                 onNext(source.bookSourceUrl, source.bookSourceName)

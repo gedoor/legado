@@ -250,6 +250,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.webPort, value)
         }
 
+    var tocUiUseReplace: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.tocUiUseReplace)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.tocUiUseReplace, value)
+        }
+
     val autoChangeSource: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
 

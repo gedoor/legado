@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 
-class ChapterListAdapter(context: Context, val callback: Callback, private val scope: CoroutineScope) :
+class ChapterListAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<Pair<BookChapter, Deferred<String>>, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
@@ -64,7 +64,7 @@ class ChapterListAdapter(context: Context, val callback: Callback, private val s
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                scope.launch {
+                callback.scope.launch {
                     tvChapterName.text = item.second.await()
                 }
                 if (item.first.isVolume) {
@@ -108,6 +108,7 @@ class ChapterListAdapter(context: Context, val callback: Callback, private val s
         }
 
     interface Callback {
+        val scope: CoroutineScope
         val isLocalBook: Boolean
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int

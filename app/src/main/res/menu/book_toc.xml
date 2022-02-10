@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AlwaysShowAction">
 
     <item
@@ -13,6 +13,12 @@
     <item
         android:id="@+id/menu_reverse_toc"
         android:title="@string/reverse_toc"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_use_replace"
+        android:checkable="true"
+        android:title="@string/use_replace"
         app:showAsAction="never" />
 
     <item

@@ -13,6 +13,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.FragmentChapterListBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.lib.theme.bottomBackground
@@ -32,7 +33,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     override val viewModel by activityViewModels<TocViewModel>()
     private val binding by viewBinding(FragmentChapterListBinding::bind)
     private val mLayoutManager by lazy { UpLinearLayoutManager(requireContext()) }
-    private val adapter by lazy { ChapterListAdapter(requireContext(), this, this) }
+    private val adapter by lazy { ChapterListAdapter(requireContext(), this) }
     private var durChapterIndex = 0
     private var tocFlowJob: Job? = null
 
@@ -115,7 +116,8 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                         val replaces = viewModel.bookData.value?.let { book ->
                             ContentProcessor.get(book.name, book.origin).getReplaceRules()
                         }
-                        val useReplace = viewModel.bookData.value?.getUseReplaceRule() == true
+                        val useReplace =
+                            AppConfig.tocUiUseReplace && viewModel.bookData.value?.getUseReplaceRule() == true
                         it.map { chapter ->
                             Pair(
                                 chapter,
@@ -133,6 +135,9 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             }
         }
     }
+
+    override val scope: CoroutineScope
+        get() = this
 
     override val isLocalBook: Boolean
         get() = viewModel.bookData.value?.isLocalBook() == true

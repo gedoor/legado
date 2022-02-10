@@ -918,6 +918,8 @@
     <string name="select_book_folder">选择保存书籍的文件夹</string>
     <string name="user_agent">用户代理</string>
     <string name="bg_alpha">背景透明度</string>
+    <string name="limit_content_length">限制正文长度</string>
+    <string name="need_more_time_load_content">正文长度过长时，加载正文可能会花费更多时间</string>
 
     <!-- check source config string -->
     <string name="check_source_config">校验设置</string>
@@ -929,5 +931,7 @@
     <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
     <string name="record_debug_log">记录调试日志</string>
     <string name="sub_dir">子文件夹</string>
+    <string name="general">全局</string>
+    <string name="use_replace">使用替换</string>
     <!-- string end -->
 </resources>

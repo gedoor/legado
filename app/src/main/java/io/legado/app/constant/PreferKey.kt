@@ -93,6 +93,7 @@ object PreferKey {
     const val defaultBookTreeUri = "defaultBookTreeUri"
     const val checkSource = "checkSource"
     const val uploadRule = "uploadRule"
+    const val tocUiUseReplace = "tocUiUseReplace"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,15 +22,17 @@ import io.legado.app.help.AppConfig
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.model.ReadAloud
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-
+/**
+ * tts引擎管理
+ */
 class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
 
@@ -37,7 +40,8 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     private val viewModel: SpeakEngineViewModel by viewModels()
     private val ttsUrlKey = "ttsUrlKey"
     private val adapter by lazy { Adapter(requireContext()) }
-    private var ttsEngine: String? = AppConfig.ttsEngine
+    private var ttsEngine: String? = ReadAloud.ttsEngine
+    private val sysTtsViews = arrayListOf<RadioButton>()
     private val importDocResult = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             viewModel.importLocal(uri)
@@ -80,13 +84,32 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         recyclerView.setEdgeEffectColor(primaryColor)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
-        tvFooterLeft.setText(R.string.system_tts)
+        viewModel.sysEngines.forEach { engine ->
+            adapter.addHeaderView {
+                ItemHttpTtsBinding.inflate(layoutInflater, recyclerView, false).apply {
+                    sysTtsViews.add(cbName)
+                    ivEdit.gone()
+                    ivMenuDelete.gone()
+                    cbName.text = engine.label
+                    cbName.tag = engine.name
+                    cbName.isChecked =
+                        GSON.fromJsonObject<SelectItem<String>>(ttsEngine)?.value == cbName.tag
+                    cbName.setOnClickListener {
+                        upTts(GSON.toJson(SelectItem(engine.label, engine.name)))
+                    }
+                }
+            }
+        }
+        tvFooterLeft.setText(R.string.book)
         tvFooterLeft.visible()
         tvFooterLeft.setOnClickListener {
-            selectSysTts()
+            ReadBook.book?.setTtsEngine(ttsEngine)
+            dismissAllowingStateLoss()
         }
+        tvOk.setText(R.string.general)
         tvOk.visible()
         tvOk.setOnClickListener {
+            ReadBook.book?.setTtsEngine(null)
             AppConfig.ttsEngine = ttsEngine
             dismissAllowingStateLoss()
         }
@@ -131,18 +154,6 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         return true
     }
 
-    private fun selectSysTts() {
-        val ttsItems = viewModel.tts.engines.map {
-            SelectItem(it.label, it.name)
-        }
-        context?.selector(R.string.system_tts, ttsItems) { _, item, _ ->
-            AppConfig.ttsEngine = GSON.toJson(item)
-            ttsEngine = null
-            adapter.notifyItemRangeChanged(0, adapter.itemCount)
-            dismissAllowingStateLoss()
-        }
-    }
-
     private fun importAlert() {
         val aCache = ACache.get(requireContext(), cacheDir = false)
         val cacheUrls: MutableList<String> = aCache
@@ -171,6 +182,14 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         }
     }
 
+    private fun upTts(tts: String) {
+        ttsEngine = tts
+        sysTtsViews.forEach {
+            it.isChecked = GSON.fromJsonObject<SelectItem<String>>(ttsEngine)?.value == it.tag
+        }
+        adapter.notifyItemRangeChanged(adapter.getHeaderCount(), adapter.itemCount)
+    }
+
     inner class Adapter(context: Context) :
         RecyclerAdapter<HttpTTS, ItemHttpTtsBinding>(context) {
 
@@ -194,8 +213,7 @@ class SpeakEngineDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             binding.run {
                 cbName.setOnClickListener {
                     getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->
-                        ttsEngine = httpTTS.id.toString()
-                        notifyItemRangeChanged(getHeaderCount(), itemCount)
+                        upTts(httpTTS.id.toString())
                     }
                 }
                 ivEdit.setOnClickListener {

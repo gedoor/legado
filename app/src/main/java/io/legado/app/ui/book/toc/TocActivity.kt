@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityChapterListBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.about.AppLogDialog
@@ -74,6 +75,11 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_use_replace)?.isChecked = AppConfig.tocUiUseReplace
+        return super.onMenuOpened(featureId, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reverse_toc -> viewModel.reverseToc {
@@ -81,6 +87,10 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
                     putExtra("index", it.durChapterIndex)
                     putExtra("chapterPos", it.durChapterPos)
                 })
+            }
+            R.id.menu_use_replace -> {
+                AppConfig.tocUiUseReplace = !item.isChecked
+                viewModel.chapterCallBack?.upChapterList(null)
             }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
