@@ -27,6 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/check_source_timeout"
+            android:digits="1234567890"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     </io.legado.app.ui.widget.text.TextInputLayout>
