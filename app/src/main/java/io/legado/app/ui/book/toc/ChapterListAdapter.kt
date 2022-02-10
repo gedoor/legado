@@ -18,6 +18,8 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
@@ -56,12 +58,17 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
     private val useReplace
         get() = AppConfig.tocUiUseReplace && callback.book?.getUseReplaceRule() == true
+    private var upDisplayTileJob: Job? = null
 
     fun upDisplayTile() {
-        callback.scope.launch(IO) {
+        upDisplayTileJob?.cancel()
+        upDisplayTileJob = callback.scope.launch(IO) {
             val replaceRules = replaceRules
             val useReplace = useReplace
             getItems().forEach {
+                if (!isActive) {
+                    return@launch
+                }
                 if (displayTileMap[it.index] == null) {
                     displayTileMap[it.index] = it.getDisplayTitle(replaceRules, useReplace)
                 }
