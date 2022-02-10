@@ -88,7 +88,10 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
                     putExtra("chapterPos", it.durChapterPos)
                 })
             }
-            R.id.menu_use_replace -> AppConfig.tocUiUseReplace = !item.isChecked
+            R.id.menu_use_replace -> {
+                AppConfig.tocUiUseReplace = !item.isChecked
+                viewModel.chapterCallBack?.upChapterList(null)
+            }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
