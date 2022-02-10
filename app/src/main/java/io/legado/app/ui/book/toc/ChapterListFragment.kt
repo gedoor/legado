@@ -121,6 +121,10 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         }
     }
 
+    override fun clearDisplayTitle() {
+        adapter.displayTileMap.clear()
+    }
+
     override val scope: CoroutineScope
         get() = this
 

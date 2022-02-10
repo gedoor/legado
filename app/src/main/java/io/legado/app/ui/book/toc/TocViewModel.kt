@@ -48,6 +48,8 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
 
     interface ChapterListCallBack {
         fun upChapterList(searchKey: String?)
+
+        fun clearDisplayTitle()
     }
 
     interface BookmarkCallBack {
