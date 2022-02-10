@@ -402,13 +402,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun pageAnim(): Int {
-        book?.let {
-            return if (it.getPageAnim() < 0)
-                ReadBookConfig.pageAnim
-            else
-                it.getPageAnim()
-        }
-        return ReadBookConfig.pageAnim
+        return book?.getPageAnim() ?: ReadBookConfig.pageAnim
     }
 
     fun setCharset(charset: String) {

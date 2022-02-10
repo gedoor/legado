@@ -110,6 +110,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
             }.collect {
                 if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
+                    binding.rotateLoading.show()
                     val data = withContext(IO) {
                         val replaces = viewModel.bookData.value?.let { book ->
                             ContentProcessor.get(book.name, book.origin).getReplaceRules()
@@ -118,11 +119,12 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                         it.map { chapter ->
                             Pair(
                                 chapter,
-                                async(start = CoroutineStart.LAZY) {
+                                async(IO) {
                                     chapter.getDisplayTitle(replaces, useReplace)
                                 })
                         }
                     }
+                    binding.rotateLoading.hide()
                     adapter.setItems(data, adapter.diffCallBack)
                     if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
                         mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
