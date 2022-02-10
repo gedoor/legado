@@ -1,7 +1,6 @@
 package io.legado.app.model.analyzeRule
 
 import androidx.annotation.Keep
-import java.util.*
 import java.util.regex.Pattern
 
 @Keep

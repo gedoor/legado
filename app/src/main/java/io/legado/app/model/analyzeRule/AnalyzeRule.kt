@@ -15,10 +15,8 @@ import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
 import timber.log.Timber
 import java.net.URL
-import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
-import kotlin.collections.HashMap
 
 /**
  * 解析规则获取结果

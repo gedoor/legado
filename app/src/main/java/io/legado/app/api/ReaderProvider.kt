@@ -13,7 +13,6 @@ import com.google.gson.Gson
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.RssSourceController
-import java.util.*
 
 /**
  * Export book data to other app.

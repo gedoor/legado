@@ -1,8 +1,8 @@
 package io.legado.app.lib.theme
 
 import android.content.Context
-import androidx.annotation.AttrRes
 import android.graphics.drawable.Drawable
+import androidx.annotation.AttrRes
 
 /**
  * @author Aidan Follestad (afollestad)

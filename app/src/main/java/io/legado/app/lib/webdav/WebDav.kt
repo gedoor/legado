@@ -3,7 +3,7 @@ package io.legado.app.lib.webdav
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import okhttp3.*
+import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -15,7 +15,6 @@ import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
-import java.util.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class WebDav(urlStr: String) {

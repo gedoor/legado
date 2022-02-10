@@ -7,7 +7,6 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.seimicrawler.xpath.JXDocument
 import org.seimicrawler.xpath.JXNode
-import java.util.*
 
 @Keep
 class AnalyzeByXPath(doc: Any) {

@@ -11,7 +11,8 @@ import android.webkit.WebViewClient
 import io.legado.app.constant.AppConst
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.runOnUI
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.apache.commons.text.StringEscapeUtils
 import splitties.init.appCtx
 import java.lang.ref.WeakReference

@@ -7,7 +7,6 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.*
-import splitties.init.appCtx
 import timber.log.Timber
 import java.util.regex.Pattern
 

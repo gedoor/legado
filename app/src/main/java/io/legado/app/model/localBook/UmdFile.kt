@@ -11,7 +11,6 @@ import splitties.init.appCtx
 import timber.log.Timber
 import java.io.File
 import java.io.InputStream
-import java.util.*
 
 class UmdFile(var book: Book) {
     companion object {

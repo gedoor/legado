@@ -21,10 +21,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.net.URLEncoder
-import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
-import kotlin.collections.HashMap
 
 /**
  * Created by GKF on 2018/1/24.

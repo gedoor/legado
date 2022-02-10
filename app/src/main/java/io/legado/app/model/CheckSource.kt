@@ -4,9 +4,9 @@ import android.content.Context
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.CacheManager
 import io.legado.app.service.CheckSourceService
 import io.legado.app.utils.startService
-import io.legado.app.help.CacheManager
 import splitties.init.appCtx
 
 object CheckSource {

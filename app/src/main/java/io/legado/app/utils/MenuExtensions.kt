@@ -10,7 +10,6 @@ import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.constant.Theme
 import java.lang.reflect.Method
-import java.util.*
 
 @SuppressLint("RestrictedApi")
 fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let { menu ->

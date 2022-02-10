@@ -4,8 +4,11 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -214,7 +217,7 @@ abstract class BaseReadBookActivity :
         }
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "SetTextI18n")
     fun showDownloadDialog() {
         ReadBook.book?.let { book ->
             alert(titleResource = R.string.offline_cache) {

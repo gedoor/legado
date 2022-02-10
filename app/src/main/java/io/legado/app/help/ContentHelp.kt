@@ -1,6 +1,5 @@
 package io.legado.app.help
 
-import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.max
 import kotlin.math.min

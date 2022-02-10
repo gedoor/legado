@@ -11,12 +11,17 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.databinding.ViewSearchMenuBinding
-import io.legado.app.help.*
-import io.legado.app.lib.theme.*
+import io.legado.app.help.ReadBookConfig
+import io.legado.app.lib.theme.Selector
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.*
-import splitties.views.*
+import splitties.views.bottomPadding
+import splitties.views.leftPadding
+import splitties.views.padding
+import splitties.views.rightPadding
 
 /**
  * 搜索界面菜单

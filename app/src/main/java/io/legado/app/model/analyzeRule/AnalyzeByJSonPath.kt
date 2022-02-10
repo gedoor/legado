@@ -3,9 +3,7 @@ package io.legado.app.model.analyzeRule
 import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
-
 import timber.log.Timber
-import java.util.*
 
 @Suppress("RegExpRedundantEscape")
 @Keep

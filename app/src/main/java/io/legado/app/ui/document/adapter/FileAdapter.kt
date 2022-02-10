@@ -14,7 +14,6 @@ import io.legado.app.ui.document.utils.FilePickerIcon
 import io.legado.app.utils.ConvertUtils
 import io.legado.app.utils.FileUtils
 import java.io.File
-import java.util.*
 
 
 class FileAdapter(context: Context, val callBack: CallBack) :

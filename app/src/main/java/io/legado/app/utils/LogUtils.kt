@@ -7,7 +7,10 @@ import io.legado.app.help.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.*
+import java.util.logging.FileHandler
+import java.util.logging.Level
+import java.util.logging.LogRecord
+import java.util.logging.Logger
 
 @SuppressLint("SimpleDateFormat")
 @Suppress("unused")

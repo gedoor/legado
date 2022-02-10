@@ -5,7 +5,6 @@ import android.app.Application
 import android.os.Bundle
 import io.legado.app.base.BaseService
 import java.lang.ref.WeakReference
-import java.util.*
 
 /**
  * Activity管理器,管理项目中Activity的状态

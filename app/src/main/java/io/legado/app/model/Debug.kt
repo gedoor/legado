@@ -12,7 +12,6 @@ import io.legado.app.utils.msg
 import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 object Debug {
     var callback: Callback? = null

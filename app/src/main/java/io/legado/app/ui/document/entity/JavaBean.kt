@@ -3,7 +3,6 @@ package io.legado.app.ui.document.entity
 import java.io.Serializable
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import java.util.*
 
 /**
  * JavaBean类
