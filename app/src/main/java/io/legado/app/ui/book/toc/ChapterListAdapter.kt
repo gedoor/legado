@@ -6,39 +6,41 @@ import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
-import io.legado.app.help.ContentProcessor
 import io.legado.app.lib.theme.ThemeUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
 
-class ChapterListAdapter(context: Context, val callback: Callback) :
-    RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
+class ChapterListAdapter(context: Context, val callback: Callback, private val scope: CoroutineScope) :
+    RecyclerAdapter<Pair<BookChapter, Deferred<String>>, ItemChapterListBinding>(context) {
 
-    val replaceRules
-        get() = callback.book?.let {
-            ContentProcessor.get(it.name, it.origin).getReplaceRules()
-        }
-    val useReplace get() = callback.book?.getUseReplaceRule() == true
     val cacheFileNames = hashSetOf<String>()
-    val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
+    val diffCallBack = object : DiffUtil.ItemCallback<Pair<BookChapter, Deferred<String>>>() {
 
-        override fun areItemsTheSame(oldItem: BookChapter, newItem: BookChapter): Boolean {
-            return oldItem.index == newItem.index
+        override fun areItemsTheSame(
+            oldItem: Pair<BookChapter, Deferred<String>>,
+            newItem: Pair<BookChapter, Deferred<String>>
+        ): Boolean {
+            return oldItem.first.index == newItem.first.index
         }
 
-        override fun areContentsTheSame(oldItem: BookChapter, newItem: BookChapter): Boolean {
-            return oldItem.bookUrl == newItem.bookUrl
-                && oldItem.url == newItem.url
-                && oldItem.isVip == newItem.isVip
-                && oldItem.isPay == newItem.isPay
-                && oldItem.title == newItem.title
-                && oldItem.tag == newItem.tag
-                && oldItem.isVolume == newItem.isVolume
+        override fun areContentsTheSame(
+            oldItem: Pair<BookChapter, Deferred<String>>,
+            newItem: Pair<BookChapter, Deferred<String>>
+        ): Boolean {
+            return oldItem.first.bookUrl == newItem.first.bookUrl
+                && oldItem.first.url == newItem.first.url
+                && oldItem.first.isVip == newItem.first.isVip
+                && oldItem.first.isPay == newItem.first.isPay
+                && oldItem.first.title == newItem.first.title
+                && oldItem.first.tag == newItem.first.tag
+                && oldItem.first.isVolume == newItem.first.isVolume
         }
 
     }
@@ -50,20 +52,22 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemChapterListBinding,
-        item: BookChapter,
+        item: Pair<BookChapter, Deferred<String>>,
         payloads: MutableList<Any>
     ) {
         binding.run {
-            val isDur = callback.durChapterIndex() == item.index
-            val cached = callback.isLocalBook || cacheFileNames.contains(item.getFileName())
+            val isDur = callback.durChapterIndex() == item.first.index
+            val cached = callback.isLocalBook || cacheFileNames.contains(item.first.getFileName())
             if (payloads.isEmpty()) {
                 if (isDur) {
                     tvChapterName.setTextColor(context.accentColor)
                 } else {
                     tvChapterName.setTextColor(context.getCompatColor(R.color.primaryText))
                 }
-                tvChapterName.text = item.getDisplayTitle(replaceRules, useReplace)
-                if (item.isVolume) {
+                scope.launch {
+                    tvChapterName.text = item.second.await()
+                }
+                if (item.first.isVolume) {
                     //卷名，如第一卷 突出显示
                     tvChapterItem.setBackgroundColor(context.getCompatColor(R.color.btn_bg_press))
                 } else {
@@ -71,9 +75,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     tvChapterItem.background =
                         ThemeUtils.resolveDrawable(context, android.R.attr.selectableItemBackground)
                 }
-                if (!item.tag.isNullOrEmpty() && !item.isVolume) {
+                if (!item.first.tag.isNullOrEmpty() && !item.first.isVolume) {
                     //卷名不显示tag(更新时间规则)
-                    tvTag.text = item.tag
+                    tvTag.text = item.first.tag
                     tvTag.visible()
                 } else {
                     tvTag.gone()
@@ -88,7 +92,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemChapterListBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                callback.openChapter(it)
+                callback.openChapter(it.first)
             }
         }
     }
@@ -104,7 +108,6 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         }
 
     interface Callback {
-        val book: Book?
         val isLocalBook: Boolean
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int

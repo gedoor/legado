@@ -6,6 +6,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ReadBookConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
@@ -149,7 +150,7 @@ data class Book(
     }
 
     fun getUseReplaceRule(): Boolean {
-        return config().useReplaceRule
+        return config().useReplaceRule ?: AppConfig.replaceEnableDefault
     }
 
     fun getReSegment(): Boolean {
@@ -169,10 +170,14 @@ data class Book(
     }
 
     fun getPageAnim(): Int {
-        return config().pageAnim
+        var pageAnim = config().pageAnim ?: ReadBookConfig.pageAnim
+        if (pageAnim < 0) {
+            pageAnim = ReadBookConfig.pageAnim
+        }
+        return pageAnim
     }
 
-    fun setPageAnim(pageAnim: Int) {
+    fun setPageAnim(pageAnim: Int?) {
         config().pageAnim = pageAnim
     }
 
@@ -182,6 +187,14 @@ data class Book(
 
     fun setImageStyle(imageStyle: String?) {
         config().imageStyle = imageStyle
+    }
+
+    fun setTtsEngine(ttsEngine: String?) {
+        config().ttsEngine = ttsEngine
+    }
+
+    fun getTtsEngine(): String? {
+        return config().ttsEngine
     }
 
     fun getDelTag(tag: Long): Boolean {
@@ -276,12 +289,13 @@ data class Book(
     @Parcelize
     data class ReadConfig(
         var reverseToc: Boolean = false,
-        var pageAnim: Int = -1,
+        var pageAnim: Int? = null,
         var reSegment: Boolean = false,
         var limitContentLength: Boolean = true, //txt规则解析目录时超过规定的最大字数时均分txt
         var imageStyle: String? = null,
-        var useReplaceRule: Boolean = AppConfig.replaceEnableDefault,// 正文使用净化替换规则
+        var useReplaceRule: Boolean? = null,// 正文使用净化替换规则
         var delTag: Long = 0L,//去除标签
+        var ttsEngine: String? = null,
     ) : Parcelable
 
     class Converters {
