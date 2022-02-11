@@ -253,6 +253,7 @@ public final class OkhttpCacheDataSource implements DataSource {
             return this;
         }
 
+        @NonNull
         @Override
         public OkhttpCacheDataSource createDataSource() {
             return createDataSourceInternal(
@@ -683,7 +684,6 @@ public final class OkhttpCacheDataSource implements DataSource {
     }
 
 
-    @SuppressWarnings("NullableProblems")
     @Nullable
     @Override
     public Uri getUri() {
@@ -693,7 +693,6 @@ public final class OkhttpCacheDataSource implements DataSource {
     @NonNull
     @Override
     public Map<String, List<String>> getResponseHeaders() {
-        // TODO: Implement.
         return isReadingFromUpstream()
                 ? upstreamDataSource.getResponseHeaders()
                 : Collections.emptyMap();
