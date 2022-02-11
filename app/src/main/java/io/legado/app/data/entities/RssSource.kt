@@ -26,13 +26,13 @@ data class RssSource(
     var loginCheckJs: String? = null,               //登录检测js
     var sortUrl: String? = null,
     var singleUrl: Boolean = false,
-    //列表规则
+    /*列表规则*/
     var articleStyle: Int = 0,                      //列表样式,0,1,2
     var ruleArticles: String? = null,
     var ruleNextPage: String? = null,
     var ruleTitle: String? = null,
     var rulePubDate: String? = null,
-    //webView规则
+    /*webView规则*/
     var ruleDescription: String? = null,
     var ruleImage: String? = null,
     var ruleLink: String? = null,
@@ -40,6 +40,7 @@ data class RssSource(
     var style: String? = null,
     var enableJs: Boolean = true,
     var loadWithBaseUrl: Boolean = true,
+    /*其它规则*/
     var customOrder: Int = 0
 ) : Parcelable, BaseSource {
 
@@ -66,18 +67,18 @@ data class RssSource(
 
     fun equal(source: RssSource): Boolean {
         return equal(sourceUrl, source.sourceUrl)
-                && equal(sourceIcon, source.sourceIcon)
-                && enabled == source.enabled
-                && equal(sourceGroup, source.sourceGroup)
-                && equal(ruleArticles, source.ruleArticles)
-                && equal(ruleNextPage, source.ruleNextPage)
-                && equal(ruleTitle, source.ruleTitle)
-                && equal(rulePubDate, source.rulePubDate)
-                && equal(ruleDescription, source.ruleDescription)
-                && equal(ruleLink, source.ruleLink)
-                && equal(ruleContent, source.ruleContent)
-                && enableJs == source.enableJs
-                && loadWithBaseUrl == source.loadWithBaseUrl
+            && equal(sourceIcon, source.sourceIcon)
+            && enabled == source.enabled
+            && equal(sourceGroup, source.sourceGroup)
+            && equal(ruleArticles, source.ruleArticles)
+            && equal(ruleNextPage, source.ruleNextPage)
+            && equal(ruleTitle, source.ruleTitle)
+            && equal(rulePubDate, source.rulePubDate)
+            && equal(ruleDescription, source.ruleDescription)
+            && equal(ruleLink, source.ruleLink)
+            && equal(ruleContent, source.ruleContent)
+            && enableJs == source.enableJs
+            && loadWithBaseUrl == source.loadWithBaseUrl
     }
 
     private fun equal(a: String?, b: String?): Boolean {
