@@ -42,11 +42,18 @@ interface ReplaceRuleDao {
     fun findByIds(vararg ids: Long): List<ReplaceRule>
 
     @Query(
-        """SELECT * FROM replace_rules WHERE isEnabled = 1 
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 and scopeContent = 1
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
         order by sortOrder"""
     )
-    fun findEnabledByScope(name: String, origin: String): List<ReplaceRule>
+    fun findEnabledByContentScope(name: String, origin: String): List<ReplaceRule>
+
+    @Query(
+        """SELECT * FROM replace_rules WHERE isEnabled = 1 and scopeTitle = 1
+        AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
+        order by sortOrder"""
+    )
+    fun findEnabledByTitleScope(name: String, origin: String): List<ReplaceRule>
 
     @Query("select * from replace_rules where `group` like '%' || :group || '%'")
     fun getByGroup(group: String): List<ReplaceRule>

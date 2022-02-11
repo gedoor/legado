@@ -352,7 +352,7 @@ object ReadBook : CoroutineScope by MainScope() {
             if (chapter.index in durChapterIndex - 1..durChapterIndex + 1) {
                 val contentProcessor = ContentProcessor.get(book.name, book.origin)
                 val displayTitle = chapter.getDisplayTitle(
-                    contentProcessor.getReplaceRules(),
+                    contentProcessor.getContentReplaceRules(),
                     book.getUseReplaceRule()
                 )
                 val contents = contentProcessor.getContent(book, chapter, content)

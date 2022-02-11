@@ -52,7 +52,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     private val replaceRules
         get() = callback.book?.let {
-            ContentProcessor.get(it.name, it.origin).getReplaceRules()
+            ContentProcessor.get(it.name, it.origin).getTitleReplaceRules()
         }
     private val useReplace
         get() = AppConfig.tocUiUseReplace && callback.book?.getUseReplaceRule() == true
