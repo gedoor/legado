@@ -92,8 +92,10 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     } else {
                         appDb.bookDao.lastReadBook?.let {
                             ReadBook.resetData(it)
-                            ReadBook.curTextChapter ?: ReadBook.loadContent(false)
-                            ReadBook.readAloud()
+                            ReadBook.clearTextChapter()
+                            ReadBook.loadContent(false) {
+                                ReadBook.readAloud()
+                            }
                         }
                     }
                 }
