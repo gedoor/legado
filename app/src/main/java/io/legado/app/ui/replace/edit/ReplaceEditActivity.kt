@@ -110,7 +110,7 @@ class ReplaceEditActivity :
         replaceRule.isRegex = cbUseRegex.isChecked
         replaceRule.replacement = etReplaceTo.text.toString()
         replaceRule.scopeTitle = cbScopeTitle.isChecked
-        replaceRule.scopeContent = cbScopeTitle.isChecked
+        replaceRule.scopeContent = cbScopeContent.isChecked
         replaceRule.scope = etScope.text.toString()
         return replaceRule
     }
