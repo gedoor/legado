@@ -74,7 +74,7 @@ data class BookChapter(
 
     @Suppress("unused")
     fun getDisplayTitle(
-        replaceRules: List<ReplaceRule>? = null,
+        replaceRules: Array<ReplaceRule>? = null,
         useReplace: Boolean = true,
         chineseConvert: Boolean = true,
     ): String {

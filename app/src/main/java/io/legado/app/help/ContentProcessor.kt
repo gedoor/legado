@@ -57,13 +57,13 @@ class ContentProcessor private constructor(
     }
 
     @Synchronized
-    fun getTitleReplaceRules(): List<ReplaceRule> {
-        return titleReplaceRules
+    fun getTitleReplaceRules(): Array<ReplaceRule> {
+        return titleReplaceRules.toTypedArray()
     }
 
     @Synchronized
-    fun getContentReplaceRules(): List<ReplaceRule> {
-        return contentReplaceRules
+    fun getContentReplaceRules(): Array<ReplaceRule> {
+        return contentReplaceRules.toTypedArray()
     }
 
     fun getContent(
