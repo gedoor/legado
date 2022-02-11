@@ -60,7 +60,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         private val speakEngineSummary: String
             get() {
-                val ttsEngine = AppConfig.ttsEngine
+                val ttsEngine = ReadAloud.ttsEngine
                     ?: return getString(R.string.system_tts)
                 if (StringUtils.isNumeric(ttsEngine)) {
                     return appDb.httpTTSDao.getName(ttsEngine.toLong())
