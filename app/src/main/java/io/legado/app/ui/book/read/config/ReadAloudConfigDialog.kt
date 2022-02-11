@@ -56,11 +56,12 @@ class ReadAloudConfigDialog : DialogFragment() {
     }
 
     class ReadAloudPreferenceFragment : BasePreferenceFragment(),
+        SpeakEngineDialog.CallBack,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         private val speakEngineSummary: String
             get() {
-                val ttsEngine = AppConfig.ttsEngine
+                val ttsEngine = ReadAloud.ttsEngine
                     ?: return getString(R.string.system_tts)
                 if (StringUtils.isNumeric(ttsEngine)) {
                     return appDb.httpTTSDao.getName(ttsEngine.toLong())
@@ -72,10 +73,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
-            upPreferenceSummary(
-                findPreference(PreferKey.ttsEngine),
-                speakEngineSummary
-            )
+            upSpeakEngineSummary()
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,7 +93,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
             when (preference.key) {
-                PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog())
+                PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog(this))
             }
             return super.onPreferenceTreeClick(preference)
         }
@@ -110,10 +108,7 @@ class ReadAloudConfigDialog : DialogFragment() {
                         postEvent(EventBus.MEDIA_BUTTON, false)
                     }
                 }
-                PreferKey.ttsEngine -> {
-                    upPreferenceSummary(findPreference(key), speakEngineSummary)
-                    ReadAloud.upReadAloudClass()
-                }
+                PreferKey.ttsEngine -> upSpeakEngineSummary()
             }
         }
 
@@ -129,5 +124,11 @@ class ReadAloudConfigDialog : DialogFragment() {
             }
         }
 
+        override fun upSpeakEngineSummary() {
+            upPreferenceSummary(
+                findPreference(PreferKey.ttsEngine),
+                speakEngineSummary
+            )
+        }
     }
 }
