@@ -1,6 +1,7 @@
 package io.legado.app.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -16,13 +17,14 @@ val appDb by lazy {
 }
 
 @Database(
-    version = 43,
+    version = 44,
     exportSchema = true,
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
-        RuleSub::class]
+        RuleSub::class],
+    autoMigrations = [AutoMigration(from = 43, to = 44)]
 )
 abstract class AppDatabase : RoomDatabase() {
 

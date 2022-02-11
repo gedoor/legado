@@ -18,14 +18,33 @@ import java.util.regex.PatternSyntaxException
 data class ReplaceRule(
     @PrimaryKey(autoGenerate = true)
     var id: Long = System.currentTimeMillis(),
+    //名称
+    @ColumnInfo(defaultValue = "")
     var name: String = "",
+    //分组
     var group: String? = null,
+    //替换内容
+    @ColumnInfo(defaultValue = "")
     var pattern: String = "",
+    //替换为
+    @ColumnInfo(defaultValue = "")
     var replacement: String = "",
+    //作用范围
     var scope: String? = null,
+    //作用于标题
+    @ColumnInfo(defaultValue = "0")
+    var scopeTitle: Boolean = false,
+    //作用于正文
+    @ColumnInfo(defaultValue = "1")
+    var scopeContent: Boolean = true,
+    //是否启用
+    @ColumnInfo(defaultValue = "1")
     var isEnabled: Boolean = true,
+    //是否正则
+    @ColumnInfo(defaultValue = "1")
     var isRegex: Boolean = true,
-    @ColumnInfo(name = "sortOrder")
+    //排序
+    @ColumnInfo(name = "sortOrder", defaultValue = "0")
     var order: Int = 0
 ) : Parcelable {
 
