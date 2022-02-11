@@ -9,6 +9,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.regex.Pattern
 
 class ContentProcessor private constructor(
@@ -37,14 +38,13 @@ class ContentProcessor private constructor(
 
     }
 
-    private val titleReplaceRules = arrayListOf<ReplaceRule>()
-    private val contentReplaceRules = arrayListOf<ReplaceRule>()
+    private val titleReplaceRules = CopyOnWriteArrayList<ReplaceRule>()
+    private val contentReplaceRules = CopyOnWriteArrayList<ReplaceRule>()
 
     init {
         upReplaceRules()
     }
 
-    @Synchronized
     fun upReplaceRules() {
         titleReplaceRules.run {
             clear()
@@ -56,14 +56,12 @@ class ContentProcessor private constructor(
         }
     }
 
-    @Synchronized
-    fun getTitleReplaceRules(): Array<ReplaceRule> {
-        return titleReplaceRules.toTypedArray()
+    fun getTitleReplaceRules(): List<ReplaceRule> {
+        return titleReplaceRules
     }
 
-    @Synchronized
-    fun getContentReplaceRules(): Array<ReplaceRule> {
-        return contentReplaceRules.toTypedArray()
+    fun getContentReplaceRules(): List<ReplaceRule> {
+        return contentReplaceRules
     }
 
     fun getContent(
