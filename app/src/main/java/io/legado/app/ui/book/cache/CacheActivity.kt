@@ -158,7 +158,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.collect { list ->
                 val booksDownload = list.filter {
-                    it.isOnLineTxt()
+                    it.type == 0
                 }
                 val books = when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> booksDownload.sortedByDescending { it.latestChapterTime }
