@@ -933,5 +933,7 @@
     <string name="sub_dir">子文件夹</string>
     <string name="general">全局</string>
     <string name="use_replace">使用替换</string>
+    <string name="scope_title">作用于标题</string>
+    <string name="scope_content">作用于正文</string>
     <!-- string end -->
 </resources>
