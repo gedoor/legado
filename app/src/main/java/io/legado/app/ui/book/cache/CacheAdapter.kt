@@ -33,17 +33,29 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
             if (payloads.isEmpty()) {
                 tvName.text = item.name
                 tvAuthor.text = context.getString(R.string.author_show, item.getRealAuthor())
-                val cs = cacheChapters[item.bookUrl]
-                if (cs == null) {
-                    tvDownload.setText(R.string.loading)
+                if (item.isLocalBook()) {
+                    tvDownload.setText(R.string.local_book)
                 } else {
-                    tvDownload.text =
-                        context.getString(R.string.download_count, cs.size, item.totalChapterNum)
+                    val cs = cacheChapters[item.bookUrl]
+                    if (cs == null) {
+                        tvDownload.setText(R.string.loading)
+                    } else {
+                        tvDownload.text =
+                            context.getString(
+                                R.string.download_count,
+                                cs.size,
+                                item.totalChapterNum
+                            )
+                    }
                 }
             } else {
-                val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
-                tvDownload.text =
-                    context.getString(R.string.download_count, cacheSize, item.totalChapterNum)
+                if (item.isLocalBook()) {
+                    tvDownload.setText(R.string.local_book)
+                } else {
+                    val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
+                    tvDownload.text =
+                        context.getString(R.string.download_count, cacheSize, item.totalChapterNum)
+                }
             }
             upDownloadIv(ivDownload, item)
             upExportInfo(tvMsg, progressExport, item)
@@ -72,14 +84,19 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
     }
 
     private fun upDownloadIv(iv: ImageView, book: Book) {
-        CacheBook.cacheBookMap[book.bookUrl]?.let {
-            if (it.isRun()) {
-                iv.setImageResource(R.drawable.ic_stop_black_24dp)
-            } else {
+        if (book.isLocalBook()) {
+            iv.gone()
+        } else {
+            iv.visible()
+            CacheBook.cacheBookMap[book.bookUrl]?.let {
+                if (it.isRun()) {
+                    iv.setImageResource(R.drawable.ic_stop_black_24dp)
+                } else {
+                    iv.setImageResource(R.drawable.ic_play_24dp)
+                }
+            } ?: let {
                 iv.setImageResource(R.drawable.ic_play_24dp)
             }
-        } ?: let {
-            iv.setImageResource(R.drawable.ic_play_24dp)
         }
     }
 
