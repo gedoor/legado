@@ -37,6 +37,7 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
         id = httpTTS.id
         execute {
             appDb.httpTTSDao.insert(httpTTS)
+            ReadAloud.stop(context)
         }.onSuccess {
             success?.invoke()
         }

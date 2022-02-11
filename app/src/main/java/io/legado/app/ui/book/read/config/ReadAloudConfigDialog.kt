@@ -14,7 +14,6 @@ import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -73,7 +72,10 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
-            upSpeakEngineSummary()
+            upPreferenceSummary(
+                findPreference(PreferKey.ttsEngine),
+                speakEngineSummary
+            )
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -129,6 +131,7 @@ class ReadAloudConfigDialog : DialogFragment() {
                 findPreference(PreferKey.ttsEngine),
                 speakEngineSummary
             )
+            ReadAloud.stop(requireContext())
         }
     }
 }
