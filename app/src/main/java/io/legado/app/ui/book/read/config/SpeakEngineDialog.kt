@@ -105,6 +105,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
         tvFooterLeft.setOnClickListener {
             ReadBook.book?.setTtsEngine(ttsEngine)
             callBack.upSpeakEngineSummary()
+            ReadAloud.upReadAloudClass()
             dismissAllowingStateLoss()
         }
         tvOk.setText(R.string.general)
@@ -112,6 +113,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
         tvOk.setOnClickListener {
             ReadBook.book?.setTtsEngine(null)
             AppConfig.ttsEngine = ttsEngine
+            ReadAloud.upReadAloudClass()
             dismissAllowingStateLoss()
         }
         tvCancel.visible()

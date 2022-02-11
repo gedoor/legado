@@ -215,7 +215,6 @@ object ReadBook : CoroutineScope by MainScope() {
      */
     fun readAloud(play: Boolean = true) {
         book?.let {
-            ReadAloud.upReadAloudClass()
             ReadAloud.play(appCtx, play)
         }
     }

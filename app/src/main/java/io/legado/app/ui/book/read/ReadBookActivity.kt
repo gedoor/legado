@@ -863,7 +863,10 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onClickReadAloud() {
         autoPageStop()
         when {
-            !BaseReadAloudService.isRun -> ReadBook.readAloud()
+            !BaseReadAloudService.isRun -> {
+                ReadAloud.upReadAloudClass()
+                ReadBook.readAloud()
+            }
             BaseReadAloudService.pause -> ReadAloud.resume(this)
             else -> ReadAloud.pause(this)
         }
