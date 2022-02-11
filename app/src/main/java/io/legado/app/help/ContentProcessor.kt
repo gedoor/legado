@@ -46,15 +46,14 @@ class ContentProcessor private constructor(
 
     @Synchronized
     fun upReplaceRules() {
-        titleReplaceRules.clear()
-        contentReplaceRules.clear()
-        titleReplaceRules.addAll(appDb.replaceRuleDao.findEnabledByTitleScope(bookName, bookOrigin))
-        contentReplaceRules.addAll(
-            appDb.replaceRuleDao.findEnabledByContentScope(
-                bookName,
-                bookOrigin
-            )
-        )
+        titleReplaceRules.run {
+            clear()
+            addAll(appDb.replaceRuleDao.findEnabledByTitleScope(bookName, bookOrigin))
+        }
+        contentReplaceRules.run {
+            clear()
+            addAll(appDb.replaceRuleDao.findEnabledByContentScope(bookName, bookOrigin))
+        }
     }
 
     @Synchronized
