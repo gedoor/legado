@@ -112,7 +112,6 @@ class ReadAloudConfigDialog : DialogFragment() {
                 }
                 PreferKey.ttsEngine -> {
                     upPreferenceSummary(findPreference(key), speakEngineSummary)
-                    ReadAloud.upReadAloudClass()
                 }
             }
         }
