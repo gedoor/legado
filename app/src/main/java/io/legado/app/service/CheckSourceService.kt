@@ -164,7 +164,7 @@ class CheckSourceService : BaseService() {
                         }
                     } else {
                         source.removeGroup("发现失效")
-                        books = exploreBooks
+                        if (books.isEmpty()) books = exploreBooks
                     }
                 }
             }
