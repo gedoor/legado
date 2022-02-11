@@ -56,6 +56,7 @@ class ReadAloudConfigDialog : DialogFragment() {
     }
 
     class ReadAloudPreferenceFragment : BasePreferenceFragment(),
+        SpeakEngineDialog.CallBack,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         private val speakEngineSummary: String
@@ -72,10 +73,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
-            upPreferenceSummary(
-                findPreference(PreferKey.ttsEngine),
-                speakEngineSummary
-            )
+            upSpeakEngineSummary()
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,7 +93,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
             when (preference.key) {
-                PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog())
+                PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog(this))
             }
             return super.onPreferenceTreeClick(preference)
         }
@@ -109,9 +107,6 @@ class ReadAloudConfigDialog : DialogFragment() {
                     if (BaseReadAloudService.isRun) {
                         postEvent(EventBus.MEDIA_BUTTON, false)
                     }
-                }
-                PreferKey.ttsEngine -> {
-                    upPreferenceSummary(findPreference(key), speakEngineSummary)
                 }
             }
         }
@@ -128,5 +123,11 @@ class ReadAloudConfigDialog : DialogFragment() {
             }
         }
 
+        override fun upSpeakEngineSummary() {
+            upPreferenceSummary(
+                findPreference(PreferKey.ttsEngine),
+                speakEngineSummary
+            )
+        }
     }
 }
