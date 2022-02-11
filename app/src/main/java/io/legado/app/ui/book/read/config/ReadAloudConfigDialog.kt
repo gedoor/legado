@@ -108,7 +108,6 @@ class ReadAloudConfigDialog : DialogFragment() {
                         postEvent(EventBus.MEDIA_BUTTON, false)
                     }
                 }
-                PreferKey.ttsEngine -> upSpeakEngineSummary()
             }
         }
 
