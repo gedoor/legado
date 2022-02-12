@@ -8,6 +8,7 @@ import io.legado.app.lib.theme.ThemeStore
 /**
  * @author Aidan Follestad (afollestad)
  */
+@Suppress("unused")
 class PrimaryTextView(context: Context, attrs: AttributeSet) :
     AppCompatTextView(context, attrs) {
 
