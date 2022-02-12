@@ -37,6 +37,7 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
         id = httpTTS.id
         execute {
             appDb.httpTTSDao.insert(httpTTS)
+            if (ReadAloud.ttsEngine == httpTTS.id.toString()) ReadAloud.upReadAloudClass()
         }.onSuccess {
             success?.invoke()
         }

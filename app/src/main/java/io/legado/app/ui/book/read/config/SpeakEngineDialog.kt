@@ -26,6 +26,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
@@ -217,7 +218,14 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
             binding.run {
                 cbName.setOnClickListener {
                     getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->
-                        upTts(httpTTS.id.toString())
+                        val id = httpTTS.id.toString()
+                        upTts(id)
+                        if (!httpTTS.loginUrl.isNullOrBlank()) {
+                            startActivity<SourceLoginActivity> {
+                                putExtra("type", "httpTts")
+                                putExtra("key", id)
+                            }
+                        }
                     }
                 }
                 ivEdit.setOnClickListener {
