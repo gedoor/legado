@@ -8,23 +8,27 @@ import android.graphics.Path
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import androidx.annotation.ColorInt
+import androidx.annotation.IntDef
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
 
-@Suppress("unused", "PrivatePropertyName")
+@Suppress("unused")
 class BevelLabelView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    private val MODE_LEFT_TOP = 0
-    private val MODE_RIGHT_TOP = 1
-    private val MODE_LEFT_BOTTOM = 2
-    private val MODE_RIGHT_BOTTOM = 3
-    private val MODE_LEFT_TOP_FILL = 4
-    private val MODE_RIGHT_TOP_FILL = 5
-    private val MODE_LEFT_BOTTOM_FILL = 6
-    private val MODE_RIGHT_BOTTOM_FILL = 7
+    companion object {
+        const val MODE_LEFT_TOP = 0
+        const val MODE_RIGHT_TOP = 1
+        const val MODE_LEFT_BOTTOM = 2
+        const val MODE_RIGHT_BOTTOM = 3
+        const val MODE_LEFT_TOP_FILL = 4
+        const val MODE_RIGHT_TOP_FILL = 5
+        const val MODE_LEFT_BOTTOM_FILL = 6
+        const val MODE_RIGHT_BOTTOM_FILL = 7
+    }
 
     private var mBgColor: Int
     private var mText: String
@@ -74,6 +78,20 @@ class BevelLabelView @JvmOverloads constructor(
         drawBackgroundText(canvas)
     }
 
+    fun setMode(@BevelLabelMode mode: Int) {
+        mMode = mode
+        invalidate()
+    }
+
+    fun setTextColor(@ColorInt color: Int) {
+        mTextColor = color
+        invalidate()
+    }
+
+    fun setBgColor(@ColorInt color: Int) {
+        mBgColor = color
+        invalidate()
+    }
 
     private fun drawBackgroundText(canvas: Canvas) {
         check(mWidth == mHeight) {
@@ -319,5 +337,13 @@ class BevelLabelView @JvmOverloads constructor(
         )
             .toInt()
     }
+
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(
+        MODE_LEFT_BOTTOM, MODE_LEFT_BOTTOM_FILL, MODE_LEFT_TOP, MODE_LEFT_TOP_FILL,
+        MODE_RIGHT_BOTTOM, MODE_RIGHT_BOTTOM_FILL, MODE_RIGHT_TOP, MODE_RIGHT_TOP_FILL
+    )
+    annotation class BevelLabelMode
 
 }
