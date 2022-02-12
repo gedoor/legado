@@ -9,6 +9,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
@@ -34,7 +35,6 @@ class CheckSourceService : BaseService() {
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
     private var notificationMsg = ""
-    private var books = ArrayList<SearchBook>()
 
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
@@ -112,7 +112,10 @@ class CheckSourceService : BaseService() {
         }
     }
 
-    fun check(source: BookSource) {
+    /**
+     *校验书源
+     */
+    private fun check(source: BookSource) {
         execute(context = searchCoroutine) {
             Debug.startChecking(source)
             var searchWord = CheckSource.keyword
@@ -126,7 +129,7 @@ class CheckSourceService : BaseService() {
                 ?.filterNot {
                     it.startsWith("Error: ")
                 }?.joinToString("\n")
-            //校验搜索 用户设置校验搜索 并且 搜索链接不为空
+            //校验搜索书籍 用户设置校验搜索 并且 搜索链接不为空
             if (CheckSource.checkSearch && !source.searchUrl.isNullOrBlank()) {
                 val searchBooks = WebBook.searchBookAwait(this, source, searchWord)
                 if (searchBooks.isEmpty()) {
@@ -136,10 +139,10 @@ class CheckSourceService : BaseService() {
                     }
                 } else {
                     source.removeGroup("搜索失效")
-                    books = searchBooks
+                    checkBook(searchBooks.first().toBook(), source)
                 }
             }
-            //校验发现
+            //校验发现书籍
             if (CheckSource.checkDiscovery) {
                 val exs = source.exploreKinds
                 var url: String? = null
@@ -164,42 +167,15 @@ class CheckSourceService : BaseService() {
                         }
                     } else {
                         source.removeGroup("发现失效")
-                        if (books.isEmpty()) books = exploreBooks
+                        checkBook(exploreBooks.first().toBook(), source, false)
                     }
                 }
             }
-            //校验详情
-            if (CheckSource.checkInfo) {
-                var book = books.first().toBook()
-                if (book.tocUrl.isBlank()) {
-                    book = WebBook.getBookInfoAwait(this, source, book)
-                }
-                //校验目录
-                if (CheckSource.checkCategory) {
-                    val toc = WebBook.getChapterListAwait(this, source, book)
-                    val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
-                    source.removeGroup("目录失效")
-                    //校验正文
-                    if (CheckSource.checkContent) {
-                        WebBook.getContentAwait(
-                            this,
-                            bookSource = source,
-                            book = book,
-                            bookChapter = toc.first(),
-                            nextChapterUrl = nextChapterUrl,
-                            needSave = false
-                        )
-                        source.removeGroup("正文失效")
-                    }
-                }
-            }
-            if (source.hasGroup("搜索失效")) throw NoStackTraceException("搜索失效")
-            if (source.hasGroup("发现失效")) throw NoStackTraceException("发现失效")
+            val finalCheckMessage = source.getInvalidGroupNames()
+            if (!finalCheckMessage.isNullOrBlank()) throw NoStackTraceException(finalCheckMessage)
         }.timeout(CheckSource.timeout)
             .onError(searchCoroutine) {
                 when(it) {
-                    is ContentEmptyException -> source.addGroup("正文失效")
-                    is TocEmptyException -> source.addGroup("目录失效")
                     //校验超时不能正常实现 不能识别
                     is TimeoutCancellationException -> source.addGroup("校验超时")
                     //NoStackTraceException 已经添加了分组，其余的视为规则失效
@@ -219,6 +195,49 @@ class CheckSourceService : BaseService() {
                 appDb.bookSourceDao.update(source)
                 onNext(source.bookSourceUrl, source.bookSourceName)
             }
+    }
+
+    /**
+     *校验书源的详情目录正文
+     */
+    private suspend fun checkBook(book: Book, source: BookSource, isSearchBook: Boolean = true) {
+        kotlin.runCatching {
+            var mBook = book
+            //校验详情
+            if (CheckSource.checkInfo) {
+                if (mBook.tocUrl.isBlank()) {
+                    mBook = WebBook.getBookInfoAwait(this, source, mBook)
+                }
+                //校验目录
+                if (CheckSource.checkCategory) {
+                    val toc = WebBook.getChapterListAwait(this, source, mBook)
+                    val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
+                    //校验正文
+                    if (CheckSource.checkContent) {
+                        WebBook.getContentAwait(
+                            this,
+                            bookSource = source,
+                            book = mBook,
+                            bookChapter = toc.first(),
+                            nextChapterUrl = nextChapterUrl,
+                            needSave = false
+                        )
+                    }
+                }
+            }
+        }.onFailure {
+            val bookType = if (isSearchBook) "搜索" else "发现"
+            when (it) {
+                is ContentEmptyException -> source.addGroup("${bookType}正文失效")
+                is TocEmptyException -> source.addGroup("${bookType}目录失效")
+                //超时??js错误
+                else -> throw it
+            }
+        }.onSuccess {
+            val bookType = if (isSearchBook) "搜索" else "发现"
+            source.removeGroup("${bookType}目录失效")
+            source.removeGroup("${bookType}正文失效")
+        }
     }
 
     private fun onNext(sourceUrl: String, sourceName: String) {
