@@ -70,7 +70,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
 
     override fun onStart() {
         super.onStart()
-        setLayout(0.9f, 0.9f)
+        setLayout(0.2f, 0.9f)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -220,7 +220,9 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
                     getItemByLayoutPosition(holder.layoutPosition)?.let { httpTTS ->
                         val id = httpTTS.id.toString()
                         upTts(id)
-                        if (!httpTTS.loginUrl.isNullOrBlank()) {
+                        if (!httpTTS.loginUrl.isNullOrBlank()
+                            && httpTTS.getLoginInfo().isNullOrBlank()
+                        ) {
                             startActivity<SourceLoginActivity> {
                                 putExtra("type", "httpTts")
                                 putExtra("key", id)
