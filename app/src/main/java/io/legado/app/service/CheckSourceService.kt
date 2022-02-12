@@ -124,6 +124,7 @@ class CheckSourceService : BaseService() {
                     searchWord = it
                 }
             }
+            source.removeInvalidGroups()
             source.bookSourceComment = source.bookSourceComment
                 ?.split("\n\n")
                 ?.filterNot {
@@ -172,7 +173,7 @@ class CheckSourceService : BaseService() {
                 }
             }
             val finalCheckMessage = source.getInvalidGroupNames()
-            if (!finalCheckMessage.isNullOrBlank()) throw NoStackTraceException(finalCheckMessage)
+            if (finalCheckMessage.isNotBlank()) throw NoStackTraceException(finalCheckMessage)
         }.timeout(CheckSource.timeout)
             .onError(searchCoroutine) {
                 when(it) {
@@ -230,7 +231,7 @@ class CheckSourceService : BaseService() {
             when (it) {
                 is ContentEmptyException -> source.addGroup("${bookType}正文失效")
                 is TocEmptyException -> source.addGroup("${bookType}目录失效")
-                //超时??js错误
+                //超时 网站异常 源码改变
                 else -> throw it
             }
         }.onSuccess {
