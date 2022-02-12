@@ -70,7 +70,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
 
     override fun onStart() {
         super.onStart()
-        setLayout(0.2f, 0.9f)
+        setLayout(0.92f, 0.9f)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,6 +91,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
                     sysTtsViews.add(cbName)
                     ivEdit.gone()
                     ivMenuDelete.gone()
+                    labelSys.visible()
                     cbName.text = engine.label
                     cbName.tag = engine.name
                     cbName.isChecked =

@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="horizontal"
     android:padding="8dp">
 
     <io.legado.app.lib.theme.view.ThemeRadioButton
         android:id="@+id/cb_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        tools:ignore="RtlSymmetry" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/iv_edit"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
@@ -23,20 +25,34 @@
         android:contentDescription="@string/edit"
         android:padding="6dp"
         android:src="@drawable/ic_edit"
-        android:tint="@color/primaryText" />
+        android:tint="@color/primaryText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/iv_menu_delete"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu_delete"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:padding="6dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="6dp"
         android:src="@drawable/ic_clear_all"
         android:tint="@color/primaryText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         tools:ignore="RtlHardcoded" />
 
-    <View
-        android:layout_width="12dp"
-        android:layout_height="36dp" />
+    <io.legado.app.ui.widget.text.BevelLabelView
+        android:id="@+id/label_sys"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:visibility="gone"
+        app:label_mode="right_top"
+        app:label_length="24dp"
+        app:label_text="SYS"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

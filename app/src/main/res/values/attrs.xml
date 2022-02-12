@@ -213,4 +213,32 @@
     <declare-styleable name="Preference">
         <attr name="isBottomBackground" />
     </declare-styleable>
+
+    <!--斜角标签-->
+    <declare-styleable name="BevelLabelView">
+        <!--背景颜色-->
+        <attr name="label_bg_color" format="color|reference" />
+        <!--文字-->
+        <attr name="label_text" format="string" />
+        <!-- 文字颜色-->
+        <attr name="label_text_color" format="color|reference" />
+        <!--文字大小-->
+        <attr name="label_text_size" format="dimension" />
+
+        <attr name="label_length" format="dimension" />
+        <!--   圆角-->
+        <attr name="label_corner" format="dimension" />
+
+        <attr name="label_mode">
+            <!--   fill是沾满整个，-->
+            <enum name="left_top" value="0" />
+            <enum name="right_top" value="1" />
+            <enum name="left_bottom" value="2" />
+            <enum name="right_bottom" value="3" />
+            <enum name="left_top_fill" value="4" />
+            <enum name="right_top_fill" value="5" />
+            <enum name="left_bottom_fill" value="6" />
+            <enum name="right_bottom_fill" value="7" />
+        </attr>
+    </declare-styleable>
 </resources>
