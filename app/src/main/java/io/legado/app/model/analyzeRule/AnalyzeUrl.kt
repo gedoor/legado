@@ -1,6 +1,7 @@
 package io.legado.app.model.analyzeRule
 
 import android.annotation.SuppressLint
+import android.util.Base64
 import androidx.annotation.Keep
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
@@ -461,30 +462,39 @@ class AnalyzeUrl(
      * 访问网站,返回ByteArray
      */
     suspend fun getByteArrayAwait(): ByteArray {
+        val dataUriRegex = Regex("data:[\\w/\\-\\.]+;base64,(.*)")
+        val dataUriFindResult = dataUriRegex.find(urlNoQuery)
         val concurrentRecord = fetchStart()
         setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
-        val byteArray = getProxyClient(proxy).newCallResponseBody(retry) {
-            addHeaders(headerMap)
-            when (method) {
-                RequestMethod.POST -> {
-                    url(urlNoQuery)
-                    val contentType = headerMap["Content-Type"]
-                    val body = body
-                    if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                        postForm(fieldMap, true)
-                    } else if (!contentType.isNullOrBlank()) {
-                        val requestBody = body.toRequestBody(contentType.toMediaType())
-                        post(requestBody)
-                    } else {
-                        postJson(body)
+        if (dataUriFindResult != null){
+            val dataUriBase64 = dataUriFindResult.groupValues?.get(1)
+            val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
+            fetchEnd(concurrentRecord)
+            return byteArray
+        }else {
+            val byteArray = getProxyClient(proxy).newCallResponseBody(retry) {
+                addHeaders(headerMap)
+                when (method) {
+                    RequestMethod.POST -> {
+                        url(urlNoQuery)
+                        val contentType = headerMap["Content-Type"]
+                        val body = body
+                        if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
+                            postForm(fieldMap, true)
+                        } else if (!contentType.isNullOrBlank()) {
+                            val requestBody = body.toRequestBody(contentType.toMediaType())
+                            post(requestBody)
+                        } else {
+                            postJson(body)
+                        }
                     }
+                    else -> get(urlNoQuery, fieldMap, true)
                 }
-                else -> get(urlNoQuery, fieldMap, true)
-            }
-        }.bytes()
-        fetchEnd(concurrentRecord)
-        return byteArray
+            }.bytes()
+            fetchEnd(concurrentRecord)
+            return byteArray
+        }
     }
 
     fun getByteArray(): ByteArray {
