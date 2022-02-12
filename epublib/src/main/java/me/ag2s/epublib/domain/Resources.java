@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import android.util.Base64;
 
 /**
  * All the resources that make up the book.
@@ -314,7 +317,17 @@ public class Resources implements Serializable {
             return null;
         }
         href = StringUtil.substringBefore(href, Constants.FRAGMENT_SEPARATOR_CHAR);
-        return resources.get(href);
+
+        Pattern dataUriRegex = Pattern.compile("data:([\\w/\\-\\.]+);base64,(.*)");
+        Matcher dataUriMatcher = dataUriRegex.matcher(href);
+        if (dataUriMatcher.find()) {
+            String dataUriMediaTypeString = dataUriMatcher.group(1);
+            MediaType dataUriMediaType = new MediaType(dataUriMediaTypeString, "." + StringUtil.substringAfterLast(dataUriMediaTypeString, '/'));
+            byte[] dataUriData = Base64.decode(dataUriMatcher.group(2), Base64.DEFAULT);
+            return new Resource(dataUriData, dataUriMediaType);
+        } else {
+            return resources.get(href);
+        }
     }
 
     /**
