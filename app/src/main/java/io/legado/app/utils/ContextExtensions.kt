@@ -28,6 +28,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.help.IntentHelp
+import splitties.systemservices.clipboardManager
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -252,18 +253,13 @@ fun Context.shareWithQr(
 }
 
 fun Context.sendToClip(text: String) {
-    val clipboard =
-        getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
     val clipData = ClipData.newPlainText(null, text)
-    clipboard?.let {
-        clipboard.setPrimaryClip(clipData)
-        longToastOnUi(R.string.copy_complete)
-    }
+    clipboardManager.setPrimaryClip(clipData)
+    longToastOnUi(R.string.copy_complete)
 }
 
 fun Context.getClipText(): String? {
-    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-    clipboard?.primaryClip?.let {
+    clipboardManager.primaryClip?.let {
         if (it.itemCount > 0) {
             return it.getItemAt(0).text.toString().trim()
         }

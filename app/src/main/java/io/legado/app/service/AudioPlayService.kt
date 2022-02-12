@@ -32,6 +32,7 @@ import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
+import splitties.systemservices.audioManager
 import timber.log.Timber
 
 
@@ -50,9 +51,6 @@ class AudioPlayService : BaseService(),
             private set
     }
 
-    private val audioManager: AudioManager by lazy {
-        getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.getFocusRequest(this)
     }

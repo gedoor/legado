@@ -27,6 +27,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import splitties.systemservices.audioManager
 
 abstract class BaseReadAloudService : BaseService(),
     AudioManager.OnAudioFocusChangeListener {
@@ -44,9 +45,6 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    private val audioManager: AudioManager by lazy {
-        getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.getFocusRequest(this)
     }

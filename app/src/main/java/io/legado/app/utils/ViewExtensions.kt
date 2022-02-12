@@ -10,7 +10,6 @@ import android.os.Build
 import android.text.Html
 import android.view.View
 import android.view.View.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.TintHelper
-import splitties.init.appCtx
+import splitties.systemservices.inputMethodManager
 import timber.log.Timber
 import java.lang.reflect.Field
 
@@ -39,8 +38,7 @@ val View.activity: AppCompatActivity?
     get() = getCompatActivity(context)
 
 fun View.hideSoftInput() = run {
-    val imm = appCtx.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-    imm?.hideSoftInputFromWindow(this.windowToken, 0)
+    inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
 }
 
 fun View.disableAutoFill() = run {
