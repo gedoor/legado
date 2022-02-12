@@ -142,11 +142,14 @@ data class BookSource(
         return false
     }
 
+    fun removeInvalidGroups() {
+        removeGroup(getInvalidGroupNames())
+    }
 
-    fun getInvalidGroupNames(): String? {
+    fun getInvalidGroupNames(): String {
         return bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.filter {
            "失效" in it
-        }?.joinToString()
+        }?.joinToString() ?: ""
     }
 
     fun equal(source: BookSource) =
