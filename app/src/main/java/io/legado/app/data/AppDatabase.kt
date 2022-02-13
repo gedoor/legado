@@ -50,13 +50,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         private const val DATABASE_NAME = "legado.db"
 
-        fun createDatabase(context: Context) =
-            Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-                .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5, 6, 7, 8, 9)
-                .addMigrations(*DatabaseMigrations.migrations)
-                .allowMainThreadQueries()
-                .addCallback(dbCallback)
-                .build()
+        fun createDatabase(context: Context) = Room
+            .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+            .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5, 6, 7, 8, 9)
+            .addMigrations(*DatabaseMigrations.migrations)
+            .allowMainThreadQueries()
+            .addCallback(dbCallback)
+            .build()
 
         private val dbCallback = object : Callback() {
 
