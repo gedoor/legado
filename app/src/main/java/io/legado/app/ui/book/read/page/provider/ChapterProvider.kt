@@ -8,6 +8,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.AppConfig
@@ -133,6 +134,7 @@ object ChapterProvider {
                 matcher.appendTail(sb)
                 text = sb.toString()
                 if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                    if (isTitle) text = replaceMultilineTitle(text, book)
                     setTypeText(
                         absStartX, durY, text, textPages, stringBuilder,
                         isTitle, isTitleWithNoContent, isVolumeTitle, textPaint, srcList
@@ -145,9 +147,10 @@ object ChapterProvider {
                 val matcher = AppPattern.imgPattern.matcher(content)
                 var start = 0
                 while (matcher.find()) {
-                    val text = content.substring(start, matcher.start())
+                    var text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                            if (isTitle) text = replaceMultilineTitle(text, book)
                             setTypeText(
                                 absStartX, durY, text, textPages, stringBuilder,
                                 isTitle, isTitleWithNoContent, isVolumeTitle, textPaint
@@ -164,9 +167,10 @@ object ChapterProvider {
                     start = matcher.end()
                 }
                 if (start < content.length) {
-                    val text = content.substring(start, content.length)
+                    var text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
                         if (!(isTitle && ReadBookConfig.titleMode == 2)) {
+                            if (isTitle) text = replaceMultilineTitle(text, book)
                             setTypeText(
                                 absStartX, durY, text, textPages, stringBuilder,
                                 isTitle, isTitleWithNoContent, isVolumeTitle, textPaint
@@ -619,6 +623,27 @@ object ChapterProvider {
             visibleRight = viewWidth - paddingRight
             visibleBottom = paddingTop + visibleHeight
         }
+    }
+
+    /**
+     * 单独替换正文的标题，可用于多行标题
+     */
+    private fun replaceMultilineTitle(title: String, book: Book): String {
+        var mTitle = title
+        appDb.replaceRuleDao.findEnabledByMultilineTitleScope(book.name, book.origin).forEach { item ->
+            if (item.pattern.isNotEmpty()) {
+                try {
+                    mTitle = if (item.isRegex) {
+                        mTitle.replace(item.pattern.toRegex(), item.replacement)
+                    } else {
+                        mTitle.replace(item.pattern, item.replacement)
+                    }
+                } catch (e: Exception) {
+                    appCtx.toastOnUi("${item.name}替换出错")
+                }
+            }
+        }
+        return mTitle
     }
 
 }

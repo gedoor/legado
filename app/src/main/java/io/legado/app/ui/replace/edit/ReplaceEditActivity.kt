@@ -98,6 +98,7 @@ class ReplaceEditActivity :
         cbUseRegex.isChecked = replaceRule.isRegex
         etReplaceTo.setText(replaceRule.replacement)
         cbScopeTitle.isChecked = replaceRule.scopeTitle
+        cbScopeMultilineTitle.isChecked = replaceRule.scopeMultilineTitle
         cbScopeContent.isChecked = replaceRule.scopeContent
         etScope.setText(replaceRule.scope)
     }
@@ -110,6 +111,7 @@ class ReplaceEditActivity :
         replaceRule.isRegex = cbUseRegex.isChecked
         replaceRule.replacement = etReplaceTo.text.toString()
         replaceRule.scopeTitle = cbScopeTitle.isChecked
+        replaceRule.scopeMultilineTitle = cbScopeMultilineTitle.isChecked
         replaceRule.scopeContent = cbScopeContent.isChecked
         replaceRule.scope = etScope.text.toString()
         return replaceRule

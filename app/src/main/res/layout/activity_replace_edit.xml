@@ -115,6 +115,13 @@
                     android:checked="false" />
 
                 <io.legado.app.lib.theme.view.ThemeCheckBox
+                    android:id="@+id/cb_scope_multiline_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/scope_multiline_title"
+                    android:checked="false" />
+
+                <io.legado.app.lib.theme.view.ThemeCheckBox
                     android:id="@+id/cb_scope_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

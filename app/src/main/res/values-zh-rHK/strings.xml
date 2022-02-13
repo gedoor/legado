@@ -917,8 +917,6 @@
     <string name="select_book_folder">选择保存书籍的文件夹</string>
     <string name="user_agent">用户代理</string>
     <string name="bg_alpha">背景透明度</string>
-
-    <!-- check source config string -->
     <string name="check_source_config">校验设置</string>
     <string name="check_source_item">校验项目</string>
     <string name="check_source_timeout">单个书源校验超时(秒)</string>
@@ -932,5 +930,5 @@
     <string name="use_replace">使用替换</string>
     <string name="scope_title">作用于标题</string>
     <string name="scope_content">作用于正文</string>
-    <!-- string end -->
+    <string name="scope_multiline_title">多行标题</string>
 </resources>
