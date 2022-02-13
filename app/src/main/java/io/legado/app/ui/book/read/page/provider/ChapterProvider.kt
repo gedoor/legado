@@ -113,11 +113,20 @@ object ChapterProvider {
         var absStartX = paddingLeft
         var durY = 0f
         textPages.add(TextPage())
-        contents.forEachIndexed { index, content ->
-            val isTitle = index == 0
-            val isTitleWithNoContent = isTitle && contents.size == 1
-            val isVolumeTitle = isTitle && bookChapter.isVolume
-            val textPaint = if (isTitle) titlePaint else contentPaint
+        if (ReadBookConfig.titleMode != 2) {
+            displayTitle.splitNotBlank("\n").forEach { text ->
+                setTypeText(
+                    absStartX, durY, text, textPages, stringBuilder, titlePaint,
+                    isTitle = true,
+                    isTitleWithNoContent = contents.isEmpty(),
+                    isVolumeTitle = bookChapter.isVolume
+                ).let {
+                    absStartX = it.first
+                    durY = it.second
+                }
+            }
+        }
+        contents.forEach { content ->
             if (book.getImageStyle() == Book.imgStyleText) {
                 var text = content.replace(srcReplaceChar, "▣")
                 val srcList = LinkedList<String>()
@@ -132,29 +141,24 @@ object ChapterProvider {
                 }
                 matcher.appendTail(sb)
                 text = sb.toString()
-                if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                    setTypeText(
-                        absStartX, durY, text, textPages, stringBuilder,
-                        isTitle, isTitleWithNoContent, isVolumeTitle, textPaint, srcList
-                    ).let {
-                        absStartX = it.first
-                        durY = it.second
-                    }
+                setTypeText(
+                    absStartX, durY, text, textPages, stringBuilder, contentPaint,
+                    srcList = srcList
+                ).let {
+                    absStartX = it.first
+                    durY = it.second
                 }
-            } else if (book.getImageStyle() != Book.imgStyleText) {
+            } else {
                 val matcher = AppPattern.imgPattern.matcher(content)
                 var start = 0
                 while (matcher.find()) {
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
-                        if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                            setTypeText(
-                                absStartX, durY, text, textPages, stringBuilder,
-                                isTitle, isTitleWithNoContent, isVolumeTitle, textPaint
-                            ).let {
-                                absStartX = it.first
-                                durY = it.second
-                            }
+                        setTypeText(
+                            absStartX, durY, text, textPages, stringBuilder, contentPaint
+                        ).let {
+                            absStartX = it.first
+                            durY = it.second
                         }
                     }
                     durY = setTypeImage(
@@ -166,14 +170,11 @@ object ChapterProvider {
                 if (start < content.length) {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
-                        if (!(isTitle && ReadBookConfig.titleMode == 2)) {
-                            setTypeText(
-                                absStartX, durY, text, textPages, stringBuilder,
-                                isTitle, isTitleWithNoContent, isVolumeTitle, textPaint
-                            ).let {
-                                absStartX = it.first
-                                durY = it.second
-                            }
+                        setTypeText(
+                            absStartX, durY, text, textPages, stringBuilder, contentPaint
+                        ).let {
+                            absStartX = it.first
+                            durY = it.second
                         }
                     }
                 }
@@ -271,10 +272,10 @@ object ChapterProvider {
         text: String,
         textPages: ArrayList<TextPage>,
         stringBuilder: StringBuilder,
-        isTitle: Boolean,
-        isTitleWithNoContent: Boolean,
-        isVolumeTitle: Boolean,
         textPaint: TextPaint,
+        isTitle: Boolean = false,
+        isTitleWithNoContent: Boolean = false,
+        isVolumeTitle: Boolean = false,
         srcList: LinkedList<String>? = null
     ): Pair<Int, Float> {
         var absStartX = x
@@ -332,9 +333,10 @@ object ChapterProvider {
                     textLine.text = "$words\n"
                     isLastLine = true
                     //标题x轴居中
-                    val startX = if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
-                        (visibleWidth - layout.getLineWidth(lineIndex)) / 2
-                    else 0f
+                    val startX =
+                        if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
+                            (visibleWidth - layout.getLineWidth(lineIndex)) / 2
+                        else 0f
                     addCharsToLineLast(
                         absStartX,
                         textLine,
@@ -603,8 +605,8 @@ object ChapterProvider {
      */
     fun upLayout() {
         doublePage = (viewWidth > viewHeight || appCtx.isPad)
-                && ReadBook.pageAnim() != 3
-                && AppConfig.doublePageHorizontal
+            && ReadBook.pageAnim() != 3
+            && AppConfig.doublePageHorizontal
         if (viewWidth > 0 && viewHeight > 0) {
             paddingLeft = ReadBookConfig.paddingLeft.dp
             paddingTop = ReadBookConfig.paddingTop.dp

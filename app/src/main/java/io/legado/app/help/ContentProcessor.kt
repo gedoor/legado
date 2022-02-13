@@ -60,6 +60,7 @@ class ContentProcessor private constructor(
         return titleReplaceRules
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun getContentReplaceRules(): List<ReplaceRule> {
         return contentReplaceRules
     }

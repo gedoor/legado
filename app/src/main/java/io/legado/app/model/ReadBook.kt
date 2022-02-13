@@ -355,7 +355,8 @@ object ReadBook : CoroutineScope by MainScope() {
                     contentProcessor.getTitleReplaceRules(),
                     book.getUseReplaceRule()
                 )
-                val contents = contentProcessor.getContent(book, chapter, content)
+                val contents = contentProcessor
+                    .getContent(book, chapter, content, includeTitle = false)
                 val textChapter = ChapterProvider
                     .getTextChapter(book, chapter, displayTitle, contents, chapterSize)
                 when (val offset = chapter.index - durChapterIndex) {
