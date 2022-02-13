@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
@@ -26,6 +27,7 @@ import io.legado.app.ui.rss.subscription.RuleSubActivity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 
@@ -139,6 +141,8 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
                     appDb.rssSourceDao.flowEnabledByGroup("%$key%")
                 }
                 else -> appDb.rssSourceDao.flowEnabled("%$searchKey%")
+            }.catch {
+                AppLog.put("订阅界面更新数据出错", it)
             }.collect {
                 adapter.setItems(it)
             }

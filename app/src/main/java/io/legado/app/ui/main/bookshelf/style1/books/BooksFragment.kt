@@ -10,10 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.BookType
-import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
+import io.legado.app.constant.*
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.FragmentBooksBinding
@@ -27,6 +24,7 @@ import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
@@ -109,6 +107,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
                 AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
                 else -> appDb.bookDao.flowByGroup(groupId)
+            }.catch {
+                AppLog.put("书架更新出错", it)
             }.collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 val books = when (getPrefInt(PreferKey.bookshelfSort)) {

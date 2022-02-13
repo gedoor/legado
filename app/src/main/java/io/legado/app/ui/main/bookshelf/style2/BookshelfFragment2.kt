@@ -9,10 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.BookType
-import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
+import io.legado.app.constant.*
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -29,6 +26,8 @@ import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
@@ -122,7 +121,9 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
                 AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
                 else -> appDb.bookDao.flowByGroup(groupId)
-            }.collect { list ->
+            }.catch {
+                AppLog.put("书架更新出错", it)
+            }.collectLatest { list ->
                 books = when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
