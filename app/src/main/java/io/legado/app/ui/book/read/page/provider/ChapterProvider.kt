@@ -125,6 +125,7 @@ object ChapterProvider {
                     durY = it.second
                 }
             }
+            durY += titleBottomSpacing
         }
         contents.forEach { content ->
             if (book.getImageStyle() == Book.imgStyleText) {
@@ -286,8 +287,27 @@ object ChapterProvider {
         )
         var durY = when {
             //标题y轴居中
-            y == 0f && isTitleWithNoContent -> ((visibleHeight - layout.lineCount * textPaint.textHeight) / 2)
-            y == 0f && isTitle -> y + titleTopSpacing
+            isTitleWithNoContent && textPages.size == 1 -> {
+                val textPage = textPages.last()
+                if (textPage.lineSize == 0) {
+                    val ty = (visibleHeight - layout.lineCount * textPaint.textHeight) / 2
+                    if (ty > 0) ty else titleTopSpacing.toFloat()
+                } else {
+                    var textLayoutHeight = layout.lineCount * textPaint.textHeight
+                    val fistLine = textPage.getLine(0)
+                    if (fistLine.lineTop < textLayoutHeight + titleTopSpacing) {
+                        textLayoutHeight = fistLine.lineTop - titleTopSpacing
+                    }
+                    textPage.textLines.forEach {
+                        it.lineTop = it.lineTop - textLayoutHeight
+                        it.lineBase = it.lineBase - textLayoutHeight
+                        it.lineBottom = it.lineBottom - textLayoutHeight
+                    }
+                    y - textLayoutHeight
+                }
+            }
+            isTitle && textPages.size == 1 && textPages.last().textLines.isEmpty() ->
+                y + titleTopSpacing
             else -> y
         }
         for (lineIndex in 0 until layout.lineCount) {
@@ -367,7 +387,6 @@ object ChapterProvider {
             durY += textPaint.textHeight * lineSpacingExtra
             textPages.last().height = durY
         }
-        if (isTitle && !isTitleWithNoContent) durY += titleBottomSpacing
         durY += textPaint.textHeight * paragraphSpacing / 10f
         return Pair(absStartX, durY)
     }
