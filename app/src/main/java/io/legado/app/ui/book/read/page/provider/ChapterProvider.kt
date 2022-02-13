@@ -286,8 +286,8 @@ object ChapterProvider {
         )
         var durY = when {
             //标题y轴居中
-            isTitleWithNoContent -> ((visibleHeight - layout.lineCount * textPaint.textHeight) / 2)
-            isTitle -> y + titleTopSpacing
+            y == 0f && isTitleWithNoContent -> ((visibleHeight - layout.lineCount * textPaint.textHeight) / 2)
+            y == 0f && isTitle -> y + titleTopSpacing
             else -> y
         }
         for (lineIndex in 0 until layout.lineCount) {
