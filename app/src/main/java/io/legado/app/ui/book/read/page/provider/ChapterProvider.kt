@@ -335,7 +335,21 @@ object ChapterProvider {
                     //最后一行
                     textLine.text = "$words\n"
                     isLastLine = true
-                    //标题x轴居中
+                    //标题最后一行x轴居中
+                    val startX = if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
+                        (visibleWidth - layout.getLineWidth(lineIndex)) / 2
+                    else 0f
+                    addCharsToLineLast(
+                        absStartX,
+                        textLine,
+                        words.toStringArray(),
+                        textPaint,
+                        startX,
+                        srcList
+                    )
+                }
+                isTitle && words.endsWith("\n") -> {
+                    //标题中含有换行
                     val startX = if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
                         (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                     else 0f
