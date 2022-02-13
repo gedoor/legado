@@ -291,7 +291,7 @@ object ChapterProvider {
                 val textPage = textPages.last()
                 if (textPage.lineSize == 0) {
                     val ty = (visibleHeight - layout.lineCount * textPaint.textHeight) / 2
-                    if (ty > 0) ty else titleTopSpacing.toFloat()
+                    if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
                 } else {
                     var textLayoutHeight = layout.lineCount * textPaint.textHeight
                     val fistLine = textPage.getLine(0)
