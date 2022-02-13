@@ -133,7 +133,7 @@ jobs:
           git checkout -b test
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.actor }}/release"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.actor }}/release"
           git add *.apk
           git commit -m "${{ needs.prepare.outputs.versionL }}"
           git push -f -u origin test
