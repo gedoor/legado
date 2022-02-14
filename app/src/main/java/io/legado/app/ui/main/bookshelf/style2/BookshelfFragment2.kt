@@ -25,15 +25,18 @@ import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**
  * 书架界面
  */
+@ExperimentalCoroutinesApi
 class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     SearchView.OnQueryTextListener,
     BaseBooksAdapter.CallBack {
@@ -123,8 +126,8 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.catch {
                 AppLog.put("书架更新出错", it)
-            }.collectLatest { list ->
-                books = when (getPrefInt(PreferKey.bookshelfSort)) {
+            }.mapLatest { list ->
+                when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
                     }
@@ -138,6 +141,8 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                         it.durChapterTime
                     }
                 }
+            }.collectLatest { list ->
+                books = list
                 booksAdapter.notifyDataSetChanged()
                 binding.tvEmptyMsg.isGone = getItemCount() > 0
             }
