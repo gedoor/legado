@@ -42,12 +42,11 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.*
 
-@ExperimentalCoroutinesApi
+/**
+ * 书源管理界面
+ */
 class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceViewModel>(),
     PopupMenu.OnMenuItemClickListener,
     BookSourceAdapter.CallBack,
@@ -233,9 +232,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 else -> {
                     appDb.bookSourceDao.flowSearch("%$searchKey%")
                 }
-            }.catch {
-                AppLog.put("书源界面更新书源出错", it)
-            }.mapLatest { data ->
+            }.conflate().map { data ->
                 if (sortAscending) when (sort) {
                     Sort.Weight -> data.sortedBy { it.weight }
                     Sort.Name -> data.sortedWith { o1, o2 ->
@@ -270,6 +267,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     }
                     else -> data.reversed()
                 }
+            }.catch {
+                AppLog.put("书源界面更新书源出错", it)
             }.collectLatest { data ->
                 adapter.setItems(data, adapter.diffItemCallback)
             }
