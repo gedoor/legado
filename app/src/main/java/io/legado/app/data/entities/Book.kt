@@ -73,6 +73,7 @@ data class Book(
         return originName.endsWith(".umd", true)
     }
 
+    @Suppress("unused")
     fun isOnLineTxt(): Boolean {
         return !isLocalBook() && type == 0
     }
