@@ -8,11 +8,9 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppConfig
-import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.*
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -23,14 +21,17 @@ import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import kotlin.math.min
 
+/**
+ * 校验书源
+ */
 class CheckSourceService : BaseService() {
     private var threadCount = AppConfig.threadCount
     private var searchCoroutine =
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-    private var tasks = CompositeCoroutine()
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
@@ -71,7 +72,6 @@ class CheckSourceService : BaseService() {
     override fun onDestroy() {
         super.onDestroy()
         Debug.finishChecking()
-        tasks.clear()
         searchCoroutine.close()
         postEvent(EventBus.CHECK_SOURCE_DONE, 0)
     }
@@ -81,7 +81,6 @@ class CheckSourceService : BaseService() {
             toastOnUi("已有书源在校验,等完成后再试")
             return
         }
-        tasks.clear()
         allIds.clear()
         checkedIds.clear()
         allIds.addAll(ids)
@@ -102,7 +101,7 @@ class CheckSourceService : BaseService() {
         synchronized(this) {
             processIndex++
         }
-        execute(context = searchCoroutine) {
+        launch(IO) {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
                 appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->

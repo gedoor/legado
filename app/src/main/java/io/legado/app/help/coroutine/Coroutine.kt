@@ -143,10 +143,11 @@ class Coroutine<T>(
                 val value = executeBlock(scope, context, timeMillis ?: 0L, block)
                 ensureActive()
                 success?.let { dispatchCallback(this, value, it) }
-            } catch (e: CancellationException) {
-                Timber.e("任务取消")
             } catch (e: Throwable) {
                 Timber.e(e)
+                if (e is CancellationException && e !is TimeoutCancellationException) {
+                    return@launch
+                }
                 val consume: Boolean = errorReturn?.value?.let { value ->
                     success?.let { dispatchCallback(this, value, it) }
                     true
