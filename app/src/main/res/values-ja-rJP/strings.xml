@@ -935,7 +935,7 @@
     <string name="use_replace">使用替换</string>
     <string name="scope_title">作用于标题</string>
     <string name="scope_content">作用于正文</string>
-    <string name="qq_channel">QQ频道</string>
+    <string name="join_qq_channel">加入QQ频道</string>
     <string name="qq_channel_summary">点击加入阅读QQ频道</string>
     <!-- string end -->
 </resources>
