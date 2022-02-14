@@ -36,6 +36,12 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
+            android:key="qqChannel"
+            android:title="@string/qq_channel"
+            android:summary="@string/qq_channel_summary"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="qq"
             android:summary="@string/click_to_apply"
             android:title="@string/join_qq_group"

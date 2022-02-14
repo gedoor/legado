@@ -32,6 +32,9 @@ class AboutFragment : PreferenceFragmentCompat() {
         Pair("(QQ群10)812720266", "oW9ksY0sAWUEq0hfM5irN5aOdvKVgMEE")
     )
 
+    private val qqChannel =
+        "https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=25d870&from=246610&biz=ka"
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("update_log")?.summary =
@@ -60,6 +63,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "crashLog" -> showCrashLogs()
+            "qqChannel" -> context?.openUrl(qqChannel)
             "tg" -> openUrl(R.string.tg_url)
             "discord" -> openUrl(R.string.discord_url)
         }
