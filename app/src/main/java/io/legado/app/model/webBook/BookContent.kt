@@ -87,7 +87,7 @@ object BookContent {
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.second.size > 1) {
-            Debug.log(bookSource.bookSourceUrl, "◇并发解析目录,总页数:${contentData.second.size}")
+            Debug.log(bookSource.bookSourceUrl, "◇并发解析正文,总页数:${contentData.second.size}")
             withContext(IO) {
                 val asyncArray = Array(contentData.second.size) {
                     async(IO) {
