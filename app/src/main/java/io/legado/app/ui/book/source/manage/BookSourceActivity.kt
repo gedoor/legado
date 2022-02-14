@@ -42,7 +42,10 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 /**
  * 书源管理界面
@@ -269,8 +272,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }.catch {
                 AppLog.put("书源界面更新书源出错", it)
-            }.collectLatest { data ->
+            }.collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback)
+                delay(500)
             }
         }
     }

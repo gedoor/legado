@@ -24,8 +24,8 @@ import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -121,9 +121,10 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 }
             }.catch {
                 AppLog.put("书架更新出错", it)
-            }.collectLatest { list ->
+            }.collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 booksAdapter.setItems(list)
+                delay(100)
             }
         }
     }

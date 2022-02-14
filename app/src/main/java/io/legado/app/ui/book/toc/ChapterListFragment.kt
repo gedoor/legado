@@ -21,13 +21,10 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.conflate
 
 class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
@@ -111,7 +108,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             when {
                 searchKey.isNullOrBlank() -> appDb.bookChapterDao.flowByBook(viewModel.bookUrl)
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
-            }.collectLatest {
+            }.conflate().collect {
                 if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
                     adapter.setItems(it, adapter.diffCallBack)
                     adapter.upDisplayTile()
@@ -119,6 +116,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                         mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                     }
                 }
+                delay(100)
             }
         }
     }

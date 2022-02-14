@@ -38,8 +38,9 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
@@ -193,14 +194,15 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 else -> {
                     appDb.replaceRuleDao.flowSearch("%$searchKey%")
                 }
-            }.catch {
+            }.conflate().catch {
                 AppLog.put("替换规则管理界面更新数据出错", it)
-            }.collectLatest {
+            }.collect {
                 if (dataInit) {
                     setResult(Activity.RESULT_OK)
                 }
                 adapter.setItems(it, adapter.diffItemCallBack)
                 dataInit = true
+                delay(100)
             }
         }
     }
