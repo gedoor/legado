@@ -25,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -110,7 +111,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             when {
                 searchKey.isNullOrBlank() -> appDb.bookChapterDao.flowByBook(viewModel.bookUrl)
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
-            }.collect {
+            }.collectLatest {
                 if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
                     adapter.setItems(it, adapter.diffCallBack)
                     adapter.upDisplayTile()
