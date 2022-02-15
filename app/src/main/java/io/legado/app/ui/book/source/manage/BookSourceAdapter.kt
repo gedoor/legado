@@ -51,7 +51,32 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             }
 
             override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
-                return false
+                return oldItem.bookSourceName == newItem.bookSourceName
+                    && oldItem.bookSourceGroup == newItem.bookSourceGroup
+                    && oldItem.enabled == newItem.enabled
+                    && oldItem.enabledExplore == newItem.enabledExplore
+                    && oldItem.exploreUrl == newItem.exploreUrl
+            }
+
+            override fun getChangePayload(oldItem: BookSource, newItem: BookSource): Any? {
+                val payload = Bundle()
+                if (oldItem.bookSourceName != newItem.bookSourceName
+                    || oldItem.bookSourceGroup != newItem.bookSourceGroup
+                ) {
+                    payload.putBoolean("upName", true)
+                }
+                if (oldItem.enabled != newItem.enabled) {
+                    payload.putBoolean("enabled", newItem.enabled)
+                }
+                if (oldItem.enabledExplore != newItem.enabledExplore ||
+                    oldItem.exploreUrl != newItem.exploreUrl
+                ) {
+                    payload.putBoolean("upExplore", true)
+                }
+                if (payload.isEmpty) {
+                    return null
+                }
+                return payload
             }
 
         }
@@ -70,12 +95,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             val payload = payloads.getOrNull(0) as? Bundle
             if (payload == null) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
-                if (item.bookSourceGroup.isNullOrEmpty()) {
-                    cbBookSource.text = item.bookSourceName
-                } else {
-                    cbBookSource.text =
-                        String.format("%s (%s)", item.bookSourceName, item.bookSourceGroup)
-                }
+                cbBookSource.text = item.getDisPlayNameGroup()
                 swtEnabled.isChecked = item.enabled
                 cbBookSource.isChecked = selected.contains(item)
                 ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
@@ -85,6 +105,9 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             } else {
                 payload.keySet().map {
                     when (it) {
+                        "enabled" -> swtEnabled.isChecked = payload.getBoolean("enabled")
+                        "upName" -> cbBookSource.text = item.getDisPlayNameGroup()
+                        "upExplore" -> upShowExplore(ivExplore, item)
                         "selected" -> cbBookSource.isChecked = selected.contains(item)
                         "checkSourceMessage" -> {
                             ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""

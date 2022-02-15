@@ -44,27 +44,26 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
 
         override fun areContentsTheSame(oldItem: RssSource, newItem: RssSource): Boolean {
             return oldItem.sourceName == newItem.sourceName
-                    && oldItem.sourceGroup == newItem.sourceGroup
-                    && oldItem.enabled == newItem.enabled
+                && oldItem.sourceGroup == newItem.sourceGroup
+                && oldItem.enabled == newItem.enabled
         }
 
-            override fun getChangePayload(oldItem: RssSource, newItem: RssSource): Any? {
-                val payload = Bundle()
-                if (oldItem.sourceName != newItem.sourceName) {
-                    payload.putString("name", newItem.sourceName)
-                }
-                if (oldItem.sourceGroup != newItem.sourceGroup) {
-                    payload.putString("group", newItem.sourceGroup)
-                }
-                if (oldItem.enabled != newItem.enabled) {
-                    payload.putBoolean("enabled", newItem.enabled)
-                }
-                if (payload.isEmpty) {
-                    return null
-                }
-                return payload
+        override fun getChangePayload(oldItem: RssSource, newItem: RssSource): Any? {
+            val payload = Bundle()
+            if (oldItem.sourceName != newItem.sourceName
+                || oldItem.sourceGroup != newItem.sourceGroup
+            ) {
+                payload.putBoolean("upName", true)
             }
+            if (oldItem.enabled != newItem.enabled) {
+                payload.putBoolean("enabled", newItem.enabled)
+            }
+            if (payload.isEmpty) {
+                return null
+            }
+            return payload
         }
+    }
 
     override fun getViewBinding(parent: ViewGroup): ItemRssSourceBinding {
         return ItemRssSourceBinding.inflate(inflater, parent, false)
@@ -80,17 +79,14 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
-                if (item.sourceGroup.isNullOrEmpty()) {
-                    cbSource.text = item.sourceName
-                } else {
-                    cbSource.text =
-                        String.format("%s (%s)", item.sourceName, item.sourceGroup)
-                }
+                cbSource.text = item.getDisplayNameGroup()
                 swtEnabled.isChecked = item.enabled
                 cbSource.isChecked = selected.contains(item)
             } else {
                 bundle.keySet().map {
                     when (it) {
+                        "upName" -> cbSource.text = item.getDisplayNameGroup()
+                        "enabled" -> swtEnabled.isChecked = bundle.getBoolean("enabled")
                         "selected" -> cbSource.isChecked = selected.contains(item)
                     }
                 }

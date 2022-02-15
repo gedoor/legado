@@ -85,6 +85,14 @@ data class RssSource(
         return a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
     }
 
+    fun getDisplayNameGroup(): String {
+        return if (sourceGroup.isNullOrBlank()) {
+            sourceName
+        } else {
+            String.format("%s (%s)", sourceName, sourceGroup)
+        }
+    }
+
     fun sortUrls(): List<Pair<String, String>> = arrayListOf<Pair<String, String>>().apply {
         kotlin.runCatching {
             var a = sortUrl
