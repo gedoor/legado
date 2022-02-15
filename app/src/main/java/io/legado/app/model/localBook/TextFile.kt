@@ -13,6 +13,7 @@ import java.io.FileNotFoundException
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.min
 
 class TextFile(private val book: Book) {
 
@@ -45,11 +46,10 @@ class TextFile(private val book: Book) {
 
     //没有标题的时候，每个章节的最大长度
     private val maxLengthWithNoToc = 10 * 1024
+
     //使用正则划分目录，每个章节的最大允许长度
     private val maxLengthWithToc = 102400
-    private val limitContentLength = book.getLimitContentLength()
 
-    private val tocRules = arrayListOf<Pattern>()
     private var charset: Charset = book.fileCharset()
 
     /**
@@ -57,7 +57,7 @@ class TextFile(private val book: Book) {
      */
     @Throws(FileNotFoundException::class)
     fun getChapterList(): ArrayList<BookChapter> {
-        val rulePattern: Pattern? = if (book.charset == null || book.tocUrl.isEmpty()) {
+        if (book.charset == null || book.tocUrl.isEmpty()) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(bufferSize)
                 var blockContent: String
@@ -65,46 +65,65 @@ class TextFile(private val book: Book) {
                 book.charset = EncodingDetect.getEncode(buffer)
                 charset = book.fileCharset()
                 blockContent = String(buffer, 0, length, charset)
-                if (book.tocUrl.isNotEmpty()) {
-                    book.tocUrl.toPattern(Pattern.MULTILINE)
-                } else {
+                if (book.tocUrl.isBlank()) {
                     if (blockContent.isEmpty()) {
                         length = bis.read(buffer)
                         book.charset = EncodingDetect.getEncode(buffer)
                         blockContent = String(buffer, 0, length, charset)
                     }
-                    getTocRule(blockContent)
+                    book.tocUrl = getTocRule(blockContent)?.pattern() ?: ""
                 }
             }
-        } else {
-            book.tocUrl.toPattern(Pattern.MULTILINE)
         }
-        return rulePattern?.let {
-            analyze(rulePattern)
-        } ?: analyze()
+        val toc = analyze(book.tocUrl.toPattern(Pattern.MULTILINE))
+        toc.forEachIndexed { index, bookChapter ->
+            bookChapter.index = index
+            bookChapter.bookUrl = book.bookUrl
+            bookChapter.url = MD5Utils.md5Encode16(book.originName + index + bookChapter.title)
+        }
+        book.latestChapterTitle = toc.last().title
+        book.totalChapterNum = toc.size
+        book.save()
+        return toc
     }
 
     /**
      * 按规则解析目录
      */
-    private fun analyze(pattern: Pattern): ArrayList<BookChapter> {
+    private fun analyze(
+        pattern: Pattern?,
+        fileStart: Long = 0L,
+        fileEnd: Long = Long.MAX_VALUE
+    ): ArrayList<BookChapter> {
+        pattern ?: return analyze(fileStart, fileEnd)
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
             var blockContent: String
             //加载章节
             var curOffset: Long = 0
             //读取的长度
-            var length: Int
+            var length = 0
             val buffer = ByteArray(bufferSize)
             var bufferStart = 3
-            bis.read(buffer, 0, 3)
-            if (Utf8BomUtils.hasBom(buffer)) {
+            if (fileStart == 0L) {
+                bis.read(buffer, 0, 3)
+                if (Utf8BomUtils.hasBom(buffer)) {
+                    bufferStart = 0
+                    curOffset = 3
+                }
+            } else {
+                bis.skip(fileStart)
+                curOffset = fileStart
                 bufferStart = 0
-                curOffset = 3
             }
             //获取文件中的数据到buffer，直到没有数据为止
-            while (bis.read(buffer, bufferStart, bufferSize - bufferStart)
-                    .also { length = it } > 0
+            while (
+                fileEnd - curOffset > 0 &&
+                bis.read(
+                    buffer,
+                    bufferStart,
+                    min((bufferSize - bufferStart).toLong(), fileEnd - curOffset).toInt()
+                ).also { length = it } > 0
             ) {
                 var end = bufferStart + length
                 for (i in bufferStart + length - 1 downTo 0) {
@@ -129,9 +148,8 @@ class TextFile(private val book: Book) {
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
-                    if (limitContentLength && curOffset + chapterLength - lastStart > maxLengthWithToc) {
-                        bis.close()
-                        return analyze()
+                    if (curOffset + chapterLength - lastStart > maxLengthWithToc) {
+                        toc.addAll(analyze(lastStart, curOffset + chapterLength))
                     }
                     //如果 seekPos == 0 && chapterStart != 0 表示当前block处前面有一段内容
                     //第一种情况一定是序章 第二种情况是上一个章节的内容
@@ -153,7 +171,8 @@ class TextFile(private val book: Book) {
                         } else { //否则就block分割之后，上一个章节的剩余内容
                             //获取上一章节
                             val lastChapter = toc.last()
-                            toc.last().isVolume = chapterContent.substringAfter(lastChapter.title).isBlank()
+                            toc.last().isVolume =
+                                chapterContent.substringAfter(lastChapter.title).isBlank()
                             //将当前段落添加上一章去
                             lastChapter.end =
                                 lastChapter.end!! + chapterLength.toLong()
@@ -167,7 +186,8 @@ class TextFile(private val book: Book) {
                         if (toc.isNotEmpty()) { //获取章节内容
                             //获取上一章节
                             val lastChapter = toc.last()
-                            toc.last().isVolume = chapterContent.substringAfter(lastChapter.title).isBlank()
+                            toc.last().isVolume =
+                                chapterContent.substringAfter(lastChapter.title).isBlank()
                             lastChapter.end =
                                 lastChapter.start!! + chapterContent.toByteArray(charset).size.toLong()
                             //创建当前章节
@@ -192,28 +212,18 @@ class TextFile(private val book: Book) {
                 toc.lastOrNull()?.end = curOffset
             }
         }
-        toc.forEachIndexed { index, bookChapter ->
-            bookChapter.index = index
-            bookChapter.bookUrl = book.bookUrl
-            bookChapter.url = MD5Utils.md5Encode16(book.originName + index + bookChapter.title)
-        }
-        book.latestChapterTitle = toc.last().title
-        book.totalChapterNum = toc.size
-
         System.gc()
         System.runFinalization()
-        book.tocUrl = pattern.pattern()
-        book.save()
         return toc
     }
 
     /**
      * 无规则拆分目录
      */
-    private fun analyze(): ArrayList<BookChapter> {
-        nextTocRule()?.let {
-            return analyze(it)
-        }
+    private fun analyze(
+        fileStart: Long = 0L,
+        fileEnd: Long = Long.MAX_VALUE
+    ): ArrayList<BookChapter> {
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
             //block的个数
@@ -222,17 +232,28 @@ class TextFile(private val book: Book) {
             var curOffset: Long = 0
             var chapterPos = 0
             //读取的长度
-            var length: Int
+            var length = 0
             val buffer = ByteArray(bufferSize)
             var bufferStart = 3
-            bis.read(buffer, 0, 3)
-            if (Utf8BomUtils.hasBom(buffer)) {
+            if (fileStart == 0L) {
+                bis.read(buffer, 0, 3)
+                if (Utf8BomUtils.hasBom(buffer)) {
+                    bufferStart = 0
+                    curOffset = 3
+                }
+            } else {
+                bis.skip(fileStart)
+                curOffset = fileStart
                 bufferStart = 0
-                curOffset = 3
             }
             //获取文件中的数据到buffer，直到没有数据为止
-            while (bis.read(buffer, bufferStart, bufferSize - bufferStart)
-                    .also { length = it } > 0
+            while (
+                fileEnd - curOffset > 0 &&
+                bis.read(
+                    buffer,
+                    bufferStart,
+                    min((bufferSize - bufferStart).toLong(), fileEnd - curOffset).toInt()
+                ).also { length = it } > 0
             ) {
                 blockPos++
                 //章节在buffer的偏移量
@@ -286,47 +307,16 @@ class TextFile(private val book: Book) {
                 }
             }
         }
-        if (toc.isEmpty()) {
-            return analyze()
-        }
-        toc.forEachIndexed { index, bookChapter ->
-            bookChapter.index = index
-            bookChapter.bookUrl = book.bookUrl
-            bookChapter.url = MD5Utils.md5Encode16(book.originName + index + bookChapter.title)
-        }
-        book.latestChapterTitle = toc.last().title
-        book.totalChapterNum = toc.size
-
-        System.gc()
-        System.runFinalization()
-        book.tocUrl = ""
-        book.save()
         return toc
-    }
-
-    /**
-     * 初始化并获取匹配次数最多的规则
-     */
-    private fun getTocRule(content: String): Pattern? {
-        tocRules.addAll(getTocRules(content, getTocRules().reversed()))
-        //tocRules.addAll(getTocRules(content, appDb.txtTocRuleDao.disabled.reversed()))
-        return tocRules.firstOrNull()
-    }
-
-    /**
-     * 获取下一个规则并移除上一个
-     */
-    private fun nextTocRule(): Pattern? {
-        tocRules.removeFirstOrNull()
-        return tocRules.firstOrNull()
     }
 
     /**
      * 获取所有匹配次数大于1的目录规则
      */
-    private fun getTocRules(content: String, rules: List<TxtTocRule>): ArrayList<Pattern> {
-        val list = arrayListOf<Pattern>()
+    private fun getTocRule(content: String): Pattern? {
+        val rules = getTocRules().reversed()
         var maxCs = 1
+        var tocPattern: Pattern? = null
         for (tocRule in rules) {
             val pattern = tocRule.rule.toPattern(Pattern.MULTILINE)
             val matcher = pattern.matcher(content)
@@ -336,12 +326,10 @@ class TextFile(private val book: Book) {
             }
             if (cs >= maxCs) {
                 maxCs = cs
-                list.add(0, pattern)
-            } else if (cs > 1) {
-                list.add(pattern)
+                tocPattern = pattern
             }
         }
-        return list
+        return tocPattern
     }
 
     /**
