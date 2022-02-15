@@ -59,6 +59,14 @@ data class ReplaceRule(
         return id.hashCode()
     }
 
+    fun getDisplayNameGroup(): String {
+        return if (group.isNullOrBlank()) {
+            name
+        } else {
+            String.format("%s (%s)", name, group)
+        }
+    }
+
     fun isValid(): Boolean {
         if (TextUtils.isEmpty(pattern)) {
             return false

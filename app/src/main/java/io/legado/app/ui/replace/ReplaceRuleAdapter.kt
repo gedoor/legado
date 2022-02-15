@@ -57,11 +57,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
         override fun getChangePayload(oldItem: ReplaceRule, newItem: ReplaceRule): Any? {
             val payload = Bundle()
-            if (oldItem.name != newItem.name) {
-                payload.putString("name", newItem.name)
-            }
-            if (oldItem.group != newItem.group) {
-                payload.putString("group", newItem.group)
+            if (oldItem.name != newItem.name
+                || oldItem.group != newItem.group
+            ) {
+                payload.putBoolean("upName", true)
             }
             if (oldItem.isEnabled != newItem.isEnabled) {
                 payload.putBoolean("enabled", newItem.isEnabled)
@@ -111,25 +110,14 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             val bundle = payloads.getOrNull(0) as? Bundle
             if (bundle == null) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
-                if (item.group.isNullOrEmpty()) {
-                    cbName.text = item.name
-                } else {
-                    cbName.text =
-                        String.format("%s (%s)", item.name, item.group)
-                }
+                cbName.text = item.getDisplayNameGroup()
                 swtEnabled.isChecked = item.isEnabled
                 cbName.isChecked = selected.contains(item)
             } else {
                 bundle.keySet().map {
                     when (it) {
                         "selected" -> cbName.isChecked = selected.contains(item)
-                        "name", "group" ->
-                            if (item.group.isNullOrEmpty()) {
-                                cbName.text = item.name
-                            } else {
-                                cbName.text =
-                                    String.format("%s (%s)", item.name, item.group)
-                            }
+                        "upName" -> cbName.text = item.getDisplayNameGroup()
                         "enabled" -> swtEnabled.isChecked = item.isEnabled
                     }
                 }
