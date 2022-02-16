@@ -118,11 +118,14 @@ class TextFile(private val book: Book) {
             }
             //获取文件中的数据到buffer，直到没有数据为止
             while (
-                fileEnd - curOffset > 0 &&
+                fileEnd - curOffset - bufferStart > 0 &&
                 bis.read(
                     buffer,
                     bufferStart,
-                    min((bufferSize - bufferStart).toLong(), fileEnd - curOffset).toInt()
+                    min(
+                        (bufferSize - bufferStart).toLong(),
+                        fileEnd - curOffset - bufferStart
+                    ).toInt()
                 ).also { length = it } > 0
             ) {
                 var end = bufferStart + length
@@ -258,11 +261,14 @@ class TextFile(private val book: Book) {
             }
             //获取文件中的数据到buffer，直到没有数据为止
             while (
-                fileEnd - curOffset > 0 &&
+                fileEnd - curOffset - bufferStart > 0 &&
                 bis.read(
                     buffer,
                     bufferStart,
-                    min((bufferSize - bufferStart).toLong(), fileEnd - curOffset).toInt()
+                    min(
+                        (bufferSize - bufferStart).toLong(),
+                        fileEnd - curOffset - bufferStart
+                    ).toInt()
                 ).also { length = it } > 0
             ) {
                 blockPos++
