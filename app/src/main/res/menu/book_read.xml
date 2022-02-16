@@ -15,7 +15,28 @@
             android:id="@+id/menu_refresh"
             android:icon="@drawable/ic_refresh_black_24dp"
             android:title="@string/refresh"
-            app:showAsAction="always" />
+            app:showAsAction="always">
+
+            <menu>
+
+                <item
+                    android:id="@+id/menu_refresh_dur"
+                    android:title="@string/menu_refresh_dur"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menu_refresh_after"
+                    android:title="@string/menu_refresh_after"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menu_refresh_all"
+                    android:title="@string/menu_refresh_all"
+                    app:showAsAction="never" />
+
+            </menu>
+
+        </item>
 
         <item
             android:id="@+id/menu_download"

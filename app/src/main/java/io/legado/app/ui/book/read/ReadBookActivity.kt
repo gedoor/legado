@@ -241,14 +241,36 @@ class ReadBookActivity : BaseReadBookActivity(),
                     showDialogFragment(ChangeSourceDialog(it.name, it.author))
                 }
             }
-            R.id.menu_refresh -> {
+            R.id.menu_refresh_dur -> {
                 if (ReadBook.bookSource == null) {
                     upContent()
                 } else {
                     ReadBook.book?.let {
                         ReadBook.curTextChapter = null
                         binding.readView.upContent()
-                        viewModel.refreshContent(it)
+                        viewModel.refreshContentDur(it)
+                    }
+                }
+            }
+            R.id.menu_refresh_after -> {
+                if (ReadBook.bookSource == null) {
+                    upContent()
+                } else {
+                    ReadBook.book?.let {
+                        ReadBook.clearTextChapter()
+                        binding.readView.upContent()
+                        viewModel.refreshContentAfter(it)
+                    }
+                }
+            }
+            R.id.menu_refresh_all -> {
+                if (ReadBook.bookSource == null) {
+                    upContent()
+                } else {
+                    ReadBook.book?.let {
+                        ReadBook.clearTextChapter()
+                        binding.readView.upContent()
+                        viewModel.refreshContentAll(it)
                     }
                 }
             }

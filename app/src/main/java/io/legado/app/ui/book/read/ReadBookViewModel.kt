@@ -253,13 +253,33 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun refreshContent(book: Book) {
+    fun refreshContentDur(book: Book) {
         execute {
             appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 ?.let { chapter ->
                     BookHelp.delContent(book, chapter)
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
+        }
+    }
+
+    fun refreshContentAfter(book: Book) {
+        execute {
+            appDb.bookChapterDao.getChapterList(
+                book.bookUrl,
+                ReadBook.durChapterIndex,
+                book.totalChapterNum
+            ).forEach { chapter ->
+                BookHelp.delContent(book, chapter)
+            }
+            ReadBook.loadContent(false)
+        }
+    }
+
+    fun refreshContentAll(book: Book) {
+        execute {
+            BookHelp.clearCache(book)
+            ReadBook.loadContent(false)
         }
     }
 
