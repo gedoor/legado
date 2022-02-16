@@ -119,6 +119,8 @@ class BookInfoActivity :
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_can_update)?.isChecked =
             viewModel.bookData.value?.canUpdate ?: true
+        menu.findItem(R.id.menu_split_long_chapter)?.isChecked =
+            viewModel.bookData.value?.getSplitLongChapter() ?: true
         menu.findItem(R.id.menu_login)?.isVisible =
             !viewModel.bookSource?.loginUrl.isNullOrBlank()
         menu.findItem(R.id.menu_set_source_variable)?.isVisible =
@@ -127,6 +129,8 @@ class BookInfoActivity :
             viewModel.bookSource != null
         menu.findItem(R.id.menu_can_update)?.isVisible =
             viewModel.bookSource != null
+        menu.findItem(R.id.menu_split_long_chapter)?.isVisible =
+            viewModel.bookData.value?.isLocalTxt() ?: false
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -186,6 +190,16 @@ class BookInfoActivity :
             }
             R.id.menu_clear_cache -> viewModel.clearCache()
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
+            R.id.menu_split_long_chapter -> {
+                upLoading(true)
+                tocChanged = true
+                viewModel.bookData.value?.let {
+                    it.setSplitLongChapter(!item.isChecked)
+                    viewModel.loadBookInfo(it, false)
+                }
+                item.isChecked = !item.isChecked
+                if (!item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }

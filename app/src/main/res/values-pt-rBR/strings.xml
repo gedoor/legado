@@ -918,7 +918,7 @@
     <string name="select_book_folder">选择保存书籍的文件夹</string>
     <string name="user_agent">用户代理</string>
     <string name="bg_alpha">背景透明度</string>
-    <string name="limit_content_length">限制正文长度</string>
+    <string name="split_long_chapter">拆分超长章节</string>
     <string name="need_more_time_load_content">正文长度过长时，加载正文可能会花费更多时间</string>
 
     <!-- check source config string -->

@@ -154,12 +154,16 @@ data class Book(
         return config().useReplaceRule ?: AppConfig.replaceEnableDefault
     }
 
+    fun setReSegment(reSegment: Boolean) {
+        config().reSegment = reSegment
+    }
+
     fun getReSegment(): Boolean {
         return config().reSegment
     }
 
-    fun setReSegment(reSegment: Boolean) {
-        config().reSegment = reSegment
+    fun setPageAnim(pageAnim: Int?) {
+        config().pageAnim = pageAnim
     }
 
     fun getPageAnim(): Int {
@@ -170,16 +174,12 @@ data class Book(
         return pageAnim
     }
 
-    fun setPageAnim(pageAnim: Int?) {
-        config().pageAnim = pageAnim
+    fun setImageStyle(imageStyle: String?) {
+        config().imageStyle = imageStyle
     }
 
     fun getImageStyle(): String? {
         return config().imageStyle
-    }
-
-    fun setImageStyle(imageStyle: String?) {
-        config().imageStyle = imageStyle
     }
 
     fun setTtsEngine(ttsEngine: String?) {
@@ -188,6 +188,14 @@ data class Book(
 
     fun getTtsEngine(): String? {
         return config().ttsEngine
+    }
+
+    fun setSplitLongChapter(limitLongContent: Boolean) {
+        config().splitLongChapter = limitLongContent
+    }
+
+    fun getSplitLongChapter(): Boolean {
+        return config().splitLongChapter
     }
 
     fun getDelTag(tag: Long): Boolean {
@@ -288,6 +296,7 @@ data class Book(
         var useReplaceRule: Boolean? = null,// 正文使用净化替换规则
         var delTag: Long = 0L,//去除标签
         var ttsEngine: String? = null,
+        var splitLongChapter: Boolean = true
     ) : Parcelable
 
     class Converters {
