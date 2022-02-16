@@ -24,7 +24,6 @@ import io.legado.app.databinding.ItemTocRegexBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.model.ReadBook
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
@@ -59,8 +58,6 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         binding.toolBar.setTitle(R.string.txt_toc_regex)
         binding.toolBar.inflateMenu(R.menu.txt_toc_regex)
         binding.toolBar.menu.applyTint(requireContext())
-        binding.toolBar.menu.findItem(R.id.menu_limit_content_length)
-            ?.isChecked = ReadBook.book?.getLimitContentLength() == true
         binding.toolBar.setOnMenuItemClickListener(this)
         initView()
         initData()
@@ -115,11 +112,6 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             R.id.menu_add -> editRule()
             R.id.menu_default -> viewModel.importDefault()
             R.id.menu_import -> showImportDialog()
-            R.id.menu_limit_content_length -> {
-                ReadBook.book?.setLimitContentLength(!item.isChecked)
-                item.isChecked = !item.isChecked
-                if (!item.isChecked) context?.longToastOnUi(R.string.need_more_time_load_content)
-            }
         }
         return false
     }
