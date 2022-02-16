@@ -152,6 +152,7 @@ class TextFile(private val book: Book) {
                         toc.lastOrNull()?.let {
                             it.end = it.start
                         }
+                        //章节字数太多进行拆分
                         toc.addAll(analyze(lastStart, curOffset + chapterLength))
                         //创建当前章节
                         val curChapter = BookChapter()
