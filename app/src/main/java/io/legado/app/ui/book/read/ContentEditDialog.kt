@@ -64,6 +64,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                 }
                 R.id.menu_reset -> viewModel.initContent(true) { content ->
                     binding.contentView.setText(content)
+                    ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
             }
             return@setOnMenuItemClickListener true
