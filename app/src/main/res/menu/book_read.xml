@@ -71,8 +71,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_copy_text"
-        android:title="@string/copy_text"
+        android:id="@+id/menu_edit_content"
+        android:title="@string/edit_content"
         app:showAsAction="never" />
 
     <item

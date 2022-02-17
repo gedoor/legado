@@ -96,24 +96,25 @@ class ReadBookActivity : BaseReadBookActivity(),
                 viewModel.replaceRuleChanged()
             }
         }
-    private val searchContentActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        it ?: return@registerForActivityResult
-        it.data?.let { data ->
-            val key = data.getLongExtra("key", System.currentTimeMillis())
-            val searchResult = IntentData.get<SearchResult>("searchResult$key")
-            val searchResultList = IntentData.get<List<SearchResult>>("searchResultList$key")
-            if (searchResult != null && searchResultList != null) {
-                viewModel.searchContentQuery = searchResult.query
-                binding.searchMenu.upSearchResultList(searchResultList)
-                isShowingSearchResult = true
-                binding.searchMenu.updateSearchResultIndex(searchResultList.indexOf(searchResult))
-                binding.searchMenu.selectedSearchResult?.let { currentResult ->
-                    skipToSearch(currentResult)
-                    showActionMenu()
+    private val searchContentActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            it ?: return@registerForActivityResult
+            it.data?.let { data ->
+                val key = data.getLongExtra("key", System.currentTimeMillis())
+                val searchResult = IntentData.get<SearchResult>("searchResult$key")
+                val searchResultList = IntentData.get<List<SearchResult>>("searchResultList$key")
+                if (searchResult != null && searchResultList != null) {
+                    viewModel.searchContentQuery = searchResult.query
+                    binding.searchMenu.upSearchResultList(searchResultList)
+                    isShowingSearchResult = true
+                    binding.searchMenu.updateSearchResultIndex(searchResultList.indexOf(searchResult))
+                    binding.searchMenu.selectedSearchResult?.let { currentResult ->
+                        skipToSearch(currentResult)
+                        showActionMenu()
+                    }
                 }
             }
         }
-    }
     private var menu: Menu? = null
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
@@ -288,9 +289,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     showDialogFragment(BookmarkDialog(bookmark))
                 }
             }
-            R.id.menu_copy_text -> showDialogFragment(
-                TextDialog(ReadBook.curTextChapter?.getContent())
-            )
+            R.id.menu_edit_content -> showDialogFragment(ContentEditDialog())
             R.id.menu_update_toc -> ReadBook.book?.let {
                 if (it.isEpub()) {
                     BookHelp.clearCache(it)
@@ -945,7 +944,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private fun skipToSearch(searchResult: SearchResult) {
         val previousResult = binding.searchMenu.previousSearchResult
 
-        fun jumpToPosition(){
+        fun jumpToPosition() {
             ReadBook.curTextChapter?.let {
                 binding.searchMenu.updateSearchInfo()
                 val positions = viewModel.searchResultPositions(it, searchResult)
@@ -954,10 +953,12 @@ class ReadBookActivity : BaseReadBookActivity(),
                         isSelectingSearchResult = true
                         binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
                         when (positions[3]) {
-                            0  -> binding.readView.curPage.selectEndMoveIndex(
-                                0, positions[1], positions[2] + viewModel.searchContentQuery.length - 1
+                            0 -> binding.readView.curPage.selectEndMoveIndex(
+                                0,
+                                positions[1],
+                                positions[2] + viewModel.searchContentQuery.length - 1
                             )
-                            1  -> binding.readView.curPage.selectEndMoveIndex(
+                            1 -> binding.readView.curPage.selectEndMoveIndex(
                                 0, positions[1] + 1, positions[4]
                             )
                             //consider change page, jump to scroll position

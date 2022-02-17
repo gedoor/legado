@@ -231,7 +231,7 @@ abstract class BaseReadBookActivity :
                     alertBinding.run {
                         val start = editStart.text?.toString()?.toInt() ?: 0
                         val end = editEnd.text?.toString()?.toInt() ?: book.totalChapterNum
-                        CacheBook.start(this@BaseReadBookActivity, book.bookUrl, start - 1, end - 1)
+                        CacheBook.start(this@BaseReadBookActivity, book, start - 1, end - 1)
                     }
                 }
                 noButton()

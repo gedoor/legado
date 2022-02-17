@@ -941,5 +941,6 @@
     <string name="menu_refresh_dur">刷新当前章节</string>
     <string name="menu_refresh_after">刷新之后章节</string>
     <string name="menu_refresh_all">刷新全部章节</string>
+    <string name="edit_content">编辑内容</string>
     <!-- string end -->
 </resources>

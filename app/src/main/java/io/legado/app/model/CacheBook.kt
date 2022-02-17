@@ -54,12 +54,14 @@ object CacheBook {
         return cacheBook
     }
 
-    fun start(context: Context, bookUrl: String, start: Int, end: Int) {
-        context.startService<CacheBookService> {
-            action = IntentAction.start
-            putExtra("bookUrl", bookUrl)
-            putExtra("start", start)
-            putExtra("end", end)
+    fun start(context: Context, book: Book, start: Int, end: Int) {
+        if (!book.isLocalBook()) {
+            context.startService<CacheBookService> {
+                action = IntentAction.start
+                putExtra("bookUrl", book.bookUrl)
+                putExtra("start", start)
+                putExtra("end", end)
+            }
         }
     }
 

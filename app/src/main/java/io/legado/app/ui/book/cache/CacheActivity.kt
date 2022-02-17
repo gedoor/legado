@@ -113,7 +113,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                     adapter.getItems().forEach { book ->
                         CacheBook.start(
                             this@CacheActivity,
-                            book.bookUrl,
+                            book,
                             book.durChapterIndex,
                             book.totalChapterNum
                         )
