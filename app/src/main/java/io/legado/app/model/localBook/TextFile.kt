@@ -151,17 +151,25 @@ class TextFile(private val book: Book) {
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
-                    if (book.getSplitLongChapter() && curOffset + chapterLength - lastStart > maxLengthWithToc) {
+                    if (book.getSplitLongChapter()
+                        && curOffset + chapterLength - lastStart > maxLengthWithToc
+                    ) {
                         toc.lastOrNull()?.let {
                             it.end = it.start
                         }
                         //章节字数太多进行拆分
-                        toc.addAll(
-                            analyze(
-                                lastStart + matcher.group().length,
-                                curOffset + chapterLength
-                            )
+                        val lastTitle = toc.lastOrNull()?.title
+                        val lastTitleLength = lastTitle?.toByteArray(charset)?.size ?: 0
+                        val chapters = analyze(
+                            lastStart + lastTitleLength,
+                            curOffset + chapterLength
                         )
+                        lastTitle?.let {
+                            chapters.forEachIndexed { index, bookChapter ->
+                                bookChapter.title = "$lastTitle(${index + 1})"
+                            }
+                        }
+                        toc.addAll(chapters)
                         //创建当前章节
                         val curChapter = BookChapter()
                         curChapter.title = matcher.group()
@@ -189,7 +197,7 @@ class TextFile(private val book: Book) {
                         } else { //否则就block分割之后，上一个章节的剩余内容
                             //获取上一章节
                             val lastChapter = toc.last()
-                            toc.last().isVolume =
+                            lastChapter.isVolume =
                                 chapterContent.substringAfter(lastChapter.title).isBlank()
                             //将当前段落添加上一章去
                             lastChapter.end =
