@@ -911,6 +911,7 @@
     <string name="tts_speech_reduce">語速減</string>
     <string name="tts_speech_add">語速加</string>
     <string name="open_sys_dir_picker_error">打開系統資料夾選擇器出錯,自動打開應用程式資料夾選擇器</string>
+    <string name="open_sys_doc_picker_error">打开系统文件选择器出错,自动打开应用文件选择器</string>
     <string name="expand_text_menu">展開文字選擇選單</string>
     <string name="search_content_size">搜尋結果</string>
     <string name="search_content_empty">搜尋結果为空</string>

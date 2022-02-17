@@ -97,7 +97,16 @@ class HandleFileActivity :
                             )
                         }
                     }
-                    HandleFileContract.FILE -> selectDoc.launch(typesOfExtensions(allowExtensions))
+                    HandleFileContract.FILE -> kotlin.runCatching {
+                        selectDoc.launch(typesOfExtensions(allowExtensions))
+                    }.onFailure {
+                        toastOnUi(R.string.open_sys_dir_picker_error)
+                        FilePickerDialog.show(
+                            supportFragmentManager,
+                            mode = HandleFileContract.FILE,
+                            allowExtensions = allowExtensions
+                        )
+                    }
                     10 -> checkPermissions {
                         FilePickerDialog.show(
                             supportFragmentManager,
