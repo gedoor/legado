@@ -59,6 +59,11 @@ Legado is a free and open source novel reader for Android.
 #### IOS-苹果
 * 准备中(No release) - [Github](https://github.com/gedoor/YueDuFlutter)
 
+
+#### Third Party-第三方
+* 源阅读(IOS) - [App Store](https://apps.apple.com/cn/app/%E6%BA%90%E9%98%85%E8%AF%BB/id1561787704)
+* 阅读3(服务器版，桌面端) - [Github](https://github.com/hectorqin/reader)
+
 <a href="#readme">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
 </a>
