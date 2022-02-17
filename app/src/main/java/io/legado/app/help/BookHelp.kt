@@ -251,16 +251,12 @@ object BookHelp {
      * 删除章节内容
      */
     fun delContent(book: Book, bookChapter: BookChapter) {
-        if (book.isLocalTxt()) {
-            return
-        } else {
-            FileUtils.createFileIfNotExist(
-                downloadDir,
-                cacheFolderName,
-                book.getFolderName(),
-                bookChapter.getFileName()
-            ).delete()
-        }
+        FileUtils.createFileIfNotExist(
+            downloadDir,
+            cacheFolderName,
+            book.getFolderName(),
+            bookChapter.getFileName()
+        ).delete()
     }
 
     /**
