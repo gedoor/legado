@@ -151,12 +151,17 @@ class TextFile(private val book: Book) {
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
-                    if (curOffset + chapterLength - lastStart > maxLengthWithToc) {
+                    if (book.getSplitLongChapter() && curOffset + chapterLength - lastStart > maxLengthWithToc) {
                         toc.lastOrNull()?.let {
                             it.end = it.start
                         }
                         //章节字数太多进行拆分
-                        toc.addAll(analyze(lastStart, curOffset + chapterLength))
+                        toc.addAll(
+                            analyze(
+                                lastStart + matcher.group().length,
+                                curOffset + chapterLength
+                            )
+                        )
                         //创建当前章节
                         val curChapter = BookChapter()
                         curChapter.title = matcher.group()
