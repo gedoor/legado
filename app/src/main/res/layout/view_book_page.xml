@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/vw_root"
-    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <View
         android:id="@+id/vw_bg"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <FrameLayout
         android:id="@+id/vw_status_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_header"
@@ -31,21 +30,21 @@
             android:id="@+id/tv_header_left"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintHorizontal_weight="1"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/tv_header_right" />
+            app:layout_constraintRight_toLeftOf="@+id/tv_header_right"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <io.legado.app.ui.widget.BatteryView
             android:id="@+id/bv_header_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -55,8 +54,8 @@
             android:id="@+id/tv_header_middle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
             android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,9 +68,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
-            android:textSize="12sp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -85,15 +84,15 @@
         android:layout_height="0.5dp"
         android:background="@color/divider"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/ll_header"/>
+        app:layout_constraintTop_toBottomOf="@id/ll_header" />
 
     <io.legado.app.ui.book.read.page.ContentTextView
         android:id="@+id/content_text_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layout_constraintTop_toBottomOf="@id/vw_top_divider"
-        app:layout_constraintBottom_toTopOf="@id/vw_bottom_divider"/>
+        app:layout_constraintBottom_toTopOf="@id/vw_bottom_divider"
+        app:layout_constraintTop_toBottomOf="@id/vw_top_divider" />
 
     <View
         android:id="@+id/vw_bottom_divider"
@@ -101,7 +100,7 @@
         android:layout_height="0.5dp"
         android:background="@color/divider"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/ll_footer"/>
+        app:layout_constraintBottom_toTopOf="@id/ll_footer" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_footer"
@@ -114,11 +113,11 @@
             android:id="@+id/tv_footer_left"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintHorizontal_weight="1"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/tv_footer_right"
             app:layout_constraintTop_toTopOf="parent" />
@@ -127,8 +126,8 @@
             android:id="@+id/bv_footer_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -138,9 +137,9 @@
             android:id="@+id/tv_footer_middle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -152,9 +151,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
-            android:textSize="12sp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
