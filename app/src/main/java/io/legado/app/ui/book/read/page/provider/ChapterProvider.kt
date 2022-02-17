@@ -164,7 +164,7 @@ object ChapterProvider {
                     }
                     durY = setTypeImage(
                         book, bookChapter, matcher.group(1)!!,
-                        durY, textPages, book.getImageStyle()
+                        absStartX, durY, textPages, book.getImageStyle()
                     )
                     start = matcher.end()
                 }
@@ -204,6 +204,7 @@ object ChapterProvider {
         book: Book,
         chapter: BookChapter,
         src: String,
+        absStartX: Int,
         y: Float,
         textPages: ArrayList<TextPage>,
         imageStyle: String?,
@@ -254,8 +255,8 @@ object ChapterProvider {
             textLine.textChars.add(
                 TextChar(
                     charData = src,
-                    start = start,
-                    end = end,
+                    start = absStartX + start,
+                    end = absStartX + end,
                     isImage = true
                 )
             )
