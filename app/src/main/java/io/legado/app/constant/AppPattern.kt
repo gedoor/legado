@@ -2,7 +2,7 @@ package io.legado.app.constant
 
 import java.util.regex.Pattern
 
-@Suppress("RegExpRedundantEscape")
+@Suppress("RegExpRedundantEscape", "unused")
 object AppPattern {
     val JS_PATTERN: Pattern =
         Pattern.compile("<js>([\\w\\W]*?)</js>|@js:([\\w\\W]*)", Pattern.CASE_INSENSITIVE)

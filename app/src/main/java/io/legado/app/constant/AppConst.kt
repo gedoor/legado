@@ -77,6 +77,7 @@ object AppConst {
         "androidx.appcompat.view.menu.ListMenuItemView"
     )
 
+    @SuppressLint("PrivateResource")
     val sysElevation = appCtx.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
 
     val androidId: String by lazy {
