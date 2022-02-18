@@ -42,8 +42,16 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override val viewModel by viewModels<SearchViewModel>()
 
     private val adapter by lazy { SearchAdapter(this, this) }
-    private val bookAdapter by lazy { BookAdapter(this, this) }
-    private val historyKeyAdapter by lazy { HistoryKeyAdapter(this, this) }
+    private val bookAdapter by lazy {
+        BookAdapter(this, this).apply {
+            setHasStableIds(true)
+        }
+    }
+    private val historyKeyAdapter by lazy {
+        HistoryKeyAdapter(this, this).apply {
+            setHasStableIds(true)
+        }
+    }
     private val loadMoreView by lazy { LoadMoreView(this) }
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
@@ -196,16 +204,16 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 upGroupMenu()
             }
         }
-        viewModel.searchBookLiveData.observe(this, {
+        viewModel.searchBookLiveData.observe(this) {
             upSearchItems(it)
-        })
-        viewModel.isSearchLiveData.observe(this, {
+        }
+        viewModel.isSearchLiveData.observe(this) {
             if (it) {
                 startSearch()
             } else {
                 searchFinally()
             }
-        })
+        }
     }
 
     private fun receiptIntent(intent: Intent? = null) {

@@ -13,6 +13,10 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
 
     private val explosionField = ExplosionField.attach2Window(activity)
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
         return ItemFilletTextBinding.inflate(inflater, parent, false)
     }

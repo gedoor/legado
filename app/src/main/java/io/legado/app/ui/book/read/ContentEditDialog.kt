@@ -9,9 +9,12 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.DialogContentEditBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
@@ -39,6 +42,15 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.title = ReadBook.curTextChapter?.title
         initMenu()
+        binding.toolBar.setOnClickListener {
+            launch {
+                val book = ReadBook.book ?: return@launch
+                val chapter = withContext(IO) {
+                    appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+                } ?: return@launch
+                editTitle(chapter)
+            }
+        }
         viewModel.initContent {
             binding.contentView.setText(it)
         }
@@ -68,6 +80,25 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                 }
             }
             return@setOnMenuItemClickListener true
+        }
+    }
+
+    private fun editTitle(chapter: BookChapter) {
+        alert {
+            setTitle(R.string.edit)
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
+            alertBinding.editView.setText(chapter.title)
+            setCustomView(alertBinding.root)
+            okButton {
+                chapter.title = alertBinding.editView.text.toString()
+                launch {
+                    withContext(IO) {
+                        appDb.bookChapterDao.upDate(chapter)
+                    }
+                    binding.toolBar.title = chapter.getDisplayTitle()
+                    ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
+                }
+            }
         }
     }
 

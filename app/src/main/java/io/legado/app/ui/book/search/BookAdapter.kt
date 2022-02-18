@@ -11,6 +11,10 @@ import io.legado.app.databinding.ItemFilletTextBinding
 class BookAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<Book, ItemFilletTextBinding>(context) {
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
         return ItemFilletTextBinding.inflate(inflater, parent, false)
     }
