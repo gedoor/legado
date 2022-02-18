@@ -16,6 +16,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
@@ -194,8 +195,8 @@ class BookSourceEditActivity :
             binding.cbIsEnableFind.isChecked = it.enabledExplore
             binding.spType.setSelection(
                 when (it.bookSourceType) {
-                    3 -> 2
-                    1 -> 1
+                    BookType.image -> 2
+                    BookType.audio -> 1
                     else -> 0
                 }
             )
@@ -298,9 +299,9 @@ class BookSourceEditActivity :
         source.enabled = binding.cbIsEnable.isChecked
         source.enabledExplore = binding.cbIsEnableFind.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
-            2 -> 3
-            1 -> 1
-            else -> 0
+            2 -> BookType.image
+            1 -> BookType.audio
+            else -> BookType.default
         }
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()
