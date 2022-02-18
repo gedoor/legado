@@ -131,43 +131,45 @@ data class Book(
         return charset(charset ?: "UTF-8")
     }
 
-    private fun config(): ReadConfig {
-        if (readConfig == null) {
-            readConfig = ReadConfig()
+    @IgnoredOnParcel
+    val config: ReadConfig
+        get() {
+            if (readConfig == null) {
+                readConfig = ReadConfig()
+            }
+            return readConfig!!
         }
-        return readConfig!!
-    }
 
     fun setReverseToc(reverseToc: Boolean) {
-        config().reverseToc = reverseToc
+        config.reverseToc = reverseToc
     }
 
     fun getReverseToc(): Boolean {
-        return config().reverseToc
+        return config.reverseToc
     }
 
     fun setUseReplaceRule(useReplaceRule: Boolean) {
-        config().useReplaceRule = useReplaceRule
+        config.useReplaceRule = useReplaceRule
     }
 
     fun getUseReplaceRule(): Boolean {
-        return config().useReplaceRule ?: AppConfig.replaceEnableDefault
+        return config.useReplaceRule ?: AppConfig.replaceEnableDefault
     }
 
     fun setReSegment(reSegment: Boolean) {
-        config().reSegment = reSegment
+        config.reSegment = reSegment
     }
 
     fun getReSegment(): Boolean {
-        return config().reSegment
+        return config.reSegment
     }
 
     fun setPageAnim(pageAnim: Int?) {
-        config().pageAnim = pageAnim
+        config.pageAnim = pageAnim
     }
 
     fun getPageAnim(): Int {
-        var pageAnim = config().pageAnim ?: ReadBookConfig.pageAnim
+        var pageAnim = config.pageAnim ?: ReadBookConfig.pageAnim
         if (pageAnim < 0) {
             pageAnim = ReadBookConfig.pageAnim
         }
@@ -175,31 +177,31 @@ data class Book(
     }
 
     fun setImageStyle(imageStyle: String?) {
-        config().imageStyle = imageStyle
+        config.imageStyle = imageStyle
     }
 
     fun getImageStyle(): String? {
-        return config().imageStyle
+        return config.imageStyle
     }
 
     fun setTtsEngine(ttsEngine: String?) {
-        config().ttsEngine = ttsEngine
+        config.ttsEngine = ttsEngine
     }
 
     fun getTtsEngine(): String? {
-        return config().ttsEngine
+        return config.ttsEngine
     }
 
     fun setSplitLongChapter(limitLongContent: Boolean) {
-        config().splitLongChapter = limitLongContent
+        config.splitLongChapter = limitLongContent
     }
 
     fun getSplitLongChapter(): Boolean {
-        return config().splitLongChapter
+        return config.splitLongChapter
     }
 
     fun getDelTag(tag: Long): Boolean {
-        return config().delTag and tag == tag
+        return config.delTag and tag == tag
     }
 
     fun getFolderName(): String {
