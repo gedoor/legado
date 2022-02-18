@@ -192,7 +192,13 @@ class BookSourceEditActivity :
         source?.let {
             binding.cbIsEnable.isChecked = it.enabled
             binding.cbIsEnableFind.isChecked = it.enabledExplore
-            binding.spType.setSelection(it.bookSourceType)
+            binding.spType.setSelection(
+                when (it.bookSourceType) {
+                    3 -> 2
+                    1 -> 1
+                    else -> 0
+                }
+            )
         }
         //基本信息
         sourceEntities.clear()
@@ -291,7 +297,11 @@ class BookSourceEditActivity :
         val source = viewModel.bookSource?.copy() ?: BookSource()
         source.enabled = binding.cbIsEnable.isChecked
         source.enabledExplore = binding.cbIsEnableFind.isChecked
-        source.bookSourceType = binding.spType.selectedItemPosition
+        source.bookSourceType = when (binding.spType.selectedItemPosition) {
+            2 -> 3
+            1 -> 1
+            else -> 0
+        }
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()
         val bookInfoRule = BookInfoRule()
