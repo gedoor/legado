@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<string-array name="book_type">
 		<item>Text</item>
 		<item>Audio</item>
+		<item>Image</item>
 	</string-array>
 
 	<string-array name="group_style">
@@ -59,7 +60,7 @@
 		<item>@string/screen_sensor</item>
 	</string-array>
 
-	<string-array name="icon_names">
+	<string-array name="icon_names" tools:ignore="Typos">
 		<item>iconMain</item>
 		<item>icon1</item>
 		<item>icon2</item>

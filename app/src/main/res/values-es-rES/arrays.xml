@@ -3,6 +3,7 @@
 	<string-array name="book_type">
 		<item>Texto</item>
 		<item>Audio</item>
+		<item>Image</item>
 	</string-array>
 
 	<string-array name="group_style">

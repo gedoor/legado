@@ -47,6 +47,7 @@
             android:layout_height="wrap_content"
             android:entries="@array/book_type"
             app:theme="@style/Spinner" />
+
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
