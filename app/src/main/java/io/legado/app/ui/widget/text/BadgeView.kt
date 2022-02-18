@@ -16,7 +16,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.gone
+import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 
 
@@ -129,7 +129,7 @@ class BadgeView @JvmOverloads constructor(
      */
     override fun setText(text: CharSequence, type: BufferType) {
         if (isHideOnNull && TextUtils.isEmpty(text)) {
-            gone()
+            invisible()
         } else {
             visible()
         }
@@ -137,12 +137,7 @@ class BadgeView @JvmOverloads constructor(
     }
 
     fun setBadgeCount(count: Int) {
-        text = count.toString()
-        if (count == 0) {
-            gone()
-        } else {
-            visible()
-        }
+        text = if (count == 0) "" else count.toString()
     }
 
     fun setHighlight(highlight: Boolean) {
