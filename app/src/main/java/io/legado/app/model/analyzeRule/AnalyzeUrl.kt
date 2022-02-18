@@ -360,7 +360,7 @@ class AnalyzeUrl(
         if (this.useWebView && useWebView) {
             strResponse = when (method) {
                 RequestMethod.POST -> {
-                    val body = getProxyClient(proxy).newCallStrResponse(retry) {
+                    val res = getProxyClient(proxy).newCallStrResponse(retry) {
                         addHeaders(headerMap)
                         url(urlNoQuery)
                         if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
@@ -368,10 +368,10 @@ class AnalyzeUrl(
                         } else {
                             postJson(body)
                         }
-                    }.body
+                    }
                     BackstageWebView(
-                        url = url,
-                        html = body,
+                        url = res.url,
+                        html = res.body,
                         tag = source?.getKey(),
                         javaScript = webJs ?: jsStr,
                         sourceRegex = sourceRegex,
@@ -462,17 +462,18 @@ class AnalyzeUrl(
      * 访问网站,返回ByteArray
      */
     suspend fun getByteArrayAwait(): ByteArray {
+        @Suppress("RegExpRedundantEscape")
         val dataUriRegex = Regex("data:[\\w/\\-\\.]+;base64,(.*)")
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
         val concurrentRecord = fetchStart()
         setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
-        if (dataUriFindResult != null){
-            val dataUriBase64 = dataUriFindResult.groupValues?.get(1)
+        if (dataUriFindResult != null) {
+            val dataUriBase64 = dataUriFindResult.groupValues[1]
             val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
             fetchEnd(concurrentRecord)
             return byteArray
-        }else {
+        } else {
             val byteArray = getProxyClient(proxy).newCallResponseBody(retry) {
                 addHeaders(headerMap)
                 when (method) {
