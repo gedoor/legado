@@ -31,7 +31,6 @@ class BatteryView @JvmOverloads constructor(
             }
         }
     private var battery: Int = 0
-    private var batteryWidth = 0
 
     init {
         setPadding(4.dp, 3.dp, 6.dp, 3.dp)
@@ -55,9 +54,6 @@ class BatteryView @JvmOverloads constructor(
     @SuppressLint("SetTextI18n")
     fun setBattery(battery: Int, text: String? = null) {
         this.battery = battery
-        if (isBattery) {
-            batteryWidth = StaticLayout.getDesiredWidth(battery.toString(), paint).toInt()
-        }
         if (text.isNullOrEmpty()) {
             setText(battery.toString())
         } else {
@@ -72,9 +68,8 @@ class BatteryView @JvmOverloads constructor(
         val batteryStart = layout
             .getPrimaryHorizontal(text.length - battery.toString().length)
             .toInt() + 3.dp
-        val batteryEnd = layout
-            .getSecondaryHorizontal(text.length)
-            .toInt() + 6.dp
+        val batteryEnd =
+            batteryStart + StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dp
         outFrame.set(
             batteryStart,
             2.dp,
