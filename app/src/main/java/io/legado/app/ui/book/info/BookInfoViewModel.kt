@@ -224,7 +224,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             bookData.value?.let { book ->
                 if (book.order == 0) {
-                    book.order = appDb.bookDao.maxOrder + 1
+                    book.order = appDb.bookDao.minOrder - 1
                 }
                 appDb.bookDao.getBook(book.name, book.author)?.let {
                     book.durChapterPos = it.durChapterPos
@@ -254,7 +254,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             bookData.value?.let { book ->
                 if (book.order == 0) {
-                    book.order = appDb.bookDao.maxOrder + 1
+                    book.order = appDb.bookDao.minOrder - 1
                 }
                 appDb.bookDao.getBook(book.name, book.author)?.let {
                     book.durChapterPos = it.durChapterPos
