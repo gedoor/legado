@@ -5,11 +5,22 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.transition.TransitionManager
 
+fun ConstraintLayout.modify(withAnim: Boolean = false): ConstraintModify.ConstraintBegin {
+    val begin = ConstraintModify(this).begin
+    if (withAnim) {
+        TransitionManager.beginDelayedTransition(this)
+    }
+    return begin
+}
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ConstraintModify(private val constraintLayout: ConstraintLayout) {
 
-    private var begin: ConstraintBegin? = null
+    val begin: ConstraintBegin by lazy {
+        ConstraintBegin(constraintLayout, applyConstraintSet).apply {
+            applyConstraintSet.clone(constraintLayout)
+        }
+    }
     private val applyConstraintSet = ConstraintSet()
     private val resetConstraintSet = ConstraintSet()
 
@@ -18,25 +29,12 @@ class ConstraintModify(private val constraintLayout: ConstraintLayout) {
     }
 
     /**
-     * 开始修改
-     */
-    fun begin(): ConstraintBegin {
-        synchronized(ConstraintBegin::class.java) {
-            if (begin == null) {
-                begin = ConstraintBegin(constraintLayout, applyConstraintSet)
-            }
-        }
-        applyConstraintSet.clone(constraintLayout)
-        return begin!!
-    }
-
-    /**
      * 带动画的修改
      * @return
      */
     fun beginWithAnim(): ConstraintBegin {
         TransitionManager.beginDelayedTransition(constraintLayout)
-        return begin()
+        return begin
     }
 
     /**
