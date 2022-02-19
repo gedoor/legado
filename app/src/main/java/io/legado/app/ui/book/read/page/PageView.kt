@@ -63,11 +63,9 @@ class PageView(context: Context) : FrameLayout(context) {
             val tipColor = with(ReadTipConfig) {
                 if (tipColor == 0) it.textColor else tipColor
             }
-            bvHeaderLeft.setColor(tipColor)
             tvHeaderLeft.setColor(tipColor)
             tvHeaderMiddle.setColor(tipColor)
             tvHeaderRight.setColor(tipColor)
-            bvFooterLeft.setColor(tipColor)
             tvFooterLeft.setColor(tipColor)
             tvFooterMiddle.setColor(tipColor)
             tvFooterRight.setColor(tipColor)
@@ -101,15 +99,17 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     private fun upTipStyle() = binding.run {
+        tvHeaderLeft.tag = null
+        tvHeaderMiddle.tag = null
+        tvHeaderRight.tag = null
+        tvFooterLeft.tag = null
+        tvFooterMiddle.tag = null
+        tvFooterRight.tag = null
         ReadTipConfig.apply {
-            tvHeaderLeft.isInvisible = tipHeaderLeft != chapterTitle
-            bvHeaderLeft.isInvisible =
-                tipHeaderLeft == none || !tvHeaderLeft.isInvisible
+            tvHeaderLeft.isGone = tipHeaderLeft == none
             tvHeaderRight.isGone = tipHeaderRight == none
             tvHeaderMiddle.isGone = tipHeaderMiddle == none
-            tvFooterLeft.isInvisible = tipFooterLeft != chapterTitle
-            bvFooterLeft.isInvisible =
-                tipFooterLeft == none || !tvFooterLeft.isInvisible
+            tvFooterLeft.isInvisible = tipFooterLeft == none
             tvFooterRight.isGone = tipFooterRight == none
             tvFooterMiddle.isGone = tipFooterMiddle == none
             llHeader.isGone = when (headerMode) {
@@ -122,63 +122,61 @@ class PageView(context: Context) : FrameLayout(context) {
                 else -> false
             }
         }
-        tvTitle = getTipView(ReadTipConfig.chapterTitle)
-        tvTitle?.apply {
+        tvTitle = getTipView(ReadTipConfig.chapterTitle)?.apply {
+            tag = ReadTipConfig.chapterTitle
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
-        tvTime = getTipView(ReadTipConfig.time)
-        tvTime?.apply {
+        tvTime = getTipView(ReadTipConfig.time)?.apply {
+            tag = ReadTipConfig.time
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
-        tvBattery = getTipView(ReadTipConfig.battery)
-        tvBattery?.apply {
+        tvBattery = getTipView(ReadTipConfig.battery)?.apply {
+            tag = ReadTipConfig.battery
             isBattery = true
-            textSize = 10f
+            textSize = 11f
         }
-        tvPage = getTipView(ReadTipConfig.page)
-        tvPage?.apply {
+        tvPage = getTipView(ReadTipConfig.page)?.apply {
+            tag = ReadTipConfig.page
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
-        tvTotalProgress = getTipView(ReadTipConfig.totalProgress)
-        tvTotalProgress?.apply {
+        tvTotalProgress = getTipView(ReadTipConfig.totalProgress)?.apply {
+            tag = ReadTipConfig.totalProgress
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
-        tvPageAndTotal = getTipView(ReadTipConfig.pageAndTotal)
-        tvPageAndTotal?.apply {
+        tvPageAndTotal = getTipView(ReadTipConfig.pageAndTotal)?.apply {
+            tag = ReadTipConfig.pageAndTotal
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
-        tvBookName = getTipView(ReadTipConfig.bookName)
-        tvBookName?.apply {
+        tvBookName = getTipView(ReadTipConfig.bookName)?.apply {
+            tag = ReadTipConfig.bookName
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
-        tvTimeBattery = getTipView(ReadTipConfig.timeBattery)
-        tvTimeBattery?.apply {
-            isBattery = false
+        tvTimeBattery = getTipView(ReadTipConfig.timeBattery)?.apply {
+            tag = ReadTipConfig.timeBattery
+            isBattery = true
             typeface = ChapterProvider.typeface
-            textSize = 12f
+            textSize = 11f
         }
     }
 
     private fun getTipView(tip: Int): BatteryView? = binding.run {
         return when (tip) {
-            ReadTipConfig.tipHeaderLeft ->
-                if (tip == ReadTipConfig.chapterTitle) tvHeaderLeft else bvHeaderLeft
+            ReadTipConfig.tipHeaderLeft -> tvHeaderLeft
             ReadTipConfig.tipHeaderMiddle -> tvHeaderMiddle
             ReadTipConfig.tipHeaderRight -> tvHeaderRight
-            ReadTipConfig.tipFooterLeft ->
-                if (tip == ReadTipConfig.chapterTitle) tvFooterLeft else bvFooterLeft
+            ReadTipConfig.tipFooterLeft -> tvFooterLeft
             ReadTipConfig.tipFooterMiddle -> tvFooterMiddle
             ReadTipConfig.tipFooterRight -> tvFooterRight
             else -> null
@@ -202,16 +200,14 @@ class PageView(context: Context) : FrameLayout(context) {
 
     fun upBattery(battery: Int) {
         this.battery = battery
-        tvBattery?.setBattery(battery)
+        tvBattery?.setTextAndBattery(battery = battery)
         upTimeBattery()
     }
 
     @SuppressLint("SetTextI18n")
     private fun upTimeBattery() {
-        tvTimeBattery?.let {
-            val time = timeFormat.format(Date(System.currentTimeMillis()))
-            it.text = "$time $battery%"
-        }
+        val time = timeFormat.format(Date(System.currentTimeMillis()))
+        tvTimeBattery?.setTextAndBattery(time, battery)
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {

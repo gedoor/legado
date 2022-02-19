@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.text.StaticLayout
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
@@ -29,6 +30,8 @@ class BatteryView @JvmOverloads constructor(
                 postInvalidate()
             }
         }
+    private var battery: Int = 0
+    private var batteryWidth = 0
 
     init {
         setPadding(4.dp, 2.dp, 6.dp, 2.dp)
@@ -50,15 +53,19 @@ class BatteryView @JvmOverloads constructor(
     }
 
     @SuppressLint("SetTextI18n")
-    fun setBattery(battery: Int) {
-        text = "$battery"
+    fun setTextAndBattery(text: String = "", battery: Int = 0) {
+        this.battery = battery
+        if (isBattery) {
+            batteryWidth = StaticLayout.getDesiredWidth(battery.toString(), paint).toInt()
+        }
+        setText("$text  $battery")
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (!isBattery) return
         outFrame.set(
-            1.dp,
+            width - 6.dp - batteryWidth,
             1.dp,
             width - 3.dp,
             height - 1.dp
