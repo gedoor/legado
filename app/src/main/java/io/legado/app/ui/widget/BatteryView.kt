@@ -53,28 +53,39 @@ class BatteryView @JvmOverloads constructor(
     }
 
     @SuppressLint("SetTextI18n")
-    fun setTextAndBattery(text: String = "", battery: Int = 0) {
+    fun setBattery(battery: Int, text: String? = null) {
         this.battery = battery
         if (isBattery) {
             batteryWidth = StaticLayout.getDesiredWidth(battery.toString(), paint).toInt()
         }
-        setText("$text  $battery")
+        if (text.isNullOrEmpty()) {
+            setText(battery.toString())
+        } else {
+            setText("$text  $battery")
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (!isBattery) return
+        layout.getLineBounds(0, outFrame)
+        val batteryStart = layout
+            .getPrimaryHorizontal(text.length - battery.toString().length)
+            .toInt() + 3.dp
+        val batteryEnd = layout
+            .getSecondaryHorizontal(text.length)
+            .toInt() + 6.dp
         outFrame.set(
-            width - 6.dp - batteryWidth,
+            batteryStart,
             1.dp,
-            width - 3.dp,
+            batteryEnd,
             height - 1.dp
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
         polar.set(
-            outFrame.right,
+            batteryEnd,
             outFrame.top + dj,
-            width - 1.dp,
+            batteryEnd + 2.dp,
             outFrame.bottom - dj
         )
         batteryPaint.style = Paint.Style.STROKE

@@ -200,14 +200,14 @@ class PageView(context: Context) : FrameLayout(context) {
 
     fun upBattery(battery: Int) {
         this.battery = battery
-        tvBattery?.setTextAndBattery(battery = battery)
+        tvBattery?.setBattery(battery)
         upTimeBattery()
     }
 
     @SuppressLint("SetTextI18n")
     private fun upTimeBattery() {
         val time = timeFormat.format(Date(System.currentTimeMillis()))
-        tvTimeBattery?.setTextAndBattery(time, battery)
+        tvTimeBattery?.setBattery(battery, time)
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
