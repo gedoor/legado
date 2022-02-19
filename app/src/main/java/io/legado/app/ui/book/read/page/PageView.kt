@@ -105,6 +105,15 @@ class PageView(context: Context) : FrameLayout(context) {
         tvFooterLeft.tag = null
         tvFooterMiddle.tag = null
         tvFooterRight.tag = null
+        llHeader.isGone = when (ReadTipConfig.headerMode) {
+            1 -> false
+            2 -> true
+            else -> !ReadBookConfig.hideStatusBar
+        }
+        llFooter.isGone = when (ReadTipConfig.footerMode) {
+            1 -> true
+            else -> false
+        }
         ReadTipConfig.apply {
             tvHeaderLeft.isGone = tipHeaderLeft == none
             tvHeaderRight.isGone = tipHeaderRight == none
@@ -112,15 +121,6 @@ class PageView(context: Context) : FrameLayout(context) {
             tvFooterLeft.isInvisible = tipFooterLeft == none
             tvFooterRight.isGone = tipFooterRight == none
             tvFooterMiddle.isGone = tipFooterMiddle == none
-            llHeader.isGone = when (headerMode) {
-                1 -> false
-                2 -> true
-                else -> !ReadBookConfig.hideStatusBar
-            }
-            llFooter.isGone = when (footerMode) {
-                1 -> true
-                else -> false
-            }
         }
         tvTitle = getTipView(ReadTipConfig.chapterTitle)?.apply {
             tag = ReadTipConfig.chapterTitle
