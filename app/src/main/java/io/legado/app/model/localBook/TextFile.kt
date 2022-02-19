@@ -90,42 +90,28 @@ class TextFile(private val book: Book) {
     /**
      * 按规则解析目录
      */
-    private fun analyze(
-        pattern: Pattern?,
-        fileStart: Long = 0L,
-        fileEnd: Long = Long.MAX_VALUE
-    ): ArrayList<BookChapter> {
-        pattern ?: return analyze(fileStart, fileEnd)
+    private fun analyze(pattern: Pattern?): ArrayList<BookChapter> {
+        pattern ?: return analyze()
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
             var blockContent: String
             //加载章节
             var curOffset: Long = 0
             //读取的长度
-            var length = 0
+            var length: Int
             val buffer = ByteArray(bufferSize)
             var bufferStart = 3
-            if (fileStart == 0L) {
-                bis.read(buffer, 0, 3)
-                if (Utf8BomUtils.hasBom(buffer)) {
-                    bufferStart = 0
-                    curOffset = 3
-                }
-            } else {
-                bis.skip(fileStart)
-                curOffset = fileStart
+            bis.read(buffer, 0, 3)
+            if (Utf8BomUtils.hasBom(buffer)) {
                 bufferStart = 0
+                curOffset = 3
             }
             //获取文件中的数据到buffer，直到没有数据为止
             while (
-                fileEnd - curOffset - bufferStart > 0 &&
                 bis.read(
                     buffer,
                     bufferStart,
-                    min(
-                        (bufferSize - bufferStart).toLong(),
-                        fileEnd - curOffset - bufferStart
-                    ).toInt()
+                    bufferSize - bufferStart
                 ).also { length = it } > 0
             ) {
                 var end = bufferStart + length
