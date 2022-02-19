@@ -34,7 +34,7 @@ class BatteryView @JvmOverloads constructor(
     private var batteryWidth = 0
 
     init {
-        setPadding(4.dp, 2.dp, 6.dp, 2.dp)
+        setPadding(4.dp, 3.dp, 6.dp, 3.dp)
         batteryPaint.strokeWidth = 1.dp.toFloat()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
@@ -77,9 +77,9 @@ class BatteryView @JvmOverloads constructor(
             .toInt() + 6.dp
         outFrame.set(
             batteryStart,
-            1.dp,
+            2.dp,
             batteryEnd,
-            height - 1.dp
+            height - 2.dp
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
         polar.set(
