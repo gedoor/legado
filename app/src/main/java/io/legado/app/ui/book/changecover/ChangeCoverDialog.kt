@@ -17,7 +17,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
-
+/**
+ * 换封面
+ */
 class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
     Toolbar.OnMenuItemClickListener,
     CoverAdapter.CallBack {
