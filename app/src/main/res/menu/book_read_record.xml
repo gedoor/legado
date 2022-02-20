@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_sort_name"
-        android:title="按书名排序" />
+        android:title="@string/sort_by_name"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_sort_time"
-        android:title="按时间排序" />
+        android:title="@string/sort_by_time"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_enable_record"
+        android:title="@string/enable_record"
+        android:checkable="true"
+        app:showAsAction="never" />
 
 </menu>

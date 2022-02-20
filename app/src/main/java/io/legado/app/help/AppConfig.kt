@@ -256,6 +256,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.tocUiUseReplace, value)
         }
 
+    var enableReadRecord: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.enableReadRecord, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableReadRecord, value)
+        }
+
     val autoChangeSource: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.autoChangeSource, true)
 

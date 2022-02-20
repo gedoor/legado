@@ -347,7 +347,7 @@
     <string name="sort">Ordenar</string>
     <string name="sort_auto">Ordenar automáticamente</string>
     <string name="sort_manual">Ordenar manualmente</string>
-    <string name="sort_name">Ordenar por nombre</string>
+    <string name="sort_by_name">Ordenar por nombre</string>
     <string name="go_to_top">Ir al principio</string>
     <string name="go_to_bottom">Ir al final</string>
     <string name="read_y">Leído: %s</string>
@@ -941,5 +941,7 @@
     <string name="edit_content">编辑内容</string>
     <string name="chapter_change_source">单章换源</string>
     <string name="book_change_source">整书换源</string>
+    <string name="sort_by_time">时间排序</string>
+    <string name="enable_record">开启记录</string>
     <!-- string end -->
 </resources>

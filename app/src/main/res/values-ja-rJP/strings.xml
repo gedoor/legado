@@ -351,7 +351,7 @@
     <string name="sort">Sort</string>
     <string name="sort_auto">Sort automatically</string>
     <string name="sort_manual">Sort manually</string>
-    <string name="sort_name">Sort by name</string>
+    <string name="sort_by_name">Sort by name</string>
     <string name="go_to_top">Scroll to the top</string>
     <string name="go_to_bottom">Scroll to the bottom</string>
     <string name="read_y">Read: %s</string>
@@ -944,5 +944,7 @@
     <string name="edit_content">编辑内容</string>
     <string name="chapter_change_source">单章换源</string>
     <string name="book_change_source">整书换源</string>
+    <string name="sort_by_time">时间排序</string>
+    <string name="enable_record">开启记录</string>
     <!-- string end -->
 </resources>

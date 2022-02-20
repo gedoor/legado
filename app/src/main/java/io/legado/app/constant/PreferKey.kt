@@ -94,6 +94,7 @@ object PreferKey {
     const val checkSource = "checkSource"
     const val uploadRule = "uploadRule"
     const val tocUiUseReplace = "tocUiUseReplace"
+    const val enableReadRecord = "enableReadRecord"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

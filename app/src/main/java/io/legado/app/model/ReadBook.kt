@@ -114,11 +114,13 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
-    fun upReadStartTime() {
+    fun upReadTime() {
         Coroutine.async {
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
-            appDb.readRecordDao.insert(readRecord)
+            if (AppConfig.enableReadRecord) {
+                appDb.readRecordDao.insert(readRecord)
+            }
         }
     }
 
@@ -205,7 +207,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (BaseReadAloudService.isRun) {
             readAloud(!BaseReadAloudService.pause)
         }
-        upReadStartTime()
+        upReadTime()
         preDownload()
         ImageProvider.clearOut(durChapterIndex)
     }

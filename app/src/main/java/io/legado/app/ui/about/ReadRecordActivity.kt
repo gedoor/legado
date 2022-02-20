@@ -13,6 +13,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReadRecordShow
 import io.legado.app.databinding.ActivityReadRecordBinding
 import io.legado.app.databinding.ItemReadRecordBinding
+import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
@@ -20,7 +21,6 @@ import io.legado.app.utils.cnCompare
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -41,6 +41,11 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_enable_record)?.isChecked = AppConfig.enableReadRecord
+        return super.onMenuOpened(featureId, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_sort_name -> {
@@ -50,6 +55,9 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
             R.id.menu_sort_time -> {
                 sortMode = 1
                 initData()
+            }
+            R.id.menu_enable_record -> {
+                AppConfig.enableReadRecord = !item.isChecked
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -70,23 +78,22 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     }
 
     private fun initData() {
-        launch(IO) {
-            val allTime = appDb.readRecordDao.allTime
-            withContext(Main) {
-                binding.readRecord.tvReadTime.text = formatDuring(allTime)
+        launch {
+            val allTime = withContext(IO) {
+                appDb.readRecordDao.allTime
             }
-            var readRecords = appDb.readRecordDao.allShow
-            readRecords = when (sortMode) {
-                1 -> readRecords.sortedBy { it.readTime }
-                else -> {
-                    readRecords.sortedWith { o1, o2 ->
-                        o1.bookName.cnCompare(o2.bookName)
+            binding.readRecord.tvReadTime.text = formatDuring(allTime)
+            val readRecords = withContext(IO) {
+                appDb.readRecordDao.allShow.let { records ->
+                    when (sortMode) {
+                        1 -> records.sortedBy { it.readTime }
+                        else -> records.sortedWith { o1, o2 ->
+                            o1.bookName.cnCompare(o2.bookName)
+                        }
                     }
                 }
             }
-            withContext(Main) {
-                adapter.setItems(readRecords)
-            }
+            adapter.setItems(readRecords)
         }
     }
 

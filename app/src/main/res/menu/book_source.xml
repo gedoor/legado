@@ -39,7 +39,7 @@
                         <item
                             android:id="@+id/menu_sort_name"
                             android:checkable="true"
-                            android:title="@string/sort_name" />
+                            android:title="@string/sort_by_name" />
 
                         <item
                             android:id="@+id/menu_sort_url"
