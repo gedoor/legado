@@ -61,7 +61,7 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
 
     override fun observeLiveBus() {
         super.observeLiveBus()
-        viewModel.searchStateData.observe(viewLifecycleOwner, {
+        viewModel.searchStateData.observe(viewLifecycleOwner) {
             binding.refreshProgressBar.isAutoLoading = it
             if (it) {
                 startStopMenuItem?.let { item ->
@@ -75,10 +75,10 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
                 }
             }
             binding.toolBar.menu.applyTint(requireContext())
-        })
-        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
+        }
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner) {
             adapter.setItems(it)
-        })
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

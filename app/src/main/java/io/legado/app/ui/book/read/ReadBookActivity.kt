@@ -236,7 +236,13 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_change_source -> {
+            R.id.menu_book_change_source -> {
+                binding.readMenu.runMenuOut()
+                ReadBook.book?.let {
+                    showDialogFragment(ChangeSourceDialog(it.name, it.author))
+                }
+            }
+            R.id.menu_chapter_change_source -> {
                 binding.readMenu.runMenuOut()
                 ReadBook.book?.let {
                     showDialogFragment(ChangeSourceDialog(it.name, it.author))

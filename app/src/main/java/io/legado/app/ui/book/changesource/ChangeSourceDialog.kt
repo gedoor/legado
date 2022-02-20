@@ -128,7 +128,7 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
     }
 
     private fun initLiveData() {
-        viewModel.searchStateData.observe(viewLifecycleOwner, {
+        viewModel.searchStateData.observe(viewLifecycleOwner) {
             binding.refreshProgressBar.isAutoLoading = it
             if (it) {
                 startStopMenuItem?.let { item ->
@@ -142,10 +142,10 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
                 }
             }
             binding.toolBar.menu.applyTint(requireContext())
-        })
-        viewModel.searchBooksLiveData.observe(viewLifecycleOwner, {
+        }
+        viewModel.searchBooksLiveData.observe(viewLifecycleOwner) {
             adapter.setItems(it)
-        })
+        }
         launch {
             appDb.bookSourceDao.flowGroupEnabled().collect {
                 groups.clear()

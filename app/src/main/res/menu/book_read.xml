@@ -9,7 +9,23 @@
             android:id="@+id/menu_change_source"
             android:icon="@drawable/ic_exchange"
             android:title="@string/change_origin"
-            app:showAsAction="always" />
+            app:showAsAction="always">
+
+            <menu>
+
+                <item
+                    android:id="@+id/menu_chapter_change_source"
+                    android:title="@string/chapter_change_source"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menu_book_change_source"
+                    android:title="@string/book_change_source"
+                    app:showAsAction="never" />
+
+            </menu>
+
+        </item>
 
         <item
             android:id="@+id/menu_refresh"
