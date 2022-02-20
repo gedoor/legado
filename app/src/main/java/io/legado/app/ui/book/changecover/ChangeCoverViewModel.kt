@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import java.util.concurrent.Executors
@@ -38,13 +37,13 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         searchSuccess = {
             if (!searchBooks.contains(it)) {
                 searchBooks.add(it)
-                trySendBlocking(searchBooks)
+                trySend(searchBooks)
             }
         }
 
         appDb.searchBookDao.getEnableHasCover(name, author).let {
             searchBooks.addAll(it)
-            trySendBlocking(searchBooks)
+            trySend(searchBooks)
         }
 
         if (searchBooks.size <= 1) {
