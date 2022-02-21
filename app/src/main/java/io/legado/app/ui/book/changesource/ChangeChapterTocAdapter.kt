@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
 import io.legado.app.lib.theme.ThemeUtils
@@ -16,6 +15,8 @@ import io.legado.app.utils.visible
 
 class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
     RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
+
+    var durChapterIndex = 0
 
     override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding {
         return ItemChapterListBinding.inflate(inflater, parent, false)
@@ -28,7 +29,7 @@ class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
         payloads: MutableList<Any>
     ) {
         binding.run {
-            val isDur = callback.durChapterIndex() == item.index
+            val isDur = durChapterIndex == item.index
             if (isDur) {
                 tvChapterName.setTextColor(context.accentColor)
             } else {
@@ -58,14 +59,12 @@ class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemChapterListBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                callback.openChapter(it)
+                callback.clickChapter(it)
             }
         }
     }
 
     interface Callback {
-        val book: Book?
-        fun openChapter(bookChapter: BookChapter)
-        fun durChapterIndex(): Int
+        fun clickChapter(bookChapter: BookChapter)
     }
 }

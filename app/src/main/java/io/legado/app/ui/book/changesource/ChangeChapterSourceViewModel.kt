@@ -16,6 +16,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
@@ -268,6 +269,29 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
     override fun onCleared() {
         super.onCleared()
         searchPool?.close()
+    }
+
+    fun getToc(
+        searchBook: SearchBook,
+        success: (toc: List<BookChapter>) -> Unit,
+        error: (msg: String) -> Unit
+    ) {
+        execute {
+            return@execute tocMap[searchBook.bookUrl]
+                ?: let {
+                    val book = searchBook.toBook()
+                    val source = appDb.bookSourceDao.getBookSource(book.origin)
+                        ?: throw NoStackTraceException("书源不存在")
+                    if (book.tocUrl.isEmpty()) {
+                        WebBook.getBookInfoAwait(this, source, book)
+                    }
+                    WebBook.getChapterListAwait(this, source, book)
+                }
+        }.onSuccess {
+            success(it)
+        }.onError {
+            error(it.localizedMessage ?: "获取目录出错")
+        }
     }
 
     fun disableSource(searchBook: SearchBook) {

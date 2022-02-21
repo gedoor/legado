@@ -29,6 +29,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/refresh_progress_bar" />
 
@@ -53,10 +54,12 @@
             android:id="@+id/recycler_view_toc"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_hide_toc" />
 
         <io.legado.app.ui.widget.anima.RotateLoading
+            android:id="@+id/loading_toc"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:visibility="gone"
