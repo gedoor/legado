@@ -62,7 +62,9 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         binding.recyclerViewToc.scrollToPosition(tocAdapter.durChapterIndex - 5)
     }
     private val contentSuccess: (content: String) -> Unit = {
+        binding.loadingToc.hide()
         callBack?.replaceContent(it)
+        dismissAllowingStateLoss()
     }
     private val searchBookAdapter by lazy {
         ChangeChapterSourceAdapter(requireContext(), viewModel, this)
@@ -265,7 +267,10 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     override fun clickChapter(bookChapter: BookChapter, nextChapterUrl: String?) {
         searchBook?.let {
+            binding.loadingToc.show()
             viewModel.getContent(it.toBook(), bookChapter, nextChapterUrl, contentSuccess) { msg ->
+                binding.loadingToc.hide()
+                binding.clToc.gone()
                 toastOnUi(msg)
             }
         }
