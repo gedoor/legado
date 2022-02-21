@@ -116,9 +116,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         execute {
             book.durChapterIndex = BookHelp.getDurChapter(
                 book.durChapterIndex,
-                oldTocSize,
                 book.durChapterTitle,
-                chapters
+                chapters,
+                oldTocSize
             )
             book.durChapterTitle = chapters[book.durChapterIndex].title
             appDb.bookDao.update(book)

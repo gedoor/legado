@@ -185,9 +185,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             val oldBook = ReadBook.book!!
             book.durChapterIndex = BookHelp.getDurChapter(
                 oldBook.durChapterIndex,
-                oldBook.totalChapterNum,
                 oldBook.durChapterTitle,
-                chapters
+                chapters,
+                oldBook.totalChapterNum
             )
             book.durChapterTitle = chapters[book.durChapterIndex].title
             oldBook.changeTo(book)

@@ -21,6 +21,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogChapterChangeSourceBinding
 import io.legado.app.help.AppConfig
+import io.legado.app.help.BookHelp
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -53,6 +54,16 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             viewModel.startSearch()
         }
+    private val tocSuccess: (toc: List<BookChapter>) -> Unit = {
+        tocAdapter.durChapterIndex =
+            BookHelp.getDurChapter(viewModel.chapterIndex, viewModel.chapterTitle, it)
+        binding.loadingToc.hide()
+        tocAdapter.setItems(it)
+        binding.recyclerViewToc.scrollToPosition(tocAdapter.durChapterIndex - 5)
+    }
+    private val contentSuccess: (content: String) -> Unit = {
+        callBack?.replaceContent(it)
+    }
     private val searchBookAdapter by lazy {
         ChangeChapterSourceAdapter(requireContext(), viewModel, this)
     }
@@ -211,13 +222,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         return false
     }
 
-    private val tocSuccess: (toc: List<BookChapter>) -> Unit = {
-        tocAdapter.durChapterIndex = viewModel.chapterIndex
-        binding.loadingToc.hide()
-        tocAdapter.setItems(it)
-        binding.recyclerViewToc.scrollToPosition(tocAdapter.durChapterIndex - 5)
-    }
-
     override fun openToc(searchBook: SearchBook) {
         this.searchBook = searchBook
         tocAdapter.setItems(null)
@@ -259,8 +263,12 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         }
     }
 
-    override fun clickChapter(bookChapter: BookChapter) {
-        TODO("Not yet implemented")
+    override fun clickChapter(bookChapter: BookChapter, nextChapterUrl: String?) {
+        searchBook?.let {
+            viewModel.getContent(it.toBook(), bookChapter, nextChapterUrl, contentSuccess) { msg ->
+                toastOnUi(msg)
+            }
+        }
     }
 
     private fun changeSource(searchBook: SearchBook) {

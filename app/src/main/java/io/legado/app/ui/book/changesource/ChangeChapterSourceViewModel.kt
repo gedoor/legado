@@ -294,6 +294,24 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
         }
     }
 
+    fun getContent(
+        book: Book,
+        chapter: BookChapter,
+        nextChapterUrl: String?,
+        success: (content: String) -> Unit,
+        error: (msg: String) -> Unit
+    ) {
+        execute {
+            val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
+                ?: throw NoStackTraceException("书源不存在")
+            WebBook.getContentAwait(this, bookSource, book, chapter, nextChapterUrl, false)
+        }.onSuccess {
+            success.invoke(it)
+        }.onError {
+            error.invoke(it.localizedMessage ?: "获取正文出错")
+        }
+    }
+
     fun disableSource(searchBook: SearchBook) {
         execute {
             appDb.bookSourceDao.getBookSource(searchBook.origin)?.let { source ->

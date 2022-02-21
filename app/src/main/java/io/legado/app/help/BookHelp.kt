@@ -265,29 +265,20 @@ object BookHelp {
      */
     fun getDurChapter(
         oldDurChapterIndex: Int,
-        oldChapterListSize: Int,
         oldDurChapterName: String?,
-        newChapterList: List<BookChapter>
+        newChapterList: List<BookChapter>,
+        oldChapterListSize: Int = 0
     ): Int {
-        if (oldChapterListSize == 0) return oldDurChapterIndex
+        if (oldDurChapterIndex == 0) return oldDurChapterIndex
         if (newChapterList.isEmpty()) return oldDurChapterIndex
         val oldChapterNum = getChapterNum(oldDurChapterName)
         val oldName = getPureChapterName(oldDurChapterName)
         val newChapterSize = newChapterList.size
-        val min = max(
-            0,
-            min(
-                oldDurChapterIndex,
-                oldDurChapterIndex - oldChapterListSize + newChapterSize
-            ) - 10
-        )
-        val max = min(
-            newChapterSize - 1,
-            max(
-                oldDurChapterIndex,
-                oldDurChapterIndex - oldChapterListSize + newChapterSize
-            ) + 10
-        )
+        val durIndex =
+            if (oldChapterListSize == 0) oldDurChapterIndex
+            else oldDurChapterIndex * oldChapterListSize / newChapterSize
+        val min = max(0, min(oldDurChapterIndex, durIndex) - 10)
+        val max = min(newChapterSize - 1, max(oldDurChapterIndex, durIndex) + 10)
         var nameSim = 0.0
         var newIndex = 0
         var newNum = 0

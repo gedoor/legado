@@ -59,12 +59,12 @@ class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemChapterListBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                callback.clickChapter(it)
+                callback.clickChapter(it, getItem(holder.layoutPosition + 1)?.url)
             }
         }
     }
 
     interface Callback {
-        fun clickChapter(bookChapter: BookChapter)
+        fun clickChapter(bookChapter: BookChapter, nextChapterUrl: String?)
     }
 }
