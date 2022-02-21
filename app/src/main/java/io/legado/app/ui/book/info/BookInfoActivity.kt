@@ -31,7 +31,7 @@ import io.legado.app.model.BookCover
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
-import io.legado.app.ui.book.changesource.ChangeSourceDialog
+import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
@@ -49,7 +49,7 @@ import kotlinx.coroutines.withContext
 class BookInfoActivity :
     VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
     GroupSelectDialog.CallBack,
-    ChangeSourceDialog.CallBack,
+    ChangeBookSourceDialog.CallBack,
     ChangeCoverDialog.CallBack {
 
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
@@ -301,7 +301,7 @@ class BookInfoActivity :
         }
         tvChangeSource.setOnClickListener {
             viewModel.bookData.value?.let {
-                showDialogFragment(ChangeSourceDialog(it.name, it.author))
+                showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
             }
         }
         tvTocView.setOnClickListener {

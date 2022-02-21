@@ -31,9 +31,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
+class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
     Toolbar.OnMenuItemClickListener,
-    ChangeSourceAdapter.CallBack {
+    ChangeBookSourceAdapter.CallBack {
 
     constructor(name: String, author: String) : this() {
         arguments = Bundle().apply {
@@ -45,8 +45,8 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
     private val binding by viewBinding(DialogChangeSourceBinding::bind)
     private val groups = linkedSetOf<String>()
     private val callBack: CallBack? get() = activity as? CallBack
-    private val viewModel: ChangeSourceViewModel by viewModels()
-    private val adapter by lazy { ChangeSourceAdapter(requireContext(), viewModel, this) }
+    private val viewModel: ChangeBookSourceViewModel by viewModels()
+    private val adapter by lazy { ChangeBookSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             viewModel.startSearch()

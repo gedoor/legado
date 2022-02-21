@@ -16,9 +16,9 @@ import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
 
-class ChangeSourceAdapter(
+class ChangeBookSourceAdapter(
     context: Context,
-    val viewModel: ChangeSourceViewModel,
+    val viewModel: ChangeBookSourceViewModel,
     val callBack: CallBack
 ) : DiffRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
 

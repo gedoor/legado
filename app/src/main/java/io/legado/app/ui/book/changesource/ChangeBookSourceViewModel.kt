@@ -32,7 +32,7 @@ import java.util.concurrent.Executors
 import kotlin.math.min
 
 @Suppress("MemberVisibilityCanBePrivate")
-class ChangeSourceViewModel(application: Application) : BaseViewModel(application) {
+class ChangeBookSourceViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
     val searchStateData = MutableLiveData<Boolean>()
