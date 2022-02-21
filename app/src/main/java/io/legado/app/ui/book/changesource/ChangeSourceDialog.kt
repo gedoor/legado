@@ -51,7 +51,6 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
             viewModel.startSearch()
         }
 
-
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.9f)
@@ -65,7 +64,6 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
         initRecyclerView()
         initSearchView()
         initLiveData()
-        viewModel.loadDbSearchBook()
     }
 
     private fun showTitle() {
@@ -143,10 +141,11 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
             }
             binding.toolBar.menu.applyTint(requireContext())
         }
-        viewModel.searchBooksLiveData.observe(viewLifecycleOwner) {
-            adapter.setItems(it)
-        }
         launch {
+            viewModel.searchDataFlow
+                .collect {
+                    adapter.setItems(it)
+                }
             appDb.bookSourceDao.flowGroupEnabled().collect {
                 groups.clear()
                 it.map { group ->
@@ -165,7 +164,7 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
             R.id.menu_check_author -> {
                 AppConfig.changeSourceCheckAuthor = !item.isChecked
                 item.isChecked = !item.isChecked
-                viewModel.loadDbSearchBook()
+                viewModel.refresh()
             }
             R.id.menu_load_toc -> {
                 putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
@@ -186,7 +185,7 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
                         putPrefString("searchGroup", item.title.toString())
                     }
                     viewModel.startOrStopSearch()
-                    viewModel.loadDbSearchBook()
+                    viewModel.refresh()
                 }
             }
         }

@@ -30,7 +30,7 @@ interface SearchBookDao {
         t1.wordCount, t2.customOrder as originOrder
         from searchBooks as t1 inner join book_sources as t2 
         on t1.origin = t2.bookSourceUrl 
-        where t1.name = :name and t1.author = :author 
+        where t1.name = :name and t1.author like '%'||:author||'%' 
         and originName like '%'||:key||'%' and t2.enabled = 1 
         and t2.bookSourceGroup like '%'||:sourceGroup||'%'
         order by t2.customOrder"""

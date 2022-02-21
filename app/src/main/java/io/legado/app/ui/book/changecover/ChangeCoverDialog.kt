@@ -14,7 +14,6 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
@@ -67,7 +66,6 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
     private fun initData() {
         launch {
             viewModel.dataFlow
-                .conflate()
                 .collect {
                     adapter.setItems(it)
                     delay(1000)
