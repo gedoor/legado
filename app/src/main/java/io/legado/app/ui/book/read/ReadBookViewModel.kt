@@ -27,6 +27,7 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.msg
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
@@ -283,13 +284,33 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun reverseContent(book: Book) {
+    /**
+     * 保存内容
+     */
+    fun saveContent(book: Book, content: String) {
         execute {
             appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 ?.let { chapter ->
-                    BookHelp.reverseContent(book, chapter)
+                    BookHelp.saveText(book, chapter, content)
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
+        }
+    }
+
+    /**
+     * 反转内容
+     */
+    fun reverseContent(book: Book) {
+        execute {
+            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+                ?: return@execute
+            val content = BookHelp.getContent(book, chapter) ?: return@execute
+            val stringBuilder = StringBuilder()
+            content.toStringArray().forEach {
+                stringBuilder.insert(0, it)
+            }
+            BookHelp.saveText(book, chapter, stringBuilder.toString())
+            ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
         }
     }
 

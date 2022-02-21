@@ -74,7 +74,7 @@ class ChangeChapterSourceAdapter(
     override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                callBack.changeTo(it)
+                callBack.openToc(it)
             }
         }
         holder.itemView.onLongClick {
@@ -112,7 +112,7 @@ class ChangeChapterSourceAdapter(
 
     interface CallBack {
         val bookUrl: String?
-        fun changeTo(searchBook: SearchBook)
+        fun openToc(searchBook: SearchBook)
         fun topSource(searchBook: SearchBook)
         fun bottomSource(searchBook: SearchBook)
         fun editSource(searchBook: SearchBook)

@@ -71,6 +71,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     SearchMenu.CallBack,
     ReadAloudDialog.CallBack,
     ChangeBookSourceDialog.CallBack,
+    ChangeChapterSourceDialog.CallBack,
     ReadBook.CallBack,
     AutoReadDialog.CallBack,
     TocRegexDialog.CallBack,
@@ -687,6 +688,12 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun changeTo(source: BookSource, book: Book) {
         viewModel.changeTo(source, book)
+    }
+
+    override fun replaceContent(content: String) {
+        ReadBook.book?.let {
+            viewModel.saveContent(it, content)
+        }
     }
 
     override fun showActionMenu() {

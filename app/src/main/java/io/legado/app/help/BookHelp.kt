@@ -227,27 +227,6 @@ object BookHelp {
     }
 
     /**
-     * 反转章节内容
-     */
-    fun reverseContent(book: Book, bookChapter: BookChapter) {
-        if (!book.isLocalBook()) {
-            val file = downloadDir.getFile(
-                cacheFolderName,
-                book.getFolderName(),
-                bookChapter.getFileName()
-            )
-            if (file.exists()) {
-                val text = file.readText()
-                val stringBuilder = StringBuilder()
-                text.toStringArray().forEach {
-                    stringBuilder.insert(0, it)
-                }
-                file.writeText(stringBuilder.toString())
-            }
-        }
-    }
-
-    /**
      * 删除章节内容
      */
     fun delContent(book: Book, bookChapter: BookChapter) {

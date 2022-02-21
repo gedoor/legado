@@ -11,6 +11,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.AppConfig
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import splitties.init.appCtx
 import timber.log.Timber
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -35,6 +37,7 @@ import kotlin.math.min
 class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
+    private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""
     var author: String = ""
@@ -42,7 +45,7 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
     private val searchBooks = ConcurrentHashSet<SearchBook>()
-    private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
+    private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
     private var searchCallback: SourceCallback? = null
     val searchDataFlow = callbackFlow {
 
@@ -203,6 +206,7 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
     private fun loadBookToc(source: BookSource, book: Book) {
         WebBook.getChapterList(viewModelScope, source, book, context = searchPool!!)
             .onSuccess(IO) { chapters ->
+                tocMap[book.bookUrl] = chapters
                 book.latestChapterTitle = chapters.last().title
                 val searchBook: SearchBook = book.toSearchBook()
                 searchCallback?.searchSuccess(searchBook)
