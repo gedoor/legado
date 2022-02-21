@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import cn.hutool.core.collection.ConcurrentHashSet
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
@@ -27,7 +28,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import splitties.init.appCtx
 import timber.log.Timber
-import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -41,7 +41,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     private var tasks = CompositeCoroutine()
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
-    private val searchBooks = CopyOnWriteArrayList<SearchBook>()
+    private val searchBooks = ConcurrentHashSet<SearchBook>()
     private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
     private var searchCallback: SourceCallback? = null
     val searchDataFlow = callbackFlow {
@@ -50,9 +50,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
 
             override fun searchSuccess(searchBook: SearchBook) {
                 appDb.searchBookDao.insert(searchBook)
-                val index = searchBooks.indexOf(searchBook)
                 when {
-                    index >= 0 -> searchBooks[index] = searchBook
                     screenKey.isEmpty() -> searchBooks.add(searchBook)
                     searchBook.name.contains(screenKey) -> searchBooks.add(searchBook)
                     else -> return

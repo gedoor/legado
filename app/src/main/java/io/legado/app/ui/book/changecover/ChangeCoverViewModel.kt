@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import cn.hutool.core.collection.ConcurrentHashSet
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
@@ -33,7 +34,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     var name: String = ""
     var author: String = ""
     val dataFlow = callbackFlow<List<SearchBook>> {
-        val searchBooks = arrayListOf<SearchBook>()
+        val searchBooks = ConcurrentHashSet<SearchBook>()
 
         searchSuccess = {
             if (!searchBooks.contains(it)) {
@@ -44,7 +45,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
 
         appDb.searchBookDao.getEnableHasCover(name, author).let {
             searchBooks.addAll(it)
-            trySend(searchBooks)
+            trySend(ArrayList(searchBooks))
         }
 
         if (searchBooks.size <= 1) {
