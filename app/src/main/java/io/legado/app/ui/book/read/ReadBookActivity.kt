@@ -244,11 +244,15 @@ class ReadBookActivity : BaseReadBookActivity(),
                     showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
                 }
             }
-            R.id.menu_chapter_change_source -> {
+            R.id.menu_chapter_change_source -> launch {
+                val book = ReadBook.book ?: return@launch
+                val chapter =
+                    appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+                        ?: return@launch
                 binding.readMenu.runMenuOut()
-                ReadBook.book?.let {
-                    showDialogFragment(ChangeChapterSourceDialog(it.name, it.author))
-                }
+                showDialogFragment(
+                    ChangeChapterSourceDialog(book.name, book.author, chapter.index, chapter.title)
+                )
             }
             R.id.menu_refresh_dur -> {
                 if (ReadBook.bookSource == null) {
