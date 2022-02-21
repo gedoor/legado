@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
@@ -82,9 +81,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         }
     }.conflate()
         .map {
-            val data = searchBooks.sortedBy { it.originOrder }
-            delay(1000)
-            data
+            searchBooks.sortedBy { it.originOrder }
         }.flowOn(IO)
 
     @Volatile

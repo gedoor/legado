@@ -27,6 +27,7 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -145,6 +146,7 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
             viewModel.searchDataFlow
                 .collect {
                     adapter.setItems(it)
+                    delay(1000)
                 }
             appDb.bookSourceDao.flowGroupEnabled().collect {
                 groups.clear()
