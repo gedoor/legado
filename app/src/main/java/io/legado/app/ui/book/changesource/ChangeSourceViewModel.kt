@@ -145,7 +145,7 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
         val task = WebBook
             .searchBook(viewModelScope, source, name, context = searchPool!!)
             .timeout(60000L)
-            .onSuccess(searchPool) {
+            .onSuccess(IO) {
                 it.forEach { searchBook ->
                     if (searchBook.name == name) {
                         if ((AppConfig.changeSourceCheckAuthor && searchBook.author.contains(author))
@@ -185,8 +185,8 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun loadBookInfo(source: BookSource, book: Book) {
-        WebBook.getBookInfo(viewModelScope, source, book)
-            .onSuccess {
+        WebBook.getBookInfo(viewModelScope, source, book, context = searchPool!!)
+            .onSuccess(IO) {
                 if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
                     loadBookToc(source, book)
                 } else {
@@ -195,18 +195,18 @@ class ChangeSourceViewModel(application: Application) : BaseViewModel(applicatio
                     val searchBook = book.toSearchBook()
                     searchCallback?.searchSuccess(searchBook)
                 }
-            }.onError {
+            }.onError(IO) {
                 Timber.e(it)
             }
     }
 
     private fun loadBookToc(source: BookSource, book: Book) {
-        WebBook.getChapterList(viewModelScope, source, book)
+        WebBook.getChapterList(viewModelScope, source, book, context = searchPool!!)
             .onSuccess(IO) { chapters ->
                 book.latestChapterTitle = chapters.last().title
                 val searchBook: SearchBook = book.toSearchBook()
                 searchCallback?.searchSuccess(searchBook)
-            }.onError {
+            }.onError(IO) {
                 Timber.e(it)
             }
     }
