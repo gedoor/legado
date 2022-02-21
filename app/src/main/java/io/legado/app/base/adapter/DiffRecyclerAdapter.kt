@@ -146,7 +146,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {}
 
     open fun onCurrentListChanged() {
-
+        //可继承
     }
 
     @Suppress("UNCHECKED_CAST")
