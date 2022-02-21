@@ -37,7 +37,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         searchSuccess = {
             if (!searchBooks.contains(it)) {
                 searchBooks.add(it)
-                trySend(ArrayList(searchBooks))
+                trySend(searchBooks)
             }
         }
 
