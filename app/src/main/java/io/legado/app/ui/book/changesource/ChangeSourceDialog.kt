@@ -148,6 +148,8 @@ class ChangeSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
                     adapter.setItems(it)
                     delay(1000)
                 }
+        }
+        launch {
             appDb.bookSourceDao.flowGroupEnabled().collect {
                 groups.clear()
                 it.map { group ->

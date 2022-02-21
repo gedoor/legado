@@ -17,7 +17,7 @@ import splitties.init.appCtx
 import java.util.concurrent.Executors
 import kotlin.math.min
 
-class SearchModel(private val scope: CoroutineScope, private val callBack: CallBack) {
+class SearchModel(private val scope: CoroutineScope) {
     val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
     private var mSearchId = 0L
@@ -26,9 +26,18 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     private var tasks = CompositeCoroutine()
     private var bookSourceList = arrayListOf<BookSource>()
     private var searchBooks = arrayListOf<SearchBook>()
+    private var callBack: CallBack? = null
 
     @Volatile
     private var searchIndex = -1
+
+    fun registerCallback(callBack: CallBack) {
+        this.callBack = callBack
+    }
+
+    fun unRegisterCallback() {
+        this.callBack = null
+    }
 
     private fun initSearchPool() {
         searchPool?.close()
@@ -37,10 +46,10 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     }
 
     fun search(searchId: Long, key: String) {
-        callBack.onSearchStart()
+        callBack?.onSearchStart()
         if (searchId != mSearchId) {
             if (key.isEmpty()) {
-                callBack.onSearchCancel()
+                callBack?.onSearchCancel()
                 return
             } else {
                 this.searchKey = key
@@ -53,6 +62,7 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
             searchPage = 1
             val searchGroup = appCtx.getPrefString("searchGroup") ?: ""
             bookSourceList.clear()
+            callBack?.onSearchSuccess(searchBooks)
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             } else {
@@ -103,7 +113,7 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
             appDb.searchBookDao.insert(*items.toTypedArray())
             val precision = appCtx.getPrefBoolean(PreferKey.precisionSearch)
             mergeItems(scope, items, precision)
-            callBack.onSearchSuccess(searchBooks)
+            callBack?.onSearchSuccess(searchBooks)
         }
     }
 
@@ -117,7 +127,7 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
         if (searchIndex >= bookSourceList.lastIndex
             + min(bookSourceList.size, threadCount)
         ) {
-            callBack.onSearchFinish()
+            callBack?.onSearchFinish()
         }
     }
 
@@ -189,7 +199,7 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
 
     fun cancelSearch() {
         close()
-        callBack.onSearchCancel()
+        callBack?.onSearchCancel()
     }
 
     fun close() {

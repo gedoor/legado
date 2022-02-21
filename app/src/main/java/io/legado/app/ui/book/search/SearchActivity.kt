@@ -19,7 +19,6 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ActivityBookSearchBinding
 import io.legado.app.lib.theme.*
@@ -30,6 +29,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -196,6 +196,13 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun initData() {
         launch {
+            viewModel.searchDataFlow
+                .collect {
+                    adapter.setItems(it)
+                    delay(1000)
+                }
+        }
+        launch {
             appDb.bookSourceDao.flowGroupEnabled().collect {
                 groups.clear()
                 it.map { group ->
@@ -203,9 +210,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
                 upGroupMenu()
             }
-        }
-        viewModel.searchBookLiveData.observe(this) {
-            upSearchItems(it)
         }
         viewModel.isSearchLiveData.observe(this) {
             if (it) {
@@ -308,13 +312,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
             }
         }
-    }
-
-    /**
-     * 更新搜索结果
-     */
-    private fun upSearchItems(items: List<SearchBook>) {
-        adapter.setItems(items)
     }
 
     /**
