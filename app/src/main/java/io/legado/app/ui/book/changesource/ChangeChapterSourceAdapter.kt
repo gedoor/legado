@@ -18,7 +18,7 @@ import splitties.views.onLongClick
 
 class ChangeChapterSourceAdapter(
     context: Context,
-    val viewModel: ChangeBookSourceViewModel,
+    val viewModel: ChangeChapterSourceViewModel,
     val callBack: CallBack
 ) : DiffRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
 

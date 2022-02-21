@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 
 class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_change_source),
     Toolbar.OnMenuItemClickListener,
-    ChangeBookSourceAdapter.CallBack {
+    ChangeChapterSourceAdapter.CallBack {
 
     constructor(name: String, author: String) : this() {
         arguments = Bundle().apply {
@@ -45,8 +45,8 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_change_so
     private val binding by viewBinding(DialogChangeSourceBinding::bind)
     private val groups = linkedSetOf<String>()
     private val callBack: CallBack? get() = activity as? CallBack
-    private val viewModel: ChangeBookSourceViewModel by viewModels()
-    private val adapter by lazy { ChangeBookSourceAdapter(requireContext(), viewModel, this) }
+    private val viewModel: ChangeChapterSourceViewModel by viewModels()
+    private val adapter by lazy { ChangeChapterSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             viewModel.startSearch()

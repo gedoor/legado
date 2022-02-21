@@ -38,6 +38,7 @@ import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
+import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
 import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
@@ -245,7 +246,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_chapter_change_source -> {
                 binding.readMenu.runMenuOut()
                 ReadBook.book?.let {
-                    showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
+                    showDialogFragment(ChangeChapterSourceDialog(it.name, it.author))
                 }
             }
             R.id.menu_refresh_dur -> {
