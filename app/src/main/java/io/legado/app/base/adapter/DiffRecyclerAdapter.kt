@@ -49,11 +49,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     @Synchronized
     fun setItems(items: List<ITEM>?) {
         kotlin.runCatching {
-            if (items == null) {
-                asyncListDiffer.submitList(null)
-            } else {
-                asyncListDiffer.submitList(ArrayList(items))
-            }
+            asyncListDiffer.submitList(items)
         }
     }
 
