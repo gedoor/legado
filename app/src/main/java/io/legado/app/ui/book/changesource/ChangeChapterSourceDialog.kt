@@ -35,10 +35,12 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     Toolbar.OnMenuItemClickListener,
     ChangeChapterSourceAdapter.CallBack {
 
-    constructor(name: String, author: String) : this() {
+    constructor(name: String, author: String, chapterIndex: Int, chapterTitle: String) : this() {
         arguments = Bundle().apply {
             putString("name", name)
             putString("author", author)
+            putInt("chapterIndex", chapterIndex)
+            putString("chapterTitle", chapterTitle)
         }
     }
 
@@ -197,7 +199,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     }
 
     override fun openToc(searchBook: SearchBook) {
-
+        binding.clToc.visible()
     }
 
     override val bookUrl: String?

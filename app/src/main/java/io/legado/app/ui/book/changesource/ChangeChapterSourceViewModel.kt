@@ -41,6 +41,8 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""
     var author: String = ""
+    var chapterIndex: Int = 0
+    var chapterTitle: String = ""
     private var tasks = CompositeCoroutine()
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
@@ -96,6 +98,10 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
             bundle.getString("author")?.let {
                 author = it.replace(AppPattern.authorRegex, "")
             }
+            bundle.getString("chapterTitle")?.let {
+                chapterTitle = it
+            }
+            chapterIndex = bundle.getInt("chapterIndex")
         }
     }
 
