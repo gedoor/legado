@@ -285,7 +285,9 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
                     if (book.tocUrl.isEmpty()) {
                         WebBook.getBookInfoAwait(this, source, book)
                     }
-                    WebBook.getChapterListAwait(this, source, book)
+                    val toc = WebBook.getChapterListAwait(this, source, book)
+                    tocMap[book.bookUrl] = toc
+                    toc
                 }
         }.onSuccess {
             success(it)
