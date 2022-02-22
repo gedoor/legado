@@ -4,7 +4,6 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import cn.hutool.core.collection.ConcurrentHashSet
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
@@ -21,6 +20,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
+import java.util.*
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -34,7 +34,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     var name: String = ""
     var author: String = ""
     val dataFlow = callbackFlow<List<SearchBook>> {
-        val searchBooks = ConcurrentHashSet<SearchBook>()
+        val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
 
         searchSuccess = {
             if (!searchBooks.contains(it)) {

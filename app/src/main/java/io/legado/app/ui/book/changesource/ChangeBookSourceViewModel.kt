@@ -4,7 +4,6 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import cn.hutool.core.collection.ConcurrentHashSet
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
@@ -28,6 +27,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import splitties.init.appCtx
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -41,7 +41,7 @@ class ChangeBookSourceViewModel(application: Application) : BaseViewModel(applic
     private var tasks = CompositeCoroutine()
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
-    private val searchBooks = ConcurrentHashSet<SearchBook>()
+    private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
     private var searchCallback: SourceCallback? = null
     val searchDataFlow = callbackFlow {
