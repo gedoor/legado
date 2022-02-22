@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
+import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.constant.Theme
@@ -33,7 +34,7 @@ fun Menu.applyOpenTint(context: Context) {
     //展开菜单显示图标
     if (this.javaClass.simpleName.equals("MenuBuilder", ignoreCase = true)) {
         val defaultTextColor = context.getCompatColor(R.color.primaryText)
-        try {
+        kotlin.runCatching {
             var method: Method =
                 this.javaClass.getDeclaredMethod("setOptionalIconsVisible", java.lang.Boolean.TYPE)
             method.isAccessible = true
@@ -47,7 +48,11 @@ fun Menu.applyOpenTint(context: Context) {
                     }
                 }
             }
-        } catch (ignored: Exception) {
+        }
+    } else if (this.javaClass.simpleName.equals("SubMenuBuilder", ignoreCase = true)) {
+        val defaultTextColor = context.getCompatColor(R.color.primaryText)
+        (this as? SubMenuBuilder)?.forEach { item: MenuItem ->
+            item.icon?.setTintMutate(defaultTextColor)
         }
     }
 }

@@ -99,11 +99,9 @@ abstract class BaseActivity<VB : ViewBinding>(
     abstract fun onActivityCreated(savedInstanceState: Bundle?)
 
     final override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return menu.let {
-            val bool = onCompatCreateOptionsMenu(it)
-            it.applyTint(this, toolBarTheme)
-            bool
-        }
+        val bool = onCompatCreateOptionsMenu(menu)
+        menu.applyTint(this, toolBarTheme)
+        return bool
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
