@@ -70,7 +70,6 @@ class TextFile(private val book: Book) {
                 if (book.tocUrl.isBlank()) {
                     if (blockContent.isEmpty()) {
                         length = bis.read(buffer)
-                        book.charset = EncodingDetect.getEncode(buffer)
                         blockContent = String(buffer, 0, length, charset)
                     }
                     book.tocUrl = getTocRule(blockContent)?.pattern() ?: ""
