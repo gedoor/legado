@@ -27,6 +27,4 @@ object ThemeStorePrefKeys {
     const val KEY_APPLY_PRIMARYDARK_STATUSBAR = "apply_primarydark_statusbar"
     const val KEY_APPLY_PRIMARY_NAVBAR = "apply_primary_navbar"
     const val KEY_AUTO_GENERATE_PRIMARYDARK = "auto_generate_primarydark"
-
-    const val KEY_ELEVATION = "elevation"
 }

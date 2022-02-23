@@ -23,6 +23,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogChapterChangeSourceBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
+import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -113,6 +114,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         binding.ivHideToc.setOnClickListener {
             binding.clToc.gone()
         }
+        binding.flHideToc.elevation = requireContext().elevation
     }
 
     private fun initRecyclerView() {

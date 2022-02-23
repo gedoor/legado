@@ -61,8 +61,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             viewPagerMain.offscreenPageLimit = 3
             viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
             viewPagerMain.addOnPageChangeListener(PageChangeCallback())
-            bottomNavigationView.elevation =
-                if (AppConfig.elevation < 0) elevation else AppConfig.elevation.toFloat()
+            bottomNavigationView.elevation = elevation
             bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
             bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
         }

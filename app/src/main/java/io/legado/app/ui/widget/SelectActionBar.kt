@@ -10,7 +10,6 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.databinding.ViewSelectActionBarBinding
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.*
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.visible
@@ -28,8 +27,7 @@ class SelectActionBar @JvmOverloads constructor(
 
     init {
         setBackgroundColor(context.bottomBackground)
-        elevation =
-            if (AppConfig.elevation < 0) context.elevation else AppConfig.elevation.toFloat()
+        elevation = context.elevation
         val textIsDark = ColorUtils.isColorLight(context.bottomBackground)
         val primaryTextColor = context.getPrimaryTextColor(textIsDark)
         val secondaryTextColor = context.getSecondaryTextColor(textIsDark)

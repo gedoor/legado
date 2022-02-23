@@ -11,7 +11,6 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
@@ -155,11 +154,7 @@ class TitleBar @JvmOverloads constructor(
             setBackgroundColor(context.primaryColor)
 
             stateListAnimator = null
-            elevation = if (AppConfig.elevation < 0) {
-                context.elevation
-            } else {
-                AppConfig.elevation.toFloat()
-            }
+            elevation = context.elevation
         }
         a.recycle()
     }
