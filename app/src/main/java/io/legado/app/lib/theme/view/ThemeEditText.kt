@@ -9,7 +9,10 @@ import io.legado.app.utils.applyTint
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ThemeEditText(context: Context, attrs: AttributeSet) : AppCompatEditText(context, attrs) {
+class ThemeEditText @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatEditText(context, attrs) {
 
     init {
         if (!isInEditMode) {
