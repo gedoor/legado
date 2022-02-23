@@ -91,6 +91,9 @@ class TextFile(private val book: Book) {
      * 按规则解析目录
      */
     private fun analyze(pattern: Pattern?): ArrayList<BookChapter> {
+        if (pattern?.pattern().isNullOrEmpty()) {
+            return analyze()
+        }
         pattern ?: return analyze()
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
@@ -310,7 +313,7 @@ class TextFile(private val book: Book) {
                 curOffset += length.toLong()
             }
             //设置结尾章节
-            if (bufferStart > 100) {
+            if (bufferStart > 100 || toc.isEmpty()) {
                 val chapter = BookChapter()
                 chapter.title = "第${blockPos}章(${chapterPos})"
                 chapter.start = toc.lastOrNull()?.end ?: curOffset
