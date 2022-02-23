@@ -63,7 +63,7 @@ class TextFile(private val book: Book) {
                 var blockContent: String
                 var length = bis.read(buffer)
                 if (book.charset.isNullOrBlank()) {
-                    book.charset = EncodingDetect.getEncode(buffer)
+                    book.charset = EncodingDetect.getEncode(buffer.copyOf(length))
                 }
                 charset = book.fileCharset()
                 blockContent = String(buffer, 0, length, charset)
