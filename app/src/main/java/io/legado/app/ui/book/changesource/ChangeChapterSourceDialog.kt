@@ -1,13 +1,13 @@
 package io.legado.app.ui.book.changesource
 
+import android.content.DialogInterface
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.KeyEvent.ACTION_UP
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 
 class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_change_source),
     Toolbar.OnMenuItemClickListener,
+    DialogInterface.OnKeyListener,
     ChangeChapterSourceAdapter.CallBack,
     ChangeChapterTocAdapter.Callback {
 
@@ -78,6 +79,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.setOnKeyListener(this)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -323,6 +325,18 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 bundleOf(Pair("upCurSource", bookUrl))
             )
         }
+    }
+
+    override fun onKey(dialog: DialogInterface?, keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> event?.let {
+                if (it.action == ACTION_UP && binding.clToc.isVisible) {
+                    binding.clToc.gone()
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     interface CallBack {

@@ -42,13 +42,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tool_bar">
 
-        <androidx.constraintlayout.utils.widget.ImageFilterView
-            android:id="@+id/iv_hide_toc"
+        <FrameLayout
+            android:id="@+id/fl_hide_toc"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_arrow_down"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/primaryText" />
+            android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:elevation="4dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.utils.widget.ImageFilterView
+                android:id="@+id/iv_hide_toc"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_arrow_down"
+                android:background="?android:attr/selectableItemBackground"
+                app:tint="@color/primaryText" />
+
+        </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_toc"
@@ -56,7 +66,7 @@
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_hide_toc" />
+            app:layout_constraintTop_toBottomOf="@+id/fl_hide_toc" />
 
         <io.legado.app.ui.widget.anima.RotateLoading
             android:id="@+id/loading_toc"
