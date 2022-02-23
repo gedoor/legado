@@ -57,12 +57,14 @@ class TextFile(private val book: Book) {
      */
     @Throws(FileNotFoundException::class)
     fun getChapterList(): ArrayList<BookChapter> {
-        if (book.charset == null || book.tocUrl.isEmpty()) {
+        if (book.charset == null || book.tocUrl.isBlank()) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(bufferSize)
                 var blockContent: String
                 var length = bis.read(buffer)
-                book.charset = EncodingDetect.getEncode(buffer)
+                if (book.charset.isNullOrBlank()) {
+                    book.charset = EncodingDetect.getEncode(buffer)
+                }
                 charset = book.fileCharset()
                 blockContent = String(buffer, 0, length, charset)
                 if (book.tocUrl.isBlank()) {
