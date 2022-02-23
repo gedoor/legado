@@ -60,18 +60,13 @@ class TextFile(private val book: Book) {
         if (book.charset == null || book.tocUrl.isBlank()) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(bufferSize)
-                var blockContent: String
-                var length = bis.read(buffer)
+                val length = bis.read(buffer)
                 if (book.charset.isNullOrBlank()) {
                     book.charset = EncodingDetect.getEncode(buffer.copyOf(length))
                 }
                 charset = book.fileCharset()
-                blockContent = String(buffer, 0, length, charset)
                 if (book.tocUrl.isBlank()) {
-                    if (blockContent.isEmpty()) {
-                        length = bis.read(buffer)
-                        blockContent = String(buffer, 0, length, charset)
-                    }
+                    val blockContent = String(buffer, 0, length, charset)
                     book.tocUrl = getTocRule(blockContent)?.pattern() ?: ""
                 }
             }
