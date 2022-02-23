@@ -366,7 +366,7 @@ object ReadBookConfig {
 
     suspend fun import(byteArray: ByteArray): Config {
         return withContext(IO) {
-            val configZipPath = FileUtils.getPath(appCtx.externalCache, configFileName)
+            val configZipPath = FileUtils.getPath(appCtx.externalCache, "readConfig.zip")
             FileUtils.deleteFile(configZipPath)
             val zipFile = FileUtils.createFileIfNotExist(configZipPath)
             zipFile.writeBytes(byteArray)
@@ -375,7 +375,7 @@ object ReadBookConfig {
             @Suppress("BlockingMethodInNonBlockingContext")
             ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
             val configDir = FileUtils.createFolderIfNotExist(configDirPath)
-            val configFile = configDir.getFile("readConfig.json")
+            val configFile = configDir.getFile(configFileName)
             val config: Config = GSON.fromJsonObject(configFile.readText())!!
             if (config.textFont.isNotEmpty()) {
                 val fontName = FileUtils.getName(config.textFont)
@@ -395,6 +395,7 @@ object ReadBookConfig {
                         bgFile.copyTo(File(bgPath))
                     }
                 }
+                config.bgStr = bgPath
             }
             if (config.bgTypeNight == 2) {
                 val bgName = FileUtils.getName(config.bgStrNight)
@@ -405,6 +406,7 @@ object ReadBookConfig {
                         bgFile.copyTo(File(bgPath))
                     }
                 }
+                config.bgStrNight = bgPath
             }
             if (config.bgTypeEInk == 2) {
                 val bgName = FileUtils.getName(config.bgStrEInk)
@@ -415,6 +417,7 @@ object ReadBookConfig {
                         bgFile.copyTo(File(bgPath))
                     }
                 }
+                config.bgStrEInk = bgPath
             }
             return@withContext config
         }
