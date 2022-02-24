@@ -22,7 +22,6 @@ import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import splitties.init.appCtx
@@ -55,11 +54,11 @@ class ChangeBookSourceViewModel(application: Application) : BaseViewModel(applic
                     searchBook.name.contains(screenKey) -> searchBooks.add(searchBook)
                     else -> return
                 }
-                trySend(searchBooks)
+                trySend(arrayOf(searchBooks))
             }
 
             override fun upAdapter() {
-                trySend(searchBooks)
+                trySend(arrayOf(searchBooks))
             }
 
         }
@@ -67,7 +66,7 @@ class ChangeBookSourceViewModel(application: Application) : BaseViewModel(applic
         getDbSearchBooks().let {
             searchBooks.clear()
             searchBooks.addAll(it)
-            trySend(searchBooks)
+            trySend(arrayOf(searchBooks))
         }
 
         if (searchBooks.size <= 1) {
@@ -77,10 +76,9 @@ class ChangeBookSourceViewModel(application: Application) : BaseViewModel(applic
         awaitClose {
             searchCallback = null
         }
-    }.conflate()
-        .map {
-            searchBooks.sortedBy { it.originOrder }
-        }.flowOn(IO)
+    }.map {
+        searchBooks.sortedBy { it.originOrder }
+    }.flowOn(IO)
 
     @Volatile
     private var searchIndex = -1

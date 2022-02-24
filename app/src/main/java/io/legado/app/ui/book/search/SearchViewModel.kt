@@ -10,7 +10,6 @@ import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.model.webBook.SearchModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     private val searchModel = SearchModel(viewModelScope)
@@ -48,7 +47,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         awaitClose {
             searchModel.unRegisterCallback()
         }
-    }.conflate()
+    }
 
     /**
      * 开始搜索

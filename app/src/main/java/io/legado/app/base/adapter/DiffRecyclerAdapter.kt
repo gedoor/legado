@@ -46,13 +46,14 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         recyclerView.adapter = this
     }
 
-    /**
-     * items与上一次提交的对象必须不同,如果指向相同地址即使数据变化也不会刷新
-     */
     @Synchronized
     fun setItems(items: List<ITEM>?) {
         kotlin.runCatching {
-            asyncListDiffer.submitList(items)
+            if (items == null) {
+                asyncListDiffer.submitList(null)
+            } else {
+                asyncListDiffer.submitList(ArrayList(items))
+            }
         }
     }
 

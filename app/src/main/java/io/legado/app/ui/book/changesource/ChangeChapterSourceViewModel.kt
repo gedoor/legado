@@ -24,7 +24,6 @@ import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import splitties.init.appCtx
@@ -83,10 +82,9 @@ class ChangeChapterSourceViewModel(application: Application) : BaseViewModel(app
         awaitClose {
             searchCallback = null
         }
-    }.conflate()
-        .map {
-            searchBooks.sortedBy { it.originOrder }
-        }.flowOn(IO)
+    }.map {
+        searchBooks.sortedBy { it.originOrder }
+    }.flowOn(IO)
 
     @Volatile
     private var searchIndex = -1

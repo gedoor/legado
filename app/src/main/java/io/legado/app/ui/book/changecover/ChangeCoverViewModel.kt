@@ -18,7 +18,6 @@ import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import java.util.*
 import java.util.concurrent.Executors
@@ -56,8 +55,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             searchBooks.clear()
             searchSuccess = null
         }
-    }.conflate()
-        .flowOn(IO)
+    }.flowOn(IO)
 
     @Volatile
     private var searchIndex = -1
