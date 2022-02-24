@@ -30,6 +30,7 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
@@ -89,7 +90,7 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
 
     private fun initData() {
         launch {
-            appDb.txtTocRuleDao.observeAll().collect { tocRules ->
+            appDb.txtTocRuleDao.observeAll().conflate().collect { tocRules ->
                 initSelectedName(tocRules)
                 adapter.setItems(tocRules)
             }

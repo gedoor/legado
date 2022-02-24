@@ -145,15 +145,13 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             binding.toolBar.menu.applyTint(requireContext())
         }
         launch {
-            viewModel.searchDataFlow
-                .conflate()
-                .collect {
-                    adapter.setItems(it)
-                    delay(1000)
-                }
+            viewModel.searchDataFlow.conflate().collect {
+                adapter.setItems(it)
+                delay(1000)
+            }
         }
         launch {
-            appDb.bookSourceDao.flowGroupEnabled().collect {
+            appDb.bookSourceDao.flowGroupEnabled().conflate().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

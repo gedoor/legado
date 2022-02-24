@@ -29,6 +29,7 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
@@ -133,7 +134,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
 
     private fun initData() {
         launch {
-            appDb.httpTTSDao.flowAll().collect {
+            appDb.httpTTSDao.flowAll().conflate().collect {
                 adapter.setItems(it)
             }
         }

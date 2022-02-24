@@ -295,14 +295,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun initLiveDataGroup() {
         launch {
-            appDb.bookSourceDao.flowGroup()
-                .collect {
-                    groups.clear()
-                    it.forEach { group ->
-                        groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-                    }
-                    upGroupMenu()
+            appDb.bookSourceDao.flowGroup().conflate().collect {
+                groups.clear()
+                it.forEach { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                 }
+                upGroupMenu()
+            }
         }
     }
 

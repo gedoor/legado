@@ -28,6 +28,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 
@@ -67,7 +68,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         launch {
-            appDb.bookGroupDao.flowAll().collect {
+            appDb.bookGroupDao.flowAll().conflate().collect {
                 adapter.setItems(it)
             }
         }

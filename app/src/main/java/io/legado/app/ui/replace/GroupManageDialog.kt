@@ -27,6 +27,7 @@ import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 
@@ -61,7 +62,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         launch {
-            appDb.replaceRuleDao.flowGroup().collect {
+            appDb.replaceRuleDao.flowGroup().conflate().collect {
                 val groups = linkedSetOf<String>()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

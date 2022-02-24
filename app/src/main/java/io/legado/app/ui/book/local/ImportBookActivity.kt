@@ -26,6 +26,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -121,7 +122,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     private fun initData() {
         launch {
-            appDb.bookDao.flowLocalUri().collect {
+            appDb.bookDao.flowLocalUri().conflate().collect {
                 adapter.upBookHas(it)
             }
         }

@@ -191,7 +191,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun initGroupFlow() {
         launch {
-            appDb.rssSourceDao.flowGroup().collect {
+            appDb.rssSourceDao.flowGroup().conflate().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -247,9 +247,9 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 else -> {
                     appDb.rssSourceDao.flowSearch("%$searchKey%")
                 }
-            }.conflate().catch {
+            }.catch {
                 AppLog.put("订阅源管理界面更新数据出错", it)
-            }.collect {
+            }.conflate().collect {
                 adapter.setItems(it, adapter.diffItemCallback)
                 delay(100)
             }

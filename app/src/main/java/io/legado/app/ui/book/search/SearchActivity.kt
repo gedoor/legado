@@ -197,15 +197,13 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun initData() {
         launch {
-            viewModel.searchDataFlow
-                .conflate()
-                .collect {
-                    adapter.setItems(it)
-                    delay(1000)
-                }
+            viewModel.searchDataFlow.conflate().collect {
+                adapter.setItems(it)
+                delay(1000)
+            }
         }
         launch {
-            appDb.bookSourceDao.flowGroupEnabled().collect {
+            appDb.bookSourceDao.flowGroupEnabled().conflate().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -287,8 +285,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 binding.tvBookShow.gone()
                 binding.rvBookshelfSearch.gone()
             } else {
-                val bookFlow = appDb.bookDao.flowSearch(key)
-                bookFlow.collect {
+                appDb.bookDao.flowSearch(key).conflate().collect {
                     if (it.isEmpty()) {
                         binding.tvBookShow.gone()
                         binding.rvBookshelfSearch.gone()
@@ -305,7 +302,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             when {
                 key.isNullOrBlank() -> appDb.searchKeywordDao.flowByUsage()
                 else -> appDb.searchKeywordDao.flowSearch(key)
-            }.collect {
+            }.conflate().collect {
                 historyKeyAdapter.setItems(it)
                 if (it.isEmpty()) {
                     binding.tvClearHistory.invisible()

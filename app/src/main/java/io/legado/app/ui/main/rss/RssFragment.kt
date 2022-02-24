@@ -28,6 +28,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 
@@ -121,7 +122,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     private fun initGroupData() {
         groupsFlowJob?.cancel()
         groupsFlowJob = launch {
-            appDb.rssSourceDao.flowGroup().collect {
+            appDb.rssSourceDao.flowGroup().conflate().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))

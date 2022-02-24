@@ -194,9 +194,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 else -> {
                     appDb.replaceRuleDao.flowSearch("%$searchKey%")
                 }
-            }.conflate().catch {
+            }.catch {
                 AppLog.put("替换规则管理界面更新数据出错", it)
-            }.collect {
+            }.conflate().collect {
                 if (dataInit) {
                     setResult(Activity.RESULT_OK)
                 }

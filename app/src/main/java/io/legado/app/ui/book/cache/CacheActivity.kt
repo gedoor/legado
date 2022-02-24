@@ -31,6 +31,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -156,11 +158,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
                 AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
                 else -> appDb.bookDao.flowByGroup(groupId)
-            }.collect { list ->
-                val booksDownload = list.filter {
+            }.conflate().map { books ->
+                val booksDownload = books.filter {
                     it.type == 0
                 }
-                val books = when (getPrefInt(PreferKey.bookshelfSort)) {
+                when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> booksDownload.sortedByDescending { it.latestChapterTime }
                     2 -> booksDownload.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
@@ -168,6 +170,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                     3 -> booksDownload.sortedBy { it.order }
                     else -> booksDownload.sortedByDescending { it.durChapterTime }
                 }
+            }.conflate().collect { books ->
                 adapter.setItems(books)
                 initCacheSize(books)
             }
@@ -177,7 +180,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launch {
-            appDb.bookGroupDao.flowAll().collect {
+            appDb.bookGroupDao.flowAll().conflate().collect {
                 groupList.clear()
                 groupList.addAll(it)
                 adapter.notifyDataSetChanged()

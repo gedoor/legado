@@ -25,6 +25,7 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.snackbar
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleViewModel>(),
@@ -66,7 +67,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
 
     private fun initData() {
         launch {
-            appDb.txtTocRuleDao.observeAll().collect { tocRules ->
+            appDb.txtTocRuleDao.observeAll().conflate().collect { tocRules ->
                 adapter.setItems(tocRules)
                 upCountView()
             }

@@ -10,6 +10,7 @@ import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 
@@ -34,7 +35,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
 
     private fun initData() {
         launch {
-            appDb.rssStarDao.liveAll().collect {
+            appDb.rssStarDao.liveAll().conflate().collect {
                 adapter.setItems(it)
             }
         }

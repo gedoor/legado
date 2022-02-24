@@ -67,12 +67,10 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
 
     private fun initData() {
         launch {
-            viewModel.dataFlow
-                .conflate()
-                .collect {
-                    adapter.setItems(it)
-                    delay(1000)
-                }
+            viewModel.dataFlow.conflate().collect {
+                adapter.setItems(it)
+                delay(1000)
+            }
         }
     }
 

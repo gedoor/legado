@@ -31,6 +31,8 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -110,7 +112,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launch {
-            appDb.bookGroupDao.flowAll().collect {
+            appDb.bookGroupDao.flowAll().conflate().collect {
                 groupList.clear()
                 groupList.addAll(it)
                 adapter.notifyDataSetChanged()
@@ -128,15 +130,16 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
                 AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
                 else -> appDb.bookDao.flowByGroup(groupId)
-            }.collect { list ->
-                val books = when (getPrefInt(PreferKey.bookshelfSort)) {
-                    1 -> list.sortedByDescending { it.latestChapterTime }
-                    2 -> list.sortedWith { o1, o2 ->
+            }.conflate().map { books ->
+                when (getPrefInt(PreferKey.bookshelfSort)) {
+                    1 -> books.sortedByDescending { it.latestChapterTime }
+                    2 -> books.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
-                    3 -> list.sortedBy { it.order }
-                    else -> list.sortedByDescending { it.durChapterTime }
+                    3 -> books.sortedBy { it.order }
+                    else -> books.sortedByDescending { it.durChapterTime }
                 }
+            }.conflate().collect { books ->
                 adapter.setItems(books)
             }
         }

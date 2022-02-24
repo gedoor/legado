@@ -28,6 +28,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
@@ -102,21 +103,20 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun initGroupData() {
         launch {
-            appDb.bookSourceDao.flowExploreGroup()
-                .collect {
-                    groups.clear()
-                    it.map { group ->
-                        groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-                    }
-                    upGroupsMenu()
+            appDb.bookSourceDao.flowExploreGroup().conflate().collect {
+                groups.clear()
+                it.map { group ->
+                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                 }
+                upGroupsMenu()
+            }
         }
     }
 
     private fun upExploreData(searchKey: String? = null) {
         exploreFlowJob?.cancel()
         exploreFlowJob = launch {
-            val exploreFlow = when {
+            when {
                 searchKey.isNullOrBlank() -> {
                     appDb.bookSourceDao.flowExplore()
                 }
@@ -127,10 +127,9 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
                 else -> {
                     appDb.bookSourceDao.flowExplore("%$searchKey%")
                 }
-            }
-            exploreFlow.catch {
+            }.catch {
                 AppLog.put("发现界面更新数据出错", it)
-            }.collect {
+            }.conflate().collect {
                 binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
                 adapter.setItems(it, diffItemCallBack)
             }

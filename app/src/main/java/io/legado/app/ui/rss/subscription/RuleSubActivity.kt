@@ -20,6 +20,7 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -61,7 +62,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     private fun initData() {
         launch {
-            appDb.ruleSubDao.flowAll().collect {
+            appDb.ruleSubDao.flowAll().conflate().collect {
                 binding.tvEmptyMsg.isGone = it.isNotEmpty()
                 adapter.setItems(it)
             }

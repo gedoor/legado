@@ -140,7 +140,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 }
             }.catch {
                 AppLog.put("书架更新出错", it)
-            }.collect { list ->
+            }.conflate().collect { list ->
                 books = list
                 booksAdapter.notifyDataSetChanged()
                 binding.tvEmptyMsg.isGone = getItemCount() > 0
