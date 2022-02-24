@@ -67,7 +67,7 @@ class BatteryView @JvmOverloads constructor(
         layout.getLineBounds(0, outFrame)
         val batteryStart = layout
             .getPrimaryHorizontal(text.length - battery.toString().length)
-            .toInt() + 3.dp
+            .toInt() + 2.dp
         val batteryEnd =
             batteryStart + StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dp
         outFrame.set(
