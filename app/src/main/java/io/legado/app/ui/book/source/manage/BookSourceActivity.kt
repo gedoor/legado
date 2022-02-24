@@ -272,7 +272,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }.catch {
                 AppLog.put("书源界面更新书源出错", it)
-            }.collect { data ->
+            }.conflate().collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback)
                 delay(500)
             }
