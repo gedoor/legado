@@ -51,7 +51,9 @@ object Backup : BackupRestore() {
         val lastBackup = context.getPrefLong(PreferKey.lastBackup)
         if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
             Coroutine.async {
-                backup(context, context.getPrefString(PreferKey.backupPath) ?: "", true)
+                if (!AppWebDav.hasBackUp()) {
+                    backup(context, context.getPrefString(PreferKey.backupPath) ?: "", true)
+                }
             }.onError {
                 AppLog.put("备份出错\n${it.localizedMessage}", it)
                 appCtx.toastOnUi(appCtx.getString(R.string.autobackup_fail, it.localizedMessage))

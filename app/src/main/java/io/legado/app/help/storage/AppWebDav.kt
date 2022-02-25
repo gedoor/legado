@@ -40,6 +40,13 @@ object AppWebDav {
             return url
         }
 
+    private val backupFileName: String
+        get() {
+            val backupDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                .format(Date(System.currentTimeMillis()))
+            return "backup${backupDate}.zip"
+        }
+
     @Throws(Exception::class)
     suspend fun initWebDav(): Boolean {
         val account = appCtx.getPrefString(PreferKey.webDavAccount)
@@ -105,6 +112,11 @@ object AppWebDav {
         }
     }
 
+    suspend fun hasBackUp(): Boolean {
+        val url = "${rootWebDavUrl}${backupFileName}"
+        return WebDav(url).exists()
+    }
+
     suspend fun backUpWebDav(path: String) {
         try {
             if (initWebDav() && NetworkUtils.isAvailable()) {
@@ -114,9 +126,7 @@ object AppWebDav {
                 }
                 FileUtils.deleteFile(zipFilePath)
                 if (ZipUtils.zipFiles(paths, zipFilePath)) {
-                    val backupDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        .format(Date(System.currentTimeMillis()))
-                    val putUrl = "${rootWebDavUrl}backup${backupDate}.zip"
+                    val putUrl = "${rootWebDavUrl}${backupFileName}"
                     WebDav(putUrl).upload(zipFilePath)
                 }
             }
