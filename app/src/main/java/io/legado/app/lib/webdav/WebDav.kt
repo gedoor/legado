@@ -160,11 +160,13 @@ class WebDav(urlStr: String) {
         if (url != null && auth != null) {
             //防止报错
             return kotlin.runCatching {
-                okHttpClient.newCallResponseBody {
-                    url(url)
-                    method("MKCOL", null)
-                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                }.close()
+                if (!exists()) {
+                    okHttpClient.newCallResponseBody {
+                        url(url)
+                        method("MKCOL", null)
+                        addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
+                    }.close()
+                }
             }.isSuccess
         }
         return false
