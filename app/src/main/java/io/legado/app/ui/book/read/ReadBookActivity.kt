@@ -290,7 +290,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_download -> showDownloadDialog()
             R.id.menu_add_bookmark -> {
                 val book = ReadBook.book
-                val page = ReadBook.curTextChapter?.page(ReadBook.durPageIndex())
+                val page = ReadBook.curTextChapter?.page(ReadBook.durPageIndex)
                 if (book != null && page != null) {
                     val bookmark = book.createBookMark().apply {
                         chapterIndex = ReadBook.durChapterIndex
@@ -657,7 +657,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         launch {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex())
+            binding.readMenu.setSeekPage(ReadBook.durPageIndex)
             loadStates = false
             success?.invoke()
         }
@@ -675,7 +675,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun pageChanged() {
         launch {
             autoPageProgress = 0
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex())
+            binding.readMenu.setSeekPage(ReadBook.durPageIndex)
             startBackupJob()
         }
     }

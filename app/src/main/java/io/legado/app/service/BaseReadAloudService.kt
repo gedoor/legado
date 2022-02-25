@@ -93,7 +93,7 @@ abstract class BaseReadAloudService : BaseService(),
         when (intent?.action) {
             IntentAction.play -> {
                 textChapter = ReadBook.curTextChapter
-                pageIndex = ReadBook.durPageIndex()
+                pageIndex = ReadBook.durPageIndex
                 newReadAloud(
                     intent.getBooleanExtra("play", true)
                 )

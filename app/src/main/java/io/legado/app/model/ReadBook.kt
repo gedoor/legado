@@ -224,12 +224,10 @@ object ReadBook : CoroutineScope by MainScope() {
     /**
      * 当前页数
      */
-    fun durPageIndex(): Int {
-        curTextChapter?.let {
-            return it.getPageIndexByCharIndex(durChapterPos)
+    val durPageIndex: Int
+        get() {
+            return curTextChapter?.getPageIndexByCharIndex(durChapterPos) ?: durChapterPos
         }
-        return durChapterPos
-    }
 
     /**
      * chapterOnDur: 0为当前页,1为下一页,-1为上一页

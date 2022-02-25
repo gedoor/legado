@@ -110,15 +110,11 @@ class HttpReadAloudService : BaseReadAloudService(),
             clearSpeakCache()
             removeCacheFile()
             val httpTts = ReadAloud.httpTTS ?: return@execute
-            contentList.forEachIndexed { index, item ->
+            contentList.forEachIndexed { index, content ->
                 ensureActive()
-                val speakText = item.replace(AppPattern.notReadAloudRegex, "")
                 val fileName =
-                    md5SpeakFileName(
-                        httpTts.url,
-                        AppConfig.ttsSpeechRate.toString(),
-                        speakText
-                    )
+                    md5SpeakFileName(httpTts.url, AppConfig.ttsSpeechRate.toString(), content)
+                val speakText = content.replace(AppPattern.notReadAloudRegex, "")
                 if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                     if (index == nowSpeak) {
                         val file = getSpeakFileAsMd5(fileName)
