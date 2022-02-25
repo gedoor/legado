@@ -140,6 +140,9 @@ class WebDav(urlStr: String) {
         return list
     }
 
+    /**
+     * 文件是否存在
+     */
     suspend fun exists(): Boolean {
         val response = propFindResponse() ?: return false
         val document = Jsoup.parse(response)
