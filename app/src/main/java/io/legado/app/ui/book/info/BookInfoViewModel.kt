@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
@@ -36,16 +37,24 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val name = intent.getStringExtra("name") ?: ""
             val author = intent.getStringExtra("author") ?: ""
             val bookUrl = intent.getStringExtra("bookUrl") ?: ""
-            appDb.bookDao.getBook(name, author)?.let { book ->
+            appDb.bookDao.getBook(name, author)?.let {
                 inBookshelf = true
-                setBook(book)
-            } ?: let {
-                val searchBook = appDb.searchBookDao.getSearchBook(bookUrl)
-                    ?: appDb.searchBookDao.getFirstByNameAuthor(name, author)
-                searchBook?.toBook()?.let { book ->
-                    setBook(book)
+                setBook(it)
+                return@execute
+            }
+            if (bookUrl.isNotBlank()) {
+                appDb.searchBookDao.getSearchBook(bookUrl)?.toBook()?.let {
+                    setBook(it)
+                    return@execute
                 }
             }
+            appDb.searchBookDao.getFirstByNameAuthor(name, author)?.toBook()?.let {
+                setBook(it)
+                return@execute
+            }
+            throw NoStackTraceException("未找到书籍")
+        }.onError {
+            context.toastOnUi(it.localizedMessage)
         }
     }
 
