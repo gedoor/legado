@@ -83,18 +83,25 @@ class DownloadService : BaseService() {
             toastOnUi("已在下载列表")
             return
         }
-        // 指定下载地址
-        val request = DownloadManager.Request(Uri.parse(url))
-        // 设置通知
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
-        // 设置下载文件保存的路径和文件名
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-        // 添加一个下载任务
-        val downloadId = downloadManager.enqueue(request)
-        downloads[downloadId] = Pair(url, fileName)
-        queryState()
-        if (upStateJob == null) {
-            checkDownloadState()
+        kotlin.runCatching {
+            // 指定下载地址
+            val request = DownloadManager.Request(Uri.parse(url))
+            // 设置通知
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
+            // 设置下载文件保存的路径和文件名
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            // 添加一个下载任务
+            val downloadId = downloadManager.enqueue(request)
+            downloads[downloadId] = Pair(url, fileName)
+            queryState()
+            if (upStateJob == null) {
+                checkDownloadState()
+            }
+        }.onFailure {
+            when (it) {
+                is SecurityException -> toastOnUi("下载出错,没有存储权限")
+                else -> toastOnUi("下载出错,${it.localizedMessage}")
+            }
         }
     }
 
