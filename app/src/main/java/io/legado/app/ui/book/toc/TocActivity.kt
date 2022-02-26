@@ -85,7 +85,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
             R.id.menu_reverse_toc -> viewModel.reverseToc {
                 setResult(RESULT_OK, Intent().apply {
                     putExtra("index", it.durChapterIndex)
-                    putExtra("chapterPos", it.durChapterPos)
+                    putExtra("chapterPos", 0)
                 })
             }
             R.id.menu_use_replace -> {
