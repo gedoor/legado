@@ -193,6 +193,7 @@ class SearchModel(private val scope: CoroutineScope) {
             if (!precision) {
                 equalData.addAll(otherData)
             }
+            if (!scope.isActive) return
             searchBooks = equalData
         }
     }
