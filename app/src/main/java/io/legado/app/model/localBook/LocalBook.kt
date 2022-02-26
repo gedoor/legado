@@ -12,7 +12,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.TocEmptyException
 import io.legado.app.utils.*
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -69,7 +69,7 @@ object LocalBook {
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
             e.localizedMessage
         }
     }

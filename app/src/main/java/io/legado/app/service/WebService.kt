@@ -13,7 +13,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
-import timber.log.Timber
+
 import java.io.IOException
 
 class WebService : BaseService() {
@@ -88,7 +88,7 @@ class WebService : BaseService() {
                 upNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
-                Timber.e(e)
+                e.printOnDebug()
                 stopSelf()
             }
         } else {

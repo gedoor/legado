@@ -13,7 +13,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
-import timber.log.Timber
+
 import java.net.URL
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
@@ -662,7 +662,7 @@ class AnalyzeRule(
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
-                Timber.e(it)
+                it.printOnDebug()
             }.getOrElse {
                 it.msg
             }

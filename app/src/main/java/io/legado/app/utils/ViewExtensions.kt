@@ -21,7 +21,7 @@ import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.theme.TintHelper
 import splitties.systemservices.inputMethodManager
-import timber.log.Timber
+
 import java.lang.reflect.Field
 
 
@@ -170,6 +170,6 @@ fun PopupMenu.show(x: Int, y: Int) {
         field.isAccessible = true
         (field.get(this) as MenuPopupHelper).show(x, y)
     }.onFailure {
-        Timber.e(it)
+        it.printOnDebug()
     }
 }

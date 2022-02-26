@@ -29,7 +29,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.help.IntentHelp
 import splitties.systemservices.clipboardManager
-import timber.log.Timber
+
 import java.io.File
 import java.io.FileOutputStream
 
@@ -178,7 +178,7 @@ val Context.sysScreenOffTime: Int
         return kotlin.runCatching {
             Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
         }.onFailure {
-            Timber.e(it)
+            it.printOnDebug()
         }.getOrDefault(0)
     }
 
@@ -338,7 +338,7 @@ val Context.channel: String
             val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             return appInfo.metaData.getString("channel") ?: ""
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         return ""
     }

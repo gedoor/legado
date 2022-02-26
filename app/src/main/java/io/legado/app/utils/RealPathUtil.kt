@@ -9,7 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import timber.log.Timber
+
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -112,7 +112,7 @@ object RealPathUtil {
                 return cursor.getString(index)
             }
         } catch (e: IllegalArgumentException) {
-            Timber.e(e)
+            e.printOnDebug()
             val file = File(context.cacheDir, "tmp")
             val filePath = file.absolutePath
             var input: FileInputStream? = null
@@ -130,8 +130,8 @@ object RealPathUtil {
                     output.write(bytes, 0, read)
                 }
                 return File(filePath).absolutePath
-            } catch (ignored: IOException) {
-                Timber.e(ignored)
+            } catch (e: IOException) {
+                e.printStackTrace()
             } finally {
                 input?.close()
                 output?.close()

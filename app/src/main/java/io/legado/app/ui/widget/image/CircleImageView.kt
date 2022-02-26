@@ -20,9 +20,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.printOnDebug
 
 import io.legado.app.utils.sp
-import timber.log.Timber
+
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -150,10 +151,6 @@ class CircleImageView @JvmOverloads constructor(
         a.recycle()
 
         mReady = true
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            outlineProvider = OutlineProvider()
-        }
 
         if (mSetupPending) {
             setup()
@@ -318,7 +315,7 @@ class CircleImageView @JvmOverloads constructor(
             drawable.draw(canvas)
             bitmap
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
             null
         }
 

@@ -3,7 +3,7 @@ package io.legado.app.help.storage
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.utils.*
-import timber.log.Timber
+
 
 object OldBook {
 
@@ -18,7 +18,7 @@ object OldBook {
             if (book.bookUrl.isBlank()) continue
             book.name = jsonItem.readString("$.bookInfoBean.name") ?: ""
             if (book.bookUrl in existingBooks) {
-                Timber.d("Found existing book: " + book.name)
+                DebugLog.d(javaClass.name, "Found existing book: " + book.name)
                 continue
             }
             book.origin = jsonItem.readString("$.tag") ?: ""

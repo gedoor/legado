@@ -5,15 +5,17 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.model.rss.Rss
+import io.legado.app.utils.printOnDebug
 
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
+
 
 class RssArticlesViewModel(application: Application) : BaseViewModel(application) {
     val loadFinally = MutableLiveData<Boolean>()
@@ -54,7 +56,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 }
             }.onError {
                 loadFinally.postValue(false)
-                Timber.e(it)
+                AppLog.put("rss获取内容失败", it)
                 context.toastOnUi(it.localizedMessage)
             }
     }
@@ -70,7 +72,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     loadMoreSuccess(it.first)
                 }
                 .onError {
-                    Timber.e(it)
+                    it.printOnDebug()
                     loadFinally.postValue(false)
                 }
         } else {

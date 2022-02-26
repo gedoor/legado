@@ -8,11 +8,13 @@ import android.text.TextUtils
 import io.legado.app.BuildConfig
 import io.legado.app.help.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.utils.DebugLog
+import io.legado.app.utils.printOnDebug
 
 import org.chromium.net.CronetEngine
 import org.json.JSONObject
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.*
 import java.math.BigInteger
 import java.net.HttpURLConnection
@@ -36,16 +38,16 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
 
     init {
         soUrl = ("https://storage.googleapis.com/chromium-cronet/android/"
-                + soVersion + "/Release/cronet/libs/"
-                + getCpuAbi(appCtx) + "/" + soName)
+            + soVersion + "/Release/cronet/libs/"
+            + getCpuAbi(appCtx) + "/" + soName)
         md5 = getMd5(appCtx)
         val dir = appCtx.getDir("cronet", Context.MODE_PRIVATE)
         soFile = File(dir.toString() + "/" + getCpuAbi(appCtx), soName)
         downloadFile = File(appCtx.cacheDir.toString() + "/so_download", soName)
-        Timber.d("soName+:$soName")
-        Timber.d("destSuccessFile:$soFile")
-        Timber.d("tempFile:$downloadFile")
-        Timber.d("soUrl:$soUrl")
+        DebugLog.d(javaClass.simpleName, "soName+:$soName")
+        DebugLog.d(javaClass.simpleName, "destSuccessFile:$soFile")
+        DebugLog.d(javaClass.simpleName, "tempFile:$downloadFile")
+        DebugLog.d(javaClass.simpleName, "soUrl:$soUrl")
     }
 
     /**
@@ -77,11 +79,11 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         Coroutine.async {
             //md5 = getUrlMd5(md5Url)
             if (soFile.exists() && md5 == getFileMD5(soFile)) {
-                Timber.d("So 库已存在")
+                DebugLog.d(javaClass.simpleName, "So 库已存在")
             } else {
                 download(soUrl, md5, downloadFile, soFile)
             }
-            Timber.d(soName)
+            DebugLog.d(javaClass.simpleName, soName)
         }
     }
 
@@ -108,7 +110,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")
     override fun loadLibrary(libName: String) {
-        Timber.d("libName:$libName")
+        DebugLog.d(javaClass.simpleName, "libName:$libName")
         val start = System.currentTimeMillis()
         @Suppress("SameParameterValue")
         try {
@@ -120,13 +122,13 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             //以下逻辑为cronet加载，优先加载本地，否则从远程加载
             //首先调用系统行为进行加载
             System.loadLibrary(libName)
-            Timber.d("load from system")
+            DebugLog.d(javaClass.simpleName, "load from system")
         } catch (e: Throwable) {
             //如果找不到，则从远程下载
             //删除历史文件
             deleteHistoryFile(Objects.requireNonNull(soFile.parentFile), soFile)
             //md5 = getUrlMd5(md5Url)
-            Timber.d("soMD5:$md5")
+            DebugLog.d(javaClass.simpleName, "soMD5:$md5")
             if (md5.length != 32 || soUrl.isEmpty()) {
                 //如果md5或下载的url为空，则调用系统行为进行加载
                 System.loadLibrary(libName)
@@ -145,7 +147,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
                 if (fileMD5 != null && fileMD5.equals(md5, ignoreCase = true)) {
                     //md5值一样，则加载
                     System.load(soFile.absolutePath)
-                    Timber.d("load from:$soFile")
+                    DebugLog.d(javaClass.simpleName, "load from:$soFile")
                     return
                 }
                 //md5不一样则删除
@@ -156,7 +158,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             //使用系统加载方法
             System.loadLibrary(libName)
         } finally {
-            Timber.d("time:" + (System.currentTimeMillis() - start))
+            DebugLog.d(javaClass.simpleName, "time:" + (System.currentTimeMillis() - start))
         }
     }
 
@@ -172,7 +174,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             abiField.isAccessible = true
             cpuAbi = abiField.get(appInfo) as String?
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         if (TextUtils.isEmpty(cpuAbi)) {
             cpuAbi = Build.SUPPORTED_ABIS[0]
@@ -191,7 +193,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             for (f in files) {
                 if (f.exists() && (currentFile == null || f.absolutePath != currentFile.absolutePath)) {
                     val delete = f.delete()
-                    Timber.d("delete file: $f result: $delete")
+                    DebugLog.d(javaClass.simpleName, "delete file: $f result: $delete")
                     if (!delete) {
                         f.deleteOnExit()
                     }
@@ -223,7 +225,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             }
             return true
         } catch (e: Throwable) {
-            Timber.e(e)
+            e.printOnDebug()
             if (destFile.exists() && !destFile.delete()) {
                 destFile.deleteOnExit()
             }
@@ -232,14 +234,14 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
                 try {
                     inputStream.close()
                 } catch (e: IOException) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
             }
             if (outputStream != null) {
                 try {
                     outputStream.close()
                 } catch (e: IOException) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
             }
         }
@@ -263,7 +265,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
         download = true
         executor.execute {
             val result = downloadFileIfNotExist(url, downloadTempFile)
-            Timber.d("download result:$result")
+            DebugLog.d(javaClass.simpleName, "download result:$result")
             //文件md5再次校验
             val fileMD5 = getFileMD5(downloadTempFile)
             if (md5 != null && !md5.equals(fileMD5, ignoreCase = true)) {
@@ -274,7 +276,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
                 download = false
                 return@execute
             }
-            Timber.d("download success, copy to $destSuccessFile")
+            DebugLog.d(javaClass.simpleName, "download success, copy to $destSuccessFile")
             //下载成功拷贝文件
             copyFile(downloadTempFile, destSuccessFile)
             cacheInstall = false
@@ -313,20 +315,20 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             }
             return true
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         } finally {
             if (fileInputStream != null) {
                 try {
                     fileInputStream.close()
                 } catch (e: Exception) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
             }
             if (os != null) {
                 try {
                     os.close()
                 } catch (e: Exception) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
             }
         }
@@ -348,15 +350,15 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             }
             return String.format("%032x", BigInteger(1, md5.digest())).lowercase()
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         } catch (e: OutOfMemoryError) {
-            Timber.e(e)
+            e.printOnDebug()
         } finally {
             if (fileInputStream != null) {
                 try {
                     fileInputStream.close()
                 } catch (e: Exception) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
             }
         }

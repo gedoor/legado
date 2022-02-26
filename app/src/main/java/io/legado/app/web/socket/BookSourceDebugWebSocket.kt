@@ -6,14 +6,11 @@ import fi.iki.elonen.NanoWSD
 import io.legado.app.R
 import io.legado.app.data.appDb
 import io.legado.app.model.Debug
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.isJson
-import io.legado.app.utils.runOnIO
+import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.IOException
 
 
@@ -90,7 +87,7 @@ class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                     close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
                 }
             }.onFailure {
-                Timber.e(it)
+                it.printOnDebug()
             }
         }
     }

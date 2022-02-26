@@ -2,6 +2,7 @@ package io.legado.app.help.http.cronet
 
 import io.legado.app.constant.AppLog
 import io.legado.app.help.AppConfig
+import io.legado.app.utils.DebugLog
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.Request
@@ -11,7 +12,7 @@ import org.chromium.net.ExperimentalCronetEngine
 import org.chromium.net.UploadDataProviders
 import org.chromium.net.UrlRequest
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -35,11 +36,10 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
     }
     try {
         val engine = builder.build()
-        Timber.d("Cronet Version:" + engine.versionString)
+        DebugLog.d("Cronet Version:", engine.versionString)
         return@lazy engine
     } catch (e: UnsatisfiedLinkError) {
         AppLog.put("初始化cronetEngine出错", e)
-        Timber.e(e, "初始化cronetEngine出错")
         return@lazy null
     }
 }

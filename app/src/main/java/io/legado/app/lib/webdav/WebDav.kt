@@ -3,13 +3,14 @@ package io.legado.app.lib.webdav
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.utils.printOnDebug
 import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.intellij.lang.annotations.Language
 import org.jsoup.Jsoup
-import timber.log.Timber
+
 import java.io.File
 import java.io.InputStream
 import java.net.MalformedURLException
@@ -100,7 +101,7 @@ class WebDav(urlStr: String) {
                     method("PROPFIND", requestBody)
                 }.text()
             }.onFailure { e ->
-                Timber.e(e)
+                e.printOnDebug()
             }.getOrNull()
         }
         return null
@@ -132,7 +133,7 @@ class WebDav(urlStr: String) {
                         }
                         list.add(webDavFile)
                     } catch (e: MalformedURLException) {
-                        Timber.e(e)
+                        e.printOnDebug()
                     }
                 }
             }

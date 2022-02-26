@@ -4,7 +4,7 @@ import com.google.gson.*
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonWriter
-import timber.log.Timber
+
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.lang.reflect.ParameterizedType
@@ -27,18 +27,20 @@ val GSON: Gson by lazy {
 inline fun <reified T> genericType(): Type = object : TypeToken<T>() {}.type
 
 inline fun <reified T> Gson.fromJsonObject(json: String?): T? {//可转成任意类型
+    json ?: return null
     return kotlin.runCatching {
         fromJson(json, genericType<T>()) as? T
     }.onFailure {
-        Timber.e(it, json)
+        DebugLog.e("GSON解析出错", json, it)
     }.getOrNull()
 }
 
 inline fun <reified T> Gson.fromJsonArray(json: String?): List<T>? {
+    json ?: return null
     return kotlin.runCatching {
         fromJson(json, ParameterizedTypeImpl(T::class.java)) as? List<T>
     }.onFailure {
-        Timber.e(it, json)
+        DebugLog.e("GSON解析出错", json, it)
     }.getOrNull()
 }
 

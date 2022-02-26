@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.alert
@@ -18,7 +19,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
+
 import java.io.File
 import java.io.FileOutputStream
 
@@ -145,7 +146,7 @@ class FileAssociationActivity :
                         mode = HandleFileContract.DIR_SYS
                     }
                     else -> {
-                        Timber.e(it, "导入书籍失败")
+                        AppLog.put("导入书籍失败", it)
                         toastOnUi(it.localizedMessage)
                         finish()
                     }

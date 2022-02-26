@@ -1,11 +1,13 @@
 package io.legado.app.help.storage
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
+import io.legado.app.utils.printOnDebug
 
-import timber.log.Timber
+
 import java.io.File
 
 object Preferences {
@@ -17,6 +19,7 @@ object Preferences {
      * @param fileName 文件名,不需要 '.xml' 后缀
      * @return
      */
+    @SuppressLint("DiscouragedPrivateApi")
     fun getSharedPreferences(
         context: Context,
         dir: String,
@@ -38,11 +41,11 @@ object Preferences {
             // 返回修改路径以后的 SharedPreferences :%FILE_PATH%/%fileName%.xml
             return context.getSharedPreferences(fileName, Activity.MODE_PRIVATE)
         } catch (e: NoSuchFieldException) {
-            Timber.e(e)
+            e.printOnDebug()
         } catch (e: IllegalArgumentException) {
-            Timber.e(e)
+            e.printOnDebug()
         } catch (e: IllegalAccessException) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         return null
     }

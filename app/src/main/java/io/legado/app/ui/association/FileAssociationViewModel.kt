@@ -7,8 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readText
-import timber.log.Timber
+
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
@@ -54,7 +55,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                 onLineImportLive.postValue(uri)
             }
         }.onError {
-            Timber.e(it)
+            it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage)
         }
     }

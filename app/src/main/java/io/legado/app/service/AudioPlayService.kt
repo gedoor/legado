@@ -33,7 +33,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 import splitties.systemservices.audioManager
-import timber.log.Timber
+
 
 
 class AudioPlayService : BaseService(),
@@ -138,7 +138,7 @@ class AudioPlayService : BaseService(),
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             }.onFailure {
-                Timber.e(it)
+                it.printOnDebug()
                 toastOnUi("$url ${it.localizedMessage}")
                 stopSelf()
             }
@@ -159,7 +159,7 @@ class AudioPlayService : BaseService(),
             postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
             upNotification()
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
     }
 
@@ -178,7 +178,7 @@ class AudioPlayService : BaseService(),
             postEvent(EventBus.AUDIO_STATE, Status.PLAY)
             upNotification()
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
             stopSelf()
         }
     }
@@ -250,7 +250,6 @@ class AudioPlayService : BaseService(),
         val errorMsg = "音频播放出错\n${error.errorCodeName} ${error.errorCode}"
         AppLog.put(errorMsg, error)
         toastOnUi(errorMsg)
-        Timber.e(error)
     }
 
     private fun setTimer(minute: Int) {

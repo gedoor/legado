@@ -24,7 +24,7 @@ import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.*
-import timber.log.Timber
+
 import java.util.*
 
 @SuppressLint("RestrictedApi")
@@ -210,7 +210,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     }
                     context.startActivity(intent)
                 }.onFailure {
-                    Timber.e(it)
+                    it.printOnDebug()
                     context.toastOnUi(it.localizedMessage ?: "ERROR")
                 }
             }

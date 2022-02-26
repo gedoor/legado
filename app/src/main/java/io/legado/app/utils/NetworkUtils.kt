@@ -3,9 +3,10 @@ package io.legado.app.utils
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import io.legado.app.constant.AppLog
 import okhttp3.internal.publicsuffix.PublicSuffixDatabase
 import splitties.systemservices.connectivityManager
-import timber.log.Timber
+
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -117,7 +118,7 @@ object NetworkUtils {
             relativeUrl = parseUrl.toString()
             return relativeUrl
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         return relativeUrl
     }
@@ -134,7 +135,7 @@ object NetworkUtils {
             relativeUrl = parseUrl.toString()
             return relativeUrl
         } catch (e: Exception) {
-            Timber.e("网址拼接出错\n${e.localizedMessage}", e)
+            AppLog.put("网址拼接出错\n${e.localizedMessage}", e)
         }
         return relativeUrl
     }
@@ -179,7 +180,7 @@ object NetworkUtils {
         try {
             enumeration = NetworkInterface.getNetworkInterfaces()
         } catch (e: SocketException) {
-            Timber.e(e)
+            e.printOnDebug()
         }
 
         if (enumeration != null) {

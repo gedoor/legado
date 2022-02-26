@@ -5,10 +5,7 @@ import android.graphics.BitmapFactory
 import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.HtmlFormatter
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFiles
+import io.legado.app.utils.*
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
@@ -17,7 +14,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -97,7 +94,7 @@ class EpubFile(var book: Book) {
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
     }
 
@@ -108,7 +105,7 @@ class EpubFile(var book: Book) {
             //通过懒加载读取epub
             return EpubReader().readEpub(bis, "utf-8")
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         return null
     }

@@ -6,7 +6,7 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
 import io.legado.app.constant.IntentAction
-import timber.log.Timber
+import io.legado.app.utils.printOnDebug
 
 
 /**
@@ -28,7 +28,7 @@ class WebTileService : TileService() {
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         return super.onStartCommand(intent, flags, startId)
     }

@@ -7,13 +7,14 @@ import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.utils.DebugLog
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StringUtils.wordCountFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
-import timber.log.Timber
+
 
 /**
  * 获取详情
@@ -87,7 +88,7 @@ object BookInfo {
                 } ?: Debug.log(bookSource.bookSourceUrl, "└")
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
-            Timber.e(e, "获取分类出错")
+            DebugLog.e("获取分类出错", e)
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取字数")
@@ -98,7 +99,7 @@ object BookInfo {
             }
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
-            Timber.e(e, "获取字数出错")
+            DebugLog.e("获取字数出错", e)
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取最新章节")
@@ -109,7 +110,7 @@ object BookInfo {
             }
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
-            Timber.e(e, "获取最新章节出错")
+            DebugLog.e("获取最新章节出错", e)
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取简介")
@@ -120,7 +121,7 @@ object BookInfo {
             }
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
-            Timber.e(e, "获取简介出错")
+            DebugLog.e("获取简介出错", e)
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
@@ -131,7 +132,7 @@ object BookInfo {
             }
         } catch (e: Exception) {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
-            Timber.e(e, "获取封面出错")
+            DebugLog.e("获取封面出错", e)
         }
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")

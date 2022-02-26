@@ -28,7 +28,7 @@ import me.ag2s.epublib.domain.*
 import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.util.ResourceUtil
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -71,7 +71,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = it.localizedMessage ?: "ERROR"
             upAdapterLiveData.postValue(book.bookUrl)
-            Timber.e(it)
+            it.printOnDebug()
         }.onSuccess {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
@@ -206,7 +206,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = it.localizedMessage ?: "ERROR"
             upAdapterLiveData.postValue(book.bookUrl)
-            Timber.e(it)
+            it.printOnDebug()
         }.onSuccess {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)

@@ -7,7 +7,8 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import timber.log.Timber
+import io.legado.app.utils.DebugLog
+
 import kotlin.math.roundToInt
 
 
@@ -38,7 +39,10 @@ class DividerNoLast(context: Context, orientation: Int) :
         val a = context.obtainStyledAttributes(attrs)
         mDivider = a.getDrawable(0)
         if (mDivider == null) {
-            Timber.w("@android:attr/listDivider was not set in the theme used for this DividerItemDecoration. Please set that attribute all call setDrawable()")
+            DebugLog.w(
+                javaClass.name,
+                "@android:attr/listDivider was not set in the theme used for this DividerItemDecoration. Please set that attribute all call setDrawable()"
+            )
         }
         a.recycle()
         setOrientation(orientation)

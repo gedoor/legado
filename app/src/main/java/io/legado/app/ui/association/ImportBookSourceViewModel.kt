@@ -16,7 +16,7 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.*
-import timber.log.Timber
+
 
 class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     var isAddGroup = false
@@ -113,7 +113,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
-            Timber.e(it)
+            it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage ?: "")
         }.onSuccess {
             comparisonSource()

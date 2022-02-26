@@ -2,7 +2,7 @@ package io.legado.app.utils
 
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import timber.log.Timber
+
 import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -241,7 +241,7 @@ object ZipUtils {
                     val entry = entries.nextElement() as ZipEntry
                     val entryName = entry.name
                     if (entryName.contains("../")) {
-                        Timber.e("entryName: $entryName is dangerous!")
+                        DebugLog.e(javaClass.name, "entryName: $entryName is dangerous!")
                         continue
                     }
                     if (!unzipChildFile(destDir, files, zip, entry, entryName)) return files
@@ -251,7 +251,7 @@ object ZipUtils {
                     val entry = entries.nextElement() as ZipEntry
                     val entryName = entry.name
                     if (entryName.contains("../")) {
-                        Timber.e("entryName: $entryName is dangerous!")
+                        DebugLog.e(javaClass.name, "entryName: $entryName is dangerous!")
                         continue
                     }
                     if (entryName.contains(keyword!!)) {
@@ -314,7 +314,7 @@ object ZipUtils {
         while (entries.hasMoreElements()) {
             val entryName = (entries.nextElement() as ZipEntry).name
             if (entryName.contains("../")) {
-                Timber.e("entryName: $entryName is dangerous!")
+                DebugLog.e(javaClass.name, "entryName: $entryName is dangerous!")
                 paths.add(entryName)
             } else {
                 paths.add(entryName)
@@ -368,7 +368,7 @@ object ZipUtils {
         return try {
             file.createNewFile()
         } catch (e: IOException) {
-            Timber.e(e)
+            e.printOnDebug()
             false
         }
     }

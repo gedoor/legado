@@ -25,7 +25,8 @@ import android.graphics.Rect
 import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.View
-import timber.log.Timber
+import io.legado.app.utils.DebugLog
+
 import java.util.*
 
 
@@ -125,11 +126,11 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
             }
 
             override fun onAnimationCancel(animator: Animator) {
-                Timber.i("CANCEL")
+                DebugLog.i(javaClass.name, "CANCEL")
             }
 
             override fun onAnimationRepeat(animator: Animator) {
-                Timber.i("REPEAT")
+                DebugLog.i(javaClass.name, "REPEAT")
             }
         })
 

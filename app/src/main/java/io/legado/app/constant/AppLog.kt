@@ -1,5 +1,7 @@
 package io.legado.app.constant
 
+import android.util.Log
+import io.legado.app.BuildConfig
 import io.legado.app.help.AppConfig
 
 object AppLog {
@@ -15,6 +17,11 @@ object AppLog {
             mLogs.removeLastOrNull()
         }
         mLogs.add(0, Triple(System.currentTimeMillis(), message, throwable))
+        if (throwable != null) {
+            if (BuildConfig.DEBUG) {
+                Log.e(message, throwable.stackTraceToString())
+            }
+        }
     }
 
     @Synchronized

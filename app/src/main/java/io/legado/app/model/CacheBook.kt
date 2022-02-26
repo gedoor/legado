@@ -16,7 +16,7 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import timber.log.Timber
+
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
@@ -180,7 +180,6 @@ object CacheBook {
                     "下载${book.name}-${chapterTitle}失败\n${error.localizedMessage}",
                     error
                 )
-                Timber.e(error)
             }
         }
 

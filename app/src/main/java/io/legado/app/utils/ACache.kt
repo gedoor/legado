@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable
 import org.json.JSONArray
 import org.json.JSONObject
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -70,11 +70,11 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
     init {
         try {
             if (!cacheDir.exists() && !cacheDir.mkdirs()) {
-                Timber.i("can't make dirs in %s" + cacheDir.absolutePath)
+                DebugLog.i(javaClass.name, "can't make dirs in %s" + cacheDir.absolutePath)
             }
             mCache = ACacheManager(cacheDir, max_size, max_count)
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
 
     }
@@ -96,7 +96,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                 file.writeText(value)
                 mCache.put(file)
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
         }
     }
@@ -131,7 +131,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                     removeFile = true
                 }
             } catch (e: IOException) {
-                Timber.e(e)
+                e.printOnDebug()
             } finally {
                 if (removeFile)
                     remove(key)
@@ -269,7 +269,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                     null
                 }
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             } finally {
                 if (removeFile)
                     remove(key)
@@ -299,7 +299,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
     }
 
@@ -318,18 +318,18 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                 ois = ObjectInputStream(bis)
                 return ois.readObject()
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             } finally {
                 try {
                     bis?.close()
                 } catch (e: IOException) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
 
                 try {
                     ois?.close()
                 } catch (e: IOException) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
 
             }
@@ -427,7 +427,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                     return f
                 }
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
         }
         return null
@@ -488,7 +488,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                     }
                 }
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
 
             return false
@@ -662,7 +662,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                         cacheCount.set(count)
                     }
                 } catch (e: Exception) {
-                    Timber.e(e)
+                    e.printOnDebug()
                 }
 
 
@@ -693,7 +693,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                 file.setLastModified(currentTime)
                 lastUsageDates[file] = currentTime
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
 
         }
@@ -727,7 +727,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                     }
                 }
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
 
         }
@@ -767,7 +767,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
                 }
                 return fileSize
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
                 return 0
             }
 

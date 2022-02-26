@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import android.util.Base64
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
@@ -11,7 +12,6 @@ import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
-import timber.log.Timber
 import javax.script.SimpleBindings
 
 /**
@@ -111,7 +111,7 @@ interface BaseSource : JsExtensions {
                 ?: return null
             return String(decodeBytes)
         } catch (e: Exception) {
-            Timber.e(e)
+            AppLog.put("获取登陆信息出错", e)
             return null
         }
     }
@@ -131,7 +131,7 @@ interface BaseSource : JsExtensions {
             CacheManager.put("userInfo_${getKey()}", encodeStr)
             true
         } catch (e: Exception) {
-            Timber.e(e)
+            AppLog.put("保存登陆信息出错", e)
             false
         }
     }

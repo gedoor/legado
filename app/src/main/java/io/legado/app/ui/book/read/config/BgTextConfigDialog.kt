@@ -33,7 +33,7 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import timber.log.Timber
+
 import java.io.File
 
 class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
@@ -293,7 +293,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }.onSuccess {
             toastOnUi("导出成功, 文件名为 $exportFileName")
         }.onError {
-            Timber.e(it)
+            it.printOnDebug()
             longToast("导出失败:${it.localizedMessage}")
         }
     }
@@ -330,7 +330,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             @Suppress("BlockingMethodInNonBlockingContext")
             importConfig(uri.readBytes(requireContext()))
         }.onError {
-            Timber.e(it)
+            it.printOnDebug()
             longToast("导入失败:${it.localizedMessage}")
         }
     }
@@ -344,7 +344,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             postEvent(EventBus.UP_CONFIG, true)
             toastOnUi("导入成功")
         }.onError {
-            Timber.e(it)
+            it.printOnDebug()
             longToast("导入失败:${it.localizedMessage}")
         }
     }

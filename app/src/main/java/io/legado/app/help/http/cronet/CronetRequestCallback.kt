@@ -2,6 +2,7 @@ package io.legado.app.help.http.cronet
 
 import android.os.ConditionVariable
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.utils.DebugLog
 import okhttp3.*
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -10,7 +11,7 @@ import okio.Buffer
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
-import timber.log.Timber
+
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
@@ -86,7 +87,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
 //        }
 //        Log.e("Cronet", sb.toString())
         //打印协议，用于调试
-        Timber.i(info.negotiatedProtocol)
+        DebugLog.i(javaClass.name, info.negotiatedProtocol)
         if (eventListener != null) {
             eventListener.responseHeadersEnd(mCall, this.mResponse)
             eventListener.responseBodyStart(mCall)
@@ -107,7 +108,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
         try {
             mBuffer.write(byteBuffer)
         } catch (e: IOException) {
-            Timber.i(e, "IOException during ByteBuffer read. Details: ")
+            DebugLog.i(javaClass.name, "IOException during ByteBuffer read. Details: ", e)
             throw e
         }
         byteBuffer.clear()
@@ -135,7 +136,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
 
     //UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
-        Timber.e(error.message.toString())
+        DebugLog.i(javaClass.name, error.message.toString())
         val msg = error.localizedMessage
         val e = IOException(msg?.substring(msg.indexOf("net::")), error)
         mException = e
@@ -192,7 +193,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
                         }
                         add(key, value)
                     } catch (e: Exception) {
-                        Timber.w("Invalid HTTP header/value: $key$value")
+                        DebugLog.w(javaClass.name, "Invalid HTTP header/value: $key$value")
                         // Ignore that header
                     }
                 }

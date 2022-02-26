@@ -1,8 +1,9 @@
 package io.legado.app.help.http.cronet
 
 import io.legado.app.help.http.CookieStore
+import io.legado.app.utils.printOnDebug
 import okhttp3.*
-import timber.log.Timber
+
 
 class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
 
@@ -33,7 +34,7 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
             if (!e.message.toString().contains("ERR_CERT_", true)
                 && !e.message.toString().contains("ERR_SSL_", true)
             ) {
-                Timber.e(e)
+                e.printOnDebug()
             }
             chain.proceed(original)
         }

@@ -1,8 +1,9 @@
 package io.legado.app.help.http
 
 import android.annotation.SuppressLint
+import io.legado.app.utils.printOnDebug
 
-import timber.log.Timber
+
 import java.io.IOException
 import java.io.InputStream
 import java.security.KeyManagementException
@@ -127,9 +128,9 @@ object SSLHelper {
             sslParams.trustManager = manager
             return sslParams
         } catch (e: NoSuchAlgorithmException) {
-            Timber.e(e)
+            e.printOnDebug()
         } catch (e: KeyManagementException) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         return null
     }
@@ -143,7 +144,7 @@ object SSLHelper {
             kmf.init(clientKeyStore, password.toCharArray())
             return kmf.keyManagers
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
         return null
     }
@@ -162,7 +163,7 @@ object SSLHelper {
             try {
                 certStream.close()
             } catch (e: IOException) {
-                Timber.e(e)
+                e.printOnDebug()
             }
         }
         //我们创建一个默认类型的TrustManagerFactory

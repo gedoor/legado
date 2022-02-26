@@ -13,7 +13,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.File
 
 /**
@@ -62,7 +62,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 configs = GSON.fromJsonArray(json)
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
         }
         (configs ?: DefaultData.readConfigs).let {
@@ -79,7 +79,7 @@ object ReadBookConfig {
                 val json = configFile.readText()
                 c = GSON.fromJsonObject(json)
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
         }
         shareConfig = c ?: configList.getOrNull(5) ?: Config()
@@ -580,9 +580,9 @@ object ReadBookConfig {
                     )
                 }
             } catch (e: OutOfMemoryError) {
-                Timber.e(e)
+                e.printOnDebug()
             } catch (e: Exception) {
-                Timber.e(e)
+                e.printOnDebug()
             }
             return bgDrawable ?: ColorDrawable(appCtx.getCompatColor(R.color.background))
         }

@@ -6,7 +6,6 @@ import androidx.annotation.Keep
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.symmetric.AES
 import cn.hutool.crypto.symmetric.DESede
-import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -22,7 +21,6 @@ import kotlinx.coroutines.runBlocking
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import splitties.init.appCtx
-import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -54,7 +52,7 @@ interface JsExtensions {
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
-                Timber.e(it)
+                it.printOnDebug()
             }.getOrElse {
                 it.msg
             }
@@ -90,7 +88,7 @@ interface JsExtensions {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
                 log("connect(${urlStr}) error\n${it.stackTraceToString()}")
-                Timber.e(it)
+                it.printOnDebug()
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)
             }
@@ -105,7 +103,7 @@ interface JsExtensions {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
                 log("ajax($urlStr,$header) error\n${it.stackTraceToString()}")
-                Timber.e(it)
+                it.printOnDebug()
             }.getOrElse {
                 StrResponse(analyzeUrl.url, it.localizedMessage)
             }
@@ -481,7 +479,7 @@ interface JsExtensions {
             CacheManager.put(key, qTTF)
             return qTTF
         } catch (e: Exception) {
-            Timber.e(e, "获取字体处理类出错")
+            AppLog.put("获取字体处理类出错", e)
             throw e
         }
     }
@@ -518,9 +516,6 @@ interface JsExtensions {
         getSource()?.let {
             Debug.log(it.getKey(), msg.toString())
         } ?: Debug.log(msg.toString())
-        if (BuildConfig.DEBUG) {
-            Timber.d(msg.toString())
-        }
         AppLog.putDebug(msg.toString())
         return msg
     }
@@ -561,7 +556,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesDecodeToByteArrayERROR")
             null
         }
@@ -600,7 +595,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesDecodeToByteArrayERROR")
             null
         }
@@ -638,7 +633,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesEncodeToByteArrayERROR")
             null
         }
@@ -675,7 +670,7 @@ interface JsExtensions {
                 iv.encodeToByteArray()
             )
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
             log(e.localizedMessage ?: "aesEncodeToBase64ByteArrayERROR")
             null
         }

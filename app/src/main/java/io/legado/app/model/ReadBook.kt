@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import splitties.init.appCtx
-import timber.log.Timber
+
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -378,7 +378,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 }
             }
         }.onError {
-            Timber.e(it)
+            AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.msg}")
         }.onSuccess {
             success?.invoke()

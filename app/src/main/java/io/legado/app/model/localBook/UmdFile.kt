@@ -2,13 +2,11 @@ package io.legado.app.model.localBook
 
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.externalFiles
+import io.legado.app.utils.*
 import me.ag2s.umdlib.domain.UmdBook
 import me.ag2s.umdlib.umd.UmdReader
 import splitties.init.appCtx
-import timber.log.Timber
+
 import java.io.File
 import java.io.InputStream
 
@@ -77,7 +75,7 @@ class UmdFile(var book: Book) {
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            e.printOnDebug()
         }
     }
 
@@ -111,7 +109,7 @@ class UmdFile(var book: Book) {
             chapter.index = index
             chapter.bookUrl = book.bookUrl
             chapter.url = index.toString()
-            Timber.d(chapter.url)
+            DebugLog.d(javaClass.name, chapter.url)
             chapterList.add(chapter)
         }
         book.latestChapterTitle = chapterList.lastOrNull()?.title
