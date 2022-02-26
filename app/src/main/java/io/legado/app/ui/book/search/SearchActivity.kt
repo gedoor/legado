@@ -10,6 +10,8 @@ import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -196,10 +198,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initData() {
-        launch {
-            viewModel.searchDataFlow.conflate().collect {
-                adapter.setItems(it)
-                delay(1000)
+        lifecycleScope.launch {
+            whenStarted {
+                viewModel.searchDataFlow.conflate().collect {
+                    adapter.setItems(it)
+                    delay(1000)
+                }
             }
         }
         launch {
