@@ -15,8 +15,9 @@ import java.net.URLDecoder
 class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack) :
     RecyclerAdapter<FileDoc, ItemFontBinding>(context) {
 
-    private val curName = URLDecoder.decode(curFilePath, "utf-8")
-        .substringAfterLast(File.separator)
+    private val curName = kotlin.runCatching {
+        URLDecoder.decode(curFilePath, "utf-8")
+    }.getOrNull()?.substringAfterLast(File.separator)
 
     override fun getViewBinding(parent: ViewGroup): ItemFontBinding {
         return ItemFontBinding.inflate(inflater, parent, false)
