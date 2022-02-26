@@ -23,6 +23,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -103,7 +104,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = launch(Dispatchers.Default) {
             when (groupId) {
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
