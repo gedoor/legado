@@ -26,18 +26,21 @@ fun ruleComplete(rule:String?,preRule:String?="",type:Int=1):String?{
     var textRule:String
     var linkRule:String
     var imgRule:String
+    var imgText:String
     if (rule.contains(Regex("/[^@]+$"))){
         textRule="/text()"
         linkRule="/@href"
         imgRule="/@src"
+        imgText="img/@alt"
     }else{
         textRule="@text"
         linkRule="@href"
         imgRule="@src"
+        imgText="img@alt"
     }
     var ret:String=rule
     when(type){
-        1 -> ret = rule.replace(Regex("$"),textRule).replace(imgComplete,"img@alt")
+        1 -> ret = rule.replace(Regex("$"),textRule).replace(imgComplete,imgText)
         2 -> ret = rule.replace(Regex("$"),linkRule)
         3 -> ret = rule.replace(Regex("$"),imgRule)
     }
