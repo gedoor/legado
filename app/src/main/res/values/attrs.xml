@@ -206,7 +206,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ATERadioNoButton">
+    <declare-styleable name="ThemeRadioNoButton">
         <attr name="isBottomBackground" />
     </declare-styleable>
 

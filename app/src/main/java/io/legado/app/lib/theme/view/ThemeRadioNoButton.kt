@@ -12,18 +12,15 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dp
 import io.legado.app.utils.getCompatColor
 
-/**
- * @author Aidan Follestad (afollestad)
- */
 class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
     AppCompatRadioButton(context, attrs) {
 
     private val isBottomBackground: Boolean
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ATERadioNoButton)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThemeRadioNoButton)
         isBottomBackground =
-            typedArray.getBoolean(R.styleable.ATERadioNoButton_isBottomBackground, false)
+            typedArray.getBoolean(R.styleable.ThemeRadioNoButton_isBottomBackground, false)
         typedArray.recycle()
         initTheme()
     }

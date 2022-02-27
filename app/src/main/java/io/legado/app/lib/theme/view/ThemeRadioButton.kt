@@ -6,9 +6,6 @@ import androidx.appcompat.widget.AppCompatRadioButton
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 
-/**
- * @author Aidan Follestad (afollestad)
- */
 class ThemeRadioButton(context: Context, attrs: AttributeSet) :
     AppCompatRadioButton(context, attrs) {
 

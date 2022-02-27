@@ -6,9 +6,6 @@ import androidx.appcompat.widget.AppCompatEditText
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 
-/**
- * @author Aidan Follestad (afollestad)
- */
 class ThemeEditText @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
