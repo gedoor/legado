@@ -25,7 +25,6 @@ import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -117,7 +116,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
             }
         }
         booksFlowJob?.cancel()
-        booksFlowJob = launch(Dispatchers.Default) {
+        booksFlowJob = launch {
             when (groupId) {
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
