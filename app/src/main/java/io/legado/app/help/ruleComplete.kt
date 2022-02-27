@@ -2,7 +2,7 @@ package io.legado.app.help
 
 // 补全时忽略匹配规则
 val completeIgnore =
-    Regex("""\\n|##|@js:|<js>|@Json:|\$.|(text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\)|##.*)?\s*$""")
+    Regex("""\\n|##|@js:|<js>|@Json:|\$.|(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\)|##.*)?\s*$""")
 
 // 补全时忽略匹配的规则(仅对详情页预处理规则生效)
 val completeIgnorePreRule = Regex("""^:|##|@js:|<js>|@Json:|\$.""")
