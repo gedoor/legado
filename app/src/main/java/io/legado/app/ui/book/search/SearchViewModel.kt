@@ -28,7 +28,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 isLoading = true
             }
 
-            @Synchronized
             override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
                 trySend(ArrayList(searchBooks))
             }
