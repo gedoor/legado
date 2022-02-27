@@ -36,30 +36,33 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
         }
     }
 
-    private fun initView() = binding.run {
-        rgTitleMode.checkByIndex(ReadBookConfig.titleMode)
-        dsbTitleSize.progress = ReadBookConfig.titleSize
-        dsbTitleTop.progress = ReadBookConfig.titleTopSpacing
-        dsbTitleBottom.progress = ReadBookConfig.titleBottomSpacing
+    private fun initView() {
+        binding.rgTitleMode.checkByIndex(ReadBookConfig.titleMode)
+        binding.dsbTitleSize.progress = ReadBookConfig.titleSize
+        binding.dsbTitleTop.progress = ReadBookConfig.titleTopSpacing
+        binding.dsbTitleBottom.progress = ReadBookConfig.titleBottomSpacing
 
-        tvHeaderShow.text = ReadTipConfig.getHeaderModes(requireContext())[ReadTipConfig.headerMode]
-        tvFooterShow.text = ReadTipConfig.getFooterModes(requireContext())[ReadTipConfig.footerMode]
+        binding.tvHeaderShow.text =
+            ReadTipConfig.getHeaderModes(requireContext())[ReadTipConfig.headerMode]
+        binding.tvFooterShow.text =
+            ReadTipConfig.getFooterModes(requireContext())[ReadTipConfig.footerMode]
 
-        ReadTipConfig.tips.let { tips ->
-            tvHeaderLeft.text =
-                tips.getOrElse(ReadTipConfig.tipHeaderLeft) { tips[ReadTipConfig.none] }
-            tvHeaderMiddle.text =
-                tips.getOrElse(ReadTipConfig.tipHeaderMiddle) { tips[ReadTipConfig.none] }
-            tvHeaderRight.text =
-                tips.getOrElse(ReadTipConfig.tipHeaderRight) { tips[ReadTipConfig.none] }
-            tvFooterLeft.text =
-                tips.getOrElse(ReadTipConfig.tipFooterLeft) { tips[ReadTipConfig.none] }
-            tvFooterMiddle.text =
-                tips.getOrElse(ReadTipConfig.tipFooterMiddle) { tips[ReadTipConfig.none] }
-            tvFooterRight.text =
-                tips.getOrElse(ReadTipConfig.tipFooterRight) { tips[ReadTipConfig.none] }
+        ReadTipConfig.run {
+            tipNames.let { tipNames ->
+                binding.tvHeaderLeft.text =
+                    tipNames.getOrElse(tipValues.indexOf(tipHeaderLeft)) { tipNames[none] }
+                binding.tvHeaderMiddle.text =
+                    tipNames.getOrElse(tipValues.indexOf(tipHeaderMiddle)) { tipNames[none] }
+                binding.tvHeaderRight.text =
+                    tipNames.getOrElse(tipValues.indexOf(tipHeaderRight)) { tipNames[none] }
+                binding.tvFooterLeft.text =
+                    tipNames.getOrElse(tipValues.indexOf(tipFooterLeft)) { tipNames[none] }
+                binding.tvFooterMiddle.text =
+                    tipNames.getOrElse(tipValues.indexOf(tipFooterMiddle)) { tipNames[none] }
+                binding.tvFooterRight.text =
+                    tipNames.getOrElse(tipValues.indexOf(tipFooterRight)) { tipNames[none] }
+            }
         }
-
         upTvTipColor()
     }
 
@@ -106,50 +109,50 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             }
         }
         llHeaderLeft.setOnClickListener {
-            context?.selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tipNames) { _, i ->
                 clearRepeat(i)
-                ReadTipConfig.tipHeaderLeft = i
-                tvHeaderLeft.text = ReadTipConfig.tips[i]
+                ReadTipConfig.tipHeaderLeft = ReadTipConfig.tipValues[i]
+                tvHeaderLeft.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llHeaderMiddle.setOnClickListener {
-            context?.selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tipNames) { _, i ->
                 clearRepeat(i)
-                ReadTipConfig.tipHeaderMiddle = i
-                tvHeaderMiddle.text = ReadTipConfig.tips[i]
+                ReadTipConfig.tipHeaderMiddle = ReadTipConfig.tipValues[i]
+                tvHeaderMiddle.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llHeaderRight.setOnClickListener {
-            context?.selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tipNames) { _, i ->
                 clearRepeat(i)
-                ReadTipConfig.tipHeaderRight = i
-                tvHeaderRight.text = ReadTipConfig.tips[i]
+                ReadTipConfig.tipHeaderRight = ReadTipConfig.tipValues[i]
+                tvHeaderRight.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llFooterLeft.setOnClickListener {
-            context?.selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tipNames) { _, i ->
                 clearRepeat(i)
-                ReadTipConfig.tipFooterLeft = i
-                tvFooterLeft.text = ReadTipConfig.tips[i]
+                ReadTipConfig.tipFooterLeft = ReadTipConfig.tipValues[i]
+                tvFooterLeft.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llFooterMiddle.setOnClickListener {
-            context?.selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tipNames) { _, i ->
                 clearRepeat(i)
-                ReadTipConfig.tipFooterMiddle = i
-                tvFooterMiddle.text = ReadTipConfig.tips[i]
+                ReadTipConfig.tipFooterMiddle = ReadTipConfig.tipValues[i]
+                tvFooterMiddle.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llFooterRight.setOnClickListener {
-            context?.selector(items = ReadTipConfig.tips) { _, i ->
+            context?.selector(items = ReadTipConfig.tipNames) { _, i ->
                 clearRepeat(i)
-                ReadTipConfig.tipFooterRight = i
-                tvFooterRight.text = ReadTipConfig.tips[i]
+                ReadTipConfig.tipFooterRight = ReadTipConfig.tipValues[i]
+                tvFooterRight.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
@@ -175,27 +178,27 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
         if (repeat != none) {
             if (tipHeaderLeft == repeat) {
                 tipHeaderLeft = none
-                binding.tvHeaderLeft.text = tips[none]
+                binding.tvHeaderLeft.text = tipNames[none]
             }
             if (tipHeaderMiddle == repeat) {
                 tipHeaderMiddle = none
-                binding.tvHeaderMiddle.text = tips[none]
+                binding.tvHeaderMiddle.text = tipNames[none]
             }
             if (tipHeaderRight == repeat) {
                 tipHeaderRight = none
-                binding.tvHeaderRight.text = tips[none]
+                binding.tvHeaderRight.text = tipNames[none]
             }
             if (tipFooterLeft == repeat) {
                 tipFooterLeft = none
-                binding.tvFooterLeft.text = tips[none]
+                binding.tvFooterLeft.text = tipNames[none]
             }
             if (tipFooterMiddle == repeat) {
                 tipFooterMiddle = none
-                binding.tvFooterMiddle.text = tips[none]
+                binding.tvFooterMiddle.text = tipNames[none]
             }
             if (tipFooterRight == repeat) {
                 tipFooterRight = none
-                binding.tvFooterRight.text = tips[none]
+                binding.tvFooterRight.text = tipNames[none]
             }
         }
     }

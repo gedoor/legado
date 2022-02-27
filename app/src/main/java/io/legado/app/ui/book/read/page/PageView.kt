@@ -33,11 +33,13 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvTitle: BatteryView? = null
     private var tvTime: BatteryView? = null
     private var tvBattery: BatteryView? = null
+    private var tvBatteryP: BatteryView? = null
     private var tvPage: BatteryView? = null
     private var tvTotalProgress: BatteryView? = null
     private var tvPageAndTotal: BatteryView? = null
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
+    private var tvTimeBatteryP: BatteryView? = null
 
     val headerHeight: Int
         get() {
@@ -169,6 +171,18 @@ class PageView(context: Context) : FrameLayout(context) {
             typeface = ChapterProvider.typeface
             textSize = 11f
         }
+        tvBatteryP = getTipView(ReadTipConfig.batteryPercentage)?.apply {
+            tag = ReadTipConfig.batteryPercentage
+            isBattery = false
+            typeface = ChapterProvider.typeface
+            textSize = 12f
+        }
+        tvTimeBatteryP = getTipView(ReadTipConfig.timeBatteryPercentage)?.apply {
+            tag = ReadTipConfig.timeBatteryPercentage
+            isBattery = false
+            typeface = ChapterProvider.typeface
+            textSize = 12f
+        }
     }
 
     private fun getTipView(tip: Int): BatteryView? = binding.run {
@@ -198,9 +212,11 @@ class PageView(context: Context) : FrameLayout(context) {
         upTimeBattery()
     }
 
+    @SuppressLint("SetTextI18n")
     fun upBattery(battery: Int) {
         this.battery = battery
         tvBattery?.setBattery(battery)
+        tvBatteryP?.text = "$battery%"
         upTimeBattery()
     }
 
@@ -208,6 +224,7 @@ class PageView(context: Context) : FrameLayout(context) {
     private fun upTimeBattery() {
         val time = timeFormat.format(Date(System.currentTimeMillis()))
         tvTimeBattery?.setBattery(battery, time)
+        tvTimeBatteryP?.text = "$time $battery%"
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {

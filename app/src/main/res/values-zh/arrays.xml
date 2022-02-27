@@ -63,14 +63,16 @@
 
     <string-array name="read_tip">
         <item>无</item>
+        <item>书名</item>
         <item>标题</item>
         <item>时间</item>
         <item>电量</item>
+        <item>电量%</item>
         <item>页数</item>
         <item>进度</item>
         <item>页数及进度</item>
-        <item>书名</item>
         <item>时间及电量</item>
+        <item>时间及电量%</item>
     </string-array>
 
     <string-array name="text_font_weight">

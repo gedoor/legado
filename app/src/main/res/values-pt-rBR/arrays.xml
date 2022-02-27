@@ -84,14 +84,16 @@
 
 	<string-array name="read_tip">
 		<item>Em branco</item>
+		<item>Nome do livro</item>
 		<item>Título</item>
 		<item>Tempo</item>
 		<item>Bateria</item>
+		<item>Bateria%</item>
 		<item>Páginas</item>
 		<item>Progresso</item>
 		<item>Páginas e progresso</item>
-		<item>Nome do livro</item>
 		<item>Tempo e Bateria</item>
+		<item>Tempo e Bateria%</item>
 	</string-array>
 
 	<string-array name="text_font_weight">
