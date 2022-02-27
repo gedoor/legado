@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import splitties.views.onLongClick
 
 /**
@@ -46,57 +48,72 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         recyclerView.adapter = this
     }
 
-    @Synchronized
-    fun setItems(items: List<ITEM>?) {
-        kotlin.runCatching {
-            if (items == null) {
-                asyncListDiffer.submitList(null)
-            } else {
-                asyncListDiffer.submitList(ArrayList(items))
+    suspend fun setItems(items: List<ITEM>?) {
+        withContext(Dispatchers.Default) {
+            synchronized(asyncListDiffer) {
+                kotlin.runCatching {
+                    if (items == null) {
+                        asyncListDiffer.submitList(null)
+                    } else {
+                        asyncListDiffer.submitList(ArrayList(items))
+                    }
+                }
             }
         }
     }
 
-    @Synchronized
-    fun setItem(position: Int, item: ITEM) {
-        kotlin.runCatching {
-            val list = ArrayList(asyncListDiffer.currentList)
-            list[position] = item
-            asyncListDiffer.submitList(list)
-        }
-    }
-
-    @Synchronized
-    fun updateItem(item: ITEM) {
-        kotlin.runCatching {
-            val index = asyncListDiffer.currentList.indexOf(item)
-            if (index >= 0) {
-                asyncListDiffer.currentList[index] = item
-                notifyItemChanged(index)
+    suspend fun setItem(position: Int, item: ITEM) {
+        withContext(Dispatchers.Default) {
+            synchronized(asyncListDiffer) {
+                kotlin.runCatching {
+                    val list = ArrayList(asyncListDiffer.currentList)
+                    list[position] = item
+                    asyncListDiffer.submitList(list)
+                }
             }
         }
     }
 
-    @Synchronized
-    fun updateItem(position: Int, payload: Any) {
-        kotlin.runCatching {
-            val size = itemCount
-            if (position in 0 until size) {
-                notifyItemChanged(position, payload)
+    suspend fun updateItem(item: ITEM) {
+        withContext(Dispatchers.Main) {
+            synchronized(asyncListDiffer) {
+                kotlin.runCatching {
+                    val index = asyncListDiffer.currentList.indexOf(item)
+                    if (index >= 0) {
+                        asyncListDiffer.currentList[index] = item
+                        notifyItemChanged(index)
+                    }
+                }
             }
         }
     }
 
-    @Synchronized
-    fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) {
-        kotlin.runCatching {
-            val size = itemCount
-            if (fromPosition in 0 until size && toPosition in 0 until size) {
-                notifyItemRangeChanged(
-                    fromPosition,
-                    toPosition - fromPosition + 1,
-                    payloads
-                )
+    suspend fun updateItem(position: Int, payload: Any) {
+        withContext(Dispatchers.Main) {
+            synchronized(asyncListDiffer) {
+                kotlin.runCatching {
+                    val size = itemCount
+                    if (position in 0 until size) {
+                        notifyItemChanged(position, payload)
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) {
+        withContext(Dispatchers.Main) {
+            synchronized(asyncListDiffer) {
+                kotlin.runCatching {
+                    val size = itemCount
+                    if (fromPosition in 0 until size && toPosition in 0 until size) {
+                        notifyItemRangeChanged(
+                            fromPosition,
+                            toPosition - fromPosition + 1,
+                            payloads
+                        )
+                    }
+                }
             }
         }
     }
