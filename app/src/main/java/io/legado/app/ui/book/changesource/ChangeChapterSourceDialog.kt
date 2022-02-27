@@ -9,7 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -31,7 +31,6 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -178,12 +177,10 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
             binding.toolBar.menu.applyTint(requireContext())
         }
-        launch(Dispatchers.Default) {
-            whenStarted {
-                viewModel.searchDataFlow.conflate().collect {
-                    searchBookAdapter.setItems(it)
-                    delay(1000)
-                }
+        lifecycleScope.launchWhenStarted {
+            viewModel.searchDataFlow.conflate().collect {
+                searchBookAdapter.setItems(it)
+                delay(1000)
             }
         }
         launch {

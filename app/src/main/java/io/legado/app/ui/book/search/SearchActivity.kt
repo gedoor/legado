@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -29,9 +28,12 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
     BookAdapter.CallBack,
@@ -195,12 +197,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initData() {
-        lifecycleScope.launch(Dispatchers.Default) {
-            whenStarted {
-                viewModel.searchDataFlow.conflate().collect {
-                    adapter.setItems(it)
-                    delay(1000)
-                }
+        lifecycleScope.launchWhenStarted {
+            viewModel.searchDataFlow.conflate().collect {
+                adapter.setItems(it)
+                delay(1000)
             }
         }
         launch {
