@@ -62,14 +62,11 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         }
     }
 
-    suspend fun setItem(position: Int, item: ITEM) {
-        withContext(Dispatchers.Default) {
-            synchronized(asyncListDiffer) {
-                kotlin.runCatching {
-                    val list = ArrayList(asyncListDiffer.currentList)
-                    list[position] = item
-                    asyncListDiffer.submitList(list)
-                }
+    fun setItem(position: Int, item: ITEM) {
+        synchronized(asyncListDiffer) {
+            kotlin.runCatching {
+                asyncListDiffer.currentList[position] = item
+                notifyItemChanged(position)
             }
         }
     }
