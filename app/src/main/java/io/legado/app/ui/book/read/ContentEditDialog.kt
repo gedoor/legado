@@ -19,6 +19,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -78,6 +79,8 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                     binding.contentView.setText(content)
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
+                R.id.menu_copy_all -> requireContext()
+                    .sendToClip("${binding.toolBar.title}\n${viewModel.content}")
             }
             return@setOnMenuItemClickListener true
         }

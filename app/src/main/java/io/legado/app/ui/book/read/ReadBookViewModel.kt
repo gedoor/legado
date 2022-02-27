@@ -189,7 +189,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 chapters,
                 oldBook.totalChapterNum
             )
-            book.durChapterTitle = chapters[book.durChapterIndex].title
+            book.durChapterTitle = chapters[book.durChapterIndex].getDisplayTitle(
+                ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+            )
             oldBook.changeTo(book)
             appDb.bookChapterDao.insert(*chapters.toTypedArray())
             ReadBook.resetData(book)

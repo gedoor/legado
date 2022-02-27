@@ -10,6 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
+import io.legado.app.help.ContentProcessor
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
@@ -120,7 +121,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                 chapters,
                 oldTocSize
             )
-            book.durChapterTitle = chapters[book.durChapterIndex].title
+            book.durChapterTitle = chapters[book.durChapterIndex].getDisplayTitle(
+                ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+            )
             appDb.bookDao.update(book)
             appDb.bookChapterDao.insert(*chapters.toTypedArray())
         }

@@ -943,5 +943,6 @@
     <string name="book_change_source">整书换源</string>
     <string name="sort_by_time">时间排序</string>
     <string name="enable_record">开启记录</string>
+    <string name="copy_all">拷贝所有</string>
     <!-- string end -->
 </resources>

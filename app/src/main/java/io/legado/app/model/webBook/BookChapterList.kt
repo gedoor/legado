@@ -6,6 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
+import io.legado.app.help.ContentProcessor
 import io.legado.app.model.Debug
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.TocEmptyException
@@ -118,9 +119,10 @@ object BookChapterList {
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
         }
-        book.latestChapterTitle = list.last().title
-        book.durChapterTitle =
-            list.getOrNull(book.durChapterIndex)?.title ?: book.latestChapterTitle
+        val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+        book.latestChapterTitle = list.last().getDisplayTitle(replaceRules)
+        book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
+            .getDisplayTitle(replaceRules)
         if (book.totalChapterNum < list.size) {
             book.lastCheckCount = list.size - book.totalChapterNum
             book.latestChapterTime = System.currentTimeMillis()
