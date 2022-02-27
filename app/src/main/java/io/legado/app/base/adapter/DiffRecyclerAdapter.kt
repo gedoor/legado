@@ -74,45 +74,39 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         }
     }
 
-    suspend fun updateItem(item: ITEM) {
-        withContext(Dispatchers.Main) {
-            synchronized(asyncListDiffer) {
-                kotlin.runCatching {
-                    val index = asyncListDiffer.currentList.indexOf(item)
-                    if (index >= 0) {
-                        asyncListDiffer.currentList[index] = item
-                        notifyItemChanged(index)
-                    }
+    fun updateItem(item: ITEM) {
+        synchronized(asyncListDiffer) {
+            kotlin.runCatching {
+                val index = asyncListDiffer.currentList.indexOf(item)
+                if (index >= 0) {
+                    asyncListDiffer.currentList[index] = item
+                    notifyItemChanged(index)
                 }
             }
         }
     }
 
-    suspend fun updateItem(position: Int, payload: Any) {
-        withContext(Dispatchers.Main) {
-            synchronized(asyncListDiffer) {
-                kotlin.runCatching {
-                    val size = itemCount
-                    if (position in 0 until size) {
-                        notifyItemChanged(position, payload)
-                    }
+    fun updateItem(position: Int, payload: Any) {
+        synchronized(asyncListDiffer) {
+            kotlin.runCatching {
+                val size = itemCount
+                if (position in 0 until size) {
+                    notifyItemChanged(position, payload)
                 }
             }
         }
     }
 
-    suspend fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) {
-        withContext(Dispatchers.Main) {
-            synchronized(asyncListDiffer) {
-                kotlin.runCatching {
-                    val size = itemCount
-                    if (fromPosition in 0 until size && toPosition in 0 until size) {
-                        notifyItemRangeChanged(
-                            fromPosition,
-                            toPosition - fromPosition + 1,
-                            payloads
-                        )
-                    }
+    fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) {
+        synchronized(asyncListDiffer) {
+            kotlin.runCatching {
+                val size = itemCount
+                if (fromPosition in 0 until size && toPosition in 0 until size) {
+                    notifyItemRangeChanged(
+                        fromPosition,
+                        toPosition - fromPosition + 1,
+                        payloads
+                    )
                 }
             }
         }
