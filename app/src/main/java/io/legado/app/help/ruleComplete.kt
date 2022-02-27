@@ -1,11 +1,11 @@
 package io.legado.app.help
 
 // 补全时忽略匹配规则
-val completeIgnore=Regex("""##|@js:|<js>|@Json:|\$.|(text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\)|##.*)?\s*$""")
-// 匹配从图片获取信息的规则
-val imgComplete=Regex("""(?<=(tag\.|[\+/@~>\| \&]))img[@/]text(\(\))?$|^img[@/]text(\(\))?$""",RegexOption.IGNORE_CASE)
+val completeIgnore=Regex("""\\n|##|@js:|<js>|@Json:|\$.|(text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\)|##.*)?\s*$""")
 // 补全时忽略匹配的规则(仅对详情页预处理规则生效)
 val completeIgnorePreRule=Regex("""^:|##|@js:|<js>|@Json:|\$.""")
+// 匹配从图片获取信息的规则
+val imgComplete=Regex("""(?<=(tag\.|[\+/@~>\| \&]))img[@/]text(\(\))?$|^img[@/]text(\(\))?$""",RegexOption.IGNORE_CASE)
 /**
  * 对简单规则进行补全，简化部分书源规则的编写
  * 该方法仅对对JSOUP/XPath/CSS规则生效
@@ -20,27 +20,26 @@ val completeIgnorePreRule=Regex("""^:|##|@js:|<js>|@Json:|\$.""")
  *  3 图片
  */
 fun ruleComplete(rule:String?,preRule:String?="",type:Int=1):String?{
-  if (rule.isNullOrEmpty()||rule.contains(completeIgnore)||preRule?.contains(completeIgnorePreRule)?:false){
-    return rule
-  }
-  var textRule:String
-  var linkRule:String
-  var imgRule:String
-  if (rule.contains(Regex("/[^@]+$"))){
-    textRule="/text()"
-    linkRule="/@href"
-    imgRule="/@src"
-  }else{
-    textRule="@text"
-    linkRule="@href"
-    imgRule="@src"
-  }
-  var ret:String=rule
-  when(type){
-    1 -> ret = rule.replace(Regex("$"),textRule).replace(imgComplete,"img@alt")
-    2 -> ret = rule.replace(Regex("$"),linkRule)
-    3 -> ret = rule.replace(Regex("$"),imgRule)
-  }
-  return ret
+    if (rule.isNullOrEmpty()||rule.contains(completeIgnore)||preRule?.contains(completeIgnorePreRule)?:false){
+        return rule
+    }
+    var textRule:String
+    var linkRule:String
+    var imgRule:String
+    if (rule.contains(Regex("/[^@]+$"))){
+        textRule="/text()"
+        linkRule="/@href"
+        imgRule="/@src"
+    }else{
+        textRule="@text"
+        linkRule="@href"
+        imgRule="@src"
+    }
+    var ret:String=rule
+    when(type){
+        1 -> ret = rule.replace(Regex("$"),textRule).replace(imgComplete,"img@alt")
+        2 -> ret = rule.replace(Regex("$"),linkRule)
+        3 -> ret = rule.replace(Regex("$"),imgRule)
+    }
+    return ret
 }
-
