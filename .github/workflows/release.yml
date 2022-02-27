@@ -4,10 +4,9 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'CHANGELOG.md'
-#  schedule:
-#    - cron: '0 4 * * *'
+#    paths:
+#      - 'CHANGELOG.md'
+  workflow_dispatch:
 
 jobs:
   build:
