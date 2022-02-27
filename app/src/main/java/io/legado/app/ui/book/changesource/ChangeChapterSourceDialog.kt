@@ -31,6 +31,7 @@ import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -177,7 +178,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
             binding.toolBar.menu.applyTint(requireContext())
         }
-        launch {
+        launch(Dispatchers.Default) {
             whenStarted {
                 viewModel.searchDataFlow.conflate().collect {
                     searchBookAdapter.setItems(it)

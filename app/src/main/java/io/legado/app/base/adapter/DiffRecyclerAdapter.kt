@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import splitties.views.onLongClick
 
 /**
@@ -48,63 +46,51 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         recyclerView.adapter = this
     }
 
-    suspend fun setItems(items: List<ITEM>?) {
-        withContext(Dispatchers.Default) {
-            synchronized(asyncListDiffer) {
-                kotlin.runCatching {
-                    if (items == null) {
-                        asyncListDiffer.submitList(null)
-                    } else {
-                        asyncListDiffer.submitList(ArrayList(items))
-                    }
-                }
+    fun setItems(items: List<ITEM>?) {
+        kotlin.runCatching {
+            if (items == null) {
+                asyncListDiffer.submitList(null)
+            } else {
+                asyncListDiffer.submitList(ArrayList(items))
             }
         }
     }
 
     fun setItem(position: Int, item: ITEM) {
-        synchronized(asyncListDiffer) {
-            kotlin.runCatching {
-                asyncListDiffer.currentList[position] = item
-                notifyItemChanged(position)
-            }
+        kotlin.runCatching {
+            asyncListDiffer.currentList[position] = item
+            notifyItemChanged(position)
         }
     }
 
     fun updateItem(item: ITEM) {
-        synchronized(asyncListDiffer) {
-            kotlin.runCatching {
-                val index = asyncListDiffer.currentList.indexOf(item)
-                if (index >= 0) {
-                    asyncListDiffer.currentList[index] = item
-                    notifyItemChanged(index)
-                }
+        kotlin.runCatching {
+            val index = asyncListDiffer.currentList.indexOf(item)
+            if (index >= 0) {
+                asyncListDiffer.currentList[index] = item
+                notifyItemChanged(index)
             }
         }
     }
 
     fun updateItem(position: Int, payload: Any) {
-        synchronized(asyncListDiffer) {
-            kotlin.runCatching {
-                val size = itemCount
-                if (position in 0 until size) {
-                    notifyItemChanged(position, payload)
-                }
+        kotlin.runCatching {
+            val size = itemCount
+            if (position in 0 until size) {
+                notifyItemChanged(position, payload)
             }
         }
     }
 
     fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) {
-        synchronized(asyncListDiffer) {
-            kotlin.runCatching {
-                val size = itemCount
-                if (fromPosition in 0 until size && toPosition in 0 until size) {
-                    notifyItemRangeChanged(
-                        fromPosition,
-                        toPosition - fromPosition + 1,
-                        payloads
-                    )
-                }
+        kotlin.runCatching {
+            val size = itemCount
+            if (fromPosition in 0 until size && toPosition in 0 until size) {
+                notifyItemRangeChanged(
+                    fromPosition,
+                    toPosition - fromPosition + 1,
+                    payloads
+                )
             }
         }
     }
