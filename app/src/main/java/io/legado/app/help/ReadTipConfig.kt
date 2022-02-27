@@ -5,9 +5,7 @@ import io.legado.app.R
 import splitties.init.appCtx
 
 object ReadTipConfig {
-    val tips by lazy {
-        appCtx.resources.getStringArray(R.array.read_tip).toList()
-    }
+    val tips get() = appCtx.resources.getStringArray(R.array.read_tip).toList()
     const val none = 0
     const val chapterTitle = 1
     const val time = 2
@@ -17,13 +15,6 @@ object ReadTipConfig {
     const val pageAndTotal = 6
     const val bookName = 7
     const val timeBattery = 8
-
-    val tipHeaderLeftStr: String get() = tips.getOrElse(tipHeaderLeft) { tips[none] }
-    val tipHeaderMiddleStr: String get() = tips.getOrElse(tipHeaderMiddle) { tips[none] }
-    val tipHeaderRightStr: String get() = tips.getOrElse(tipHeaderRight) { tips[none] }
-    val tipFooterLeftStr: String get() = tips.getOrElse(tipFooterLeft) { tips[none] }
-    val tipFooterMiddleStr: String get() = tips.getOrElse(tipFooterMiddle) { tips[none] }
-    val tipFooterRightStr: String get() = tips.getOrElse(tipFooterRight) { tips[none] }
 
     var tipHeaderLeft: Int
         get() = ReadBookConfig.config.tipHeaderLeft

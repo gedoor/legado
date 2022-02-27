@@ -45,12 +45,20 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
         tvHeaderShow.text = ReadTipConfig.getHeaderModes(requireContext())[ReadTipConfig.headerMode]
         tvFooterShow.text = ReadTipConfig.getFooterModes(requireContext())[ReadTipConfig.footerMode]
 
-        tvHeaderLeft.text = ReadTipConfig.tipHeaderLeftStr
-        tvHeaderMiddle.text = ReadTipConfig.tipHeaderMiddleStr
-        tvHeaderRight.text = ReadTipConfig.tipHeaderRightStr
-        tvFooterLeft.text = ReadTipConfig.tipFooterLeftStr
-        tvFooterMiddle.text = ReadTipConfig.tipFooterMiddleStr
-        tvFooterRight.text = ReadTipConfig.tipFooterRightStr
+        ReadTipConfig.tips.let { tips ->
+            tvHeaderLeft.text =
+                tips.getOrElse(ReadTipConfig.tipHeaderLeft) { tips[ReadTipConfig.none] }
+            tvHeaderMiddle.text =
+                tips.getOrElse(ReadTipConfig.tipHeaderMiddle) { tips[ReadTipConfig.none] }
+            tvHeaderRight.text =
+                tips.getOrElse(ReadTipConfig.tipHeaderRight) { tips[ReadTipConfig.none] }
+            tvFooterLeft.text =
+                tips.getOrElse(ReadTipConfig.tipFooterLeft) { tips[ReadTipConfig.none] }
+            tvFooterMiddle.text =
+                tips.getOrElse(ReadTipConfig.tipFooterMiddle) { tips[ReadTipConfig.none] }
+            tvFooterRight.text =
+                tips.getOrElse(ReadTipConfig.tipFooterRight) { tips[ReadTipConfig.none] }
+        }
 
         upTvTipColor()
     }
