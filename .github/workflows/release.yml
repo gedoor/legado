@@ -1,13 +1,12 @@
 name: Build and Release
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'CHANGELOG.md'
-#  schedule:
-#    - cron: '0 4 * * *'
+#  push:
+#    branches:
+#      - master
+#    paths:
+#      - 'CHANGELOG.md'
+  workflow_dispatch:
 
 jobs:
   build:
