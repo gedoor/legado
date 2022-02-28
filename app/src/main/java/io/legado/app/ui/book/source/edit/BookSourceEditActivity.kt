@@ -21,7 +21,6 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
 import io.legado.app.help.LocalConfig
-import io.legado.app.help.ruleComplete
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.backgroundColor
@@ -90,6 +89,7 @@ class BookSourceEditActivity :
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_login)?.isVisible = !viewModel.bookSource?.loginUrl.isNullOrBlank()
+        menu.findItem(R.id.menu_auto_complete)?.isChecked = viewModel.autoComplete
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -112,6 +112,7 @@ class BookSourceEditActivity :
                     }
                 }
             }
+            R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
             R.id.menu_qr_code_camera -> qrCodeResult.launch()
@@ -328,64 +329,86 @@ class BookSourceEditActivity :
                 "searchUrl" -> source.searchUrl = it.value
                 "checkKeyWord" -> searchRule.checkKeyWord = it.value
                 "bookList" -> searchRule.bookList = it.value ?: ""
-                "name" -> searchRule.name = ruleComplete(it.value,searchRule.bookList)
-                "author" -> searchRule.author = ruleComplete(it.value,searchRule.bookList)
-                "kind" -> searchRule.kind = ruleComplete(it.value,searchRule.bookList)
-                "intro" -> searchRule.intro = ruleComplete(it.value,searchRule.bookList)
-                "updateTime" -> searchRule.updateTime = ruleComplete(it.value,searchRule.bookList)
-                "wordCount" -> searchRule.wordCount = ruleComplete(it.value,searchRule.bookList)
-                "lastChapter" -> searchRule.lastChapter = ruleComplete(it.value,searchRule.bookList)
-                "coverUrl" -> searchRule.coverUrl = ruleComplete(it.value,searchRule.bookList,3)
-                "bookUrl" -> searchRule.bookUrl = ruleComplete(it.value,searchRule.bookList,2)
+                "name" -> searchRule.name = viewModel.ruleComplete(it.value, searchRule.bookList)
+                "author" -> searchRule.author =
+                    viewModel.ruleComplete(it.value, searchRule.bookList)
+                "kind" -> searchRule.kind = viewModel.ruleComplete(it.value, searchRule.bookList)
+                "intro" -> searchRule.intro = viewModel.ruleComplete(it.value, searchRule.bookList)
+                "updateTime" -> searchRule.updateTime =
+                    viewModel.ruleComplete(it.value, searchRule.bookList)
+                "wordCount" -> searchRule.wordCount =
+                    viewModel.ruleComplete(it.value, searchRule.bookList)
+                "lastChapter" -> searchRule.lastChapter =
+                    viewModel.ruleComplete(it.value, searchRule.bookList)
+                "coverUrl" -> searchRule.coverUrl =
+                    viewModel.ruleComplete(it.value, searchRule.bookList, 3)
+                "bookUrl" -> searchRule.bookUrl =
+                    viewModel.ruleComplete(it.value, searchRule.bookList, 2)
             }
         }
         findEntities.forEach {
             when (it.key) {
                 "exploreUrl" -> source.exploreUrl = it.value
                 "bookList" -> exploreRule.bookList = it.value ?: ""
-                "name" -> exploreRule.name = ruleComplete(it.value,exploreRule.bookList)
-                "author" -> exploreRule.author = ruleComplete(it.value,exploreRule.bookList)
-                "kind" -> exploreRule.kind = ruleComplete(it.value,exploreRule.bookList)
-                "intro" -> exploreRule.intro = ruleComplete(it.value,exploreRule.bookList)
-                "updateTime" -> exploreRule.updateTime = ruleComplete(it.value,exploreRule.bookList)
-                "wordCount" -> exploreRule.wordCount = ruleComplete(it.value,exploreRule.bookList)
-                "lastChapter" -> exploreRule.lastChapter = ruleComplete(it.value,exploreRule.bookList)
-                "coverUrl" -> exploreRule.coverUrl = ruleComplete(it.value,exploreRule.bookList,3)
-                "bookUrl" -> exploreRule.bookUrl = ruleComplete(it.value,exploreRule.bookList,2)
+                "name" -> exploreRule.name = viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "author" -> exploreRule.author =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "kind" -> exploreRule.kind = viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "intro" -> exploreRule.intro =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "updateTime" -> exploreRule.updateTime =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "wordCount" -> exploreRule.wordCount =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "lastChapter" -> exploreRule.lastChapter =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "coverUrl" -> exploreRule.coverUrl =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList, 3)
+                "bookUrl" -> exploreRule.bookUrl =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList, 2)
             }
         }
         infoEntities.forEach {
             when (it.key) {
                 "init" -> bookInfoRule.init = it.value ?: ""
-                "name" -> bookInfoRule.name = ruleComplete(it.value, bookInfoRule.init)
-                "author" -> bookInfoRule.author = ruleComplete(it.value, bookInfoRule.init)
-                "kind" -> bookInfoRule.kind = ruleComplete(it.value, bookInfoRule.init)
-                "intro" -> bookInfoRule.intro = ruleComplete(it.value, bookInfoRule.init)
-                "updateTime" -> bookInfoRule.updateTime = ruleComplete(it.value, bookInfoRule.init)
-                "wordCount" -> bookInfoRule.wordCount = ruleComplete(it.value, bookInfoRule.init)
+                "name" -> bookInfoRule.name = viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "author" -> bookInfoRule.author =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "kind" -> bookInfoRule.kind = viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "intro" -> bookInfoRule.intro = viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "updateTime" -> bookInfoRule.updateTime =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "wordCount" -> bookInfoRule.wordCount =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init)
                 "lastChapter" -> bookInfoRule.lastChapter =
-                    ruleComplete(it.value, bookInfoRule.init)
-                "coverUrl" -> bookInfoRule.coverUrl = ruleComplete(it.value, bookInfoRule.init, 3)
-                "tocUrl" -> bookInfoRule.tocUrl = ruleComplete(it.value, bookInfoRule.init, 2)
+                    viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "coverUrl" -> bookInfoRule.coverUrl =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init, 3)
+                "tocUrl" -> bookInfoRule.tocUrl =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init, 2)
                 "canReName" -> bookInfoRule.canReName = it.value
             }
         }
         tocEntities.forEach {
             when (it.key) {
                 "chapterList" -> tocRule.chapterList = it.value ?: ""
-                "chapterName" -> tocRule.chapterName = ruleComplete(it.value,tocRule.chapterList)
-                "chapterUrl" -> tocRule.chapterUrl = ruleComplete(it.value,tocRule.chapterList, 2)
+                "chapterName" -> tocRule.chapterName =
+                    viewModel.ruleComplete(it.value, tocRule.chapterList)
+                "chapterUrl" -> tocRule.chapterUrl =
+                    viewModel.ruleComplete(it.value, tocRule.chapterList, 2)
                 "isVolume" -> tocRule.isVolume = it.value
                 "updateTime" -> tocRule.updateTime = it.value
                 "isVip" -> tocRule.isVip = it.value
                 "isPay" -> tocRule.isPay = it.value
-                "nextTocUrl" -> tocRule.nextTocUrl = ruleComplete(it.value,tocRule.chapterList,2)
+                "nextTocUrl" -> tocRule.nextTocUrl =
+                    viewModel.ruleComplete(it.value, tocRule.chapterList, 2)
             }
         }
         contentEntities.forEach {
             when (it.key) {
-                "content" -> contentRule.content = ruleComplete(it.value)
-                "nextContentUrl" -> contentRule.nextContentUrl = ruleComplete(it.value, type = 2)
+                "content" -> contentRule.content = viewModel.ruleComplete(it.value)
+                "nextContentUrl" -> contentRule.nextContentUrl =
+                    viewModel.ruleComplete(it.value, type = 2)
                 "webJs" -> contentRule.webJs = it.value
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value

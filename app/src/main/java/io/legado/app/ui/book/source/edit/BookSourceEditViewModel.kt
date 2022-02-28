@@ -5,6 +5,7 @@ import android.content.Intent
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.RuleComplete
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.NoStackTraceException
@@ -13,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 
 
 class BookSourceEditViewModel(application: Application) : BaseViewModel(application) {
-
+    var autoComplete = false
     var bookSource: BookSource? = null
     private var oldSourceUrl: String? = null
 
@@ -95,4 +96,9 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             }
         }
     }
+
+    fun ruleComplete(rule: String?, preRule: String? = null, type: Int = 1): String? {
+        return RuleComplete.autoComplete(rule, preRule, type, autoComplete)
+    }
+
 }

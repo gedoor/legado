@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/menu_save"
         android:icon="@drawable/ic_save"
         android:title="@string/action_save"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_debug_source"
         android:icon="@drawable/ic_bug_report"
         android:title="@string/debug_source"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_login"
         android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_auto_complete"
+        android:title="@string/auto_complete"
+        android:checkable="true"
         app:showAsAction="never" />
 
     <item
