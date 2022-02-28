@@ -67,7 +67,11 @@ class HttpReadAloudService : BaseReadAloudService(),
             kotlin.runCatching {
                 val tts = ReadAloud.httpTTS ?: throw NoStackTraceException("httpTts is null")
                 val fileName =
-                    md5SpeakFileName(tts.url, AppConfig.ttsSpeechRate.toString(), contentList[nowSpeak])
+                    md5SpeakFileName(
+                        tts.url,
+                        AppConfig.ttsSpeechRate.toString(),
+                        contentList[nowSpeak]
+                    )
                 if (nowSpeak == 0) {
                     downloadAudio()
                 } else {
@@ -223,7 +227,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun md5SpeakFileName(url: String, ttsConfig: String, content: String): String {
-        return MD5Utils.md5Encode("$url-|-$ttsConfig-|-$content")
+        return MD5Utils.md5Encode16(textChapter?.title ?: "") + "_" +
+            MD5Utils.md5Encode16("$url-|-$ttsConfig-|-$content")
     }
 
     private fun createSilentSound(fileName: String) {
@@ -256,17 +261,10 @@ class HttpReadAloudService : BaseReadAloudService(),
      * 移除缓存文件
      */
     private fun removeCacheFile() {
-        val cacheRegex = Regex(""".+\.mp3$""")
-        val reg = """^${MD5Utils.md5Encode16(textChapter!!.title)}_[a-z0-9]{16}\.mp3$""".toRegex()
+        val titleMd5 = MD5Utils.md5Encode16(textChapter?.title ?: "")
         FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
-            if (cacheRegex.matches(it.name)) { //mp3缓存文件
-                if (!reg.matches(it.name)) {
-                    FileUtils.deleteFile(it.absolutePath)
-                }
-            } else {
-                if (Date().time - it.lastModified() > 600000) {
-                    FileUtils.deleteFile(it.absolutePath)
-                }
+            if (!it.name.startsWith(titleMd5) && Date().time - it.lastModified() > 600000) {
+                FileUtils.deleteFile(it.absolutePath)
             }
         }
     }
