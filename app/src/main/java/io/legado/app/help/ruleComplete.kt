@@ -2,10 +2,10 @@ package io.legado.app.help
 
 // 补全时忽略匹配规则
 val completeIgnore =
-    Regex("""\\n|##|@js:|<js>|@Json:|\$.|(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\)|##.*)?\s*$""")
+    Regex("""\\n|##|@js:|<js>|@Json:|\$\.|(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\)|##.*)?\s*$""",RegexOption.MULTILINE)
 
-// 补全时忽略匹配的规则(仅对详情页预处理规则生效)
-val completeIgnorePreRule = Regex("""^:|##|@js:|<js>|@Json:|\$.""")
+// 补全时忽略匹配的规则(判断列表项和详情页预处理规则生效)
+val completeIgnorePreRule = Regex("""^:|##|@js:|<js>|@Json:|\$\.""")
 
 // 匹配从图片获取信息的规则
 val imgComplete = Regex(
