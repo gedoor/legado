@@ -335,8 +335,8 @@ class BookSourceEditActivity :
                 "updateTime" -> searchRule.updateTime = ruleComplete(it.value,searchRule.bookList)
                 "wordCount" -> searchRule.wordCount = ruleComplete(it.value,searchRule.bookList)
                 "lastChapter" -> searchRule.lastChapter = ruleComplete(it.value,searchRule.bookList)
-                "coverUrl" -> searchRule.coverUrl = ruleComplete(it.value,searchRule.bookList, type = 3)
-                "bookUrl" -> searchRule.bookUrl = ruleComplete(it.value,searchRule.bookList, type = 2)
+                "coverUrl" -> searchRule.coverUrl = ruleComplete(it.value,searchRule.bookList,3)
+                "bookUrl" -> searchRule.bookUrl = ruleComplete(it.value,searchRule.bookList,2)
             }
         }
         findEntities.forEach {
@@ -350,15 +350,15 @@ class BookSourceEditActivity :
                 "updateTime" -> exploreRule.updateTime = ruleComplete(it.value,exploreRule.bookList)
                 "wordCount" -> exploreRule.wordCount = ruleComplete(it.value,exploreRule.bookList)
                 "lastChapter" -> exploreRule.lastChapter = ruleComplete(it.value,exploreRule.bookList)
-                "coverUrl" -> exploreRule.coverUrl = ruleComplete(it.value,exploreRule.bookList, type = 3)
-                "bookUrl" -> exploreRule.bookUrl = ruleComplete(it.value,exploreRule.bookList, type = 2)
+                "coverUrl" -> exploreRule.coverUrl = ruleComplete(it.value,exploreRule.bookList,3)
+                "bookUrl" -> exploreRule.bookUrl = ruleComplete(it.value,exploreRule.bookList,2)
             }
         }
         infoEntities.forEach {
             when (it.key) {
                 "init" -> bookInfoRule.init = it.value ?: ""
                 "name" -> bookInfoRule.name = ruleComplete(it.value, bookInfoRule.init)
-                "author" -> bookInfoRule.author = ruleComplete(it.value,tocRule.chapterList, bookInfoRule.init)
+                "author" -> bookInfoRule.author = ruleComplete(it.value, bookInfoRule.init)
                 "kind" -> bookInfoRule.kind = ruleComplete(it.value, bookInfoRule.init)
                 "intro" -> bookInfoRule.intro = ruleComplete(it.value, bookInfoRule.init)
                 "updateTime" -> bookInfoRule.updateTime = ruleComplete(it.value, bookInfoRule.init)
@@ -374,12 +374,12 @@ class BookSourceEditActivity :
             when (it.key) {
                 "chapterList" -> tocRule.chapterList = it.value ?: ""
                 "chapterName" -> tocRule.chapterName = ruleComplete(it.value,tocRule.chapterList)
-                "chapterUrl" -> tocRule.chapterUrl = ruleComplete(it.value,tocRule.chapterList, type = 2)
+                "chapterUrl" -> tocRule.chapterUrl = ruleComplete(it.value,tocRule.chapterList, 2)
                 "isVolume" -> tocRule.isVolume = it.value
                 "updateTime" -> tocRule.updateTime = it.value
                 "isVip" -> tocRule.isVip = it.value
                 "isPay" -> tocRule.isPay = it.value
-                "nextTocUrl" -> tocRule.nextTocUrl = ruleComplete(it.value,tocRule.chapterList, type = 2)
+                "nextTocUrl" -> tocRule.nextTocUrl = ruleComplete(it.value,tocRule.chapterList,2)
             }
         }
         contentEntities.forEach {
