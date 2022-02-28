@@ -78,7 +78,10 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     }
 
     fun ruleComplete(rule: String?, preRule: String? = null, type: Int = 1): String? {
-        return RuleComplete.autoComplete(rule, preRule, type, autoComplete)
+        if (autoComplete) {
+            return RuleComplete.autoComplete(rule, preRule, type)
+        }
+        return rule
     }
 
 }

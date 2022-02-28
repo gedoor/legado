@@ -36,12 +36,8 @@ object RuleComplete {
     fun autoComplete(
         rule: String?,
         preRule: String? = null,
-        type: Int = 1,
-        enable: Boolean
+        type: Int = 1
     ): String? {
-        if (!enable) {
-            return rule
-        }
         if (rule.isNullOrEmpty() || rule.contains(completeIgnore)
             || preRule?.contains(completeIgnorePreRule) == true
         ) {
