@@ -84,12 +84,12 @@ class RssSourceEditActivity :
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.source_edit, menu)
-        menu.findItem(R.id.menu_login).isVisible = false
         return super.onCompatCreateOptionsMenu(menu)
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_login)?.isVisible = !viewModel.rssSource.loginUrl.isNullOrBlank()
+        menu.findItem(R.id.menu_auto_complete)?.isChecked = viewModel.autoComplete
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -124,6 +124,7 @@ class RssSourceEditActivity :
                     }
                 }
             }
+            R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getRssSource()))
             R.id.menu_qr_code_camera -> qrCodeResult.launch()
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
@@ -202,13 +203,20 @@ class RssSourceEditActivity :
                 "concurrentRate" -> source.concurrentRate = it.value
                 "sortUrl" -> source.sortUrl = it.value
                 "ruleArticles" -> source.ruleArticles = it.value
-                "ruleNextPage" -> source.ruleNextPage = it.value
-                "ruleTitle" -> source.ruleTitle = it.value
-                "rulePubDate" -> source.rulePubDate = it.value
-                "ruleDescription" -> source.ruleDescription = it.value
-                "ruleImage" -> source.ruleImage = it.value
-                "ruleLink" -> source.ruleLink = it.value
-                "ruleContent" -> source.ruleContent = it.value
+                "ruleNextPage" -> source.ruleNextPage =
+                    viewModel.ruleComplete(it.value, source.ruleArticles, 2)
+                "ruleTitle" -> source.ruleTitle =
+                    viewModel.ruleComplete(it.value, source.ruleArticles)
+                "rulePubDate" -> source.rulePubDate =
+                    viewModel.ruleComplete(it.value, source.ruleArticles)
+                "ruleDescription" -> source.ruleDescription =
+                    viewModel.ruleComplete(it.value, source.ruleArticles)
+                "ruleImage" -> source.ruleImage =
+                    viewModel.ruleComplete(it.value, source.ruleArticles, 3)
+                "ruleLink" -> source.ruleLink =
+                    viewModel.ruleComplete(it.value, source.ruleArticles)
+                "ruleContent" -> source.ruleContent =
+                    viewModel.ruleComplete(it.value, source.ruleArticles)
                 "style" -> source.style = it.value
             }
         }

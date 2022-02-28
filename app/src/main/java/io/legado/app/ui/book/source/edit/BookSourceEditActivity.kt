@@ -329,11 +329,14 @@ class BookSourceEditActivity :
                 "searchUrl" -> source.searchUrl = it.value
                 "checkKeyWord" -> searchRule.checkKeyWord = it.value
                 "bookList" -> searchRule.bookList = it.value ?: ""
-                "name" -> searchRule.name = viewModel.ruleComplete(it.value, searchRule.bookList)
+                "name" -> searchRule.name =
+                    viewModel.ruleComplete(it.value, searchRule.bookList)
                 "author" -> searchRule.author =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
-                "kind" -> searchRule.kind = viewModel.ruleComplete(it.value, searchRule.bookList)
-                "intro" -> searchRule.intro = viewModel.ruleComplete(it.value, searchRule.bookList)
+                "kind" -> searchRule.kind =
+                    viewModel.ruleComplete(it.value, searchRule.bookList)
+                "intro" -> searchRule.intro =
+                    viewModel.ruleComplete(it.value, searchRule.bookList)
                 "updateTime" -> searchRule.updateTime =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
                 "wordCount" -> searchRule.wordCount =
@@ -350,10 +353,12 @@ class BookSourceEditActivity :
             when (it.key) {
                 "exploreUrl" -> source.exploreUrl = it.value
                 "bookList" -> exploreRule.bookList = it.value ?: ""
-                "name" -> exploreRule.name = viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "name" -> exploreRule.name =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList)
                 "author" -> exploreRule.author =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
-                "kind" -> exploreRule.kind = viewModel.ruleComplete(it.value, exploreRule.bookList)
+                "kind" -> exploreRule.kind =
+                    viewModel.ruleComplete(it.value, exploreRule.bookList)
                 "intro" -> exploreRule.intro =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
                 "updateTime" -> exploreRule.updateTime =
@@ -374,8 +379,10 @@ class BookSourceEditActivity :
                 "name" -> bookInfoRule.name = viewModel.ruleComplete(it.value, bookInfoRule.init)
                 "author" -> bookInfoRule.author =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
-                "kind" -> bookInfoRule.kind = viewModel.ruleComplete(it.value, bookInfoRule.init)
-                "intro" -> bookInfoRule.intro = viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "kind" -> bookInfoRule.kind =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "intro" -> bookInfoRule.intro =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init)
                 "updateTime" -> bookInfoRule.updateTime =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
                 "wordCount" -> bookInfoRule.wordCount =
@@ -406,7 +413,8 @@ class BookSourceEditActivity :
         }
         contentEntities.forEach {
             when (it.key) {
-                "content" -> contentRule.content = viewModel.ruleComplete(it.value)
+                "content" -> contentRule.content =
+                    viewModel.ruleComplete(it.value)
                 "nextContentUrl" -> contentRule.nextContentUrl =
                     viewModel.ruleComplete(it.value, type = 2)
                 "webJs" -> contentRule.webJs = it.value

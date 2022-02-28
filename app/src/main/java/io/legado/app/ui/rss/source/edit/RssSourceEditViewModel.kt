@@ -5,6 +5,7 @@ import android.content.Intent
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.RuleComplete
 import io.legado.app.utils.getClipText
 import io.legado.app.utils.msg
 import io.legado.app.utils.printOnDebug
@@ -14,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
-
+    var autoComplete = false
     var rssSource: RssSource = RssSource()
     private var oldSourceUrl: String = ""
 
@@ -74,6 +75,10 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }.onError {
             context.toastOnUi(it.msg)
         }
+    }
+
+    fun ruleComplete(rule: String?, preRule: String? = null, type: Int = 1): String? {
+        return RuleComplete.autoComplete(rule, preRule, type, autoComplete)
     }
 
 }
