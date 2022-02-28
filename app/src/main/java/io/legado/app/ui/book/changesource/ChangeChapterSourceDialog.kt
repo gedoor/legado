@@ -81,7 +81,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     override fun onStart() {
         super.onStart()
-        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 0.96f)
         dialog?.setOnKeyListener(this)
     }
 
