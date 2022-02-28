@@ -33,10 +33,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

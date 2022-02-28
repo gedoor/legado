@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read
 
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogPhotoViewBinding
@@ -11,7 +10,9 @@ import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-
+/**
+ * 显示图片
+ */
 class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
     constructor(chapterIndex: Int, src: String) : this() {
@@ -25,10 +26,7 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        setLayout(0.98f, 0.98f)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

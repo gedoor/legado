@@ -36,10 +36,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(
-            0.9f,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

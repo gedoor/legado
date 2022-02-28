@@ -34,9 +34,9 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
-            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.run {
+            setBackgroundDrawableResource(R.color.transparent)
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
     }
 

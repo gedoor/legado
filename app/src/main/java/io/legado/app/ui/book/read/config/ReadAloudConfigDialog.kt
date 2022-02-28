@@ -14,7 +14,6 @@ import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.help.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -27,10 +26,9 @@ class ReadAloudConfigDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dm = requireActivity().windowSize
-        dialog?.window?.let {
-            it.setBackgroundDrawableResource(R.color.transparent)
-            it.setLayout((dm.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.run {
+            setBackgroundDrawableResource(R.color.transparent)
+            setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 
