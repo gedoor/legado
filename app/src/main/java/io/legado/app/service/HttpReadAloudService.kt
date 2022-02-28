@@ -43,7 +43,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
     private val cacheFiles = hashSetOf<String>()
     private var task: Coroutine<*>? = null
-    private var playingIndex = -1
     private var playIndexJob: Job? = null
     private val mutex = Mutex()
 
@@ -58,12 +57,8 @@ class HttpReadAloudService : BaseReadAloudService(),
         exoPlayer.release()
     }
 
-    override fun newReadAloud(play: Boolean) {
-        playingIndex = -1
-        super.newReadAloud(play)
-    }
-
     override fun play() {
+        exoPlayer.stop()
         if (contentList.isEmpty()) {
             AppLog.putDebug("朗读列表为空")
             ReadBook.readAloud()
@@ -213,7 +208,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     @Synchronized
     private fun playAudio(file: File) {
-        if (playingIndex != nowSpeak && requestFocus()) {
+        if (requestFocus()) {
             launch {
                 kotlin.runCatching {
                     val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
@@ -288,12 +283,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun resumeReadAloud() {
         super.resumeReadAloud()
         kotlin.runCatching {
-            if (playingIndex == -1) {
-                play()
-            } else {
-                exoPlayer.play()
-                upPlayPos()
-            }
+            exoPlayer.play()
+            upPlayPos()
         }
     }
 
@@ -328,7 +319,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun upSpeechRate(reset: Boolean) {
         task?.cancel()
         exoPlayer.stop()
-        playingIndex = -1
         downloadAudio()
     }
 
