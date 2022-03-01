@@ -80,7 +80,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
                 R.id.menu_copy_all -> requireContext()
-                    .sendToClip("${binding.toolBar.title}\n${viewModel.content}")
+                    .sendToClip("${binding.toolBar.title}\n${binding.contentView.text}")
             }
             return@setOnMenuItemClickListener true
         }
