@@ -8,6 +8,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern.JS_PATTERN
+import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -463,7 +464,6 @@ class AnalyzeUrl(
      */
     suspend fun getByteArrayAwait(): ByteArray {
         @Suppress("RegExpRedundantEscape")
-        val dataUriRegex = Regex("data:[\\w/\\-\\.]+;base64,(.*)")
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
         val concurrentRecord = fetchStart()
         setCookie(source?.getKey())
