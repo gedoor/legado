@@ -141,8 +141,8 @@ object LocalBook {
                         //将文件名注入到脚步的src变量中
                         SimpleBindings().also { it["src"] = tempFileName }
                     ).toString()
-                    val bookMess =
-                        GSON.fromJsonObject<HashMap<String, String>>(jsonStr) ?: HashMap()
+                    val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr)
+                        .getOrThrow() ?: HashMap()
                     name = bookMess["name"] ?: tempFileName
                     author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
                 } catch (e: Exception) {

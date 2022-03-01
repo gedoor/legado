@@ -108,7 +108,7 @@ data class BookSource(
                     }
                 }
                 if (ruleStr.isJsonArray()) {
-                    GSON.fromJsonArray<ExploreKind>(ruleStr)?.let {
+                    GSON.fromJsonArray<ExploreKind>(ruleStr).getOrThrow()?.let {
                         kinds.addAll(it)
                     }
                 } else {
@@ -219,34 +219,44 @@ data class BookSource(
     class Converters {
 
         @TypeConverter
-        fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)
+        fun exploreRuleToString(exploreRule: ExploreRule?): String =
+            GSON.toJson(exploreRule)
 
         @TypeConverter
-        fun stringToExploreRule(json: String?) = GSON.fromJsonObject<ExploreRule>(json)
+        fun stringToExploreRule(json: String?) =
+            GSON.fromJsonObject<ExploreRule>(json).getOrNull()
 
         @TypeConverter
-        fun searchRuleToString(searchRule: SearchRule?): String = GSON.toJson(searchRule)
+        fun searchRuleToString(searchRule: SearchRule?): String =
+            GSON.toJson(searchRule)
 
         @TypeConverter
-        fun stringToSearchRule(json: String?) = GSON.fromJsonObject<SearchRule>(json)
+        fun stringToSearchRule(json: String?) =
+            GSON.fromJsonObject<SearchRule>(json).getOrNull()
 
         @TypeConverter
-        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String = GSON.toJson(bookInfoRule)
+        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String =
+            GSON.toJson(bookInfoRule)
 
         @TypeConverter
-        fun stringToBookInfoRule(json: String?) = GSON.fromJsonObject<BookInfoRule>(json)
+        fun stringToBookInfoRule(json: String?) =
+            GSON.fromJsonObject<BookInfoRule>(json).getOrNull()
 
         @TypeConverter
-        fun tocRuleToString(tocRule: TocRule?): String = GSON.toJson(tocRule)
+        fun tocRuleToString(tocRule: TocRule?): String =
+            GSON.toJson(tocRule)
 
         @TypeConverter
-        fun stringToTocRule(json: String?) = GSON.fromJsonObject<TocRule>(json)
+        fun stringToTocRule(json: String?) =
+            GSON.fromJsonObject<TocRule>(json).getOrNull()
 
         @TypeConverter
-        fun contentRuleToString(contentRule: ContentRule?): String = GSON.toJson(contentRule)
+        fun contentRuleToString(contentRule: ContentRule?): String =
+            GSON.toJson(contentRule)
 
         @TypeConverter
-        fun stringToContentRule(json: String?) = GSON.fromJsonObject<ContentRule>(json)
+        fun stringToContentRule(json: String?) =
+            GSON.fromJsonObject<ContentRule>(json).getOrNull()
 
     }
 }

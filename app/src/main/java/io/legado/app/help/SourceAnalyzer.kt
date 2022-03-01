@@ -3,6 +3,7 @@ package io.legado.app.help
 import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
@@ -31,11 +32,10 @@ object SourceAnalyzer {
 
     fun jsonToBookSource(json: String): BookSource? {
         val source = BookSource()
-        val sourceAny = try {
-            GSON.fromJsonObject<BookSourceAny>(json.trim())
-        } catch (e: Exception) {
-            null
-        }
+        val sourceAny = GSON.fromJsonObject<BookSourceAny>(json.trim())
+            .onFailure {
+                AppLog.put("转化书源出错", it)
+            }.getOrNull()
         try {
             if (sourceAny?.ruleToc == null) {
                 source.apply {
@@ -132,30 +132,40 @@ object SourceAnalyzer {
                 source.weight = sourceAny.weight
                 source.exploreUrl = sourceAny.exploreUrl
                 source.ruleExplore = if (sourceAny.ruleExplore is String) {
-                    GSON.fromJsonObject(sourceAny.ruleExplore.toString())
+                    GSON.fromJsonObject<ExploreRule>(sourceAny.ruleExplore.toString())
+                        .getOrNull()
                 } else {
-                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleExplore))
+                    GSON.fromJsonObject<ExploreRule>(GSON.toJson(sourceAny.ruleExplore))
+                        .getOrNull()
                 }
                 source.searchUrl = sourceAny.searchUrl
                 source.ruleSearch = if (sourceAny.ruleSearch is String) {
-                    GSON.fromJsonObject(sourceAny.ruleSearch.toString())
+                    GSON.fromJsonObject<SearchRule>(sourceAny.ruleSearch.toString())
+                        .getOrNull()
                 } else {
-                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleSearch))
+                    GSON.fromJsonObject<SearchRule>(GSON.toJson(sourceAny.ruleSearch))
+                        .getOrNull()
                 }
                 source.ruleBookInfo = if (sourceAny.ruleBookInfo is String) {
-                    GSON.fromJsonObject(sourceAny.ruleBookInfo.toString())
+                    GSON.fromJsonObject<BookInfoRule>(sourceAny.ruleBookInfo.toString())
+                        .getOrNull()
                 } else {
-                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleBookInfo))
+                    GSON.fromJsonObject<BookInfoRule>(GSON.toJson(sourceAny.ruleBookInfo))
+                        .getOrNull()
                 }
                 source.ruleToc = if (sourceAny.ruleToc is String) {
-                    GSON.fromJsonObject(sourceAny.ruleToc.toString())
+                    GSON.fromJsonObject<TocRule>(sourceAny.ruleToc.toString())
+                        .getOrNull()
                 } else {
-                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleToc))
+                    GSON.fromJsonObject<TocRule>(GSON.toJson(sourceAny.ruleToc))
+                        .getOrNull()
                 }
                 source.ruleContent = if (sourceAny.ruleContent is String) {
-                    GSON.fromJsonObject(sourceAny.ruleContent.toString())
+                    GSON.fromJsonObject<ContentRule>(sourceAny.ruleContent.toString())
+                        .getOrNull()
                 } else {
-                    GSON.fromJsonObject(GSON.toJson(sourceAny.ruleContent))
+                    GSON.fromJsonObject<ContentRule>(GSON.toJson(sourceAny.ruleContent))
+                        .getOrNull()
                 }
             }
         } catch (e: Exception) {

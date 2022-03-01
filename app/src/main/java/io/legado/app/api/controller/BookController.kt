@@ -166,9 +166,8 @@ object BookController {
      * 保存书籍
      */
     fun saveBook(postData: String?): ReturnData {
-        val book = GSON.fromJsonObject<Book>(postData)
         val returnData = ReturnData()
-        if (book != null) {
+        GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
             book.save()
             AppWebDav.uploadBookProgress(book)
             if (ReadBook.book?.bookUrl == book.bookUrl) {

@@ -83,10 +83,11 @@ object ThemeConfig {
     }
 
     fun addConfig(json: String): Boolean {
-        GSON.fromJsonObject<Config>(json.trim { it < ' ' })?.let {
-            addConfig(it)
-            return true
-        }
+        GSON.fromJsonObject<Config>(json.trim { it < ' ' }).getOrNull()
+            ?.let {
+                addConfig(it)
+                return true
+            }
         return false
     }
 
@@ -106,7 +107,7 @@ object ThemeConfig {
         if (configFile.exists()) {
             kotlin.runCatching {
                 val json = configFile.readText()
-                return GSON.fromJsonArray(json)
+                return GSON.fromJsonArray<Config>(json).getOrThrow()
             }.onFailure {
                 it.printOnDebug()
             }

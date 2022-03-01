@@ -65,7 +65,7 @@ class ReadAloudConfigDialog : DialogFragment() {
                     return appDb.httpTTSDao.getName(ttsEngine.toLong())
                         ?: getString(R.string.system_tts)
                 }
-                return GSON.fromJsonObject<SelectItem<String>>(ttsEngine)?.title
+                return GSON.fromJsonObject<SelectItem<String>>(ttsEngine).getOrNull()?.title
                     ?: getString(R.string.system_tts)
             }
 

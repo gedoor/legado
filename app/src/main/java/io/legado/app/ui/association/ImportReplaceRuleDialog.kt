@@ -181,7 +181,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
 
     override fun onCodeSave(code: String, requestId: String?) {
         requestId?.toInt()?.let {
-            GSON.fromJsonObject<ReplaceRule>(code)?.let { rule ->
+            GSON.fromJsonObject<ReplaceRule>(code).getOrNull()?.let { rule ->
                 viewModel.allRules[it] = rule
                 adapter.setItem(it, rule)
             }

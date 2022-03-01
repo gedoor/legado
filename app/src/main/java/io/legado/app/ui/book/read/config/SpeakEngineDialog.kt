@@ -95,8 +95,8 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
                     labelSys.visible()
                     cbName.text = engine.label
                     cbName.tag = engine.name
-                    cbName.isChecked =
-                        GSON.fromJsonObject<SelectItem<String>>(ttsEngine)?.value == cbName.tag
+                    cbName.isChecked = GSON.fromJsonObject<SelectItem<String>>(ttsEngine)
+                        .getOrNull()?.value == cbName.tag
                     cbName.setOnClickListener {
                         upTts(GSON.toJson(SelectItem(engine.label, engine.name)))
                     }
@@ -192,7 +192,8 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
     private fun upTts(tts: String) {
         ttsEngine = tts
         sysTtsViews.forEach {
-            it.isChecked = GSON.fromJsonObject<SelectItem<String>>(ttsEngine)?.value == it.tag
+            it.isChecked = GSON.fromJsonObject<SelectItem<String>>(ttsEngine)
+                .getOrNull()?.value == it.tag
         }
         adapter.notifyItemRangeChanged(adapter.getHeaderCount(), adapter.itemCount)
     }

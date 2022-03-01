@@ -126,7 +126,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     private fun importBookshelfByJson(json: String, groupId: Long) {
         execute {
             val bookSources = appDb.bookSourceDao.allEnabled
-            GSON.fromJsonArray<Map<String, String?>>(json)?.forEach { bookInfo ->
+            GSON.fromJsonArray<Map<String, String?>>(json).getOrThrow()?.forEach { bookInfo ->
                 if (!isActive) return@execute
                 val name = bookInfo["name"] ?: ""
                 val author = bookInfo["author"] ?: ""
@@ -143,6 +143,8 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                         }
                 }
             }
+        }.onError {
+            it.printOnDebug()
         }.onFinally {
             context.toastOnUi(R.string.success)
         }

@@ -20,12 +20,9 @@ object OldReplace {
     }
 
     private fun jsonToReplaceRule(json: String): ReplaceRule? {
-        var replaceRule: ReplaceRule? = null
+        val replaceRule: ReplaceRule? = GSON.fromJsonObject<ReplaceRule>(json.trim()).getOrNull()
         runCatching {
-            replaceRule = GSON.fromJsonObject<ReplaceRule>(json.trim())
-        }
-        runCatching {
-            if (replaceRule == null || replaceRule?.pattern.isNullOrBlank()) {
+            if (replaceRule == null || replaceRule.pattern.isBlank()) {
                 val jsonItem = jsonPath.parse(json.trim())
                 val rule = ReplaceRule()
                 rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis()
