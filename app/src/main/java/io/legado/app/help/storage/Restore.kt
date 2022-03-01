@@ -195,8 +195,8 @@ object Restore : BackupRestore() {
             val json = file.readText()
             return GSON.fromJsonArray<T>(json).getOrThrow()
         } catch (e: Exception) {
-            AppLog.put("读取文件出错\n${e.localizedMessage}", e)
-            appCtx.toastOnUi("读取文件出错\n${e.localizedMessage}")
+            AppLog.put("$fileName\n读取解析出错\n${e.localizedMessage}", e)
+            appCtx.toastOnUi("$fileName\n读取文件出错\n${e.localizedMessage}")
         }
         return null
     }
