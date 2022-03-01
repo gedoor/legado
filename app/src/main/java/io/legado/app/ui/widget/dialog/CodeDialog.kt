@@ -29,7 +29,7 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(0.96f, ViewGroup.LayoutParams.MATCH_PARENT)
+        setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
