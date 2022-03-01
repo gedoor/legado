@@ -129,6 +129,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                         .joinToString("\n")
                 }
             }.onSuccess {
+                content = it
                 success.invoke(it ?: "")
             }
         }
