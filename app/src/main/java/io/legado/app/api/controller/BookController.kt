@@ -72,7 +72,7 @@ object BookController {
         val returnData = ReturnData()
         val bookUrl = parameters["url"]?.firstOrNull()
             ?: return returnData.setErrorMsg("bookUrl为空")
-        val book = appDb.bookDao.getBook(bookUrl)
+        val book = appDb.bookDao.getBook(URLDecoder.decode(bookUrl, "UTF-8"))
             ?: return returnData.setErrorMsg("bookUrl不对")
         val src = URLDecoder.decode(parameters["path"]?.firstOrNull(), "UTF-8")
         val vFile = BookHelp.getImage(book, src)
@@ -82,7 +82,9 @@ object BookController {
                 BookHelp.saveImage(bookSource, book, src)
             }
         }
-        return returnData.setData(vFile.readBytes())
+        return returnData.setData(
+            BitmapUtils.decodeBitmap(vFile.absolutePath)
+        )
     }
 
     /**
