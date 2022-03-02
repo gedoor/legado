@@ -21,6 +21,7 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.localBook.UmdFile
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
@@ -131,7 +132,16 @@ object BookController {
             return returnData.setErrorMsg("参数index不能为空, 请指定目录序号")
         }
         val book = appDb.bookDao.getBook(bookUrl)
-        val chapter = appDb.bookChapterDao.getChapter(bookUrl, index)
+        val chapter = runBlocking {
+            var chapter = appDb.bookChapterDao.getChapter(bookUrl, index)
+            var wait = 0
+            while (chapter == null && wait < 30) {
+                delay(1000)
+                chapter = appDb.bookChapterDao.getChapter(bookUrl, index)
+                wait++
+            }
+            chapter
+        }
         if (book == null || chapter == null) {
             return returnData.setErrorMsg("未找到")
         }
