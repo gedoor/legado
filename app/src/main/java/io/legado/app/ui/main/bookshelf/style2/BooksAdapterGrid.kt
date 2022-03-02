@@ -17,14 +17,6 @@ import splitties.views.onLongClick
 class BooksAdapterGrid(context: Context, callBack: CallBack) :
     BaseBooksAdapter<RecyclerView.ViewHolder>(context, callBack) {
 
-    override fun getItemCount(): Int {
-        return callBack.getItemCount()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return callBack.getItemType(position)
-    }
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -67,7 +59,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
 
     private fun onBindBook(binding: ItemBookshelfGridBinding, position: Int, bundle: Bundle) {
         binding.run {
-            val item = callBack.getItem(position) as Book
+            val item = callBack.getItem(position) as? Book ?: return
             bundle.keySet().forEach {
                 when (it) {
                     "name" -> tvName.text = item.name
