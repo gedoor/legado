@@ -29,7 +29,7 @@ data class RssStar(
     @delegate:Ignore
     @IgnoredOnParcel
     override val variableMap by lazy {
-        GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+        GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
     override fun putVariable(key: String, value: String?) {

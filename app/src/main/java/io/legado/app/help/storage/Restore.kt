@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.AppConst.androidId
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -20,7 +21,6 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-
 import java.io.File
 
 
@@ -193,9 +193,10 @@ object Restore : BackupRestore() {
         try {
             val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
             val json = file.readText()
-            return GSON.fromJsonArray(json)
+            return GSON.fromJsonArray<T>(json).getOrThrow()
         } catch (e: Exception) {
-            e.printOnDebug()
+            AppLog.put("$fileName\n读取解析出错\n${e.localizedMessage}", e)
+            appCtx.toastOnUi("$fileName\n读取文件出错\n${e.localizedMessage}")
         }
         return null
     }

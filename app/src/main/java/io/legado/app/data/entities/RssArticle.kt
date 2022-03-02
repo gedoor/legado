@@ -36,8 +36,8 @@ data class RssArticle(
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
-    override val variableMap by lazy {
-        GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+    override val variableMap: HashMap<String, String> by lazy {
+        GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
     override fun putVariable(key: String, value: String?) {

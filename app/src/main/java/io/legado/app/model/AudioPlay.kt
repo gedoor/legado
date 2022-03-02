@@ -10,6 +10,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.ContentProcessor
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.AudioPlayService
 import io.legado.app.utils.postEvent
@@ -148,7 +149,9 @@ object AudioPlay {
         book.durChapterTime = System.currentTimeMillis()
         Coroutine.async {
             appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
-                book.durChapterTitle = it.title
+                book.durChapterTitle = it.getDisplayTitle(
+                    ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+                )
             }
             book.save()
         }

@@ -341,8 +341,11 @@ class AnalyzeRule(
         val putMatcher = putPattern.matcher(vRuleStr)
         while (putMatcher.find()) {
             vRuleStr = vRuleStr.replace(putMatcher.group(), "")
-            val map = GSON.fromJsonObject<Map<String, String>>(putMatcher.group(1))
-            map?.let { putMap.putAll(map) }
+            GSON.fromJsonObject<Map<String, String>>(putMatcher.group(1))
+                .getOrNull()
+                ?.let {
+                    putMap.putAll(it)
+                }
         }
         return vRuleStr
     }
@@ -379,7 +382,7 @@ class AnalyzeRule(
      * 分解规则生成规则列表
      */
     fun splitSourceRule(ruleStr: String?, allInOne: Boolean = false): List<SourceRule> {
-        if (ruleStr.isNullOrEmpty()) return ArrayList<SourceRule>()
+        if (ruleStr.isNullOrEmpty()) return emptyList()
         val ruleList = ArrayList<SourceRule>()
         var mMode: Mode = Mode.Default
         var start = 0
@@ -597,9 +600,9 @@ class AnalyzeRule(
 
         private fun isRule(ruleStr: String): Boolean {
             return ruleStr.startsWith('@') //js首个字符不可能是@，除非是装饰器，所以@开头规定为规则
-                    || ruleStr.startsWith("$.")
-                    || ruleStr.startsWith("$[")
-                    || ruleStr.startsWith("//")
+                || ruleStr.startsWith("$.")
+                || ruleStr.startsWith("$[")
+                || ruleStr.startsWith("//")
         }
     }
 

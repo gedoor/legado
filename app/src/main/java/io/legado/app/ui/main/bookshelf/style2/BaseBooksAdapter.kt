@@ -73,6 +73,14 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
         }
     }
 
+    override fun getItemCount(): Int {
+        return callBack.getItemCount()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return callBack.getItemType(position)
+    }
+
 
     interface CallBack {
         fun onItemClick(position: Int)
@@ -80,6 +88,6 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
         fun isUpdate(bookUrl: String): Boolean
         fun getItemCount(): Int
         fun getItemType(position: Int): Int
-        fun getItem(position: Int): Any
+        fun getItem(position: Int): Any?
     }
 }

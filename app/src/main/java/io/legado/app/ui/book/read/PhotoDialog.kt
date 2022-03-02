@@ -26,7 +26,7 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(0.98f, 0.98f)
+        setLayout(1f, 1f)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

@@ -1,12 +1,23 @@
 package io.legado.app.data.dao
 
 import androidx.room.*
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao {
+
+    @Query(
+        """
+        select * from books where type != ${BookType.audio} 
+        and origin != '${BookType.local}' 
+        and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
+        and (select show from book_groups where groupId = ${AppConst.bookGroupNoneId}) != 1
+        """
+    )
+    fun flowRoot(): Flow<List<Book>>
 
     @Query("SELECT * FROM books order by durChapterTime desc")
     fun flowAll(): Flow<List<Book>>
@@ -17,7 +28,13 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
     fun flowLocal(): Flow<List<Book>>
 
-    @Query("select * from books where type != ${BookType.audio} and origin != '${BookType.local}' and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0")
+    @Query(
+        """
+        select * from books where type != ${BookType.audio} 
+        and origin != '${BookType.local}' 
+        and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
+        """
+    )
     fun flowNoGroup(): Flow<List<Book>>
 
     @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}'")

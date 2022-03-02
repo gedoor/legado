@@ -28,7 +28,8 @@ object DefaultData {
             appCtx.assets.open("defaultData${File.separator}${ReadBookConfig.configFileName}")
                 .readBytes()
         )
-        GSON.fromJsonArray(json)!!
+        GSON.fromJsonArray<ReadBookConfig.Config>(json).getOrNull()
+            ?: emptyList()
     }
 
     val txtTocRules: List<TxtTocRule> by lazy {
@@ -36,7 +37,7 @@ object DefaultData {
             appCtx.assets.open("defaultData${File.separator}$txtTocRuleFileName")
                 .readBytes()
         )
-        GSON.fromJsonArray(json)!!
+        GSON.fromJsonArray<TxtTocRule>(json).getOrNull() ?: emptyList()
     }
 
     val themeConfigs: List<ThemeConfig.Config> by lazy {
@@ -44,15 +45,17 @@ object DefaultData {
             appCtx.assets.open("defaultData${File.separator}${ThemeConfig.configFileName}")
                 .readBytes()
         )
-        GSON.fromJsonArray(json)!!
+        GSON.fromJsonArray<ThemeConfig.Config>(json).getOrNull() ?: emptyList()
     }
 
     val rssSources: List<RssSource> by lazy {
-        val json = String(
-            appCtx.assets.open("defaultData${File.separator}rssSources.json")
-                .readBytes()
-        )
-        RssSource.fromJsonArray(json)
+        kotlin.runCatching {
+            val json = String(
+                appCtx.assets.open("defaultData${File.separator}rssSources.json")
+                    .readBytes()
+            )
+            RssSource.fromJsonArray(json)
+        }.getOrDefault(emptyList())
     }
 
     fun importDefaultHttpTTS() {

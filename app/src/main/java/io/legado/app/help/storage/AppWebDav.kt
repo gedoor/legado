@@ -172,9 +172,7 @@ object AppWebDav {
             WebDav(url).download()?.let { byteArray ->
                 val json = String(byteArray)
                 if (json.isJson()) {
-                    GSON.fromJsonObject<BookProgress>(json)?.let {
-                        return it
-                    }
+                    return GSON.fromJsonObject<BookProgress>(json).getOrNull()
                 }
             }
         }

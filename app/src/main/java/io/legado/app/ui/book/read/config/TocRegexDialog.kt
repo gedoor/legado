@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
@@ -154,10 +153,8 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                         cacheUrls.add(0, it)
                         aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
                     }
-                    Snackbar.make(binding.toolBar, R.string.importing, Snackbar.LENGTH_INDEFINITE)
-                        .show()
                     viewModel.importOnLine(it) { msg ->
-                        binding.toolBar.snackbar(msg)
+                        toastOnUi(msg)
                     }
                 }
             }

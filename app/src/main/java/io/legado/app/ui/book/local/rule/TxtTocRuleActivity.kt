@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.appDb
@@ -22,8 +21,8 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ACache
 import io.legado.app.utils.setEdgeEffectColor
-import io.legado.app.utils.snackbar
 import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -184,10 +183,8 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
                         cacheUrls.add(0, it)
                         aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
                     }
-                    Snackbar.make(binding.root, R.string.importing, Snackbar.LENGTH_INDEFINITE)
-                        .show()
                     viewModel.importOnLine(it) { msg ->
-                        binding.root.snackbar(msg)
+                        toastOnUi(msg)
                     }
                 }
             }

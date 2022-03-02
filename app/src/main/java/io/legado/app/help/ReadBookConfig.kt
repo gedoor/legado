@@ -6,15 +6,17 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.NoStackTraceException
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-
 import java.io.File
+import java.io.IOException
 
 /**
  * 阅读界面配置
@@ -60,9 +62,9 @@ object ReadBookConfig {
         if (configFile.exists()) {
             try {
                 val json = configFile.readText()
-                configs = GSON.fromJsonArray(json)
+                configs = GSON.fromJsonArray<Config>(json).getOrThrow()
             } catch (e: Exception) {
-                e.printOnDebug()
+                AppLog.put("读取排版配置文件出错", e)
             }
         }
         (configs ?: DefaultData.readConfigs).let {
@@ -77,7 +79,7 @@ object ReadBookConfig {
         if (configFile.exists()) {
             try {
                 val json = configFile.readText()
-                c = GSON.fromJsonObject(json)
+                c = GSON.fromJsonObject<Config>(json).getOrThrow()
             } catch (e: Exception) {
                 e.printOnDebug()
             }
@@ -325,7 +327,7 @@ object ReadBookConfig {
         }
 
     fun getExportConfig(): Config {
-        val exportConfig = GSON.fromJsonObject<Config>(GSON.toJson(durConfig))!!
+        val exportConfig = durConfig.deepCopy()
         if (shareLayout) {
             exportConfig.textFont = shareConfig.textFont
             exportConfig.textBold = shareConfig.textBold
@@ -364,6 +366,7 @@ object ReadBookConfig {
         return exportConfig
     }
 
+    @Throws(IOException::class)
     suspend fun import(byteArray: ByteArray): Config {
         return withContext(IO) {
             val configZipPath = FileUtils.getPath(appCtx.externalCache, "readConfig.zip")
@@ -376,7 +379,8 @@ object ReadBookConfig {
             ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
             val configDir = FileUtils.createFolderIfNotExist(configDirPath)
             val configFile = configDir.getFile(configFileName)
-            val config: Config = GSON.fromJsonObject(configFile.readText())!!
+            val config: Config = GSON.fromJsonObject<Config>(configFile.readText()).getOrThrow()
+                ?: throw NoStackTraceException("排版配置格式错误")
             if (config.textFont.isNotEmpty()) {
                 val fontName = FileUtils.getName(config.textFont)
                 val fontPath =

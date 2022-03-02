@@ -36,7 +36,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(0.96f, ViewGroup.LayoutParams.MATCH_PARENT)
+        setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,7 +80,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
                 R.id.menu_copy_all -> requireContext()
-                    .sendToClip("${binding.toolBar.title}\n${viewModel.content}")
+                    .sendToClip("${binding.toolBar.title}\n${binding.contentView.text}")
             }
             return@setOnMenuItemClickListener true
         }
@@ -129,6 +129,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                         .joinToString("\n")
                 }
             }.onSuccess {
+                content = it
                 success.invoke(it ?: "")
             }
         }

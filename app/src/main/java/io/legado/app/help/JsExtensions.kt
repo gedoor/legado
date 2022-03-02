@@ -97,7 +97,7 @@ interface JsExtensions {
 
     fun connect(urlStr: String, header: String?): StrResponse {
         return runBlocking {
-            val headerMap = GSON.fromJsonObject<Map<String, String>>(header)
+            val headerMap = GSON.fromJsonObject<Map<String, String>>(header).getOrNull()
             val analyzeUrl = AnalyzeUrl(urlStr, headerMapF = headerMap, source = getSource())
             kotlin.runCatching {
                 analyzeUrl.getStrResponseAwait()

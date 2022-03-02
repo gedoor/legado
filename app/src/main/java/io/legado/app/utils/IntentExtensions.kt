@@ -12,10 +12,10 @@ fun Intent.putJson(key: String, any: Any?) {
 
 inline fun <reified T> Intent.getJsonObject(key: String): T? {
     val value = getStringExtra(key)
-    return GSON.fromJsonObject<T>(value)
+    return GSON.fromJsonObject<T>(value).getOrNull()
 }
 
 inline fun <reified T> Intent.getJsonArray(key: String): List<T>? {
     val value = getStringExtra(key)
-    return GSON.fromJsonArray(value)
+    return GSON.fromJsonArray<T>(value).getOrNull()
 }

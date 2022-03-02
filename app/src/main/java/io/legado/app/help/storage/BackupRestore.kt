@@ -13,7 +13,7 @@ abstract class BackupRestore {
     val ignoreConfig: HashMap<String, Boolean> by lazy {
         val file = FileUtils.createFileIfNotExist(ignoreConfigPath)
         val json = file.readText()
-        GSON.fromJsonObject<HashMap<String, Boolean>>(json) ?: hashMapOf()
+        GSON.fromJsonObject<HashMap<String, Boolean>>(json).getOrNull() ?: hashMapOf()
     }
 
     //忽略key

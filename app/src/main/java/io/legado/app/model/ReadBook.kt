@@ -25,7 +25,6 @@ import kotlinx.coroutines.delay
 import splitties.init.appCtx
 
 
-
 @Suppress("MemberVisibilityCanBePrivate")
 object ReadBook : CoroutineScope by MainScope() {
     var book: Book? = null
@@ -422,7 +421,9 @@ object ReadBook : CoroutineScope by MainScope() {
                 book.durChapterIndex = durChapterIndex
                 book.durChapterPos = durChapterPos
                 appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let {
-                    book.durChapterTitle = it.title
+                    book.durChapterTitle = it.getDisplayTitle(
+                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+                    )
                 }
                 appDb.bookDao.update(book)
             }

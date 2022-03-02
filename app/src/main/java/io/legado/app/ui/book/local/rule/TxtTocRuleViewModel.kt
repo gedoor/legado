@@ -42,14 +42,14 @@ class TxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
             okHttpClient.newCallResponseBody {
                 url(url)
             }.text("utf-8").let { json ->
-                GSON.fromJsonArray<TxtTocRule>(json)?.let {
+                GSON.fromJsonArray<TxtTocRule>(json).getOrThrow()?.let {
                     appDb.txtTocRuleDao.insert(*it.toTypedArray())
                 }
             }
         }.onSuccess {
             finally("导入成功")
         }.onError {
-            finally("导入失败")
+            finally("导入失败\n${it.localizedMessage}")
         }
     }
 

@@ -92,8 +92,8 @@ data class Book(
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
-    override val variableMap by lazy {
-        GSON.fromJsonObject<HashMap<String, String>>(variable) ?: HashMap()
+    override val variableMap: HashMap<String, String> by lazy {
+        GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
     override fun putVariable(key: String, value: String?) {
@@ -307,6 +307,6 @@ data class Book(
         fun readConfigToString(config: ReadConfig?): String = GSON.toJson(config)
 
         @TypeConverter
-        fun stringToReadConfig(json: String?) = GSON.fromJsonObject<ReadConfig>(json)
+        fun stringToReadConfig(json: String?) = GSON.fromJsonObject<ReadConfig>(json).getOrNull()
     }
 }

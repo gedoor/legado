@@ -49,7 +49,8 @@ class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                     close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
                     return@launch
                 }
-                val debugBean = GSON.fromJsonObject<Map<String, String>>(message.textPayload)
+                val debugBean =
+                    GSON.fromJsonObject<Map<String, String>>(message.textPayload).getOrNull()
                 if (debugBean != null) {
                     val tag = debugBean["tag"]
                     val key = debugBean["key"]
