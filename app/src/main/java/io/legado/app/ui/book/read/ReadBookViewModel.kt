@@ -227,10 +227,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (index < ReadBook.chapterSize) {
             ReadBook.clearTextChapter()
             ReadBook.callBack?.upContent()
-            if (index != ReadBook.durChapterIndex) {
-                ReadBook.durChapterIndex = index
-                ReadBook.durChapterPos = durChapterPos
-            }
+            ReadBook.durChapterIndex = index
+            ReadBook.durChapterPos = durChapterPos
             ReadBook.saveRead()
             ReadBook.loadContent(resetPageOffset = true) {
                 success?.invoke()
