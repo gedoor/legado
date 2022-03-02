@@ -25,7 +25,6 @@ import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
-import java.net.URLDecoder
 
 object BookController {
 
@@ -56,7 +55,7 @@ object BookController {
      */
     fun getCover(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
-        val coverPath = URLDecoder.decode(parameters["path"]?.firstOrNull(), "UTF-8")
+        val coverPath = parameters["path"]?.firstOrNull()
         val ftBitmap = ImageLoader.loadBitmap(appCtx, coverPath).submit()
         return try {
             returnData.setData(ftBitmap.get())
@@ -72,9 +71,9 @@ object BookController {
         val returnData = ReturnData()
         val bookUrl = parameters["url"]?.firstOrNull()
             ?: return returnData.setErrorMsg("bookUrl为空")
-        val book = appDb.bookDao.getBook(URLDecoder.decode(bookUrl, "UTF-8"))
-            ?: return returnData.setErrorMsg("bookUrl不对")
-        val src = URLDecoder.decode(parameters["path"]?.firstOrNull(), "UTF-8")
+        val book = appDb.bookDao.getBook(bookUrl)
+            ?: return returnData.setErrorMsg("bookUrl不对:${bookUrl}")
+        val src = parameters["path"]?.firstOrNull()
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) {
             val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
