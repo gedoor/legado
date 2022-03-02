@@ -83,7 +83,7 @@ object BookController {
             }
         }
         return returnData.setData(
-            BitmapUtils.decodeBitmap(vFile.absolutePath)
+            BitmapUtils.decodeBitmap(vFile.absolutePath, 640, 640)
         )
     }
 
