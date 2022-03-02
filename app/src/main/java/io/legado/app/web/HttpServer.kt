@@ -61,6 +61,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/refreshToc" -> BookController.refreshToc(parameters)
                         "/getBookContent" -> BookController.getBookContent(parameters)
                         "/cover" -> BookController.getCover(parameters)
+                        "/image" -> BookController.getImage(parameters)
                         "/getReadConfig" -> BookController.getWebReadConfig()
                         "/getRssSource" -> RssSourceController.getSource(parameters)
                         "/getRssSources" -> RssSourceController.sources
