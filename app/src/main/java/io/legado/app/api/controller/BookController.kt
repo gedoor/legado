@@ -75,6 +75,7 @@ object BookController {
         val book = appDb.bookDao.getBook(bookUrl)
             ?: return returnData.setErrorMsg("bookUrl不对:${bookUrl}")
         val src = parameters["path"]?.firstOrNull()
+            ?: return returnData.setErrorMsg("图片链接为空")
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) {
             val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
