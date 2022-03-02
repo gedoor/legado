@@ -266,6 +266,9 @@ object BookController {
         return returnData.setData(true)
     }
 
+    /**
+     *
+     */
     fun saveWebReadConfig(postData: String?): ReturnData {
         val returnData = ReturnData()
         postData?.let {
@@ -274,6 +277,9 @@ object BookController {
         return returnData.setData("")
     }
 
+    /**
+     *
+     */
     fun getWebReadConfig(): ReturnData {
         val returnData = ReturnData()
         val data = CacheManager.get("webReadConfig") ?: "{}"
