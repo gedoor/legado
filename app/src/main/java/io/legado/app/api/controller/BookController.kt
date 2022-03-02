@@ -309,18 +309,4 @@ object BookController {
         return returnData.setData(data)
     }
 
-    /**
-     * 获取图片
-     */
-    fun getImage(parameters: Map<String, List<String>>): ReturnData {
-        val returnData = ReturnData()
-        val coverPath = parameters["path"]?.firstOrNull()
-        val ftBitmap = ImageLoader.loadBitmap(appCtx, coverPath).submit()
-        return try {
-            returnData.setData(ftBitmap.get())
-        } catch (e: Exception) {
-            returnData.setData(BookCover.defaultDrawable.toBitmap())
-        }
-    }
-
 }
