@@ -38,6 +38,7 @@ class AssetsWeb(rootPath: String) {
             suffix.equals(".js", ignoreCase = true) -> "text/javascript"
             suffix.equals(".css", ignoreCase = true) -> "text/css"
             suffix.equals(".ico", ignoreCase = true) -> "image/x-icon"
+            suffix.equals(".jpg", ignoreCase = true) -> "image/jpg"
             else -> "text/html"
         }
     }
