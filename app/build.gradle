@@ -188,7 +188,7 @@ dependencies {
     implementation(project(path: ':epublib'))
 
     //JS rhino
-    implementation('com.github.gedoor:rhino-android:1.6')
+    implementation('com.github.gedoor:rhino-android:1.7')
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.9.3')
