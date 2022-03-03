@@ -198,24 +198,22 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_read, menu)
         menu.findItem(R.id.menu_change_source)?.setOnLongClickListener(menu) {
-            if (changeSourceMenu == null) {
-                changeSourceMenu = PopupMenu(this, it).apply {
-                    inflate(R.menu.book_read_change_source)
-                    this.menu.applyOpenTint(this@ReadBookActivity)
-                    setOnMenuItemClickListener(this@ReadBookActivity)
-                }
+            val changeSourceMenu = changeSourceMenu ?: PopupMenu(this, it).apply {
+                inflate(R.menu.book_read_change_source)
+                this.menu.applyOpenTint(this@ReadBookActivity)
+                setOnMenuItemClickListener(this@ReadBookActivity)
+                changeSourceMenu = this
             }
-            changeSourceMenu!!.show()
+            changeSourceMenu.show()
         }
         menu.findItem(R.id.menu_refresh)?.setOnLongClickListener(menu) {
-            if (refreshMenu == null) {
-                refreshMenu = PopupMenu(this, it).apply {
-                    inflate(R.menu.book_read_refresh)
-                    this.menu.applyOpenTint(this@ReadBookActivity)
-                    setOnMenuItemClickListener(this@ReadBookActivity)
-                }
+            val refreshMenu = refreshMenu ?: PopupMenu(this, it).apply {
+                inflate(R.menu.book_read_refresh)
+                this.menu.applyOpenTint(this@ReadBookActivity)
+                setOnMenuItemClickListener(this@ReadBookActivity)
+                refreshMenu = this
             }
-            refreshMenu!!.show()
+            refreshMenu.show()
         }
         return super.onCompatCreateOptionsMenu(menu)
     }
