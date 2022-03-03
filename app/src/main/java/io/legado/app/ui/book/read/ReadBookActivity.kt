@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
@@ -67,6 +68,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     ReadView.CallBack,
     TextActionMenu.CallBack,
     ContentTextView.CallBack,
+    PopupMenu.OnMenuItemClickListener,
     ReadMenu.CallBack,
     SearchMenu.CallBack,
     ReadAloudDialog.CallBack,
@@ -118,6 +120,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
     private var menu: Menu? = null
+    private var changeSourceMenu: PopupMenu? = null
+    private var refreshMenu: PopupMenu? = null
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
@@ -193,6 +197,26 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_read, menu)
+        menu.findItem(R.id.menu_change_source)?.setOnLongClickListener(menu) {
+            if (changeSourceMenu == null) {
+                changeSourceMenu = PopupMenu(this, it).apply {
+                    inflate(R.menu.book_read_change_source)
+                    this.menu.applyOpenTint(this@ReadBookActivity)
+                    setOnMenuItemClickListener(this@ReadBookActivity)
+                }
+            }
+            changeSourceMenu!!.show()
+        }
+        menu.findItem(R.id.menu_refresh)?.setOnLongClickListener(menu) {
+            if (refreshMenu == null) {
+                refreshMenu = PopupMenu(this, it).apply {
+                    inflate(R.menu.book_read_refresh)
+                    this.menu.applyOpenTint(this@ReadBookActivity)
+                    setOnMenuItemClickListener(this@ReadBookActivity)
+                }
+            }
+            refreshMenu!!.show()
+        }
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -238,6 +262,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_change_source,
             R.id.menu_book_change_source -> {
                 binding.readMenu.runMenuOut()
                 ReadBook.book?.let {
@@ -254,6 +279,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     ChangeChapterSourceDialog(book.name, book.author, chapter.index, chapter.title)
                 )
             }
+            R.id.menu_refresh,
             R.id.menu_refresh_dur -> {
                 if (ReadBook.bookSource == null) {
                     upContent()
@@ -350,6 +376,10 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_help -> showReadMenuHelp()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        return onCompatOptionsItemSelected(item)
     }
 
     /**

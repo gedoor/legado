@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
@@ -60,9 +61,9 @@ fun Menu.applyOpenTint(context: Context) {
     }
 }
 
-fun MenuItem.setOnLongClickListener(menu: Menu, function: () -> (Unit)) {
+fun MenuItem.setOnLongClickListener(menu: Menu, function: (view: View) -> (Unit)) {
     setActionView(R.layout.view_action_button)
     actionView.findViewById<ImageButton>(R.id.item).setImageDrawable(icon)
-    actionView.setOnLongClickListener { function.invoke(); true }
+    actionView.setOnLongClickListener { function.invoke(actionView); true }
     actionView.setOnClickListener { menu.performIdentifierAction(itemId, 0) }
 }
