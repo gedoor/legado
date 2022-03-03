@@ -290,7 +290,7 @@ object BookController {
     }
 
     /**
-     *
+     * 保存web阅读界面配置
      */
     fun saveWebReadConfig(postData: String?): ReturnData {
         val returnData = ReturnData()
@@ -301,7 +301,7 @@ object BookController {
     }
 
     /**
-     *
+     * 获取web阅读界面配置
      */
     fun getWebReadConfig(): ReturnData {
         val returnData = ReturnData()
