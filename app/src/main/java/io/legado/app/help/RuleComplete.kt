@@ -4,13 +4,13 @@ package io.legado.app.help
 object RuleComplete {
     // 需要补全
     private val needComplete =Regex(
-    """(?!=(@|/|^)(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\))?)(?<seq>\&{2}|%%|\|{2}|$)""")
+    """(?<!(@|/|^|[|%&]{2})(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\))?)(?<seq>\&{2}|%%|\|{2}|$)""")
 
     // 不能补全 存在js/json/{{xx}}的复杂情况
     private val notComplete = Regex("""^:|^##|\{\{|@js:|<js>|@Json:|\$\.""")
 
     // 修正从图片获取信息
-    private val fixImgInfo = Regex("""(?<=(^|tag\.|[\+/@>~| &]))img(?<at>\[@.+\]|\.[-\w]+)?[@/]+text(\(\))?(?<seq>\&{2}|%%|\|{2}|$)""")
+    private val fixImgInfo = Regex("""(?<=(^|tag\.|[\+/@>~| &]))img(?<at>\[@?.+\]|\.[-\w]+)?[@/]+text(\(\))?(?<seq>\&{2}|%%|\|{2}|$)""")
 
     private val isXpath= Regex("^//|^@Xpath:")
 
