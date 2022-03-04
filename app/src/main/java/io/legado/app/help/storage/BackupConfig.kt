@@ -7,7 +7,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import splitties.init.appCtx
 
-abstract class BackupRestore {
+object BackupConfig {
 
     private val ignoreConfigPath = FileUtils.getPath(appCtx.filesDir, "restoreIgnore.json")
     val ignoreConfig: HashMap<String, Boolean> by lazy {
@@ -16,7 +16,7 @@ abstract class BackupRestore {
         GSON.fromJsonObject<HashMap<String, Boolean>>(json).getOrNull() ?: hashMapOf()
     }
 
-    //忽略key
+    //配置忽略key
     val ignoreKeys = arrayOf(
         "readConfig",
         PreferKey.themeMode,
@@ -25,7 +25,7 @@ abstract class BackupRestore {
         PreferKey.threadCount
     )
 
-    //忽略标题
+    //配置忽略标题
     val ignoreTitle = arrayOf(
         appCtx.getString(R.string.read_config),
         appCtx.getString(R.string.theme_mode),
@@ -52,7 +52,7 @@ abstract class BackupRestore {
     )
 
 
-    protected fun keyIsNotIgnore(key: String): Boolean {
+    fun keyIsNotIgnore(key: String): Boolean {
         return when {
             ignorePrefKeys.contains(key) -> false
             readPrefKeys.contains(key) && ignoreReadConfig -> false
@@ -64,7 +64,7 @@ abstract class BackupRestore {
         }
     }
 
-    protected val ignoreReadConfig: Boolean
+    val ignoreReadConfig: Boolean
         get() = ignoreConfig["readConfig"] == true
     private val ignoreThemeMode: Boolean
         get() = ignoreConfig[PreferKey.themeMode] == true

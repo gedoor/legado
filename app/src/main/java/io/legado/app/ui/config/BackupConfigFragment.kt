@@ -20,10 +20,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.AppConfig
 import io.legado.app.help.LocalConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.storage.AppWebDav
-import io.legado.app.help.storage.Backup
-import io.legado.app.help.storage.ImportOldData
-import io.legado.app.help.storage.Restore
+import io.legado.app.help.storage.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
@@ -224,15 +221,15 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
 
     private fun backupIgnore() {
-        val checkedItems = BooleanArray(Backup.ignoreKeys.size) {
-            Backup.ignoreConfig[Backup.ignoreKeys[it]] ?: false
+        val checkedItems = BooleanArray(BackupConfig.ignoreKeys.size) {
+            BackupConfig.ignoreConfig[BackupConfig.ignoreKeys[it]] ?: false
         }
         alert(R.string.restore_ignore) {
-            multiChoiceItems(Backup.ignoreTitle, checkedItems) { _, which, isChecked ->
-                Backup.ignoreConfig[Backup.ignoreKeys[which]] = isChecked
+            multiChoiceItems(BackupConfig.ignoreTitle, checkedItems) { _, which, isChecked ->
+                BackupConfig.ignoreConfig[BackupConfig.ignoreKeys[which]] = isChecked
             }
             onDismiss {
-                Backup.saveIgnoreConfig()
+                BackupConfig.saveIgnoreConfig()
             }
         }
     }
