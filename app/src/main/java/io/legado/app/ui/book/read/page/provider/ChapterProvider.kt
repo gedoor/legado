@@ -204,11 +204,12 @@ object ChapterProvider {
         book: Book,
         chapter: BookChapter,
         src: String,
-        absStartX: Int,
+        x: Int,
         y: Float,
         textPages: ArrayList<TextPage>,
         imageStyle: String?,
     ): Float {
+        val absStartX = x - paddingLeft
         var durY = y
         ImageProvider.getImage(book, chapter.index, src, ReadBook.bookSource)?.let {
             if (durY > visibleHeight) {
