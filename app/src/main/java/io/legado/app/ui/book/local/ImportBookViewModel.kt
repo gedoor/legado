@@ -14,6 +14,8 @@ import java.io.File
 
 class ImportBookViewModel(application: Application) : BaseViewModel(application) {
 
+    var sort = 0
+
     fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
         execute {
             uriList.forEach {

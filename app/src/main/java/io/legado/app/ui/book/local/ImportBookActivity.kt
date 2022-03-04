@@ -70,11 +70,30 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_sort_name)?.isChecked = viewModel.sort == 0
+        menu.findItem(R.id.menu_sort_size)?.isChecked = viewModel.sort == 1
+        menu.findItem(R.id.menu_sort_time)?.isChecked = viewModel.sort == 2
+        return super.onMenuOpened(featureId, menu)
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_select_folder -> selectFolder.launch()
             R.id.menu_scan_folder -> scanFolder()
             R.id.menu_import_file_name -> alertImportFileName()
+            R.id.menu_sort_name -> {
+                viewModel.sort = 0
+                upPath()
+            }
+            R.id.menu_sort_size -> {
+                viewModel.sort = 1
+                upPath()
+            }
+            R.id.menu_sort_time -> {
+                viewModel.sort = 2
+                upPath()
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -205,7 +224,28 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
                         else -> item.name.matches(bookFileRegex)
                     }
                 }
-                docList.sortWith(compareBy({ !it.isDir }, { it.name }))
+                when (viewModel.sort) {
+                    2 -> docList.sortWith(
+                        compareBy(
+                            { !it.isDir },
+                            { it.date },
+                            { it.name }
+                        )
+                    )
+                    1 -> docList.sortWith(
+                        compareBy(
+                            { !it.isDir },
+                            { it.size },
+                            { it.name }
+                        )
+                    )
+                    else -> docList.sortWith(
+                        compareBy(
+                            { !it.isDir },
+                            { it.name }
+                        )
+                    )
+                }
                 withContext(Main) {
                     adapter.setItems(docList)
                 }
