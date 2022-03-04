@@ -22,8 +22,7 @@ abstract class BackupRestore {
         PreferKey.themeMode,
         PreferKey.bookshelfLayout,
         PreferKey.showRss,
-        PreferKey.threadCount,
-        PreferKey.defaultBookTreeUri
+        PreferKey.threadCount
     )
 
     //忽略标题
@@ -35,11 +34,12 @@ abstract class BackupRestore {
         appCtx.getString(R.string.thread_count)
     )
 
-    //默认忽略keys
+    //自动忽略keys
     private val ignorePrefKeys = arrayOf(
-        PreferKey.themeMode,
         PreferKey.defaultCover,
-        PreferKey.defaultCoverDark
+        PreferKey.defaultCoverDark,
+        PreferKey.backupPath,
+        PreferKey.defaultBookTreeUri
     )
 
     //阅读配置
