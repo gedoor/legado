@@ -7,10 +7,10 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.AppConfig
+import io.legado.app.help.ReplaceAnalyzer
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import io.legado.app.help.storage.OldReplace
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.splitNotBlank
 
@@ -87,11 +87,11 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
                 okHttpClient.newCallResponseBody {
                     url(text)
                 }.text("utf-8").let {
-                    val rules = OldReplace.jsonToReplaceRules(it)
+                    val rules = ReplaceAnalyzer.jsonToReplaceRules(it)
                     allRules.addAll(rules)
                 }
             } else {
-                val rules = OldReplace.jsonToReplaceRules(text)
+                val rules = ReplaceAnalyzer.jsonToReplaceRules(text)
                 allRules.addAll(rules)
             }
         }.onError {

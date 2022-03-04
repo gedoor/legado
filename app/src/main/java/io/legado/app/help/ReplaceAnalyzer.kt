@@ -1,9 +1,9 @@
-package io.legado.app.help.storage
+package io.legado.app.help
 
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.*
 
-object OldReplace {
+object ReplaceAnalyzer {
 
     fun jsonToReplaceRules(json: String): List<ReplaceRule> {
         val replaceRules = mutableListOf<ReplaceRule>()
