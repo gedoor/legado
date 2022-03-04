@@ -20,6 +20,6 @@ jobs:
     - uses: actions/stale@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        stale-issue-message: '由于长期没有状态更新，该问题自动关闭。如有需要可重新打开。'
+        stale-issue-message: '由于长期没有状态更新，该问题将于5天后自动关闭。如有需要可重新打开。'
         days-before-stale: 30
         days-before-close: 5
