@@ -3,7 +3,7 @@ package io.legado.app.ui.association
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.R
-import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -44,7 +44,7 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
 
     fun importReadConfig(bytes: ByteArray, finally: (title: String, msg: String) -> Unit) {
         execute {
-            val config = ReadBookConfig.import(bytes)
+            val config = ReadBookConfig.import(bytes).getOrThrow()
             ReadBookConfig.configList.forEachIndexed { index, c ->
                 if (c.name == config.name) {
                     ReadBookConfig.configList[index] = config

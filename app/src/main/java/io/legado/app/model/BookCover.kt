@@ -8,8 +8,8 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
-import io.legado.app.help.AppConfig
 import io.legado.app.help.BlurTransformation
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.getPrefBoolean

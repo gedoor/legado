@@ -8,10 +8,10 @@ import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
-import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.CacheManager
 import io.legado.app.help.ContentProcessor
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.BookCover

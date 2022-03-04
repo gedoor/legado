@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.AnimRes
-import io.legado.app.help.AppConfig
+import io.legado.app.help.config.AppConfig
 
 object AnimationUtilsSupport {
     fun loadAnimation(context: Context, @AnimRes id: Int): Animation {

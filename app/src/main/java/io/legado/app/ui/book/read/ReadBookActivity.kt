@@ -24,8 +24,8 @@ import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentData
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.ReadTipConfig
+import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.help.storage.Backup

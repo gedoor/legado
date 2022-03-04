@@ -3,7 +3,7 @@ package io.legado.app.ui.book.read.page.entities
 import android.text.Layout
 import android.text.StaticLayout
 import io.legado.app.R
-import io.legado.app.help.ReadBookConfig
+import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.textHeight

@@ -1,7 +1,7 @@
 package io.legado.app.help.http
 
 import io.legado.app.constant.AppConst
-import io.legado.app.help.AppConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.GSON
 import io.legado.app.utils.Utf8BomUtils

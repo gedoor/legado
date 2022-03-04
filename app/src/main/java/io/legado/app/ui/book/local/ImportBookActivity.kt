@@ -15,7 +15,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.AppConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat

@@ -12,9 +12,9 @@ import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.AppConfig
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.*
 import io.legado.app.model.ConcurrentException
 import io.legado.app.utils.*

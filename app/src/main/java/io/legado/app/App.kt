@@ -11,10 +11,10 @@ import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
-import io.legado.app.help.AppConfig
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.LifecycleHelp
-import io.legado.app.help.ThemeConfig.applyDayNight
+import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.ThemeConfig.applyDayNight
 import io.legado.app.help.http.cronet.CronetLoader
 import io.legado.app.utils.defaultSharedPreferences
 import splitties.systemservices.notificationManager

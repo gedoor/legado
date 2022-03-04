@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.config
 
 import android.content.Context
 import android.content.SharedPreferences

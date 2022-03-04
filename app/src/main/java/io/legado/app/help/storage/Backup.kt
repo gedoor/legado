@@ -8,8 +8,8 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.DefaultData
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.ThemeConfig
+import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO

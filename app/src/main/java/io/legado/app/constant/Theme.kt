@@ -1,6 +1,6 @@
 package io.legado.app.constant
 
-import io.legado.app.help.AppConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.ColorUtils
 
 enum class Theme {

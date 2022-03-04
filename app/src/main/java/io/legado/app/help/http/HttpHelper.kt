@@ -1,6 +1,6 @@
 package io.legado.app.help.http
 
-import io.legado.app.help.AppConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.cronet.CronetInterceptor
 import io.legado.app.help.http.cronet.CronetLoader
 import okhttp3.ConnectionSpec

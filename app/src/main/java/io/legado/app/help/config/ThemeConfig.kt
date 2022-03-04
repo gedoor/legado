@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.config
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
+import io.legado.app.help.DefaultData
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.BookCover
 import io.legado.app.utils.*

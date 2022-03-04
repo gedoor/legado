@@ -8,8 +8,8 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.databinding.DialogTipConfigBinding
-import io.legado.app.help.ReadBookConfig
-import io.legado.app.help.ReadTipConfig
+import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding

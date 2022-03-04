@@ -1,7 +1,7 @@
 package io.legado.app.help.http.cronet
 
 import io.legado.app.constant.AppLog
-import io.legado.app.help.AppConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.DebugLog
 import okhttp3.Headers
 import okhttp3.MediaType

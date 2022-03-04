@@ -16,9 +16,9 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.AppConfig
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.*
@@ -28,7 +28,6 @@ import me.ag2s.epublib.domain.*
 import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.util.ResourceUtil
 import splitties.init.appCtx
-
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream

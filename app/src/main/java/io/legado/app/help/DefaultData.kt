@@ -4,6 +4,8 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.help.config.ThemeConfig
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import splitties.init.appCtx

@@ -6,8 +6,8 @@ import android.content.Intent
 import android.view.KeyEvent
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
-import io.legado.app.help.AppConfig
 import io.legado.app.help.LifecycleHelp
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook

@@ -7,7 +7,7 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
-import io.legado.app.help.AppConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.CacheBook
 import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.utils.activityPendingIntent
