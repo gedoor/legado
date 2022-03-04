@@ -34,15 +34,29 @@ object RuleComplete {
         if (rules.isNullOrEmpty()||rules.contains(notComplete) || preRule?.contains(notComplete) ?: false){
             return rules
         }
-        // 分离正则
-        val regexSplit=rules.split("##".toRegex(),2)
-        val cleanedRule=regexSplit[0]
-        val regexRule=if (regexSplit.size>1) "##"+regexSplit[1] else ""
 
+        /** 尾部##分割的正则或由,分割的参数 */
+        val tailStr: String
+        /** 分割字符 */
+        val splitStr:String
+        /**  用于获取文字时添加的规则 */
         val textRule: String
+        /**  用于获取链接时添加的规则 */
         val linkRule: String
+        /**  用于获取图片时添加的规则 */
         val imgRule: String
+        /**  用于获取图片alt属性时添加的规则 */
         val imgText: String
+
+        // 分离尾部规则
+        val regexSplit=rules.split("##|,".toRegex(),2)
+        val cleanedRule=regexSplit[0]
+        if (regexSplit.size>1){
+            splitStr="##|,".toRegex().find(rules)?.value ?: ""
+            tailStr = splitStr + regexSplit[1]
+        }else{
+            tailStr = ""
+        }
         if (cleanedRule.contains(isXpath)){
             textRule = "//text()\${seq}"
             linkRule = "//@href\${seq}"
@@ -55,9 +69,9 @@ object RuleComplete {
             imgText = "img\${at}@alt\${seq}"
         }
         return when (type) {
-            1 -> needComplete.replace(cleanedRule, textRule).replace(fixImgInfo, imgText) + regexRule
-            2 -> needComplete.replace(cleanedRule, linkRule) + regexRule
-            3 -> needComplete.replace(cleanedRule, imgRule) + regexRule
+            1 -> needComplete.replace(cleanedRule, textRule).replace(fixImgInfo, imgText) + tailStr
+            2 -> needComplete.replace(cleanedRule, linkRule) + tailStr
+            3 -> needComplete.replace(cleanedRule, imgRule) + tailStr
             else -> rules
         }
     }
