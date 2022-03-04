@@ -11,6 +11,36 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_sort"
+        android:title="@string/sort"
+        android:icon="@drawable/ic_sort"
+        app:showAsAction="always">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_sort_name"
+                android:checkable="true"
+                android:title="@string/sort_by_name"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_sort_size"
+                android:checkable="true"
+                android:title="@string/sort_by_size"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menu_sort_time"
+                android:checkable="true"
+                android:title="@string/sort_by_time"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
+
+    <item
         android:id="@+id/menu_scan_folder"
         android:title="@string/scan_folder"
         app:showAsAction="never" />
@@ -19,27 +49,5 @@
         android:id="@+id/menu_import_file_name"
         android:title="@string/import_file_name"
         app:showAsAction="never" />
-
-    <group android:id="@+id/menu_group_sort">
-
-        <item
-            android:id="@+id/menu_sort_name"
-            android:checkable="true"
-            android:title="@string/sort_by_name"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/menu_sort_size"
-            android:checkable="true"
-            android:title="@string/sort_by_size"
-            app:showAsAction="never" />
-
-        <item
-            android:id="@+id/menu_sort_time"
-            android:checkable="true"
-            android:title="@string/sort_by_time"
-            app:showAsAction="never" />
-
-    </group>
 
 </menu>
