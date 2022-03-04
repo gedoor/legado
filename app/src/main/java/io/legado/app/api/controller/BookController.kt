@@ -305,7 +305,8 @@ object BookController {
      */
     fun getWebReadConfig(): ReturnData {
         val returnData = ReturnData()
-        val data = CacheManager.get("webReadConfig") ?: "{}"
+        val data = CacheManager.get("webReadConfig")
+            ?: return returnData.setErrorMsg("没有配置")
         return returnData.setData(data)
     }
 
