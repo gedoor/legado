@@ -296,7 +296,7 @@ object BookController {
         val returnData = ReturnData()
         postData?.let {
             CacheManager.put("webReadConfig", postData)
-        }
+        } ?: CacheManager.delete("webReadConfig")
         return returnData.setData("")
     }
 
