@@ -66,6 +66,7 @@ abstract class BaseActivity<VB : ViewBinding>(
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.disableAutoFill()
         initTheme()
+        upBackgroundImage()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setupSystemBar()
@@ -121,7 +122,7 @@ abstract class BaseActivity<VB : ViewBinding>(
 
     open fun onCompatOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)
 
-    private fun initTheme() {
+    open fun initTheme() {
         when (theme) {
             Theme.Transparent -> setTheme(R.style.AppTheme_Transparent)
             Theme.Dark -> {
@@ -141,6 +142,9 @@ abstract class BaseActivity<VB : ViewBinding>(
                 window.decorView.applyBackgroundTint(backgroundColor)
             }
         }
+    }
+
+    open fun upBackgroundImage() {
         if (imageBg) {
             try {
                 ThemeConfig.getBgImage(this, windowSize)?.let {

@@ -69,6 +69,14 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
         binding.root.postDelayed({ startMainActivity() }, 500)
     }
 
+    override fun upBackgroundImage() {
+        if (getPrefBoolean(PreferKey.customWelcome)) {
+            super.upBackgroundImage()
+        } else {
+            super.upBackgroundImage()
+        }
+    }
+
     private fun startMainActivity() {
         startActivity<MainActivity>()
         if (getPrefBoolean(PreferKey.defaultToRead)) {
