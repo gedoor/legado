@@ -107,8 +107,8 @@ class WelcomeConfigFragment : BasePreferenceFragment(),
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
-            PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> preference.summary = if (value.isNullOrBlank()) {
+            PreferKey.welcomeImage,
+            PreferKey.welcomeImageDark -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)
             } else {
                 value
@@ -123,7 +123,6 @@ class WelcomeConfigFragment : BasePreferenceFragment(),
             file = FileUtils.createFileIfNotExist(file, "covers", name)
             file.writeBytes(bytes)
             putPrefString(preferenceKey, file.absolutePath)
-            BookCover.upDefaultCover()
         }
     }
 
