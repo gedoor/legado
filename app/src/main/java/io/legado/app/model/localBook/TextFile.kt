@@ -114,10 +114,12 @@ class TextFile(private val book: Book) {
                 ).also { length = it } > 0
             ) {
                 var end = bufferStart + length
-                for (i in bufferStart + length - 1 downTo 0) {
-                    if (buffer[i] == blank) {
-                        end = i
-                        break
+                if (end == bufferSize) {
+                    for (i in bufferStart + length - 1 downTo 0) {
+                        if (buffer[i] == blank) {
+                            end = i
+                            break
+                        }
                     }
                 }
                 //将数据转换成String, 不能超过length
