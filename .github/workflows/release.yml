@@ -32,6 +32,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-
 
+      - name: Set github-action[bot] info
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Download Lastest Cronet jar
+        run: |
+          echo "获取cronet最新版本"
+          source $GITHUB_WORKSPACE/.github/scripts/cronet.sh
+          git add *cronet*jar
+          git add *cronet.json
+          git add gradle.properties
+          git commit -m "bump cronet version: $lastest_cronet_version"
+          git push origin master
+
       - name: Release Apk Sign
         run: |
           echo "给apk增加签名"
@@ -47,21 +62,6 @@ jobs:
           VERSION=$(date -d "8 hour" -u +3.%y.%m%d%H)
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
           sed "/def version/c def version = \"$VERSION\"" $GITHUB_WORKSPACE/app/build.gradle  -i
-
-      - name: Set github-action[bot] info
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Download Lastest Cronet jar
-        run: |
-          echo "获取cronet最新版本"
-          source $GITHUB_WORKSPACE/.github/scripts/cronet.sh
-          git add *cronet*jar
-          git add *cronet.json
-          git add gradle.properties
-          git commit -m "bump cronet version: $lastest_cronet_version"
-          git push origin master
 
       - name: Build With Gradle
         run: |
