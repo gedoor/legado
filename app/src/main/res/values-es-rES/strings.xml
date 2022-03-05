@@ -945,5 +945,6 @@
     <string name="enable_record">开启记录</string>
     <string name="copy_all">拷贝所有</string>
     <string name="auto_complete">自动补全</string>
+    <string name="sort_by_size">大小排序</string>
     <!-- string end -->
 </resources>
