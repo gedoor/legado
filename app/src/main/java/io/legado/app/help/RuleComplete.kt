@@ -10,7 +10,7 @@ object RuleComplete {
     private val notComplete = Regex("""^:|^##|\{\{|@js:|<js>|@Json:|\$\.""")
 
     // 修正从图片获取信息
-    private val fixImgInfo = Regex("""(?<=(^|tag\.|[\+/@>~| &]))img(?<at>\[@?.+\]|\.[-\w]+)?[@/]+text(\(\))?(?<seq>\&{2}|%%|\|{2}|$)""")
+    private val fixImgInfo = Regex("""(?<=(^|tag\.|[\+/@>~| &]))img(?<at>(\[@?.+\]|\.[-\w]+)?)[@/]+text(\(\))?(?<seq>\&{2}|%%|\|{2}|$)""")
 
     private val isXpath= Regex("^//|^@Xpath:")
 
