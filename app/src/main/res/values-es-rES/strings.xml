@@ -946,5 +946,11 @@
     <string name="copy_all">拷贝所有</string>
     <string name="auto_complete">自动补全</string>
     <string name="sort_by_size">大小排序</string>
+    <string name="welcome_style">启动界面样式</string>
+    <string name="welcome_style_summary">启动界面图片和是否显示文字等</string>
+    <string name="show_welcome_text">显示文字</string>
+    <string name="welcome_text">阅读|享受美好时光</string>
+    <string name="custom_welcome">自定义欢迎页</string>
+    <string name="custom_welcome_summary">是否使用自定义欢迎页</string>
     <!-- string end -->
 </resources>

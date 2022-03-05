@@ -12,6 +12,11 @@
         app:iconSpaceReserved="false"
         app:icons="@array/icons" />
 
+    <io.legado.app.ui.widget.prefs.Preference
+        android:key="welcomeStyle"
+        android:title="@string/welcome_style"
+        android:summary="@string/welcome_style_summary" />
+
     <io.legado.app.ui.widget.prefs.SwitchPreference
         android:defaultValue="true"
         android:key="transparentStatusBar"
@@ -27,21 +32,18 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:defaultValue="true"
         android:key="barElevation"
         android:summary="@string/bar_elevation_s"
         android:title="@string/bar_elevation"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:defaultValue="true"
         android:key="fontScale"
         android:summary="@string/font_scale_summary"
         android:title="@string/font_scale"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.ui.widget.prefs.Preference
-        android:defaultValue="false"
         android:key="coverConfig"
         android:title="@string/cover_config"
         android:summary="@string/cover_config_summary"

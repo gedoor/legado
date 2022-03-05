@@ -12,31 +12,26 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.BookCover
-import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 
-class CoverConfigFragment : BasePreferenceFragment(),
+class WelcomeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val requestCodeCover = 111
-    private val requestCodeCoverDark = 112
+    private val requestWelcomeImage = 221
+    private val requestWelcomeImageDark = 222
     private val selectImage = registerForActivityResult(SelectImageContract()) {
         it.uri?.let { uri ->
             when (it.requestCode) {
-                requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)
-                requestCodeCoverDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
+                requestWelcomeImage -> setCoverFromUri(PreferKey.defaultCover, uri)
+                requestWelcomeImageDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
             }
         }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        addPreferencesFromResource(R.xml.pref_config_cover)
-        upPreferenceSummary(PreferKey.defaultCover, getPrefString(PreferKey.defaultCover))
-        upPreferenceSummary(PreferKey.defaultCoverDark, getPrefString(PreferKey.defaultCoverDark))
-        findPreference<SwitchPreference>(PreferKey.coverShowAuthor)
-            ?.isEnabled = getPrefBoolean(PreferKey.coverShowName)
-        findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
-            ?.isEnabled = getPrefBoolean(PreferKey.coverShowNameN)
+        addPreferencesFromResource(R.xml.pref_config_welcome)
+        upPreferenceSummary(PreferKey.welcomeImage, getPrefString(PreferKey.welcomeImage))
+        upPreferenceSummary(PreferKey.welcomeImageDark, getPrefString(PreferKey.welcomeImageDark))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,23 +54,9 @@ class CoverConfigFragment : BasePreferenceFragment(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         sharedPreferences ?: return
         when (key) {
-            PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> {
+            PreferKey.welcomeImage,
+            PreferKey.welcomeImageDark -> {
                 upPreferenceSummary(key, getPrefString(key))
-            }
-            PreferKey.coverShowName -> {
-                findPreference<SwitchPreference>(PreferKey.coverShowAuthor)
-                    ?.isEnabled = getPrefBoolean(key)
-                BookCover.upDefaultCover()
-            }
-            PreferKey.coverShowNameN -> {
-                findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
-                    ?.isEnabled = getPrefBoolean(key)
-                BookCover.upDefaultCover()
-            }
-            PreferKey.coverShowAuthor,
-            PreferKey.coverShowAuthorN -> {
-                BookCover.upDefaultCover()
             }
         }
     }
@@ -83,9 +64,9 @@ class CoverConfigFragment : BasePreferenceFragment(),
     @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            PreferKey.defaultCover ->
+            PreferKey.welcomeImage ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCover)
+                    selectImage.launch(requestWelcomeImage)
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -97,13 +78,13 @@ class CoverConfigFragment : BasePreferenceFragment(),
                             removePref(preference.key)
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestCodeCover)
+                            selectImage.launch(requestWelcomeImage)
                         }
                     }
                 }
-            PreferKey.defaultCoverDark ->
+            PreferKey.welcomeImageDark ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCoverDark)
+                    selectImage.launch(requestWelcomeImageDark)
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -115,7 +96,7 @@ class CoverConfigFragment : BasePreferenceFragment(),
                             removePref(preference.key)
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestCodeCoverDark)
+                            selectImage.launch(requestWelcomeImageDark)
                         }
                     }
                 }
