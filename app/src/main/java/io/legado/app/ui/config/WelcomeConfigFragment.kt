@@ -36,7 +36,7 @@ class WelcomeConfigFragment : BasePreferenceFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.setTitle(R.string.cover_config)
+        activity?.setTitle(R.string.welcome_style)
         listView.setEdgeEffectColor(primaryColor)
         setHasOptionsMenu(true)
     }

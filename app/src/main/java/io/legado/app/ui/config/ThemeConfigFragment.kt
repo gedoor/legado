@@ -179,7 +179,7 @@ class ThemeConfigFragment : BasePreferenceFragment(),
             "coverConfig" -> (activity as? ConfigActivity)
                 ?.replaceFragment<CoverConfigFragment>(ConfigTag.COVER_CONFIG)
             "welcomeStyle" -> (activity as? ConfigActivity)
-                ?.replaceFragment<CoverConfigFragment>(ConfigTag.WELCOME_CONFIG)
+                ?.replaceFragment<WelcomeConfigFragment>(ConfigTag.WELCOME_CONFIG)
         }
         return super.onPreferenceTreeClick(preference)
     }

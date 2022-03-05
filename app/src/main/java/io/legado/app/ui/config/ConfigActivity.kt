@@ -46,7 +46,9 @@ class ConfigActivity : BaseActivity<ActivityConfigBinding>() {
     }
 
     override fun finish() {
-        if (supportFragmentManager.findFragmentByTag(ConfigTag.COVER_CONFIG) != null) {
+        if (supportFragmentManager.findFragmentByTag(ConfigTag.COVER_CONFIG) != null
+            || supportFragmentManager.findFragmentByTag(ConfigTag.WELCOME_CONFIG) != null
+        ) {
             replaceFragment<ThemeConfigFragment>(ConfigTag.THEME_CONFIG)
         } else {
             super.finish()
