@@ -10,7 +10,7 @@ object RuleComplete {
     private val notComplete = Regex("""^:|^##|\{\{|@js:|<js>|@Json:|\$\.""")
 
     // 修正从图片获取信息
-    private val fixImgInfo = Regex("""(?<=(^|tag\.|[\+/@>~| &]))img(?<at>\[@?.+\]|\.[-\w]+)?[@/]+text(\(\))?(?<seq>\&{2}|%%|\|{2}|$)""")
+    private val fixImgInfo = Regex("""(?<=(^|tag\.|[\+/@>~| &]))img(?<at>(\[@?.+\]|\.[-\w]+)?)[@/]+text(\(\))?(?<seq>\&{2}|%%|\|{2}|$)""")
 
     private val isXpath= Regex("^//|^@Xpath:")
 
@@ -49,10 +49,10 @@ object RuleComplete {
         val imgText: String
 
         // 分离尾部规则
-        val regexSplit=rules.split("##|,".toRegex(),2)
+        val regexSplit=rules.split("""##|,\{""".toRegex(),2)
         val cleanedRule=regexSplit[0]
         if (regexSplit.size>1){
-            splitStr="##|,".toRegex().find(rules)?.value ?: ""
+            splitStr="""##|,\{""".toRegex().find(rules)?.value ?: ""
             tailStr = splitStr + regexSplit[1]
         }else{
             tailStr = ""
