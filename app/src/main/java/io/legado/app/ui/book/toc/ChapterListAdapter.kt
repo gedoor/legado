@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
+import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemChapterListBinding
@@ -22,21 +22,23 @@ import kotlinx.coroutines.isActive
 import java.util.concurrent.ConcurrentHashMap
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
-    RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
+    DiffRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
     val displayTileMap = ConcurrentHashMap<Int, String>()
-    val diffCallBack = object : DiffUtil.ItemCallback<BookChapter>() {
 
-        override fun areItemsTheSame(
-            oldItem: BookChapter,
-            newItem: BookChapter
-        ): Boolean {
-            return oldItem.index == newItem.index
-        }
+    override val diffItemCallback: DiffUtil.ItemCallback<BookChapter>
+        get() = object : DiffUtil.ItemCallback<BookChapter>() {
 
-        override fun areContentsTheSame(
-            oldItem: BookChapter,
+            override fun areItemsTheSame(
+                oldItem: BookChapter,
+                newItem: BookChapter
+            ): Boolean {
+                return oldItem.index == newItem.index
+            }
+
+            override fun areContentsTheSame(
+                oldItem: BookChapter,
             newItem: BookChapter
         ): Boolean {
             return oldItem.bookUrl == newItem.bookUrl
@@ -48,7 +50,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 && oldItem.isVolume == newItem.isVolume
         }
 
-    }
+        }
 
     private val replaceRules
         get() = callback.book?.let {
@@ -57,6 +59,11 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     private val useReplace
         get() = AppConfig.tocUiUseReplace && callback.book?.getUseReplaceRule() == true
     private var upDisplayTileJob: Coroutine<*>? = null
+
+    override fun onCurrentListChanged() {
+        super.onCurrentListChanged()
+        upDisplayTile()
+    }
 
     fun upDisplayTile() {
         upDisplayTileJob?.cancel()
@@ -151,4 +158,5 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
     }
+
 }

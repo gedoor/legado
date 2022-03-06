@@ -109,12 +109,9 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 searchKey.isNullOrBlank() -> appDb.bookChapterDao.flowByBook(viewModel.bookUrl)
                 else -> appDb.bookChapterDao.flowSearch(viewModel.bookUrl, searchKey)
             }.conflate().collect {
-                if (!(searchKey.isNullOrBlank() && it.isEmpty())) {
-                    adapter.setItems(it, adapter.diffCallBack)
-                    adapter.upDisplayTile()
-                    if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
-                        mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
-                    }
+                adapter.setItems(it)
+                if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
+                    mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
                 }
                 delay(100)
             }
