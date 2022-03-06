@@ -1,4 +1,4 @@
-name: Build and Release
+name: Release Build
 
 on:
 #  push:
@@ -36,17 +36,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Download Lastest Cronet jar
-        run: |
-          echo "获取cronet最新版本"
-          source .github/scripts/cronet.sh
-          git add *cronet*jar
-          git add *cronet.json
-          git add gradle.properties
-          git add *updateLog.md
-          git commit -m "bump cronet version: $lastest_cronet_version" -m "changes in the [Git log](https://chromium.googlesource.com/chromium/src/+log/$current_cronet_version..$lastest_cronet_version)"
-          git push origin master
 
       - name: Release Apk Sign
         run: |

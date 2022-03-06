@@ -49,3 +49,5 @@ else
     chmod +x gradlew
     ./gradlew app:downloadCronet
 fi
+
+rm -f cronet lastest_cronet_version stable_page
