@@ -63,6 +63,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     override fun onCurrentListChanged() {
         super.onCurrentListChanged()
         upDisplayTile()
+        callback.onListChanged()
     }
 
     fun upDisplayTile() {
@@ -157,6 +158,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         val isLocalBook: Boolean
         fun openChapter(bookChapter: BookChapter)
         fun durChapterIndex(): Int
+        fun onListChanged()
     }
 
 }

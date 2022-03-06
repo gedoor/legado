@@ -22,6 +22,7 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -111,10 +112,22 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 }
             }.let {
                 adapter.setItems(it)
-                if (searchKey.isNullOrBlank() && mLayoutManager.findFirstVisibleItemPosition() < 0) {
-                    mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
+            }
+        }
+    }
+
+    override fun onListChanged() {
+        launch {
+            var scrollPos = 0
+            withContext(Default) {
+                adapter.getItems().forEachIndexed { index, bookChapter ->
+                    if (bookChapter.index >= durChapterIndex) {
+                        return@withContext
+                    }
+                    scrollPos = index
                 }
             }
+            mLayoutManager.scrollToPositionWithOffset(scrollPos, 0)
         }
     }
 
