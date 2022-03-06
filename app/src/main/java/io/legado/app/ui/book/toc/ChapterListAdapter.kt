@@ -39,16 +39,16 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
             override fun areContentsTheSame(
                 oldItem: BookChapter,
-            newItem: BookChapter
-        ): Boolean {
-            return oldItem.bookUrl == newItem.bookUrl
-                && oldItem.url == newItem.url
-                && oldItem.isVip == newItem.isVip
-                && oldItem.isPay == newItem.isPay
-                && oldItem.title == newItem.title
-                && oldItem.tag == newItem.tag
-                && oldItem.isVolume == newItem.isVolume
-        }
+                newItem: BookChapter
+            ): Boolean {
+                return oldItem.bookUrl == newItem.bookUrl
+                    && oldItem.url == newItem.url
+                    && oldItem.isVip == newItem.isVip
+                    && oldItem.isPay == newItem.isPay
+                    && oldItem.title == newItem.title
+                    && oldItem.tag == newItem.tag
+                    && oldItem.isVolume == newItem.isVolume
+            }
 
         }
 
