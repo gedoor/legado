@@ -25,7 +25,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     DiffRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
-    val displayTileMap = ConcurrentHashMap<Int, String>()
+    private val displayTitleMap = ConcurrentHashMap<Int, String>()
 
     override val diffItemCallback: DiffUtil.ItemCallback<BookChapter>
         get() = object : DiffUtil.ItemCallback<BookChapter>() {
@@ -62,11 +62,16 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     override fun onCurrentListChanged() {
         super.onCurrentListChanged()
-        upDisplayTile()
+        upDisplayTitle()
         callback.onListChanged()
     }
 
-    fun upDisplayTile() {
+    fun clearDisplayTitle() {
+        upDisplayTileJob?.cancel()
+        displayTitleMap.clear()
+    }
+
+    fun upDisplayTitle() {
         upDisplayTileJob?.cancel()
         upDisplayTileJob = Coroutine.async(callback.scope) {
             val replaceRules = replaceRules
@@ -75,8 +80,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 if (!isActive) {
                     return@async
                 }
-                if (displayTileMap[it.index] == null) {
-                    displayTileMap[it.index] = it.getDisplayTitle(replaceRules, useReplace)
+                if (displayTitleMap[it.index] == null) {
+                    displayTitleMap[it.index] = it.getDisplayTitle(replaceRules, useReplace)
                 }
             }
         }
@@ -87,12 +92,12 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     }
 
     private fun getDisplayTile(chapter: BookChapter): String {
-        var displayTile = displayTileMap[chapter.index]
+        var displayTile = displayTitleMap[chapter.index]
         if (displayTile != null) {
             return displayTile
         }
         displayTile = chapter.getDisplayTitle(replaceRules, useReplace)
-        displayTileMap[chapter.index] = displayTile
+        displayTitleMap[chapter.index] = displayTile
         return displayTile
     }
 
