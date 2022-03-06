@@ -92,6 +92,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
             R.id.menu_use_replace -> {
                 AppConfig.tocUiUseReplace = !item.isChecked
                 viewModel.chapterListCallBack?.clearDisplayTitle()
+                viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
             }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
