@@ -83,7 +83,6 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reverse_toc -> viewModel.reverseToc {
-                viewModel.chapterListCallBack?.clearDisplayTitle()
                 viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
                 setResult(RESULT_OK, Intent().apply {
                     putExtra("index", it.durChapterIndex)

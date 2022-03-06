@@ -25,7 +25,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     DiffRecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
 
     val cacheFileNames = hashSetOf<String>()
-    private val displayTitleMap = ConcurrentHashMap<Int, String>()
+    private val displayTitleMap = ConcurrentHashMap<String, String>()
 
     override val diffItemCallback: DiffUtil.ItemCallback<BookChapter>
         get() = object : DiffUtil.ItemCallback<BookChapter>() {
@@ -80,8 +80,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 if (!isActive) {
                     return@async
                 }
-                if (displayTitleMap[it.index] == null) {
-                    displayTitleMap[it.index] = it.getDisplayTitle(replaceRules, useReplace)
+                if (displayTitleMap[it.url] == null) {
+                    displayTitleMap[it.url] = it.getDisplayTitle(replaceRules, useReplace)
                 }
             }
         }
@@ -92,12 +92,12 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     }
 
     private fun getDisplayTile(chapter: BookChapter): String {
-        var displayTile = displayTitleMap[chapter.index]
+        var displayTile = displayTitleMap[chapter.url]
         if (displayTile != null) {
             return displayTile
         }
         displayTile = chapter.getDisplayTitle(replaceRules, useReplace)
-        displayTitleMap[chapter.index] = displayTile
+        displayTitleMap[chapter.url] = displayTile
         return displayTile
     }
 
