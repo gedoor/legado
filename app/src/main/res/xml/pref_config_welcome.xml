@@ -35,6 +35,15 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="welcomeShowIcon"
+            android:summary="@string/show_default_book_icon"
+            android:title="@string/show_icon"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.ui.widget.prefs.PreferenceCategory>
 
     <io.legado.app.ui.widget.prefs.PreferenceCategory
@@ -57,6 +66,15 @@
             android:key="welcomeShowTextDark"
             android:summary="@string/welcome_text"
             android:title="@string/show_welcome_text"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="welcomeShowIconDark"
+            android:summary="@string/show_default_book_icon"
+            android:title="@string/show_icon"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />

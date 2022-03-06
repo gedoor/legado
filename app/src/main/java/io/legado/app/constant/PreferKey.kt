@@ -100,6 +100,8 @@ object PreferKey {
     const val welcomeImageDark = "welcomeImagePathDark"
     const val welcomeShowText = "welcomeShowText"
     const val welcomeShowTextDark = "welcomeShowTextDark"
+    const val welcomeShowIcon = "welcomeShowIcon"
+    const val welcomeShowIconDark = "welcomeShowIconDark"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
