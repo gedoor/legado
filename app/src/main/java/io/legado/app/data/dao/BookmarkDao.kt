@@ -2,7 +2,6 @@ package io.legado.app.data.dao
 
 import androidx.room.*
 import io.legado.app.data.entities.Bookmark
-import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -16,7 +15,7 @@ interface BookmarkDao {
         where bookName = :bookName and bookAuthor = :bookAuthor 
         order by chapterIndex"""
     )
-    fun flowByBook(bookName: String, bookAuthor: String): Flow<List<Bookmark>>
+    fun getByBook(bookName: String, bookAuthor: String): List<Bookmark>
 
     @Query(
         """SELECT * FROM bookmarks 
@@ -24,7 +23,7 @@ interface BookmarkDao {
         and chapterName like '%'||:key||'%' or content like '%'||:key||'%'
         order by chapterIndex"""
     )
-    fun flowSearch(bookName: String, bookAuthor: String, key: String): Flow<List<Bookmark>>
+    fun search(bookName: String, bookAuthor: String, key: String): List<Bookmark>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookmark: Bookmark)
