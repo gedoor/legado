@@ -40,11 +40,12 @@ jobs:
       - name: Download Lastest Cronet jar
         run: |
           echo "获取cronet最新版本"
-          source $GITHUB_WORKSPACE/.github/scripts/cronet.sh
+          source .github/scripts/cronet.sh
           git add *cronet*jar
           git add *cronet.json
           git add gradle.properties
-          git commit -m "bump cronet version: $lastest_cronet_version"
+          git add *updateLog.md
+          git commit -m "bump cronet version: $lastest_cronet_version" -m "changes in the [Git log](https://chromium.googlesource.com/chromium/src/+log/$current_cronet_version..$lastest_cronet_version)"
           git push origin master
 
       - name: Release Apk Sign
