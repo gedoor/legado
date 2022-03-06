@@ -10,7 +10,7 @@ import io.legado.app.data.entities.Book
 class TocViewModel(application: Application) : BaseViewModel(application) {
     var bookUrl: String = ""
     var bookData = MutableLiveData<Book>()
-    var chapterCallBack: ChapterListCallBack? = null
+    var chapterListCallBack: ChapterListCallBack? = null
     var bookMarkCallBack: BookmarkCallBack? = null
 
     fun initBook(bookUrl: String) {
@@ -39,7 +39,7 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun startChapterListSearch(newText: String?) {
-        chapterCallBack?.upChapterList(newText)
+        chapterListCallBack?.upChapterList(newText)
     }
 
     fun startBookmarkSearch(newText: String?) {

@@ -2,16 +2,12 @@ package io.legado.app.data.dao
 
 import androidx.room.*
 import io.legado.app.data.entities.BookChapter
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookChapterDao {
 
-    @Query("select * from chapters where bookUrl = :bookUrl order by `index`")
-    fun flowByBook(bookUrl: String): Flow<List<BookChapter>>
-
     @Query("SELECT * FROM chapters where bookUrl = :bookUrl and title like '%'||:key||'%' order by `index`")
-    fun flowSearch(bookUrl: String, key: String): Flow<List<BookChapter>>
+    fun search(bookUrl: String, key: String): List<BookChapter>
 
     @Query("select * from chapters where bookUrl = :bookUrl order by `index`")
     fun getChapterList(bookUrl: String): List<BookChapter>
