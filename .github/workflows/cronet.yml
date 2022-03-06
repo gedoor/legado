@@ -1,0 +1,40 @@
+name: Update Cronet
+
+on:
+  schedule:
+    - cron: 0 0 * * *
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Download Lastest Cronet jar
+        run: |
+          echo "获取cronet最新版本"
+          source .github/scripts/cronet.sh
+          echo "PR_TITLE=Bump cronet from $current_cronet_version to $lastest_cronet_version " >>$GITHUB_ENV
+          echo "PR_BODY=Changes in the [Git log](https://chromium.googlesource.com/chromium/src/+log/$current_cronet_version..$lastest_cronet_version)" >>$GITHUB_ENV
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        continue-on-error: true
+        with:
+          token: ${{ secrets.ACTIONS_TOKEN }}
+          title: ${{ env.PR_TITLE }}
+          commit-message: |
+            ${{ env.PR_TITLE }}
+            - ${{ env.PR_BODY }}
+          body: ${{ env.PR_BODY }}
+          branch: cronet
+          delete-branch: true
+          add-paths: |
+            *cronet*jar
+            *cronet.json
+            *updateLog.md
+            gradle.properties
+          
