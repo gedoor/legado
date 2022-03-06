@@ -22,8 +22,8 @@ class WelcomeConfigFragment : BasePreferenceFragment(),
     private val selectImage = registerForActivityResult(SelectImageContract()) {
         it.uri?.let { uri ->
             when (it.requestCode) {
-                requestWelcomeImage -> setCoverFromUri(PreferKey.defaultCover, uri)
-                requestWelcomeImageDark -> setCoverFromUri(PreferKey.defaultCoverDark, uri)
+                requestWelcomeImage -> setCoverFromUri(PreferKey.welcomeImage, uri)
+                requestWelcomeImageDark -> setCoverFromUri(PreferKey.welcomeImageDark, uri)
             }
         }
     }
