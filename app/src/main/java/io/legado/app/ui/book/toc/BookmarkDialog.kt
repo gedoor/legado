@@ -11,14 +11,16 @@ import io.legado.app.databinding.DialogBookmarkBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
 
-    constructor(bookmark: Bookmark) : this() {
+    constructor(bookmark: Bookmark, editPos: Int = -1) : this() {
         arguments = Bundle().apply {
+            putInt("editPos", editPos)
             putParcelable("bookmark", bookmark)
         }
     }
@@ -32,11 +34,17 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        val bookmark = arguments?.getParcelable<Bookmark>("bookmark")
+        val arguments = arguments ?: let {
+            dismiss()
+            return
+        }
+        val bookmark = arguments.getParcelable<Bookmark>("bookmark")
         bookmark ?: let {
             dismiss()
             return
         }
+        val editPos = arguments.getInt("editPos", -1)
+        binding.tvFooterLeft.visible(editPos >= 0)
         binding.run {
             tvChapterName.text = bookmark.chapterName
             editBookText.setText(bookmark.bookText)
