@@ -123,6 +123,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
             allowContentAccess = true
+            builtInZoomControls = true
         }
         binding.webView.addJavascriptInterface(this, "app")
         upWebViewTheme()
