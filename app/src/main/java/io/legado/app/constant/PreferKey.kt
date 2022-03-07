@@ -95,6 +95,7 @@ object PreferKey {
     const val uploadRule = "uploadRule"
     const val tocUiUseReplace = "tocUiUseReplace"
     const val enableReadRecord = "enableReadRecord"
+    const val localBookImportSort = "localBookImportSort"
     const val customWelcome = "customWelcome"
     const val welcomeImage = "welcomeImagePath"
     const val welcomeImageDark = "welcomeImagePathDark"
@@ -102,6 +103,7 @@ object PreferKey {
     const val welcomeShowTextDark = "welcomeShowTextDark"
     const val welcomeShowIcon = "welcomeShowIcon"
     const val welcomeShowIconDark = "welcomeShowIconDark"
+
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

@@ -12,6 +12,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
@@ -80,18 +81,9 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             R.id.menu_select_folder -> selectFolder.launch()
             R.id.menu_scan_folder -> scanFolder()
             R.id.menu_import_file_name -> alertImportFileName()
-            R.id.menu_sort_name -> {
-                viewModel.sort = 0
-                upSort()
-            }
-            R.id.menu_sort_size -> {
-                viewModel.sort = 1
-                upSort()
-            }
-            R.id.menu_sort_time -> {
-                viewModel.sort = 2
-                upSort()
-            }
+            R.id.menu_sort_name -> upSort(0)
+            R.id.menu_sort_size -> upSort(1)
+            R.id.menu_sort_time -> upSort(2)
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -203,7 +195,9 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
             .request()
     }
 
-    private fun upSort() {
+    private fun upSort(sort: Int) {
+        viewModel.sort = sort
+        putPrefInt(PreferKey.localBookImportSort, sort)
         if (scanDocJob?.isCancelled == true || scanDocJob?.isCompleted == true) {
             viewModel.dataCallback?.setItems(adapter.getItems())
         }

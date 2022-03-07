@@ -4,11 +4,9 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.PreferKey
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileDoc
-import io.legado.app.utils.isContentScheme
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -24,7 +22,7 @@ import java.util.*
 
 class ImportBookViewModel(application: Application) : BaseViewModel(application) {
     private val bookFileRegex = Regex("(?i).*\\.(txt|epub|umd)")
-    var sort = 0
+    var sort = context.getPrefInt(PreferKey.localBookImportSort)
     var dataCallback: DataCallback? = null
     var dataFlowStart: (() -> Unit)? = null
     val dataFlow = callbackFlow<List<FileDoc>> {
