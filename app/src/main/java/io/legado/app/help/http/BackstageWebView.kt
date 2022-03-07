@@ -9,6 +9,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import io.legado.app.constant.AppConst
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.Runnable
@@ -94,7 +95,7 @@ class BackstageWebView(
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.blockNetworkImage = true
-        settings.userAgentString = headerMap?.get(AppConst.UA_NAME)
+        settings.userAgentString = headerMap?.get(AppConst.UA_NAME) ?: AppConfig.userAgent
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         if (sourceRegex.isNullOrEmpty()) {
             webView.webViewClient = HtmlWebViewClient()
