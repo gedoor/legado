@@ -37,7 +37,7 @@ task downloadJar(type: Download) {
     ])
     dest libPath
     overwrite true
-    onlyIfModified true
+    onlyIfModified false
 }
 /**
  * 下载Cronet的arm64-v8a so
