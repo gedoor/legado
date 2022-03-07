@@ -80,8 +80,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 if (!isActive) {
                     return@async
                 }
-                if (displayTitleMap[it.url] == null) {
-                    displayTitleMap[it.url] = it.getDisplayTitle(replaceRules, useReplace)
+                if (displayTitleMap[it.title] == null) {
+                    displayTitleMap[it.title] = it.getDisplayTitle(replaceRules, useReplace)
                 }
             }
         }
@@ -92,13 +92,13 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     }
 
     private fun getDisplayTile(chapter: BookChapter): String {
-        var displayTile = displayTitleMap[chapter.url]
-        if (displayTile != null) {
-            return displayTile
+        var displayTitle = displayTitleMap[chapter.title]
+        if (displayTitle != null) {
+            return displayTitle
         }
-        displayTile = chapter.getDisplayTitle(replaceRules, useReplace)
-        displayTitleMap[chapter.url] = displayTile
-        return displayTile
+        displayTitle = chapter.getDisplayTitle(replaceRules, useReplace)
+        displayTitleMap[chapter.title] = displayTitle
+        return displayTitle
     }
 
     override fun convert(
