@@ -209,7 +209,6 @@ object ChapterProvider {
         textPages: ArrayList<TextPage>,
         imageStyle: String?,
     ): Float {
-        val absStartX = x - paddingLeft
         var durY = y
         ImageProvider.getImage(book, chapter.index, src, ReadBook.bookSource)?.let {
             if (durY > visibleHeight) {
@@ -246,18 +245,15 @@ object ChapterProvider {
             textLine.lineBottom = durY
             val (start, end) = if (visibleWidth > width) {
                 val adjustWidth = (visibleWidth - width) / 2f
-                Pair(
-                    paddingLeft.toFloat() + adjustWidth,
-                    paddingLeft.toFloat() + adjustWidth + width
-                )
+                Pair(adjustWidth, adjustWidth + width)
             } else {
-                Pair(paddingLeft.toFloat(), (paddingLeft + width).toFloat())
+                Pair(0f, width.toFloat())
             }
             textLine.textChars.add(
                 TextChar(
                     charData = src,
-                    start = absStartX + start,
-                    end = absStartX + end,
+                    start = x + start,
+                    end = x + end,
                     isImage = true
                 )
             )
