@@ -83,8 +83,8 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
         }
     }
 
-    override fun onLongClick(bookmark: Bookmark) {
-        showDialogFragment(BookmarkDialog(bookmark))
+    override fun onLongClick(bookmark: Bookmark, pos: Int) {
+        showDialogFragment(BookmarkDialog(bookmark, pos))
     }
 
     override fun upBookmark(pos: Int, bookmark: Bookmark) {
