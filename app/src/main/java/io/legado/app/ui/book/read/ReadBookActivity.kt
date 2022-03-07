@@ -314,7 +314,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_download -> showDownloadDialog()
             R.id.menu_add_bookmark -> {
                 val book = ReadBook.book
-                val page = ReadBook.curTextChapter?.page(ReadBook.durPageIndex)
+                val page = ReadBook.curTextChapter?.getPage(ReadBook.durPageIndex)
                 if (book != null && page != null) {
                     val bookmark = book.createBookMark().apply {
                         chapterIndex = ReadBook.durChapterIndex
@@ -1106,8 +1106,9 @@ class ReadBookActivity : BaseReadBookActivity(),
             launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
-                        val aloudSpanStart = chapterStart - ReadBook.durChapterPos
-                        textChapter.getPageByReadPos(ReadBook.durChapterPos)
+                        val pageIndex = ReadBook.durPageIndex
+                        val aloudSpanStart = chapterStart - textChapter.getReadLength(pageIndex)
+                        textChapter.getPage(pageIndex)
                             ?.upPageAloudSpan(aloudSpanStart)
                         upContent()
                     }

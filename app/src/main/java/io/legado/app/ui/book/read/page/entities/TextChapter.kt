@@ -12,12 +12,12 @@ data class TextChapter(
     val isPay: Boolean,
 ) {
 
-    fun page(index: Int): TextPage? {
+    fun getPage(index: Int): TextPage? {
         return pages.getOrNull(index)
     }
 
     fun getPageByReadPos(readPos: Int): TextPage? {
-        return page(getPageIndexByCharIndex(readPos))
+        return getPage(getPageIndexByCharIndex(readPos))
     }
 
     val lastPage: TextPage? get() = pages.lastOrNull()
