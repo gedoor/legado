@@ -43,7 +43,7 @@
         android:textColor="@color/primaryText"
         android:textCursorDrawable="@drawable/shape_text_cursor"
         android:textSize="14sp"
-        tools:ignore="TouchTargetSizeCheck" />
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -74,7 +74,7 @@
         android:textColor="@color/primaryText"
         android:textCursorDrawable="@drawable/shape_text_cursor"
         android:textSize="14sp"
-        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck,TextContrastCheck" />
 
     <View
         android:layout_width="0dp"

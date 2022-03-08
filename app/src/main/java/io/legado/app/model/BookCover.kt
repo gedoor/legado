@@ -80,7 +80,7 @@ object BookCover {
             )
         val res = analyzeUrl.getStrResponseAwait()
         val analyzeRule = AnalyzeRule(book)
-        analyzeRule.setContent(res.body, config.searchUrl)
+        analyzeRule.setContent(res.body)
         analyzeRule.setRedirectUrl(res.url)
         return analyzeRule.getString(config.coverRule, isUrl = true)
     }
@@ -89,6 +89,11 @@ object BookCover {
         coverRuleConfig = config
         val json = GSON.toJson(config)
         CacheManager.put(coverRuleConfigKey, json)
+    }
+
+    fun delCoverRuleConfig() {
+        CacheManager.delete(coverRuleConfigKey)
+        coverRuleConfig = DefaultData.coverRuleConfig
     }
 
     data class CoverRuleConfig(

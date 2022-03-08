@@ -83,6 +83,7 @@ class CoverConfigFragment : BasePreferenceFragment(),
     @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
+            "coverRule" -> showDialogFragment(CoverRuleConfigDialog())
             PreferKey.defaultCover ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
                     selectImage.launch(requestCodeCover)
