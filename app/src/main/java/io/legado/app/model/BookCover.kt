@@ -9,14 +9,15 @@ import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BaseSource
+import io.legado.app.data.entities.Book
 import io.legado.app.help.BlurTransformation
 import io.legado.app.help.CacheManager
+import io.legado.app.help.DefaultData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
-import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 
 object BookCover {
@@ -28,11 +29,9 @@ object BookCover {
         private set
     lateinit var defaultDrawable: Drawable
         private set
-    var coverRuleConfig: CoverRuleConfig? =
+    var coverRuleConfig: CoverRuleConfig =
         GSON.fromJsonObject<CoverRuleConfig>(CacheManager.get(coverRuleConfigKey)).getOrNull()
-    private val analyzeRule by lazy {
-        AnalyzeRule()
-    }
+            ?: DefaultData.coverRuleConfig
 
     init {
         upDefaultCover()
@@ -67,18 +66,23 @@ object BookCover {
             .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
     }
 
-    fun searchCover(name: String, author: String): String? {
-        val config = coverRuleConfig ?: return null
+    suspend fun searchCover(book: Book): String? {
+        val config = coverRuleConfig
         if (config.searchUrl.isBlank() || config.coverRule.isBlank()) {
             return null
         }
         val analyzeUrl =
-            AnalyzeUrl(config.searchUrl, name, source = config, headerMapF = config.getHeaderMap())
-        return runBlocking {
-            analyzeUrl.getStrResponseAwait().body?.let { body ->
-                return@let analyzeRule.getString(config.coverRule, body, true)
-            }
-        }
+            AnalyzeUrl(
+                config.searchUrl,
+                book.name,
+                source = config,
+                headerMapF = config.getHeaderMap()
+            )
+        val res = analyzeUrl.getStrResponseAwait()
+        val analyzeRule = AnalyzeRule(book)
+        analyzeRule.setContent(res.body, config.searchUrl)
+        analyzeRule.setRedirectUrl(res.url)
+        return analyzeRule.getString(config.coverRule, isUrl = true)
     }
 
     fun saveCoverRuleConfig(config: CoverRuleConfig) {

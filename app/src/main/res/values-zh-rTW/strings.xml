@@ -881,7 +881,7 @@
     <string name="set_book_variable">設定書籍變數</string>
     <string name="summary">注釋</string>
     <string name="cover_config">封面設定</string>
-    <string name="cover_config_summary">設定預設封面樣式</string>
+    <string name="cover_config_summary">通用封面规则及默认封面样式</string>
     <string name="cover_show_name">顯示書名</string>
     <string name="cover_show_name_summary">封面上顯示書名</string>
     <string name="cover_show_author">顯示作者</string>

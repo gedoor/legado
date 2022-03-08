@@ -882,7 +882,7 @@
     <string name="set_book_variable">设置书籍变量</string>
     <string name="summary">summary</string>
     <string name="cover_config">cover config</string>
-    <string name="cover_config_summary">设置默认封面样式</string>
+    <string name="cover_config_summary">通用封面规则及默认封面样式</string>
     <string name="cover_show_name">show name</string>
     <string name="cover_show_name_summary">封面上显示书名</string>
     <string name="cover_show_author">show author</string>

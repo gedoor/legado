@@ -15,6 +15,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.BookCover
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
@@ -69,9 +70,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun setBook(book: Book) {
+    private suspend fun setBook(book: Book) {
         durChapterIndex = book.durChapterIndex
         bookData.postValue(book)
+        if (book.customCoverUrl.isNullOrBlank()) {
+            BookCover.searchCover(book)?.let { coverUrl ->
+                book.customCoverUrl = coverUrl
+                bookData.postValue(book)
+                saveBook(book)
+            }
+        }
         bookSource = if (book.isLocalBook()) {
             null
         } else {
@@ -232,20 +240,19 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun saveBook(success: (() -> Unit)? = null) {
+    fun saveBook(book: Book?, success: (() -> Unit)? = null) {
+        book ?: return
         execute {
-            bookData.value?.let { book ->
-                if (book.order == 0) {
-                    book.order = appDb.bookDao.minOrder - 1
-                }
-                appDb.bookDao.getBook(book.name, book.author)?.let {
-                    book.durChapterPos = it.durChapterPos
-                    book.durChapterTitle = it.durChapterTitle
-                }
-                book.save()
-                if (ReadBook.book?.name == book.name && ReadBook.book?.author == book.author) {
-                    ReadBook.book = book
-                }
+            if (book.order == 0) {
+                book.order = appDb.bookDao.minOrder - 1
+            }
+            appDb.bookDao.getBook(book.name, book.author)?.let {
+                book.durChapterPos = it.durChapterPos
+                book.durChapterTitle = it.durChapterTitle
+            }
+            book.save()
+            if (ReadBook.book?.name == book.name && ReadBook.book?.author == book.author) {
+                ReadBook.book = book
             }
         }.onSuccess {
             success?.invoke()

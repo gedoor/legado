@@ -6,8 +6,10 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.model.BookCover
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
 import splitties.init.appCtx
 import java.io.File
 
@@ -58,6 +60,14 @@ object DefaultData {
             )
             RssSource.fromJsonArray(json)
         }.getOrDefault(emptyList())
+    }
+
+    val coverRuleConfig: BookCover.CoverRuleConfig by lazy {
+        val json = String(
+            appCtx.assets.open("defaultData${File.separator}coverRuleConfig.json")
+                .readBytes()
+        )
+        GSON.fromJsonObject<BookCover.CoverRuleConfig>(json).getOrThrow()!!
     }
 
     fun importDefaultHttpTTS() {

@@ -182,7 +182,7 @@ class BookInfoActivity :
                 if (viewModel.inBookshelf) {
                     viewModel.bookData.value?.let {
                         it.canUpdate = !it.canUpdate
-                        viewModel.saveBook()
+                        viewModel.saveBook(it)
                     }
                 } else {
                     toastOnUi(R.string.after_add_bookshelf)
@@ -306,7 +306,7 @@ class BookInfoActivity :
         }
         tvTocView.setOnClickListener {
             if (!viewModel.inBookshelf) {
-                viewModel.saveBook {
+                viewModel.saveBook(viewModel.bookData.value) {
                     viewModel.saveChapterList {
                         openChapterList()
                     }
@@ -366,15 +366,17 @@ class BookInfoActivity :
                 }
                 customView { alertBinding.root }
                 okButton {
-                    viewModel.bookData.value
-                        ?.putVariable("custom", alertBinding.editView.text?.toString())
-                    viewModel.saveBook()
+                    viewModel.bookData.value?.let { book ->
+                        book.putVariable("custom", alertBinding.editView.text?.toString())
+                        viewModel.saveBook(book)
+                    }
                 }
                 cancelButton()
                 neutralButton(R.string.delete) {
-                    viewModel.bookData.value
-                        ?.putVariable("custom", null)
-                    viewModel.saveBook()
+                    viewModel.bookData.value?.let { book ->
+                        book.putVariable("custom", null)
+                        viewModel.saveBook(book)
+                    }
                 }
             }
         }
@@ -423,13 +425,13 @@ class BookInfoActivity :
 
     private fun readBook(book: Book) {
         if (!viewModel.inBookshelf) {
-            viewModel.saveBook {
+            viewModel.saveBook(book) {
                 viewModel.saveChapterList {
                     startReadActivity(book)
                 }
             }
         } else {
-            viewModel.saveBook {
+            viewModel.saveBook(book) {
                 startReadActivity(book)
             }
         }
@@ -461,22 +463,24 @@ class BookInfoActivity :
     }
 
     override fun coverChangeTo(coverUrl: String) {
-        viewModel.bookData.value?.let {
-            it.coverUrl = coverUrl
-            viewModel.saveBook()
-            showCover(it)
+        viewModel.bookData.value?.let { book ->
+            book.customCoverUrl = coverUrl
+            viewModel.saveBook(book)
+            showCover(book)
         }
     }
 
     override fun upGroup(requestCode: Int, groupId: Long) {
         upGroup(groupId)
-        viewModel.bookData.value?.group = groupId
-        if (viewModel.inBookshelf) {
-            viewModel.saveBook()
-        } else if (groupId > 0) {
-            viewModel.saveBook()
-            viewModel.inBookshelf = true
-            upTvBookshelf()
+        viewModel.bookData.value?.let { book ->
+            book.group = groupId
+            if (viewModel.inBookshelf) {
+                viewModel.saveBook(book)
+            } else if (groupId > 0) {
+                viewModel.saveBook(book)
+                viewModel.inBookshelf = true
+                upTvBookshelf()
+            }
         }
     }
 
