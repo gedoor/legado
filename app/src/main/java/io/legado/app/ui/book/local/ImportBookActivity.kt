@@ -226,7 +226,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     }
 
     /**
-     * 扫描当前文件夹
+     * 扫描当前文件夹及所有子文件夹
      */
     private fun scanFolder() {
         rootDoc?.let { doc ->
