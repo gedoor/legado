@@ -28,12 +28,13 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
             dismissAllowingStateLoss()
         }
         binding.tvOk.onClick {
+            val enable = binding.cbEnable.isChecked
             val searchUrl = binding.editSearchUrl.text?.toString()
             val coverRule = binding.editCoverUrlRule.text?.toString()
             if (searchUrl.isNullOrBlank() || coverRule.isNullOrBlank()) {
                 toastOnUi("搜索url和cover规则不能为空")
             } else {
-                BookCover.CoverRuleConfig(searchUrl, coverRule).let { config ->
+                BookCover.CoverRuleConfig(enable, searchUrl, coverRule).let { config ->
                     BookCover.saveCoverRuleConfig(config)
                 }
                 dismissAllowingStateLoss()

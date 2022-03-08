@@ -68,7 +68,7 @@ object BookCover {
 
     suspend fun searchCover(book: Book): String? {
         val config = coverRuleConfig
-        if (config.searchUrl.isBlank() || config.coverRule.isBlank()) {
+        if (!config.enable || config.searchUrl.isBlank() || config.coverRule.isBlank()) {
             return null
         }
         val analyzeUrl =
@@ -97,6 +97,7 @@ object BookCover {
     }
 
     data class CoverRuleConfig(
+        var enable: Boolean = true,
         var searchUrl: String,
         var coverRule: String,
         override var concurrentRate: String? = null,
