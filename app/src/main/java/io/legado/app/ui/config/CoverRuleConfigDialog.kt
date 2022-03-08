@@ -22,6 +22,7 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        binding.cbEnable.isChecked = BookCover.coverRuleConfig.enable
         binding.editSearchUrl.setText(BookCover.coverRuleConfig.searchUrl)
         binding.editCoverUrlRule.setText(BookCover.coverRuleConfig.coverRule)
         binding.tvCancel.onClick {
