@@ -24,7 +24,9 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     fun addBookByUrl(bookUrls: String) {
         var successCount = 0
         execute {
-            var hasBookUrlPattern: List<BookSource>? = null
+            val hasBookUrlPattern: List<BookSource> by lazy {
+                appDb.bookSourceDao.hasBookUrlPattern
+            }
             val urls = bookUrls.split("\n")
             for (url in urls) {
                 val bookUrl = url.trim()
@@ -33,9 +35,6 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 val baseUrl = NetworkUtils.getBaseUrl(bookUrl) ?: continue
                 var source = appDb.bookSourceDao.getBookSource(baseUrl)
                 if (source == null) {
-                    if (hasBookUrlPattern == null) {
-                        hasBookUrlPattern = appDb.bookSourceDao.hasBookUrlPattern
-                    }
                     hasBookUrlPattern.forEach { bookSource ->
                         if (bookUrl.matches(bookSource.bookUrlPattern!!.toRegex())) {
                             source = bookSource

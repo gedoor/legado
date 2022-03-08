@@ -117,7 +117,7 @@ object RssParserByRule {
         Debug.log(sourceUrl, "┌获取文章链接", log)
         rssArticle.link = NetworkUtils.getAbsoluteURL(sourceUrl, analyzeRule.getString(ruleLink))
         Debug.log(sourceUrl, "└${rssArticle.link}", log)
-        rssArticle.variable = GSON.toJson(analyzeRule.ruleData.variableMap)
+        rssArticle.variable = analyzeRule.ruleData?.variableMap?.let { GSON.toJson(it) }
         if (rssArticle.title.isBlank()) {
             return null
         }
