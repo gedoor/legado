@@ -8,7 +8,7 @@ import io.legado.app.base.BaseDialogFragment
 class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_config) {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        TODO("Not yet implemented")
+
     }
 
 }

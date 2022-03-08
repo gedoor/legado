@@ -13,6 +13,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.model.BookCover
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.*
@@ -54,8 +55,10 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
             }
         }
         Coroutine.async {
-            appDb.cacheDao.clearDeadline(System.currentTimeMillis())
+            //初始化封面
+            BookCover.toString()
             //清除过期数据
+            appDb.cacheDao.clearDeadline(System.currentTimeMillis())
             if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
                 appDb.searchBookDao
                     .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
