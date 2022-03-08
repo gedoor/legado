@@ -26,6 +26,10 @@ interface BaseSource : JsExtensions {
 
     fun getKey(): String
 
+    override fun getSource(): BaseSource? {
+        return this
+    }
+
     fun loginUi(): List<RowUi>? {
         return GSON.fromJsonArray<RowUi>(loginUi)
             .onFailure {

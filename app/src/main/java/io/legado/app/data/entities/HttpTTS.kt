@@ -33,10 +33,6 @@ data class HttpTTS(
         return "httpTts:$id"
     }
 
-    override fun getSource(): BaseSource {
-        return this
-    }
-
     @Suppress("MemberVisibilityCanBePrivate")
     companion object {
 

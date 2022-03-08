@@ -52,10 +52,6 @@ data class RssSource(
         return sourceUrl
     }
 
-    override fun getSource(): BaseSource {
-        return this
-    }
-
     override fun equals(other: Any?): Boolean {
         if (other is RssSource) {
             return other.sourceUrl == sourceUrl
