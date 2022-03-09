@@ -77,7 +77,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             BookCover.searchCover(book)?.let { coverUrl ->
                 book.customCoverUrl = coverUrl
                 bookData.postValue(book)
-                saveBook(book)
+                if (inBookshelf) {
+                    saveBook(book)
+                }
             }
         }
         bookSource = if (book.isLocalBook()) {
