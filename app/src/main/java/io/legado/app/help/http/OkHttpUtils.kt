@@ -29,7 +29,7 @@ suspend fun OkHttpClient.newCallResponse(
         requestBuilder.apply(builder)
         var response: Response? = null
         for (i in 0..retry) {
-            response = this@newCallResponse.newCall(requestBuilder.build()).await()
+            response = newCall(requestBuilder.build()).await()
             if (response.isSuccessful) {
                 return@withContext response
             }
@@ -42,18 +42,8 @@ suspend fun OkHttpClient.newCallResponseBody(
     retry: Int = 0,
     builder: Request.Builder.() -> Unit
 ): ResponseBody {
-    return withContext(IO) {
-        val requestBuilder = Request.Builder()
-        requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
-        requestBuilder.apply(builder)
-        var response: Response? = null
-        for (i in 0..retry) {
-            response = this@newCallResponseBody.newCall(requestBuilder.build()).await()
-            if (response.isSuccessful) {
-                return@withContext response.body!!
-            }
-        }
-        return@withContext response!!.body ?: throw IOException(response.message)
+    return newCallResponse(retry, builder).let {
+        it.body ?: throw IOException(it.message)
     }
 }
 
@@ -61,18 +51,8 @@ suspend fun OkHttpClient.newCallStrResponse(
     retry: Int = 0,
     builder: Request.Builder.() -> Unit
 ): StrResponse {
-    return withContext(IO) {
-        val requestBuilder = Request.Builder()
-        requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
-        requestBuilder.apply(builder)
-        var response: Response? = null
-        for (i in 0..retry) {
-            response = this@newCallStrResponse.newCall(requestBuilder.build()).await()
-            if (response.isSuccessful) {
-                return@withContext StrResponse(response, response.body!!.text())
-            }
-        }
-        return@withContext StrResponse(response!!, response.body?.text() ?: response.message)
+    return newCallResponse(retry, builder).let {
+        StrResponse(it, it.body?.text() ?: it.message)
     }
 }
 
