@@ -87,10 +87,7 @@ class SearchContentActivity :
 
     private fun initView() {
         binding.ivSearchContentTop.setOnClickListener {
-            mLayoutManager.scrollToPositionWithOffset(
-                0,
-                0
-            )
+            mLayoutManager.scrollToPositionWithOffset(0, 0)
         }
         binding.ivSearchContentBottom.setOnClickListener {
             if (adapter.itemCount > 0) {
