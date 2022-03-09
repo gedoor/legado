@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -56,6 +57,10 @@ data class BookChapter(
 
     override fun putVariable(key: String, value: String?) {
         if (value != null) {
+            if (value.length > 1000) {
+                AppLog.put("${title}设置变量长度超过1000,设置失败")
+                return
+            }
             variableMap[key] = value
         } else {
             variableMap.remove(key)

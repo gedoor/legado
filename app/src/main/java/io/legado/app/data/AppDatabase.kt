@@ -17,14 +17,18 @@ val appDb by lazy {
 }
 
 @Database(
-    version = 44,
+    version = 46,
     exportSchema = true,
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
         RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
-        RuleSub::class],
-    autoMigrations = [AutoMigration(from = 43, to = 44)]
+        RuleSub::class, KeyboardAssist::class],
+    autoMigrations = [
+        AutoMigration(from = 43, to = 44),
+        AutoMigration(from = 44, to = 45),
+        AutoMigration(from = 45, to = 46)
+    ]
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -45,6 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val httpTTSDao: HttpTTSDao
     abstract val cacheDao: CacheDao
     abstract val ruleSubDao: RuleSubDao
+    abstract val keyboardAssistsDao: KeyboardAssistsDao
 
     companion object {
 

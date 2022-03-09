@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import androidx.room.Entity
 import androidx.room.Ignore
+import io.legado.app.constant.AppLog
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -34,6 +35,10 @@ data class RssStar(
 
     override fun putVariable(key: String, value: String?) {
         if (value != null) {
+            if (value.length > 1000) {
+                AppLog.put("${title}设置变量长度超过1000,设置失败")
+                return
+            }
             variableMap[key] = value
         } else {
             variableMap.remove(key)
