@@ -24,7 +24,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -98,7 +98,8 @@ class SearchContentActivity :
 
     @SuppressLint("SetTextI18n")
     private fun initBook() {
-        binding.tvCurrentSearchInfo.text = this.getString(R.string.search_content_size) +": ${viewModel.searchResultCounts}"
+        binding.tvCurrentSearchInfo.text =
+            this.getString(R.string.search_content_size) + ": ${viewModel.searchResultCounts}"
         viewModel.book?.let {
             initCacheFileNames(it)
             durChapterIndex = it.durChapterIndex
@@ -109,11 +110,11 @@ class SearchContentActivity :
     }
 
     private fun initCacheFileNames(book: Book) {
-        launch(Dispatchers.IO) {
-            viewModel.cacheChapterNames.addAll(BookHelp.getChapterFiles(book))
-            withContext(Dispatchers.Main) {
-                adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
+        launch {
+            withContext(IO) {
+                viewModel.cacheChapterNames.addAll(BookHelp.getChapterFiles(book))
             }
+            adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
         }
     }
 
@@ -136,26 +137,30 @@ class SearchContentActivity :
             viewModel.searchResultList.clear()
             viewModel.searchResultCounts = 0
             viewModel.lastQuery = query
-            var searchResults = listOf<SearchResult>()
-            launch(Dispatchers.Main) {
-                appDb.bookChapterDao.getChapterList(viewModel.bookUrl).map { bookChapter ->
+            launch {
+                withContext(IO) {
+                    appDb.bookChapterDao.getChapterList(viewModel.bookUrl)
+                }.forEach { bookChapter ->
                     binding.refreshProgressBar.isAutoLoading = true
-                    withContext(Dispatchers.IO) {
+                    val searchResults = withContext(IO) {
                         if (isLocalBook || viewModel.cacheChapterNames.contains(bookChapter.getFileName())) {
-                            searchResults = viewModel.searchChapter(query, bookChapter)
+                            viewModel.searchChapter(query, bookChapter)
+                        } else {
+                            null
                         }
                     }
-                    binding.tvCurrentSearchInfo.text = this@SearchContentActivity.getString(R.string.search_content_size) +": ${viewModel.searchResultCounts}"
-                    if (searchResults.isNotEmpty()) {
+                    binding.tvCurrentSearchInfo.text =
+                        this@SearchContentActivity.getString(R.string.search_content_size) + ": ${viewModel.searchResultCounts}"
+                    if (searchResults != null && searchResults.isNotEmpty()) {
                         viewModel.searchResultList.addAll(searchResults)
                         binding.refreshProgressBar.isAutoLoading = false
                         adapter.addItems(searchResults)
-                        searchResults = listOf()
                     }
                 }
                 binding.refreshProgressBar.isAutoLoading = false
                 if (viewModel.searchResultCounts == 0) {
-                    val noSearchResult = SearchResult(resultText = getString(R.string.search_content_empty))
+                    val noSearchResult =
+                        SearchResult(resultText = getString(R.string.search_content_empty))
                     adapter.addItem(noSearchResult)
                 }
             }
