@@ -39,7 +39,7 @@ class SearchContentAdapter(context: Context, val callback: Callback) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemSearchListBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                if (!it.query.isBlank()) callback.openSearchResult(it)
+                if (it.query.isNotBlank()) callback.openSearchResult(it)
             }
         }
     }
