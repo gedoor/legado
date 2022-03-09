@@ -55,11 +55,12 @@ class ReplaceEditActivity :
     override val binding by viewBinding(ActivityReplaceEditBinding::inflate)
     override val viewModel by viewModels<ReplaceEditViewModel>()
 
-    private var mSoftKeyboardTool: PopupWindow? = null
+    private val mSoftKeyboardTool: PopupWindow by lazy {
+        KeyboardToolPop(this, AppConst.keyboardToolChars, this)
+    }
     private var mIsSoftKeyBoardShowing = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
         viewModel.initData(intent) {
             upReplaceView(it)
@@ -121,12 +122,12 @@ class ReplaceEditActivity :
         if (view is EditText) {
             val start = view.selectionStart
             val end = view.selectionEnd
-            //TODO 获取EditText的文字
+            //获取EditText的文字
             val edit = view.editableText
             if (start < 0 || start >= edit.length) {
                 edit.append(text)
             } else {
-                //TODO 光标所在位置插入文字
+                //光标所在位置插入文字
                 edit.replace(start, end, text)
             }
         }
@@ -155,7 +156,7 @@ class ReplaceEditActivity :
     }
 
     private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.let {
+        mSoftKeyboardTool.let {
             if (it.isShowing) return
             if (!isFinishing) {
                 it.showAtLocation(binding.llContent, Gravity.BOTTOM, 0, 0)
@@ -164,7 +165,7 @@ class ReplaceEditActivity :
     }
 
     private fun closePopupWindow() {
-        mSoftKeyboardTool?.dismiss()
+        mSoftKeyboardTool.dismiss()
     }
 
     override fun onGlobalLayout() {

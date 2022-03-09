@@ -65,7 +65,9 @@ class BookSourceEditActivity :
         }
     }
 
-    private var mSoftKeyboardTool: PopupWindow? = null
+    private val mSoftKeyboardTool: PopupWindow by lazy {
+        KeyboardToolPop(this, AppConst.keyboardToolChars, this)
+    }
     private var mIsSoftKeyBoardShowing = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -139,7 +141,6 @@ class BookSourceEditActivity :
 
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-        mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
@@ -176,7 +177,7 @@ class BookSourceEditActivity :
 
     override fun onDestroy() {
         super.onDestroy()
-        mSoftKeyboardTool?.dismiss()
+        mSoftKeyboardTool.dismiss()
     }
 
     private fun setEditEntities(tabPosition: Int?) {
@@ -485,7 +486,7 @@ class BookSourceEditActivity :
     }
 
     private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.let {
+        mSoftKeyboardTool.let {
             if (it.isShowing) return
             if (!isFinishing) {
                 it.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
@@ -494,7 +495,7 @@ class BookSourceEditActivity :
     }
 
     private fun closePopupWindow() {
-        mSoftKeyboardTool?.dismiss()
+        mSoftKeyboardTool.dismiss()
     }
 
     private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {

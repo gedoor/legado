@@ -36,7 +36,9 @@ class RssSourceEditActivity :
 
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
-    private var mSoftKeyboardTool: PopupWindow? = null
+    private val mSoftKeyboardTool: PopupWindow by lazy {
+        KeyboardToolPop(this, AppConst.keyboardToolChars, this)
+    }
     private var mIsSoftKeyBoardShowing = false
     private val adapter by lazy { RssSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
@@ -79,7 +81,7 @@ class RssSourceEditActivity :
 
     override fun onDestroy() {
         super.onDestroy()
-        mSoftKeyboardTool?.dismiss()
+        mSoftKeyboardTool.dismiss()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -141,7 +143,6 @@ class RssSourceEditActivity :
 
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-        mSoftKeyboardTool = KeyboardToolPop(this, AppConst.keyboardToolChars, this)
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
         binding.recyclerView.adapter = adapter
     }
@@ -276,7 +277,7 @@ class RssSourceEditActivity :
     }
 
     private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool?.let {
+        mSoftKeyboardTool.let {
             if (it.isShowing) return
             if (!isFinishing) {
                 it.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
@@ -285,7 +286,7 @@ class RssSourceEditActivity :
     }
 
     private fun closePopupWindow() {
-        mSoftKeyboardTool?.dismiss()
+        mSoftKeyboardTool.dismiss()
     }
 
     override fun onGlobalLayout() {
