@@ -66,7 +66,7 @@ class BookSourceEditActivity :
     }
 
     private val mSoftKeyboardTool: PopupWindow by lazy {
-        KeyboardToolPop(this, AppConst.keyboardToolChars, this)
+        KeyboardToolPop(this, this)
     }
     private var mIsSoftKeyBoardShowing = false
 
@@ -441,7 +441,22 @@ class BookSourceEditActivity :
         return true
     }
 
-    private fun insertText(text: String) {
+    override fun keyboardHelp() {
+        val items = arrayListOf("插入URL参数", "书源教程", "js教程", "正则教程", "选择文件")
+        selector(getString(R.string.help), items) { _, index ->
+            when (index) {
+                0 -> sendText(AppConst.urlOption)
+                1 -> showHelp("ruleHelp")
+                2 -> showHelp("jsHelp")
+                3 -> showHelp("regexHelp")
+                4 -> selectDoc.launch {
+                    mode = HandleFileContract.FILE
+                }
+            }
+        }
+    }
+
+    override fun sendText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -452,29 +467,6 @@ class BookSourceEditActivity :
                 edit.append(text)
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
-            }
-        }
-    }
-
-    override fun sendText(text: String) {
-        if (text == AppConst.keyboardToolChars[0]) {
-            showHelpDialog()
-        } else {
-            insertText(text)
-        }
-    }
-
-    private fun showHelpDialog() {
-        val items = arrayListOf("插入URL参数", "书源教程", "js教程", "正则教程", "选择文件")
-        selector(getString(R.string.help), items) { _, index ->
-            when (index) {
-                0 -> insertText(AppConst.urlOption)
-                1 -> showHelp("ruleHelp")
-                2 -> showHelp("jsHelp")
-                3 -> showHelp("regexHelp")
-                4 -> selectDoc.launch {
-                    mode = HandleFileContract.FILE
-                }
             }
         }
     }

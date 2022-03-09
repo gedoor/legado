@@ -13,7 +13,6 @@ import android.widget.PopupWindow
 import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceEditBinding
 import io.legado.app.lib.dialogs.selector
@@ -56,7 +55,7 @@ class ReplaceEditActivity :
     override val viewModel by viewModels<ReplaceEditViewModel>()
 
     private val mSoftKeyboardTool: PopupWindow by lazy {
-        KeyboardToolPop(this, AppConst.keyboardToolChars, this)
+        KeyboardToolPop(this, this)
     }
     private var mIsSoftKeyBoardShowing = false
 
@@ -116,7 +115,16 @@ class ReplaceEditActivity :
         return replaceRule
     }
 
-    private fun insertText(text: String) {
+    override fun keyboardHelp() {
+        val items = arrayListOf("正则教程")
+        selector(getString(R.string.help), items) { _, index ->
+            when (index) {
+                0 -> showRegexHelp()
+            }
+        }
+    }
+
+    override fun sendText(text: String) {
         if (text.isBlank()) return
         val view = window?.decorView?.findFocus()
         if (view is EditText) {
@@ -129,23 +137,6 @@ class ReplaceEditActivity :
             } else {
                 //光标所在位置插入文字
                 edit.replace(start, end, text)
-            }
-        }
-    }
-
-    override fun sendText(text: String) {
-        if (text == AppConst.keyboardToolChars[0]) {
-            showHelpDialog()
-        } else {
-            insertText(text)
-        }
-    }
-
-    private fun showHelpDialog() {
-        val items = arrayListOf("正则教程")
-        selector(getString(R.string.help), items) { _, index ->
-            when (index) {
-                0 -> showRegexHelp()
             }
         }
     }

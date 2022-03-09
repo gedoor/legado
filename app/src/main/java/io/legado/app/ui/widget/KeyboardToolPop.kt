@@ -8,17 +8,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.PopupKeyboardToolBinding
+import splitties.systemservices.layoutInflater
 
 /**
  * 键盘帮助浮窗
  */
 class KeyboardToolPop(
     context: Context,
-    private val chars: List<String>,
-    val callBack: CallBack?
+    private val callBack: CallBack
 ) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
+
+    private val helpChar = "❓"
 
     private val binding = PopupKeyboardToolBinding.inflate(LayoutInflater.from(context))
 
@@ -37,7 +40,15 @@ class KeyboardToolPop(
         binding.recyclerView.layoutManager =
             LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         binding.recyclerView.adapter = adapter
-        adapter.setItems(chars)
+        adapter.addHeaderView {
+            ItemFilletTextBinding.inflate(layoutInflater, it, false).apply {
+                textView.text = helpChar
+                root.setOnClickListener {
+                    callBack.keyboardHelp()
+                }
+            }
+        }
+        adapter.setItems(AppConst.charsets)
     }
 
     inner class Adapter(context: Context) :
@@ -61,8 +72,8 @@ class KeyboardToolPop(
         override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
             holder.itemView.apply {
                 setOnClickListener {
-                    getItem(holder.layoutPosition)?.let {
-                        callBack?.sendText(it)
+                    getItemByLayoutPosition(holder.layoutPosition)?.let {
+                        callBack.sendText(it)
                     }
                 }
             }
@@ -70,7 +81,11 @@ class KeyboardToolPop(
     }
 
     interface CallBack {
+
+        fun keyboardHelp()
+
         fun sendText(text: String)
+
     }
 
 }

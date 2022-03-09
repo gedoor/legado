@@ -37,7 +37,7 @@ class RssSourceEditActivity :
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
     private val mSoftKeyboardTool: PopupWindow by lazy {
-        KeyboardToolPop(this, AppConst.keyboardToolChars, this)
+        KeyboardToolPop(this, this)
     }
     private var mIsSoftKeyBoardShowing = false
     private val adapter by lazy { RssSourceEditAdapter() }
@@ -232,7 +232,18 @@ class RssSourceEditActivity :
         return true
     }
 
-    private fun insertText(text: String) {
+    override fun keyboardHelp() {
+        val items = arrayListOf("插入URL参数", "订阅源教程", "正则教程")
+        selector(getString(R.string.help), items) { _, index ->
+            when (index) {
+                0 -> sendText(AppConst.urlOption)
+                1 -> showRuleHelp()
+                2 -> showRegexHelp()
+            }
+        }
+    }
+
+    override fun sendText(text: String) {
         if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -243,25 +254,6 @@ class RssSourceEditActivity :
                 edit.append(text)
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
-            }
-        }
-    }
-
-    override fun sendText(text: String) {
-        if (text == AppConst.keyboardToolChars[0]) {
-            showHelpDialog()
-        } else {
-            insertText(text)
-        }
-    }
-
-    private fun showHelpDialog() {
-        val items = arrayListOf("插入URL参数", "订阅源教程", "正则教程")
-        selector(getString(R.string.help), items) { _, index ->
-            when (index) {
-                0 -> insertText(AppConst.urlOption)
-                1 -> showRuleHelp()
-                2 -> showRegexHelp()
             }
         }
     }

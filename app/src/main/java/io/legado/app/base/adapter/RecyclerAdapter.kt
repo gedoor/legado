@@ -308,7 +308,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
     fun getItem(position: Int): ITEM? = items.getOrNull(position)
 
-    fun getItemByLayoutPosition(position: Int) = items.getOrNull(position - getHeaderCount())
+    fun getItemByLayoutPosition(position: Int) = items.getOrNull(getActualPosition(position))
 
     fun getItems(): List<ITEM> = items
 
@@ -324,7 +324,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     final override fun getItemViewType(position: Int) = when {
         isHeader(position) -> TYPE_HEADER_VIEW + position
         isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount() - getHeaderCount()
-        else -> getItem(getActualPosition(position))?.let {
+        else -> getItemByLayoutPosition(position)?.let {
             getItemViewType(it, getActualPosition(position))
         } ?: 0
     }
@@ -350,7 +350,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
             if (itemClickListener != null) {
                 holder.itemView.setOnClickListener {
-                    getItem(holder.layoutPosition)?.let {
+                    getItemByLayoutPosition(holder.layoutPosition)?.let {
                         itemClickListener?.invoke(holder, it)
                     }
                 }
@@ -358,7 +358,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
             if (itemLongClickListener != null) {
                 holder.itemView.onLongClick {
-                    getItem(holder.layoutPosition)?.let {
+                    getItemByLayoutPosition(holder.layoutPosition)?.let {
                         itemLongClickListener?.invoke(holder, it)
                     }
                 }
@@ -379,7 +379,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         payloads: MutableList<Any>
     ) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
-            getItem(holder.layoutPosition - getHeaderCount())?.let {
+            getItemByLayoutPosition(holder.layoutPosition)?.let {
                 convert(holder, (holder.binding as VB), it, payloads)
             }
         }
