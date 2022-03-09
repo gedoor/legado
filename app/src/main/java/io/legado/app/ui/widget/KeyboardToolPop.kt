@@ -11,7 +11,9 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.PopupKeyboardToolBinding
 
-
+/**
+ * 键盘帮助浮窗
+ */
 class KeyboardToolPop(
     context: Context,
     private val chars: List<String>,
