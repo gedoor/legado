@@ -17,17 +17,21 @@ data class SearchResult(
 ) {
 
     fun getHtmlCompat(textColor: String, accentColor: String): Spanned {
-        if (!query.isBlank()) {
+        return if (query.isNotBlank()) {
             val queryIndexInSurrounding = resultText.indexOf(query)
             val leftString = resultText.substring(0, queryIndexInSurrounding)
-            val rightString = resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
+            val rightString =
+                resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
             val html = leftString.colorTextForHtml(textColor) +
-                    query.colorTextForHtml(accentColor) +
-                    rightString.colorTextForHtml(textColor) +
-                    chapterTitle.colorTextForHtml(accentColor)
-            return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                query.colorTextForHtml(accentColor) +
+                rightString.colorTextForHtml(textColor) +
+                chapterTitle.colorTextForHtml(accentColor)
+            HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
-                return HtmlCompat.fromHtml(resultText.colorTextForHtml(textColor), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            HtmlCompat.fromHtml(
+                resultText.colorTextForHtml(textColor),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         }
     }
 
