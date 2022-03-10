@@ -4,8 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
@@ -22,7 +20,7 @@ import splitties.systemservices.layoutInflater
  * 键盘帮助浮窗
  */
 class KeyboardToolPop(
-    context: Context,
+    private val context: Context,
     private val scope: CoroutineScope,
     private val callBack: CallBack
 ) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
@@ -30,6 +28,7 @@ class KeyboardToolPop(
     private val helpChar = "❓"
 
     private val binding = PopupKeyboardToolBinding.inflate(LayoutInflater.from(context))
+    private val adapter = Adapter(context)
 
     init {
         contentView = binding.root
@@ -39,21 +38,23 @@ class KeyboardToolPop(
         isFocusable = false
         inputMethodMode = INPUT_METHOD_NEEDED //解决遮盖输入法
         initRecyclerView()
+        upAdapterData()
     }
 
-    private fun initRecyclerView() = with(contentView) {
-        val adapter = Adapter(context)
-        binding.recyclerView.layoutManager =
-            LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+    private fun initRecyclerView() {
         binding.recyclerView.adapter = adapter
         adapter.addHeaderView {
-            ItemFilletTextBinding.inflate(layoutInflater, it, false).apply {
+            ItemFilletTextBinding.inflate(context.layoutInflater, it, false).apply {
                 textView.text = helpChar
                 root.setOnClickListener {
                     callBack.keyboardHelp()
                 }
             }
         }
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun upAdapterData() {
         scope.launch {
             val items = withContext(IO) {
                 appDb.keyboardAssistsDao.getOrDefault()
