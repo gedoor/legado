@@ -151,7 +151,7 @@ dependencies {
     implementation('androidx.viewpager2:viewpager2:1.0.0')
     implementation('com.google.android.material:material:1.5.0')
     implementation('com.google.android.flexbox:flexbox:3.0.0')
-    implementation('com.google.code.gson:gson:2.8.9')
+    implementation('com.google.code.gson:gson:2.9.0')
     implementation('androidx.webkit:webkit:1.4.0')
 
     //firebase
@@ -198,7 +198,7 @@ dependencies {
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
-    def glideVersion = "4.13.0"
+    def glideVersion = "4.13.1"
     implementation("com.github.bumptech.glide:glide:$glideVersion")
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
 
@@ -227,7 +227,7 @@ dependencies {
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
 
     //加解密类库
-    implementation('cn.hutool:hutool-crypto:5.7.20')
+    implementation('cn.hutool:hutool-crypto:5.7.22')
 
     //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
     //epubLib集成到应用内
