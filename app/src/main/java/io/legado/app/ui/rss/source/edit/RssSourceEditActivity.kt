@@ -44,6 +44,7 @@ class RssSourceEditActivity :
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        softKeyboardTool.attachToWindow(window)
         initView()
         viewModel.initData(intent) {
             upRecyclerView()
@@ -136,7 +137,6 @@ class RssSourceEditActivity :
 
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(softKeyboardTool)
         binding.recyclerView.adapter = adapter
     }
 

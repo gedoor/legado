@@ -47,6 +47,10 @@ class KeyboardToolPop(
         upAdapterData()
     }
 
+    fun attachToWindow(window: Window) {
+        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
+    }
+
     override fun onGlobalLayout() {
         val rect = Rect()
         // 获取当前页面窗口的显示范围

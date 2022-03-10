@@ -65,6 +65,7 @@ class BookSourceEditActivity :
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        softKeyboardTool.attachToWindow(window)
         initView()
         viewModel.initData(intent) {
             upRecyclerView()
@@ -135,7 +136,6 @@ class BookSourceEditActivity :
 
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(softKeyboardTool)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
         binding.tabLayout.setBackgroundColor(backgroundColor)

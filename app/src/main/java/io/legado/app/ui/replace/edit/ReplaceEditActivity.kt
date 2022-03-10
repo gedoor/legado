@@ -52,7 +52,7 @@ class ReplaceEditActivity :
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(softKeyboardTool)
+        softKeyboardTool.attachToWindow(window)
         viewModel.initData(intent) {
             upReplaceView(it)
         }
