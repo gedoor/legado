@@ -1,0 +1,162 @@
+[
+  {
+    "key": "@css:",
+    "value": "@css:",
+    "serialNo": 0
+  },
+  {
+    "key": "<js>",
+    "value": "<js></js>",
+    "serialNo": 1
+  },
+  {
+    "key": "{{}}",
+    "value": "{{}}",
+    "serialNo": 2
+  },
+  {
+    "key": "##",
+    "value": "##",
+    "serialNo": 3
+  },
+  {
+    "key": "&&",
+    "value": "&&",
+    "serialNo": 4
+  },
+  {
+    "key": "%%",
+    "value": "%%",
+    "serialNo": 5
+  },
+  {
+    "key": "||",
+    "value": "||",
+    "serialNo": 6
+  },
+  {
+    "key": "//",
+    "value": "//",
+    "serialNo": 7
+  },
+  {
+    "key": "\\",
+    "value": "\\",
+    "serialNo": 8
+  },
+  {
+    "key": "$.",
+    "value": "$.",
+    "serialNo": 9
+  },
+  {
+    "key": "@",
+    "value": "@",
+    "serialNo": 10
+  },
+  {
+    "key": ":",
+    "value": ":",
+    "serialNo": 11
+  },
+  {
+    "key": "class",
+    "value": "class",
+    "serialNo": 12
+  },
+  {
+    "key": "text",
+    "value": "text",
+    "serialNo": 13
+  },
+  {
+    "key": "href",
+    "value": "href",
+    "serialNo": 14
+  },
+  {
+    "key": "textNodes",
+    "value": "textNodes",
+    "serialNo": 15
+  },
+  {
+    "key": "ownText",
+    "value": "ownText",
+    "serialNo": 16
+  },
+  {
+    "key": "all",
+    "value": "all",
+    "serialNo": 17
+  },
+  {
+    "key": "html",
+    "value": "html",
+    "serialNo": 18
+  },
+  {
+    "key": "[",
+    "value": "[",
+    "serialNo": 19
+  },
+  {
+    "key": "]",
+    "value": "]",
+    "serialNo": 20
+  },
+  {
+    "key": "<",
+    "value": "<",
+    "serialNo": 21
+  },
+  {
+    "key": ">",
+    "value": ">",
+    "serialNo": 22
+  },
+  {
+    "key": "#",
+    "value": "#",
+    "serialNo": 23
+  },
+  {
+    "key": "!",
+    "value": "!",
+    "serialNo": 24
+  },
+  {
+    "key": ".",
+    "value": ".",
+    "serialNo": 25
+  },
+  {
+    "key": "+",
+    "value": "+",
+    "serialNo": 26
+  },
+  {
+    "key": "-",
+    "value": "-",
+    "serialNo": 27
+  },
+  {
+    "key": "*",
+    "value": "*",
+    "serialNo": 28
+  },
+  {
+    "key": "/",
+    "value": "/",
+    "serialNo": 29
+  },
+  {
+    "key": "=",
+    "value": "=",
+    "serialNo": 30
+  },
+  {
+    "key": "webView",
+    "value": "{'webView': true}",
+    "serialNo": 31
+  }
+]
