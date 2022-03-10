@@ -37,7 +37,7 @@ class RssSourceEditActivity :
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
     private val mSoftKeyboardTool: PopupWindow by lazy {
-        KeyboardToolPop(this, this)
+        KeyboardToolPop(this, this, this)
     }
     private var mIsSoftKeyBoardShowing = false
     private val adapter by lazy { RssSourceEditAdapter() }

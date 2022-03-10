@@ -66,7 +66,7 @@ class BookSourceEditActivity :
     }
 
     private val mSoftKeyboardTool: PopupWindow by lazy {
-        KeyboardToolPop(this, this)
+        KeyboardToolPop(this, this, this)
     }
     private var mIsSoftKeyBoardShowing = false
 

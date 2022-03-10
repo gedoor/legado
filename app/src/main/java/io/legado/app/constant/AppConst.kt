@@ -39,14 +39,6 @@ object AppConst {
         SimpleDateFormat("yy-MM-dd-HH-mm-ss")
     }
 
-    val keyboardToolChars: List<String> by lazy {
-        arrayListOf(
-            "@css:", "<js></js>", "{{}}", "##", "&&", "%%", "||", "//", "\\", "$.",
-            "@", ":", "class", "text", "href", "textNodes", "ownText", "all", "html",
-            "[", "]", "<", ">", "#", "!", ".", "+", "-", "*", "=", "{'webView': true}"
-        )
-    }
-
     const val bookGroupAllId = -1L
     const val bookGroupLocalId = -2L
     const val bookGroupAudioId = -3L

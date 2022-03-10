@@ -8,9 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.constant.AppConst
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.KeyboardAssist
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.PopupKeyboardToolBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import splitties.systemservices.layoutInflater
 
 /**
@@ -18,6 +23,7 @@ import splitties.systemservices.layoutInflater
  */
 class KeyboardToolPop(
     context: Context,
+    private val scope: CoroutineScope,
     private val callBack: CallBack
 ) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
 
@@ -48,11 +54,16 @@ class KeyboardToolPop(
                 }
             }
         }
-        adapter.setItems(AppConst.charsets)
+        scope.launch {
+            val items = withContext(IO) {
+                appDb.keyboardAssistsDao.getOrDefault()
+            }
+            adapter.setItems(items)
+        }
     }
 
     inner class Adapter(context: Context) :
-        RecyclerAdapter<String, ItemFilletTextBinding>(context) {
+        RecyclerAdapter<KeyboardAssist, ItemFilletTextBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
             return ItemFilletTextBinding.inflate(inflater, parent, false)
@@ -61,11 +72,11 @@ class KeyboardToolPop(
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemFilletTextBinding,
-            item: String,
+            item: KeyboardAssist,
             payloads: MutableList<Any>
         ) {
             binding.run {
-                textView.text = item
+                textView.text = item.key
             }
         }
 
@@ -73,7 +84,7 @@ class KeyboardToolPop(
             holder.itemView.apply {
                 setOnClickListener {
                     getItemByLayoutPosition(holder.layoutPosition)?.let {
-                        callBack.sendText(it)
+                        callBack.sendText(it.value)
                     }
                 }
             }
