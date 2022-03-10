@@ -26,18 +26,18 @@ fun AppCompatActivity.showDialogFragment(dialogFragment: DialogFragment) {
     dialogFragment.show(supportFragmentManager, dialogFragment::class.simpleName)
 }
 
-val Activity.windowSize: DisplayMetrics
+val WindowManager.windowSize: DisplayMetrics
     get() {
         val displayMetrics = DisplayMetrics()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics: WindowMetrics = windowManager.currentWindowMetrics
+            val windowMetrics: WindowMetrics = currentWindowMetrics
             val insets = windowMetrics.windowInsets
                 .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             displayMetrics.widthPixels = windowMetrics.bounds.width() - insets.left - insets.right
             displayMetrics.heightPixels = windowMetrics.bounds.height() - insets.top - insets.bottom
         } else {
             @Suppress("DEPRECATION")
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            defaultDisplay.getMetrics(displayMetrics)
         }
         return displayMetrics
     }

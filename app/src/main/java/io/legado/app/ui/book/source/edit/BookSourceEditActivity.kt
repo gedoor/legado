@@ -1,14 +1,10 @@
 package io.legado.app.ui.book.source.edit
 
 import android.app.Activity
-import android.graphics.Rect
 import android.os.Bundle
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewTreeObserver
 import android.widget.EditText
-import android.widget.PopupWindow
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -33,7 +29,6 @@ import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlin.math.abs
 
 class BookSourceEditActivity :
     VMBaseActivity<ActivityBookSourceEditBinding, BookSourceEditViewModel>(false),
@@ -65,10 +60,9 @@ class BookSourceEditActivity :
         }
     }
 
-    private val mSoftKeyboardTool: PopupWindow by lazy {
-        KeyboardToolPop(this, this, this)
+    private val softKeyboardTool by lazy {
+        KeyboardToolPop(this, this, binding.root, this)
     }
-    private var mIsSoftKeyBoardShowing = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -141,7 +135,7 @@ class BookSourceEditActivity :
 
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(KeyboardOnGlobalChangeListener())
+        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(softKeyboardTool)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
         binding.tabLayout.setBackgroundColor(backgroundColor)
@@ -177,7 +171,7 @@ class BookSourceEditActivity :
 
     override fun onDestroy() {
         super.onDestroy()
-        mSoftKeyboardTool.dismiss()
+        softKeyboardTool.dismiss()
     }
 
     private fun setEditEntities(tabPosition: Int?) {
@@ -477,38 +471,4 @@ class BookSourceEditActivity :
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
 
-    private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool.let {
-            if (it.isShowing) return
-            if (!isFinishing) {
-                it.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
-            }
-        }
-    }
-
-    private fun closePopupWindow() {
-        mSoftKeyboardTool.dismiss()
-    }
-
-    private inner class KeyboardOnGlobalChangeListener : ViewTreeObserver.OnGlobalLayoutListener {
-        override fun onGlobalLayout() {
-            val rect = Rect()
-            // 获取当前页面窗口的显示范围
-            window.decorView.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = this@BookSourceEditActivity.windowSize.heightPixels
-            val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
-            val preShowing = mIsSoftKeyBoardShowing
-            if (abs(keyboardHeight) > screenHeight / 5) {
-                mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-                binding.recyclerView.setPadding(0, 0, 0, 100)
-                showKeyboardTopPopupWindow()
-            } else {
-                mIsSoftKeyBoardShowing = false
-                binding.recyclerView.setPadding(0, 0, 0, 0)
-                if (preShowing) {
-                    closePopupWindow()
-                }
-            }
-        }
-    }
 }

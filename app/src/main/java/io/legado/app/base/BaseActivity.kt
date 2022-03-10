@@ -147,7 +147,7 @@ abstract class BaseActivity<VB : ViewBinding>(
     open fun upBackgroundImage() {
         if (imageBg) {
             try {
-                ThemeConfig.getBgImage(this, windowSize)?.let {
+                ThemeConfig.getBgImage(this, windowManager.windowSize)?.let {
                     window.decorView.background = BitmapDrawable(resources, it)
                 }
             } catch (e: OutOfMemoryError) {

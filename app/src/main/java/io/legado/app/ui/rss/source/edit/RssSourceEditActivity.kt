@@ -1,14 +1,10 @@
 package io.legado.app.ui.rss.source.edit
 
 import android.app.Activity
-import android.graphics.Rect
 import android.os.Bundle
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewTreeObserver
 import android.widget.EditText
-import android.widget.PopupWindow
 import androidx.activity.viewModels
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
@@ -27,19 +23,16 @@ import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlin.math.abs
 
 class RssSourceEditActivity :
     VMBaseActivity<ActivityRssSourceEditBinding, RssSourceEditViewModel>(false),
-    ViewTreeObserver.OnGlobalLayoutListener,
     KeyboardToolPop.CallBack {
 
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
-    private val mSoftKeyboardTool: PopupWindow by lazy {
-        KeyboardToolPop(this, this, this)
+    private val softKeyboardTool by lazy {
+        KeyboardToolPop(this, this, binding.root, this)
     }
-    private var mIsSoftKeyBoardShowing = false
     private val adapter by lazy { RssSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
@@ -81,7 +74,7 @@ class RssSourceEditActivity :
 
     override fun onDestroy() {
         super.onDestroy()
-        mSoftKeyboardTool.dismiss()
+        softKeyboardTool.dismiss()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -143,7 +136,7 @@ class RssSourceEditActivity :
 
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
+        window.decorView.viewTreeObserver.addOnGlobalLayoutListener(softKeyboardTool)
         binding.recyclerView.adapter = adapter
     }
 
@@ -266,39 +259,6 @@ class RssSourceEditActivity :
     private fun showRegexHelp() {
         val mdText = String(assets.open("help/regexHelp.md").readBytes())
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
-    }
-
-    private fun showKeyboardTopPopupWindow() {
-        mSoftKeyboardTool.let {
-            if (it.isShowing) return
-            if (!isFinishing) {
-                it.showAtLocation(binding.root, Gravity.BOTTOM, 0, 0)
-            }
-        }
-    }
-
-    private fun closePopupWindow() {
-        mSoftKeyboardTool.dismiss()
-    }
-
-    override fun onGlobalLayout() {
-        val rect = Rect()
-        // 获取当前页面窗口的显示范围
-        window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenHeight = this@RssSourceEditActivity.windowSize.heightPixels
-        val keyboardHeight = screenHeight - rect.bottom // 输入法的高度
-        val preShowing = mIsSoftKeyBoardShowing
-        if (abs(keyboardHeight) > screenHeight / 5) {
-            mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-            binding.recyclerView.setPadding(0, 0, 0, 100)
-            showKeyboardTopPopupWindow()
-        } else {
-            mIsSoftKeyBoardShowing = false
-            binding.recyclerView.setPadding(0, 0, 0, 0)
-            if (preShowing) {
-                closePopupWindow()
-            }
-        }
     }
 
 }

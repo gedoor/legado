@@ -78,7 +78,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
             kotlin.runCatching {
                 when (Theme.getTheme()) {
                     Theme.Dark -> getPrefString(PreferKey.welcomeImageDark)?.let { path ->
-                        val size = windowSize
+                        val size = windowManager.windowSize
                         BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels).let {
                             binding.tvLegado.visible(getPrefBoolean(PreferKey.welcomeShowTextDark))
                             binding.ivBook.visible(getPrefBoolean(PreferKey.welcomeShowIconDark))
@@ -87,7 +87,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
                         }
                     }
                     else -> getPrefString(PreferKey.welcomeImage)?.let { path ->
-                        val size = windowSize
+                        val size = windowManager.windowSize
                         BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels).let {
                             binding.tvLegado.visible(getPrefBoolean(PreferKey.welcomeShowText))
                             binding.ivBook.visible(getPrefBoolean(PreferKey.welcomeShowIcon))

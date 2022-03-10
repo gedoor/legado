@@ -30,7 +30,7 @@ fun AlertDialog.requestInputMethod() {
 }
 
 fun DialogFragment.setLayout(widthMix: Float, heightMix: Float) {
-    val dm = requireActivity().windowSize
+    val dm = requireActivity().windowManager.windowSize
     dialog?.window?.setLayout(
         (dm.widthPixels * widthMix).toInt(),
         (dm.heightPixels * heightMix).toInt()
@@ -38,7 +38,7 @@ fun DialogFragment.setLayout(widthMix: Float, heightMix: Float) {
 }
 
 fun DialogFragment.setLayout(width: Int, heightMix: Float) {
-    val dm = requireActivity().windowSize
+    val dm = requireActivity().windowManager.windowSize
     dialog?.window?.setLayout(
         width,
         (dm.heightPixels * heightMix).toInt()
@@ -46,7 +46,7 @@ fun DialogFragment.setLayout(width: Int, heightMix: Float) {
 }
 
 fun DialogFragment.setLayout(widthMix: Float, height: Int) {
-    val dm = requireActivity().windowSize
+    val dm = requireActivity().windowManager.windowSize
     dialog?.window?.setLayout(
         (dm.widthPixels * widthMix).toInt(),
         height
