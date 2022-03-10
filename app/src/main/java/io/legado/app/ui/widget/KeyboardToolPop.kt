@@ -49,6 +49,10 @@ class KeyboardToolPop(
 
     fun attachToWindow(window: Window) {
         window.decorView.viewTreeObserver.addOnGlobalLayoutListener(this)
+        contentView.measure(
+            View.MeasureSpec.UNSPECIFIED,
+            View.MeasureSpec.UNSPECIFIED,
+        )
     }
 
     override fun onGlobalLayout() {
@@ -60,7 +64,7 @@ class KeyboardToolPop(
         val preShowing = mIsSoftKeyBoardShowing
         if (abs(keyboardHeight) > screenHeight / 5) {
             mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-            rootView.setPadding(0, 0, 0, 100)
+            rootView.setPadding(0, 0, 0, contentView.measuredHeight)
             if (!isShowing) {
                 showAtLocation(rootView, Gravity.BOTTOM, 0, 0)
             }
