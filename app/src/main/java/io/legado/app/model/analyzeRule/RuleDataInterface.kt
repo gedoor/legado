@@ -19,7 +19,8 @@ interface RuleDataInterface {
                 variable = GSON.toJson(variableMap)
             }
             else -> {
-
+                variableMap[key] = value
+                variable = GSON.toJson(variableMap)
             }
         }
     }
