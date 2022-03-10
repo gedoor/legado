@@ -135,7 +135,7 @@ object BookList {
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
         book.type = bookSource.bookSourceType
-        analyzeRule.book = book
+        analyzeRule.ruleData = book
         BookInfo.analyzeBookInfo(
             scope,
             book,
@@ -175,7 +175,7 @@ object BookList {
         searchBook.originName = bookSource.bookSourceName
         searchBook.type = bookSource.bookSourceType
         searchBook.originOrder = bookSource.customOrder
-        analyzeRule.book = searchBook
+        analyzeRule.ruleData = searchBook
         analyzeRule.setContent(item)
         scope.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取书名", log)

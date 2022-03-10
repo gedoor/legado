@@ -142,6 +142,10 @@ data class Book(
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
+    override fun putBigVariable(key: String, value: String) {
+
+    }
+
     @Ignore
     @IgnoredOnParcel
     override var infoHtml: String? = null

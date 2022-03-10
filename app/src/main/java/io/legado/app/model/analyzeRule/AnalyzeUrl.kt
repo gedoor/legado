@@ -274,8 +274,8 @@ class AnalyzeUrl(
                 return it.title
             }
         }
-        return chapter?.variableMap?.get(key)
-            ?: ruleData?.variableMap?.get(key)
+        return chapter?.getVariable(key)
+            ?: ruleData?.getVariable(key)
             ?: ""
     }
 

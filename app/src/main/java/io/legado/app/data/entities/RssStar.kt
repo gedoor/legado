@@ -22,7 +22,7 @@ data class RssStar(
     var description: String? = null,
     var content: String? = null,
     var image: String? = null,
-    var variable: String? = null
+    override var variable: String? = null
 ) : RuleDataInterface {
 
     @delegate:Transient
@@ -35,6 +35,10 @@ data class RssStar(
     override fun putVariable(key: String, value: String?) {
         super.putVariable(key, value)
         variable = GSON.toJson(variableMap)
+    }
+
+    override fun putBigVariable(key: String, value: String) {
+
     }
 
     fun toRssArticle() = RssArticle(

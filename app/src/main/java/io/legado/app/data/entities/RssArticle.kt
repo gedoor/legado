@@ -23,7 +23,7 @@ data class RssArticle(
     var content: String? = null,
     var image: String? = null,
     var read: Boolean = false,
-    var variable: String? = null
+    override var variable: String? = null
 ) : RuleDataInterface {
 
     override fun hashCode() = link.hashCode()
@@ -43,6 +43,10 @@ data class RssArticle(
     override fun putVariable(key: String, value: String?) {
         super.putVariable(key, value)
         variable = GSON.toJson(variableMap)
+    }
+
+    override fun putBigVariable(key: String, value: String) {
+
     }
 
     fun toStar() = RssStar(

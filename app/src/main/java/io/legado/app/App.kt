@@ -33,6 +33,7 @@ class App : MultiDexApplication() {
             .autoClear(false)
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
+
     }
 
     override fun attachBaseContext(base: Context) {
