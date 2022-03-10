@@ -3,7 +3,6 @@ package io.legado.app.help
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.analyzeRule.RuleData
 import io.legado.app.utils.jsonPath
 import io.legado.app.utils.readString
 import splitties.init.appCtx
@@ -27,7 +26,7 @@ object DirectLinkUpload {
         }
         val analyzeUrl = AnalyzeUrl(url)
         val res = analyzeUrl.upload(fileName, file, contentType)
-        val analyzeRule = AnalyzeRule(RuleData()).setContent(res.body, res.url)
+        val analyzeRule = AnalyzeRule().setContent(res.body, res.url)
         val downloadUrl = analyzeRule.getString(downloadUrlRule)
         if (downloadUrl.isBlank()) {
             throw NoStackTraceException("上传失败,${res.body}")

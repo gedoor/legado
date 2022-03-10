@@ -64,11 +64,7 @@ data class SearchBook(
     }
 
     override fun putVariable(key: String, value: String?) {
-        if (value != null) {
-            variableMap[key] = value
-        } else {
-            variableMap.remove(key)
-        }
+        super.putVariable(key, value)
         variable = GSON.toJson(variableMap)
     }
 
