@@ -71,4 +71,7 @@ interface RssSourceDao {
 
     @Query("select * from rssSources where sourceGroup like '%' || :group || '%'")
     fun getByGroup(group: String): List<RssSource>
+
+    @Query("select 1 from rssSources where sourceUrl = :key")
+    fun has(key: String): Boolean?
 }

@@ -1,8 +1,12 @@
 package io.legado.app.help
 
+import io.legado.app.data.appDb
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.externalFiles
+import io.legado.app.utils.getFile
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 
@@ -11,6 +15,41 @@ object RuleBigDataHelp {
     private val ruleDataDir = FileUtils.createFolderIfNotExist(appCtx.externalFiles, "ruleData")
     private val bookData = FileUtils.createFolderIfNotExist(ruleDataDir, "book")
     private val rssData = FileUtils.createFolderIfNotExist(ruleDataDir, "rss")
+
+    suspend fun clearInvalid() {
+        withContext(IO) {
+            bookData.listFiles()?.forEach {
+                if (it.isFile) {
+                    FileUtils.delete(it)
+                } else {
+                    val bookUrlFile = it.getFile("bookUrl.txt")
+                    if (!bookUrlFile.exists()) {
+                        FileUtils.delete(it)
+                    } else {
+                        val bookUrl = bookUrlFile.readText()
+                        if (appDb.bookDao.has(bookUrl) != true) {
+                            FileUtils.delete(it)
+                        }
+                    }
+                }
+            }
+            rssData.listFiles()?.forEach {
+                if (it.isFile) {
+                    FileUtils.delete(it)
+                } else {
+                    val originFile = it.getFile("origin.txt")
+                    if (!originFile.exists()) {
+                        FileUtils.delete(it)
+                    } else {
+                        val origin = originFile.readText()
+                        if (appDb.rssSourceDao.has(origin) != true) {
+                            FileUtils.delete(it)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fun putBookVariable(bookUrl: String, key: String, value: String?) {
         val md5BookUrl = MD5Utils.md5Encode(bookUrl)
