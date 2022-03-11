@@ -6,11 +6,11 @@ import androidx.room.Entity
 @Entity(tableName = "keyboardAssists", primaryKeys = ["type", "key"])
 data class KeyboardAssist(
     @ColumnInfo(defaultValue = "0")
-    val type: Int = 0,
+    var type: Int = 0,
     @ColumnInfo(defaultValue = "")
-    val key: String,
+    var key: String,
     @ColumnInfo(defaultValue = "")
-    val value: String,
+    var value: String,
     @ColumnInfo(defaultValue = "0")
-    val serialNo: Int
+    var serialNo: Int = 0
 )

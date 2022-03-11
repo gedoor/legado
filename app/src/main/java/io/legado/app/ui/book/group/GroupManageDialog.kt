@@ -46,7 +46,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        binding.toolBar.title = getString(R.string.group_manage)
+        binding.toolBar.setTitle(R.string.group_manage)
         initView()
         initData()
         initMenu()

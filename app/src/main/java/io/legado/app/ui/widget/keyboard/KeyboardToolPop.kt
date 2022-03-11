@@ -1,20 +1,23 @@
-package io.legado.app.ui.widget
+package io.legado.app.ui.widget.keyboard
 
 import android.content.Context
 import android.graphics.Rect
 import android.view.*
 import android.widget.PopupWindow
+import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.KeyboardAssist
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.PopupKeyboardToolBinding
+import io.legado.app.lib.dialogs.SelectItem
+import io.legado.app.lib.dialogs.selector
+import io.legado.app.utils.activity
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.windowSize
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import splitties.systemservices.layoutInflater
 import splitties.systemservices.windowManager
 import kotlin.math.abs
@@ -83,7 +86,7 @@ class KeyboardToolPop(
             ItemFilletTextBinding.inflate(context.layoutInflater, it, false).apply {
                 textView.text = helpChar
                 root.setOnClickListener {
-                    callBack.keyboardHelp()
+                    helpAlert()
                 }
             }
         }
@@ -92,11 +95,27 @@ class KeyboardToolPop(
     @Suppress("MemberVisibilityCanBePrivate")
     fun upAdapterData() {
         scope.launch {
-            val items = withContext(IO) {
-                appDb.keyboardAssistsDao.getOrDefault()
+            appDb.keyboardAssistsDao.flowByType(0).collect {
+                adapter.setItems(it)
             }
-            adapter.setItems(items)
         }
+    }
+
+    private fun helpAlert() {
+        val items = arrayListOf(
+            SelectItem(context.getString(R.string.assists_key_config), "keyConfig")
+        )
+        items.addAll(callBack.helpActions())
+        context.selector(context.getString(R.string.help), items) { _, selectItem, i ->
+            when (selectItem.value) {
+                "keyConfig" -> config()
+                else -> callBack.onHelpActionSelect(selectItem.value)
+            }
+        }
+    }
+
+    private fun config() {
+        contentView.activity?.showDialogFragment<KeyboardAssistsConfig>()
     }
 
     inner class Adapter(context: Context) :
@@ -130,7 +149,9 @@ class KeyboardToolPop(
 
     interface CallBack {
 
-        fun keyboardHelp()
+        fun helpActions(): List<SelectItem<String>> = arrayListOf()
+
+        fun onHelpActionSelect(action: String)
 
         fun sendText(text: String)
 

@@ -17,16 +17,16 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
 import io.legado.app.help.config.LocalConfig
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
-import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -435,17 +435,24 @@ class BookSourceEditActivity :
         return true
     }
 
-    override fun keyboardHelp() {
-        val items = arrayListOf("插入URL参数", "书源教程", "js教程", "正则教程", "选择文件")
-        selector(getString(R.string.help), items) { _, index ->
-            when (index) {
-                0 -> sendText(AppConst.urlOption)
-                1 -> showHelp("ruleHelp")
-                2 -> showHelp("jsHelp")
-                3 -> showHelp("regexHelp")
-                4 -> selectDoc.launch {
-                    mode = HandleFileContract.FILE
-                }
+    override fun helpActions(): List<SelectItem<String>> {
+        return arrayListOf(
+            SelectItem("插入URL参数", "urlOption"),
+            SelectItem("书源教程", "ruleHelp"),
+            SelectItem("js教程", "jsHelp"),
+            SelectItem("正则教程", "regexHelp"),
+            SelectItem("选择文件", "selectFile"),
+        )
+    }
+
+    override fun onHelpActionSelect(action: String) {
+        when (action) {
+            "urlOption" -> sendText(AppConst.urlOption)
+            "ruleHelp" -> showHelp("ruleHelp")
+            "jsHelp" -> showHelp("jsHelp")
+            "regexHelp" -> showHelp("regexHelp")
+            "selectFile" -> selectDoc.launch {
+                mode = HandleFileContract.FILE
             }
         }
     }

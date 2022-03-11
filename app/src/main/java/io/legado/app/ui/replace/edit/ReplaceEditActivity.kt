@@ -11,9 +11,9 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceEditBinding
-import io.legado.app.lib.dialogs.selector
-import io.legado.app.ui.widget.KeyboardToolPop
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -57,7 +57,7 @@ class ReplaceEditActivity :
             upReplaceView(it)
         }
         binding.ivHelp.setOnClickListener {
-            showRegexHelp()
+            showHelp("regexHelp")
         }
     }
 
@@ -112,12 +112,15 @@ class ReplaceEditActivity :
         return replaceRule
     }
 
-    override fun keyboardHelp() {
-        val items = arrayListOf("正则教程")
-        selector(getString(R.string.help), items) { _, index ->
-            when (index) {
-                0 -> showRegexHelp()
-            }
+    override fun helpActions(): List<SelectItem<String>> {
+        return arrayListOf(
+            SelectItem("正则教程", "regexHelp")
+        )
+    }
+
+    override fun onHelpActionSelect(action: String) {
+        when (action) {
+            "regexHelp" -> showHelp("regexHelp")
         }
     }
 
@@ -138,8 +141,10 @@ class ReplaceEditActivity :
         }
     }
 
-    private fun showRegexHelp() {
-        val mdText = String(assets.open("help/regexHelp.md").readBytes())
+    @Suppress("SameParameterValue")
+    private fun showHelp(fileName: String) {
+        //显示目录help下的帮助文档
+        val mdText = String(assets.open("help/${fileName}.md").readBytes())
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
 

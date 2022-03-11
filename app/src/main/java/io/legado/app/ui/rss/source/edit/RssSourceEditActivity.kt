@@ -13,14 +13,15 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssSourceEditBinding
 import io.legado.app.help.config.LocalConfig
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
-import io.legado.app.ui.widget.KeyboardToolPop
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -35,6 +36,15 @@ class RssSourceEditActivity :
     }
     private val adapter by lazy { RssSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
+    private val selectDoc = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            if (uri.isContentScheme()) {
+                sendText(uri.toString())
+            } else {
+                sendText(uri.path.toString())
+            }
+        }
+    }
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it?.let {
             viewModel.importSource(it) { source: RssSource ->
@@ -54,7 +64,7 @@ class RssSourceEditActivity :
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (!LocalConfig.ruleHelpVersionIsLast) {
-            showRuleHelp()
+            showHelp("ruleHelp")
         }
     }
 
@@ -130,7 +140,7 @@ class RssSourceEditActivity :
                 getString(R.string.share_rss_source),
                 ErrorCorrectionLevel.L
             )
-            R.id.menu_help -> showRuleHelp()
+            R.id.menu_help -> showHelp("ruleHelp")
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -225,13 +235,24 @@ class RssSourceEditActivity :
         return true
     }
 
-    override fun keyboardHelp() {
-        val items = arrayListOf("插入URL参数", "订阅源教程", "正则教程")
-        selector(getString(R.string.help), items) { _, index ->
-            when (index) {
-                0 -> sendText(AppConst.urlOption)
-                1 -> showRuleHelp()
-                2 -> showRegexHelp()
+    override fun helpActions(): List<SelectItem<String>> {
+        return arrayListOf(
+            SelectItem("插入URL参数", "urlOption"),
+            SelectItem("订阅源教程", "ruleHelp"),
+            SelectItem("js教程", "jsHelp"),
+            SelectItem("正则教程", "regexHelp"),
+            SelectItem("选择文件", "selectFile"),
+        )
+    }
+
+    override fun onHelpActionSelect(action: String) {
+        when (action) {
+            "urlOption" -> sendText(AppConst.urlOption)
+            "ruleHelp" -> showHelp("ruleHelp")
+            "jsHelp" -> showHelp("jsHelp")
+            "regexHelp" -> showHelp("regexHelp")
+            "selectFile" -> selectDoc.launch {
+                mode = HandleFileContract.FILE
             }
         }
     }
@@ -251,13 +272,9 @@ class RssSourceEditActivity :
         }
     }
 
-    private fun showRuleHelp() {
-        val mdText = String(assets.open("help/ruleHelp.md").readBytes())
-        showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
-    }
-
-    private fun showRegexHelp() {
-        val mdText = String(assets.open("help/regexHelp.md").readBytes())
+    private fun showHelp(fileName: String) {
+        //显示目录help下的帮助文档
+        val mdText = String(assets.open("help/${fileName}.md").readBytes())
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
 
