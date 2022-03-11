@@ -63,10 +63,6 @@ data class SearchBook(
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: HashMap()
     }
 
-    override fun putBigVariable(key: String, value: String) {
-
-    }
-
     @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel

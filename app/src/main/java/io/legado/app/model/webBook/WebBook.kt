@@ -9,6 +9,7 @@ import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.analyzeRule.RuleData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -38,7 +39,7 @@ object WebBook {
         key: String,
         page: Int? = 1,
     ): ArrayList<SearchBook> {
-        val variableBook = SearchBook()
+        val ruleData = RuleData()
         bookSource.searchUrl?.let { searchUrl ->
             val analyzeUrl = AnalyzeUrl(
                 mUrl = searchUrl,
@@ -47,7 +48,7 @@ object WebBook {
                 baseUrl = bookSource.bookSourceUrl,
                 headerMapF = bookSource.getHeaderMap(true),
                 source = bookSource,
-                ruleData = variableBook,
+                ruleData = ruleData,
             )
             var res = analyzeUrl.getStrResponseAwait()
             //检测书源是否已登录
@@ -59,7 +60,7 @@ object WebBook {
             return BookList.analyzeBookList(
                 scope = scope,
                 bookSource = bookSource,
-                variableBook = variableBook,
+                ruleData = ruleData,
                 analyzeUrl = analyzeUrl,
                 baseUrl = res.url,
                 body = res.body,
@@ -90,13 +91,13 @@ object WebBook {
         url: String,
         page: Int? = 1,
     ): ArrayList<SearchBook> {
-        val variableBook = SearchBook()
+        val ruleData = RuleData()
         val analyzeUrl = AnalyzeUrl(
             mUrl = url,
             page = page,
             baseUrl = bookSource.bookSourceUrl,
             source = bookSource,
-            ruleData = variableBook,
+            ruleData = ruleData,
             headerMapF = bookSource.getHeaderMap(true)
         )
         var res = analyzeUrl.getStrResponseAwait()
@@ -109,7 +110,7 @@ object WebBook {
         return BookList.analyzeBookList(
             scope = scope,
             bookSource = bookSource,
-            variableBook = variableBook,
+            ruleData = ruleData,
             analyzeUrl = analyzeUrl,
             baseUrl = res.url,
             body = res.body,

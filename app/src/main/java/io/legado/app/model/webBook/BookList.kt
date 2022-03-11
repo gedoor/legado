@@ -10,6 +10,7 @@ import io.legado.app.model.Debug
 import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.analyzeRule.RuleData
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StringUtils.wordCountFormat
@@ -26,7 +27,7 @@ object BookList {
     fun analyzeBookList(
         scope: CoroutineScope,
         bookSource: BookSource,
-        variableBook: SearchBook,
+        ruleData: RuleData,
         analyzeUrl: AnalyzeUrl,
         baseUrl: String,
         body: String?,
@@ -41,7 +42,7 @@ object BookList {
         val bookList = ArrayList<SearchBook>()
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
         Debug.log(bookSource.bookSourceUrl, body, state = 10)
-        val analyzeRule = AnalyzeRule(variableBook, bookSource)
+        val analyzeRule = AnalyzeRule(ruleData, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
         bookSource.bookUrlPattern?.let {
@@ -49,7 +50,13 @@ object BookList {
             if (baseUrl.matches(it.toRegex())) {
                 Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
                 getInfoItem(
-                    scope, bookSource, analyzeRule, analyzeUrl, body, baseUrl, variableBook.variable
+                    scope,
+                    bookSource,
+                    analyzeRule,
+                    analyzeUrl,
+                    body,
+                    baseUrl,
+                    ruleData.getVariable()
                 )?.let { searchBook ->
                     searchBook.infoHtml = body
                     bookList.add(searchBook)
@@ -78,7 +85,7 @@ object BookList {
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
             getInfoItem(
-                scope, bookSource, analyzeRule, analyzeUrl, body, baseUrl, variableBook.variable
+                scope, bookSource, analyzeRule, analyzeUrl, body, baseUrl, ruleData.getVariable()
             )?.let { searchBook ->
                 searchBook.infoHtml = body
                 bookList.add(searchBook)
@@ -95,7 +102,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└列表大小:${collections.size}")
             for ((index, item) in collections.withIndex()) {
                 getSearchItem(
-                    scope, bookSource, analyzeRule, item, baseUrl, variableBook.variable,
+                    scope, bookSource, analyzeRule, item, baseUrl, ruleData.getVariable(),
                     index == 0,
                     ruleName = ruleName,
                     ruleBookUrl = ruleBookUrl,

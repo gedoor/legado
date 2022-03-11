@@ -8,6 +8,7 @@ import androidx.room.Index
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
 import io.legado.app.constant.AppPattern
+import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
@@ -44,7 +45,7 @@ data class BookChapter(
     var end: Long? = null,              // 章节终止位置
     var startFragmentId: String? = null,  //EPUB书籍当前章节的fragmentId
     var endFragmentId: String? = null,    //EPUB书籍下一章节的fragmentId
-    override var variable: String? = null        //变量
+    var variable: String? = null        //变量
 ) : Parcelable, RuleDataInterface {
 
     @delegate:Transient
@@ -54,13 +55,19 @@ data class BookChapter(
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
-    override fun putVariable(key: String, value: String?) {
-        super.putVariable(key, value)
-        variable = GSON.toJson(variableMap)
+    override fun putVariable(key: String, value: String?): Boolean {
+        if (super.putVariable(key, value)) {
+            variable = GSON.toJson(variableMap)
+        }
+        return true
     }
 
-    override fun putBigVariable(key: String, value: String) {
+    override fun putBigVariable(key: String, value: String?) {
+        RuleBigDataHelp.putChapterVariable(bookUrl, url, key, value)
+    }
 
+    override fun getBigVariable(key: String): String? {
+        return RuleBigDataHelp.getChapterVariable(bookUrl, url, key)
     }
 
     override fun hashCode() = url.hashCode()
