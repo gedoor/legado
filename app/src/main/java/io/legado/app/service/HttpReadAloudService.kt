@@ -264,7 +264,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         val titleMd5 = MD5Utils.md5Encode16(textChapter?.title ?: "")
         FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
             if (!it.name.startsWith(titleMd5) && Date().time - it.lastModified() > 600000) {
-                FileUtils.deleteFile(it.absolutePath)
+                FileUtils.delete(it.absolutePath)
             }
         }
     }

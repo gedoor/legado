@@ -124,7 +124,7 @@ object AppWebDav {
                 for (i in 0 until paths.size) {
                     paths[i] = path + File.separator + paths[i]
                 }
-                FileUtils.deleteFile(zipFilePath)
+                FileUtils.delete(zipFilePath)
                 if (ZipUtils.zipFiles(paths, zipFilePath)) {
                     val putUrl = "${rootWebDavUrl}${backupFileName}"
                     WebDav(putUrl).upload(zipFilePath)

@@ -231,10 +231,10 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         execute {
             val exportFiles = arrayListOf<File>()
             val configDirPath = FileUtils.getPath(requireContext().externalCache, "readConfig")
-            FileUtils.deleteFile(configDirPath)
+            FileUtils.delete(configDirPath)
             val configDir = FileUtils.createFolderIfNotExist(configDirPath)
             val configExportPath = FileUtils.getPath(configDir, "readConfig.json")
-            FileUtils.deleteFile(configExportPath)
+            FileUtils.delete(configExportPath)
             val configExportFile = FileUtils.createFileIfNotExist(configExportPath)
             configExportFile.writeText(GSON.toJson(ReadBookConfig.getExportConfig()))
             exportFiles.add(configExportFile)
@@ -285,7 +285,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                     }
                 } else {
                     val exportPath = FileUtils.getPath(File(uri.path!!), exportFileName)
-                    FileUtils.deleteFile(exportPath)
+                    FileUtils.delete(exportPath)
                     FileUtils.createFileIfNotExist(exportPath)
                         .writeBytes(File(configZipPath).readBytes())
                 }

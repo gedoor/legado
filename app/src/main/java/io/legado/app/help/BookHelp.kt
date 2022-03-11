@@ -31,14 +31,14 @@ object BookHelp {
     private val downloadImages = CopyOnWriteArraySet<String>()
 
     fun clearCache() {
-        FileUtils.deleteFile(
+        FileUtils.delete(
             FileUtils.getPath(downloadDir, cacheFolderName)
         )
     }
 
     fun clearCache(book: Book) {
         val filePath = FileUtils.getPath(downloadDir, cacheFolderName, book.getFolderName())
-        FileUtils.deleteFile(filePath)
+        FileUtils.delete(filePath)
     }
 
     /**
@@ -53,7 +53,7 @@ object BookHelp {
             val file = downloadDir.getFile(cacheFolderName)
             file.listFiles()?.forEach { bookFile ->
                 if (!bookFolderNames.contains(bookFile.name)) {
-                    FileUtils.deleteFile(bookFile.absolutePath)
+                    FileUtils.delete(bookFile.absolutePath)
                 }
             }
         }

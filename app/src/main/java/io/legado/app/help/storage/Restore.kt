@@ -124,7 +124,7 @@ object Restore {
                 val file =
                     FileUtils.createFileIfNotExist("$path${File.separator}${ThemeConfig.configFileName}")
                 if (file.exists()) {
-                    FileUtils.deleteFile(ThemeConfig.configFilePath)
+                    FileUtils.delete(ThemeConfig.configFilePath)
                     file.copyTo(File(ThemeConfig.configFilePath))
                     ThemeConfig.upConfig()
                 }
@@ -137,7 +137,7 @@ object Restore {
                     val file =
                         FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.configFileName}")
                     if (file.exists()) {
-                        FileUtils.deleteFile(ReadBookConfig.configFilePath)
+                        FileUtils.delete(ReadBookConfig.configFilePath)
                         file.copyTo(File(ReadBookConfig.configFilePath))
                         ReadBookConfig.initConfigs()
                     }
@@ -148,7 +148,7 @@ object Restore {
                     val file =
                         FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.shareConfigFileName}")
                     if (file.exists()) {
-                        FileUtils.deleteFile(ReadBookConfig.shareConfigFilePath)
+                        FileUtils.delete(ReadBookConfig.shareConfigFilePath)
                         file.copyTo(File(ReadBookConfig.shareConfigFilePath))
                         ReadBookConfig.initShareConfig()
                     }

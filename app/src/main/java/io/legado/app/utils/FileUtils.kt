@@ -90,23 +90,6 @@ object FileUtils {
         return path.toString()
     }
 
-    //递归删除文件夹下的数据
-    @Synchronized
-    fun deleteFile(filePath: String) {
-        val file = File(filePath)
-        if (!file.exists()) return
-
-        if (file.isDirectory) {
-            val files = file.listFiles()
-            files?.forEach { subFile ->
-                val path = subFile.path
-                deleteFile(path)
-            }
-        }
-        //删除文件
-        file.delete()
-    }
-
     fun getCachePath(): String {
         return appCtx.externalCache.absolutePath
     }
@@ -360,7 +343,7 @@ object FileUtils {
      * 删除文件或目录
      */
     @JvmOverloads
-    fun delete(path: String, deleteRootDir: Boolean = false): Boolean {
+    fun delete(path: String, deleteRootDir: Boolean = true): Boolean {
         val file = File(path)
 
         return if (file.exists()) {

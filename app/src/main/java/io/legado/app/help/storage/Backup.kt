@@ -66,7 +66,7 @@ object Backup {
     suspend fun backup(context: Context, path: String?, isAuto: Boolean = false) {
         context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
         withContext(IO) {
-            FileUtils.deleteFile(backupPath)
+            FileUtils.delete(backupPath)
             writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
             writeListToJson(appDb.bookmarkDao.all, "bookmark.json", backupPath)
             writeListToJson(appDb.bookGroupDao.all, "bookGroup.json", backupPath)

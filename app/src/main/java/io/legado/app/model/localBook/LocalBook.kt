@@ -167,7 +167,7 @@ object LocalBook {
                     val uri = Uri.parse(book.bookUrl)
                     DocumentFile.fromSingleUri(appCtx, uri)?.delete()
                 } else {
-                    FileUtils.deleteFile(book.bookUrl)
+                    FileUtils.delete(book.bookUrl)
                 }
             }
         }

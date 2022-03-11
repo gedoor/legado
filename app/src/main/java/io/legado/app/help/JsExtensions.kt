@@ -177,7 +177,7 @@ interface JsExtensions {
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"
         )
-        FileUtils.deleteFile(zipPath)
+        FileUtils.delete(zipPath)
         val zipFile = FileUtils.createFileIfNotExist(zipPath)
         StringUtils.hexStringToByte(content).let {
             if (it.isNotEmpty()) {
@@ -363,11 +363,11 @@ interface JsExtensions {
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
             FileUtils.getNameExcludeExtension(zipPath)
         )
-        FileUtils.deleteFile(unzipPath)
+        FileUtils.delete(unzipPath)
         val zipFile = getFile(zipPath)
         val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
         ZipUtils.unzipFile(zipFile, unzipFolder)
-        FileUtils.deleteFile(zipFile.absolutePath)
+        FileUtils.delete(zipFile.absolutePath)
         return unzipPath.substring(FileUtils.getCachePath().length)
     }
 
@@ -388,7 +388,7 @@ interface JsExtensions {
                 contents.deleteCharAt(contents.length - 1)
             }
         }
-        FileUtils.deleteFile(unzipFolder.absolutePath)
+        FileUtils.delete(unzipFolder.absolutePath)
         return contents.toString()
     }
 

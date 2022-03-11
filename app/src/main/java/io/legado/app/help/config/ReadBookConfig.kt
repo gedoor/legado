@@ -105,11 +105,11 @@ object ReadBookConfig {
         Coroutine.async {
             synchronized(this) {
                 GSON.toJson(configList).let {
-                    FileUtils.deleteFile(configFilePath)
+                    FileUtils.delete(configFilePath)
                     FileUtils.createFileIfNotExist(configFilePath).writeText(it)
                 }
                 GSON.toJson(shareConfig).let {
-                    FileUtils.deleteFile(shareConfigFilePath)
+                    FileUtils.delete(shareConfigFilePath)
                     FileUtils.createFileIfNotExist(shareConfigFilePath).writeText(it)
                 }
             }
@@ -370,11 +370,11 @@ object ReadBookConfig {
         return kotlin.runCatching {
             withContext(IO) {
                 val configZipPath = FileUtils.getPath(appCtx.externalCache, "readConfig.zip")
-                FileUtils.deleteFile(configZipPath)
+                FileUtils.delete(configZipPath)
                 val zipFile = FileUtils.createFileIfNotExist(configZipPath)
                 zipFile.writeBytes(byteArray)
                 val configDirPath = FileUtils.getPath(appCtx.externalCache, "readConfig")
-                FileUtils.deleteFile(configDirPath)
+                FileUtils.delete(configDirPath)
                 @Suppress("BlockingMethodInNonBlockingContext")
                 ZipUtils.unzipFile(zipFile, FileUtils.createFolderIfNotExist(configDirPath))
                 val configDir = FileUtils.createFolderIfNotExist(configDirPath)

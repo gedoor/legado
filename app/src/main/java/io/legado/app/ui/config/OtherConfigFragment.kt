@@ -186,7 +186,7 @@ class OtherConfigFragment : BasePreferenceFragment(),
         ) {
             okButton {
                 BookHelp.clearCache()
-                FileUtils.deleteFile(requireActivity().cacheDir.absolutePath)
+                FileUtils.delete(requireActivity().cacheDir.absolutePath)
                 toastOnUi(R.string.clear_cache_success)
             }
             noButton()

@@ -74,7 +74,7 @@ object ThemeConfig {
 
     fun save() {
         val json = GSON.toJson(configList)
-        FileUtils.deleteFile(configFilePath)
+        FileUtils.delete(configFilePath)
         FileUtils.createFileIfNotExist(configFilePath).writeText(json)
     }
 
