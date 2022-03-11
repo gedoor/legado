@@ -11,7 +11,7 @@ interface RuleDataInterface {
                 putBigVariable(key, value)
                 true
             }
-            value.length < 1000 -> {
+            value.length < 10000 -> {
                 variableMap[key] = value
                 true
             }
