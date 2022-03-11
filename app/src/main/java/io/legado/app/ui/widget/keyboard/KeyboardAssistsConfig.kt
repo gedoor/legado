@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +24,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.dp
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
@@ -84,8 +86,10 @@ class KeyboardAssistsConfig : BaseDialogFragment(R.layout.dialog_recycler_view),
             setTitle("辅助按键")
             val alertBinding = DialogMultipleEditTextBinding.inflate(layoutInflater).apply {
                 layout1.hint = "key"
+                edit1.setText(keyboardAssist?.key)
                 layout2.hint = "value"
                 layout2.visible()
+                edit2.setText(keyboardAssist?.value)
             }
             setCustomView(alertBinding.root)
             cancelButton()
@@ -115,7 +119,10 @@ class KeyboardAssistsConfig : BaseDialogFragment(R.layout.dialog_recycler_view),
         private var isMoved = false
 
         override fun getViewBinding(parent: ViewGroup): Item1lineTextAndDelBinding {
-            return Item1lineTextAndDelBinding.inflate(inflater, parent, false)
+            return Item1lineTextAndDelBinding.inflate(inflater, parent, false).apply {
+                root.setPadding(16.dp)
+                ivDelete.visible()
+            }
         }
 
         override fun convert(
@@ -128,9 +135,16 @@ class KeyboardAssistsConfig : BaseDialogFragment(R.layout.dialog_recycler_view),
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextAndDelBinding) {
-            binding.ivDelete.setOnClickListener {
+            binding.root.setOnClickListener {
                 getItemByLayoutPosition(holder.layoutPosition)?.let { keyboardAssist ->
                     editKey(keyboardAssist)
+                }
+            }
+            binding.ivDelete.setOnClickListener {
+                getItemByLayoutPosition(holder.layoutPosition)?.let { keyboardAssist ->
+                    launch(IO) {
+                        appDb.keyboardAssistsDao.delete(keyboardAssist)
+                    }
                 }
             }
         }
