@@ -148,6 +148,9 @@ class RssSourceEditActivity :
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.adapter = adapter
+        binding.composeView.setContent {
+
+        }
     }
 
     private fun upRecyclerView(source: RssSource? = viewModel.rssSource) {

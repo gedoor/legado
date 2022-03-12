@@ -27,6 +27,16 @@ object ThemeConfig {
         ArrayList(cList)
     }
 
+    fun getTheme() = when {
+        AppConfig.isEInkMode -> Theme.EInk
+        AppConfig.isNightTheme -> Theme.Dark
+        else -> Theme.Light
+    }
+
+    fun isDarkTheme(): Boolean {
+        return getTheme() == Theme.Dark
+    }
+
     fun applyDayNight(context: Context) {
         ReadBookConfig.upBg()
         applyTheme(context)
@@ -46,7 +56,7 @@ object ThemeConfig {
     }
 
     fun getBgImage(context: Context, metrics: DisplayMetrics): Bitmap? {
-        val bgCfg = when (Theme.getTheme()) {
+        val bgCfg = when (getTheme()) {
             Theme.Light -> Pair(
                 context.getPrefString(PreferKey.bgImage),
                 context.getPrefInt(PreferKey.bgImageBlurring, 0)

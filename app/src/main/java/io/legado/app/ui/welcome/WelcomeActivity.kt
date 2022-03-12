@@ -9,6 +9,7 @@ import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityWelcomeBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.lib.theme.accentColor
@@ -61,7 +62,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
     override fun upBackgroundImage() {
         if (getPrefBoolean(PreferKey.customWelcome)) {
             kotlin.runCatching {
-                when (Theme.getTheme()) {
+                when (ThemeConfig.getTheme()) {
                     Theme.Dark -> getPrefString(PreferKey.welcomeImageDark)?.let { path ->
                         val size = windowManager.windowSize
                         BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels).let {
