@@ -105,6 +105,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.0.5'
+    }
 
     sourceSets {
         // Adds exported schema location as test app assets.
