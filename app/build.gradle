@@ -57,6 +57,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        compose true
     }
     buildTypes {
         release {
@@ -106,7 +107,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.0.5'
+        kotlinCompilerExtensionVersion '1.1.0'
     }
 
     sourceSets {
@@ -180,7 +181,7 @@ dependencies {
 
     //media
     implementation("androidx.media:media:1.5.0")
-    def exoplayer_version = '2.17.0'
+    def exoplayer_version = '2.17.1'
     implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
     implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
 
