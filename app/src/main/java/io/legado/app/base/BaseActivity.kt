@@ -66,10 +66,10 @@ abstract class BaseActivity<VB : ViewBinding>(
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.disableAutoFill()
         initTheme()
-        upBackgroundImage()
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
         setupSystemBar()
+        setContentView(binding.root)
+        upBackgroundImage()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
@@ -158,7 +158,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         }
     }
 
-    private fun setupSystemBar() {
+    open fun setupSystemBar() {
         if (fullScreen && !isInMultiWindow) {
             fullScreen()
         }

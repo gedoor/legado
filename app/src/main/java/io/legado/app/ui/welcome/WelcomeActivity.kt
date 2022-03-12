@@ -12,6 +12,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.*
@@ -47,8 +48,14 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
             finish()
         } else {
-            binding.root.postDelayed({ startMainActivity() }, 500)
+            binding.root.postDelayed({ startMainActivity() }, 600)
         }
+    }
+
+    override fun setupSystemBar() {
+        fullScreen()
+        setStatusBarColorAuto(backgroundColor, true, fullScreen)
+        upNavigationBarColor()
     }
 
     override fun upBackgroundImage() {

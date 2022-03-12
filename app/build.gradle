@@ -157,6 +157,20 @@ dependencies {
     implementation('com.google.code.gson:gson:2.9.0')
     implementation('androidx.webkit:webkit:1.4.0')
 
+    //compose
+    // Integration with activities
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    // Compose Material Design
+    implementation 'androidx.compose.material:material:1.1.1'
+    // Animations
+    implementation 'androidx.compose.animation:animation:1.1.1'
+    // Tooling support (Previews, etc.)
+    implementation 'androidx.compose.ui:ui-tooling:1.1.1'
+    // Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
+    // UI Tests
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
+
     //firebase
     //implementation platform('com.google.firebase:firebase-bom:29.1.0')
     //implementation 'com.google.firebase:firebase-analytics-ktx'
