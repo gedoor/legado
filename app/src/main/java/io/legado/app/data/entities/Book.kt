@@ -206,7 +206,8 @@ data class Book(
     }
 
     fun getPageAnim(): Int {
-        var pageAnim = config.pageAnim ?: ReadBookConfig.pageAnim
+        var pageAnim = config.pageAnim
+            ?: if (type == BookType.image) 3 else ReadBookConfig.pageAnim
         if (pageAnim < 0) {
             pageAnim = ReadBookConfig.pageAnim
         }
@@ -219,6 +220,7 @@ data class Book(
 
     fun getImageStyle(): String? {
         return config.imageStyle
+            ?: if (type == BookType.image) imgStyleFull else null
     }
 
     fun setTtsEngine(ttsEngine: String?) {
