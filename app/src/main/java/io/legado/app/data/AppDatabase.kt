@@ -1,6 +1,8 @@
 package io.legado.app.data
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
@@ -9,6 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.constant.AppConst
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
+import io.legado.app.help.DefaultData
 import splitties.init.appCtx
 import java.util.*
 
@@ -94,6 +97,23 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("update rssSources set loginUi = null where loginUi = 'null'")
                 db.execSQL("update httpTTS set loginUi = null where loginUi = 'null'")
                 db.execSQL("update httpTTS set concurrentRate = '0' where loginUi is null")
+                db.query("select * from keyboardAssists order by serialNo").use {
+                    if (it.count == 0) {
+                        DefaultData.keyboardAssists.forEach { keyboardAssist ->
+                            val contentValues = ContentValues().apply {
+                                put("type", keyboardAssist.type)
+                                put("key", keyboardAssist.key)
+                                put("value", keyboardAssist.value)
+                                put("serialNo", keyboardAssist.serialNo)
+                            }
+                            db.insert(
+                                "keyboardAssists",
+                                SQLiteDatabase.CONFLICT_REPLACE,
+                                contentValues
+                            )
+                        }
+                    }
+                }
             }
         }
 
