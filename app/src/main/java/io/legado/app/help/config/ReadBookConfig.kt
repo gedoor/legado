@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import io.legado.app.R
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.PageAnim
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.DefaultData
 import io.legado.app.help.coroutine.Coroutine
@@ -173,7 +174,7 @@ object ReadBookConfig {
 
     var pageAnim: Int
         get() = config.curPageAnim()
-        set(value) {
+        set(@PageAnim.Anim value) {
             config.setCurPageAnim(value)
         }
 
@@ -515,7 +516,7 @@ object ReadBookConfig {
             }
         }
 
-        fun setCurPageAnim(anim: Int) {
+        fun setCurPageAnim(@PageAnim.Anim anim: Int) {
             when {
                 AppConfig.isEInkMode -> pageAnimEInk = anim
                 else -> pageAnim = anim

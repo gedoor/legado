@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.view.WindowInsets
 import android.widget.FrameLayout
+import io.legado.app.constant.PageAnim
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
@@ -127,7 +128,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         super.dispatchDraw(canvas)
         pageDelegate?.onDraw(canvas)
         if (!isInEditMode && callBack.isAutoPage && !isScroll) {
-            // TODO 自动翻页
+            // 自动翻页
             nextPage.screenshot()?.let {
                 val bottom = callBack.autoPageProgress
                 autoPageRect.set(0, 0, width, bottom)
@@ -481,16 +482,16 @@ class ReadView(context: Context, attrs: AttributeSet) :
         isScroll = ReadBook.pageAnim() == 3
         ChapterProvider.upLayout()
         when (ReadBook.pageAnim()) {
-            0 -> if (pageDelegate !is CoverPageDelegate) {
+            PageAnim.coverPageAnim -> if (pageDelegate !is CoverPageDelegate) {
                 pageDelegate = CoverPageDelegate(this)
             }
-            1 -> if (pageDelegate !is SlidePageDelegate) {
+            PageAnim.slidePageAnim -> if (pageDelegate !is SlidePageDelegate) {
                 pageDelegate = SlidePageDelegate(this)
             }
-            2 -> if (pageDelegate !is SimulationPageDelegate) {
+            PageAnim.simulationPageAnim -> if (pageDelegate !is SimulationPageDelegate) {
                 pageDelegate = SimulationPageDelegate(this)
             }
-            3 -> if (pageDelegate !is ScrollPageDelegate) {
+            PageAnim.scrollPageAnim -> if (pageDelegate !is ScrollPageDelegate) {
                 pageDelegate = ScrollPageDelegate(this)
             }
             else -> if (pageDelegate !is NoAnimPageDelegate) {
