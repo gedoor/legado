@@ -79,6 +79,18 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
         mutableStateOf("")
     }
     urlOption.setRetry(retry.value)
+    val type = remember {
+        mutableStateOf("")
+    }
+    urlOption.setType(type.value)
+    val webJs = remember {
+        mutableStateOf("")
+    }
+    urlOption.setWebJs(webJs.value)
+    val js = remember {
+        mutableStateOf("")
+    }
+    urlOption.setJs(js.value)
     Column {
         Row {
             LabelledCheckBox(
@@ -99,7 +111,7 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
             }
         )
         TextField(
-            value = method.value,
+            value = charset.value,
             onValueChange = {
                 charset.value = it
             },
@@ -110,7 +122,7 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
         TextField(
             value = headers.value,
             onValueChange = {
-                charset.value = it
+                headers.value = it
             },
             label = {
                 Text(text = "headers")
@@ -125,6 +137,34 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
                 Text(text = "retry")
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+        TextField(
+            value = type.value,
+            onValueChange = {
+                type.value = it
+            },
+            label = {
+                Text(text = "type")
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+        TextField(
+            value = webJs.value,
+            onValueChange = {
+                webJs.value = it
+            },
+            label = {
+                Text(text = "webJs")
+            }
+        )
+        TextField(
+            value = js.value,
+            onValueChange = {
+                js.value = it
+            },
+            label = {
+                Text(text = "js")
+            }
         )
     }
 }
