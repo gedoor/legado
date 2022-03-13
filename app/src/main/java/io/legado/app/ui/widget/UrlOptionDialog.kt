@@ -2,7 +2,7 @@ package io.legado.app.ui.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -11,8 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.KeyboardType
 import io.legado.app.R
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.ui.theme.AppTheme
@@ -61,11 +60,27 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
     }
     urlOption.useWebView(useWebView.value)
     val method = remember {
-        mutableStateOf(urlOption.getMethod() ?: "")
+        mutableStateOf("")
     }
     urlOption.setMethod(method.value)
-    Column(Modifier.padding(6.dp)) {
-        Row(Modifier.padding(3.dp)) {
+    val charset = remember {
+        mutableStateOf("")
+    }
+    urlOption.setCharset(charset.value)
+    val headers = remember {
+        mutableStateOf("")
+    }
+    urlOption.setHeaders(headers.value)
+    val body = remember {
+        mutableStateOf("")
+    }
+    urlOption.setBody(body.value)
+    val retry = remember {
+        mutableStateOf("")
+    }
+    urlOption.setRetry(retry.value)
+    Column {
+        Row {
             LabelledCheckBox(
                 checked = useWebView.value,
                 onCheckedChange = {
@@ -80,8 +95,36 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
                 method.value = it
             },
             label = {
-                Text(text = "Method")
+                Text(text = "method")
             }
+        )
+        TextField(
+            value = method.value,
+            onValueChange = {
+                charset.value = it
+            },
+            label = {
+                Text(text = "charset")
+            }
+        )
+        TextField(
+            value = headers.value,
+            onValueChange = {
+                charset.value = it
+            },
+            label = {
+                Text(text = "headers")
+            }
+        )
+        TextField(
+            value = retry.value,
+            onValueChange = {
+                retry.value = it
+            },
+            label = {
+                Text(text = "retry")
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
     }
 }

@@ -172,7 +172,7 @@ class AnalyzeUrl(
                     option.getMethod()?.let {
                         if (it.equals("POST", true)) method = RequestMethod.POST
                     }
-                    option.getHeaders()?.forEach { entry ->
+                    option.getHeaderMap()?.forEach { entry ->
                         headerMap[entry.key.toString()] = entry.value.toString()
                     }
                     option.getBody()?.let {
@@ -558,8 +558,8 @@ class AnalyzeUrl(
         private var charset: String? = null,
         private var headers: Any? = null,
         private var body: Any? = null,
-        private var type: String? = null,
         private var retry: Int? = null,
+        private var type: String? = null,
         private var webView: Any? = null,
         private var webJs: String? = null,
         private var js: String? = null,
@@ -580,20 +580,20 @@ class AnalyzeUrl(
             return charset
         }
 
+        fun setRetry(value: String?) {
+            retry = if (value.isNullOrEmpty()) null else value.toIntOrNull()
+        }
+
+        fun getRetry(): Int {
+            return retry ?: 0
+        }
+
         fun setType(value: String?) {
             type = if (value.isNullOrBlank()) null else value
         }
 
         fun getType(): String? {
             return type
-        }
-
-        fun setRetry(value: Int?) {
-            retry = if (value == null || value <= 0) null else value
-        }
-
-        fun getRetry(): Int {
-            return retry ?: 0
         }
 
         fun useWebView(): Boolean {
@@ -615,7 +615,7 @@ class AnalyzeUrl(
             }
         }
 
-        fun getHeaders(): Map<*, *>? {
+        fun getHeaderMap(): Map<*, *>? {
             return when (val value = headers) {
                 is Map<*, *> -> value
                 is String -> GSON.fromJsonObject<Map<String, Any>>(value).getOrNull()
