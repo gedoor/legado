@@ -169,28 +169,21 @@ class AnalyzeUrl(
         if (urlNoOption.length != ruleUrl.length) {
             GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlMatcher.end())).getOrNull()
                 ?.let { option ->
-                    option.method?.let {
+                    option.getMethod()?.let {
                         if (it.equals("POST", true)) method = RequestMethod.POST
                     }
-                    option.headers?.let { headers ->
-                        if (headers is Map<*, *>) {
-                            headers.forEach { entry ->
-                                headerMap[entry.key.toString()] = entry.value.toString()
-                            }
-                        } else if (headers is String) {
-                            GSON.fromJsonObject<Map<String, String>>(headers).getOrNull()
-                                ?.let { headerMap.putAll(it) }
-                        }
+                    option.getHeaders()?.forEach { entry ->
+                        headerMap[entry.key.toString()] = entry.value.toString()
                     }
-                    option.body?.let {
-                        body = if (it is String) it else GSON.toJson(it)
+                    option.getBody()?.let {
+                        body = it
                     }
-                    type = option.type
-                    charset = option.charset
-                    retry = option.retry
+                    type = option.getType()
+                    charset = option.getCharset()
+                    retry = option.getRetry()
                     useWebView = option.useWebView()
-                    webJs = option.webJs
-                    option.js?.let { jsStr ->
+                    webJs = option.getWebJs()
+                    option.getJs()?.let { jsStr ->
                         evalJS(jsStr, url)?.toString()?.let {
                             url = it
                         }
@@ -561,16 +554,47 @@ class AnalyzeUrl(
     }
 
     data class UrlOption(
-        var method: String? = null,
-        var charset: String? = null,
-        var headers: Any? = null,
-        var body: Any? = null,
-        var type: String? = null,
-        var js: String? = null,
-        var retry: Int = 0,
-        var webView: Any? = null,
-        var webJs: String? = null,
+        private var method: String? = null,
+        private var charset: String? = null,
+        private var headers: Any? = null,
+        private var body: Any? = null,
+        private var type: String? = null,
+        private var retry: Int? = null,
+        private var webView: Any? = null,
+        private var webJs: String? = null,
+        private var js: String? = null,
     ) {
+        fun setMethod(value: String?) {
+            method = if (value.isNullOrBlank()) null else value
+        }
+
+        fun getMethod(): String? {
+            return method
+        }
+
+        fun setCharset(value: String?) {
+            charset = if (value.isNullOrBlank()) null else value
+        }
+
+        fun getCharset(): String? {
+            return charset
+        }
+
+        fun setType(value: String?) {
+            type = if (value.isNullOrBlank()) null else value
+        }
+
+        fun getType(): String? {
+            return type
+        }
+
+        fun setRetry(value: Int?) {
+            retry = if (value == null || value <= 0) null else value
+        }
+
+        fun getRetry(): Int {
+            return retry ?: 0
+        }
 
         fun useWebView(): Boolean {
             return when (webView) {
@@ -579,6 +603,56 @@ class AnalyzeUrl(
             }
         }
 
+        fun useWebView(boolean: Boolean) {
+            webView = if (boolean) true else null
+        }
+
+        fun setHeaders(value: String?) {
+            headers = if (value.isNullOrBlank()) {
+                null
+            } else {
+                GSON.fromJsonObject<Map<String, Any>>(value).getOrNull()
+            }
+        }
+
+        fun getHeaders(): Map<*, *>? {
+            return when (val value = headers) {
+                is Map<*, *> -> value
+                is String -> GSON.fromJsonObject<Map<String, Any>>(value).getOrNull()
+                else -> null
+            }
+        }
+
+        fun setBody(value: String?) {
+            body = when {
+                value.isNullOrBlank() -> null
+                value.isJsonObject() -> GSON.fromJsonObject<Map<String, Any>>(value)
+                value.isJsonArray() -> GSON.fromJsonArray<Map<String, Any>>(value)
+                else -> value
+            }
+        }
+
+        fun getBody(): String? {
+            return body?.let {
+                if (it is String) it else GSON.toJson(it)
+            }
+        }
+
+        fun setWebJs(value: String?) {
+            webJs = if (value.isNullOrBlank()) null else value
+        }
+
+        fun getWebJs(): String? {
+            return webJs
+        }
+
+        fun setJs(value: String?) {
+            js = if (value.isNullOrBlank()) null else value
+        }
+
+        fun getJs(): String? {
+            return js
+        }
     }
 
     data class ConcurrentRecord(

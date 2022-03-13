@@ -58,7 +58,7 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
     val useWebView = remember {
         mutableStateOf(urlOption.useWebView())
     }
-    urlOption.webView = useWebView.value
+    urlOption.useWebView(useWebView.value)
     Column(Modifier.padding(6.dp)) {
         Row(Modifier.padding(3.dp)) {
             LabelledCheckBox(
