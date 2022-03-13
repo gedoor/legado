@@ -6,10 +6,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.compose.runtime.mutableStateOf
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssSourceEditBinding
 import io.legado.app.help.config.LocalConfig
@@ -20,6 +20,7 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
+import io.legado.app.ui.widget.UrlOptionDialog
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.*
@@ -31,6 +32,7 @@ class RssSourceEditActivity :
 
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
+    private val urlOptionDialogState = mutableStateOf(false)
     private val softKeyboardTool by lazy {
         KeyboardToolPop(this, this, binding.root, this)
     }
@@ -148,13 +150,11 @@ class RssSourceEditActivity :
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.adapter = adapter
-//        binding.composeView.setContent {
-//            AppTheme {
-//                UrlOptionDialog {
-//
-//                }
-//            }
-//        }
+        binding.composeView.setContent {
+            UrlOptionDialog(openState = urlOptionDialogState) {
+                
+            }
+        }
     }
 
     private fun upRecyclerView(source: RssSource? = viewModel.rssSource) {
@@ -254,7 +254,7 @@ class RssSourceEditActivity :
 
     override fun onHelpActionSelect(action: String) {
         when (action) {
-            "urlOption" -> sendText(AppConst.urlOption)
+            "urlOption" -> urlOptionDialogState.value = true
             "ruleHelp" -> showHelp("ruleHelp")
             "jsHelp" -> showHelp("jsHelp")
             "regexHelp" -> showHelp("regexHelp")
