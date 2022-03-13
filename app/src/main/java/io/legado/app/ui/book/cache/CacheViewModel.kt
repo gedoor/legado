@@ -142,7 +142,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         append: (text: String, srcList: ArrayList<Triple<String, Int, String>>?) -> Unit
     ) {
-        val useReplace = AppConfig.exportUseReplace
+        val useReplace = AppConfig.exportUseReplace && book.getUseReplaceRule()
         val contentProcessor = ContentProcessor.get(book.name, book.origin)
         val qy = "${book.name}\n${
             context.getString(R.string.author_show, book.getRealAuthor())
@@ -278,7 +278,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                                 when {
                                     //正文模板
                                     file.name.equals("chapter.html", true)
-                                            || file.name.equals("chapter.xhtml", true) -> {
+                                        || file.name.equals("chapter.xhtml", true) -> {
                                         contentModel = file.readText(context)
                                     }
                                     //封面等其他模板
@@ -411,7 +411,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         epubBook: EpubBook
     ) {
         //正文
-        val useReplace = AppConfig.exportUseReplace
+        val useReplace = AppConfig.exportUseReplace && book.getUseReplaceRule()
         val contentProcessor = ContentProcessor.get(book.name, book.origin)
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
             scope.ensureActive()
@@ -430,10 +430,14 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                         reSegment = false
                     )
                     .joinToString("\n")
+                val title = chapter.getDisplayTitle(
+                    contentProcessor.getTitleReplaceRules(),
+                    useReplace = useReplace
+                )
                 epubBook.addSection(
-                    chapter.title,
+                    title,
                     ResourceUtil.createChapterResource(
-                        chapter.title.replace("\uD83D\uDD12", ""),
+                        title.replace("\uD83D\uDD12", ""),
                         content1,
                         contentModel,
                         "Text/chapter_${index}.html"
