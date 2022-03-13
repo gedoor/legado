@@ -10,7 +10,7 @@ import android.text.StaticLayout
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 
 class BatteryView @JvmOverloads constructor(
     context: Context,
@@ -33,8 +33,8 @@ class BatteryView @JvmOverloads constructor(
     private var battery: Int = 0
 
     init {
-        setPadding(4.dp, 3.dp, 6.dp, 3.dp)
-        batteryPaint.strokeWidth = 1.dp.toFloat()
+        setPadding(4.dpToPx(), 3.dpToPx(), 6.dpToPx(), 3.dpToPx())
+        batteryPaint.strokeWidth = 1f.dpToPx()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
     }
@@ -67,20 +67,20 @@ class BatteryView @JvmOverloads constructor(
         layout.getLineBounds(0, outFrame)
         val batteryStart = layout
             .getPrimaryHorizontal(text.length - battery.toString().length)
-            .toInt() + 2.dp
-        val batteryEnd =
-            batteryStart + StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dp
+            .toInt() + 2.dpToPx()
+        val batteryEnd = batteryStart +
+            StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dpToPx()
         outFrame.set(
             batteryStart,
-            2.dp,
+            2.dpToPx(),
             batteryEnd,
-            height - 2.dp
+            height - 2.dpToPx()
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
         polar.set(
             batteryEnd,
             outFrame.top + dj,
-            batteryEnd + 2.dp,
+            batteryEnd + 2.dpToPx(),
             outFrame.bottom - dj
         )
         batteryPaint.style = Paint.Style.STROKE

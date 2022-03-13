@@ -80,7 +80,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         rvStyle.adapter = styleAdapter
         styleAdapter.addFooterView {
             ItemReadStyleBinding.inflate(layoutInflater, it, false).apply {
-                ivStyle.setPadding(6.dp, 6.dp, 6.dp, 6.dp)
+                ivStyle.setPadding(6.dpToPx(), 6.dpToPx(), 6.dpToPx(), 6.dpToPx())
                 ivStyle.setText(null)
                 ivStyle.setColorFilter(textColor)
                 ivStyle.borderColor = textColor

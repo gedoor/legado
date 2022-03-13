@@ -181,7 +181,7 @@ object ChapterProvider {
                 }
             }
         }
-        textPages.last().height = durY + 20.dp
+        textPages.last().height = durY + 20.dpToPx()
         textPages.last().text = stringBuilder.toString()
         textPages.forEachIndexed { index, item ->
             item.index = index
@@ -537,8 +537,8 @@ object ChapterProvider {
         //间距
         lineSpacingExtra = ReadBookConfig.lineSpacingExtra / 10f
         paragraphSpacing = ReadBookConfig.paragraphSpacing
-        titleTopSpacing = ReadBookConfig.titleTopSpacing.dp
-        titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dp
+        titleTopSpacing = ReadBookConfig.titleTopSpacing.dpToPx()
+        titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dpToPx()
         upLayout()
     }
 
@@ -593,14 +593,14 @@ object ChapterProvider {
         tPaint.color = ReadBookConfig.textColor
         tPaint.letterSpacing = ReadBookConfig.letterSpacing
         tPaint.typeface = titleFont
-        tPaint.textSize = with(ReadBookConfig) { textSize + titleSize }.sp.toFloat()
+        tPaint.textSize = with(ReadBookConfig) { textSize + titleSize }.toFloat().spToPx()
         tPaint.isAntiAlias = true
         //正文
         val cPaint = TextPaint()
         cPaint.color = ReadBookConfig.textColor
         cPaint.letterSpacing = ReadBookConfig.letterSpacing
         cPaint.typeface = textFont
-        cPaint.textSize = ReadBookConfig.textSize.sp.toFloat()
+        cPaint.textSize = ReadBookConfig.textSize.toFloat().spToPx()
         cPaint.isAntiAlias = true
         return Pair(tPaint, cPaint)
     }
@@ -625,10 +625,10 @@ object ChapterProvider {
             && ReadBook.pageAnim() != 3
             && AppConfig.doublePageHorizontal
         if (viewWidth > 0 && viewHeight > 0) {
-            paddingLeft = ReadBookConfig.paddingLeft.dp
-            paddingTop = ReadBookConfig.paddingTop.dp
-            paddingRight = ReadBookConfig.paddingRight.dp
-            paddingBottom = ReadBookConfig.paddingBottom.dp
+            paddingLeft = ReadBookConfig.paddingLeft.dpToPx()
+            paddingTop = ReadBookConfig.paddingTop.dpToPx()
+            paddingRight = ReadBookConfig.paddingRight.dpToPx()
+            paddingBottom = ReadBookConfig.paddingBottom.dpToPx()
             visibleWidth = if (doublePage) {
                 viewWidth / 2 - paddingLeft - paddingRight
             } else {

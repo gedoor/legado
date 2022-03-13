@@ -63,7 +63,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
                     binding.flexbox.addView(it.root)
                     it.root.id = index
                     it.textView.text = rowUi.name
-                    it.textView.setPadding(16.dp)
+                    it.textView.setPadding(16.dpToPx())
                     it.root.onClick {
                         if (rowUi.action.isAbsUrl()) {
                             context?.openUrl(rowUi.action!!)

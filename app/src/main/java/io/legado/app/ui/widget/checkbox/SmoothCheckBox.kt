@@ -9,7 +9,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.Checkable
 import io.legado.app.R
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 import kotlin.math.min
 import kotlin.math.pow
@@ -127,7 +127,7 @@ class SmoothCheckBox @JvmOverloads constructor(
     }
 
     private fun measureSize(measureSpec: Int): Int {
-        val defSize: Int = DEF_DRAW_SIZE.dp
+        val defSize: Int = DEF_DRAW_SIZE.dpToPx()
         val specSize = MeasureSpec.getSize(measureSpec)
         val specMode = MeasureSpec.getMode(measureSpec)
         var result = 0

@@ -73,16 +73,16 @@ class PageView(context: Context) : FrameLayout(context) {
             tvFooterRight.setColor(tipColor)
             upStatusBar()
             llHeader.setPadding(
-                it.headerPaddingLeft.dp,
-                it.headerPaddingTop.dp,
-                it.headerPaddingRight.dp,
-                it.headerPaddingBottom.dp
+                it.headerPaddingLeft.dpToPx(),
+                it.headerPaddingTop.dpToPx(),
+                it.headerPaddingRight.dpToPx(),
+                it.headerPaddingBottom.dpToPx()
             )
             llFooter.setPadding(
-                it.footerPaddingLeft.dp,
-                it.footerPaddingTop.dp,
-                it.footerPaddingRight.dp,
-                it.footerPaddingBottom.dp
+                it.footerPaddingLeft.dpToPx(),
+                it.footerPaddingTop.dpToPx(),
+                it.footerPaddingRight.dpToPx(),
+                it.footerPaddingBottom.dpToPx()
             )
             vwTopDivider.visible(it.showHeaderLine)
             vwBottomDivider.visible(it.showFooterLine)

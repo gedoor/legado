@@ -8,7 +8,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 
 class AccentBgTextView @JvmOverloads constructor(
@@ -27,7 +27,7 @@ class AccentBgTextView @JvmOverloads constructor(
     }
 
     fun setRadius(radius: Int) {
-        this.radius = radius.dp
+        this.radius = radius.dpToPx()
         upBackground()
     }
 

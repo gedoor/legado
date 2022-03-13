@@ -163,7 +163,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
                 }
                 textInputLayout.setHint(R.string.group_name)
                 editView.setFilterValues(groups.toList())
-                editView.dropDownHeight = 180.dp
+                editView.dropDownHeight = 180.dpToPx()
             }
             customView {
                 alertBinding.root

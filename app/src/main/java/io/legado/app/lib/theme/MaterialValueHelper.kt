@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import io.legado.app.R
 import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -127,14 +127,14 @@ val Context.elevation: Float
                 resources.getDimension(R.dimen.design_appbar_elevation)
             )
         } else {
-            AppConfig.elevation.dp.toFloat()
+            AppConfig.elevation.toFloat().dpToPx()
         }
     }
 
 val Context.filletBackground: GradientDrawable
     get() {
         val background = GradientDrawable()
-        background.cornerRadius = 3F.dp
+        background.cornerRadius = 3f.dpToPx()
         background.setColor(backgroundColor)
         return background
     }

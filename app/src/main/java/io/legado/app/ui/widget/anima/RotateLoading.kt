@@ -11,7 +11,7 @@ import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 
 /**
  * RotateLoading
@@ -60,8 +60,8 @@ class RotateLoading @JvmOverloads constructor(
 
     init {
         loadingColor = context.accentColor
-        thisWidth = DEFAULT_WIDTH.dp
-        shadowPosition = DEFAULT_SHADOW_POSITION.dp
+        thisWidth = DEFAULT_WIDTH.dpToPx()
+        shadowPosition = DEFAULT_SHADOW_POSITION.dpToPx()
         speedOfDegree = DEFAULT_SPEED_OF_DEGREE
 
         if (null != attrs) {
@@ -70,7 +70,7 @@ class RotateLoading @JvmOverloads constructor(
                 typedArray.getColor(R.styleable.RotateLoading_loading_color, loadingColor)
             thisWidth = typedArray.getDimensionPixelSize(
                 R.styleable.RotateLoading_loading_width,
-                DEFAULT_WIDTH.dp
+                DEFAULT_WIDTH.dpToPx()
             )
             shadowPosition = typedArray.getInt(
                 R.styleable.RotateLoading_shadow_position,

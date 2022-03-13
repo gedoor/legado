@@ -86,7 +86,7 @@ class ReadMenu @JvmOverloads constructor(
         }
         initAnimation()
         val brightnessBackground = GradientDrawable()
-        brightnessBackground.cornerRadius = 5F.dp
+        brightnessBackground.cornerRadius = 5F.dpToPx()
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
         llBrightness.background = brightnessBackground
         llBottomBg.setBackgroundColor(bgColor)

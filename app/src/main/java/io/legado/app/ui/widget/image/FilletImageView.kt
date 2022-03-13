@@ -7,7 +7,7 @@ import android.graphics.Path
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 import kotlin.math.max
 
 class FilletImageView @JvmOverloads constructor(
@@ -24,7 +24,7 @@ class FilletImageView @JvmOverloads constructor(
     init {
         // 读取配置
         val array = context.obtainStyledAttributes(attrs, R.styleable.FilletImageView)
-        val defaultRadius = 5.dp
+        val defaultRadius = 5.dpToPx()
         val radius =
             array.getDimensionPixelOffset(R.styleable.FilletImageView_radius, defaultRadius)
         leftTopRadius = array.getDimensionPixelOffset(

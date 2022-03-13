@@ -18,7 +18,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.setEdgeEffectColor
@@ -36,7 +36,7 @@ class MoreConfigDialog : DialogFragment() {
             attr.dimAmount = 0.0f
             attr.gravity = Gravity.BOTTOM
             attributes = attr
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 360.dp)
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 360.dpToPx())
         }
     }
 

@@ -394,7 +394,7 @@ class BookInfoActivity :
                         setText(R.string.delete_book_file)
                     }
                     val view = LinearLayout(this@BookInfoActivity).apply {
-                        setPadding(16.dp, 0, 16.dp, 0)
+                        setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
                         addView(checkBox)
                     }
                     customView { view }

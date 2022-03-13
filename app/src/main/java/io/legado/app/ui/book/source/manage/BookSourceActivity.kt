@@ -389,7 +389,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setHint(R.string.group_name)
                 editView.setFilterValues(groups.toList())
-                editView.dropDownHeight = 180.dp
+                editView.dropDownHeight = 180.dpToPx()
             }
             customView { alertBinding.root }
             okButton {
@@ -409,7 +409,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setHint(R.string.group_name)
                 editView.setFilterValues(groups.toList())
-                editView.dropDownHeight = 180.dp
+                editView.dropDownHeight = 180.dpToPx()
             }
             customView { alertBinding.root }
             okButton {

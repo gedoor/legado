@@ -8,13 +8,13 @@ import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 
 class AccentStrokeTextView(context: Context, attrs: AttributeSet) :
     AppCompatTextView(context, attrs) {
 
-    private var radius = 3.dp
+    private var radius = 3.dpToPx()
     private val isBottomBackground: Boolean
 
     init {
@@ -39,7 +39,7 @@ class AccentStrokeTextView(context: Context, attrs: AttributeSet) :
         }
         background = Selector.shapeBuild()
             .setCornerRadius(radius)
-            .setStrokeWidth(1.dp)
+            .setStrokeWidth(1.dpToPx())
             .setDisabledStrokeColor(disableColor)
             .setDefaultStrokeColor(ThemeStore.accentColor(context))
             .setPressedBgColor(context.getCompatColor(R.color.transparent30))

@@ -114,22 +114,17 @@ object ConvertUtils {
 
 }
 
-val Int.dp: Int
-    get() = this.toFloat().dp.toInt()
-
-val Int.sp: Int
-    get() = this.toFloat().sp.toInt()
-
 val Int.hexString: String
     get() = Integer.toHexString(this)
 
+fun Int.dpToPx(): Int = this.toFloat().dpToPx().toInt()
 
-val Float.dp: Float
-    get() = android.util.TypedValue.applyDimension(
-        android.util.TypedValue.COMPLEX_UNIT_DIP, this, Resources.getSystem().displayMetrics
-    )
+fun Int.spToPx(): Int = this.toFloat().spToPx().toInt()
 
-val Float.sp: Float
-    get() = android.util.TypedValue.applyDimension(
-        android.util.TypedValue.COMPLEX_UNIT_SP, this, Resources.getSystem().displayMetrics
-    )
+fun Float.dpToPx(): Float = android.util.TypedValue.applyDimension(
+    android.util.TypedValue.COMPLEX_UNIT_DIP, this, Resources.getSystem().displayMetrics
+)
+
+fun Float.spToPx(): Float = android.util.TypedValue.applyDimension(
+    android.util.TypedValue.COMPLEX_UNIT_SP, this, Resources.getSystem().displayMetrics
+)

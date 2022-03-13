@@ -42,9 +42,9 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
     ) {
         binding.run {
             if (holder.layoutPosition == itemCount - 1) {
-                root.setPadding(16.dp, 12.dp, 16.dp, 12.dp)
+                root.setPadding(16.dpToPx(), 12.dpToPx(), 16.dpToPx(), 12.dpToPx())
             } else {
-                root.setPadding(16.dp, 12.dp, 16.dp, 0)
+                root.setPadding(16.dpToPx(), 12.dpToPx(), 16.dpToPx(), 0)
             }
             if (payloads.isEmpty()) {
                 tvName.text = item.bookSourceName

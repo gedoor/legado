@@ -9,7 +9,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 
 class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
@@ -32,8 +32,8 @@ class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
                 val isLight = ColorUtils.isColorLight(context.bottomBackground)
                 val textColor = context.getPrimaryTextColor(isLight)
                 background = Selector.shapeBuild()
-                    .setCornerRadius(2.dp)
-                    .setStrokeWidth(2.dp)
+                    .setCornerRadius(2.dpToPx())
+                    .setStrokeWidth(2.dpToPx())
                     .setCheckedBgColor(context.accentColor)
                     .setCheckedStrokeColor(context.accentColor)
                     .setDefaultStrokeColor(textColor)
@@ -48,8 +48,8 @@ class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
             else -> {
                 val textColor = context.getCompatColor(R.color.primaryText)
                 background = Selector.shapeBuild()
-                    .setCornerRadius(2.dp)
-                    .setStrokeWidth(2.dp)
+                    .setCornerRadius(2.dpToPx())
+                    .setStrokeWidth(2.dpToPx())
                     .setCheckedBgColor(context.accentColor)
                     .setCheckedStrokeColor(context.accentColor)
                     .setDefaultStrokeColor(textColor)

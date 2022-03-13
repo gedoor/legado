@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.legado.app.ui.widget.text.AccentBgTextView
-import io.legado.app.utils.dp
+import io.legado.app.utils.dpToPx
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class LabelsBar @JvmOverloads constructor(
@@ -40,10 +40,10 @@ class LabelsBar @JvmOverloads constructor(
     fun addLabel(label: String) {
         val tv = if (unUsedViews.isEmpty()) {
             AccentBgTextView(context, null).apply {
-                setPadding(3.dp, 0, 3.dp, 0)
+                setPadding(3.dpToPx(), 0, 3.dpToPx(), 0)
                 setRadius(2)
                 val lp = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-                lp.setMargins(0, 0, 2.dp, 0)
+                lp.setMargins(0, 0, 2.dpToPx(), 0)
                 layoutParams = lp
                 text = label
                 maxLines = 1

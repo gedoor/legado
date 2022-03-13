@@ -21,8 +21,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.printOnDebug
-
-import io.legado.app.utils.sp
+import io.legado.app.utils.spToPx
 
 import kotlin.math.min
 import kotlin.math.pow
@@ -202,7 +201,7 @@ class CircleImageView @JvmOverloads constructor(
         text?.let {
             textPaint.color = textColor
             textPaint.isFakeBoldText = textBold
-            textPaint.textSize = 15.sp.toFloat()
+            textPaint.textSize = 15f.spToPx()
             val fm = textPaint.fontMetrics
             canvas.drawText(
                 it,
