@@ -188,7 +188,7 @@ class AnalyzeUrl(
                     type = option.type
                     charset = option.charset
                     retry = option.retry
-                    useWebView = option.webView?.toString()?.isNotBlank() == true
+                    useWebView = option.useWebView()
                     webJs = option.webJs
                     option.js?.let { jsStr ->
                         evalJS(jsStr, url)?.toString()?.let {
@@ -561,16 +561,25 @@ class AnalyzeUrl(
     }
 
     data class UrlOption(
-        val method: String?,
-        val charset: String?,
-        val headers: Any?,
-        val body: Any?,
-        val type: String?,
-        val js: String?,
-        val retry: Int = 0,
-        val webView: Any?,
-        val webJs: String?,
-    )
+        var method: String? = null,
+        var charset: String? = null,
+        var headers: Any? = null,
+        var body: Any? = null,
+        var type: String? = null,
+        var js: String? = null,
+        var retry: Int = 0,
+        var webView: Any? = null,
+        var webJs: String? = null,
+    ) {
+
+        fun useWebView(): Boolean {
+            return when (webView) {
+                null, "", false, "false" -> false
+                else -> true
+            }
+        }
+
+    }
 
     data class ConcurrentRecord(
         val concurrent: Boolean,
