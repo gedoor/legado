@@ -152,7 +152,7 @@ class RssSourceEditActivity :
         binding.recyclerView.adapter = adapter
         binding.composeView.setContent {
             UrlOptionDialog(openState = urlOptionDialogState) {
-                
+                sendText(it)
             }
         }
     }

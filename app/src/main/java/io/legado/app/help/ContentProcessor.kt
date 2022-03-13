@@ -107,7 +107,10 @@ class ContentProcessor private constructor(
         }
         if (includeTitle) {
             //重新添加标题
-            mContent = chapter.getDisplayTitle(getTitleReplaceRules()) + "\n" + mContent
+            mContent = chapter.getDisplayTitle(
+                getTitleReplaceRules(),
+                useReplace = useReplace && book.getUseReplaceRule()
+            ) + "\n" + mContent
         }
         val contents = arrayListOf<String>()
         mContent.split("\n").forEach { str ->
