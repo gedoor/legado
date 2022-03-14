@@ -1,6 +1,5 @@
 package io.legado.app.help.http.cronet
 
-import android.os.ConditionVariable
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import okhttp3.*
@@ -11,46 +10,28 @@ import okio.Buffer
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
-
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 
-class CronetRequestCallback @JvmOverloads internal constructor(
-    private val originalRequest: Request,
-    private val mCall: Call,
-    eventListener: EventListener? = null,
-    responseCallback: Callback? = null
+abstract class AbsCallBack(
+    val originalRequest: Request,
+    val mCall: Call,
+    private val eventListener: EventListener? = null,
+    private val responseCallback: Callback? = null
+
 ) : UrlRequest.Callback() {
 
-    private val eventListener: EventListener?
-    private val responseCallback: Callback?
+    val buffer = Buffer()
+
+    var mResponse: Response
+
+    var mException: IOException? = null
     private var followCount = 0
-    private var mResponse: Response
-    private var mException: IOException? = null
-    private val mResponseCondition = ConditionVariable()
-    private val mBuffer = Buffer()
 
-    @Throws(IOException::class)
-    fun waitForDone(urlRequest: UrlRequest): Response {
-        //获取okhttp call的完整请求的超时时间
-        val timeOutMs: Long = mCall.timeout().timeoutNanos() / 1000000
-        if (timeOutMs > 0) {
-            mResponseCondition.block(timeOutMs)
-        } else {
-            mResponseCondition.block()
-        }
-        //ConditionVariable 正常open或者超时open后，检查urlRequest是否完成
-        if (!urlRequest.isDone) {
-            urlRequest.cancel()
-            mException = IOException("Cronet timeout after wait " + timeOutMs + "ms")
-        }
 
-        if (mException != null) {
-            throw mException as IOException
-        }
-        return this.mResponse
-    }
+    abstract fun waitForDone(urlRequest: UrlRequest): Response
+
 
     override fun onRedirectReceived(
         request: UrlRequest,
@@ -59,6 +40,10 @@ class CronetRequestCallback @JvmOverloads internal constructor(
     ) {
         if (followCount > MAX_FOLLOW_COUNT) {
             request.cancel()
+            mException = IOException("Too many redirect")
+        }
+        if (mCall.isCanceled()) {
+            mException = IOException("Request Canceled")
         }
         followCount += 1
         val client = okHttpClient
@@ -66,26 +51,18 @@ class CronetRequestCallback @JvmOverloads internal constructor(
             request.followRedirect()
         } else if (!originalRequest.url.isHttps && newLocationUrl.startsWith("https://") && client.followSslRedirects) {
             request.followRedirect()
-        } else if (client.followRedirects) {
+        } else if (okHttpClient.followRedirects) {
             request.followRedirect()
         } else {
+            mException = IOException("Too many redirect")
             request.cancel()
         }
     }
 
+
+    //UrlResponseInfo可能为null
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
         this.mResponse = responseFromResponse(this.mResponse, info)
-//        用于调试
-//        val sb: StringBuilder = StringBuilder(info.url).append("\r\n")
-//        sb.append("[Cached:").append(info.wasCached()).append("][StatusCode:")
-//            .append(info.httpStatusCode).append("][StatusText:").append(info.httpStatusText)
-//            .append("][Protocol:").append(info.negotiatedProtocol).append("][ByteCount:")
-//            .append(info.receivedByteCount).append("]\r\n");
-//        val httpHeaders=info.allHeadersAsList
-//        httpHeaders.forEach { h ->
-//            sb.append("[").append(h.key).append("]").append(h.value).append("\r\n");
-//        }
-//        Log.e("Cronet", sb.toString())
         //打印协议，用于调试
         DebugLog.i(javaClass.name, info.negotiatedProtocol)
         if (eventListener != null) {
@@ -95,6 +72,7 @@ class CronetRequestCallback @JvmOverloads internal constructor(
         request.read(ByteBuffer.allocateDirect(32 * 1024))
     }
 
+
     @Throws(Exception::class)
     override fun onReadCompleted(
         request: UrlRequest,
@@ -103,27 +81,34 @@ class CronetRequestCallback @JvmOverloads internal constructor(
     ) {
 
 
+        if (mCall.isCanceled()) {
+            request.cancel()
+            mException = IOException("Request Canceled")
+        }
+
         byteBuffer.flip()
 
         try {
-            mBuffer.write(byteBuffer)
+            buffer.write(byteBuffer)
         } catch (e: IOException) {
             DebugLog.i(javaClass.name, "IOException during ByteBuffer read. Details: ", e)
+            mException = IOException("IOException during ByteBuffer read. Details:", e)
             throw e
         }
         byteBuffer.clear()
         request.read(byteBuffer)
     }
 
+
     override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
         eventListener?.responseBodyEnd(mCall, info.receivedByteCount)
         val contentType: MediaType? = (this.mResponse.header("content-type")
             ?: "text/plain; charset=\"utf-8\"").toMediaTypeOrNull()
         val responseBody: ResponseBody =
-            mBuffer.asResponseBody(contentType)
+            buffer.asResponseBody(contentType)
         val newRequest = originalRequest.newBuilder().url(info.url).build()
         this.mResponse = this.mResponse.newBuilder().body(responseBody).request(newRequest).build()
-        mResponseCondition.open()
+
         eventListener?.callEnd(mCall)
         if (responseCallback != null) {
             try {
@@ -134,28 +119,34 @@ class CronetRequestCallback @JvmOverloads internal constructor(
         }
     }
 
+
     //UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
         DebugLog.i(javaClass.name, error.message.toString())
-        val msg = error.localizedMessage
-        val e = IOException(msg?.substring(msg.indexOf("net::")), error)
-        mException = e
-        mResponseCondition.open()
-
-        this.eventListener?.callFailed(mCall, e)
-        responseCallback?.onFailure(mCall, e)
+        mException = IOException(error.message, error)
+        this.eventListener?.callFailed(mCall, error)
+        responseCallback?.onFailure(mCall, error)
     }
 
-    override fun onCanceled(request: UrlRequest, info: UrlResponseInfo?) {
-        mResponseCondition.open()
+    override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
+        super.onCanceled(request, info)
         this.eventListener?.callEnd(mCall)
+        mException = IOException("Cronet Request Canceled")
+    }
 
 
+    init {
+        mResponse = Response.Builder()
+            .sentRequestAtMillis(System.currentTimeMillis())
+            .request(originalRequest)
+            .protocol(Protocol.HTTP_1_0)
+            .code(0)
+            .message("")
+            .build()
     }
 
     companion object {
-        private const val MAX_FOLLOW_COUNT = 20
-
+        const val MAX_FOLLOW_COUNT = 20
         private fun protocolFromNegotiatedProtocol(responseInfo: UrlResponseInfo): Protocol {
             val negotiatedProtocol = responseInfo.negotiatedProtocol.lowercase(Locale.getDefault())
             return when {
@@ -216,17 +207,5 @@ class CronetRequestCallback @JvmOverloads internal constructor(
                 .headers(headers)
                 .build()
         }
-    }
-
-    init {
-        this.mResponse = Response.Builder()
-            .sentRequestAtMillis(System.currentTimeMillis())
-            .request(originalRequest)
-            .protocol(Protocol.HTTP_1_0)
-            .code(0)
-            .message("")
-            .build()
-        this.responseCallback = responseCallback
-        this.eventListener = eventListener
     }
 }
