@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
-import androidx.compose.runtime.mutableStateOf
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -32,7 +31,6 @@ class RssSourceEditActivity :
 
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
-    private val urlOptionDialogState = mutableStateOf(false)
     private val softKeyboardTool by lazy {
         KeyboardToolPop(this, this, binding.root, this)
     }
@@ -150,11 +148,6 @@ class RssSourceEditActivity :
     private fun initView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.adapter = adapter
-        binding.composeView.setContent {
-            UrlOptionDialog(openState = urlOptionDialogState) {
-                sendText(it)
-            }
-        }
     }
 
     private fun upRecyclerView(source: RssSource? = viewModel.rssSource) {
