@@ -24,11 +24,13 @@ object ImageLoader {
         val dataUriFindResult = dataUriRegex.find(path ?: "")
         return when {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
-            dataUriFindResult != null -> {
+            dataUriFindResult != null -> kotlin.runCatching {
                 val dataUriBase64 = dataUriFindResult.groupValues[1]
                 val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
                 Glide.with(context).load(byteArray)
-            }
+            }.getOrDefault(
+                Glide.with(context).load(path)
+            )
             path.isAbsUrl() -> {
                 val url = kotlin.runCatching {
                     AnalyzeUrl(path).getGlideUrl()
