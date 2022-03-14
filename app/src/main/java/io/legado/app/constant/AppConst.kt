@@ -51,19 +51,6 @@ object AppConst {
     const val notificationIdDownload = -1122395
     const val notificationIdCheckSource = -1122395
 
-    val urlOption: String by lazy {
-        """
-        ,{
-        'charset': '',
-        'method': 'POST',
-        'body': '',
-        'headers': {
-            'User-Agent': ''
-            }
-        }
-        """.trimIndent()
-    }
-
     val menuViewNames = arrayOf(
         "com.android.internal.view.menu.ListMenuItemView",
         "androidx.appcompat.view.menu.ListMenuItemView"
