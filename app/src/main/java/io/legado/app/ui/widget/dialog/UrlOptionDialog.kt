@@ -87,7 +87,7 @@ fun UrlOptionDialog(openState: MutableState<Boolean>, confirm: (String) -> Unit)
                     Text(text = "url参数")
                 },
                 text = {
-                    Surface() {
+                    Surface {
                         UrlOptionView(urlOption = urlOption)
                     }
                 }
