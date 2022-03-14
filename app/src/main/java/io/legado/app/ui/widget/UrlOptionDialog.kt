@@ -2,7 +2,9 @@ package io.legado.app.ui.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import io.legado.app.R
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -91,7 +94,8 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
         mutableStateOf("")
     }
     urlOption.setJs(js.value)
-    Column {
+
+    Column(Modifier.verticalScroll(rememberScrollState())) {
         Row {
             LabelledCheckBox(
                 checked = useWebView.value,
@@ -145,8 +149,7 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
             },
             label = {
                 Text(text = "type")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            }
         )
         TextField(
             value = webJs.value,
