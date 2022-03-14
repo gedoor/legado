@@ -20,8 +20,8 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
-import io.legado.app.ui.widget.UrlOptionDialog
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.ui.widget.dialog.UrlOptionDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -254,7 +254,7 @@ class RssSourceEditActivity :
 
     override fun onHelpActionSelect(action: String) {
         when (action) {
-            "urlOption" -> urlOptionDialogState.value = true
+            "urlOption" -> UrlOptionDialog(this).show()
             "ruleHelp" -> showHelp("ruleHelp")
             "jsHelp" -> showHelp("jsHelp")
             "regexHelp" -> showHelp("regexHelp")

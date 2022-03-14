@@ -1,11 +1,13 @@
 package io.legado.app.utils
 
+import android.app.Dialog
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.filletBackground
+import splitties.systemservices.windowManager
 
 fun AlertDialog.applyTint(): AlertDialog {
     window?.setBackgroundDrawable(context.filletBackground)
@@ -30,29 +32,45 @@ fun AlertDialog.requestInputMethod() {
 }
 
 fun DialogFragment.setLayout(widthMix: Float, heightMix: Float) {
-    val dm = requireActivity().windowManager.windowSize
-    dialog?.window?.setLayout(
+    dialog?.setLayout(widthMix, heightMix)
+}
+
+fun Dialog.setLayout(widthMix: Float, heightMix: Float) {
+    val dm = context.windowManager.windowSize
+    window?.setLayout(
         (dm.widthPixels * widthMix).toInt(),
         (dm.heightPixels * heightMix).toInt()
     )
 }
 
 fun DialogFragment.setLayout(width: Int, heightMix: Float) {
-    val dm = requireActivity().windowManager.windowSize
-    dialog?.window?.setLayout(
+    dialog?.setLayout(width, heightMix)
+}
+
+fun Dialog.setLayout(width: Int, heightMix: Float) {
+    val dm = context.windowManager.windowSize
+    window?.setLayout(
         width,
         (dm.heightPixels * heightMix).toInt()
     )
 }
 
 fun DialogFragment.setLayout(widthMix: Float, height: Int) {
-    val dm = requireActivity().windowManager.windowSize
-    dialog?.window?.setLayout(
+    dialog?.setLayout(widthMix, height)
+}
+
+fun Dialog.setLayout(widthMix: Float, height: Int) {
+    val dm = context.windowManager.windowSize
+    window?.setLayout(
         (dm.widthPixels * widthMix).toInt(),
         height
     )
 }
 
 fun DialogFragment.setLayout(width: Int, height: Int) {
-    dialog?.window?.setLayout(width, height)
+    dialog?.setLayout(width, height)
+}
+
+fun Dialog.setLayout(width: Int, height: Int) {
+    window?.setLayout(width, height)
 }
