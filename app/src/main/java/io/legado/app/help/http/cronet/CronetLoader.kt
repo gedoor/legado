@@ -34,6 +34,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     private var cpuAbi: String? = null
     private var md5: String
     var download = false
+    @Volatile
     private var cacheInstall = false
 
     init {

@@ -1,5 +1,6 @@
 package io.legado.app.help.http.cronet
 
+import android.os.Build
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.printOnDebug
 import okhttp3.*
@@ -42,10 +43,14 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
     }
 
     private fun proceedWithCronet(request: Request, call: Call): Response? {
-        val callback = CronetRequestCallback(request, call)
-        buildRequest(request, callback)?.let {
+        val callBack = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            NewCallBack(request, call)
+        } else {
+            OldCallback(request, call)
+        }
+        buildRequest(request, callBack)?.let {
             it.start()
-            return callback.waitForDone(it)
+            return callBack.waitForDone(it)
         }
         return null
     }
