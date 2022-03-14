@@ -106,7 +106,7 @@ class KeyboardToolPop(
             SelectItem(context.getString(R.string.assists_key_config), "keyConfig")
         )
         items.addAll(callBack.helpActions())
-        context.selector(context.getString(R.string.help), items) { _, selectItem, i ->
+        context.selector(context.getString(R.string.help), items) { _, selectItem, _ ->
             when (selectItem.value) {
                 "keyConfig" -> config()
                 else -> callBack.onHelpActionSelect(selectItem.value)
