@@ -1,9 +1,9 @@
 package io.legado.app.ui.widget.dialog
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
@@ -26,7 +26,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.setLayout
 import splitties.init.appCtx
 
-class UrlOptionDialog(context: Context) : AlertDialog(context) {
+class UrlOptionDialog(context: Context) : Dialog(context) {
 
     val binding = DialogUrlOptionEditBinding.inflate(layoutInflater)
 
