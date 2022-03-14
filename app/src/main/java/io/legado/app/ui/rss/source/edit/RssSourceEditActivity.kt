@@ -254,7 +254,9 @@ class RssSourceEditActivity :
 
     override fun onHelpActionSelect(action: String) {
         when (action) {
-            "urlOption" -> UrlOptionDialog(this).show()
+            "urlOption" -> UrlOptionDialog(this) {
+                sendText(it)
+            }.show()
             "ruleHelp" -> showHelp("ruleHelp")
             "jsHelp" -> showHelp("jsHelp")
             "regexHelp" -> showHelp("regexHelp")

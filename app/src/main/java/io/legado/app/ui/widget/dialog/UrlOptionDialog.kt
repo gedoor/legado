@@ -26,7 +26,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.setLayout
 import splitties.init.appCtx
 
-class UrlOptionDialog(context: Context) : Dialog(context) {
+class UrlOptionDialog(context: Context, private val success: (String) -> Unit) : Dialog(context) {
 
     val binding = DialogUrlOptionEditBinding.inflate(layoutInflater)
 
@@ -39,8 +39,23 @@ class UrlOptionDialog(context: Context) : Dialog(context) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.tvOk.setOnClickListener {
+            success.invoke(GSON.toJson(getUrlOption()))
             dismiss()
         }
+    }
+
+    private fun getUrlOption(): AnalyzeUrl.UrlOption {
+        val urlOption = AnalyzeUrl.UrlOption()
+        urlOption.useWebView(binding.cbUseWebView.isChecked)
+        urlOption.setMethod(binding.editMethod.text.toString())
+        urlOption.setCharset(binding.editMethod.text.toString())
+        urlOption.setHeaders(binding.editHeaders.text.toString())
+        urlOption.setBody(binding.editBody.text.toString())
+        urlOption.setRetry(binding.editRetry.text.toString())
+        urlOption.setType(binding.editType.text.toString())
+        urlOption.setWebJs(binding.editWebJs.text.toString())
+        urlOption.setJs(binding.editJs.text.toString())
+        return urlOption
     }
 
 }
