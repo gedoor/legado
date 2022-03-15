@@ -31,7 +31,7 @@ class UrlOptionDialog(context: Context, private val success: (String) -> Unit) :
 
     override fun onStart() {
         super.onStart()
-        setLayout(1f, ViewGroup.LayoutParams.WRAP_CONTENT)
+        setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
