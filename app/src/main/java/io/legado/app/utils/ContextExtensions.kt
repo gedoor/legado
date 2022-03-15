@@ -13,6 +13,7 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.BatteryManager
 import android.os.Build
@@ -29,7 +30,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.help.IntentHelp
 import splitties.systemservices.clipboardManager
-
+import splitties.systemservices.connectivityManager
 import java.io.File
 import java.io.FileOutputStream
 
@@ -325,6 +326,12 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
         toastOnUi(e.msg)
     }
 }
+
+val Context.isWifiConnect: Boolean
+    get() {
+        val info = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        return info?.isConnected == true
+    }
 
 val Context.isPad: Boolean
     get() {

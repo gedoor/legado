@@ -29,7 +29,7 @@ object ImageLoader {
                 val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
                 Glide.with(context).load(byteArray)
             }.getOrDefault(
-                Glide.with(context).load(path)
+                GlideApp.with(context).load(path)
             )
             path.isAbsUrl() -> {
                 val url = kotlin.runCatching {
