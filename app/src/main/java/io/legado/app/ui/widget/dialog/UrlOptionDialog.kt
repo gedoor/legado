@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import io.legado.app.R
 import io.legado.app.databinding.DialogUrlOptionEditBinding
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -213,10 +212,4 @@ fun UrlOptionView(urlOption: AnalyzeUrl.UrlOption) {
             }
         )
     }
-}
-
-@Preview
-@Composable
-fun PreviewUrlOption() {
-    UrlOptionView(urlOption = AnalyzeUrl.UrlOption())
 }
