@@ -3,19 +3,25 @@ package io.legado.app.ui.book.read.config
 import android.app.Dialog
 import android.content.Context
 import android.view.KeyEvent
-import io.legado.app.R
+import android.view.ViewGroup
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogPageKeyBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefString
+import io.legado.app.utils.setLayout
 import splitties.views.onClick
 
 
-class PageKeyDialog(context: Context) : Dialog(context, R.style.AppTheme_AlertDialog) {
+class PageKeyDialog(context: Context) : Dialog(context) {
 
     private val binding = DialogPageKeyBinding.inflate(layoutInflater)
+
+    override fun onStart() {
+        super.onStart()
+        setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
 
     init {
         setContentView(binding.root)

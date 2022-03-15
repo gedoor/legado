@@ -48,8 +48,6 @@
         <item name="colorAccent">@color/md_grey_900</item>
     </style>
 
-    <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert"/>
-
     <style name="Spinner" parent="android:Theme.Holo.Light" />
 
     //**********System Style******************//
