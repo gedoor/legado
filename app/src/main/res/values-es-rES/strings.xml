@@ -956,5 +956,6 @@
     <string name="show_default_book_icon">显示默认书籍图标</string>
     <string name="cache_export">缓存/导出</string>
     <string name="assists_key_config">辅助按键配置</string>
+    <string name="url_option">Url参数</string>
     <!-- string end -->
 </resources>
