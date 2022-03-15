@@ -47,7 +47,7 @@ class UrlOptionDialog(context: Context, private val success: (String) -> Unit) :
         val urlOption = AnalyzeUrl.UrlOption()
         urlOption.useWebView(binding.cbUseWebView.isChecked)
         urlOption.setMethod(binding.editMethod.text.toString())
-        urlOption.setCharset(binding.editMethod.text.toString())
+        urlOption.setCharset(binding.editCharset.text.toString())
         urlOption.setHeaders(binding.editHeaders.text.toString())
         urlOption.setBody(binding.editBody.text.toString())
         urlOption.setRetry(binding.editRetry.text.toString())
