@@ -229,9 +229,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "┌获取封面链接", log)
             try {
                 analyzeRule.getString(ruleCoverUrl).let {
-                    if (it.startsWith("data:")) {
-                        searchBook.coverUrl = it
-                    } else if (it.isNotEmpty()) {
+                    if (it.isNotEmpty()) {
                         searchBook.coverUrl =
                             NetworkUtils.getAbsoluteURL(baseUrl, it)
                     }

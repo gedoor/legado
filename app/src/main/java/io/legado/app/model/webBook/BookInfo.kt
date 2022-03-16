@@ -127,9 +127,7 @@ object BookInfo {
         Debug.log(bookSource.bookSourceUrl, "┌获取封面链接")
         try {
             analyzeRule.getString(infoRule.coverUrl).let {
-                if (it.startsWith("data:")) {
-                    book.coverUrl = it
-                } else if (it.isNotEmpty()) {
+                if (it.isNotEmpty()) {
                     book.coverUrl =
                         NetworkUtils.getAbsoluteURL(baseUrl, it)
                 }

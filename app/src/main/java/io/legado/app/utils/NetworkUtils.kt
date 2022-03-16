@@ -4,6 +4,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern
 import okhttp3.internal.publicsuffix.PublicSuffixDatabase
 import splitties.systemservices.connectivityManager
 
@@ -110,6 +111,7 @@ object NetworkUtils {
     fun getAbsoluteURL(baseURL: String?, relativePath: String): String {
         if (baseURL.isNullOrEmpty()) return relativePath
         if (relativePath.isAbsUrl()) return relativePath
+        if (relativePath.matches(AppPattern.dataUriRegex)) return relativePath
         if (relativePath.startsWith("javascript")) return ""
         var relativeUrl = relativePath
         try {
