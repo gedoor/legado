@@ -31,14 +31,21 @@ object ImageLoader {
                 GlideApp.with(context).load(path)
             )
             path.isAbsUrl() -> {
-                val url = kotlin.runCatching {
-                    AnalyzeUrl(path).getGlideUrl()
-                }.getOrDefault(path)
-                GlideApp.with(context).load(url)
+                kotlin.runCatching {
+                    val url = AnalyzeUrl(path).getGlideUrl()
+                    GlideApp.with(context).load(url)
+                }.getOrDefault(
+                    GlideApp.with(context).load(path)
+                )
             }
             path.isContentScheme() -> GlideApp.with(context).load(Uri.parse(path))
             else -> kotlin.runCatching {
-                GlideApp.with(context).load(File(path))
+                val file = File(path)
+                if (file.exists()) {
+                    GlideApp.with(context).load(file)
+                } else {
+                    GlideApp.with(context).load(path)
+                }
             }.getOrElse {
                 GlideApp.with(context).load(path)
             }
