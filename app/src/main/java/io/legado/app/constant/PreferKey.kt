@@ -8,6 +8,7 @@ object PreferKey {
     const val showUnread = "showUnread"
     const val bookGroupStyle = "bookGroupStyle"
     const val useDefaultCover = "useDefaultCover"
+    const val loadCoverOnlyWifi = "loadCoverOnlyWifi"
     const val coverShowName = "coverShowName"
     const val coverShowAuthor = "coverShowAuthor"
     const val coverShowNameN = "coverShowNameN"

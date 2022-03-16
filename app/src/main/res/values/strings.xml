@@ -960,5 +960,9 @@
     <string name="cache_export">缓存/导出</string>
     <string name="assists_key_config">辅助按键配置</string>
     <string name="url_option">Url参数</string>
+    <string name="only_wifi">仅WIFI</string>
+    <string name="only_wifi_summary">仅在wifi下加载网络封面</string>
+    <string name="cover_rule">封面规则</string>
+    <string name="cover_rule_summary">进入详情页时使用封面规则重新获取封面</string>
     <!-- string end -->
 </resources>

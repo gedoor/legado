@@ -2,10 +2,16 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <io.legado.app.ui.widget.prefs.SwitchPreference
+        android:key="loadCoverOnlyWifi"
+        android:defaultValue="false"
+        android:title="@string/only_wifi"
+        android:summary="@string/only_wifi_summary" />
+
     <io.legado.app.ui.widget.prefs.Preference
         android:key="coverRule"
-        android:title="封面规则"
-        android:summary="进入详情页时使用封面规则重新获取封面"
+        android:title="@string/cover_rule"
+        android:summary="@string/cover_rule_summary"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
