@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.Base64
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.RequestBuilder
 import io.legado.app.constant.AppPattern.dataUriRegex
@@ -20,16 +19,12 @@ object ImageLoader {
      * 自动判断path类型
      */
     fun load(context: Context, path: String?): RequestBuilder<Drawable> {
-        val dataUriFindResult = dataUriRegex.find(path ?: "")
         return when {
             path.isNullOrEmpty() -> GlideApp.with(context).load(path)
-            dataUriFindResult != null -> kotlin.runCatching {
-                val dataUriBase64 = dataUriFindResult.groupValues[1]
-                val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
-                GlideApp.with(context).load(byteArray)
-            }.getOrDefault(
+            dataUriRegex.find(path) != null -> {
+                //glide内部已经实现dataUri解析
                 GlideApp.with(context).load(path)
-            )
+            }
             path.isAbsUrl() -> {
                 kotlin.runCatching {
                     val url = AnalyzeUrl(path).getGlideUrl()
