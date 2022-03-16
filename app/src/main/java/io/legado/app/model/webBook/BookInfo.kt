@@ -129,7 +129,7 @@ object BookInfo {
             analyzeRule.getString(infoRule.coverUrl).let {
                 if (it.isNotEmpty()) {
                     book.coverUrl =
-                        NetworkUtils.getAbsoluteURL(baseUrl, it)
+                        NetworkUtils.getAbsoluteURL(redirectUrl, it)
                 }
                 Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
