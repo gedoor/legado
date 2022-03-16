@@ -35,10 +35,8 @@ class OkHttpStreamFetcher(private val url: GlideUrl) :
     }
 
     override fun cleanup() {
-        try {
+        kotlin.runCatching {
             stream?.close()
-        } catch (e: IOException) {
-            // Ignored
         }
         responseBody?.close()
         callback = null
@@ -65,9 +63,9 @@ class OkHttpStreamFetcher(private val url: GlideUrl) :
         if (response.isSuccessful) {
             val contentLength: Long = Preconditions.checkNotNull(responseBody).contentLength()
             stream = ContentLengthInputStream.obtain(responseBody!!.byteStream(), contentLength)
-            callback!!.onDataReady(stream)
+            callback?.onDataReady(stream)
         } else {
-            callback!!.onLoadFailed(HttpException(response.message, response.code))
+            callback?.onLoadFailed(HttpException(response.message, response.code))
         }
     }
 }

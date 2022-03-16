@@ -10,7 +10,8 @@ import java.io.InputStream
 
 @Suppress("unused")
 @GlideModule
-class OkHttpGlideModule : AppGlideModule() {
+class LegadoGlideModule : AppGlideModule() {
+
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         registry.replace(
             GlideUrl::class.java,
@@ -18,4 +19,5 @@ class OkHttpGlideModule : AppGlideModule() {
             OkHttpModeLoaderFactory
         )
     }
+
 }
