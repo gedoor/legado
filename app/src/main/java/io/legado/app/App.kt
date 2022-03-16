@@ -21,6 +21,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.cronet.CronetLoader
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
@@ -55,7 +56,23 @@ class App : MultiDexApplication() {
             when (AppConfig.chineseConverterType) {
                 1 -> ChineseUtils.t2s("初始化")
                 2 -> ChineseUtils.s2t("初始化")
-                else -> null
+            }
+            //同步阅读记录
+            if (!AppConfig.syncBookProgress) return@async
+            val books = appDb.bookDao.all
+            books.forEach { book ->
+                AppWebDav.getBookProgress(book)?.let { bookProgress ->
+                    if (bookProgress.durChapterIndex > book.durChapterIndex ||
+                        (bookProgress.durChapterIndex == book.durChapterIndex &&
+                            bookProgress.durChapterPos > book.durChapterPos)
+                    ) {
+                        book.durChapterIndex = bookProgress.durChapterIndex
+                        book.durChapterPos = bookProgress.durChapterPos
+                        book.durChapterTitle = bookProgress.durChapterTitle
+                        book.durChapterTime = bookProgress.durChapterTime
+                        appDb.bookDao.update(book)
+                    }
+                }
             }
         }
     }

@@ -6,12 +6,8 @@ import android.os.Bundle
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
-import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityWelcomeBinding
-import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig
-import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.storage.AppWebDav
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.read.ReadBookActivity
@@ -26,25 +22,6 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.ivBook.setColorFilter(accentColor)
         binding.vwTitleLine.setBackgroundColor(accentColor)
-        Coroutine.async {
-            //同步阅读记录
-            if (!AppConfig.syncBookProgress) return@async
-            val books = appDb.bookDao.all
-            books.forEach { book ->
-                AppWebDav.getBookProgress(book)?.let { bookProgress ->
-                    if (bookProgress.durChapterIndex > book.durChapterIndex ||
-                        (bookProgress.durChapterIndex == book.durChapterIndex &&
-                            bookProgress.durChapterPos > book.durChapterPos)
-                    ) {
-                        book.durChapterIndex = bookProgress.durChapterIndex
-                        book.durChapterPos = bookProgress.durChapterPos
-                        book.durChapterTitle = bookProgress.durChapterTitle
-                        book.durChapterTime = bookProgress.durChapterTime
-                        appDb.bookDao.update(book)
-                    }
-                }
-            }
-        }
         // 避免从桌面启动程序后，会重新实例化入口类的activity
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
             finish()
