@@ -9,20 +9,43 @@ on:
   workflow_dispatch:
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    outputs:
+      version: ${{ steps.set-ver.outputs.version }}
+      play: ${{ steps.check.outputs.play }}
+      sign: ${{ steps.check.outputs.sign }}
+    steps:
+      - id: set-ver
+        run: |
+          echo "::set-output name=version::$(date -d "8 hour" -u +3.%y.%m%d%H)"
+      - id: check
+        run: |
+          if [ ! -z "${{ secrets.RELEASE_KEY_STORE }}" ]; then
+            echo "::set-output name=sign::yes"
+          fi
+          if [ ! -z "${{ secrets.SERVICE_ACCOUNT_JSON }}" ]; then
+            echo "::set-output name=play::yes"
+          fi
+
   build:
+    needs: prepare
+    if: ${{ needs.prepare.outputs.sign }}
+    strategy:
+      matrix:
+        product: [ app, google ]
+      fail-fast: false
     runs-on: ubuntu-latest
     env:
-      # 登录蓝奏云后在控制台运行document.cookie
-      ylogin: ${{ secrets.LANZOU_ID }}
-      phpdisk_info: ${{ secrets.LANZOU_PSD }}
-      # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
-      LANZOU_FOLDER_ID: 'b0f7pt4ja'
-      # 是否上传到artifact
-      UPLOAD_ARTIFACT: 'true'
+      product: ${{ matrix.product }}
+      VERSION: ${{ needs.prepare.outputs.version }}
+      play: ${{ needs.prepare.outputs.play }}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
+          
       - uses: actions/cache@v2
         with:
           path: |
@@ -32,72 +55,80 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-
 
-      - name: Set github-action[bot] info
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
       - name: Release Apk Sign
         run: |
-          echo "给apk增加签名"
-          cp $GITHUB_WORKSPACE/.github/workflows/legado.jks $GITHUB_WORKSPACE/app/legado.jks
-          sed '$a\RELEASE_STORE_FILE=./legado.jks'          $GITHUB_WORKSPACE/gradle.properties -i
-          sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
-          sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
-          sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
+          echo "::set-output name=KeyStore::yes"
+          echo RELEASE_KEY_ALIAS='${{ secrets.RELEASE_KEY_ALIAS }}' >> gradle.properties
+          echo RELEASE_KEY_PASSWORD='${{ secrets.RELEASE_KEY_PASSWORD }}' >> gradle.properties
+          echo RELEASE_STORE_PASSWORD='${{ secrets.RELEASE_STORE_PASSWORD }}' >> gradle.properties
+          echo RELEASE_STORE_FILE='./key.jks' >> gradle.properties
+          echo ${{ secrets.RELEASE_KEY_STORE }} | base64 --decode > $GITHUB_WORKSPACE/app/key.jks
 
       - name: Unify Version Name
         run: |
           echo "统一版本号"
-          VERSION=$(date -d "8 hour" -u +3.%y.%m%d%H)
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-          sed "/def version/c def version = \"$VERSION\"" $GITHUB_WORKSPACE/app/build.gradle  -i
+          sed "/def version/c def version = \"${{ env.VERSION }}\"" $GITHUB_WORKSPACE/app/build.gradle  -i
 
       - name: Build With Gradle
         run: |
-          echo "开始进行release构建"
+          echo "开始进行${{ env.product }}构建"
           chmod +x gradlew
-          ./gradlew assembleRelease --build-cache --parallel
+          ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
 
       - name: Organize the Files
         run: |
           mkdir -p ${{ github.workspace }}/apk/
           cp -rf ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk ${{ github.workspace }}/apk/
+          
       - name: Upload App To Artifact
-        if: ${{ env.UPLOAD_ARTIFACT != 'false' }}
         uses: actions/upload-artifact@v2
         with:
-          name: legado apk
+          name: legado_${{ env.product }}
           path: ${{ github.workspace }}/apk/*.apk
 
-      - name: Upload App To Lanzou
-        if: ${{ env.ylogin }}
-        run: |
-          path="$GITHUB_WORKSPACE/apk/"
-          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
-          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f7pt4ja"
-
       - name: Release
+        if: ${{ env.product == 'app' }}
         uses: softprops/action-gh-release@59c3b4891632ff9a897f99a91d7bc557467a3a22
         with:
-          name: legado_app_${{ env.RELEASE_VERSION }}
-          tag_name: ${{ env.RELEASE_VERSION }}
+          name: legado_app_${{ env.VERSION }}
+          tag_name: ${{ env.VERSION }}
           body_path: ${{ github.workspace }}/CHANGELOG.md
           draft: false
           prerelease: false
-          files: ${{ github.workspace }}/apk/*.apk
+          files: ${{ github.workspace }}/apk/legado_app_*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Prepare For GooglePlay
+        if: env.product == 'google' && env.play == 'yes'
+        run: |
+          mkdir -p ReleaseNotes
+          ln -s ${{ github.workspace }}/CHANGELOG.md ReleaseNotes/whatsnew-en-US
+          ln -s ${{ github.workspace }}/CHANGELOG.md ReleaseNotes/whatsnew-zh-CN
+
+      - name: Release To GooglePlay
+        if: env.product == 'google' && env.play == 'yes'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: io.legado.play
+          releaseFiles: ${{ github.workspace }}/apk/legado_google_*.apk
+          track: production
+          whatsNewDirectory: ${{ github.workspace }}/ReleaseNotes
 
       - name: Push Assets To "release" Branch
         if: ${{ github.actor == 'gedoor' }}
         run: |
-          git clone "https://${{ github.actor }}:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.actor }}/release" -b release release-branch
-          mv -f $GITHUB_WORKSPACE/apk/*.apk release-branch
-          cd release-branch
+          cd $GITHUB_WORKSPACE/apk/
+          git init
+          git checkout -b release
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.actor }}/release"
           git add *.apk
-          git commit -m "${{ env.RELEASE_VERSION }}"
+          git commit -m "${{ env.VERSION }}"
           git push -f -u origin release
+          
       - name: Purge Jsdelivr Cache
         if: ${{ github.actor == 'gedoor' }}
         run: |
