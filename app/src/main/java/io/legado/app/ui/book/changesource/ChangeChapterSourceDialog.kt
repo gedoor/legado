@@ -93,6 +93,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         initView()
         initRecyclerView()
         initSearchView()
+        initBottomBar()
         initLiveData()
     }
 
@@ -161,6 +162,19 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         })
     }
 
+    private fun initBottomBar() {
+        binding.tvDur.text = callBack?.oldBook?.originName
+        binding.tvDur.setOnClickListener {
+            scrollToDurSource()
+        }
+        binding.ivTop.setOnClickListener {
+            binding.recyclerView.scrollToPosition(0)
+        }
+        binding.ivBottom.setOnClickListener {
+            binding.recyclerView.scrollToPosition(searchBookAdapter.itemCount - 1)
+        }
+    }
+
     private fun initLiveData() {
         viewModel.searchStateData.observe(viewLifecycleOwner) {
             binding.refreshProgressBar.isAutoLoading = it
@@ -199,7 +213,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_scroll_to_dur -> scrollToDurSource()
             R.id.menu_check_author -> {
                 AppConfig.changeSourceCheckAuthor = !item.isChecked
                 item.isChecked = !item.isChecked
