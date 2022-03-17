@@ -2,10 +2,10 @@ package io.legado.app.help
 
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
-import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.jsonPath
 import io.legado.app.utils.readString
 import io.legado.app.utils.toastOnUi

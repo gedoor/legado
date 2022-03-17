@@ -6,8 +6,8 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.ThemeConfig
-import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject

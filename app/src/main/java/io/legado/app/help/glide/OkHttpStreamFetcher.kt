@@ -8,8 +8,8 @@ import com.bumptech.glide.load.data.DataFetcher
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.okHttpClient
-import io.legado.app.model.NoStackTraceException
 import io.legado.app.utils.isWifiConnect
 import okhttp3.Call
 import okhttp3.Request

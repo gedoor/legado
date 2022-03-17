@@ -3,9 +3,9 @@ package io.legado.app.model.webBook
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.BookHelp
 import io.legado.app.model.Debug
-import io.legado.app.model.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.HtmlFormatter

@@ -1,6 +1,6 @@
 package io.legado.app.help
 
-import io.legado.app.model.NoStackTraceException
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.jsonPath

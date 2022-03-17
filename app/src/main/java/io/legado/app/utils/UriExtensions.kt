@@ -6,10 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import io.legado.app.R
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
-import io.legado.app.model.NoStackTraceException
-
 import java.io.File
 
 fun Uri.isContentScheme() = this.scheme == "content"

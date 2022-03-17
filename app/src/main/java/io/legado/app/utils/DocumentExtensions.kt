@@ -5,7 +5,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
-import io.legado.app.model.NoStackTraceException
+import io.legado.app.exception.NoStackTraceException
 import splitties.init.appCtx
 import java.io.File
 import java.nio.charset.Charset

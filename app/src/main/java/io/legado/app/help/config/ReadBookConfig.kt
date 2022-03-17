@@ -9,9 +9,9 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PageAnim
 import io.legado.app.constant.PreferKey
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.DefaultData
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.NoStackTraceException
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO

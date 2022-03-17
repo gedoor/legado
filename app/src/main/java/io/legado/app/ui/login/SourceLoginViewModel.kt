@@ -5,7 +5,7 @@ import android.content.Intent
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
-import io.legado.app.model.NoStackTraceException
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.toastOnUi
 
 class SourceLoginViewModel(application: Application) : BaseViewModel(application) {
