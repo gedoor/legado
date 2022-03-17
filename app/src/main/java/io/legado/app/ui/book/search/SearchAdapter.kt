@@ -9,6 +9,7 @@ import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
@@ -81,8 +82,12 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             upLasted(binding, searchBook.latestChapterTitle)
             tvIntroduce.text = searchBook.trimIntro(context)
             upKind(binding, searchBook.getKindList())
-            ivCover.load(searchBook.coverUrl, searchBook.name, searchBook.author)
-
+            ivCover.load(
+                searchBook.coverUrl,
+                searchBook.name,
+                searchBook.author,
+                AppConfig.loadOnlyWifi
+            )
         }
     }
 

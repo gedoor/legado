@@ -8,6 +8,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
@@ -42,7 +43,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                 llKind.visible()
                 llKind.setLabels(kinds)
             }
-            ivCover.load(item.coverUrl, item.name, item.author)
+            ivCover.load(item.coverUrl, item.name, item.author, AppConfig.loadOnlyWifi)
         }
     }
 

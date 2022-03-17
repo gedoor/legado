@@ -11,13 +11,11 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.PreferKey
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.BookCover
-import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.textHeight
 import io.legado.app.utils.toStringArray
 
@@ -173,7 +171,12 @@ class CoverImageView @JvmOverloads constructor(
         }
     }
 
-    fun load(path: String? = null, name: String? = null, author: String? = null) {
+    fun load(
+        path: String? = null,
+        name: String? = null,
+        author: String? = null,
+        loadOnlyWifi: Boolean = false
+    ) {
         this.bitmapPath = path
         this.name = name?.replace(AppPattern.bdRegex, "")?.trim()
         this.author = author?.replace(AppPattern.bdRegex, "")?.trim()
@@ -183,7 +186,6 @@ class CoverImageView @JvmOverloads constructor(
                 .centerCrop()
                 .into(this)
         } else {
-            val loadOnlyWifi = context.getPrefBoolean(PreferKey.loadCoverOnlyWifi, false)
             ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
                 .apply(RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi))
                 .placeholder(BookCover.defaultDrawable)
