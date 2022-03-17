@@ -44,7 +44,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     private val saveImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             ACache.get(this).put(imagePathKey, uri.toString())
-            viewModel.saveImage(webPic, uri.toString())
+            viewModel.saveImage(webPic, uri)
         }
     }
 
@@ -155,7 +155,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         if (path.isNullOrEmpty()) {
             selectSaveFolder()
         } else {
-            viewModel.saveImage(webPic, path)
+            viewModel.saveImage(webPic, Uri.parse(path))
         }
     }
 
