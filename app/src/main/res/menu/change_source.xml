@@ -19,6 +19,11 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
+        android:id="@+id/menu_scroll_to_dur"
+        android:title="@string/scroll_to_dur_source"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_source_manage"
         android:title="@string/book_source_manage"
         app:showAsAction="never" />

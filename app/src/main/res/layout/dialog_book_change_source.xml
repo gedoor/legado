@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
@@ -13,10 +13,10 @@
         android:background="@color/background_menu"
         android:elevation="5dp"
         android:theme="?attr/actionBarStyle"
-        app:titleTextAppearance="@style/ToolbarTitle"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
         app:displayHomeAsUp="false"
-        app:fitStatusBar="false" />
+        app:fitStatusBar="false"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextAppearance="@style/ToolbarTitle" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
         android:id="@+id/refresh_progress_bar"
@@ -26,6 +26,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </LinearLayout>

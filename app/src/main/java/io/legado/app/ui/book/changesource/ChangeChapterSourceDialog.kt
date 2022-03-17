@@ -59,6 +59,12 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             viewModel.startSearch()
         }
+    private val searchBookAdapter by lazy {
+        ChangeChapterSourceAdapter(requireContext(), viewModel, this)
+    }
+    private val tocAdapter by lazy {
+        ChangeChapterTocAdapter(requireContext(), this)
+    }
     private val tocSuccess: (toc: List<BookChapter>) -> Unit = {
         tocAdapter.durChapterIndex =
             BookHelp.getDurChapter(viewModel.chapterIndex, viewModel.chapterTitle, it)
@@ -70,12 +76,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         binding.loadingToc.hide()
         callBack?.replaceContent(it)
         dismissAllowingStateLoss()
-    }
-    private val searchBookAdapter by lazy {
-        ChangeChapterSourceAdapter(requireContext(), viewModel, this)
-    }
-    private val tocAdapter by lazy {
-        ChangeChapterTocAdapter(requireContext(), this)
     }
     private var searchBook: SearchBook? = null
 
@@ -199,6 +199,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.menu_scroll_to_dur -> scrollToDurSource()
             R.id.menu_check_author -> {
                 AppConfig.changeSourceCheckAuthor = !item.isChecked
                 item.isChecked = !item.isChecked
@@ -228,6 +229,15 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
         }
         return false
+    }
+
+    private fun scrollToDurSource() {
+        searchBookAdapter.getItems().forEachIndexed { index, searchBook ->
+            if (searchBook.bookUrl == bookUrl) {
+                binding.recyclerView.scrollToPosition(index)
+                return
+            }
+        }
     }
 
     override fun openToc(searchBook: SearchBook) {

@@ -964,5 +964,6 @@
     <string name="only_wifi_summary">仅在wifi下加载网络封面</string>
     <string name="cover_rule">封面规则</string>
     <string name="cover_rule_summary">进入详情页时使用封面规则重新获取封面</string>
+    <string name="scroll_to_dur_source">定位到当前书源</string>
     <!-- string end -->
 </resources>

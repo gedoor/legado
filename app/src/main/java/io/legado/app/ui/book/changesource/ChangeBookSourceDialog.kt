@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -88,7 +87,6 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     }
 
     private fun initRecyclerView() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -167,6 +165,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.menu_scroll_to_dur -> scrollToDurSource()
             R.id.menu_check_author -> {
                 AppConfig.changeSourceCheckAuthor = !item.isChecked
                 item.isChecked = !item.isChecked
@@ -196,6 +195,15 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             }
         }
         return false
+    }
+
+    private fun scrollToDurSource() {
+        adapter.getItems().forEachIndexed { index, searchBook ->
+            if (searchBook.bookUrl == bookUrl) {
+                binding.recyclerView.scrollToPosition(index)
+                return
+            }
+        }
     }
 
     override fun changeTo(searchBook: SearchBook) {
