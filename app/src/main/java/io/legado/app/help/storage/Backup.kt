@@ -130,7 +130,7 @@ object Backup {
         }
     }
 
-    @Throws(java.lang.Exception::class)
+    @Throws(Exception::class)
     private fun copyBackup(context: Context, uri: Uri, isAuto: Boolean) {
         DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
             for (fileName in backupFileNames) {
@@ -153,7 +153,7 @@ object Backup {
         }
     }
 
-    @Throws(java.lang.Exception::class)
+    @Throws(Exception::class)
     private fun copyBackup(rootFile: File, isAuto: Boolean) {
         for (fileName in backupFileNames) {
             val file = File(backupPath + File.separator + fileName)
