@@ -47,7 +47,7 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
                 newDoc!!.writeBytes(context, bytes)
                 newDoc.uri
             } else {
-                val file = File(uri.path!!)
+                val file = File(uri.path ?: uri.toString())
                 val newFile = FileUtils.createFileIfNotExist(file, fileName)
                 newFile.writeBytes(bytes)
                 Uri.fromFile(newFile)

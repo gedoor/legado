@@ -142,8 +142,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
                             ?.writeBytes(context, biteArray)
                     }
                 } else {
-                    val file =
-                        FileUtils.createFileIfNotExist(File(uri.path ?: uri.toString()), fileName)
+                    val dir = File(uri.path ?: uri.toString())
+                    val file = FileUtils.createFileIfNotExist(dir, fileName)
                     file.writeBytes(biteArray)
                 }
             } ?: throw Throwable("NULL")
