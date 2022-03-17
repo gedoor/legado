@@ -117,7 +117,7 @@ jobs:
           whatsNewDirectory: ${{ github.workspace }}/ReleaseNotes
 
       - name: Push Assets To "release" Branch
-        if:  ${{ github.actor == 'gedoor' }}
+        if: ${{ github.actor == 'gedoor' }}
         run: |
           cd $GITHUB_WORKSPACE/apk/
           git init
@@ -130,7 +130,7 @@ jobs:
           git push -f -u origin release
           
       - name: Purge Jsdelivr Cache
-        if:  ${{ github.actor == 'gedoor' }}
+        if: ${{ github.actor == 'gedoor' }}
         run: |
           result=$(curl -s https://purge.jsdelivr.net/gh/${{ github.actor }}/release@release/)
           if echo $result |grep -q 'success.*true'; then
