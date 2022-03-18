@@ -63,11 +63,6 @@ object BookCover {
         }.getOrDefault(appCtx.resources.getDrawable(R.drawable.image_cover_default, null))
     }
 
-    private fun getBlurDefaultCover(context: Context): RequestBuilder<Drawable> {
-        return ImageLoader.load(context, defaultDrawable)
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
-    }
-
     fun load(
         context: Context,
         path: String?,
@@ -90,16 +85,18 @@ object BookCover {
         path: String?,
         loadOnlyWifi: Boolean = false
     ): RequestBuilder<Drawable> {
+        val loadBlur = ImageLoader.load(context, defaultDrawable)
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
         return if (AppConfig.useDefaultCover) {
-            getBlurDefaultCover(context)
-                .centerCrop()
+            loadBlur.centerCrop()
         } else {
             val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
             ImageLoader.load(context, path)
                 .apply(options)
                 .transition(DrawableTransitionOptions.withCrossFade(1500))
-                .thumbnail(getBlurDefaultCover(context))
+                .thumbnail(loadBlur)
                 .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
+                .centerCrop()
         }
     }
 

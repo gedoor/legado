@@ -8,6 +8,7 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
+import androidx.annotation.IntRange
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import java.security.MessageDigest
@@ -19,7 +20,11 @@ import kotlin.math.roundToInt
  * 模糊
  * @radius: 0..25
  */
-class BlurTransformation(context: Context, private val radius: Int) : CenterCrop() {
+class BlurTransformation(
+    context: Context,
+    @IntRange(from = 0, to = 25) private val radius: Int
+) : CenterCrop() {
+
     private val rs: RenderScript = RenderScript.create(context)
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
