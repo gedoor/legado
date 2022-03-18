@@ -13,6 +13,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.BookCover
 import io.legado.app.utils.*
+import java.io.FileOutputStream
 
 class WelcomeConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -118,10 +119,12 @@ class WelcomeConfigFragment : BasePreferenceFragment(),
     }
 
     private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
-        readUri(uri) { name, bytes ->
+        readUri(uri) { fileDoc, inputStream ->
             var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, "covers", name)
-            file.writeBytes(bytes)
+            file = FileUtils.createFileIfNotExist(file, "covers", fileDoc.name)
+            FileOutputStream(file).use {
+                inputStream.copyTo(it)
+            }
             putPrefString(preferenceKey, file.absolutePath)
         }
     }

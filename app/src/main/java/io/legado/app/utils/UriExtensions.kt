@@ -10,32 +10,41 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 
 fun Uri.isContentScheme() = this.scheme == "content"
 
 /**
  * 读取URI
  */
-fun AppCompatActivity.readUri(uri: Uri?, success: (name: String, bytes: ByteArray) -> Unit) {
+fun AppCompatActivity.readUri(
+    uri: Uri?,
+    success: (fileDoc: FileDoc, inputStream: InputStream) -> Unit
+) {
     uri ?: return
     try {
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(this, uri)
             doc ?: throw NoStackTraceException("未获取到文件")
-            val name = doc.name ?: throw NoStackTraceException("未获取到文件名")
-            val fileBytes = DocumentUtils.readBytes(this, doc.uri)
-            success.invoke(name, fileBytes)
+            val fileDoc = FileDoc.fromDocumentFile(doc)
+            contentResolver.openInputStream(uri)!!.use { inputStream ->
+                success.invoke(fileDoc, inputStream)
+            }
         } else {
             PermissionsCompat.Builder(this)
                 .addPermissions(
                     Permissions.READ_EXTERNAL_STORAGE,
                     Permissions.WRITE_EXTERNAL_STORAGE
                 )
-                .rationale(R.string.bg_image_per)
+                .rationale(R.string.get_storage_per)
                 .onGranted {
                     RealPathUtil.getPath(this, uri)?.let { path ->
-                        val imgFile = File(path)
-                        success.invoke(imgFile.name, imgFile.readBytes())
+                        val file = File(path)
+                        val fileDoc = FileDoc.fromFile(file)
+                        FileInputStream(file).use { inputStream ->
+                            success.invoke(fileDoc, inputStream)
+                        }
                     }
                 }
                 .request()
@@ -49,26 +58,31 @@ fun AppCompatActivity.readUri(uri: Uri?, success: (name: String, bytes: ByteArra
 /**
  * 读取URI
  */
-fun Fragment.readUri(uri: Uri?, success: (name: String, bytes: ByteArray) -> Unit) {
+fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputStream) -> Unit) {
     uri ?: return
     try {
         if (uri.isContentScheme()) {
             val doc = DocumentFile.fromSingleUri(requireContext(), uri)
             doc ?: throw NoStackTraceException("未获取到文件")
-            val name = doc.name ?: throw NoStackTraceException("未获取到文件名")
-            val fileBytes = DocumentUtils.readBytes(requireContext(), doc.uri)
-            success.invoke(name, fileBytes)
+            val fileDoc = FileDoc.fromDocumentFile(doc)
+            requireContext().contentResolver.openInputStream(uri)!!.use { inputStream ->
+                success.invoke(fileDoc, inputStream)
+            }
         } else {
             PermissionsCompat.Builder(this)
                 .addPermissions(
                     Permissions.READ_EXTERNAL_STORAGE,
                     Permissions.WRITE_EXTERNAL_STORAGE
                 )
-                .rationale(R.string.bg_image_per)
+                .rationale(R.string.get_storage_per)
                 .onGranted {
                     RealPathUtil.getPath(requireContext(), uri)?.let { path ->
-                        val imgFile = File(path)
-                        success.invoke(imgFile.name, imgFile.readBytes())
+                        val file = File(path)
+                        val fileDoc = FileDoc.fromFile(file)
+                        FileInputStream(file).use { inputStream ->
+                            success.invoke(fileDoc, inputStream)
+                        }
+
                     }
                 }
                 .request()

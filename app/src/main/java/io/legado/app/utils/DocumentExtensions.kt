@@ -9,7 +9,6 @@ import io.legado.app.exception.NoStackTraceException
 import splitties.init.appCtx
 import java.io.File
 import java.nio.charset.Charset
-import java.util.*
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -125,7 +124,7 @@ object DocumentUtils {
                             name = cursor.getString(nci),
                             isDir = cursor.getString(mci) == DocumentsContract.Document.MIME_TYPE_DIR,
                             size = cursor.getLong(sci),
-                            date = Date(cursor.getLong(dci)),
+                            lastModified = cursor.getLong(dci),
                             uri = DocumentsContract
                                 .buildDocumentUriUsingTree(uri, cursor.getString(ici))
                         )
@@ -150,7 +149,7 @@ object DocumentUtils {
                 it.name,
                 it.isDirectory,
                 it.length(),
-                Date(it.lastModified()),
+                it.lastModified(),
                 Uri.fromFile(it)
             )
             if (filter == null || filter.invoke(item)) {
@@ -166,7 +165,7 @@ data class FileDoc(
     val name: String,
     val isDir: Boolean,
     val size: Long,
-    val date: Date,
+    val lastModified: Long,
     val uri: Uri
 ) {
 
@@ -187,7 +186,7 @@ data class FileDoc(
                 name = doc.name ?: "",
                 isDir = doc.isDirectory,
                 size = doc.length(),
-                date = Date(doc.lastModified()),
+                lastModified = doc.lastModified(),
                 uri = doc.uri
             )
         }
@@ -197,7 +196,7 @@ data class FileDoc(
                 name = file.name,
                 isDir = file.isDirectory,
                 size = file.length(),
-                date = Date(file.lastModified()),
+                lastModified = file.lastModified(),
                 uri = Uri.fromFile(file)
             )
         }

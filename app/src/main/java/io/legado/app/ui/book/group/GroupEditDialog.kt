@@ -13,6 +13,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
+import java.io.FileOutputStream
 
 class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
 
@@ -26,10 +27,12 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
     val selectImage = registerForActivityResult(SelectImageContract()) {
-        readUri(it?.uri) { name, bytes ->
+        readUri(it?.uri) { fileDoc, inputStream ->
             var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, "covers", name)
-            file.writeBytes(bytes)
+            file = FileUtils.createFileIfNotExist(file, "covers", fileDoc.name)
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
             binding.ivCover.load(file.absolutePath)
         }
     }

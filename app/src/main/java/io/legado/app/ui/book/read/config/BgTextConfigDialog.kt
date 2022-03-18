@@ -35,6 +35,7 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 import java.io.File
+import java.io.FileOutputStream
 
 class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
@@ -350,10 +351,12 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     }
 
     private fun setBgFromUri(uri: Uri) {
-        readUri(uri) { name, bytes ->
+        readUri(uri) { fileDoc, inputStream ->
             var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, "bg", name)
-            file.writeBytes(bytes)
+            file = FileUtils.createFileIfNotExist(file, "bg", fileDoc.name)
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
             ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
             ReadBookConfig.upBg()
             postEvent(EventBus.UP_CONFIG, false)

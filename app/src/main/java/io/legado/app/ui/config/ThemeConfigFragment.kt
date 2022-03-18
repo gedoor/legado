@@ -29,6 +29,7 @@ import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.prefs.ColorPreference
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
+import java.io.FileOutputStream
 
 
 @Suppress("SameParameterValue")
@@ -298,10 +299,12 @@ class ThemeConfigFragment : BasePreferenceFragment(),
     }
 
     private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
-        readUri(uri) { name, bytes ->
+        readUri(uri) { fileDoc, inputStream ->
             var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, preferenceKey, name)
-            file.writeBytes(bytes)
+            file = FileUtils.createFileIfNotExist(file, preferenceKey, fileDoc.name)
+            FileOutputStream(file).use {
+                inputStream.copyTo(it)
+            }
             putPrefString(preferenceKey, file.absolutePath)
             success()
         }

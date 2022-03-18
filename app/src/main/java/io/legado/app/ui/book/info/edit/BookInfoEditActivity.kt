@@ -13,6 +13,7 @@ import io.legado.app.databinding.ActivityBookInfoEditBinding
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import java.io.FileOutputStream
 
 class BookInfoEditActivity :
     VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
@@ -101,11 +102,15 @@ class BookInfoEditActivity :
     }
 
     private fun coverChangeTo(uri: Uri) {
-        readUri(uri) { name, bytes ->
-            var file = this.externalFiles
-            file = FileUtils.createFileIfNotExist(file, "covers", name)
-            file.writeBytes(bytes)
-            coverChangeTo(file.absolutePath)
+        readUri(uri) { fileDoc, inputStream ->
+            inputStream.use {
+                var file = this.externalFiles
+                file = FileUtils.createFileIfNotExist(file, "covers", fileDoc.name)
+                FileOutputStream(file).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+                coverChangeTo(file.absolutePath)
+            }
         }
     }
 
