@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -247,7 +248,8 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     private fun scrollToDurSource() {
         searchBookAdapter.getItems().forEachIndexed { index, searchBook ->
             if (searchBook.bookUrl == bookUrl) {
-                binding.recyclerView.scrollToPosition(index)
+                (binding.recyclerView.layoutManager as LinearLayoutManager)
+                    .scrollToPositionWithOffset(index, 60.dpToPx())
                 return
             }
         }
