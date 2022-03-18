@@ -8,8 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.activity.viewModels
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
@@ -18,8 +16,6 @@ import io.legado.app.constant.Theme
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityAudioPlayBinding
-import io.legado.app.help.BlurTransformation
-import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.BookCover
@@ -169,14 +165,9 @@ class AudioPlayActivity :
     }
 
     private fun upCover(path: String?) {
-        ImageLoader.load(this, path)
-            .placeholder(BookCover.defaultDrawable)
-            .error(BookCover.defaultDrawable)
+        BookCover.load(this, path)
             .into(binding.ivCover)
-        ImageLoader.load(this, path)
-            .transition(DrawableTransitionOptions.withCrossFade(1500))
-            .thumbnail(BookCover.getBlurDefaultCover(this))
-            .apply(bitmapTransform(BlurTransformation(this, 25)))
+        BookCover.loadBlur(this, path)
             .into(binding.ivBg)
     }
 

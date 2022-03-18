@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -15,6 +16,7 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.DefaultData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
@@ -61,9 +63,44 @@ object BookCover {
         }.getOrDefault(appCtx.resources.getDrawable(R.drawable.image_cover_default, null))
     }
 
-    fun getBlurDefaultCover(context: Context): RequestBuilder<Drawable> {
+    private fun getBlurDefaultCover(context: Context): RequestBuilder<Drawable> {
         return ImageLoader.load(context, defaultDrawable)
             .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
+    }
+
+    fun load(
+        context: Context,
+        path: String?,
+        loadOnlyWifi: Boolean = false
+    ): RequestBuilder<Drawable> {
+        return if (AppConfig.useDefaultCover) {
+            ImageLoader.load(context, defaultDrawable)
+                .centerCrop()
+        } else {
+            val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+            ImageLoader.load(context, path)
+                .apply(options)
+                .placeholder(defaultDrawable)
+                .error(defaultDrawable)
+        }
+    }
+
+    fun loadBlur(
+        context: Context,
+        path: String?,
+        loadOnlyWifi: Boolean = false
+    ): RequestBuilder<Drawable> {
+        return if (AppConfig.useDefaultCover) {
+            getBlurDefaultCover(context)
+                .centerCrop()
+        } else {
+            val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+            ImageLoader.load(context, path)
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade(1500))
+                .thumbnail(getBlurDefaultCover(context))
+                .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
+        }
     }
 
     suspend fun searchCover(book: Book): String? {
