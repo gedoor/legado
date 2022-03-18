@@ -11,4 +11,5 @@
 * receiver 广播侦听
 * service 服务
 * ui 界面
+* utils 辅助类
 * web web服务
