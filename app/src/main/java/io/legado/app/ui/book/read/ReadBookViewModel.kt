@@ -38,6 +38,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var searchContentQuery = ""
     private var changeSourceCoroutine: Coroutine<*>? = null
 
+    /**
+     * 初始化
+     */
     fun initData(intent: Intent) {
         execute {
             ReadBook.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
@@ -99,6 +102,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 加载详情页
+     */
     private fun loadBookInfo(book: Book) {
         if (book.isLocalBook()) {
             loadChapterList(book)
@@ -114,6 +120,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 加载目录
+     */
     fun loadChapterList(book: Book) {
         if (book.isLocalBook()) {
             execute {
@@ -152,6 +161,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 同步进度
+     */
     fun syncBookProgress(
         book: Book,
         alertSync: ((progress: BookProgress) -> Unit)? = null
