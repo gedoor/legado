@@ -172,6 +172,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
     }
 
+    /**
+     * 换源
+     */
     fun changeTo(source: BookSource, book: Book) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
@@ -218,6 +221,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
     }
 
+    /**
+     * 自动换源
+     */
     private fun autoChangeSource(name: String, author: String) {
         if (!AppConfig.autoChangeSource) return
         execute {
