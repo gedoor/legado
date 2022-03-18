@@ -192,6 +192,18 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             book.durChapterTitle = chapters[book.durChapterIndex].getDisplayTitle(
                 ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
             )
+            ensureActive()
+            val nextChapter = chapters.getOrElse(book.durChapterIndex) {
+                chapters.first()
+            }
+            WebBook.getContentAwait(
+                this,
+                bookSource = source,
+                book = book,
+                bookChapter = chapters[book.durChapterIndex],
+                nextChapterUrl = nextChapter.url
+            )
+            ensureActive()
             oldBook.changeTo(book)
             appDb.bookChapterDao.insert(*chapters.toTypedArray())
             ReadBook.resetData(book)
