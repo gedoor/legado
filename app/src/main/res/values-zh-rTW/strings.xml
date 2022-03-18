@@ -482,7 +482,7 @@
     <string name="night_theme">夜間模式</string>
     <string name="eink_theme">E-Ink 模式</string>
     <string name="eink_theme_desc">電子墨水屏模式</string>
-    <string name="get_storage_per">本軟體需要儲存權限來儲存備份書籍訊息</string>
+    <string name="get_storage_per">需要儲存權限</string>
     <string name="double_click_exit">再按一次退出程式</string>
     <string name="import_book_per">匯入本機書籍需儲存權限</string>
     <string name="network_connection_unavailable">網路連接不可用</string>

@@ -482,7 +482,7 @@
     <string name="night_theme">夜间模式</string>
     <string name="eink_theme">E-Ink 模式</string>
     <string name="eink_theme_desc">电子墨水屏模式</string>
-    <string name="get_storage_per">本软件需要存储权限来存储备份书籍信息</string>
+    <string name="get_storage_per">需要存储权限</string>
     <string name="double_click_exit">再按一次退出程序</string>
     <string name="import_book_per">导入本地书籍需存储权限</string>
     <string name="network_connection_unavailable">网络连接不可用</string>

@@ -481,7 +481,7 @@
     <string name="night_theme">Tema Noturno</string>
     <string name="eink_theme">E-Ink</string>
     <string name="eink_theme_desc">Otimização para dispositivos E-ink</string>
-    <string name="get_storage_per">Este App requer permissão de armazenamento para salvar as informações do livro no Backup</string>
+    <string name="get_storage_per">requer permissão</string>
     <string name="double_click_exit">Toque novamente para sair do App</string>
     <string name="import_book_per">Importação de livros locais requer permissão de armazenamento</string>
     <string name="network_connection_unavailable">A conexão de internet não está disponível</string>
