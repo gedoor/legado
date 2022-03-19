@@ -169,11 +169,21 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             }
         }
 
+    var ttsFlowSys: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.ttsFollowSys, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.ttsFollowSys, value)
+        }
+
+    const val defaultSpeechRate = 5
+
     var ttsSpeechRate: Int
-        get() = appCtx.getPrefInt(PreferKey.ttsSpeechRate, 5)
+        get() = appCtx.getPrefInt(PreferKey.ttsSpeechRate, defaultSpeechRate)
         set(value) {
             appCtx.putPrefInt(PreferKey.ttsSpeechRate, value)
         }
+
+    val speechRatePlay: Int get() = if (ttsFlowSys) defaultSpeechRate else ttsSpeechRate
 
     var chineseConverterType: Int
         get() = appCtx.getPrefInt(PreferKey.chineseConverterType)

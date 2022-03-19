@@ -106,13 +106,14 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
      * 更新朗读速度
      */
     override fun upSpeechRate(reset: Boolean) {
-        if (this.getPrefBoolean("ttsFollowSys", true)) {
+        if (AppConfig.ttsFlowSys) {
             if (reset) {
                 clearTTS()
                 initTts()
             }
         } else {
-            textToSpeech?.setSpeechRate((AppConfig.ttsSpeechRate + 5) / 10f)
+            val speechRate = (AppConfig.ttsSpeechRate + 5) / 10f
+            textToSpeech?.setSpeechRate(speechRate)
         }
     }
 

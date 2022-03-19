@@ -22,7 +22,6 @@ import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEvent
-import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
@@ -110,7 +109,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
         llCatalog.setOnClickListener { callBack?.openChapterList() }
         llToBackstage.setOnClickListener { callBack?.finish() }
         cbTtsFollowSys.setOnCheckedChangeListener { _, isChecked ->
-            requireContext().putPrefBoolean("ttsFollowSys", isChecked)
+            AppConfig.ttsFlowSys = isChecked
             seekTtsSpeechRate.isEnabled = !isChecked
             upTtsSpeechRate()
         }
