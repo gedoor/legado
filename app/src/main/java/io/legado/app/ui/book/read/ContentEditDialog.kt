@@ -54,6 +54,13 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
         }
         viewModel.initContent {
             binding.contentView.setText(it)
+            binding.contentView.post {
+                binding.contentView.apply {
+                    val lineIndex = layout.getLineForOffset(ReadBook.durChapterPos)
+                    val lineHeight = layout.getLineTop(lineIndex)
+                    scrollTo(0, lineHeight)
+                }
+            }
         }
     }
 
