@@ -1,17 +1,19 @@
 package io.legado.app.ui.config
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import io.legado.app.R
-import io.legado.app.base.BaseActivity
+import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.databinding.ActivityConfigBinding
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class ConfigActivity : BaseActivity<ActivityConfigBinding>() {
+class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() {
 
     override val binding by viewBinding(ActivityConfigBinding::inflate)
+    override val viewModel by viewModels<ConfigViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         when (val configTag = intent.getStringExtra("configTag")) {
