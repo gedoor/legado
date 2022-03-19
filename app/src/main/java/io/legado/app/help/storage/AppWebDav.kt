@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.exception.NoStackTraceException
@@ -166,6 +167,13 @@ object AppWebDav {
         }
     }
 
+    private fun getProgressUrl(book: Book): String {
+        return bookProgressUrl + book.name + "_" + book.author + ".json"
+    }
+
+    /**
+     * 获取书籍进度
+     */
     suspend fun getBookProgress(book: Book): BookProgress? {
         if (initWebDav() && NetworkUtils.isAvailable()) {
             val url = getProgressUrl(book)
@@ -179,7 +187,21 @@ object AppWebDav {
         return null
     }
 
-    private fun getProgressUrl(book: Book): String {
-        return bookProgressUrl + book.name + "_" + book.author + ".json"
+    suspend fun downloadAllBookProgress() {
+        appDb.bookDao.all.forEach { book ->
+            getBookProgress(book)?.let { bookProgress ->
+                if (bookProgress.durChapterIndex > book.durChapterIndex ||
+                    (bookProgress.durChapterIndex == book.durChapterIndex &&
+                        bookProgress.durChapterPos > book.durChapterPos)
+                ) {
+                    book.durChapterIndex = bookProgress.durChapterIndex
+                    book.durChapterPos = bookProgress.durChapterPos
+                    book.durChapterTitle = bookProgress.durChapterTitle
+                    book.durChapterTime = bookProgress.durChapterTime
+                    appDb.bookDao.update(book)
+                }
+            }
+        }
     }
+
 }

@@ -48,8 +48,8 @@ class App : MultiDexApplication() {
             //清除过期数据
             appDb.cacheDao.clearDeadline(System.currentTimeMillis())
             if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
-                appDb.searchBookDao
-                    .clearExpired(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+                val clearTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1)
+                appDb.searchBookDao.clearExpired(clearTime)
             }
             RuleBigDataHelp.clearInvalid()
             //初始化简繁转换引擎
@@ -58,21 +58,8 @@ class App : MultiDexApplication() {
                 2 -> ChineseUtils.s2t("初始化")
             }
             //同步阅读记录
-            if (!AppConfig.syncBookProgress) return@async
-            val books = appDb.bookDao.all
-            books.forEach { book ->
-                AppWebDav.getBookProgress(book)?.let { bookProgress ->
-                    if (bookProgress.durChapterIndex > book.durChapterIndex ||
-                        (bookProgress.durChapterIndex == book.durChapterIndex &&
-                            bookProgress.durChapterPos > book.durChapterPos)
-                    ) {
-                        book.durChapterIndex = bookProgress.durChapterIndex
-                        book.durChapterPos = bookProgress.durChapterPos
-                        book.durChapterTitle = bookProgress.durChapterTitle
-                        book.durChapterTime = bookProgress.durChapterTime
-                        appDb.bookDao.update(book)
-                    }
-                }
+            if (AppConfig.syncBookProgress) {
+                AppWebDav.downloadAllBookProgress()
             }
         }
     }
