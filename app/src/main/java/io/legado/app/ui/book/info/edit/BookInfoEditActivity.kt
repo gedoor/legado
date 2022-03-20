@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityBookInfoEditBinding
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
@@ -70,6 +71,13 @@ class BookInfoEditActivity :
     private fun upView(book: Book) = binding.run {
         tieBookName.setText(book.name)
         tieBookAuthor.setText(book.author)
+        spType.setSelection(
+            when (book.type) {
+                BookType.image -> 2
+                BookType.audio -> 1
+                else -> 0
+            }
+        )
         tieCoverUrl.setText(book.getDisplayCover())
         tieBookIntro.setText(book.getDisplayIntro())
         upCover()
@@ -85,6 +93,11 @@ class BookInfoEditActivity :
         viewModel.book?.let { book ->
             book.name = tieBookName.text?.toString() ?: ""
             book.author = tieBookAuthor.text?.toString() ?: ""
+            book.type = when (spType.selectedItemPosition) {
+                2 -> BookType.image
+                1 -> BookType.audio
+                else -> BookType.default
+            }
             val customCoverUrl = tieCoverUrl.text?.toString()
             book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
             book.customIntro = tieBookIntro.text?.toString()
