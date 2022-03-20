@@ -88,12 +88,8 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         when (item.itemId) {
             R.id.menu_bookshelf -> viewPagerMain.setCurrentItem(0, false)
             R.id.menu_discovery -> viewPagerMain.setCurrentItem(1, false)
-            R.id.menu_rss -> if (AppConfig.showDiscovery) {
-                viewPagerMain.setCurrentItem(2, false)
-            } else {
-                viewPagerMain.setCurrentItem(1, false)
-            }
-            R.id.menu_my_config -> viewPagerMain.setCurrentItem(bottomMenuCount - 1, false)
+            R.id.menu_rss -> openPage(RssFragment.id)
+            R.id.menu_my_config -> openPage(MyFragment.id)
         }
         return false
     }
@@ -114,6 +110,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     (fragmentMap[1] as? ExploreFragment)?.compressExplore()
                 }
             }
+        }
+    }
+
+    private fun openPage(id: Int) {
+        realPositions.firstOrNull {
+            it == id
+        }?.let { index ->
+            binding.viewPagerMain.setCurrentItem(index, false)
         }
     }
 
@@ -212,11 +216,11 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     private fun getFragmentId(position: Int): Int {
-        val p = realPositions[position]
-        if (p == BaseBookshelfFragment.id) {
+        val id = realPositions[position]
+        if (id == BaseBookshelfFragment.id) {
             return if (AppConfig.bookGroupStyle == 1) BookshelfFragment2.id else BookshelfFragment1.id
         }
-        return p
+        return id
     }
 
     private inner class PageChangeCallback : ViewPager.SimpleOnPageChangeListener() {
