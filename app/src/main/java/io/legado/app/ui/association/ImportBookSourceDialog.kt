@@ -93,14 +93,14 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
             adapter.notifyDataSetChanged()
             upSelectText()
         }
-        viewModel.errorLiveData.observe(this, {
+        viewModel.errorLiveData.observe(this) {
             binding.rotateLoading.hide()
             binding.tvMsg.apply {
                 text = it
                 visible()
             }
-        })
-        viewModel.successLiveData.observe(this, {
+        }
+        viewModel.successLiveData.observe(this) {
             binding.rotateLoading.hide()
             if (it > 0) {
                 adapter.setItems(viewModel.allSources)
@@ -111,7 +111,7 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
                     visible()
                 }
             }
-        })
+        }
         val source = arguments?.getString("source")
         if (source.isNullOrEmpty()) {
             dismiss()
