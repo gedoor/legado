@@ -48,14 +48,19 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
     override val viewModel by viewModels<MainViewModel>()
+    private val idBookshelf = 0
+    private val idBookshelf1 = 11
+    private val idBookshelf2 = 12
+    private val idExplore = 1
+    private val idRss = 2
+    private val idMy = 3
     private var exitTime: Long = 0
     private var bookshelfReselected: Long = 0
     private var exploreReselected: Long = 0
     private var pagePosition = 0
     private val fragmentMap = hashMapOf<Int, Fragment>()
     private var bottomMenuCount = 4
-    private val realPositions =
-        arrayOf(BaseBookshelfFragment.id, ExploreFragment.id, RssFragment.id, MyFragment.id)
+    private val realPositions = arrayOf(idBookshelf, idExplore, idRss, idMy)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
@@ -88,8 +93,8 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         when (item.itemId) {
             R.id.menu_bookshelf -> viewPagerMain.setCurrentItem(0, false)
             R.id.menu_discovery -> viewPagerMain.setCurrentItem(1, false)
-            R.id.menu_rss -> openPage(RssFragment.id)
-            R.id.menu_my_config -> openPage(MyFragment.id)
+            R.id.menu_rss -> openPage(idRss)
+            R.id.menu_my_config -> openPage(idMy)
         }
         return false
     }
@@ -204,21 +209,21 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
         bottomMenuCount = 1
         if (showDiscovery) {
-            realPositions[bottomMenuCount] = ExploreFragment.id
+            realPositions[bottomMenuCount] = idExplore
             bottomMenuCount++
         }
         if (showRss) {
-            realPositions[bottomMenuCount] = RssFragment.id
+            realPositions[bottomMenuCount] = idRss
             bottomMenuCount++
         }
-        realPositions[bottomMenuCount] = MyFragment.id
+        realPositions[bottomMenuCount] = idMy
         bottomMenuCount++
     }
 
     private fun getFragmentId(position: Int): Int {
         val id = realPositions[position]
-        if (id == BaseBookshelfFragment.id) {
-            return if (AppConfig.bookGroupStyle == 1) BookshelfFragment2.id else BookshelfFragment1.id
+        if (id == idBookshelf) {
+            return if (AppConfig.bookGroupStyle == 1) idBookshelf2 else idBookshelf1
         }
         return id
     }
@@ -247,10 +252,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
         override fun getItem(position: Int): Fragment {
             return when (getId(position)) {
-                BookshelfFragment1.id -> BookshelfFragment1()
-                BookshelfFragment2.id -> BookshelfFragment2()
-                ExploreFragment.id -> ExploreFragment()
-                RssFragment.id -> RssFragment()
+                idBookshelf1 -> BookshelfFragment1()
+                idBookshelf2 -> BookshelfFragment2()
+                idExplore -> ExploreFragment()
+                idRss -> RssFragment()
                 else -> MyFragment()
             }
         }

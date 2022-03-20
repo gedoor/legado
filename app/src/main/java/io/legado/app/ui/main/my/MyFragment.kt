@@ -33,10 +33,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class MyFragment : BaseFragment(R.layout.fragment_my_config) {
 
-    companion object {
-        const val id = 3
-    }
-
     private val binding by viewBinding(FragmentMyConfigBinding::bind)
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {

@@ -30,10 +30,6 @@ import io.legado.app.utils.*
 
 abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId) {
 
-    companion object {
-        const val id = 0
-    }
-
     val activityViewModel by activityViewModels<MainViewModel>()
     override val viewModel by viewModels<BookshelfViewModel>()
 
