@@ -17,7 +17,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.FileOutputStream
 
 class BookInfoEditActivity :
-    VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
+    VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(fullScreen = false),
     ChangeCoverDialog.CallBack {
 
     private val selectCover = registerForActivityResult(SelectImageContract()) {
