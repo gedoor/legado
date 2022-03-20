@@ -35,6 +35,10 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
     TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener {
 
+    companion object {
+        const val id = 11
+    }
+
     private val binding by viewBinding(FragmentBookshelfBinding::bind)
     private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager) }
     private val tabLayout: TabLayout by lazy {

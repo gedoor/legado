@@ -53,8 +53,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private var exploreReselected: Long = 0
     private var pagePosition = 0
     private val fragmentMap = hashMapOf<Int, Fragment>()
-    private var bottomMenuCount = 2
-    private val realPositions = arrayOf(0, 1, 2, 3)
+    private var bottomMenuCount = 4
+    private val realPositions =
+        arrayOf(BaseBookshelfFragment.id, ExploreFragment.id, RssFragment.id, MyFragment.id)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
@@ -197,31 +198,23 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             menu.findItem(R.id.menu_discovery).isVisible = showDiscovery
             menu.findItem(R.id.menu_rss).isVisible = showRss
         }
-        bottomMenuCount = 2
-        realPositions[1] = 1
-        realPositions[2] = 2
-        when {
-            showDiscovery -> bottomMenuCount++
-            showRss -> {
-                realPositions[1] = 2
-                realPositions[2] = 3
-            }
-            else -> {
-                realPositions[1] = 3
-                realPositions[2] = 3
-            }
+        bottomMenuCount = 1
+        if (showDiscovery) {
+            realPositions[bottomMenuCount] = ExploreFragment.id
+            bottomMenuCount++
         }
         if (showRss) {
+            realPositions[bottomMenuCount] = RssFragment.id
             bottomMenuCount++
-        } else {
-            realPositions[2] = 3
         }
+        realPositions[bottomMenuCount] = MyFragment.id
+        bottomMenuCount++
     }
 
     private fun getFragmentId(position: Int): Int {
         val p = realPositions[position]
-        if (p == 0) {
-            return if (AppConfig.bookGroupStyle == 1) 11 else 0
+        if (p == BaseBookshelfFragment.id) {
+            return if (AppConfig.bookGroupStyle == 1) BookshelfFragment2.id else BookshelfFragment1.id
         }
         return p
     }
@@ -250,10 +243,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
         override fun getItem(position: Int): Fragment {
             return when (getId(position)) {
-                0 -> BookshelfFragment1()
-                11 -> BookshelfFragment2()
-                1 -> ExploreFragment()
-                2 -> RssFragment()
+                BookshelfFragment1.id -> BookshelfFragment1()
+                BookshelfFragment2.id -> BookshelfFragment2()
+                ExploreFragment.id -> ExploreFragment()
+                RssFragment.id -> RssFragment()
                 else -> MyFragment()
             }
         }

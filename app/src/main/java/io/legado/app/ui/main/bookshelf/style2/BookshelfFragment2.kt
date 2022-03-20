@@ -42,6 +42,10 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     SearchView.OnQueryTextListener,
     BaseBooksAdapter.CallBack {
 
+    companion object {
+        const val id = 12
+    }
+
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
     private val rootGroupId = -100L
     private val bookshelfLayout by lazy {
