@@ -70,31 +70,36 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun setBook(book: Book) {
-        durChapterIndex = book.durChapterIndex
-        bookData.postValue(book)
-        if (book.customCoverUrl.isNullOrBlank()) {
-            BookCover.searchCover(book)?.let { coverUrl ->
-                book.customCoverUrl = coverUrl
-                bookData.postValue(book)
-                if (inBookshelf) {
-                    saveBook(book)
+    private fun setBook(book: Book) {
+        execute {
+            durChapterIndex = book.durChapterIndex
+            bookData.postValue(book)
+            upCoverByRule(book)
+            bookSource = if (book.isLocalBook()) null else
+                appDb.bookSourceDao.getBookSource(book.origin)
+            if (book.tocUrl.isEmpty()) {
+                loadBookInfo(book)
+            } else {
+                val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
+                if (chapterList.isNotEmpty()) {
+                    chapterListData.postValue(chapterList)
+                } else {
+                    loadChapter(book)
                 }
             }
         }
-        bookSource = if (book.isLocalBook()) {
-            null
-        } else {
-            appDb.bookSourceDao.getBookSource(book.origin)
-        }
-        if (book.tocUrl.isEmpty()) {
-            loadBookInfo(book)
-        } else {
-            val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
-            if (chapterList.isNotEmpty()) {
-                chapterListData.postValue(chapterList)
-            } else {
-                loadChapter(book)
+    }
+
+    private fun upCoverByRule(book: Book) {
+        execute {
+            if (book.customCoverUrl.isNullOrBlank()) {
+                BookCover.searchCover(book)?.let { coverUrl ->
+                    book.customCoverUrl = coverUrl
+                    bookData.postValue(book)
+                    if (inBookshelf) {
+                        saveBook(book)
+                    }
+                }
             }
         }
     }
