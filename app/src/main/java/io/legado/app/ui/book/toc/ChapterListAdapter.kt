@@ -16,6 +16,7 @@ import io.legado.app.lib.theme.ThemeUtils
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
+import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
@@ -144,6 +145,12 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
             getItem(holder.layoutPosition)?.let {
                 callback.openChapter(it)
             }
+        }
+        holder.itemView.setOnLongClickListener {
+            getItem(holder.layoutPosition)?.let {
+                context.longToastOnUi(getDisplayTile(it))
+            }
+            true
         }
     }
 
