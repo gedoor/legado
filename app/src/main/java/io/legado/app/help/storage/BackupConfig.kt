@@ -26,13 +26,14 @@ object BackupConfig {
     )
 
     //配置忽略标题
-    val ignoreTitle = arrayOf(
-        appCtx.getString(R.string.read_config),
-        appCtx.getString(R.string.theme_mode),
-        appCtx.getString(R.string.bookshelf_layout),
-        appCtx.getString(R.string.show_rss),
-        appCtx.getString(R.string.thread_count)
-    )
+    val ignoreTitle
+        get() = arrayOf(
+            appCtx.getString(R.string.read_config),
+            appCtx.getString(R.string.theme_mode),
+            appCtx.getString(R.string.bookshelf_layout),
+            appCtx.getString(R.string.show_rss),
+            appCtx.getString(R.string.thread_count)
+        )
 
     //自动忽略keys
     private val ignorePrefKeys = arrayOf(
