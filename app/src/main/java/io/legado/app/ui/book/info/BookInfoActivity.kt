@@ -30,6 +30,7 @@ import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
+import io.legado.app.ui.book.read.PhotoDialog
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -104,7 +105,7 @@ class BookInfoActivity :
         viewModel.bookData.observe(this) { showBook(it) }
         viewModel.chapterListData.observe(this) { upLoading(false, it) }
         viewModel.initData(intent)
-        initOnClick()
+        initViewEvent()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -263,13 +264,19 @@ class BookInfoActivity :
         }
     }
 
-    private fun initOnClick() = binding.run {
+    private fun initViewEvent() = binding.run {
         ivCover.setOnClickListener {
             viewModel.bookData.value?.let {
                 showDialogFragment(
                     ChangeCoverDialog(it.name, it.author)
                 )
             }
+        }
+        ivCover.setOnLongClickListener {
+            viewModel.bookData.value?.getDisplayCover()?.let { path ->
+                showDialogFragment(PhotoDialog(path))
+            }
+            true
         }
         tvRead.setOnClickListener {
             viewModel.bookData.value?.let {
