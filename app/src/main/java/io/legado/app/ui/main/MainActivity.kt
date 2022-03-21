@@ -207,17 +207,18 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             menu.findItem(R.id.menu_discovery).isVisible = showDiscovery
             menu.findItem(R.id.menu_rss).isVisible = showRss
         }
-        bottomMenuCount = 1
+        var index = 0
         if (showDiscovery) {
-            realPositions[bottomMenuCount] = idExplore
-            bottomMenuCount++
+            index++
+            realPositions[index] = idExplore
         }
         if (showRss) {
-            realPositions[bottomMenuCount] = idRss
-            bottomMenuCount++
+            index++
+            realPositions[index] = idRss
         }
-        realPositions[bottomMenuCount] = idMy
-        bottomMenuCount++
+        index++
+        realPositions[index] = idMy
+        bottomMenuCount = index + 1
     }
 
     private fun getFragmentId(position: Int): Int {
