@@ -43,8 +43,6 @@ class App : MultiDexApplication() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         Coroutine.async {
-            //WebDav初始化
-            AppWebDav.initConfig()
             //初始化封面
             BookCover.toString()
             //清除过期数据
