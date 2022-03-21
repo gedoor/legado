@@ -60,7 +60,7 @@ class App : MultiDexApplication() {
                 2 -> ChineseUtils.s2t("初始化")
             }
             //同步阅读记录
-            if (AppConfig.syncBookProgress) {
+            if (AppWebDav.isOk && AppConfig.syncBookProgress) {
                 AppWebDav.downloadAllBookProgress()
             }
         }

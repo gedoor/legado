@@ -17,6 +17,7 @@ import io.legado.app.lib.webdav.WebDav
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
@@ -29,6 +30,12 @@ object AppWebDav {
     private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
 
     var isOk = false
+
+    init {
+        runBlocking {
+            initConfig()
+        }
+    }
 
     private val rootWebDavUrl: String
         get() {
@@ -50,14 +57,15 @@ object AppWebDav {
             return "backup${backupDate}.zip"
         }
 
-    @Throws(Exception::class)
     suspend fun initConfig() {
-        isOk = false
-        val account = appCtx.getPrefString(PreferKey.webDavAccount)
-        val password = appCtx.getPrefString(PreferKey.webDavPassword)
-        if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
-            HttpAuth.auth = HttpAuth.Auth(account, password)
-            isOk = WebDav(rootWebDavUrl).makeAsDir() && WebDav(bookProgressUrl).makeAsDir()
+        kotlin.runCatching {
+            isOk = false
+            val account = appCtx.getPrefString(PreferKey.webDavAccount)
+            val password = appCtx.getPrefString(PreferKey.webDavPassword)
+            if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
+                HttpAuth.auth = HttpAuth.Auth(account, password)
+                isOk = WebDav(rootWebDavUrl).makeAsDir() && WebDav(bookProgressUrl).makeAsDir()
+            }
         }
     }
 
