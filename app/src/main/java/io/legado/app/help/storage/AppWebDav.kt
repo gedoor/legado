@@ -33,7 +33,7 @@ object AppWebDav {
 
     init {
         runBlocking {
-            initConfig()
+            upConfig()
         }
     }
 
@@ -57,7 +57,7 @@ object AppWebDav {
             return "backup${backupDate}.zip"
         }
 
-    suspend fun initConfig() {
+    suspend fun upConfig() {
         kotlin.runCatching {
             isOk = false
             val account = appCtx.getPrefString(PreferKey.webDavAccount)

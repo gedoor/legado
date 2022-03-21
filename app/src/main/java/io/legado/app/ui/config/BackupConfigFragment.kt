@@ -9,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.documentfile.provider.DocumentFile
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -35,6 +36,8 @@ import splitties.init.appCtx
 
 class BackupConfigFragment : BasePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private val viewModel by activityViewModels<ConfigViewModel>()
 
     private val selectBackupPath = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
@@ -101,7 +104,6 @@ class BackupConfigFragment : BasePreferenceFragment(),
             it.setOnBindEditTextListener { editText ->
                 editText.applyTint(requireContext().accentColor)
             }
-
         }
         findPreference<EditTextPreference>(PreferKey.webDavAccount)?.let {
             it.setOnBindEditTextListener { editText ->
@@ -113,6 +115,11 @@ class BackupConfigFragment : BasePreferenceFragment(),
                 editText.applyTint(requireContext().accentColor)
                 editText.inputType =
                     InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+            }
+        }
+        findPreference<EditTextPreference>(PreferKey.webDavDir)?.let {
+            it.setOnBindEditTextListener { editText ->
+                editText.applyTint(requireContext().accentColor)
             }
         }
         upPreferenceSummary(PreferKey.webDavUrl, getPrefString(PreferKey.webDavUrl))
@@ -160,13 +167,14 @@ class BackupConfigFragment : BasePreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
+            PreferKey.backupPath -> upPreferenceSummary(key, getPrefString(key))
             PreferKey.webDavUrl,
             PreferKey.webDavAccount,
             PreferKey.webDavPassword,
-            PreferKey.backupPath -> {
+            PreferKey.webDavDir -> listView.post {
                 upPreferenceSummary(key, getPrefString(key))
+                viewModel.upWebDavConfig()
             }
-            PreferKey.webDavDir -> upPreferenceSummary(key, AppConfig.webDavDir)
         }
     }
 
@@ -191,10 +199,9 @@ class BackupConfigFragment : BasePreferenceFragment(),
                 } else {
                     preference.summary = "*".repeat(value.toString().length)
                 }
-            PreferKey.webDavDir -> if (value.isNullOrBlank()) {
-                preference.summary = "null"
-            } else {
-                preference.summary = value
+            PreferKey.webDavDir -> preference.summary = when (value) {
+                null -> "legado"
+                else -> value
             }
             else -> {
                 if (preference is ListPreference) {
