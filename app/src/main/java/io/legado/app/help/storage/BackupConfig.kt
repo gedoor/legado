@@ -22,7 +22,11 @@ object BackupConfig {
         PreferKey.themeMode,
         PreferKey.bookshelfLayout,
         PreferKey.showRss,
-        PreferKey.threadCount
+        PreferKey.threadCount,
+        PreferKey.webDavUrl,
+        PreferKey.webDavDir,
+        PreferKey.webDavAccount,
+        PreferKey.webDavPassword
     )
 
     //配置忽略标题
