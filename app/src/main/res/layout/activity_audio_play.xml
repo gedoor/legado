@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription,ImageContrastCheck" />
 
     <View
         android:id="@+id/vw_bg"
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="00:00"
             android:textColor="@color/md_white_1000"
-            tools:ignore="HardcodedText,RtlSymmetry" />
+            tools:ignore="HardcodedText,RtlSymmetry,TextContrastCheck" />
 
         <io.legado.app.lib.theme.view.ThemeSeekBar
             android:id="@+id/player_progress"
@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:text="00:00"
             android:textColor="@color/md_white_1000"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText,TextContrastCheck" />
 
     </LinearLayout>
 
@@ -119,7 +119,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/set_timer"
             android:src="@drawable/ic_timer_black_24dp"
-            app:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000"
+            tools:ignore="ImageContrastCheck" />
 
         <View
             android:layout_width="0dp"
@@ -133,7 +134,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_previous"
             android:src="@drawable/ic_fast_rewind"
-            app:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000"
+            tools:ignore="ImageContrastCheck" />
 
         <View
             android:layout_width="0dp"
@@ -147,7 +149,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_previous"
             android:src="@drawable/ic_skip_previous"
-            app:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000"
+            tools:ignore="ImageContrastCheck" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_play_stop"
@@ -160,7 +163,8 @@
             app:backgroundTint="@color/md_white_1000"
             app:elevation="2dp"
             app:fabSize="normal"
-            app:pressedTranslationZ="2dp" />
+            app:pressedTranslationZ="2dp"
+            tools:ignore="ImageContrastCheck" />
 
         <ImageView
             android:id="@+id/iv_skip_next"
@@ -169,7 +173,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_next"
             android:src="@drawable/ic_skip_next"
-            app:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000"
+            tools:ignore="ImageContrastCheck" />
 
         <View
             android:layout_width="0dp"
@@ -183,7 +188,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/skip_next"
             android:src="@drawable/ic_fast_forward"
-            app:tint="@color/md_white_1000" />
+            app:tint="@color/md_white_1000"
+            tools:ignore="ImageContrastCheck" />
 
         <View
             android:layout_width="0dp"
@@ -195,9 +201,10 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_chapter_list"
             android:contentDescription="@string/chapter_list"
-            app:tint="@color/md_white_1000" />
+            android:src="@drawable/ic_chapter_list"
+            app:tint="@color/md_white_1000"
+            tools:ignore="ImageContrastCheck" />
 
     </LinearLayout>
 
