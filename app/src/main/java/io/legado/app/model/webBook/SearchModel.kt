@@ -62,6 +62,7 @@ class SearchModel(private val scope: CoroutineScope) {
             searchPage = 1
             val searchGroup = appCtx.getPrefString("searchGroup") ?: ""
             bookSourceList.clear()
+            searchBooks.clear()
             callBack?.onSearchSuccess(searchBooks)
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
