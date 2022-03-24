@@ -4,12 +4,12 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readText
-
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
@@ -48,8 +48,10 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                             importHttpTTS(content, finally)
                         else -> errorLiveData.postValue("格式不对")
                     }
-                } else {
+                } else if (uri.toString().matches(bookFileRegex)) {
                     importBookLiveData.postValue(uri)
+                } else {
+                    throw NoStackTraceException("暂未支持的本地书籍格式(TXT/UMD/EPUB)")
                 }
             } else {
                 onLineImportLive.postValue(uri)
