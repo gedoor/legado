@@ -92,7 +92,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     override fun onNavigationItemSelected(item: MenuItem): Boolean = binding.run {
         when (item.itemId) {
             R.id.menu_bookshelf -> viewPagerMain.setCurrentItem(0, false)
-            R.id.menu_discovery -> viewPagerMain.setCurrentItem(1, false)
+            R.id.menu_discovery -> openPage(idExplore)
             R.id.menu_rss -> openPage(idRss)
             R.id.menu_my_config -> openPage(idMy)
         }
@@ -119,9 +119,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     private fun openPage(id: Int) {
-        realPositions.firstOrNull {
-            it == id
-        }?.let { index ->
+        realPositions.indexOf(id).let { index ->
             binding.viewPagerMain.setCurrentItem(index, false)
         }
     }
