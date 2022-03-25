@@ -128,7 +128,7 @@ class SearchModel(private val scope: CoroutineScope) {
         if (searchIndex >= bookSourceList.lastIndex
             + min(bookSourceList.size, threadCount)
         ) {
-            callBack?.onSearchFinish()
+            callBack?.onSearchFinish(searchBooks.isEmpty())
         }
     }
 
@@ -214,7 +214,7 @@ class SearchModel(private val scope: CoroutineScope) {
     interface CallBack {
         fun onSearchStart()
         fun onSearchSuccess(searchBooks: ArrayList<SearchBook>)
-        fun onSearchFinish()
+        fun onSearchFinish(isEmpty: Boolean)
         fun onSearchCancel()
     }
 
