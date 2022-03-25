@@ -122,8 +122,11 @@ object AppWebDav {
     }
 
     suspend fun hasBackUp(): Boolean {
-        val url = "${rootWebDavUrl}${backupFileName}"
-        return WebDav(url).exists()
+        if (isOk) {
+            val url = "${rootWebDavUrl}${backupFileName}"
+            return WebDav(url).exists()
+        }
+        return false
     }
 
     suspend fun backUpWebDav(path: String) {
@@ -163,15 +166,14 @@ object AppWebDav {
     }
 
     fun uploadBookProgress(book: Book) {
+        if (!isOk) return
         if (!AppConfig.syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
             val bookProgress = BookProgress(book)
             val json = GSON.toJson(bookProgress)
             val url = getProgressUrl(book)
-            if (isOk) {
-                WebDav(url).upload(json.toByteArray(), "application/json")
-            }
+            WebDav(url).upload(json.toByteArray(), "application/json")
         }
     }
 
@@ -196,6 +198,7 @@ object AppWebDav {
     }
 
     suspend fun downloadAllBookProgress() {
+        if (!isOk) return
         appDb.bookDao.all.forEach { book ->
             getBookProgress(book)?.let { bookProgress ->
                 if (bookProgress.durChapterIndex > book.durChapterIndex ||
