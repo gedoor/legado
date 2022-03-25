@@ -110,12 +110,14 @@ object BookChapterList {
         if (!reverse) {
             chapterList.reverse()
         }
+        scope.ensureActive()
         val lh = LinkedHashSet(chapterList)
         val list = ArrayList(lh)
         if (!book.getReverseToc()) {
             list.reverse()
         }
         Debug.log(book.origin, "◇目录总数:${list.size}")
+        scope.ensureActive()
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
         }
@@ -129,6 +131,7 @@ object BookChapterList {
         }
         book.lastCheckTime = System.currentTimeMillis()
         book.totalChapterNum = list.size
+        scope.ensureActive()
         return list
     }
 
