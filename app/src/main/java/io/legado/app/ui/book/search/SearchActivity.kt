@@ -64,19 +64,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        binding.llHistory.setBackgroundColor(backgroundColor)
-        initRecyclerView()
-        initSearchView()
-        initOtherView()
-        initData()
-        receiptIntent(intent)
-        viewModel.searchFinishCallback = {
-            if (it) {
-                val searchGroup = getPrefString("searchGroup")
-                if (!searchGroup.isNullOrEmpty()) {
-                    alert(R.string.empty) {
+    private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
+        if (it) {
+            val searchGroup = getPrefString("searchGroup")
+            if (!searchGroup.isNullOrEmpty()) {
+                launch {
+                    alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         cancelButton()
                         okButton {
@@ -88,6 +81,16 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
             }
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        binding.llHistory.setBackgroundColor(backgroundColor)
+        initRecyclerView()
+        initSearchView()
+        initOtherView()
+        initData()
+        receiptIntent(intent)
+        viewModel.searchFinishCallback = searchFinishCallback
     }
 
     override fun onNewIntent(data: Intent?) {
