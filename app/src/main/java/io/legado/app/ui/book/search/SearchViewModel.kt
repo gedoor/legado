@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.flowOn
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     private val searchModel = SearchModel(viewModelScope)
+    var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchKey: String = ""
     private var searchID = 0L
@@ -32,6 +33,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
             override fun onSearchFinish(isEmpty: Boolean) {
                 isSearchLiveData.postValue(false)
+                searchFinishCallback?.invoke(isEmpty)
             }
 
             override fun onSearchCancel() {
