@@ -2,6 +2,7 @@ package io.legado.app.ui.book.changesource
 
 import android.app.Application
 import android.os.Bundle
+import androidx.annotation.CallSuper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
@@ -85,6 +86,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     @Volatile
     private var searchIndex = -1
 
+    @CallSuper
     open fun initData(arguments: Bundle?) {
         arguments?.let { bundle ->
             bundle.getString("name")?.let {

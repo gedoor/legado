@@ -20,6 +20,7 @@ class ChangeChapterSourceViewModel(application: Application) :
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
 
     override fun initData(arguments: Bundle?) {
+        super.initData(arguments)
         arguments?.let { bundle ->
             bundle.getString("chapterTitle")?.let {
                 chapterTitle = it
