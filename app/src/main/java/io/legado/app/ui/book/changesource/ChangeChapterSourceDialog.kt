@@ -25,6 +25,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogChapterChangeSourceBinding
 import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -79,6 +80,23 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         dismissAllowingStateLoss()
     }
     private var searchBook: SearchBook? = null
+    private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
+        if (it) {
+            val searchGroup = getPrefString("searchGroup")
+            if (!searchGroup.isNullOrEmpty()) {
+                launch {
+                    alert("搜索结果为空") {
+                        setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
+                        cancelButton()
+                        okButton {
+                            putPrefString("searchGroup", "")
+                            viewModel.startSearch()
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -96,6 +114,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         initSearchView()
         initBottomBar()
         initLiveData()
+        viewModel.searchFinishCallback = searchFinishCallback
     }
 
     private fun showTitle() {
