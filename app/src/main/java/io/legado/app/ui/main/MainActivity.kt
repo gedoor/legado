@@ -91,10 +91,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean = binding.run {
         when (item.itemId) {
-            R.id.menu_bookshelf -> viewPagerMain.setCurrentItem(0, false)
-            R.id.menu_discovery -> openPage(idExplore)
-            R.id.menu_rss -> openPage(idRss)
-            R.id.menu_my_config -> openPage(idMy)
+            R.id.menu_bookshelf ->
+                viewPagerMain.setCurrentItem(0, false)
+            R.id.menu_discovery ->
+                viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
+            R.id.menu_rss ->
+                viewPagerMain.setCurrentItem(realPositions.indexOf(idRss), false)
+            R.id.menu_my_config ->
+                viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
         }
         return false
     }
@@ -115,12 +119,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     (fragmentMap[1] as? ExploreFragment)?.compressExplore()
                 }
             }
-        }
-    }
-
-    private fun openPage(id: Int) {
-        realPositions.indexOf(id).let { index ->
-            binding.viewPagerMain.setCurrentItem(index, false)
         }
     }
 
