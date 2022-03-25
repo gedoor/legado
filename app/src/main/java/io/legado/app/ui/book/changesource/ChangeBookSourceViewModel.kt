@@ -163,9 +163,11 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                     }
                 }
             }
-        }
-            .timeout(60000L)
-            .onFinally {
+        }.timeout(60000L)
+            .onError {
+                nextSearch()
+            }
+            .onSuccess {
                 nextSearch()
             }
         tasks.add(task)
