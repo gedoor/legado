@@ -14,10 +14,11 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
-import io.legado.app.utils.printOnDebug
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -26,16 +27,16 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import splitties.init.appCtx
-
 import java.util.*
 import java.util.concurrent.Executors
 import kotlin.math.min
 
 @Suppress("MemberVisibilityCanBePrivate")
-class ChangeBookSourceViewModel(application: Application) : BaseViewModel(application) {
+open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
     val searchStateData = MutableLiveData<Boolean>()
+    var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var name: String = ""
     var author: String = ""
     private var tasks = CompositeCoroutine()
@@ -70,7 +71,7 @@ class ChangeBookSourceViewModel(application: Application) : BaseViewModel(applic
             trySend(arrayOf(searchBooks))
         }
 
-        if (searchBooks.size <= 1) {
+        if (searchBooks.isEmpty()) {
             startSearch()
         }
 
@@ -84,7 +85,7 @@ class ChangeBookSourceViewModel(application: Application) : BaseViewModel(applic
     @Volatile
     private var searchIndex = -1
 
-    fun initData(arguments: Bundle?) {
+    open fun initData(arguments: Bundle?) {
         arguments?.let { bundle ->
             bundle.getString("name")?.let {
                 name = it
@@ -141,73 +142,67 @@ class ChangeBookSourceViewModel(application: Application) : BaseViewModel(applic
             searchIndex++
         }
         val source = bookSourceList[searchIndex]
-        val task = WebBook
-            .searchBook(viewModelScope, source, name, context = searchPool!!)
-            .timeout(60000L)
-            .onSuccess(IO) {
-                it.forEach { searchBook ->
-                    if (searchBook.name == name) {
-                        if ((AppConfig.changeSourceCheckAuthor && searchBook.author.contains(author))
-                            || !AppConfig.changeSourceCheckAuthor
-                        ) {
-                            if (searchBook.latestChapterTitle.isNullOrEmpty()) {
-                                if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
-                                    loadBookInfo(source, searchBook.toBook())
-                                } else {
-                                    searchCallback?.searchSuccess(searchBook)
-                                }
+        val task = Coroutine.async(scope = viewModelScope, context = searchPool!!) {
+            val resultBooks = WebBook.searchBookAwait(this, source, name)
+            resultBooks.forEach { searchBook ->
+                if (searchBook.name == name) {
+                    if ((AppConfig.changeSourceCheckAuthor && searchBook.author.contains(author))
+                        || !AppConfig.changeSourceCheckAuthor
+                    ) {
+                        if (searchBook.latestChapterTitle.isNullOrEmpty()) {
+                            if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
+                                loadBookInfo(this, source, searchBook.toBook())
                             } else {
                                 searchCallback?.searchSuccess(searchBook)
                             }
+                        } else {
+                            searchCallback?.searchSuccess(searchBook)
                         }
                     }
                 }
             }
-            .onFinally(searchPool) {
-                synchronized(this) {
-                    if (searchIndex < bookSourceList.lastIndex) {
-                        search()
-                    } else {
-                        searchIndex++
-                    }
-                    if (searchIndex >= bookSourceList.lastIndex + bookSourceList.size
-                        || searchIndex >= bookSourceList.lastIndex + threadCount
-                    ) {
-                        searchStateData.postValue(false)
-                        tasks.clear()
-                    }
-                }
-
+        }
+            .timeout(60000L)
+            .onFinally {
+                nextSearch()
             }
         tasks.add(task)
-
     }
 
-    private fun loadBookInfo(source: BookSource, book: Book) {
-        WebBook.getBookInfo(viewModelScope, source, book, context = searchPool!!)
-            .onSuccess(IO) {
-                if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
-                    loadBookToc(source, book)
-                } else {
-                    //从详情页里获取最新章节
-                    book.latestChapterTitle = it.latestChapterTitle
-                    val searchBook = book.toSearchBook()
-                    searchCallback?.searchSuccess(searchBook)
-                }
-            }.onError(IO) {
-                it.printOnDebug()
-            }
+    private suspend fun loadBookInfo(scope: CoroutineScope, source: BookSource, book: Book) {
+        val mBook = WebBook.getBookInfoAwait(scope, source, book)
+        if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
+            loadBookToc(scope, source, mBook)
+        } else {
+            //从详情页里获取最新章节
+            book.latestChapterTitle = mBook.latestChapterTitle
+            val searchBook = book.toSearchBook()
+            searchCallback?.searchSuccess(searchBook)
+        }
     }
 
-    private fun loadBookToc(source: BookSource, book: Book) {
-        WebBook.getChapterList(viewModelScope, source, book, context = searchPool!!)
-            .onSuccess(IO) { chapters ->
-                book.latestChapterTitle = chapters.last().title
-                val searchBook: SearchBook = book.toSearchBook()
-                searchCallback?.searchSuccess(searchBook)
-            }.onError(IO) {
-                it.printOnDebug()
+    private suspend fun loadBookToc(scope: CoroutineScope, source: BookSource, book: Book) {
+        val chapters = WebBook.getChapterListAwait(scope, source, book)
+        book.latestChapterTitle = chapters.last().title
+        val searchBook: SearchBook = book.toSearchBook()
+        searchCallback?.searchSuccess(searchBook)
+    }
+
+    private fun nextSearch() {
+        synchronized(this) {
+            if (searchIndex < bookSourceList.lastIndex) {
+                search()
+            } else {
+                searchIndex++
             }
+            if (searchIndex >= bookSourceList.lastIndex + bookSourceList.size
+                || searchIndex >= bookSourceList.lastIndex + threadCount
+            ) {
+                searchStateData.postValue(false)
+                tasks.clear()
+                searchFinishCallback?.invoke(searchBooks.isEmpty())
+            }
+        }
     }
 
     private fun getDbSearchBooks(): List<SearchBook> {
