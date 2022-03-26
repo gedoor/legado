@@ -35,16 +35,16 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     val dataFlow = callbackFlow<List<SearchBook>> {
         val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
 
-        searchSuccess = {
-            if (!searchBooks.contains(it)) {
-                searchBooks.add(it)
-                trySend(ArrayList(searchBooks))
+        searchSuccess = { searchBook ->
+            if (!searchBooks.contains(searchBook)) {
+                searchBooks.add(searchBook)
+                trySend(searchBooks.sortedBy { it.originOrder })
             }
         }
 
         appDb.searchBookDao.getEnableHasCover(name, author).let {
             searchBooks.addAll(it)
-            trySend(ArrayList(searchBooks))
+            trySend(searchBooks.toList())
         }
 
         if (searchBooks.size <= 1) {
