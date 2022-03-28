@@ -11,10 +11,10 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
-import io.legado.app.help.BlurTransformation
 import io.legado.app.help.CacheManager
 import io.legado.app.help.DefaultData
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.glide.BlurTransformation
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.model.analyzeRule.AnalyzeRule
@@ -86,7 +86,7 @@ object BookCover {
         loadOnlyWifi: Boolean = false
     ): RequestBuilder<Drawable> {
         val loadBlur = ImageLoader.load(context, defaultDrawable)
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(25)))
         return if (AppConfig.useDefaultCover) {
             loadBlur.centerCrop()
         } else {
@@ -95,7 +95,7 @@ object BookCover {
                 .apply(options)
                 .transition(DrawableTransitionOptions.withCrossFade(1500))
                 .thumbnail(loadBlur)
-                .apply(RequestOptions.bitmapTransform(BlurTransformation(context, 25)))
+                .apply(RequestOptions.bitmapTransform(BlurTransformation(25)))
                 .centerCrop()
         }
     }

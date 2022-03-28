@@ -5,12 +5,8 @@ package io.legado.app.utils
 import android.content.Context
 import android.graphics.*
 import android.graphics.Bitmap.Config
-import android.renderscript.Allocation
-import android.renderscript.Element
-import android.renderscript.RenderScript
-import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
-import splitties.init.appCtx
+import com.google.android.renderscript.Toolkit
 import java.io.FileInputStream
 import java.io.IOException
 import kotlin.math.*
@@ -250,33 +246,9 @@ fun Bitmap.changeSize(newWidth: Int, newHeight: Int): Bitmap {
 /**
  * 高斯模糊
  */
-fun Bitmap.stackBlur(radius: Float = 8f): Bitmap? {
-    val rs = RenderScript.create(appCtx)
+fun Bitmap.stackBlur(radius: Int = 8): Bitmap {
     val blurredBitmap = this.copy(Config.ARGB_8888, true)
-
-    //分配用于渲染脚本的内存
-    val input = Allocation.createFromBitmap(
-        rs,
-        blurredBitmap,
-        Allocation.MipmapControl.MIPMAP_FULL,
-        Allocation.USAGE_SHARED
-    )
-    val output = Allocation.createTyped(rs, input.type)
-
-    //加载我们想要使用的特定脚本的实例。
-    val script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
-    script.setInput(input)
-
-    //设置模糊半径
-    script.setRadius(radius)
-
-    //启动 ScriptIntrinsicBlur
-    script.forEach(output)
-
-    //将输出复制到模糊的位图
-    output.copyTo(blurredBitmap)
-
-    return blurredBitmap
+    return Toolkit.blur(blurredBitmap, radius)
 }
 
 /**

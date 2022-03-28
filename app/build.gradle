@@ -246,6 +246,8 @@ dependencies {
     //加解密类库
     implementation('cn.hutool:hutool-crypto:5.7.22')
 
+    implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
+
     //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
     //epubLib集成到应用内
 

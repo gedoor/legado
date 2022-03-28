@@ -73,7 +73,7 @@ object ThemeConfig {
         if (bgCfg.second == 0) {
             return bgImage
         }
-        return bgImage.stackBlur(bgCfg.second.toFloat())
+        return bgImage.stackBlur(bgCfg.second)
     }
 
     fun upConfig() {
