@@ -14,6 +14,7 @@ import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.constant.Theme
+import io.legado.app.lib.theme.primaryTextColor
 import java.lang.reflect.Method
 
 @SuppressLint("RestrictedApi")
@@ -22,7 +23,7 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
         menu.setOptionalIconsVisible(true)
     }
     val defaultTextColor = context.getCompatColor(R.color.primaryText)
-    val tintColor = UIUtils.getMenuColor(context, theme)
+    val tintColor = MenuExtensions.getMenuColor(context, theme)
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
             //overflow：展开的item
@@ -69,4 +70,24 @@ fun Menu.iconItemOnLongClick(id: Int, function: (view: View) -> Unit) {
         item.actionView.setOnLongClickListener { function.invoke(item.actionView); true }
         item.actionView.setOnClickListener { performIdentifierAction(id, 0) }
     }
+}
+
+object MenuExtensions {
+
+    fun getMenuColor(
+        context: Context,
+        theme: Theme = Theme.Auto,
+        requiresOverflow: Boolean = false
+    ): Int {
+        val defaultTextColor = context.getCompatColor(R.color.primaryText)
+        if (requiresOverflow)
+            return defaultTextColor
+        val primaryTextColor = context.primaryTextColor
+        return when (theme) {
+            Theme.Dark -> context.getCompatColor(R.color.md_white_1000)
+            Theme.Light -> context.getCompatColor(R.color.md_black_1000)
+            else -> primaryTextColor
+        }
+    }
+
 }
