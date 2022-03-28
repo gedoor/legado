@@ -86,9 +86,9 @@ object BookCover {
         loadOnlyWifi: Boolean = false
     ): RequestBuilder<Drawable> {
         val loadBlur = ImageLoader.load(context, defaultDrawable)
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(25)))
+            .transform(BlurTransformation(25))
         return if (AppConfig.useDefaultCover) {
-            loadBlur.centerCrop()
+            loadBlur
         } else {
             val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
             ImageLoader.load(context, path)
@@ -96,7 +96,6 @@ object BookCover {
                 .transform(BlurTransformation(25))
                 .transition(DrawableTransitionOptions.withCrossFade(1500))
                 .thumbnail(loadBlur)
-                .centerCrop()
         }
     }
 
