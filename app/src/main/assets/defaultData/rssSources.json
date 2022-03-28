@@ -25,7 +25,7 @@
     "enabled": true,
     "singleUrl": true,
     "sourceGroup": "legado",
-    "sourceIcon": "https://Cloud.miaogongzi.site/images/icon.png",
+    "sourceIcon": "https://cdn.jsdelivr.net/gh/mgz0227/meowcloud/icon.png",
     "sourceName": "Meow云",
     "sourceUrl": "https://pan.miaogongzi.net"
   },

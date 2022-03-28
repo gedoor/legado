@@ -93,9 +93,9 @@ object BookCover {
             val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
             ImageLoader.load(context, path)
                 .apply(options)
+                .transform(BlurTransformation(25))
                 .transition(DrawableTransitionOptions.withCrossFade(1500))
                 .thumbnail(loadBlur)
-                .apply(RequestOptions.bitmapTransform(BlurTransformation(25)))
                 .centerCrop()
         }
     }
