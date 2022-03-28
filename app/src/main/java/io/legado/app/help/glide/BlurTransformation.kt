@@ -3,7 +3,7 @@ package io.legado.app.help.glide
 import android.graphics.Bitmap
 import androidx.annotation.IntRange
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import io.legado.app.utils.stackBlur
 import java.security.MessageDigest
 
@@ -13,7 +13,7 @@ import java.security.MessageDigest
  */
 class BlurTransformation(
     @IntRange(from = 0, to = 25) private val radius: Int
-) : CenterCrop() {
+) : BitmapTransformation() {
 
     override fun transform(
         pool: BitmapPool,
@@ -21,8 +21,7 @@ class BlurTransformation(
         outWidth: Int,
         outHeight: Int
     ): Bitmap {
-        val transform = super.transform(pool, toTransform, outWidth, outHeight)
-        return transform.stackBlur(radius)
+        return toTransform.stackBlur(radius)
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
