@@ -110,13 +110,12 @@ object BookCover {
         if (!config.enable || config.searchUrl.isBlank() || config.coverRule.isBlank()) {
             return null
         }
-        val analyzeUrl =
-            AnalyzeUrl(
-                config.searchUrl,
-                book.name,
-                source = config,
-                headerMapF = config.getHeaderMap()
-            )
+        val analyzeUrl = AnalyzeUrl(
+            config.searchUrl,
+            book.name,
+            source = config,
+            headerMapF = config.getHeaderMap()
+        )
         val res = analyzeUrl.getStrResponseAwait()
         val analyzeRule = AnalyzeRule(book)
         analyzeRule.setContent(res.body)
