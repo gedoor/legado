@@ -15,7 +15,6 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.*
-import java.util.*
 
 /**
  * 本地朗读
@@ -60,7 +59,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         if (status == TextToSpeech.SUCCESS) {
             textToSpeech?.let {
                 it.setOnUtteranceProgressListener(ttsUtteranceListener)
-                it.language = Locale.CHINA
                 ttsInitFinish = true
                 play()
             }
