@@ -15,6 +15,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.AudioPlayService
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.startService
+import splitties.init.appCtx
 
 object AudioPlay {
     var titleData = MutableLiveData<String>()
@@ -138,10 +139,17 @@ object AudioPlay {
         }
     }
 
-    fun addTimer(context: Context) {
-        val intent = Intent(context, AudioPlayService::class.java)
+    fun addTimer() {
+        val intent = Intent(appCtx, AudioPlayService::class.java)
         intent.action = IntentAction.addTimer
-        context.startService(intent)
+        appCtx.startService(intent)
+    }
+
+    fun setTimer(minute: Int) {
+        val intent = Intent(appCtx, AudioPlayService::class.java)
+        intent.action = IntentAction.setTimer
+        intent.putExtra("minute", minute)
+        appCtx.startService(intent)
     }
 
     fun saveRead(book: Book) {
