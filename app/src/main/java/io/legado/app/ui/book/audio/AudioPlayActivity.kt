@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.audio
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.icu.text.SimpleDateFormat
 import android.os.Build
@@ -210,6 +211,7 @@ class AudioPlayActivity :
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun observeLiveBus() {
         observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
@@ -238,6 +240,10 @@ class AudioPlayActivity :
         observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
             binding.tvSpeed.text = String.format("%.1fX", it)
             binding.tvSpeed.visible()
+        }
+        observeEventSticky<Int>(EventBus.AUDIO_DS) {
+            binding.tvTimer.text = "${it}m"
+            binding.tvTimer.visible(it > 0)
         }
     }
 

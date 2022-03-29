@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
+    android:orientation="vertical"
     tools:context=".ui.book.audio.AudioPlayActivity">
 
     <ImageView
@@ -29,14 +29,29 @@
         app:themeMode="dark" />
 
     <TextView
+        android:id="@+id/tv_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/shape_fillet_btn_press"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:textColor="@color/md_white_1000"
+        android:visibility="invisible"
+        app:drawableLeftCompat="@drawable/ic_timer_black_24dp"
+        app:drawableTint="@color/md_white_1000"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar" />
+
+    <TextView
         android:id="@+id/tv_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@drawable/shape_fillet_btn_press"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
         android:textColor="@color/md_white_1000"
-        android:paddingStart="3dp"
-        android:paddingEnd="3dp"
         android:visibility="invisible"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_bar" />
@@ -58,12 +73,12 @@
         android:id="@+id/tv_sub_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         android:paddingTop="6dp"
+        android:paddingEnd="16dp"
         android:paddingBottom="6dp"
         android:textColor="@color/md_white_1000"
-        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress" />
 
     <LinearLayout
@@ -106,10 +121,10 @@
         android:id="@+id/ll_play_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView

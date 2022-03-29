@@ -76,6 +76,7 @@ class AudioPlayService : BaseService(),
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        doDs()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -273,7 +274,7 @@ class AudioPlayService : BaseService(),
      * 定时
      */
     private fun doDs() {
-        postEvent(EventBus.TTS_DS, timeMinute)
+        postEvent(EventBus.AUDIO_DS, timeMinute)
         upNotification()
         dsJob?.cancel()
         dsJob = launch {
@@ -287,7 +288,7 @@ class AudioPlayService : BaseService(),
                         AudioPlay.stop(this@AudioPlayService)
                     }
                 }
-                postEvent(EventBus.TTS_DS, timeMinute)
+                postEvent(EventBus.AUDIO_DS, timeMinute)
                 upNotification()
             }
         }
