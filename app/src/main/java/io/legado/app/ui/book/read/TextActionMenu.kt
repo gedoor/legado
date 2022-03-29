@@ -25,8 +25,6 @@ import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.*
 
-import java.util.*
-
 @SuppressLint("RestrictedApi")
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
     PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
@@ -248,7 +246,6 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     @Synchronized
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            textToSpeech?.language = Locale.CHINA
             ttsInitFinish = true
             readAloud(lastText)
         } else {

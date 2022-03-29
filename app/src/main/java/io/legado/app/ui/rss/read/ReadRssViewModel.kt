@@ -194,7 +194,6 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
     @Synchronized
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            textToSpeech?.language = Locale.CHINA
             textToSpeech?.setOnUtteranceProgressListener(TTSUtteranceListener())
             ttsInitFinish = true
             play()
