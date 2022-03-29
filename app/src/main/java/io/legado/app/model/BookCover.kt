@@ -64,23 +64,29 @@ object BookCover {
         }.getOrDefault(appCtx.resources.getDrawable(R.drawable.image_cover_default, null))
     }
 
+    /**
+     * 加载封面
+     */
     fun load(
         context: Context,
         path: String?,
         loadOnlyWifi: Boolean = false
     ): RequestBuilder<Drawable> {
-        return if (AppConfig.useDefaultCover) {
-            ImageLoader.load(context, defaultDrawable)
+        if (AppConfig.useDefaultCover) {
+            return ImageLoader.load(context, defaultDrawable)
                 .centerCrop()
-        } else {
-            val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
-            ImageLoader.load(context, path)
-                .apply(options)
-                .placeholder(defaultDrawable)
-                .error(defaultDrawable)
         }
+        val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+        return ImageLoader.load(context, path)
+            .apply(options)
+            .placeholder(defaultDrawable)
+            .error(defaultDrawable)
+            .centerCrop()
     }
 
+    /**
+     * 加载模糊封面
+     */
     fun loadBlur(
         context: Context,
         path: String?,
@@ -88,16 +94,15 @@ object BookCover {
     ): RequestBuilder<Drawable> {
         val loadBlur = ImageLoader.load(context, defaultDrawable)
             .transform(BlurTransformation(25), CenterCrop())
-        return if (AppConfig.useDefaultCover) {
-            loadBlur
-        } else {
-            val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
-            ImageLoader.load(context, path)
-                .apply(options)
-                .transform(BlurTransformation(25), CenterCrop())
-                .transition(DrawableTransitionOptions.withCrossFade(1500))
-                .thumbnail(loadBlur)
+        if (AppConfig.useDefaultCover) {
+            return loadBlur
         }
+        val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+        return ImageLoader.load(context, path)
+            .apply(options)
+            .transform(BlurTransformation(25), CenterCrop())
+            .transition(DrawableTransitionOptions.withCrossFade(1500))
+            .thumbnail(loadBlur)
     }
 
     suspend fun searchCover(book: Book): String? {
