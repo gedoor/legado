@@ -23,10 +23,15 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.ui.widget.prefs.Preference
-            android:defaultValue="false"
             android:title="@string/speak_engine"
             android:summary="TTS"
             android:key="appTtsEngine"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
+            android:title="@string/sys_tts_config"
+            android:summary="@string/sys_tts_config_summary"
+            android:key="sysTtsConfig"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.ui.widget.prefs.PreferenceCategory>

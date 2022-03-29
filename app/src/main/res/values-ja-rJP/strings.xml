@@ -965,5 +965,7 @@
     <string name="cover_rule">封面规则</string>
     <string name="cover_rule_summary">进入详情页时使用封面规则重新获取封面</string>
     <string name="scroll_to_dur_source">定位到当前书源</string>
+    <string name="sys_tts_config">系统tts设置</string>
+    <string name="sys_tts_config_summary">打开系统tts设置界面</string>
     <!-- string end -->
 </resources>

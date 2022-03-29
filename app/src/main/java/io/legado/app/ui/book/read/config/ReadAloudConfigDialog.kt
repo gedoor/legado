@@ -14,6 +14,7 @@ import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.help.IntentHelp
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -92,6 +93,7 @@ class ReadAloudConfigDialog : DialogFragment() {
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
             when (preference.key) {
                 PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog(this))
+                "sysTtsConfig" -> IntentHelp.openTTSSetting()
             }
             return super.onPreferenceTreeClick(preference)
         }

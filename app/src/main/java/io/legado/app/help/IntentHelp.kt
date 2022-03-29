@@ -24,15 +24,15 @@ object IntentHelp {
         return intent
     }
 
-    fun toTTSSetting(context: Context) {
+    fun openTTSSetting() {
         //跳转到文字转语音设置界面
         kotlin.runCatching {
             val intent = Intent()
             intent.action = "com.android.settings.TTS_SETTINGS"
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(intent)
+            appCtx.startActivity(intent)
         }.onFailure {
-            context.toastOnUi(R.string.tip_cannot_jump_setting_page)
+            appCtx.toastOnUi(R.string.tip_cannot_jump_setting_page)
         }
     }
 
