@@ -24,6 +24,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.exoplayer.ExoPlayerHelper
+import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
@@ -34,8 +35,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 import splitties.systemservices.audioManager
 
-
-
+/**
+ * 音频播放服务
+ */
 class AudioPlayService : BaseService(),
     AudioManager.OnAudioFocusChangeListener,
     Player.Listener {
@@ -458,13 +460,19 @@ class AudioPlayService : BaseService(),
         }
         val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_volume_up)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.icon_read_book))
             .setOngoing(true)
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(
                 activityPendingIntent<AudioPlayActivity>("activity")
             )
+        kotlin.runCatching {
+            ImageLoader.loadBitmap(this, AudioPlay.book?.getDisplayCover()).submit().get()
+        }.getOrElse {
+            BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
+        }.let {
+            builder.setLargeIcon(it)
+        }
         if (pause) {
             builder.addAction(
                 R.drawable.ic_play_24dp,

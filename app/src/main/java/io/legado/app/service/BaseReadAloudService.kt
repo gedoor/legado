@@ -17,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
 import io.legado.app.help.MediaHelp
+import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
@@ -29,6 +30,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import splitties.systemservices.audioManager
 
+/**
+ * 朗读服务
+ */
 abstract class BaseReadAloudService : BaseService(),
     AudioManager.OnAudioFocusChangeListener {
 
@@ -311,13 +315,19 @@ abstract class BaseReadAloudService : BaseService(),
             nSubtitle = getString(R.string.read_aloud_s)
         val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_volume_up)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.icon_read_book))
             .setOngoing(true)
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(
                 activityPendingIntent<ReadBookActivity>("activity")
             )
+        kotlin.runCatching {
+            ImageLoader.loadBitmap(this, ReadBook.book?.getDisplayCover()).submit().get()
+        }.getOrElse {
+            BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
+        }.let {
+            builder.setLargeIcon(it)
+        }
         if (pause) {
             builder.addAction(
                 R.drawable.ic_play_24dp,

@@ -17,6 +17,9 @@ import io.legado.app.model.ReadBook
 import io.legado.app.utils.*
 import java.util.*
 
+/**
+ * 本地朗读
+ */
 class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener {
 
     private var textToSpeech: TextToSpeech? = null
