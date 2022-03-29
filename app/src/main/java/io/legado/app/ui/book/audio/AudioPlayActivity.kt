@@ -161,7 +161,7 @@ class AudioPlayActivity :
         }
         binding.composeView.setContent {
             AppTheme {
-                TimerView(
+                TimerDialog(
                     state = timerViewState,
                     binding.ivTimer
                 )

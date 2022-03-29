@@ -12,7 +12,7 @@ import io.legado.app.service.AudioPlayService
 
 
 @Composable
-fun TimerView(state: MutableState<Boolean>, parent: View) {
+fun TimerDialog(state: MutableState<Boolean>, parent: View) {
     val intOffset = IntArray(2)
     parent.getLocationInWindow(intOffset)
     if (state.value) {
