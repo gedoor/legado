@@ -301,63 +301,70 @@ abstract class BaseReadAloudService : BaseService(),
      * 更新通知
      */
     private fun upNotification() {
-        var nTitle: String = when {
-            pause -> getString(R.string.read_aloud_pause)
-            timeMinute > 0 -> getString(
-                R.string.read_aloud_timer,
-                timeMinute
-            )
-            else -> getString(R.string.read_aloud_t)
-        }
-        nTitle += ": ${ReadBook.book?.name}"
-        var nSubtitle = ReadBook.curTextChapter?.title
-        if (nSubtitle.isNullOrBlank())
-            nSubtitle = getString(R.string.read_aloud_s)
-        val builder = NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
-            .setSmallIcon(R.drawable.ic_volume_up)
-            .setOngoing(true)
-            .setContentTitle(nTitle)
-            .setContentText(nSubtitle)
-            .setContentIntent(
-                activityPendingIntent<ReadBookActivity>("activity")
-            )
-        kotlin.runCatching {
-            ImageLoader.loadBitmap(this, ReadBook.book?.getDisplayCover()).submit().get()
-        }.getOrElse {
-            BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
-        }.let {
-            builder.setLargeIcon(it)
-        }
-        if (pause) {
+        execute {
+            var nTitle: String = when {
+                pause -> getString(R.string.read_aloud_pause)
+                timeMinute > 0 -> getString(
+                    R.string.read_aloud_timer,
+                    timeMinute
+                )
+                else -> getString(R.string.read_aloud_t)
+            }
+            nTitle += ": ${ReadBook.book?.name}"
+            var nSubtitle = ReadBook.curTextChapter?.title
+            if (nSubtitle.isNullOrBlank())
+                nSubtitle = getString(R.string.read_aloud_s)
+            val builder = NotificationCompat
+                .Builder(this@BaseReadAloudService, AppConst.channelIdReadAloud)
+                .setSmallIcon(R.drawable.ic_volume_up)
+                .setOngoing(true)
+                .setContentTitle(nTitle)
+                .setContentText(nSubtitle)
+                .setContentIntent(
+                    activityPendingIntent<ReadBookActivity>("activity")
+                )
+            kotlin.runCatching {
+                ImageLoader
+                    .loadBitmap(this@BaseReadAloudService, ReadBook.book?.getDisplayCover())
+                    .submit()
+                    .get()
+            }.getOrElse {
+                BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
+            }.let {
+                builder.setLargeIcon(it)
+            }
+            if (pause) {
+                builder.addAction(
+                    R.drawable.ic_play_24dp,
+                    getString(R.string.resume),
+                    aloudServicePendingIntent(IntentAction.resume)
+                )
+            } else {
+                builder.addAction(
+                    R.drawable.ic_pause_24dp,
+                    getString(R.string.pause),
+                    aloudServicePendingIntent(IntentAction.pause)
+                )
+            }
             builder.addAction(
-                R.drawable.ic_play_24dp,
-                getString(R.string.resume),
-                aloudServicePendingIntent(IntentAction.resume)
+                R.drawable.ic_stop_black_24dp,
+                getString(R.string.stop),
+                aloudServicePendingIntent(IntentAction.stop)
             )
-        } else {
             builder.addAction(
-                R.drawable.ic_pause_24dp,
-                getString(R.string.pause),
-                aloudServicePendingIntent(IntentAction.pause)
+                R.drawable.ic_time_add_24dp,
+                getString(R.string.set_timer),
+                aloudServicePendingIntent(IntentAction.addTimer)
             )
+            builder.setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setShowActionsInCompactView(0, 1, 2)
+            )
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            builder
+        }.onSuccess {
+            startForeground(AppConst.notificationIdRead, it.build())
         }
-        builder.addAction(
-            R.drawable.ic_stop_black_24dp,
-            getString(R.string.stop),
-            aloudServicePendingIntent(IntentAction.stop)
-        )
-        builder.addAction(
-            R.drawable.ic_time_add_24dp,
-            getString(R.string.set_timer),
-            aloudServicePendingIntent(IntentAction.addTimer)
-        )
-        builder.setStyle(
-            androidx.media.app.NotificationCompat.MediaStyle()
-                .setShowActionsInCompactView(0, 1, 2)
-        )
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        val notification = builder.build()
-        startForeground(AppConst.notificationIdRead, notification)
     }
 
     abstract fun aloudServicePendingIntent(actionStr: String): PendingIntent?
