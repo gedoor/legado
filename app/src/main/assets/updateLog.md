@@ -563,22 +563,6 @@ fun getZipByteArrayContent(url: String, path: String): ByteArray?
 * 样式属性可以搜索 [FleboxLayout子元素支持的属性介绍](https://www.jianshu.com/p/3c471953e36d)
 * 样式属性可省略,有默认值
 
-```json
-[
-  {
-    "title": "xxx",
-    "url": "",
-    "style": {
-      "layout_flexGrow": 0,
-      "layout_flexShrink": 1,
-      "layout_alignSelf": "auto",
-      "layout_flexBasisPercent": -1,
-      "layout_wrapBefore": false
-    }
-  }
-]
-```
-
 **2021/07/07**
 
 1. 默认规则新增类似`jsonPath`的索引写法 by bushixuanqi
@@ -776,9 +760,6 @@ chapter.html的关键字有{title}、{content}
 
 * 增加三星 S Pen 支持 by [dacer](https://github.com/dacer)
 * 订阅添加阅读下载,可以从多个渠道下载
-* 修复一些BUG
-  **2020/12/30**
-
 * 解决文件下载异常，在线语音可正常播放 by [Celeter](https://github.com/Celeter)
 * 更新默认在线朗读库, 默认id小于0方便下次更新时删除旧数据, 有重复的自己删除
 * 导入导出书单
