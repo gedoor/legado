@@ -167,6 +167,10 @@ class AudioPlayService : BaseService(),
     private fun resume() {
         try {
             pause = false
+            if (url.isEmpty()) {
+                loadContent()
+                return
+            }
             if (!exoPlayer.isPlaying) {
                 exoPlayer.play()
             }
