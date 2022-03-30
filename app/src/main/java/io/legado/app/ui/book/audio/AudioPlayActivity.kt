@@ -157,7 +157,11 @@ class AudioPlayActivity :
             AudioPlay.adjustSpeed(this@AudioPlayActivity, -0.1f)
         }
         binding.ivTimer.setOnClickListener {
-            timerViewState.value = true
+            if (AudioPlayService.isRun) {
+                timerViewState.value = true
+            } else {
+                toastOnUi(R.string.cannot_timed_non_playback)
+            }
         }
         binding.composeView.setContent {
             AppTheme {
