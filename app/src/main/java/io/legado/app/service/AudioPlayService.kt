@@ -61,6 +61,7 @@ class AudioPlayService : BaseService(),
     }
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
+    private var audioFocusLossTransient = false
     private var position = AudioPlay.book?.durChapterPos ?: 0
     private var dsJob: Job? = null
     private var upPlayProgressJob: Job? = null
@@ -425,13 +426,18 @@ class AudioPlayService : BaseService(),
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
+                audioFocusLossTransient = false
                 if (!pause) resume()
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
+                if (audioFocusLossTransient) {
+                    pause(true)
+                }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
+                audioFocusLossTransient = true
                 if (!pause) pause(false)
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
