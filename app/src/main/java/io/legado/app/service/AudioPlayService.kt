@@ -45,7 +45,7 @@ class AudioPlayService : BaseService(),
     companion object {
         var isRun = false
             private set
-        var pause = false
+        var pause = true
             private set
         var timeMinute: Int = 0
             private set
@@ -59,11 +59,9 @@ class AudioPlayService : BaseService(),
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayer.Builder(this).build()
     }
-    private var title: String = ""
-    private var subtitle: String = ""
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var position = 0
+    private var position = AudioPlay.book?.durChapterPos ?: 0
     private var dsJob: Job? = null
     private var upPlayProgressJob: Job? = null
     private var playSpeed: Float = 1f
@@ -83,12 +81,9 @@ class AudioPlayService : BaseService(),
         intent?.action?.let { action ->
             when (action) {
                 IntentAction.play -> {
-                    AudioPlay.book?.let {
-                        title = it.name
-                        subtitle = AudioPlay.durChapter?.title ?: ""
-                        position = it.durChapterPos
-                        loadContent()
-                    }
+                    pause = false
+                    position = AudioPlay.book?.durChapterPos ?: 0
+                    loadContent()
                 }
                 IntentAction.pause -> pause(true)
                 IntentAction.resume -> resume()
@@ -361,7 +356,6 @@ class AudioPlayService : BaseService(),
      */
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
         if (chapter.index == AudioPlay.book?.durChapterIndex) {
-            subtitle = chapter.title
             url = content
             play()
         }
@@ -455,9 +449,9 @@ class AudioPlayService : BaseService(),
                 )
                 else -> getString(R.string.audio_play_t)
             }
-            nTitle += ": $title"
-            var nSubtitle = subtitle
-            if (subtitle.isEmpty()) {
+            nTitle += ": ${AudioPlay.book?.name}"
+            var nSubtitle = AudioPlay.durChapter?.title
+            if (nSubtitle.isNullOrEmpty()) {
                 nSubtitle = getString(R.string.audio_play_s)
             }
             val builder = NotificationCompat
