@@ -139,7 +139,7 @@ interface JsExtensions {
             path.startsWith("/storage") -> FileUtils.readText(path)
             else -> {
                 //相对路径
-                val jsPath = if (path.startsWith("/")) path else "/" + path
+                val jsPath = if (path.startsWith("/")) path else "/$path"
                 //先找书籍保存目录下有没有
                 val publicStoragePath = AppConfig.defaultBookTreeUri
                 val jsString = publicStoragePath?.let {
@@ -154,7 +154,7 @@ interface JsExtensions {
                 if (jsString.isNullOrBlank()) readTxtFile(path) else jsString
             }
         }
-        if (result.isBlank()) throw NoStackTraceException("${path} 内容获取失败或者为空")
+        if (result.isBlank()) throw NoStackTraceException("$path 内容获取失败或者为空")
         return result
     }
 
