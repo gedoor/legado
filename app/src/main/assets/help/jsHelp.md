@@ -59,6 +59,12 @@ java.ajaxAll(urlList: Array<String>): Array<StrResponse?>
 java.log(msg)
 java.logType(var)
 ```
+* 从网络(由java.cacheFile实现)、本地导入JavaScript脚本
+```
+{{java.importScript(url)}}
+{{java.importScript(relativePath)}}
+{{java.importScript(absolutePath)}}
+```
 * 缓存网络文件
 ```
 获取
