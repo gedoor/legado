@@ -6,14 +6,11 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
 import java.io.File
@@ -44,8 +41,8 @@ object BookHelp {
     /**
      * 清除已删除书的缓存
      */
-    fun clearRemovedCache() {
-        Coroutine.async {
+    suspend fun clearInvalidCache() {
+        withContext(IO) {
             val bookFolderNames = appDb.bookDao.all.map {
                 it.getFolderName()
             }
