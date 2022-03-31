@@ -22,7 +22,7 @@ object AppPattern {
     val debugMessageSymbolRegex = Regex("[⇒◇┌└≡]")
 
     //本地书籍支持类型
-    val bookFileRegex = Regex("(?i).*\\.(txt|epub|umd)")
+    val bookFileRegex = Regex(".*\\.(txt|epub|umd)", RegexOption.IGNORE_CASE)
 
     /**
      * 所有标点
