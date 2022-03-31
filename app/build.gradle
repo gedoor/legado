@@ -244,8 +244,9 @@ dependencies {
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
 
     //加解密类库
-    implementation('cn.hutool:hutool-crypto:5.7.22')
+    implementation('cn.hutool:hutool-crypto:5.8.0.M1')
 
+    //renderscriptToolkit
     implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
 
     //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
