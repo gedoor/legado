@@ -47,7 +47,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                             importHttpTTS(content, finally)
                         else -> errorLiveData.postValue("格式不对")
                     }
-                    uri.toString().matches(bookFileRegex) -> {
+                    (uri.path ?: uri.toString()).matches(bookFileRegex) -> {
                         importBookLiveData.postValue(uri)
                     }
                     else -> {
