@@ -58,10 +58,10 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     }.map { docList ->
         when (sort) {
             2 -> docList.sortedWith(
-                compareBy({ !it.isDir }, { it.lastModified }, { it.name })
+                compareBy({ !it.isDir }, { -it.lastModified }, { it.name })
             )
             1 -> docList.sortedWith(
-                compareBy({ !it.isDir }, { it.size }, { it.name })
+                compareBy({ !it.isDir }, { -it.size }, { it.name })
             )
             else -> docList.sortedWith(
                 compareBy({ !it.isDir }, { it.name })

@@ -184,7 +184,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
 
     override fun observeLiveBus() {
         observeEvent<Int>(EventBus.ALOUD_STATE) { upPlayState() }
-        observeEvent<Int>(EventBus.TTS_DS) { binding.seekTimer.progress = it }
+        observeEvent<Int>(EventBus.READ_ALOUD_DS) { binding.seekTimer.progress = it }
     }
 
     interface CallBack {

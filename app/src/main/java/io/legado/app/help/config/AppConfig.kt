@@ -282,8 +282,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val importKeepName get() = appCtx.getPrefBoolean(PreferKey.importKeepName)
 
-    val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
-
     var preDownloadNum
         get() = appCtx.getPrefInt(PreferKey.preDownloadNum, 10)
         set(value) {

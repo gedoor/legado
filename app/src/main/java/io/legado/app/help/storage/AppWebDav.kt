@@ -29,6 +29,8 @@ object AppWebDav {
     private val bookProgressUrl = "${rootWebDavUrl}bookProgress/"
     private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
 
+    val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
+
     var isOk = false
 
     init {
@@ -167,7 +169,7 @@ object AppWebDav {
 
     fun uploadBookProgress(book: Book) {
         if (!isOk) return
-        if (!AppConfig.syncBookProgress) return
+        if (!syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
             val bookProgress = BookProgress(book)

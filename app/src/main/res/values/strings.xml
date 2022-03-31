@@ -967,5 +967,6 @@
     <string name="scroll_to_dur_source">定位到当前书源</string>
     <string name="sys_tts_config">系统tts设置</string>
     <string name="sys_tts_config_summary">打开系统tts设置界面</string>
+    <string name="cannot_timed_non_playback">非播放状态无法定时</string>
     <!-- string end -->
 </resources>

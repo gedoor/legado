@@ -206,7 +206,7 @@ abstract class BaseReadAloudService : BaseService(),
      */
     @Synchronized
     private fun doDs() {
-        postEvent(EventBus.TTS_DS, timeMinute)
+        postEvent(EventBus.READ_ALOUD_DS, timeMinute)
         upNotification()
         dsJob?.cancel()
         dsJob = launch {
@@ -220,7 +220,7 @@ abstract class BaseReadAloudService : BaseService(),
                         ReadAloud.stop(this@BaseReadAloudService)
                     }
                 }
-                postEvent(EventBus.TTS_DS, timeMinute)
+                postEvent(EventBus.READ_ALOUD_DS, timeMinute)
                 upNotification()
             }
         }

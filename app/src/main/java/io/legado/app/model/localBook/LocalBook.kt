@@ -16,11 +16,16 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
 
 object LocalBook {
+
+    private val nameAuthorPatterns = arrayOf(
+        Pattern.compile("(.*?)《([^《》]+)》(.*)"),
+        Pattern.compile("(^)(.+) 作者：(.+)$"),
+        Pattern.compile("(^)(.+) by (.+)$")
+    )
 
     @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
@@ -117,44 +122,37 @@ object LocalBook {
         val tempFileName = fileName.substringBeforeLast(".")
         var name: String
         var author: String
-        //匹配(知轩藏书常用格式) 《书名》其它信息作者：作者名.txt
-        val m1 = Pattern
-            .compile("(.*?)《([^《》]+)》(.*)")
-            .matcher(tempFileName)
-        //匹配 书名 作者：作者名.txt
-        val m2 = Pattern
-            .compile("(^)(.+) 作者：(.+)$")
-            .matcher(tempFileName)
-
-        (m1.takeIf { m1.find() } ?: m2.takeIf { m2.find() }).run {
-            if (this is Matcher) {
-                //按默认格式将文件名分解成书名、作者名
+        for (pattern in nameAuthorPatterns) {
+            pattern.matcher(tempFileName).takeIf { it.find() }?.run {
                 name = group(2)!!
-                author = BookHelp.formatBookAuthor((group(1) ?: "") + (group(3) ?: ""))
-            } else if (!AppConfig.bookImportFileName.isNullOrBlank()) {
-                try {
-                    //在脚本中定义如何分解文件名成书名、作者名
-                    val jsonStr = AppConst.SCRIPT_ENGINE.eval(
-                        //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
-                        AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
-                        //将文件名注入到脚步的src变量中
-                        SimpleBindings().also { it["src"] = tempFileName }
-                    ).toString()
-                    val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr)
-                        .getOrThrow() ?: HashMap()
-                    name = bookMess["name"] ?: tempFileName
-                    author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
-                } catch (e: Exception) {
-                    name = BookHelp.formatBookName(tempFileName)
-                    author = BookHelp.formatBookAuthor(tempFileName.replace(name, ""))
-                        .takeIf { it.length != tempFileName.length } ?: ""
-                }
-            } else {
+                val group1 = group(1) ?: ""
+                val group3 = group(3) ?: ""
+                author = BookHelp.formatBookAuthor(group1 + group3)
+                return Pair(name, author)
+            }
+        }
+        if (!AppConfig.bookImportFileName.isNullOrBlank()) {
+            try {
+                //在脚本中定义如何分解文件名成书名、作者名
+                val jsonStr = AppConst.SCRIPT_ENGINE.eval(
+                    //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
+                    AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
+                    //将文件名注入到脚步的src变量中
+                    SimpleBindings().also { it["src"] = tempFileName }
+                ).toString()
+                val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr)
+                    .getOrThrow() ?: HashMap()
+                name = bookMess["name"] ?: tempFileName
+                author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
+            } catch (e: Exception) {
                 name = BookHelp.formatBookName(tempFileName)
                 author = BookHelp.formatBookAuthor(tempFileName.replace(name, ""))
                     .takeIf { it.length != tempFileName.length } ?: ""
             }
-
+        } else {
+            name = BookHelp.formatBookName(tempFileName)
+            author = BookHelp.formatBookAuthor(tempFileName.replace(name, ""))
+                .takeIf { it.length != tempFileName.length } ?: ""
         }
         return Pair(name, author)
     }

@@ -45,7 +45,7 @@ class AudioPlayService : BaseService(),
     companion object {
         var isRun = false
             private set
-        var pause = false
+        var pause = true
             private set
         var timeMinute: Int = 0
             private set
@@ -59,11 +59,10 @@ class AudioPlayService : BaseService(),
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayer.Builder(this).build()
     }
-    private var title: String = ""
-    private var subtitle: String = ""
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var position = 0
+    private var audioFocusLossTransient = false
+    private var position = AudioPlay.book?.durChapterPos ?: 0
     private var dsJob: Job? = null
     private var upPlayProgressJob: Job? = null
     private var playSpeed: Float = 1f
@@ -76,18 +75,16 @@ class AudioPlayService : BaseService(),
         initMediaSession()
         initBroadcastReceiver()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        doDs()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.action?.let { action ->
             when (action) {
                 IntentAction.play -> {
-                    AudioPlay.book?.let {
-                        title = it.name
-                        subtitle = AudioPlay.durChapter?.title ?: ""
-                        position = it.durChapterPos
-                        loadContent()
-                    }
+                    pause = false
+                    position = AudioPlay.book?.durChapterPos ?: 0
+                    loadContent()
                 }
                 IntentAction.pause -> pause(true)
                 IntentAction.resume -> resume()
@@ -171,6 +168,10 @@ class AudioPlayService : BaseService(),
     private fun resume() {
         try {
             pause = false
+            if (url.isEmpty()) {
+                loadContent()
+                return
+            }
             if (!exoPlayer.isPlaying) {
                 exoPlayer.play()
             }
@@ -260,11 +261,11 @@ class AudioPlayService : BaseService(),
     }
 
     private fun addTimer() {
-        if (timeMinute == 60) {
+        if (timeMinute == 180) {
             timeMinute = 0
         } else {
             timeMinute += 10
-            if (timeMinute > 60) timeMinute = 60
+            if (timeMinute > 180) timeMinute = 180
         }
         doDs()
     }
@@ -273,7 +274,7 @@ class AudioPlayService : BaseService(),
      * 定时
      */
     private fun doDs() {
-        postEvent(EventBus.TTS_DS, timeMinute)
+        postEvent(EventBus.AUDIO_DS, timeMinute)
         upNotification()
         dsJob?.cancel()
         dsJob = launch {
@@ -287,7 +288,7 @@ class AudioPlayService : BaseService(),
                         AudioPlay.stop(this@AudioPlayService)
                     }
                 }
-                postEvent(EventBus.TTS_DS, timeMinute)
+                postEvent(EventBus.AUDIO_DS, timeMinute)
                 upNotification()
             }
         }
@@ -360,7 +361,6 @@ class AudioPlayService : BaseService(),
      */
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
         if (chapter.index == AudioPlay.book?.durChapterIndex) {
-            subtitle = chapter.title
             url = content
             play()
         }
@@ -426,13 +426,18 @@ class AudioPlayService : BaseService(),
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
+                audioFocusLossTransient = false
                 if (!pause) resume()
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
+                if (audioFocusLossTransient) {
+                    pause(true)
+                }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
+                audioFocusLossTransient = true
                 if (!pause) pause(false)
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
@@ -454,9 +459,9 @@ class AudioPlayService : BaseService(),
                 )
                 else -> getString(R.string.audio_play_t)
             }
-            nTitle += ": $title"
-            var nSubtitle = subtitle
-            if (subtitle.isEmpty()) {
+            nTitle += ": ${AudioPlay.book?.name}"
+            var nSubtitle = AudioPlay.durChapter?.title
+            if (nSubtitle.isNullOrEmpty()) {
                 nSubtitle = getString(R.string.audio_play_s)
             }
             val builder = NotificationCompat
