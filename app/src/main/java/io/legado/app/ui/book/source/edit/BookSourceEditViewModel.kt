@@ -86,14 +86,12 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             text.isJsonArray() -> {
                 val items: List<Map<String, Any>> = jsonPath.parse(text).read("$")
                 val jsonItem = jsonPath.parse(items[0])
-                BookSource.fromJson(jsonItem.jsonString())
+                BookSource.fromJson(jsonItem.jsonString()).getOrThrow()
             }
             text.isJsonObject() -> {
-                BookSource.fromJson(text)
+                BookSource.fromJson(text).getOrThrow()
             }
-            else -> {
-                null
-            }
+            else -> throw NoStackTraceException("格式不对")
         }
     }
 

@@ -204,11 +204,11 @@ data class BookSource(
 
     companion object {
 
-        fun fromJson(json: String): BookSource? {
+        fun fromJson(json: String): Result<BookSource> {
             return SourceAnalyzer.jsonToBookSource(json)
         }
 
-        fun fromJsonArray(json: String): List<BookSource> {
+        fun fromJsonArray(json: String): Result<MutableList<BookSource>> {
             return SourceAnalyzer.jsonToBookSources(json)
         }
 

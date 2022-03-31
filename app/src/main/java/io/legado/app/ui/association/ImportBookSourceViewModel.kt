@@ -97,13 +97,12 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                             importSourceUrl(it)
                         }
                     } else {
-                        BookSource.fromJson(mText)?.let {
+                        BookSource.fromJson(mText).getOrThrow().let {
                             allSources.add(it)
                         }
                     }
                 }
-                mText.isJsonArray() -> {
-                    val items = BookSource.fromJsonArray(mText)
+                mText.isJsonArray() -> BookSource.fromJsonArray(mText).getOrThrow().let { items ->
                     allSources.addAll(items)
                 }
                 mText.isAbsUrl() -> {

@@ -91,9 +91,10 @@ object ImportOldData {
     }
 
     fun importOldSource(json: String): Int {
-        val bookSources = BookSource.fromJsonArray(json)
-        appDb.bookSourceDao.insert(*bookSources.toTypedArray())
-        return bookSources.size
+        val count = BookSource.fromJsonArray(json).onSuccess {
+            appDb.bookSourceDao.insert(*it.toTypedArray())
+        }.getOrNull()?.size
+        return count ?: 0
     }
 
     private fun importOldReplaceRule(json: String): Int {

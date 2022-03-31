@@ -189,7 +189,7 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
 
     override fun onCodeSave(code: String, requestId: String?) {
         requestId?.toInt()?.let {
-            BookSource.fromJson(code)?.let { source ->
+            BookSource.fromJson(code).getOrNull()?.let { source ->
                 viewModel.allSources[it] = source
                 adapter.setItem(it, source)
             }

@@ -7,6 +7,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.*
 import java.io.InputStream
 
@@ -17,16 +18,30 @@ object SourceAnalyzer {
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
 
-    fun jsonToBookSources(json: String): List<BookSource> {
-        val bookSources = mutableListOf<BookSource>()
-        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-        for (item in items) {
-            val jsonItem = jsonPath.parse(item)
-            jsonToBookSource(jsonItem.jsonString())?.let {
-                bookSources.add(it)
+    fun jsonToBookSources(json: String): Result<MutableList<BookSource>> {
+        return kotlin.runCatching {
+            val bookSources = mutableListOf<BookSource>()
+            when {
+                json.isJsonArray() -> {
+                    val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
+                    for (item in items) {
+                        val jsonItem = jsonPath.parse(item)
+                        jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
+                            bookSources.add(it)
+                        }
+                    }
+                }
+                json.isJsonObject() -> {
+                    jsonToBookSource(json).getOrThrow().let {
+                        bookSources.add(it)
+                    }
+                }
+                else -> {
+                    throw NoStackTraceException("格式不对")
+                }
             }
+            bookSources
         }
-        return bookSources
     }
 
     fun jsonToBookSources(inputStream: InputStream): Result<MutableList<BookSource>> {
@@ -36,14 +51,14 @@ object SourceAnalyzer {
                 val items: List<Map<String, Any>> = jsonPath.parse(inputStream).read("$")
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
-                    jsonToBookSource(jsonItem.jsonString())?.let {
+                    jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
                         bookSources.add(it)
                     }
                 }
             }.onFailure {
                 val item: Map<String, Any> = jsonPath.parse(inputStream).read("$")
                 val jsonItem = jsonPath.parse(item)
-                jsonToBookSource(jsonItem.jsonString())?.let {
+                jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
                     bookSources.add(it)
                 }
             }
@@ -51,17 +66,18 @@ object SourceAnalyzer {
         }
     }
 
-    fun jsonToBookSource(json: String): BookSource? {
+    fun jsonToBookSource(json: String): Result<BookSource> {
         val source = BookSource()
         val sourceAny = GSON.fromJsonObject<BookSourceAny>(json.trim())
             .onFailure {
                 AppLog.put("转化书源出错", it)
             }.getOrNull()
-        try {
+        return kotlin.runCatching {
             if (sourceAny?.ruleToc == null) {
                 source.apply {
                     val jsonItem = jsonPath.parse(json.trim())
-                    bookSourceUrl = jsonItem.readString("bookSourceUrl") ?: return null
+                    bookSourceUrl = jsonItem.readString("bookSourceUrl")
+                        ?: throw NoStackTraceException("格式不对")
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup")
                     loginUrl = jsonItem.readString("loginUrl")
@@ -189,10 +205,8 @@ object SourceAnalyzer {
                         .getOrNull()
                 }
             }
-        } catch (e: Exception) {
-            e.printOnDebug()
+            source
         }
-        return source
     }
 
     @Keep
