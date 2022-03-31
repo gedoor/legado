@@ -10,6 +10,8 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
+import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.*
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -125,6 +127,35 @@ interface JsExtensions {
                 javaScript = js
             ).getStrResponse().body
         }
+    }
+
+    /**
+     * 可从网络，本地文件(阅读私有缓存目录和书籍保存位置支持相对路径)导入JavaScript脚本
+     */
+    fun importScript(path: String): String {
+        val result = when {
+            path.startsWith("http") -> cacheFile(path) ?: ""
+            path.isContentScheme() -> DocumentUtils.readText(appCtx, Uri.parse(path))
+            path.startsWith("/storage") -> FileUtils.readText(path)
+            else -> {
+                //相对路径
+                val jsPath = if (path.startsWith("/")) path else "/" + path
+                //先找书籍保存目录下有没有
+                val publicStoragePath = AppConfig.defaultBookTreeUri
+                val jsString = publicStoragePath?.let {
+                    if (it.isContentScheme()) {
+                        val fileUri = Uri.parse(it + URLEncoder.encode(jsPath, "UTF-8"))
+                        DocumentUtils.readText(appCtx, fileUri)
+                    } else {
+                        FileUtils.readText(it + jsPath)
+                    }
+                }
+                //私有目录
+                if (jsString.isNullOrBlank()) readTxtFile(path) else jsString
+            }
+        }
+        if (result.isBlank()) throw NoStackTraceException("${path} 内容获取失败或者为空")
+        return result
     }
 
     /**
