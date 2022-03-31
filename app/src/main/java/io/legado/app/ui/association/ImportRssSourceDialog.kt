@@ -92,14 +92,14 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             adapter.notifyDataSetChanged()
             upSelectText()
         }
-        viewModel.errorLiveData.observe(this, {
+        viewModel.errorLiveData.observe(this) {
             binding.rotateLoading.hide()
             binding.tvMsg.apply {
                 text = it
                 visible()
             }
-        })
-        viewModel.successLiveData.observe(this, {
+        }
+        viewModel.successLiveData.observe(this) {
             binding.rotateLoading.hide()
             if (it > 0) {
                 adapter.setItems(viewModel.allSources)
@@ -110,7 +110,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
                     visible()
                 }
             }
-        })
+        }
         val source = arguments?.getString("source")
         if (source.isNullOrEmpty()) {
             dismiss()
@@ -188,7 +188,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
 
     override fun onCodeSave(code: String, requestId: String?) {
         requestId?.toInt()?.let {
-            RssSource.fromJson(code)?.let { source ->
+            RssSource.fromJson(code).getOrNull()?.let { source ->
                 viewModel.allSources[it] = source
                 adapter.setItem(it, source)
             }

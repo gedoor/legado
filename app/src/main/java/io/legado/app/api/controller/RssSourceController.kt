@@ -5,7 +5,6 @@ import android.text.TextUtils
 import io.legado.app.api.ReturnData
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.msg
 
 object RssSourceController {
 
@@ -21,20 +20,15 @@ object RssSourceController {
     fun saveSource(postData: String?): ReturnData {
         val returnData = ReturnData()
         postData ?: return returnData.setErrorMsg("数据不能为空")
-        kotlin.runCatching {
-            val source = RssSource.fromJson(postData)
-            if (source != null) {
-                if (TextUtils.isEmpty(source.sourceName) || TextUtils.isEmpty(source.sourceUrl)) {
-                    returnData.setErrorMsg("源名称和URL不能为空")
-                } else {
-                    appDb.rssSourceDao.insert(source)
-                    returnData.setData("")
-                }
+        RssSource.fromJson(postData).onFailure {
+            returnData.setErrorMsg("转换源失败${it.localizedMessage}")
+        }.onSuccess { source ->
+            if (TextUtils.isEmpty(source.sourceName) || TextUtils.isEmpty(source.sourceUrl)) {
+                returnData.setErrorMsg("源名称和URL不能为空")
             } else {
-                returnData.setErrorMsg("转换源失败")
+                appDb.rssSourceDao.insert(source)
+                returnData.setData("")
             }
-        }.onFailure {
-            returnData.setErrorMsg(it.msg)
         }
         return returnData
     }
@@ -42,17 +36,16 @@ object RssSourceController {
     fun saveSources(postData: String?): ReturnData {
         postData ?: return ReturnData().setErrorMsg("数据不能为空")
         val okSources = arrayListOf<RssSource>()
-        val source = RssSource.fromJsonArray(postData)
-        if (source.isNotEmpty()) {
-            for (rssSource in source) {
-                if (rssSource.sourceName.isBlank() || rssSource.sourceUrl.isBlank()) {
-                    continue
-                }
-                appDb.rssSourceDao.insert(rssSource)
-                okSources.add(rssSource)
-            }
-        } else {
+        val source = RssSource.fromJsonArray(postData).getOrNull()
+        if (source.isNullOrEmpty()) {
             return ReturnData().setErrorMsg("转换源失败")
+        }
+        for (rssSource in source) {
+            if (rssSource.sourceName.isBlank() || rssSource.sourceUrl.isBlank()) {
+                continue
+            }
+            appDb.rssSourceDao.insert(rssSource)
+            okSources.add(rssSource)
         }
         return ReturnData().setData(okSources)
     }
@@ -70,11 +63,11 @@ object RssSourceController {
 
     fun deleteSources(postData: String?): ReturnData {
         postData ?: return ReturnData().setErrorMsg("没有传递数据")
-        kotlin.runCatching {
-            RssSource.fromJsonArray(postData).let {
-                it.forEach { source ->
-                    appDb.rssSourceDao.delete(source)
-                }
+        RssSource.fromJsonArray(postData).onFailure {
+            return ReturnData().setErrorMsg("格式不对")
+        }.onSuccess {
+            it.forEach { source ->
+                appDb.rssSourceDao.delete(source)
             }
         }
         return ReturnData().setData("已执行"/*okSources*/)

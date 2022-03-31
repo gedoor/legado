@@ -54,13 +54,11 @@ object DefaultData {
     }
 
     val rssSources: List<RssSource> by lazy {
-        kotlin.runCatching {
-            val json = String(
-                appCtx.assets.open("defaultData${File.separator}rssSources.json")
-                    .readBytes()
-            )
-            RssSource.fromJsonArray(json)
-        }.getOrDefault(emptyList())
+        val json = String(
+            appCtx.assets.open("defaultData${File.separator}rssSources.json")
+                .readBytes()
+        )
+        RssSource.fromJsonArray(json).getOrDefault(emptyList())
     }
 
     val coverRuleConfig: BookCover.CoverRuleConfig by lazy {

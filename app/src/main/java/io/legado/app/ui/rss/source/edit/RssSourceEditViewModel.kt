@@ -52,7 +52,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         execute(context = Dispatchers.Main) {
             var source: RssSource? = null
             context.getClipText()?.let { json ->
-                source = RssSource.fromJson(json)
+                source = RssSource.fromJson(json).getOrThrow()
             }
             source
         }.onError {
@@ -69,7 +69,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     fun importSource(text: String, finally: (source: RssSource) -> Unit) {
         execute {
             val text1 = text.trim()
-            RssSource.fromJson(text1)?.let {
+            RssSource.fromJson(text1).getOrThrow().let {
                 finally.invoke(it)
             }
         }.onError {
