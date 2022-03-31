@@ -168,7 +168,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         alertSync: ((progress: BookProgress) -> Unit)? = null
     ) {
-        if (AppConfig.syncBookProgress)
+        if (AppWebDav.syncBookProgress)
             execute {
                 AppWebDav.getBookProgress(book)
             }.onSuccess {
