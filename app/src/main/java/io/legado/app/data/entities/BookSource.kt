@@ -11,6 +11,7 @@ import io.legado.app.utils.*
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
+import java.io.InputStream
 
 @Parcelize
 @TypeConverters(BookSource.Converters::class)
@@ -209,6 +210,10 @@ data class BookSource(
 
         fun fromJsonArray(json: String): List<BookSource> {
             return SourceAnalyzer.jsonToBookSources(json)
+        }
+
+        fun fromJsonArray(inputStream: InputStream): Result<MutableList<BookSource>> {
+            return SourceAnalyzer.jsonToBookSources(inputStream)
         }
     }
 

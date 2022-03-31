@@ -14,7 +14,6 @@ import io.legado.app.help.SourceHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
-import io.legado.app.help.http.text
 import io.legado.app.utils.*
 
 
@@ -123,26 +122,8 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private suspend fun importSourceUrl(url: String) {
         okHttpClient.newCallResponseBody {
             url(url)
-        }.text("utf-8").let { body ->
-            when {
-                body.isJsonArray() -> {
-                    val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
-                    for (item in items) {
-                        val jsonItem = jsonPath.parse(item)
-                        BookSource.fromJson(jsonItem.jsonString())?.let { source ->
-                            allSources.add(source)
-                        }
-                    }
-                }
-                body.isJsonObject() -> {
-                    BookSource.fromJson(body)?.let {
-                        allSources.add(it)
-                    }
-                }
-                else -> {
-                    throw NoStackTraceException(context.getString(R.string.wrong_format))
-                }
-            }
+        }.byteStream().let {
+            allSources.addAll(BookSource.fromJsonArray(it).getOrThrow())
         }
     }
 

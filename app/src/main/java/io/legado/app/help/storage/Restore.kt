@@ -22,6 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
+import java.io.FileInputStream
 
 
 object Restore {
@@ -192,8 +193,9 @@ object Restore {
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
         try {
             val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
-            val json = file.readText()
-            return GSON.fromJsonArray<T>(json).getOrThrow()
+            FileInputStream(file).use {
+                return GSON.fromJsonArray<T>(it).getOrThrow()
+            }
         } catch (e: Exception) {
             AppLog.put("$fileName\n读取解析出错\n${e.localizedMessage}", e)
             appCtx.toastOnUi("$fileName\n读取文件出错\n${e.localizedMessage}")
