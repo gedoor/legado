@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.toc
+package io.legado.app.ui.book.bookmark
 
 import android.os.Bundle
 import android.view.View
@@ -76,7 +76,8 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
     }
 
     private fun getCallback(): Callback? {
-        return parentFragment as? Callback
+        return (parentFragment as? Callback)
+            ?: activity as? Callback
     }
 
     interface Callback {

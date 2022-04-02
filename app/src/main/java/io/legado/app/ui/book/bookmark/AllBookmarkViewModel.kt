@@ -16,4 +16,10 @@ class AllBookmarkViewModel(application: Application) : BaseViewModel(application
         }
     }
 
+    fun deleteBookmark(bookmark: Bookmark) {
+        execute {
+            appDb.bookmarkDao.delete(bookmark)
+        }
+    }
+
 }
