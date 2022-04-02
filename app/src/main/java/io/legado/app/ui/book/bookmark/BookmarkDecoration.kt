@@ -7,7 +7,7 @@ import android.text.TextPaint
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.spToPx
 import splitties.init.appCtx
@@ -18,7 +18,7 @@ class BookmarkDecoration(val adapter: BookmarkAdapter) : RecyclerView.ItemDecora
     private val headerHeight = 32f.dpToPx()
 
     private val headerPaint = Paint().apply {
-        color = appCtx.backgroundColor
+        color = appCtx.primaryColor
     }
     private val textPaint = TextPaint().apply {
         textSize = 16f.spToPx()
@@ -33,7 +33,13 @@ class BookmarkDecoration(val adapter: BookmarkAdapter) : RecyclerView.ItemDecora
             val position = parent.getChildLayoutPosition(view)
             val isHeader = adapter.isItemHeader(position)
             if (isHeader) {
-                c.drawRect(0f, 0f, parent.width.toFloat(), headerHeight, headerPaint)
+                c.drawRect(
+                    0f,
+                    view.top - headerHeight,
+                    parent.width.toFloat(),
+                    view.top.toFloat(),
+                    headerPaint
+                )
                 val headerText = adapter.getHeaderText(position)
                 textPaint.getTextBounds(headerText, 0, headerText.length, textRect)
                 c.drawText(
