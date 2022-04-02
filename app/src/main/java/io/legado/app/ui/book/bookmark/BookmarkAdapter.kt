@@ -6,6 +6,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ItemBookmarkBinding
+import io.legado.app.utils.gone
 
 class BookmarkAdapter(context: Context) : RecyclerAdapter<Bookmark, ItemBookmarkBinding>(context) {
 
@@ -20,7 +21,9 @@ class BookmarkAdapter(context: Context) : RecyclerAdapter<Bookmark, ItemBookmark
         payloads: MutableList<Any>
     ) {
         binding.tvChapterName.text = item.chapterName
+        binding.tvBookText.gone(item.bookText.isEmpty())
         binding.tvBookText.text = item.bookText
+        binding.tvContent.gone(item.content.isEmpty())
         binding.tvContent.text = item.content
     }
 
@@ -28,5 +31,18 @@ class BookmarkAdapter(context: Context) : RecyclerAdapter<Bookmark, ItemBookmark
 
     }
 
+    fun getHeaderText(position: Int): String {
+        return with(getItem(position)) {
+            "${this?.bookName ?: ""}(${this?.bookAuthor ?: ""})"
+        }
+    }
+
+    fun isItemHeader(position: Int): Boolean {
+        if (position == 0) return true
+        val lastItem = getItem(position - 1)
+        val curItem = getItem(position)
+        return !(lastItem?.bookName == curItem?.bookName
+            && lastItem?.bookAuthor == curItem?.bookAuthor)
+    }
 
 }

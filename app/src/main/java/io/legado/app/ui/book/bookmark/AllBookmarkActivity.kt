@@ -22,6 +22,7 @@ class AllBookmarkActivity : VMBaseActivity<ActivityAllBookmarkBinding, AllBookma
     }
 
     private fun initView() {
+        binding.recyclerView.addItemDecoration(BookmarkDecoration(adapter))
         binding.recyclerView.adapter = adapter
     }
 

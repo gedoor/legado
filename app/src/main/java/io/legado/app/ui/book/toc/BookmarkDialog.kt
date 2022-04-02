@@ -75,7 +75,7 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
         }
     }
 
-    fun getCallback(): Callback? {
+    private fun getCallback(): Callback? {
         return parentFragment as? Callback
     }
 
