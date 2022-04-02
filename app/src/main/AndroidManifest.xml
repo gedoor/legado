@@ -293,6 +293,10 @@
         <activity
             android:name=".ui.rss.favorites.RssFavoritesActivity"
             android:launchMode="singleTop" />
+        <!-- 书签 -->
+        <activity
+            android:name=".ui.book.bookmark.AllBookmarkActivity"
+            android:launchMode="singleTop" />
         <!-- 缓存界面 -->
         <activity
             android:name=".ui.book.cache.CacheActivity"

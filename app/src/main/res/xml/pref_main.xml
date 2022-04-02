@@ -19,6 +19,13 @@
         android:icon="@drawable/ic_cfg_replace"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.ui.widget.prefs.Preference
+        android:key="bookmark"
+        android:title="@string/bookmark"
+        android:summary="@string/all_bookmark"
+        android:icon="@drawable/ic_bookmark"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.ui.widget.prefs.NameListPreference
         android:defaultValue="0"
         android:entries="@array/theme_mode"

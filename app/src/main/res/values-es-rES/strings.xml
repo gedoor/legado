@@ -965,5 +965,6 @@
     <string name="sys_tts_config">系统tts设置</string>
     <string name="sys_tts_config_summary">打开系统tts设置界面</string>
     <string name="cannot_timed_non_playback">非播放状态无法定时</string>
+    <string name="all_bookmark">所有书签</string>
     <!-- string end -->
 </resources>

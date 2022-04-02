@@ -7,7 +7,7 @@ import io.legado.app.data.entities.Bookmark
 @Dao
 interface BookmarkDao {
 
-    @get:Query("select * from bookmarks")
+    @get:Query("select * from bookmarks order by bookName, bookAuthor, chapterIndex, chapterPos")
     val all: List<Bookmark>
 
     @Query(
