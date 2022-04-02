@@ -5,12 +5,14 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.text.TextPaint
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.primaryColor
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.spToPx
 import splitties.init.appCtx
+import kotlin.math.min
 
 class BookmarkDecoration(val adapter: BookmarkAdapter) : RecyclerView.ItemDecoration() {
 
@@ -18,7 +20,7 @@ class BookmarkDecoration(val adapter: BookmarkAdapter) : RecyclerView.ItemDecora
     private val headerHeight = 32f.dpToPx()
 
     private val headerPaint = Paint().apply {
-        color = appCtx.primaryColor
+        color = appCtx.backgroundColor
     }
     private val textPaint = TextPaint().apply {
         textSize = 16f.spToPx()
@@ -52,45 +54,45 @@ class BookmarkDecoration(val adapter: BookmarkAdapter) : RecyclerView.ItemDecora
         }
     }
 
-//    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-//        val position = (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-//        val view = parent.findViewHolderForAdapterPosition(position)?.itemView ?: return
-//        val isHeader = adapter.isItemHeader(position + 1)
-//        val headerText = adapter.getHeaderText(position)
-//        if (isHeader) {
-//            val bottom = min(headerHeight.toInt(), view.bottom)
-//            c.drawRect(
-//                0f,
-//                view.top.toFloat(),
-//                parent.width.toFloat(),
-//                view.top + headerHeight,
-//                headerPaint
-//            )
-//            textPaint.getTextBounds(headerText, 0, headerText.length, textRect)
-//            c.drawText(
-//                headerText,
-//                headerLeft,
-//                headerHeight / 2 + textRect.height() / 2 - (headerHeight - bottom),
-//                textPaint
-//            )
-//        } else {
-//            c.drawRect(
-//                0f,
-//                0f,
-//                parent.width.toFloat(),
-//                headerHeight,
-//                headerPaint
-//            )
-//            textPaint.getTextBounds(headerText, 0, headerText.length, textRect)
-//            c.drawText(
-//                headerText,
-//                headerLeft,
-//                headerHeight / 2 + textRect.height() / 2,
-//                textPaint
-//            )
-//        }
-//        c.save()
-//    }
+    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+        val position = (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        val view = parent.findViewHolderForAdapterPosition(position)?.itemView ?: return
+        val isHeader = adapter.isItemHeader(position + 1)
+        val headerText = adapter.getHeaderText(position)
+        if (isHeader) {
+            val bottom = min(headerHeight.toInt(), view.bottom)
+            c.drawRect(
+                0f,
+                view.top - headerHeight,
+                parent.width.toFloat(),
+                bottom.toFloat(),
+                headerPaint
+            )
+            textPaint.getTextBounds(headerText, 0, headerText.length, textRect)
+            c.drawText(
+                headerText,
+                headerLeft,
+                headerHeight / 2 + textRect.height() / 2 - (headerHeight - bottom),
+                textPaint
+            )
+        } else {
+            c.drawRect(
+                0f,
+                0f,
+                parent.width.toFloat(),
+                headerHeight,
+                headerPaint
+            )
+            textPaint.getTextBounds(headerText, 0, headerText.length, textRect)
+            c.drawText(
+                headerText,
+                headerLeft,
+                headerHeight / 2 + textRect.height() / 2,
+                textPaint
+            )
+        }
+        c.save()
+    }
 
     override fun getItemOffsets(
         outRect: Rect,
