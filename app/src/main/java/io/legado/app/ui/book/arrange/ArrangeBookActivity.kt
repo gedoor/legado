@@ -169,6 +169,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
             R.id.menu_update_disable ->
                 viewModel.upCanUpdate(adapter.selectedBooks(), false)
             R.id.menu_add_to_group -> selectGroup(addToGroupRequestCode, 0)
+            R.id.menu_change_source -> showDialogFragment<SourcePickerDialog>()
         }
         return false
     }
