@@ -10,14 +10,18 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.DialogSourcePickerBinding
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
 
@@ -28,6 +32,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
     private val adapter by lazy {
         SourceAdapter(requireContext())
     }
+    private var sourceFlowJob: Job? = null
 
     override fun onStart() {
         super.onStart()
@@ -36,6 +41,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initView()
+        initData()
     }
 
     private fun initView() {
@@ -54,18 +60,31 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
+                initData(newText)
                 return false
             }
         })
     }
 
+    private fun initData(searchKey: String? = null) {
+        sourceFlowJob?.cancel()
+        sourceFlowJob = launch {
+            when {
+                searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
+                else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)
+            }.collect {
+                adapter.setItems(it)
+            }
+        }
+    }
 
     inner class SourceAdapter(context: Context) :
         RecyclerAdapter<BookSource, ItemTextBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
-            return ItemTextBinding.inflate(inflater, parent, false)
+            return ItemTextBinding.inflate(inflater, parent, false).apply {
+                root.setPadding(16.dpToPx(), 8.dpToPx(), 16.dpToPx(), 8.dpToPx())
+            }
         }
 
         override fun convert(

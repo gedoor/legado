@@ -230,10 +230,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.bookSourceDao.flowGroupSearch("%$key%")
+                    appDb.bookSourceDao.flowGroupSearch(key)
                 }
                 else -> {
-                    appDb.bookSourceDao.flowSearch("%$searchKey%")
+                    appDb.bookSourceDao.flowSearch(searchKey)
                 }
             }.conflate().map { data ->
                 if (sortAscending) when (sort) {
