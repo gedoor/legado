@@ -13,6 +13,8 @@ import io.legado.app.model.webBook.WebBook
 class ArrangeBookViewModel(application: Application) : BaseViewModel(application) {
 
     val batchChangeSourceState = mutableStateOf(false)
+    val batchChangeSourceSize = mutableStateOf(0)
+    val batchChangeSourcePosition = mutableStateOf(0)
 
     fun upCanUpdate(books: Array<Book>, canUpdate: Boolean) {
         execute {
@@ -37,13 +39,17 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
 
     fun changeSource(books: Array<Book>, source: BookSource): Coroutine<Unit> {
         return execute {
-            books.forEach { book ->
+            batchChangeSourceSize.value = books.size
+            books.forEachIndexed { index, book ->
+                batchChangeSourcePosition.value = index + 1
                 WebBook.preciseSearchAwait(this, book.name, book.author, source)?.let {
 
                 }
             }
+        }.onCancel {
+            batchChangeSourceState.value = false
         }.onFinally {
-
+            batchChangeSourceState.value = false
         }
     }
 

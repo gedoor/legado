@@ -112,7 +112,13 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         binding.selectActionBar.setCallBack(this)
         binding.composeView.setContent {
             AppTheme {
-                BatchChangeSourceDialog(state = viewModel.batchChangeSourceState)
+                BatchChangeSourceDialog(
+                    state = viewModel.batchChangeSourceState,
+                    size = viewModel.batchChangeSourceSize,
+                    position = viewModel.batchChangeSourcePosition
+                ) {
+
+                }
             }
         }
     }
@@ -238,7 +244,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     }
 
     override fun sourceOnClick(source: BookSource) {
-        //viewModel.changeSource(adapter.selectedBooks(), source)
+        viewModel.changeSource(adapter.selectedBooks(), source)
         viewModel.batchChangeSourceState.value = true
     }
 
