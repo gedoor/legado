@@ -4,6 +4,7 @@ import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 
 
 class ArrangeBookViewModel(application: Application) : BaseViewModel(application) {
@@ -27,6 +28,10 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
         execute {
             appDb.bookDao.delete(*book)
         }
+    }
+
+    fun changeSource(books: List<Book>, source: BookSource) {
+
     }
 
 }
