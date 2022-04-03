@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -22,6 +23,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import splitties.views.onClick
 
 class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
 
@@ -83,7 +85,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
 
         override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
             return ItemTextBinding.inflate(inflater, parent, false).apply {
-                root.setPadding(16.dpToPx(), 8.dpToPx(), 16.dpToPx(), 8.dpToPx())
+                root.setPadding(16.dpToPx())
             }
         }
 
@@ -97,9 +99,22 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemTextBinding) {
-
+            binding.root.onClick {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
+                    callback?.sourceOnClick(it)
+                }
+            }
         }
 
+    }
+
+    private val callback: Callback?
+        get() {
+            return (parentFragment as? Callback) ?: activity as? Callback
+        }
+
+    interface Callback {
+        fun sourceOnClick(source: BookSource)
     }
 
 }

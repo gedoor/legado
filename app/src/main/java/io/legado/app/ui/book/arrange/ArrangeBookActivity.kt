@@ -15,6 +15,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityArrangeBookBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
@@ -41,6 +42,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
     ArrangeBookAdapter.CallBack,
+    SourcePickerDialog.Callback,
     GroupSelectDialog.CallBack {
 
     override val binding by viewBinding(ActivityArrangeBookBinding::inflate)
@@ -227,6 +229,10 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                 viewModel.deleteBook(book)
             }
         }
+    }
+
+    override fun sourceOnClick(source: BookSource) {
+        viewModel.changeSource(adapter.selectedBooks(), source)
     }
 
 }

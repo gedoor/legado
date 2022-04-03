@@ -262,7 +262,7 @@ object WebBook {
             Debug.log(bookSource.bookSourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
             return bookChapter.url
         }
-        if(bookChapter.isVolume && bookChapter.url.startsWith(bookChapter.title)) {
+        if (bookChapter.isVolume && bookChapter.url.startsWith(bookChapter.title)) {
             Debug.log(bookSource.bookSourceUrl, "⇒一级目录正文不解析规则")
             return bookChapter.tag ?: ""
         }
@@ -322,16 +322,16 @@ object WebBook {
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<Pair<BookSource, Book>> {
         return Coroutine.async(scope, context) {
-            preciseSearchAwait(scope, bookSources, name, author)
+            preciseSearchAwait(scope, name, author, *bookSources.toTypedArray())
                 ?: throw NoStackTraceException("没有搜索到<$name>$author")
         }
     }
 
     suspend fun preciseSearchAwait(
         scope: CoroutineScope,
-        bookSources: List<BookSource>,
         name: String,
-        author: String
+        author: String,
+        vararg bookSources: BookSource
     ): Pair<BookSource, Book>? {
         bookSources.forEach { source ->
             kotlin.runCatching {
