@@ -117,7 +117,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                     size = viewModel.batchChangeSourceSize,
                     position = viewModel.batchChangeSourcePosition
                 ) {
-
+                    viewModel.batchChangeSourceCoroutine?.cancel()
                 }
             }
         }
