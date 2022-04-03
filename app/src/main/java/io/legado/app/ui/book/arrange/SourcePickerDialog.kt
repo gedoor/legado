@@ -14,7 +14,7 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.DialogSourcePickerBinding
-import io.legado.app.databinding.Item1lineTextAndDelBinding
+import io.legado.app.databinding.Item1lineTextBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.applyTint
@@ -81,24 +81,24 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
     }
 
     inner class SourceAdapter(context: Context) :
-        RecyclerAdapter<BookSource, Item1lineTextAndDelBinding>(context) {
+        RecyclerAdapter<BookSource, Item1lineTextBinding>(context) {
 
-        override fun getViewBinding(parent: ViewGroup): Item1lineTextAndDelBinding {
-            return Item1lineTextAndDelBinding.inflate(inflater, parent, false).apply {
+        override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding {
+            return Item1lineTextBinding.inflate(inflater, parent, false).apply {
                 root.setPadding(16.dpToPx())
             }
         }
 
         override fun convert(
             holder: ItemViewHolder,
-            binding: Item1lineTextAndDelBinding,
+            binding: Item1lineTextBinding,
             item: BookSource,
             payloads: MutableList<Any>
         ) {
             binding.textView.text = item.getDisPlayNameGroup()
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextAndDelBinding) {
+        override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextBinding) {
             binding.root.onClick {
                 getItemByLayoutPosition(holder.layoutPosition)?.let {
                     callback?.sourceOnClick(it)
