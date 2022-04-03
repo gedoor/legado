@@ -16,17 +16,17 @@ object AppTheme {
     val colors
         get() = if (ThemeConfig.isDarkTheme()) {
             darkColors(
-                primary = Color(appCtx.primaryColor),
-                primaryVariant = Color(ColorUtils.darkenColor(appCtx.primaryColor)),
-                secondary = Color(appCtx.accentColor),
-                secondaryVariant = Color(appCtx.accentColor)
+                primary = Color(appCtx.accentColor),
+                primaryVariant = Color(ColorUtils.darkenColor(appCtx.accentColor)),
+                secondary = Color(appCtx.primaryColor),
+                secondaryVariant = Color(appCtx.primaryColor)
             )
         } else {
             lightColors(
-                primary = Color(appCtx.primaryColor),
-                primaryVariant = Color(ColorUtils.darkenColor(appCtx.primaryColor)),
-                secondary = Color(appCtx.accentColor),
-                secondaryVariant = Color(appCtx.accentColor)
+                primary = Color(appCtx.accentColor),
+                primaryVariant = Color(ColorUtils.darkenColor(appCtx.accentColor)),
+                secondary = Color(appCtx.primaryColor),
+                secondaryVariant = Color(appCtx.primaryColor)
             )
         }
 

@@ -21,6 +21,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
+import io.legado.app.ui.theme.AppTheme
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
@@ -109,6 +110,11 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         binding.selectActionBar.inflateMenu(R.menu.arrange_book_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
         binding.selectActionBar.setCallBack(this)
+        binding.composeView.setContent {
+            AppTheme {
+                BatchChangeSourceDialog(state = viewModel.batchChangeSourceState)
+            }
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -232,7 +238,8 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     }
 
     override fun sourceOnClick(source: BookSource) {
-        viewModel.changeSource(adapter.selectedBooks(), source)
+        //viewModel.changeSource(adapter.selectedBooks(), source)
+        viewModel.batchChangeSourceState.value = true
     }
 
 }

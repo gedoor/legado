@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.arrange
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -10,6 +11,8 @@ import io.legado.app.model.webBook.WebBook
 
 
 class ArrangeBookViewModel(application: Application) : BaseViewModel(application) {
+
+    val batchChangeSourceState = mutableStateOf(false)
 
     fun upCanUpdate(books: Array<Book>, canUpdate: Boolean) {
         execute {
