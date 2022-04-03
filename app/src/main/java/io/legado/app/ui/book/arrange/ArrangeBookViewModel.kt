@@ -47,7 +47,13 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
                 if (book.isLocalBook()) return@forEachIndexed
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
                 WebBook.preciseSearchAwait(this, book.name, book.author, source)?.let {
-                    book.changeTo(it.second)
+                    val newBook = it.second
+                    book.changeTo(newBook)
+                    if (newBook.tocUrl.isEmpty()) {
+                        WebBook.getBookInfoAwait(this, source, newBook)
+                    }
+                    val toc = WebBook.getChapterListAwait(this, source, newBook)
+                    appDb.bookChapterDao.insert(*toc.toTypedArray())
                 }
             }
         }.onFinally {
