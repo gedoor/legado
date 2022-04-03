@@ -16,10 +16,8 @@ import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import splitties.views.rightPadding
 
 class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
 
@@ -43,7 +41,6 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
     private fun initView() {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.title = "选择书源"
-        binding.toolBar.rightPadding = 16.dpToPx()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
         searchView.applyTint(primaryTextColor)

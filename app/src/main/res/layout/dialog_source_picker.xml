@@ -11,11 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarStyle"
+        android:paddingRight="16dp"
         app:attachToActivity="false"
         app:contentLayout="@layout/view_search"
         app:fitStatusBar="false"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     <FrameLayout
         android:layout_width="match_parent"
