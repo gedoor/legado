@@ -44,6 +44,7 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
             batchChangeSourceSize.value = books.size
             books.forEachIndexed { index, book ->
                 batchChangeSourcePosition.value = index + 1
+                if (book.isLocalBook()) return@forEachIndexed
                 WebBook.preciseSearchAwait(this, book.name, book.author, source)?.let {
                     book.changeTo(it.second)
                 }
