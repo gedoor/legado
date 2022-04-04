@@ -48,10 +48,7 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
                 WebBook.preciseSearchAwait(this, book.name, book.author, source)?.let {
                     val newBook = it.second
-                    newBook.durChapterIndex = book.durChapterIndex
-                    newBook.durChapterPos = book.durChapterPos
-                    newBook.durChapterTitle = book.durChapterTitle
-                    newBook.latestChapterTitle = book.latestChapterTitle
+                    newBook.upInfoFromOld(book)
                     book.changeTo(newBook)
                     if (newBook.tocUrl.isEmpty()) {
                         WebBook.getBookInfoAwait(this, source, newBook)
