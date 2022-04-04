@@ -10,6 +10,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
@@ -30,7 +31,6 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.ensureActive
 
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     val permissionDenialLiveData = MutableLiveData<Int>()
@@ -191,40 +191,22 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 换源
      */
-    fun changeTo(source: BookSource, book: Book) {
+    fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
             ReadBook.upMsg(context.getString(R.string.loading))
-            if (book.tocUrl.isEmpty()) {
-                WebBook.getBookInfoAwait(this, source, book)
-            }
-            ensureActive()
-            val chapters = WebBook.getChapterListAwait(this, source, book)
-            ensureActive()
-            val oldBook = ReadBook.book!!
-            book.durChapterIndex = BookHelp.getDurChapter(
-                oldBook.durChapterIndex,
-                oldBook.durChapterTitle,
-                chapters,
-                oldBook.totalChapterNum
-            )
-            book.durChapterTitle = chapters[book.durChapterIndex].getDisplayTitle(
-                ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-            )
-            ensureActive()
-            val nextChapter = chapters.getOrElse(book.durChapterIndex) {
-                chapters.first()
+            ReadBook.book!!.changeTo(book, toc)
+            val nextChapter = toc.getOrElse(book.durChapterIndex) {
+                toc.first()
             }
             WebBook.getContentAwait(
                 this,
                 bookSource = source,
                 book = book,
-                bookChapter = chapters[book.durChapterIndex],
+                bookChapter = toc[book.durChapterIndex],
                 nextChapterUrl = nextChapter.url
             )
-            ensureActive()
-            oldBook.changeTo(book)
-            appDb.bookChapterDao.insert(*chapters.toTypedArray())
+            appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadBook.resetData(book)
             ReadBook.upMsg(null)
             ReadBook.loadContent(resetPageOffset = true)
@@ -244,10 +226,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!AppConfig.autoChangeSource) return
         execute {
             val sources = appDb.bookSourceDao.allTextEnabled
-            WebBook.preciseSearchAwait(this, name, author, *sources.toTypedArray())?.let {
-                it.second.upInfoFromOld(ReadBook.book)
-                changeTo(it.first, it.second)
-            } ?: throw NoStackTraceException("自动换源失败")
+            sources.forEach { source ->
+                WebBook.preciseSearchAwait(this, source, name, author).getOrNull()?.let { book ->
+                    if (book.tocUrl.isEmpty()) {
+                        WebBook.getBookInfoAwait(this, source, book)
+                    }
+                    val toc = WebBook.getChapterListAwait(this, source, book)
+                    changeTo(source, book, toc)
+                    return@execute
+                }
+            }
+            throw NoStackTraceException("自动换源失败")
         }.onStart {
             ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onError {
@@ -272,7 +261,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
         execute {
-            Book.delete(ReadBook.book)
+            ReadBook.book?.delete()
         }.onSuccess {
             success?.invoke()
         }

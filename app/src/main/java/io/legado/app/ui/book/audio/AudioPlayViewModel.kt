@@ -9,8 +9,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.BookHelp
-import io.legado.app.help.ContentProcessor
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
@@ -45,33 +43,23 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    private fun loadBookInfo(
-        book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
-    ) {
+    private fun loadBookInfo(book: Book) {
         execute {
             AudioPlay.bookSource?.let {
                 WebBook.getBookInfo(this, it, book)
                     .onSuccess {
-                        loadChapterList(book, changeDruChapterIndex)
+                        loadChapterList(book)
                     }
             }
         }
     }
 
-    private fun loadChapterList(
-        book: Book,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null
-    ) {
+    private fun loadChapterList(book: Book) {
         execute {
             AudioPlay.bookSource?.let {
                 WebBook.getChapterList(this, it, book)
                     .onSuccess(Dispatchers.IO) { cList ->
-                        if (changeDruChapterIndex == null) {
-                            appDb.bookChapterDao.insert(*cList.toTypedArray())
-                        } else {
-                            changeDruChapterIndex(cList)
-                        }
+                        appDb.bookChapterDao.insert(*cList.toTypedArray())
                         AudioPlay.upDurChapter(book)
                     }.onError {
                         context.toastOnUi(R.string.error_load_toc)
@@ -88,44 +76,14 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun changeTo(source: BookSource, book: Book) {
+    fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         execute {
-            var oldTocSize: Int = book.totalChapterNum
-            AudioPlay.book?.let {
-                oldTocSize = it.totalChapterNum
-                book.order = it.order
-                appDb.bookDao.delete(it)
-            }
-            appDb.bookDao.insert(book)
-            AudioPlay.book = book
+            AudioPlay.book = AudioPlay.book!!.changeTo(book, toc)
             AudioPlay.bookSource = source
-            if (book.tocUrl.isEmpty()) {
-                loadBookInfo(book) { upChangeDurChapterIndex(book, oldTocSize, it) }
-            } else {
-                loadChapterList(book) { upChangeDurChapterIndex(book, oldTocSize, it) }
-            }
+            appDb.bookChapterDao.insert(*toc.toTypedArray())
+            AudioPlay.upDurChapter(book)
         }.onFinally {
             postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
-        }
-    }
-
-    private fun upChangeDurChapterIndex(
-        book: Book,
-        oldTocSize: Int,
-        chapters: List<BookChapter>
-    ) {
-        execute {
-            book.durChapterIndex = BookHelp.getDurChapter(
-                book.durChapterIndex,
-                book.durChapterTitle,
-                chapters,
-                oldTocSize
-            )
-            book.durChapterTitle = chapters[book.durChapterIndex].getDisplayTitle(
-                ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-            )
-            appDb.bookDao.update(book)
-            appDb.bookChapterDao.insert(*chapters.toTypedArray())
         }
     }
 

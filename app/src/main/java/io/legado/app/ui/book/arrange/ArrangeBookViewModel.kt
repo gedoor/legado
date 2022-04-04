@@ -46,16 +46,12 @@ class ArrangeBookViewModel(application: Application) : BaseViewModel(application
                 batchChangeSourcePosition.value = index + 1
                 if (book.isLocalBook()) return@forEachIndexed
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
-                WebBook.preciseSearchAwait(this, book.name, book.author, source)?.let {
-                    val newBook = it.second
-                    newBook.upInfoFromOld(book)
-                    book.changeTo(newBook)
-                    if (newBook.tocUrl.isEmpty()) {
-                        WebBook.getBookInfoAwait(this, source, newBook)
+                WebBook.preciseSearchAwait(this, source, book.name, book.author)
+                    .getOrNull()?.let { newBook ->
+                        val toc = WebBook.getChapterListAwait(this, source, newBook)
+                        book.changeTo(newBook, toc)
+                        appDb.bookChapterDao.insert(*toc.toTypedArray())
                     }
-                    val toc = WebBook.getChapterListAwait(this, source, newBook)
-                    appDb.bookChapterDao.insert(*toc.toTypedArray())
-                }
             }
         }.onFinally {
             batchChangeSourceState.value = false

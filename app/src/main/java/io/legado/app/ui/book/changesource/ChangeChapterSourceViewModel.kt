@@ -5,7 +5,7 @@ import android.os.Bundle
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.SearchBook
+import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.webBook.WebBook
 import java.util.concurrent.ConcurrentHashMap
@@ -29,28 +29,24 @@ class ChangeChapterSourceViewModel(application: Application) :
         }
     }
 
-    fun getToc(
-        searchBook: SearchBook,
-        success: (toc: List<BookChapter>) -> Unit,
-        error: (msg: String) -> Unit
+    override fun getToc(
+        book: Book,
+        onError: (msg: String) -> Unit,
+        onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
     ) {
         execute {
-            return@execute tocMap[searchBook.bookUrl]
-                ?: let {
-                    val book = searchBook.toBook()
-                    val source = appDb.bookSourceDao.getBookSource(book.origin)
-                        ?: throw NoStackTraceException("书源不存在")
-                    if (book.tocUrl.isEmpty()) {
-                        WebBook.getBookInfoAwait(this, source, book)
-                    }
-                    val toc = WebBook.getChapterListAwait(this, source, book)
-                    tocMap[book.bookUrl] = toc
-                    toc
-                }
+            val toc = tocMap[book.bookUrl]
+            if (toc != null) {
+                val source = appDb.bookSourceDao.getBookSource(book.origin)
+                return@execute Pair(toc, source!!)
+            }
+            val result = getToc(book).getOrThrow()
+            tocMap[book.bookUrl] = result.first
+            return@execute result
         }.onSuccess {
-            success(it)
+            onSuccess.invoke(it.first, it.second)
         }.onError {
-            error(it.localizedMessage ?: "获取目录出错")
+            onError.invoke(it.localizedMessage ?: "获取目录出错")
         }
     }
 

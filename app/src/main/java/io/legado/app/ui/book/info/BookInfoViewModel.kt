@@ -14,7 +14,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.BookHelp
-import io.legado.app.help.ContentProcessor
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
@@ -24,7 +23,6 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.ensureActive
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
@@ -107,12 +105,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun loadBookInfo(
         book: Book,
         canReName: Boolean = true,
-        scope: CoroutineScope = viewModelScope,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
+        scope: CoroutineScope = viewModelScope
     ) {
         execute(scope) {
             if (book.isLocalBook()) {
-                loadChapter(book, scope, changeDruChapterIndex)
+                loadChapter(book, scope)
             } else {
                 bookSource?.let { bookSource ->
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
@@ -121,7 +118,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             if (inBookshelf) {
                                 appDb.bookDao.update(book)
                             }
-                            loadChapter(it, scope, changeDruChapterIndex)
+                            loadChapter(it, scope)
                         }.onError {
                             AppLog.put("获取数据信息失败\n${it.localizedMessage}", it)
                             context.toastOnUi(R.string.error_get_book_info)
@@ -136,8 +133,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     private fun loadChapter(
         book: Book,
-        scope: CoroutineScope = viewModelScope,
-        changeDruChapterIndex: ((chapters: List<BookChapter>) -> Unit)? = null,
+        scope: CoroutineScope = viewModelScope
     ) {
         execute(scope) {
             if (book.isLocalBook()) {
@@ -156,11 +152,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 appDb.bookChapterDao.delByBook(book.bookUrl)
                                 appDb.bookChapterDao.insert(*it.toTypedArray())
                             }
-                            if (changeDruChapterIndex == null) {
-                                chapterListData.postValue(it)
-                            } else {
-                                changeDruChapterIndex(it)
-                            }
+                            chapterListData.postValue(it)
                         }.onError {
                             chapterListData.postValue(emptyList())
                             AppLog.put("获取目录失败\n${it.localizedMessage}", it)
@@ -184,55 +176,15 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeTo(source: BookSource, newBook: Book) {
+    fun changeTo(source: BookSource, newBook: Book, toc: List<BookChapter>) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
-            var oldTocSize: Int = newBook.totalChapterNum
-            if (inBookshelf) {
-                bookData.value?.let {
-                    oldTocSize = it.totalChapterNum
-                    it.changeTo(newBook)
-                }
-            }
-            bookData.postValue(newBook)
             bookSource = source
-            if (newBook.tocUrl.isEmpty()) {
-                loadBookInfo(newBook, false, this) {
-                    ensureActive()
-                    upChangeDurChapterIndex(newBook, oldTocSize, it)
-                }
-            } else {
-                loadChapter(newBook, this) {
-                    ensureActive()
-                    upChangeDurChapterIndex(newBook, oldTocSize, it)
-                }
-            }
+            bookData.value!!.changeTo(newBook, toc)
+            bookData.postValue(newBook)
+            chapterListData.postValue(toc)
         }.onFinally {
             postEvent(EventBus.SOURCE_CHANGED, newBook.bookUrl)
-        }
-    }
-
-    private fun upChangeDurChapterIndex(
-        book: Book,
-        oldTocSize: Int,
-        chapters: List<BookChapter>
-    ) {
-        execute {
-            book.durChapterIndex = BookHelp.getDurChapter(
-                book.durChapterIndex,
-                book.durChapterTitle,
-                chapters,
-                oldTocSize
-            )
-            book.durChapterTitle = chapters[book.durChapterIndex].getDisplayTitle(
-                ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-            )
-            if (inBookshelf) {
-                appDb.bookDao.update(book)
-                appDb.bookChapterDao.insert(*chapters.toTypedArray())
-            }
-            bookData.postValue(book)
-            chapterListData.postValue(chapters)
         }
     }
 
@@ -300,7 +252,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun delBook(deleteOriginal: Boolean = false, success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let {
-                Book.delete(it)
+                it.delete()
                 inBookshelf = false
                 if (it.isLocalBook()) {
                     LocalBook.deleteBook(it, deleteOriginal)

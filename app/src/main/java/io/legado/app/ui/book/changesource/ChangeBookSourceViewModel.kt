@@ -11,14 +11,17 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
@@ -27,6 +30,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.util.*
 import java.util.concurrent.Executors
@@ -85,6 +89,11 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     @Volatile
     private var searchIndex = -1
+
+    override fun onCleared() {
+        super.onCleared()
+        searchPool?.close()
+    }
 
     @CallSuper
     open fun initData(arguments: Bundle?) {
@@ -253,9 +262,32 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchStateData.postValue(false)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        searchPool?.close()
+    open fun getToc(
+        book: Book,
+        onError: (msg: String) -> Unit,
+        onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
+    ) {
+        execute {
+            getToc(book).getOrThrow()
+        }.onError {
+            onError.invoke(it.localizedMessage ?: "加载目录错误")
+        }.onSuccess {
+            onSuccess.invoke(it.first, it.second)
+        }
+    }
+
+    suspend fun getToc(book: Book): Result<Pair<List<BookChapter>, BookSource>> {
+        return kotlin.runCatching {
+            withContext(IO) {
+                val source = appDb.bookSourceDao.getBookSource(book.origin)
+                    ?: throw NoStackTraceException("书源不存在")
+                if (book.tocUrl.isEmpty()) {
+                    WebBook.getBookInfoAwait(this, source, book)
+                }
+                val toc = WebBook.getChapterListAwait(this, source, book)
+                Pair(toc, source)
+            }
+        }
     }
 
     fun disableSource(searchBook: SearchBook) {
@@ -310,8 +342,23 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchCallback?.upAdapter()
     }
 
-    fun firstSourceOrNull(searchBook: SearchBook): SearchBook? {
-        return searchBooks.firstOrNull { it.bookUrl != searchBook.bookUrl }
+    fun autoChangeSource(
+        onSuccess: (book: Book, toc: List<BookChapter>, source: BookSource) -> Unit
+    ) {
+        execute {
+            searchBooks.forEach {
+                val book = it.toBook()
+                val result = getToc(book).getOrNull()
+                if (result != null) {
+                    return@execute Triple(book, result.first, result.second)
+                }
+            }
+            throw NoStackTraceException("没有有效源")
+        }.onSuccess {
+            onSuccess.invoke(it.first, it.second, it.third)
+        }.onError {
+            context.toastOnUi("自动换源失败\n${it.localizedMessage}")
+        }
     }
 
     interface SourceCallback {

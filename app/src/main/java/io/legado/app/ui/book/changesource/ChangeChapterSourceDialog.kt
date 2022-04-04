@@ -67,13 +67,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     private val tocAdapter by lazy {
         ChangeChapterTocAdapter(requireContext(), this)
     }
-    private val tocSuccess: (toc: List<BookChapter>) -> Unit = {
-        tocAdapter.durChapterIndex =
-            BookHelp.getDurChapter(viewModel.chapterIndex, viewModel.chapterTitle, it)
-        binding.loadingToc.hide()
-        tocAdapter.setItems(it)
-        binding.recyclerViewToc.scrollToPosition(tocAdapter.durChapterIndex - 5)
-    }
     private val contentSuccess: (content: String) -> Unit = {
         binding.loadingToc.hide()
         callBack?.replaceContent(it)
@@ -279,9 +272,16 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         tocAdapter.setItems(null)
         binding.clToc.visible()
         binding.loadingToc.show()
-        viewModel.getToc(searchBook, tocSuccess) {
+        val book = searchBook.toBook()
+        viewModel.getToc(book, {
             binding.clToc.gone()
             toastOnUi(it)
+        }) { toc: List<BookChapter>, _: BookSource ->
+            tocAdapter.durChapterIndex =
+                BookHelp.getDurChapter(viewModel.chapterIndex, viewModel.chapterTitle, toc)
+            binding.loadingToc.hide()
+            tocAdapter.setItems(toc)
+            binding.recyclerViewToc.scrollToPosition(tocAdapter.durChapterIndex - 5)
         }
     }
 
@@ -309,8 +309,8 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     override fun deleteSource(searchBook: SearchBook) {
         viewModel.del(searchBook)
         if (bookUrl == searchBook.bookUrl) {
-            viewModel.firstSourceOrNull(searchBook)?.let {
-                changeSource(it)
+            viewModel.autoChangeSource { book, toc, source ->
+                callBack?.changeTo(source, book, toc)
             }
         }
     }
@@ -323,19 +323,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 binding.clToc.gone()
                 toastOnUi(msg)
             }
-        }
-    }
-
-    private fun changeSource(searchBook: SearchBook) {
-        try {
-            val book = searchBook.toBook()
-            book.upInfoFromOld(callBack?.oldBook)
-            val source = appDb.bookSourceDao.getBookSource(book.origin)
-            callBack?.changeTo(source!!, book)
-            searchBook.time = System.currentTimeMillis()
-            viewModel.updateSource(searchBook)
-        } catch (e: Exception) {
-            toastOnUi("换源失败\n${e.localizedMessage}")
         }
     }
 
@@ -388,7 +375,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     interface CallBack {
         val oldBook: Book?
-        fun changeTo(source: BookSource, book: Book)
+        fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>)
         fun replaceContent(content: String)
     }
 

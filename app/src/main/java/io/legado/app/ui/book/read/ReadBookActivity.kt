@@ -715,8 +715,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     override val oldBook: Book?
         get() = ReadBook.book
 
-    override fun changeTo(source: BookSource, book: Book) {
-        viewModel.changeTo(source, book)
+    override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+        viewModel.changeTo(source, book, toc)
     }
 
     override fun replaceContent(content: String) {

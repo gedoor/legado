@@ -320,35 +320,38 @@ object WebBook {
         name: String,
         author: String,
         context: CoroutineContext = Dispatchers.IO,
-    ): Coroutine<Pair<BookSource, Book>> {
+    ): Coroutine<Pair<Book, BookSource>> {
         return Coroutine.async(scope, context) {
-            preciseSearchAwait(scope, name, author, *bookSources.toTypedArray())
-                ?: throw NoStackTraceException("没有搜索到<$name>$author")
+            for (source in bookSources) {
+                val book = preciseSearchAwait(scope, source, name, author).getOrNull()
+                if (book != null) {
+                    return@async Pair(book, source)
+                }
+            }
+            throw NoStackTraceException("没有搜索到<$name>$author")
         }
     }
 
     suspend fun preciseSearchAwait(
         scope: CoroutineScope,
+        bookSource: BookSource,
         name: String,
         author: String,
-        vararg bookSources: BookSource
-    ): Pair<BookSource, Book>? {
-        bookSources.forEach { source ->
-            kotlin.runCatching {
-                if (!scope.isActive) return null
-                searchBookAwait(scope, source, name).firstOrNull {
-                    it.name == name && it.author == author
-                }?.let { searchBook ->
-                    if (!scope.isActive) return null
-                    var book = searchBook.toBook()
-                    if (book.tocUrl.isBlank()) {
-                        book = getBookInfoAwait(scope, source, book)
-                    }
-                    return Pair(source, book)
+    ): Result<Book?> {
+        return kotlin.runCatching {
+            if (!scope.isActive) return@runCatching null
+            searchBookAwait(scope, bookSource, name).firstOrNull {
+                it.name == name && it.author == author
+            }?.let { searchBook ->
+                if (!scope.isActive) return@runCatching null
+                var book = searchBook.toBook()
+                if (book.tocUrl.isBlank()) {
+                    book = getBookInfoAwait(scope, bookSource, book)
                 }
+                return@runCatching book
             }
+            return@runCatching null
         }
-        return null
     }
 
 }
