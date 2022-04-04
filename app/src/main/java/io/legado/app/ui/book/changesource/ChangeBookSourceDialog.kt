@@ -287,6 +287,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             waitDialog.dismiss()
             toastOnUi(it)
         }) { toc, source ->
+            waitDialog.dismiss()
             callBack?.changeTo(source, book, toc)
             onSuccess?.invoke()
         }
