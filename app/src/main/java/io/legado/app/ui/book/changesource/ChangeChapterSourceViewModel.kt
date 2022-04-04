@@ -5,10 +5,8 @@ import android.os.Bundle
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.webBook.WebBook
-import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("MemberVisibilityCanBePrivate")
 class ChangeChapterSourceViewModel(application: Application) :
@@ -17,8 +15,6 @@ class ChangeChapterSourceViewModel(application: Application) :
     var chapterIndex: Int = 0
     var chapterTitle: String = ""
 
-    private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
-
     override fun initData(arguments: Bundle?) {
         super.initData(arguments)
         arguments?.let { bundle ->
@@ -26,27 +22,6 @@ class ChangeChapterSourceViewModel(application: Application) :
                 chapterTitle = it
             }
             chapterIndex = bundle.getInt("chapterIndex")
-        }
-    }
-
-    override fun getToc(
-        book: Book,
-        onError: (msg: String) -> Unit,
-        onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
-    ) {
-        execute {
-            val toc = tocMap[book.bookUrl]
-            if (toc != null) {
-                val source = appDb.bookSourceDao.getBookSource(book.origin)
-                return@execute Pair(toc, source!!)
-            }
-            val result = getToc(book).getOrThrow()
-            tocMap[book.bookUrl] = result.first
-            return@execute result
-        }.onSuccess {
-            onSuccess.invoke(it.first, it.second)
-        }.onError {
-            onError.invoke(it.localizedMessage ?: "获取目录出错")
         }
     }
 

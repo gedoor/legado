@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -48,6 +49,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
+    private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
     private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
     private var searchCallback: SourceCallback? = null
     val searchDataFlow = callbackFlow {
@@ -196,6 +198,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private suspend fun loadBookToc(scope: CoroutineScope, source: BookSource, book: Book) {
         val chapters = WebBook.getChapterListAwait(scope, source, book)
+        tocMap[book.bookUrl] = chapters
         book.latestChapterTitle = chapters.last().title
         val searchBook: SearchBook = book.toSearchBook()
         searchCallback?.searchSuccess(searchBook)
@@ -262,17 +265,24 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchStateData.postValue(false)
     }
 
-    open fun getToc(
+    fun getToc(
         book: Book,
         onError: (msg: String) -> Unit,
         onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
     ) {
         execute {
-            getToc(book).getOrThrow()
-        }.onError {
-            onError.invoke(it.localizedMessage ?: "加载目录错误")
+            val toc = tocMap[book.bookUrl]
+            if (toc != null) {
+                val source = appDb.bookSourceDao.getBookSource(book.origin)
+                return@execute Pair(toc, source!!)
+            }
+            val result = getToc(book).getOrThrow()
+            tocMap[book.bookUrl] = result.first
+            return@execute result
         }.onSuccess {
             onSuccess.invoke(it.first, it.second)
+        }.onError {
+            onError.invoke(it.localizedMessage ?: "获取目录出错")
         }
     }
 
