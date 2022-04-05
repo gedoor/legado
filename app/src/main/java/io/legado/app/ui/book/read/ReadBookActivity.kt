@@ -14,6 +14,7 @@ import androidx.core.view.size
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
@@ -38,6 +39,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
@@ -716,7 +718,18 @@ class ReadBookActivity : BaseReadBookActivity(),
         get() = ReadBook.book
 
     override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
-        viewModel.changeTo(source, book, toc)
+        if (book.type != BookType.audio) {
+            viewModel.changeTo(source, book, toc)
+        } else {
+            ReadAloud.stop(this)
+            launch {
+                ReadBook.book?.changeTo(book, toc)
+            }
+            startActivity<AudioPlayActivity> {
+                putExtra("bookUrl", book.bookUrl)
+            }
+            finish()
+        }
     }
 
     override fun replaceContent(content: String) {
