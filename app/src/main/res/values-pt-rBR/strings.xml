@@ -778,7 +778,7 @@
     <string name="sort_by_lastUpdateTime">Ordenar por tempo de atualização</string>
     <string name="search_content">Pesquisar conteúdo</string>
     <string name="rss_source_empty">Siga [开源阅读] no WeChat para mais fontes de RSS!</string>
-    <string name="explore_empty">Atualmente não há nenhuma fonte, siga o número público [开源阅读] para adicionar uma fonte de livro via Descoberta</string>
+    <string name="explore_empty">Atualmente não há nenhuma fonte!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">Nome de tema</string>
     <string name="auto_clear_expired">Excluir automaticamente dados vencidos da busca</string>
