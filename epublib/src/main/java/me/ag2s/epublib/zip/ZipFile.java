@@ -352,7 +352,7 @@ public class ZipFile implements ZipConstants, Closeable {
     public ZipEntry getEntry(String name) {
         try {
             HashMap<String, ZipEntry> entries = getEntries();
-            ZipEntry entry = (ZipEntry) entries.get(name);
+            ZipEntry entry = entries.get(name);
             return entry != null ? (ZipEntry) entry.clone() : null;
         } catch (IOException ioe) {
             return null;
