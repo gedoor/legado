@@ -777,7 +777,7 @@
     <string name="select_theme">Alterar o tema padrão</string>
     <string name="sort_by_lastUpdateTime">Ordenar por tempo de atualização</string>
     <string name="search_content">Pesquisar conteúdo</string>
-    <string name="rss_source_empty">Siga [开源阅读] no WeChat para mais fontes de RSS!</string>
+    <string name="rss_source_empty">Empty now!</string>
     <string name="explore_empty">Atualmente não há nenhuma fonte!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">Nome de tema</string>
