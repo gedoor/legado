@@ -11,14 +11,16 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefString
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
@@ -27,8 +29,9 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import splitties.init.appCtx
+import kotlinx.coroutines.withContext
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -44,7 +47,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
-    private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
+    private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
     private var searchCallback: SourceCallback? = null
     val searchDataFlow = callbackFlow {
 
@@ -86,6 +89,11 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     @Volatile
     private var searchIndex = -1
 
+    override fun onCleared() {
+        super.onCleared()
+        searchPool?.close()
+    }
+
     @CallSuper
     open fun initData(arguments: Bundle?) {
         arguments?.let { bundle ->
@@ -118,11 +126,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             appDb.searchBookDao.clear(name, author)
             searchBooks.clear()
             bookSourceList.clear()
+            val searchGroup = AppConfig.searchGroup
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             } else {
                 val sources = appDb.bookSourceDao.getEnabledByGroup(searchGroup)
                 if (sources.isEmpty()) {
+                    AppConfig.searchGroup = ""
                     bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
                 } else {
                     bookSourceList.addAll(sources)
@@ -187,6 +197,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private suspend fun loadBookToc(scope: CoroutineScope, source: BookSource, book: Book) {
         val chapters = WebBook.getChapterListAwait(scope, source, book)
+        tocMap[book.bookUrl] = chapters
         book.latestChapterTitle = chapters.last().title
         val searchBook: SearchBook = book.toSearchBook()
         searchCallback?.searchSuccess(searchBook)
@@ -212,15 +223,23 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private fun getDbSearchBooks(): List<SearchBook> {
         return if (screenKey.isEmpty()) {
             if (AppConfig.changeSourceCheckAuthor) {
-                appDb.searchBookDao.getChangeSourceSearch(name, author, searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(
+                    name, author, AppConfig.searchGroup
+                )
             } else {
-                appDb.searchBookDao.getChangeSourceSearch(name, "", searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(
+                    name, "", AppConfig.searchGroup
+                )
             }
         } else {
             if (AppConfig.changeSourceCheckAuthor) {
-                appDb.searchBookDao.getChangeSourceSearch(name, author, screenKey, searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(
+                    name, author, screenKey, AppConfig.searchGroup
+                )
             } else {
-                appDb.searchBookDao.getChangeSourceSearch(name, "", screenKey, searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(
+                    name, "", screenKey, AppConfig.searchGroup
+                )
             }
         }
     }
@@ -253,9 +272,39 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchStateData.postValue(false)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        searchPool?.close()
+    fun getToc(
+        book: Book,
+        onError: (msg: String) -> Unit,
+        onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
+    ) {
+        execute {
+            val toc = tocMap[book.bookUrl]
+            if (toc != null) {
+                val source = appDb.bookSourceDao.getBookSource(book.origin)
+                return@execute Pair(toc, source!!)
+            }
+            val result = getToc(book).getOrThrow()
+            tocMap[book.bookUrl] = result.first
+            return@execute result
+        }.onSuccess {
+            onSuccess.invoke(it.first, it.second)
+        }.onError {
+            onError.invoke(it.localizedMessage ?: "获取目录出错")
+        }
+    }
+
+    suspend fun getToc(book: Book): Result<Pair<List<BookChapter>, BookSource>> {
+        return kotlin.runCatching {
+            withContext(IO) {
+                val source = appDb.bookSourceDao.getBookSource(book.origin)
+                    ?: throw NoStackTraceException("书源不存在")
+                if (book.tocUrl.isEmpty()) {
+                    WebBook.getBookInfoAwait(this, source, book)
+                }
+                val toc = WebBook.getChapterListAwait(this, source, book)
+                Pair(toc, source)
+            }
+        }
     }
 
     fun disableSource(searchBook: SearchBook) {
@@ -310,8 +359,26 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchCallback?.upAdapter()
     }
 
-    fun firstSourceOrNull(searchBook: SearchBook): SearchBook? {
-        return searchBooks.firstOrNull { it.bookUrl != searchBook.bookUrl }
+    fun autoChangeSource(
+        bookType: Int?,
+        onSuccess: (book: Book, toc: List<BookChapter>, source: BookSource) -> Unit
+    ) {
+        execute {
+            searchBooks.forEach {
+                if (it.type == bookType) {
+                    val book = it.toBook()
+                    val result = getToc(book).getOrNull()
+                    if (result != null) {
+                        return@execute Triple(book, result.first, result.second)
+                    }
+                }
+            }
+            throw NoStackTraceException("没有有效源")
+        }.onSuccess {
+            onSuccess.invoke(it.first, it.second, it.third)
+        }.onError {
+            context.toastOnUi("自动换源失败\n${it.localizedMessage}")
+        }
     }
 
     interface SourceCallback {

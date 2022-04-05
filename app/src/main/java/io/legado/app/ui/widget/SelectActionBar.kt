@@ -98,6 +98,11 @@ class SelectActionBar @JvmOverloads constructor(
         btnRevertSelection.isClickable = isClickable
         btnSelectActionMain.isEnabled = isClickable
         btnSelectActionMain.isClickable = isClickable
+        if (isClickable) {
+            ivMenuMore.setColorFilter(context.primaryTextColor)
+        } else {
+            ivMenuMore.setColorFilter(context.secondaryTextColor)
+        }
         ivMenuMore.isEnabled = isClickable
         ivMenuMore.isClickable = isClickable
     }

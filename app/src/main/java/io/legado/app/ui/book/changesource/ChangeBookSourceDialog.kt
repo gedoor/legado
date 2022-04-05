@@ -19,6 +19,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogBookChangeSourceBinding
@@ -27,6 +28,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -50,6 +52,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     private val groups = linkedSetOf<String>()
     private val callBack: CallBack? get() = activity as? CallBack
     private val viewModel: ChangeBookSourceViewModel by viewModels()
+    private val waitDialog by lazy { WaitDialog(requireContext()) }
     private val adapter by lazy { ChangeBookSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
@@ -57,14 +60,14 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         }
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
         if (it) {
-            val searchGroup = getPrefString("searchGroup")
-            if (!searchGroup.isNullOrEmpty()) {
+            val searchGroup = AppConfig.searchGroup
+            if (searchGroup.isNotEmpty()) {
                 launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         cancelButton()
                         okButton {
-                            putPrefString("searchGroup", "")
+                            AppConfig.searchGroup = ""
                             viewModel.startSearch()
                         }
                     }
@@ -218,9 +221,9 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 if (!item.isChecked) {
                     item.isChecked = true
                     if (item.title.toString() == getString(R.string.all_source)) {
-                        putPrefString("searchGroup", "")
+                        AppConfig.searchGroup = ""
                     } else {
-                        putPrefString("searchGroup", item.title.toString())
+                        AppConfig.searchGroup = item.title.toString()
                     }
                     viewModel.startOrStopSearch()
                     viewModel.refresh()
@@ -241,8 +244,23 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        changeSource(searchBook)
-        dismissAllowingStateLoss()
+        if (searchBook.type == callBack?.oldBook?.type) {
+            changeSource(searchBook) {
+                dismissAllowingStateLoss()
+            }
+        } else {
+            alert(
+                titleResource = R.string.book_type_different,
+                messageResource = R.string.soure_change_source
+            ) {
+                okButton {
+                    changeSource(searchBook) {
+                        dismissAllowingStateLoss()
+                    }
+                }
+                cancelButton()
+            }
+        }
     }
 
     override val bookUrl: String?
@@ -269,22 +287,23 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     override fun deleteSource(searchBook: SearchBook) {
         viewModel.del(searchBook)
         if (bookUrl == searchBook.bookUrl) {
-            viewModel.firstSourceOrNull(searchBook)?.let {
-                changeSource(it)
+            viewModel.autoChangeSource(callBack?.oldBook?.type) { book, toc, source ->
+                callBack?.changeTo(source, book, toc)
             }
         }
     }
 
-    private fun changeSource(searchBook: SearchBook) {
-        try {
-            val book = searchBook.toBook()
-            book.upInfoFromOld(callBack?.oldBook)
-            val source = appDb.bookSourceDao.getBookSource(book.origin)
-            callBack?.changeTo(source!!, book)
-            searchBook.time = System.currentTimeMillis()
-            viewModel.updateSource(searchBook)
-        } catch (e: Exception) {
-            toastOnUi("换源失败\n${e.localizedMessage}")
+    private fun changeSource(searchBook: SearchBook, onSuccess: (() -> Unit)? = null) {
+        waitDialog.setText(R.string.load_toc)
+        waitDialog.show()
+        val book = searchBook.toBook()
+        viewModel.getToc(book, {
+            waitDialog.dismiss()
+            toastOnUi(it)
+        }) { toc, source ->
+            waitDialog.dismiss()
+            callBack?.changeTo(source, book, toc)
+            onSuccess?.invoke()
         }
     }
 
@@ -293,7 +312,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
      */
     private fun upGroupMenu() {
         val menu: Menu = binding.toolBar.menu
-        val selectedGroup = getPrefString("searchGroup")
+        val selectedGroup = AppConfig.searchGroup
         menu.removeGroup(R.id.source_group)
         val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
         var hasSelectedGroup = false
@@ -325,7 +344,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
 
     interface CallBack {
         val oldBook: Book?
-        fun changeTo(source: BookSource, book: Book)
+        fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>)
     }
 
 }

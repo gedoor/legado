@@ -4,6 +4,8 @@ import com.google.gson.*
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonWriter
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.lang.reflect.ParameterizedType
@@ -34,6 +36,20 @@ inline fun <reified T> Gson.fromJsonObject(json: String?): Result<T?> {
 inline fun <reified T> Gson.fromJsonArray(json: String?): Result<List<T>?> {
     return kotlin.runCatching {
         fromJson(json, ParameterizedTypeImpl(T::class.java)) as? List<T>
+    }
+}
+
+inline fun <reified T> Gson.fromJsonObject(inputStream: InputStream?): Result<T?> {
+    return kotlin.runCatching {
+        val reader = InputStreamReader(inputStream)
+        fromJson(reader, genericType<T>()) as? T
+    }
+}
+
+inline fun <reified T> Gson.fromJsonArray(inputStream: InputStream?): Result<List<T>?> {
+    return kotlin.runCatching {
+        val reader = InputStreamReader(inputStream)
+        fromJson(reader, ParameterizedTypeImpl(T::class.java)) as? List<T>
     }
 }
 

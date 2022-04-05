@@ -15,11 +15,13 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityArrangeBookBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
+import io.legado.app.ui.theme.AppTheme
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
@@ -41,6 +43,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
     ArrangeBookAdapter.CallBack,
+    SourcePickerDialog.Callback,
     GroupSelectDialog.CallBack {
 
     override val binding by viewBinding(ActivityArrangeBookBinding::inflate)
@@ -107,6 +110,17 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         binding.selectActionBar.inflateMenu(R.menu.arrange_book_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
         binding.selectActionBar.setCallBack(this)
+        binding.composeView.setContent {
+            AppTheme {
+                BatchChangeSourceDialog(
+                    state = viewModel.batchChangeSourceState,
+                    size = viewModel.batchChangeSourceSize,
+                    position = viewModel.batchChangeSourcePosition
+                ) {
+                    viewModel.batchChangeSourceCoroutine?.cancel()
+                }
+            }
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -169,6 +183,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
             R.id.menu_update_disable ->
                 viewModel.upCanUpdate(adapter.selectedBooks(), false)
             R.id.menu_add_to_group -> selectGroup(addToGroupRequestCode, 0)
+            R.id.menu_change_source -> showDialogFragment<SourcePickerDialog>()
         }
         return false
     }
@@ -226,6 +241,11 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                 viewModel.deleteBook(book)
             }
         }
+    }
+
+    override fun sourceOnClick(source: BookSource) {
+        viewModel.changeSource(adapter.selectedBooks(), source)
+        viewModel.batchChangeSourceState.value = true
     }
 
 }

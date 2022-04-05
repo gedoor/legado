@@ -22,6 +22,7 @@ import io.legado.app.databinding.ActivityMainBinding
 import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
@@ -175,7 +176,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
     override fun onDestroy() {
         super.onDestroy()
-        BookHelp.clearRemovedCache()
+        Coroutine.async {
+            BookHelp.clearInvalidCache()
+        }
     }
 
     override fun observeLiveBus() {

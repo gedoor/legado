@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp"
+        android:textColor="@color/secondaryText"
         android:textIsSelectable="true" />
 
     <io.legado.app.ui.widget.text.BadgeView

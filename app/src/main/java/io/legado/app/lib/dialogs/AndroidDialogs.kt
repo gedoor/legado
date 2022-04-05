@@ -48,9 +48,9 @@ fun Context.alert(
 
 inline fun Fragment.alert(
     titleResource: Int? = null,
-    message: Int? = null,
+    messageResource: Int? = null,
     noinline init: (AlertBuilder<DialogInterface>.() -> Unit)? = null
-) = requireActivity().alert(titleResource, message, init)
+) = requireActivity().alert(titleResource, messageResource, init)
 
 fun Context.alert(init: AlertBuilder<AlertDialog>.() -> Unit): AlertDialog =
     AndroidAlertBuilder(this).apply {

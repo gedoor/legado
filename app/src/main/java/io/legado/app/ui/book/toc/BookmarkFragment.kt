@@ -11,6 +11,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.FragmentBookmarkBinding
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.setEdgeEffectColor

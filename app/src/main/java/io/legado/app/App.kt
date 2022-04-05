@@ -14,6 +14,7 @@ import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.help.BookHelp
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.RuleBigDataHelp
@@ -52,6 +53,7 @@ class App : MultiDexApplication() {
                 appDb.searchBookDao.clearExpired(clearTime)
             }
             RuleBigDataHelp.clearInvalid()
+            BookHelp.clearInvalidCache()
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
                 1 -> ChineseUtils.t2s("初始化")

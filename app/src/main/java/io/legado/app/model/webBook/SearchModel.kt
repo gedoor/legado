@@ -8,7 +8,6 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -60,7 +59,7 @@ class SearchModel(private val scope: CoroutineScope) {
             initSearchPool()
             mSearchId = searchId
             searchPage = 1
-            val searchGroup = appCtx.getPrefString("searchGroup") ?: ""
+            val searchGroup = AppConfig.searchGroup
             bookSourceList.clear()
             searchBooks.clear()
             callBack?.onSearchSuccess(searchBooks)
@@ -69,6 +68,7 @@ class SearchModel(private val scope: CoroutineScope) {
             } else {
                 val sources = appDb.bookSourceDao.getEnabledByGroup(searchGroup)
                 if (sources.isEmpty()) {
+                    AppConfig.searchGroup = ""
                     bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
                 } else {
                     bookSourceList.addAll(sources)

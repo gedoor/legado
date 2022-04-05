@@ -457,9 +457,8 @@ class BookInfoActivity :
     override val oldBook: Book?
         get() = viewModel.bookData.value
 
-    override fun changeTo(source: BookSource, book: Book) {
-        upLoading(true)
-        viewModel.changeTo(source, book)
+    override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+        viewModel.changeTo(source, book, toc)
     }
 
     override fun coverChangeTo(coverUrl: String) {

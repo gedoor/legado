@@ -17,4 +17,8 @@
         android:id="@+id/menu_add_to_group"
         android:title="@string/add_to_group" />
 
+    <item
+        android:id="@+id/menu_change_source"
+        android:title="@string/change_source_batch" />
+
 </menu>

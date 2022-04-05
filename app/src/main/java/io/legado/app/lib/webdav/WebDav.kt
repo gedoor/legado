@@ -1,5 +1,6 @@
 package io.legado.app.lib.webdav
 
+import io.legado.app.constant.AppLog
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -168,6 +169,8 @@ class WebDav(urlStr: String) {
                         addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
                     }.close()
                 }
+            }.onFailure {
+                AppLog.put(it.localizedMessage)
             }.isSuccess
         }
         return false

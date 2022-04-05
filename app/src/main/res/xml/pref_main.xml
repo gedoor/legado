@@ -77,6 +77,13 @@
         app:layout="@layout/view_preference_category">
 
         <io.legado.app.ui.widget.prefs.Preference
+            android:key="bookmark"
+            android:title="@string/bookmark"
+            android:summary="@string/all_bookmark"
+            android:icon="@drawable/ic_bookmark"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.ui.widget.prefs.Preference
             android:key="readRecord"
             android:title="@string/read_record"
             android:summary="@string/read_record_summary"

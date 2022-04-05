@@ -32,7 +32,7 @@ fun TimerDialog(state: MutableState<Boolean>, parent: View) {
                         timeMinute.value = it.toInt()
                         AudioPlay.setTimer(it.toInt())
                     },
-                    valueRange = 0f..180f
+                    valueRange = 0f..180f,
                 )
             }
         }

@@ -139,7 +139,7 @@ interface JsExtensions {
             path.startsWith("/storage") -> FileUtils.readText(path)
             else -> readTxtFile(path)
         }
-        if (result.isBlank()) throw NoStackTraceException("${path} 内容获取失败或者为空")
+        if (result.isBlank()) throw NoStackTraceException("$path 内容获取失败或者为空")
         return result
     }
 

@@ -46,7 +46,7 @@
     <string name="recent_reading">Leitura recente</string>
     <string name="last_read">Última leitura</string>
     <string name="update_log">Novidades</string>
-    <string name="bookshelf_empty">A estante está vazia. Procure por livros ou adicione-os via descoberta! \n se você o usa pela primeira vez, por favor, preste atenção à conta pública [开源阅读] para obter a fonte do livro!</string>
+    <string name="bookshelf_empty">A estante está vazia. Procure por livros ou adicione-os via descoberta!</string>
     <string name="action_search">Pesquisar</string>
     <string name="action_download">Download</string>
     <string name="layout_list">Lista</string>
@@ -777,8 +777,8 @@
     <string name="select_theme">Alterar o tema padrão</string>
     <string name="sort_by_lastUpdateTime">Ordenar por tempo de atualização</string>
     <string name="search_content">Pesquisar conteúdo</string>
-    <string name="rss_source_empty">Siga [开源阅读] no WeChat para mais fontes de RSS!</string>
-    <string name="explore_empty">Atualmente não há nenhuma fonte, siga o número público [开源阅读] para adicionar uma fonte de livro via Descoberta</string>
+    <string name="rss_source_empty">Empty now!</string>
+    <string name="explore_empty">Atualmente não há nenhuma fonte!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">Nome de tema</string>
     <string name="auto_clear_expired">Excluir automaticamente dados vencidos da busca</string>
@@ -968,5 +968,9 @@
     <string name="sys_tts_config">系统tts设置</string>
     <string name="sys_tts_config_summary">打开系统tts设置界面</string>
     <string name="cannot_timed_non_playback">非播放状态无法定时</string>
+    <string name="all_bookmark">所有书签</string>
+    <string name="change_source_batch">批量换源</string>
+    <string name="book_type_different">书籍类型不一样</string>
+    <string name="soure_change_source">是否确认换源</string>
     <!-- string end -->
 </resources>

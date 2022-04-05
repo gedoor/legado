@@ -31,9 +31,8 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                 } else {
                     DocumentFile.fromSingleUri(context, uri)?.readText(context)
                 } ?: throw NoStackTraceException("文件不存在")
-                if (content.isJson()) {
-                    //暂时根据文件内容判断属于什么
-                    when {
+                when {
+                    content.isJson() -> when {
                         content.contains("bookSourceUrl") ->
                             importBookSourceLive.postValue(content)
                         content.contains("sourceUrl") ->
@@ -48,10 +47,12 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                             importHttpTTS(content, finally)
                         else -> errorLiveData.postValue("格式不对")
                     }
-                } else if (uri.toString().matches(bookFileRegex)) {
-                    importBookLiveData.postValue(uri)
-                } else {
-                    throw NoStackTraceException("暂未支持的本地书籍格式(TXT/UMD/EPUB)")
+                    (uri.path ?: uri.toString()).matches(bookFileRegex) -> {
+                        importBookLiveData.postValue(uri)
+                    }
+                    else -> {
+                        throw NoStackTraceException("暂未支持的本地书籍格式(TXT/UMD/EPUB)")
+                    }
                 }
             } else {
                 onLineImportLive.postValue(uri)

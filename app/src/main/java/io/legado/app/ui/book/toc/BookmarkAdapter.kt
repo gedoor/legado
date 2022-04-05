@@ -6,6 +6,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ItemBookmarkBinding
+import io.legado.app.utils.gone
 import splitties.views.onLongClick
 
 class BookmarkAdapter(context: Context, val callback: Callback) :
@@ -22,7 +23,9 @@ class BookmarkAdapter(context: Context, val callback: Callback) :
         payloads: MutableList<Any>
     ) {
         binding.tvChapterName.text = item.chapterName
+        binding.tvBookText.gone(item.bookText.isEmpty())
         binding.tvBookText.text = item.bookText
+        binding.tvContent.gone(item.content.isEmpty())
         binding.tvContent.text = item.content
     }
 

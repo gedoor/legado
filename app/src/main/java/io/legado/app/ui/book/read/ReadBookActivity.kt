@@ -14,6 +14,7 @@ import androidx.core.view.size
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
@@ -38,6 +39,8 @@ import io.legado.app.model.ReadBook
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.book.audio.AudioPlayActivity
+import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
 import io.legado.app.ui.book.read.config.*
@@ -51,7 +54,6 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.book.toc.BookmarkDialog
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.dict.DictDialog
@@ -715,8 +717,19 @@ class ReadBookActivity : BaseReadBookActivity(),
     override val oldBook: Book?
         get() = ReadBook.book
 
-    override fun changeTo(source: BookSource, book: Book) {
-        viewModel.changeTo(source, book)
+    override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+        if (book.type != BookType.audio) {
+            viewModel.changeTo(source, book, toc)
+        } else {
+            ReadAloud.stop(this)
+            launch {
+                ReadBook.book?.changeTo(book, toc)
+            }
+            startActivity<AudioPlayActivity> {
+                putExtra("bookUrl", book.bookUrl)
+            }
+            finish()
+        }
     }
 
     override fun replaceContent(content: String) {

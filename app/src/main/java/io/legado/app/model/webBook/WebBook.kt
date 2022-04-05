@@ -262,7 +262,7 @@ object WebBook {
             Debug.log(bookSource.bookSourceUrl, "⇒正文规则为空,使用章节链接:${bookChapter.url}")
             return bookChapter.url
         }
-        if(bookChapter.isVolume && bookChapter.url.startsWith(bookChapter.title)) {
+        if (bookChapter.isVolume && bookChapter.url.startsWith(bookChapter.title)) {
             Debug.log(bookSource.bookSourceUrl, "⇒一级目录正文不解析规则")
             return bookChapter.tag ?: ""
         }
@@ -320,35 +320,38 @@ object WebBook {
         name: String,
         author: String,
         context: CoroutineContext = Dispatchers.IO,
-    ): Coroutine<Pair<BookSource, Book>> {
+    ): Coroutine<Pair<Book, BookSource>> {
         return Coroutine.async(scope, context) {
-            preciseSearchAwait(scope, bookSources, name, author)
-                ?: throw NoStackTraceException("没有搜索到<$name>$author")
+            for (source in bookSources) {
+                val book = preciseSearchAwait(scope, source, name, author).getOrNull()
+                if (book != null) {
+                    return@async Pair(book, source)
+                }
+            }
+            throw NoStackTraceException("没有搜索到<$name>$author")
         }
     }
 
     suspend fun preciseSearchAwait(
         scope: CoroutineScope,
-        bookSources: List<BookSource>,
+        bookSource: BookSource,
         name: String,
-        author: String
-    ): Pair<BookSource, Book>? {
-        bookSources.forEach { source ->
-            kotlin.runCatching {
-                if (!scope.isActive) return null
-                searchBookAwait(scope, source, name).firstOrNull {
-                    it.name == name && it.author == author
-                }?.let { searchBook ->
-                    if (!scope.isActive) return null
-                    var book = searchBook.toBook()
-                    if (book.tocUrl.isBlank()) {
-                        book = getBookInfoAwait(scope, source, book)
-                    }
-                    return Pair(source, book)
+        author: String,
+    ): Result<Book?> {
+        return kotlin.runCatching {
+            if (!scope.isActive) return@runCatching null
+            searchBookAwait(scope, bookSource, name).firstOrNull {
+                it.name == name && it.author == author
+            }?.let { searchBook ->
+                if (!scope.isActive) return@runCatching null
+                var book = searchBook.toBook()
+                if (book.tocUrl.isBlank()) {
+                    book = getBookInfoAwait(scope, bookSource, book)
                 }
+                return@runCatching book
             }
+            return@runCatching null
         }
-        return null
     }
 
 }

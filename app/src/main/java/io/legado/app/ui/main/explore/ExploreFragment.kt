@@ -123,10 +123,10 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.bookSourceDao.flowGroupExplore("%$key%")
+                    appDb.bookSourceDao.flowGroupExplore(key)
                 }
                 else -> {
-                    appDb.bookSourceDao.flowExplore("%$searchKey%")
+                    appDb.bookSourceDao.flowExplore(searchKey)
                 }
             }.catch {
                 AppLog.put("发现界面更新数据出错", it)

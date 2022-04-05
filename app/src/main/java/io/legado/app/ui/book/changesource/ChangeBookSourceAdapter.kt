@@ -74,7 +74,9 @@ class ChangeBookSourceAdapter(
     override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                callBack.changeTo(it)
+                if (it.bookUrl != callBack.bookUrl) {
+                    callBack.changeTo(it)
+                }
             }
         }
         holder.itemView.onLongClick {

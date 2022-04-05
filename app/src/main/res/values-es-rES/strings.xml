@@ -776,8 +776,8 @@
     <string name="select_theme">Cambiar tema predeterminado</string>
     <string name="sort_by_lastUpdateTime">Ordenar por hora de actualización</string>
     <string name="search_content">Contenido de búsqueda</string>
-    <string name="rss_source_empty">¡Siga [开源阅读] en WeChat para obtener más feeds RSS!</string>
-    <string name="explore_empty">Actualmente no hay una fuente para Descubrir, siga el número público [开源 阅读] para agregar una fuente de libro a través de Descubrir.</string>
+    <string name="rss_source_empty">Empty now!</string>
+    <string name="explore_empty">Actualmente no hay una fuente para Descubrir!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">Nombre del tema</string>
     <string name="auto_clear_expired">Limpiar automáticamente los datos de búsqueda caducados</string>
@@ -965,5 +965,9 @@
     <string name="sys_tts_config">系统tts设置</string>
     <string name="sys_tts_config_summary">打开系统tts设置界面</string>
     <string name="cannot_timed_non_playback">非播放状态无法定时</string>
+    <string name="all_bookmark">所有书签</string>
+    <string name="change_source_batch">批量换源</string>
+    <string name="book_type_different">书籍类型不一样</string>
+    <string name="soure_change_source">是否确认换源</string>
     <!-- string end -->
 </resources>

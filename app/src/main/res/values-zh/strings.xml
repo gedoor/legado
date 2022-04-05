@@ -45,7 +45,7 @@
     <string name="recent_reading">最近阅读</string>
     <string name="last_read">最后阅读</string>
     <string name="update_log">更新日志</string>
-    <string name="bookshelf_empty">书架还空着，先去搜索书籍或从发现里添加吧！\n初次使用请关注公众号[开源阅读]获取书源和教程！</string>
+    <string name="bookshelf_empty">书架还空着，先去搜索书籍或从发现里添加吧！</string>
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
     <string name="layout_list">列表</string>
@@ -780,8 +780,8 @@
     <string name="search_content">全文搜索</string>
     <string name="search_content_size">搜索结果</string>
     <string name="search_content_empty">搜索结果为空</string>
-    <string name="rss_source_empty">关注公众号[开源阅读]获取订阅源!</string>
-    <string name="explore_empty">当前没有发现源,关注公众号[开源阅读]添加带发现的书源!</string>
+    <string name="rss_source_empty">Empty now!</string>
+    <string name="explore_empty">当前没有发现源!</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值,多个按键会自动用英文逗号隔开.</string>
     <string name="theme_name">主题名称</string>
     <string name="auto_clear_expired">自动清除过期搜索数据</string>
@@ -967,5 +967,9 @@
     <string name="sys_tts_config">系统tts设置</string>
     <string name="sys_tts_config_summary">打开系统tts设置界面</string>
     <string name="cannot_timed_non_playback">非播放状态无法定时</string>
+    <string name="all_bookmark">所有书签</string>
+    <string name="change_source_batch">批量换源</string>
+    <string name="book_type_different">书籍类型不一样</string>
+    <string name="soure_change_source">是否确认换源</string>
     <!-- string end -->
 </resources>
