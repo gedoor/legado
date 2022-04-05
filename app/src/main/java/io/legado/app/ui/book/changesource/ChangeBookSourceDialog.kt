@@ -244,8 +244,22 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        changeSource(searchBook) {
-            dismissAllowingStateLoss()
+        if (searchBook.type == callBack?.oldBook?.type) {
+            changeSource(searchBook) {
+                dismissAllowingStateLoss()
+            }
+        } else {
+            alert(
+                titleResource = R.string.book_type_different,
+                messageResource = R.string.soure_change_source
+            ) {
+                okButton {
+                    changeSource(searchBook) {
+                        dismissAllowingStateLoss()
+                    }
+                }
+                cancelButton()
+            }
         }
     }
 
