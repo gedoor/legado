@@ -62,6 +62,7 @@ java.logType(var)
 * 从网络(由java.cacheFile实现)、本地导入JavaScript脚本
 ```
 {{java.importScript(url)}}
+//相对路径支持android/data/{package}/cache
 {{java.importScript(relativePath)}}
 {{java.importScript(absolutePath)}}
 ```

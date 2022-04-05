@@ -137,22 +137,7 @@ interface JsExtensions {
             path.startsWith("http") -> cacheFile(path) ?: ""
             path.isContentScheme() -> DocumentUtils.readText(appCtx, Uri.parse(path))
             path.startsWith("/storage") -> FileUtils.readText(path)
-            else -> {
-                //相对路径
-                val jsPath = if (path.startsWith("/")) path else "/$path"
-                //先找书籍保存目录下有没有
-                val publicStoragePath = AppConfig.defaultBookTreeUri
-                val jsString = publicStoragePath?.let {
-                    if (it.isContentScheme()) {
-                        val fileUri = Uri.parse(it + URLEncoder.encode(jsPath, "UTF-8"))
-                        DocumentUtils.readText(appCtx, fileUri)
-                    } else {
-                        FileUtils.readText(it + jsPath)
-                    }
-                }
-                //私有目录
-                if (jsString.isNullOrBlank()) readTxtFile(path) else jsString
-            }
+            else -> readTxtFile(path)
         }
         if (result.isBlank()) throw NoStackTraceException("$path 内容获取失败或者为空")
         return result
