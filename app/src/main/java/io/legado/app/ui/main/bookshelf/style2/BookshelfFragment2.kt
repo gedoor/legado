@@ -43,7 +43,6 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     BaseBooksAdapter.CallBack {
 
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
-    private val rootGroupId = -100L
     private val bookshelfLayout by lazy {
         getPrefInt(PreferKey.bookshelfLayout)
     }
@@ -56,7 +55,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
     private var bookGroups: List<BookGroup> = emptyList()
     private var booksFlowJob: Job? = null
-    override var groupId = rootGroupId
+    override var groupId = AppConst.rootGroupId
     override var books: List<Book> = emptyList()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,7 +120,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             when (groupId) {
-                rootGroupId -> appDb.bookDao.flowRoot()
+                AppConst.rootGroupId -> appDb.bookDao.flowRoot()
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
@@ -212,7 +211,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun getItemCount(): Int {
-        return if (groupId == rootGroupId) {
+        return if (groupId == AppConst.rootGroupId) {
             bookGroups.size + books.size
         } else {
             books.size
@@ -220,7 +219,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun getItemType(position: Int): Int {
-        if (groupId != rootGroupId) {
+        if (groupId != AppConst.rootGroupId) {
             return 0
         }
         if (position < bookGroups.size) {
@@ -230,7 +229,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     }
 
     override fun getItem(position: Int): Any? {
-        if (groupId != rootGroupId) {
+        if (groupId != AppConst.rootGroupId) {
             return books.getOrNull(position)
         }
         if (position < bookGroups.size) {

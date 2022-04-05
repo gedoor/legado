@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.management
+package io.legado.app.ui.book.manage
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -140,6 +140,7 @@ class BookshelfManageActivity :
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             when (groupId) {
+                AppConst.rootGroupId -> appDb.bookDao.flowNoGroup()
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
@@ -147,12 +148,18 @@ class BookshelfManageActivity :
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { books ->
                 when (getPrefInt(PreferKey.bookshelfSort)) {
-                    1 -> books.sortedByDescending { it.latestChapterTime }
+                    1 -> books.sortedByDescending {
+                        it.latestChapterTime
+                    }
                     2 -> books.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
-                    3 -> books.sortedBy { it.order }
-                    else -> books.sortedByDescending { it.durChapterTime }
+                    3 -> books.sortedBy {
+                        it.order
+                    }
+                    else -> books.sortedByDescending {
+                        it.durChapterTime
+                    }
                 }
             }.conflate().collect { books ->
                 adapter.setItems(books)

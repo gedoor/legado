@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.management
+package io.legado.app.ui.book.manage
 
 import android.content.Context
 import android.os.Bundle

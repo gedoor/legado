@@ -22,7 +22,7 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
-import io.legado.app.ui.book.management.BookshelfManageActivity
+import io.legado.app.ui.book.manage.BookshelfManageActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.main.MainViewModel
