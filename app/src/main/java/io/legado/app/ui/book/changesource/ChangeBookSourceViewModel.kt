@@ -360,14 +360,17 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     fun autoChangeSource(
+        bookType: Int?,
         onSuccess: (book: Book, toc: List<BookChapter>, source: BookSource) -> Unit
     ) {
         execute {
             searchBooks.forEach {
-                val book = it.toBook()
-                val result = getToc(book).getOrNull()
-                if (result != null) {
-                    return@execute Triple(book, result.first, result.second)
+                if (it.type == bookType) {
+                    val book = it.toBook()
+                    val result = getToc(book).getOrNull()
+                    if (result != null) {
+                        return@execute Triple(book, result.first, result.second)
+                    }
                 }
             }
             throw NoStackTraceException("没有有效源")

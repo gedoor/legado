@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.mutableStateOf
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.Status
 import io.legado.app.constant.Theme
@@ -25,6 +26,7 @@ import io.legado.app.model.BookCover
 import io.legado.app.service.AudioPlayService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLoginActivity
@@ -32,6 +34,9 @@ import io.legado.app.ui.theme.AppTheme
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import splitties.views.onLongClick
 import java.util.*
 
@@ -200,7 +205,20 @@ class AudioPlayActivity :
         get() = AudioPlay.book
 
     override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
-        viewModel.changeTo(source, book, toc)
+        if (book.type == BookType.audio) {
+            viewModel.changeTo(source, book, toc)
+        } else {
+            AudioPlay.stop(this)
+            launch {
+                withContext(IO) {
+                    AudioPlay.book?.changeTo(book, toc)
+                }
+                startActivity<ReadBookActivity> {
+                    putExtra("bookUrl", book.bookUrl)
+                }
+                finish()
+            }
+        }
     }
 
     override fun finish() {

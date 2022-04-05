@@ -309,7 +309,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     override fun deleteSource(searchBook: SearchBook) {
         viewModel.del(searchBook)
         if (bookUrl == searchBook.bookUrl) {
-            viewModel.autoChangeSource { book, toc, source ->
+            viewModel.autoChangeSource(callBack?.oldBook?.type) { book, toc, source ->
                 callBack?.changeTo(source, book, toc)
             }
         }
