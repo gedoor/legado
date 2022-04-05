@@ -45,7 +45,7 @@
     <string name="recent_reading">最近閱讀</string>
     <string name="last_read">最後閱讀</string>
     <string name="update_log">更新日誌</string>
-    <string name="bookshelf_empty">書架還空著，先去搜尋書籍或從發現裡添加吧！\n如果初次使用請访问legado.top獲取書源！</string>
+    <string name="bookshelf_empty">書架還空著，先去搜尋書籍或從發現裡添加吧！</string>
     <string name="action_search">搜尋</string>
     <string name="action_download">下載</string>
     <string name="layout_list">列表</string>
