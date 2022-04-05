@@ -271,7 +271,7 @@
     <string name="load_over_time">Tempo limite de carregamento</string>
     <string name="join_group">Siga:%s</string>
     <string name="copy_complete">Copiado com sucesso</string>
-    <string name="arrange_bookshelf">A organização da estante</string>
+    <string name="bookshelf_management">A organização da estante</string>
     <string name="clear_bookshelf_s">Isto excluirá todos os livros. Por favor, tenha cuidado.</string>
     <string name="search_book_source">Pesquisar fontes de livros</string>
     <string name="search_rss_source">Buscar fontes de assinatura</string>

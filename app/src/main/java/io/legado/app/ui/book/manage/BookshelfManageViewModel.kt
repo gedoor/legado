@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.arrange
+package io.legado.app.ui.book.manage
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
@@ -10,7 +10,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 
 
-class ArrangeBookViewModel(application: Application) : BaseViewModel(application) {
+class BookshelfManageViewModel(application: Application) : BaseViewModel(application) {
 
     val batchChangeSourceState = mutableStateOf(false)
     val batchChangeSourceSize = mutableStateOf(0)

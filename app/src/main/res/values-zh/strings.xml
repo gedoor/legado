@@ -270,7 +270,7 @@
     <string name="load_over_time">加载超时</string>
     <string name="join_group">关注:%s</string>
     <string name="copy_complete">已拷贝</string>
-    <string name="arrange_bookshelf">整理书架</string>
+    <string name="bookshelf_management">书架管理</string>
     <string name="clear_bookshelf_s">这将会删除所有书籍，请谨慎操作。</string>
     <string name="search_book_source">搜索书源</string>
     <string name="search_rss_source">搜索订阅源</string>

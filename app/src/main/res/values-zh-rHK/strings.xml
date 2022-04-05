@@ -268,7 +268,7 @@
     <string name="load_over_time">加載超時</string>
     <string name="join_group">關注: %s</string>
     <string name="copy_complete">拷貝咗</string>
-    <string name="arrange_bookshelf">整理書架</string>
+    <string name="bookshelf_management">書架管理</string>
     <string name="clear_bookshelf_s">這將會刪除所有書籍，請謹慎操作。</string>
     <string name="search_book_source">搜索書源</string>
     <string name="search_rss_source">搜索訂閲源</string>
