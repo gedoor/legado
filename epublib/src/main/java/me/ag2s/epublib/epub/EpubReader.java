@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.EpubBook;
@@ -20,6 +18,8 @@ import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.domain.Resources;
 import me.ag2s.epublib.util.ResourceUtil;
 import me.ag2s.epublib.util.StringUtil;
+import me.ag2s.epublib.zip.ZipFile;
+import me.ag2s.epublib.zip.ZipInputStream;
 
 /**
  * Reads an epub file.

@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import me.ag2s.epublib.domain.EpubResourceProvider;
 import me.ag2s.epublib.domain.LazyResource;
@@ -21,6 +17,10 @@ import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.domain.Resources;
 import me.ag2s.epublib.util.CollectionUtil;
 import me.ag2s.epublib.util.ResourceUtil;
+import me.ag2s.epublib.zip.ZipEntry;
+import me.ag2s.epublib.zip.ZipException;
+import me.ag2s.epublib.zip.ZipFile;
+import me.ag2s.epublib.zip.ZipInputStream;
 
 
 /**
@@ -51,7 +51,7 @@ public class ResourcesLoader {
                                           List<MediaType> lazyLoadedTypes) throws IOException {
 
         LazyResourceProvider resourceProvider =
-                new EpubResourceProvider(zipFile.getName());
+                new EpubResourceProvider(zipFile.getContext(), zipFile.getUri());
 
         Resources result = new Resources();
         Enumeration<? extends ZipEntry> entries = zipFile.entries();

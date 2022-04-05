@@ -2,6 +2,7 @@ package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -10,6 +11,7 @@ import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
+import me.ag2s.epublib.zip.ZipFile
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -101,9 +103,16 @@ class EpubFile(var book: Book) {
     /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
     private fun readEpub(): EpubBook? {
         try {
-            val bis = LocalBook.getBookInputStream(book)
-            //通过懒加载读取epub
-            return EpubReader().readEpub(bis, "utf-8")
+            val uri = Uri.parse(book.bookUrl)
+            return if (uri.isContentScheme()) {
+                //通过懒加载读取epub
+                EpubReader().readEpubLazy(ZipFile(appCtx, uri), "utf-8")
+            } else {
+                val bis = LocalBook.getBookInputStream(book)
+                EpubReader().readEpub(bis, "utf-8")
+            }
+
+
         } catch (e: Exception) {
             e.printOnDebug()
         }

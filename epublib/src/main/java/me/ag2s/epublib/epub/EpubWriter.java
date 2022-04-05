@@ -9,14 +9,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.MediaTypes;
 import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.util.IOUtil;
+import me.ag2s.epublib.zip.CRC32;
+import me.ag2s.epublib.zip.ZipEntry;
+import me.ag2s.epublib.zip.ZipOutputStream;
 
 /**
  * Generates an epub file. Not thread-safe, single use object.
