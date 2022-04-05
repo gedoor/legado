@@ -75,14 +75,14 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     private var searchBook: SearchBook? = null
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
         if (it) {
-            val searchGroup = getPrefString("searchGroup")
-            if (!searchGroup.isNullOrEmpty()) {
+            val searchGroup = AppConfig.searchGroup
+            if (searchGroup.isNotEmpty()) {
                 launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         cancelButton()
                         okButton {
-                            putPrefString("searchGroup", "")
+                            AppConfig.searchGroup = ""
                             viewModel.startSearch()
                         }
                     }
@@ -245,9 +245,9 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 if (!item.isChecked) {
                     item.isChecked = true
                     if (item.title.toString() == getString(R.string.all_source)) {
-                        putPrefString("searchGroup", "")
+                        AppConfig.searchGroup = ""
                     } else {
-                        putPrefString("searchGroup", item.title.toString())
+                        AppConfig.searchGroup = item.title.toString()
                     }
                     viewModel.startOrStopSearch()
                     viewModel.refresh()

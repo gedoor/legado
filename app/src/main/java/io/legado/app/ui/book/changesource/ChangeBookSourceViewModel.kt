@@ -20,7 +20,6 @@ import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.getPrefString
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -31,7 +30,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import splitties.init.appCtx
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
@@ -50,7 +48,6 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var bookSourceList = arrayListOf<BookSource>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
-    private val searchGroup get() = appCtx.getPrefString("searchGroup") ?: ""
     private var searchCallback: SourceCallback? = null
     val searchDataFlow = callbackFlow {
 
@@ -129,11 +126,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             appDb.searchBookDao.clear(name, author)
             searchBooks.clear()
             bookSourceList.clear()
+            val searchGroup = AppConfig.searchGroup
             if (searchGroup.isBlank()) {
                 bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             } else {
                 val sources = appDb.bookSourceDao.getEnabledByGroup(searchGroup)
                 if (sources.isEmpty()) {
+                    AppConfig.searchGroup = ""
                     bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
                 } else {
                     bookSourceList.addAll(sources)
@@ -224,15 +223,25 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private fun getDbSearchBooks(): List<SearchBook> {
         return if (screenKey.isEmpty()) {
             if (AppConfig.changeSourceCheckAuthor) {
-                appDb.searchBookDao.getChangeSourceSearch(name, author, searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(name, author, AppConfig.searchGroup)
             } else {
-                appDb.searchBookDao.getChangeSourceSearch(name, "", searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(name, "", AppConfig.searchGroup)
             }
         } else {
             if (AppConfig.changeSourceCheckAuthor) {
-                appDb.searchBookDao.getChangeSourceSearch(name, author, screenKey, searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(
+                    name,
+                    author,
+                    screenKey,
+                    AppConfig.searchGroup
+                )
             } else {
-                appDb.searchBookDao.getChangeSourceSearch(name, "", screenKey, searchGroup)
+                appDb.searchBookDao.getChangeSourceSearch(
+                    name,
+                    "",
+                    screenKey,
+                    AppConfig.searchGroup
+                )
             }
         }
     }

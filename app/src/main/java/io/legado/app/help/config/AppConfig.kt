@@ -301,6 +301,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val doublePageHorizontal: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.doublePageHorizontal, true)
 
+    var searchGroup: String
+        get() = appCtx.getPrefString("searchGroup") ?: ""
+        set(value) {
+            appCtx.putPrefString("searchGroup", value)
+        }
+
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {
