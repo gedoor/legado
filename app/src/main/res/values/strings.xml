@@ -271,7 +271,7 @@
     <string name="load_over_time">Loading timeout</string>
     <string name="join_group">Follow:%s</string>
     <string name="copy_complete">Copied successfully</string>
-    <string name="arrange_bookshelf">Bookshelf arrangement</string>
+    <string name="bookshelf_management">Bookshelf management</string>
     <string name="clear_bookshelf_s">It will delete all books. Be careful,please.</string>
     <string name="search_book_source">Search book sources</string>
     <string name="search_rss_source">Search subscription sources</string>

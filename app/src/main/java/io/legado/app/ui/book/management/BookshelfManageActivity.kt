@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.arrange
+package io.legado.app.ui.book.management
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -39,19 +39,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBookViewModel>(),
+class BookshelfManageActivity :
+    VMBaseActivity<ActivityArrangeBookBinding, BookshelfManageViewModel>(),
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
-    ArrangeBookAdapter.CallBack,
+    BookAdapter.CallBack,
     SourcePickerDialog.Callback,
     GroupSelectDialog.CallBack {
 
     override val binding by viewBinding(ActivityArrangeBookBinding::inflate)
-    override val viewModel by viewModels<ArrangeBookViewModel>()
+    override val viewModel by viewModels<BookshelfManageViewModel>()
     override val groupList: ArrayList<BookGroup> = arrayListOf()
     private val groupRequestCode = 22
     private val addToGroupRequestCode = 34
-    private val adapter by lazy { ArrangeBookAdapter(this, this) }
+    private val adapter by lazy { BookAdapter(this, this) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var groupId: Long = -1

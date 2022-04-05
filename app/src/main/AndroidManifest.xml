@@ -249,7 +249,7 @@
             android:screenOrientation="behind" />
         <!-- 书籍管理 -->
         <activity
-            android:name=".ui.book.arrange.ArrangeBookActivity"
+            android:name=".ui.book.management.BookshelfManageActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
         <!-- 书源调试 -->
