@@ -22,6 +22,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ActivityBookSearchBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
 import io.legado.app.ui.book.info.BookInfoActivity
@@ -66,14 +67,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var groups = linkedSetOf<String>()
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
         if (it) {
-            val searchGroup = getPrefString("searchGroup")
-            if (!searchGroup.isNullOrEmpty()) {
+            val searchGroup = AppConfig.searchGroup
+            if (searchGroup.isNotEmpty()) {
                 launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         cancelButton()
                         okButton {
-                            putPrefString("searchGroup", "")
+                            AppConfig.searchGroup = ""
                             viewModel.searchKey = ""
                             viewModel.search(searchView.query.toString())
                         }
@@ -123,9 +124,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             else -> if (item.groupId == R.id.source_group) {
                 item.isChecked = true
                 if (item.title.toString() == getString(R.string.all_source)) {
-                    putPrefString("searchGroup", "")
+                    AppConfig.searchGroup = ""
                 } else {
-                    putPrefString("searchGroup", item.title.toString())
+                    AppConfig.searchGroup = item.title.toString()
                 }
                 searchView.query?.toString()?.trim()?.let {
                     searchView.setQuery(it, true)
@@ -280,7 +281,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 更新分组菜单
      */
     private fun upGroupMenu() = menu?.let { menu ->
-        val selectedGroup = getPrefString("searchGroup")
+        val selectedGroup = AppConfig.searchGroup
         menu.removeGroup(R.id.source_group)
         val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
         var hasSelectedGroup = false

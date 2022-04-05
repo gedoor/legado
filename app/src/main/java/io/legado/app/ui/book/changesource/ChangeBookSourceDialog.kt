@@ -298,7 +298,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
      */
     private fun upGroupMenu() {
         val menu: Menu = binding.toolBar.menu
-        val selectedGroup = getPrefString("searchGroup")
+        val selectedGroup = AppConfig.searchGroup
         menu.removeGroup(R.id.source_group)
         val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
         var hasSelectedGroup = false
