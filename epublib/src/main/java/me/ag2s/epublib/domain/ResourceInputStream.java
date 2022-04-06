@@ -3,7 +3,8 @@ package me.ag2s.epublib.domain;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipFile;
+
+import me.ag2s.epublib.zip.ZipFile;
 
 /**
  * A wrapper class for closing a ZipFile object when the InputStream derived

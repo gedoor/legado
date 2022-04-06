@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -20,6 +18,8 @@ import me.ag2s.epublib.domain.MediaType;
 import me.ag2s.epublib.domain.MediaTypes;
 import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.epub.EpubProcessorSupport;
+import me.ag2s.epublib.zip.ZipEntry;
+import me.ag2s.epublib.zip.ZipInputStream;
 
 /**
  * Various resource utility methods

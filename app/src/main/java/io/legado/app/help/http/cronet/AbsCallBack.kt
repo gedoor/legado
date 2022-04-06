@@ -60,11 +60,10 @@ abstract class AbsCallBack(
     }
 
 
-    //UrlResponseInfo可能为null
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
         this.mResponse = responseFromResponse(this.mResponse, info)
         //打印协议，用于调试
-        DebugLog.i(javaClass.name, info.negotiatedProtocol)
+        DebugLog.i(javaClass.simpleName, "start[${info.negotiatedProtocol}]${info.url}")
         if (eventListener != null) {
             eventListener.responseHeadersEnd(mCall, this.mResponse)
             eventListener.responseBodyStart(mCall)
@@ -108,6 +107,7 @@ abstract class AbsCallBack(
             buffer.asResponseBody(contentType)
         val newRequest = originalRequest.newBuilder().url(info.url).build()
         this.mResponse = this.mResponse.newBuilder().body(responseBody).request(newRequest).build()
+        DebugLog.i(javaClass.simpleName, "end[${info.negotiatedProtocol}]${info.url}")
 
         eventListener?.callEnd(mCall)
         if (responseCallback != null) {
