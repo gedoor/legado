@@ -71,7 +71,7 @@ class BookshelfManageActivity :
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.arrange_book, menu)
+        menuInflater.inflate(R.menu.bookshelf_manage, menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -108,7 +108,7 @@ class BookshelfManageActivity :
         // Note: need judge selection first, so add ItemTouchHelper after it.
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
         binding.selectActionBar.setMainActionText(R.string.move_to_group)
-        binding.selectActionBar.inflateMenu(R.menu.arrange_book_sel)
+        binding.selectActionBar.inflateMenu(R.menu.bookshelf_menage_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
         binding.selectActionBar.setCallBack(this)
         binding.composeView.setContent {
