@@ -270,7 +270,7 @@ class BookInfoActivity :
                 showDialogFragment(
                     ChangeCoverDialog(it.name, it.author)
                 )
-            }
+            } ?: toastOnUi("Book is null")
         }
         ivCover.setOnLongClickListener {
             viewModel.bookData.value?.getDisplayCover()?.let { path ->
@@ -281,7 +281,7 @@ class BookInfoActivity :
         tvRead.setOnClickListener {
             viewModel.bookData.value?.let {
                 readBook(it)
-            }
+            } ?: toastOnUi("Book is null")
         }
         tvShelf.setOnClickListener {
             if (viewModel.inBookshelf) {
@@ -297,12 +297,12 @@ class BookInfoActivity :
                 startActivity<BookSourceEditActivity> {
                     putExtra("sourceUrl", it.origin)
                 }
-            }
+            } ?: toastOnUi("Book is null")
         }
         tvChangeSource.setOnClickListener {
-            viewModel.bookData.value?.let {
-                showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
-            }
+            viewModel.bookData.value?.let { book ->
+                showDialogFragment(ChangeBookSourceDialog(book.name, book.author))
+            } ?: toastOnUi("Book is null")
         }
         tvTocView.setOnClickListener {
             if (!viewModel.inBookshelf) {
@@ -320,7 +320,7 @@ class BookInfoActivity :
                 showDialogFragment(
                     GroupSelectDialog(it.group)
                 )
-            }
+            } ?: toastOnUi("Book is null")
         }
         tvAuthor.setOnClickListener {
             startActivity<SearchActivity> {

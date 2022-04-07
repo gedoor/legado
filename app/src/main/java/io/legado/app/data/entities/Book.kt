@@ -287,10 +287,6 @@ data class Book(
         newBook.customTag = customTag
         newBook.canUpdate = canUpdate
         newBook.readConfig = readConfig
-        if (appDb.bookDao.has(bookUrl) == true) {
-            delete()
-            appDb.bookDao.insert(newBook)
-        }
         return newBook
     }
 

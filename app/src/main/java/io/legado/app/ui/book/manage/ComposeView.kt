@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.arrange
+package io.legado.app.ui.book.manage
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.AlertDialog

@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.arrange
+package io.legado.app.ui.book.manage
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -39,19 +39,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBookViewModel>(),
+class BookshelfManageActivity :
+    VMBaseActivity<ActivityArrangeBookBinding, BookshelfManageViewModel>(),
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
-    ArrangeBookAdapter.CallBack,
+    BookAdapter.CallBack,
     SourcePickerDialog.Callback,
     GroupSelectDialog.CallBack {
 
     override val binding by viewBinding(ActivityArrangeBookBinding::inflate)
-    override val viewModel by viewModels<ArrangeBookViewModel>()
+    override val viewModel by viewModels<BookshelfManageViewModel>()
     override val groupList: ArrayList<BookGroup> = arrayListOf()
     private val groupRequestCode = 22
     private val addToGroupRequestCode = 34
-    private val adapter by lazy { ArrangeBookAdapter(this, this) }
+    private val adapter by lazy { BookAdapter(this, this) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var groupId: Long = -1
@@ -70,7 +71,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.arrange_book, menu)
+        menuInflater.inflate(R.menu.bookshelf_manage, menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -107,7 +108,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         // Note: need judge selection first, so add ItemTouchHelper after it.
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
         binding.selectActionBar.setMainActionText(R.string.move_to_group)
-        binding.selectActionBar.inflateMenu(R.menu.arrange_book_sel)
+        binding.selectActionBar.inflateMenu(R.menu.bookshelf_menage_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
         binding.selectActionBar.setCallBack(this)
         binding.composeView.setContent {
@@ -139,6 +140,7 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             when (groupId) {
+                AppConst.rootGroupId -> appDb.bookDao.flowNoGroup()
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
@@ -146,12 +148,18 @@ class ArrangeBookActivity : VMBaseActivity<ActivityArrangeBookBinding, ArrangeBo
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { books ->
                 when (getPrefInt(PreferKey.bookshelfSort)) {
-                    1 -> books.sortedByDescending { it.latestChapterTime }
+                    1 -> books.sortedByDescending {
+                        it.latestChapterTime
+                    }
                     2 -> books.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
-                    3 -> books.sortedBy { it.order }
-                    else -> books.sortedByDescending { it.durChapterTime }
+                    3 -> books.sortedBy {
+                        it.order
+                    }
+                    else -> books.sortedByDescending {
+                        it.durChapterTime
+                    }
                 }
             }.conflate().collect { books ->
                 adapter.setItems(books)

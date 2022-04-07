@@ -184,12 +184,11 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     private suspend fun loadBookInfo(scope: CoroutineScope, source: BookSource, book: Book) {
-        val mBook = WebBook.getBookInfoAwait(scope, source, book)
+        WebBook.getBookInfoAwait(scope, source, book)
         if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
-            loadBookToc(scope, source, mBook)
+            loadBookToc(scope, source, book)
         } else {
             //从详情页里获取最新章节
-            book.latestChapterTitle = mBook.latestChapterTitle
             val searchBook = book.toSearchBook()
             searchCallback?.searchSuccess(searchBook)
         }

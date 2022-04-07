@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.arrange
+package io.legado.app.ui.book.manage
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,7 +15,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 
-class ArrangeBookAdapter(context: Context, val callBack: CallBack) :
+class BookAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<Book, ItemArrangeBookBinding>(context),
 
     ItemTouchCallback.Callback {

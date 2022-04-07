@@ -16,6 +16,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.Status
 import io.legado.app.constant.Theme
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
@@ -212,6 +213,7 @@ class AudioPlayActivity :
             launch {
                 withContext(IO) {
                     AudioPlay.book?.changeTo(book, toc)
+                    appDb.bookDao.insert(book)
                 }
                 startActivity<ReadBookActivity> {
                     putExtra("bookUrl", book.bookUrl)
