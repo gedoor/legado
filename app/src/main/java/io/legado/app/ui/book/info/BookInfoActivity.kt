@@ -54,7 +54,6 @@ class BookInfoActivity :
             viewModel.bookData.value?.let { book ->
                 launch {
                     withContext(IO) {
-                        viewModel.durChapterIndex = it.first
                         book.durChapterIndex = it.first
                         book.durChapterPos = it.second
                         appDb.bookDao.update(book)

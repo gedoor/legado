@@ -27,7 +27,6 @@ import kotlinx.coroutines.Dispatchers.IO
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
-    var durChapterIndex = 0
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
@@ -70,7 +69,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     private fun upBook(book: Book) {
         execute {
-            durChapterIndex = book.durChapterIndex
             bookData.postValue(book)
             upCoverByRule(book)
             bookSource = if (book.isLocalBook()) null else
