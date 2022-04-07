@@ -27,6 +27,8 @@ import kotlinx.coroutines.Dispatchers.IO
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
+    var name = ""
+    var author = ""
     var durChapterIndex = 0
     var inBookshelf = false
     var bookSource: BookSource? = null
@@ -34,8 +36,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun initData(intent: Intent) {
         execute {
-            val name = intent.getStringExtra("name") ?: ""
-            val author = intent.getStringExtra("author") ?: ""
+            name = intent.getStringExtra("name") ?: ""
+            author = intent.getStringExtra("author") ?: ""
             val bookUrl = intent.getStringExtra("bookUrl") ?: ""
             appDb.bookDao.getBook(name, author)?.let {
                 inBookshelf = true

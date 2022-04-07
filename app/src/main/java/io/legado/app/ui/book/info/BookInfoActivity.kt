@@ -300,9 +300,7 @@ class BookInfoActivity :
             }
         }
         tvChangeSource.setOnClickListener {
-            viewModel.bookData.value?.let {
-                showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
-            }
+            showDialogFragment(ChangeBookSourceDialog(viewModel.name, viewModel.author))
         }
         tvTocView.setOnClickListener {
             if (!viewModel.inBookshelf) {
