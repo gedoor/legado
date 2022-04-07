@@ -27,8 +27,6 @@ import kotlinx.coroutines.Dispatchers.IO
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
-    var name = ""
-    var author = ""
     var durChapterIndex = 0
     var inBookshelf = false
     var bookSource: BookSource? = null
@@ -36,22 +34,22 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun initData(intent: Intent) {
         execute {
-            name = intent.getStringExtra("name") ?: ""
-            author = intent.getStringExtra("author") ?: ""
+            val name = intent.getStringExtra("name") ?: ""
+            val author = intent.getStringExtra("author") ?: ""
             val bookUrl = intent.getStringExtra("bookUrl") ?: ""
             appDb.bookDao.getBook(name, author)?.let {
                 inBookshelf = true
-                setBook(it)
+                upBook(it)
                 return@execute
             }
             if (bookUrl.isNotBlank()) {
                 appDb.searchBookDao.getSearchBook(bookUrl)?.toBook()?.let {
-                    setBook(it)
+                    upBook(it)
                     return@execute
                 }
             }
             appDb.searchBookDao.getFirstByNameAuthor(name, author)?.toBook()?.let {
-                setBook(it)
+                upBook(it)
                 return@execute
             }
             throw NoStackTraceException("未找到书籍")
@@ -65,12 +63,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val name = intent.getStringExtra("name") ?: ""
             val author = intent.getStringExtra("author") ?: ""
             appDb.bookDao.getBook(name, author)?.let { book ->
-                setBook(book)
+                upBook(book)
             }
         }
     }
 
-    private fun setBook(book: Book) {
+    private fun upBook(book: Book) {
         execute {
             durChapterIndex = book.durChapterIndex
             bookData.postValue(book)
