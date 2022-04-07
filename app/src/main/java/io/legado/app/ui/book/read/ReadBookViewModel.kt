@@ -211,13 +211,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.resetData(book)
             ReadBook.upMsg(null)
             ReadBook.loadContent(resetPageOffset = true)
-        }.timeout(60000)
-            .onError {
-                context.toastOnUi("换源失败\n${it.localizedMessage}")
-                ReadBook.upMsg(null)
-            }.onFinally {
-                postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
-            }
+        }.onError {
+            context.toastOnUi("换源失败\n${it.localizedMessage}")
+            ReadBook.upMsg(null)
+        }.onFinally {
+            postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
+        }
     }
 
     /**
