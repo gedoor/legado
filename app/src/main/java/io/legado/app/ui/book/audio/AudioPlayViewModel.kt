@@ -78,7 +78,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         execute {
-            AudioPlay.book = AudioPlay.book!!.changeTo(book, toc)
+            AudioPlay.book?.changeTo(book, toc)
+            appDb.bookDao.insert(book)
+            AudioPlay.book = book
             AudioPlay.bookSource = source
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             AudioPlay.upDurChapter(book)

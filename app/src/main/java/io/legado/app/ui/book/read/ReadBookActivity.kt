@@ -724,6 +724,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadAloud.stop(this)
             launch {
                 ReadBook.book?.changeTo(book, toc)
+                appDb.bookDao.insert(book)
             }
             startActivity<AudioPlayActivity> {
                 putExtra("bookUrl", book.bookUrl)

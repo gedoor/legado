@@ -195,7 +195,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
             ReadBook.upMsg(context.getString(R.string.loading))
-            ReadBook.book!!.changeTo(book, toc)
+            ReadBook.book?.changeTo(book, toc)
             val nextChapter = toc.getOrElse(book.durChapterIndex) {
                 toc.first()
             }
@@ -206,6 +206,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 bookChapter = toc[book.durChapterIndex],
                 nextChapterUrl = nextChapter.url
             )
+            appDb.bookDao.insert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadBook.resetData(book)
             ReadBook.upMsg(null)

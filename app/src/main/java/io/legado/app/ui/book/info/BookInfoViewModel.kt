@@ -178,18 +178,19 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeTo(source: BookSource, newBook: Book, toc: List<BookChapter>) {
+    fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
             bookSource = source
-            bookData.value!!.changeTo(newBook, toc)
-            bookData.postValue(newBook)
-            chapterListData.postValue(toc)
+            bookData.value?.changeTo(book, toc)
             if (inBookshelf) {
+                appDb.bookDao.insert(book)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
             }
+            bookData.postValue(book)
+            chapterListData.postValue(toc)
         }.onFinally {
-            postEvent(EventBus.SOURCE_CHANGED, newBook.bookUrl)
+            postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
         }
     }
 

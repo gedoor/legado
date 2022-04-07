@@ -50,6 +50,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                     .getOrNull()?.let { newBook ->
                         val toc = WebBook.getChapterListAwait(this, source, newBook)
                         book.changeTo(newBook, toc)
+                        appDb.bookDao.insert(newBook)
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
                     }
             }
