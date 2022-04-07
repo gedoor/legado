@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
@@ -23,15 +24,22 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
     @Suppress("BlockingMethodInNonBlockingContext")
     fun dispatchIndent(uri: Uri, finally: (title: String, msg: String) -> Unit) {
         execute {
+            lateinit var fileName: String
+            lateinit var content: String
             //如果是普通的url，需要根据返回的内容判断是什么
             if (uri.scheme == "file" || uri.scheme == "content") {
-                val content = if (uri.scheme == "file") {
-                    File(uri.path.toString()).readText()
+                if (uri.scheme == "file") {
+                    val file = File(uri.path.toString())
+                    content = file.readText()
+                    fileName = file.name
                 } else {
-                    DocumentFile.fromSingleUri(context, uri)?.readText(context)
-                } ?: throw NoStackTraceException("文件不存在")
-                when {
-                    content.isJson() -> when {
+                    val file = DocumentFile.fromSingleUri(context, uri)
+                    content = file?.readText(context) ?: throw NoStackTraceException("文件不存在")
+                    fileName = file!!.name ?: ""
+                }
+                if (content.isJson()) {
+                    //暂时根据文件内容判断属于什么
+                    when {
                         content.contains("bookSourceUrl") ->
                             importBookSourceLive.postValue(content)
                         content.contains("sourceUrl") ->
@@ -46,7 +54,10 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                             importHttpTTS(content, finally)
                         else -> errorLiveData.postValue("格式不对")
                     }
-                    else -> importBookLiveData.postValue(uri)
+                } else if (fileName.matches(bookFileRegex)) {
+                    importBookLiveData.postValue(uri)
+                } else {
+                    throw NoStackTraceException("$fileName 暂未支持的本地书籍格式(TXT/UMD/EPUB)")
                 }
             } else {
                 onLineImportLive.postValue(uri)
