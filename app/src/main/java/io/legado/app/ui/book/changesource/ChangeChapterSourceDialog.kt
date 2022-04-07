@@ -16,7 +16,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -231,12 +230,12 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 item.isChecked = !item.isChecked
                 viewModel.refresh()
             }
-            R.id.menu_load_toc -> {
-                putPrefBoolean(PreferKey.changeSourceLoadToc, !item.isChecked)
+            R.id.menu_load_info -> {
+                AppConfig.changeSourceLoadInfo = !item.isChecked
                 item.isChecked = !item.isChecked
             }
-            R.id.menu_load_info -> {
-                putPrefBoolean(PreferKey.changeSourceLoadInfo, !item.isChecked)
+            R.id.menu_load_toc -> {
+                AppConfig.changeSourceLoadToc = !item.isChecked
                 item.isChecked = !item.isChecked
             }
             R.id.menu_start_stop -> viewModel.startOrStopSearch()
