@@ -1,4 +1,4 @@
-package me.ag2s.epublib.util;
+package me.ag2s.utils;
 
 import android.os.Build;
 import android.util.CloseGuard;

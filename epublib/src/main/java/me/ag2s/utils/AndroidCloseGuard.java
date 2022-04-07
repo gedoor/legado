@@ -1,4 +1,4 @@
-package me.ag2s.epublib.util;
+package me.ag2s.utils;
 
 
 import android.os.Build;
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 public interface AndroidCloseGuard {
 
 
-    public static AndroidCloseGuard getInstance() {
+    static AndroidCloseGuard getInstance() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return new Android11CloseGuard();
         } else {

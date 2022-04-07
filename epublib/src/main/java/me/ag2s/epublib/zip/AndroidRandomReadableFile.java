@@ -1,8 +1,9 @@
 package me.ag2s.epublib.zip;
 
+import static me.ag2s.utils.ThrowableUtils.rethrowAsIOException;
+
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.system.ErrnoException;
 import android.system.OsConstants;
@@ -22,12 +23,18 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
-import me.ag2s.epublib.util.AndroidCloseGuard;
+import me.ag2s.utils.AndroidCloseGuard;
 
-
+@SuppressWarnings("unused")
 public class AndroidRandomReadableFile implements DataInput, Closeable {
     private final ParcelFileDescriptor pfd;
     private FileInputStream fis;
+    private final Object lock = new Object();
+
+    /**
+     * 读取基本类型的buffer
+     */
+    private final byte[] readBuffer = new byte[8];
     private long pos = 0;
 
     private final AndroidCloseGuard guard = AndroidCloseGuard.getInstance();
@@ -35,7 +42,6 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
     public AndroidRandomReadableFile(@NonNull Context context, @NonNull Uri treeUri) throws FileNotFoundException {
         pfd = context.getContentResolver().openFileDescriptor(treeUri, "r");
         fis = new FileInputStream(pfd.getFileDescriptor());
-        //dis = new DataInputStream(fis);
         guard.open("close");
 
     }
@@ -45,18 +51,42 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
         return pfd.getFileDescriptor();
     }
 
+
+    /**
+     * Returns the unique {@link java.nio.channels.FileChannel FileChannel}
+     * object associated with this file.
+     *
+     * <p> The {@link java.nio.channels.FileChannel#position()
+     * position} of the returned channel will always be equal to
+     * this object's file-pointer offset as returned by the {@link
+     * #getFilePointer getFilePointer} method.  Changing this object's
+     * file-pointer offset, whether explicitly or by reading or writing bytes,
+     * will change the position of the channel, and vice versa.  Changing the
+     * file's length via this object will change the length seen via the file
+     * channel, and vice versa.
+     *
+     * @return the file channel associated with this file
+     * @spec JSR-51
+     * @since 1.4
+     */
     public final FileChannel getChannel() {
-        if (fis == null || pos != getPos()) {
-            fis = new FileInputStream(pfd.getFileDescriptor());
+        synchronized (lock) {
+            if (fis == null || pos != getPos()) {
+                fis = new FileInputStream(pfd.getFileDescriptor());
+            }
         }
+
         return fis.getChannel();
     }
 
     public final FileInputStream getFileInputStream() {
-        if (fis == null || this.pos != getPos()) {
-            this.pos = getPos();
-            fis = new FileInputStream(pfd.getFileDescriptor());
+        synchronized (lock) {
+            if (fis == null || this.pos != getPos()) {
+                this.pos = getPos();
+                fis = new FileInputStream(pfd.getFileDescriptor());
+            }
         }
+
         return fis;
     }
 
@@ -69,8 +99,23 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
      * @throws IOException if an I/O error occurs.
      */
     public int read() throws IOException {
-        byte[] b = new byte[1];
-        return (read(b, 0, 1) != -1) ? b[0] & 0xff : -1;
+        return (read(readBuffer, 0, 1) != -1) ? readBuffer[0] & 0xff : -1;
+    }
+
+    /**
+     * Reads a sub array as a sequence of bytes.
+     *
+     * @param b   the buffer into which the data is read.
+     * @param off the start offset of the data.
+     * @param len the number of bytes to read.
+     * @throws IOException If an I/O error has occurred.
+     */
+    private int readBytes(byte[] b, int off, int len) throws IOException {
+        try {
+            return android.system.Os.read(pfd.getFileDescriptor(), b, off, len);
+        } catch (ErrnoException e) {
+            throw rethrowAsIOException(e);
+        }
     }
 
 
@@ -86,8 +131,7 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
      * @throws IOException if an I/O error occurs.
      */
     public int read(byte[] b) throws IOException {
-        return read(b, 0, b.length);
-
+        return readBytes(b, 0, b.length);
     }
 
     /**
@@ -109,11 +153,7 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
      * @throws IOException               if an I/O error occurs.
      */
     public int read(byte[] b, int off, int len) throws IOException {
-        try {
-            return android.system.Os.read(pfd.getFileDescriptor(), b, off, len);
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+        return readBytes(b, off, len);
     }
 
 
@@ -126,8 +166,8 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
     public void seek(long pos) throws IOException {
         try {
             android.system.Os.lseek(pfd.getFileDescriptor(), pos, OsConstants.SEEK_SET);
-        } catch (Exception e) {
-            throw new IOException(e);
+        } catch (ErrnoException e) {
+            throw rethrowAsIOException(e);
         }
 
     }
@@ -135,20 +175,36 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
     public long length() throws IOException {
         try {
             return android.system.Os.lseek(pfd.getFileDescriptor(), 0, OsConstants.SEEK_END);
-        } catch (Exception e) {
-            throw new IOException(e);
+        } catch (ErrnoException e) {
+            throw rethrowAsIOException(e);
         }
 
+    }
+
+    /**
+     * Returns the current offset in this file.
+     *
+     * @return the offset from the beginning of the file, in bytes,
+     * at which the next read or write occurs.
+     * @throws IOException if an I/O error occurs.
+     */
+    public long getFilePointer() throws IOException {
+        try {
+            return android.system.Os.lseek(pfd.getFileDescriptor(), 0, OsConstants.SEEK_CUR);
+        } catch (ErrnoException e) {
+            throw rethrowAsIOException(e);
+        }
     }
 
     public long getPos() {
         try {
             return android.system.Os.lseek(pfd.getFileDescriptor(), 0, OsConstants.SEEK_CUR);
-        } catch (Exception e) {
+        } catch (ErrnoException e) {
             return -1;
         }
 
     }
+
 
     /**
      * Reads some bytes from an input
@@ -192,13 +248,7 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
      */
     @Override
     public void readFully(byte[] b) throws IOException {
-        try {
-            android.system.Os.read(pfd.getFileDescriptor(), b, 0, b.length);
-        } catch (ErrnoException e) {
-            e.printStackTrace();
-        }
-
-
+        readFully(b, 0, b.length);
     }
 
     /**
@@ -246,12 +296,13 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
      */
     @Override
     public void readFully(byte[] b, int off, int len) throws IOException {
-        try {
-            android.system.Os.read(pfd.getFileDescriptor(), b, off, len);
-            //syncInputStream();
-        } catch (ErrnoException e) {
-            throw new IOException(e);
-        }
+        int n = 0;
+        do {
+            int count = this.read(b, off + n, len - n);
+            if (count < 0)
+                throw new EOFException();
+            n += count;
+        } while (n < len);
     }
 
     /**
@@ -277,14 +328,32 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
      */
     @Override
     public int skipBytes(int n) throws IOException {
-        try {
-            byte[] b = new byte[n];
-            return android.system.Os.read(pfd.getFileDescriptor(), b, 0, b.length);
-        } catch (Exception e) {
-            return -1;
+        long pos;
+        long len;
+        long newpos;
+
+        if (n <= 0) {
+            return 0;
         }
+        pos = getFilePointer();
+        len = length();
+        newpos = pos + n;
+        if (newpos > len) {
+            newpos = len;
+        }
+        seek(newpos);
+
+        /* return the actual number of bytes skipped */
+        return (int) (newpos - pos);
+//        try {
+//            byte[] b = new byte[n];
+//            return android.system.Os.read(pfd.getFileDescriptor(), b, 0, b.length);
+//        } catch (Exception e) {
+//            return -1;
+//        }
 
     }
+
 
     /**
      * Reads one input byte and returns
@@ -357,7 +426,6 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
         return ch;
     }
 
-    private final byte[] readBuffer = new byte[8];
 
     /**
      * Reads two input bytes and returns
@@ -432,7 +500,7 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
     @Override
     public char readChar() throws IOException {
         readFully(readBuffer, 0, 2);
-        return (char) ByteBuffer.wrap(readBuffer).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get();
+        return ByteBuffer.wrap(readBuffer).order(ByteOrder.BIG_ENDIAN).asCharBuffer().get();
     }
 
     /**
@@ -543,73 +611,60 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
         return Double.longBitsToDouble(readLong());
     }
 
-    private char[] lineBuffer;
 
     /**
-     * See the general contract of the <code>readLine</code>
-     * method of <code>DataInput</code>.
-     * <p>
-     * Bytes
-     * for this operation are read from the contained
-     * input stream.
+     * Reads the next line of text from this file.  This method successively
+     * reads bytes from the file, starting at the current file pointer,
+     * until it reaches a line terminator or the end
+     * of the file.  Each byte is converted into a character by taking the
+     * byte's value for the lower eight bits of the character and setting the
+     * high eight bits of the character to zero.  This method does not,
+     * therefore, support the full Unicode character set.
      *
-     * @return the next line of text from this input stream.
+     * <p> A line of text is terminated by a carriage-return character
+     * ({@code '\u005Cr'}), a newline character ({@code '\u005Cn'}), a
+     * carriage-return character immediately followed by a newline character,
+     * or the end of the file.  Line-terminating characters are discarded and
+     * are not included as part of the string returned.
+     *
+     * <p> This method blocks until a newline character is read, a carriage
+     * return and the byte following it are read (to see if it is a newline),
+     * the end of the file is reached, or an exception is thrown.
+     *
+     * @return the next line of text from this file, or null if end
+     * of file is encountered before even one byte is read.
      * @throws IOException if an I/O error occurs.
-     * @see java.io.BufferedReader#readLine()
-     * @see java.io.FilterInputStream##in
-     * @deprecated This method does not properly convert bytes to characters.
-     * As of JDK&nbsp;1.1, the preferred way to read lines of text is via the
-     * <code>BufferedReader.readLine()</code> method.  Programs that use the
-     * <code>DataInputStream</code> class to read lines can be converted to use
-     * the <code>BufferedReader</code> class by replacing code of the form:
-     * <blockquote><pre>
-     *     DataInputStream d =&nbsp;new&nbsp;DataInputStream(in);
-     * </pre></blockquote>
-     * with:
-     * <blockquote><pre>
-     *     BufferedReader d
-     *          =&nbsp;new&nbsp;BufferedReader(new&nbsp;InputStreamReader(in));
-     * </pre></blockquote>
      */
-    @Deprecated
+
     @Override
     public String readLine() throws IOException {
-        char[] buf = lineBuffer;
+        StringBuilder input = new StringBuilder();
+        int c = -1;
+        boolean eol = false;
 
-        if (buf == null) {
-            buf = lineBuffer = new char[128];
-        }
-
-        int room = buf.length;
-        int offset = 0;
-        int c;
-
-        loop:
-        while (true) {
-            switch (c = this.read()) {
+        while (!eol) {
+            switch (c = read()) {
                 case -1:
                 case '\n':
-                    break loop;
-
+                    eol = true;
+                    break;
                 case '\r':
-                    int c2 = this.read();
-                    break loop;
-
-                default:
-                    if (--room < 0) {
-                        buf = new char[offset + 128];
-                        room = buf.length - offset - 1;
-                        System.arraycopy(lineBuffer, 0, buf, 0, offset);
-                        lineBuffer = buf;
+                    eol = true;
+                    long cur = getFilePointer();
+                    if ((read()) != '\n') {
+                        seek(cur);
                     }
-                    buf[offset++] = (char) c;
+                    break;
+                default:
+                    input.append((char) c);
                     break;
             }
         }
-        if ((c == -1) && (offset == 0)) {
+
+        if ((c == -1) && (input.length() == 0)) {
             return null;
         }
-        return String.copyValueOf(buf, 0, offset);
+        return input.toString();
     }
 
     /**
@@ -641,9 +696,6 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
 
         guard.close();
 
-        if (Build.VERSION.SDK_INT >= 28) {
-            //Reference.reachabilityFence(this);
-        }
         try {
             if (fis != null) {
                 fis.close();
@@ -668,6 +720,7 @@ public class AndroidRandomReadableFile implements DataInput, Closeable {
             // Note that guard could be null if the constructor threw.
 
             guard.warnIfOpen();
+
 
             close();
 

@@ -54,6 +54,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     /**
      * 判断Cronet是否安装完成
      */
+    @Synchronized
     fun install(): Boolean {
         if (cacheInstall) {
             return true
