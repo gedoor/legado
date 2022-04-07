@@ -35,29 +35,33 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                 } else {
                     val file = DocumentFile.fromSingleUri(context, uri)
                     content = file?.readText(context) ?: throw NoStackTraceException("文件不存在")
-                    fileName = file!!.name ?: ""
+                    fileName = file.name ?: ""
                 }
-                if (content.isJson()) {
-                    //暂时根据文件内容判断属于什么
-                    when {
-                        content.contains("bookSourceUrl") ->
-                            importBookSourceLive.postValue(content)
-                        content.contains("sourceUrl") ->
-                            importRssSourceLive.postValue(content)
-                        content.contains("pattern") ->
-                            importReplaceRuleLive.postValue(content)
-                        content.contains("themeName") ->
-                            importTheme(content, finally)
-                        content.contains("name") && content.contains("rule") ->
-                            importTextTocRule(content, finally)
-                        content.contains("name") && content.contains("url") ->
-                            importHttpTTS(content, finally)
-                        else -> errorLiveData.postValue("格式不对")
+                when {
+                    content.isJson() -> {
+                        //暂时根据文件内容判断属于什么
+                        when {
+                            content.contains("bookSourceUrl") ->
+                                importBookSourceLive.postValue(content)
+                            content.contains("sourceUrl") ->
+                                importRssSourceLive.postValue(content)
+                            content.contains("pattern") ->
+                                importReplaceRuleLive.postValue(content)
+                            content.contains("themeName") ->
+                                importTheme(content, finally)
+                            content.contains("name") && content.contains("rule") ->
+                                importTextTocRule(content, finally)
+                            content.contains("name") && content.contains("url") ->
+                                importHttpTTS(content, finally)
+                            else -> errorLiveData.postValue("格式不对")
+                        }
                     }
-                } else if (fileName.matches(bookFileRegex)) {
-                    importBookLiveData.postValue(uri)
-                } else {
-                    throw NoStackTraceException("$fileName 暂未支持的本地书籍格式(TXT/UMD/EPUB)")
+                    fileName.matches(bookFileRegex) -> {
+                        importBookLiveData.postValue(uri)
+                    }
+                    else -> {
+                        throw NoStackTraceException("$fileName 暂未支持的本地书籍格式(TXT/UMD/EPUB)")
+                    }
                 }
             } else {
                 onLineImportLive.postValue(uri)
