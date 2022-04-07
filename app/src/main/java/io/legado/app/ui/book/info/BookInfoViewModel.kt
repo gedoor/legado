@@ -183,6 +183,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value!!.changeTo(newBook, toc)
             bookData.postValue(newBook)
             chapterListData.postValue(toc)
+            if (inBookshelf) {
+                appDb.bookChapterDao.insert(*toc.toTypedArray())
+            }
         }.onFinally {
             postEvent(EventBus.SOURCE_CHANGED, newBook.bookUrl)
         }
