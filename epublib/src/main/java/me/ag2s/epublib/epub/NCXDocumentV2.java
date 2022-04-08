@@ -14,6 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.Author;
@@ -25,8 +27,6 @@ import me.ag2s.epublib.domain.TOCReference;
 import me.ag2s.epublib.domain.TableOfContents;
 import me.ag2s.epublib.util.ResourceUtil;
 import me.ag2s.epublib.util.StringUtil;
-import me.ag2s.epublib.zip.ZipEntry;
-import me.ag2s.epublib.zip.ZipOutputStream;
 
 /**
  * Writes the ncx document as defined by namespace http://www.daisy.org/z3986/2005/ncx/
