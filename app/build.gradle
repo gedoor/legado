@@ -136,8 +136,10 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0')
     implementation('androidx.multidex:multidex:2.0.1')
     //kotlin
+    //noinspection GradleDependency
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     //Kotlin反射
+    //noinspection GradleDependency
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
     //协程
     def coroutines_version = '1.6.1-native-mt'
