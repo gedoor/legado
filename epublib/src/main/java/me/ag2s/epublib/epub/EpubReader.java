@@ -2,6 +2,8 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -9,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.EpubBook;
@@ -18,8 +22,6 @@ import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.domain.Resources;
 import me.ag2s.epublib.util.ResourceUtil;
 import me.ag2s.epublib.util.StringUtil;
-import me.ag2s.epublib.zip.ZipFile;
-import me.ag2s.epublib.zip.ZipInputStream;
 
 /**
  * Reads an epub file.
@@ -65,13 +67,13 @@ public class EpubReader {
      * @return this Book without loading all resources into memory.
      * @throws IOException IOException
      */
-    public EpubBook readEpubLazy(ZipFile zipFile, String encoding)
+    public EpubBook readEpubLazy(@NonNull ZipFile zipFile, @NonNull String encoding)
             throws IOException {
         return readEpubLazy(zipFile, encoding,
                 Arrays.asList(MediaTypes.mediaTypes));
     }
 
-    public EpubBook readEpub(ZipInputStream in, String encoding) throws IOException {
+    public EpubBook readEpub(@NonNull ZipInputStream in, @NonNull String encoding) throws IOException {
         return readEpub(ResourcesLoader.loadResources(in, encoding));
     }
 
@@ -88,8 +90,8 @@ public class EpubReader {
      * @return this Book without loading all resources into memory.
      * @throws IOException IOException
      */
-    public EpubBook readEpubLazy(ZipFile zipFile, String encoding,
-                                 List<MediaType> lazyLoadedTypes) throws IOException {
+    public EpubBook readEpubLazy(@NonNull ZipFile zipFile, @NonNull String encoding,
+                                 @NonNull List<MediaType> lazyLoadedTypes) throws IOException {
         Resources resources = ResourcesLoader
                 .loadResources(zipFile, encoding, lazyLoadedTypes);
         return readEpub(resources);
@@ -113,7 +115,6 @@ public class EpubReader {
         result = postProcessBook(result);
         return result;
     }
-
 
     private EpubBook postProcessBook(EpubBook book) {
         if (bookProcessor != null) {

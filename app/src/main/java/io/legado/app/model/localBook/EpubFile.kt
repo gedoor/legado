@@ -11,7 +11,6 @@ import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
-import me.ag2s.epublib.zip.ZipFile
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -22,6 +21,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
+import java.util.zip.ZipFile
 
 class EpubFile(var book: Book) {
 
@@ -105,11 +105,12 @@ class EpubFile(var book: Book) {
         try {
             val uri = Uri.parse(book.bookUrl)
             return if (uri.isContentScheme()) {
-                //通过懒加载读取epub
-                EpubReader().readEpubLazy(ZipFile(appCtx, uri), "utf-8")
+                //高版本的手机内存一般足够大，直接加载到内存中最快
+                EpubReader().readEpub(LocalBook.getBookInputStream(book), "utf-8")
             } else {
-                val bis = LocalBook.getBookInputStream(book)
-                EpubReader().readEpub(bis, "utf-8")
+                //低版本的使用懒加载
+                EpubReader().readEpubLazy(ZipFile(uri.path), "utf-8")
+
             }
 
 
