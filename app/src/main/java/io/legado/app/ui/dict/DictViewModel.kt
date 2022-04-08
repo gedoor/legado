@@ -15,9 +15,9 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
     var dictHtmlData: MutableLiveData<String> = MutableLiveData()
 
     fun dict(word: String) {
-        if(isChinese(word)){
+        if (isChinese(word)) {
             baiduDict(word)
-        }else{
+        } else {
             haiciDict(word)
         }
 

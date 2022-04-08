@@ -34,13 +34,14 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
     private var cpuAbi: String? = null
     private var md5: String
     var download = false
+
     @Volatile
     private var cacheInstall = false
 
     init {
         soUrl = ("https://storage.googleapis.com/chromium-cronet/android/"
-            + soVersion + "/Release/cronet/libs/"
-            + getCpuAbi(appCtx) + "/" + soName)
+                + soVersion + "/Release/cronet/libs/"
+                + getCpuAbi(appCtx) + "/" + soName)
         md5 = getMd5(appCtx)
         val dir = appCtx.getDir("cronet", Context.MODE_PRIVATE)
         soFile = File(dir.toString() + "/" + getCpuAbi(appCtx), soName)

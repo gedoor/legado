@@ -205,7 +205,7 @@ object AppWebDav {
             getBookProgress(book)?.let { bookProgress ->
                 if (bookProgress.durChapterIndex > book.durChapterIndex ||
                     (bookProgress.durChapterIndex == book.durChapterIndex &&
-                        bookProgress.durChapterPos > book.durChapterPos)
+                            bookProgress.durChapterPos > book.durChapterPos)
                 ) {
                     book.durChapterIndex = bookProgress.durChapterIndex
                     book.durChapterPos = bookProgress.durChapterPos

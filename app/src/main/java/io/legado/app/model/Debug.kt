@@ -55,7 +55,7 @@ object Debug {
             if (showTime && debugTimeMap[sourceUrl] != null) {
                 val time =
                     debugTimeFormat.format(Date(System.currentTimeMillis() - debugTimeMap[sourceUrl]!!))
-                printMsg = printMsg.replace(AppPattern.debugMessageSymbolRegex,"")
+                printMsg = printMsg.replace(AppPattern.debugMessageSymbolRegex, "")
 
                 debugMessageMap[sourceUrl] = "$time $printMsg"
             }
@@ -93,7 +93,8 @@ object Debug {
     fun updateFinalMessage(sourceUrl: String, state: String) {
         if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
             val spendingTime = System.currentTimeMillis() - debugTimeMap[sourceUrl]!!
-            debugTimeMap[sourceUrl] = if (state == "校验成功") spendingTime else CheckSource.timeout + spendingTime
+            debugTimeMap[sourceUrl] =
+                if (state == "校验成功") spendingTime else CheckSource.timeout + spendingTime
             val printTime = debugTimeFormat.format(Date(spendingTime))
             debugMessageMap[sourceUrl] = "$printTime $state"
         }

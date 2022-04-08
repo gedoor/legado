@@ -162,8 +162,8 @@ fun Context.restart() {
     intent?.let {
         intent.addFlags(
             Intent.FLAG_ACTIVITY_NEW_TASK
-                or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    or Intent.FLAG_ACTIVITY_CLEAR_TOP
         )
         startActivity(intent)
         //杀掉以前进程
@@ -327,6 +327,7 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
     }
 }
 
+@Suppress("DEPRECATION")
 val Context.isWifiConnect: Boolean
     get() {
         val info = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)

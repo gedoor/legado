@@ -278,7 +278,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                                 when {
                                     //正文模板
                                     file.name.equals("chapter.html", true)
-                                        || file.name.equals("chapter.xhtml", true) -> {
+                                            || file.name.equals("chapter.xhtml", true) -> {
                                         contentModel = file.readText(context)
                                     }
                                     //封面等其他模板

@@ -181,7 +181,7 @@ class CheckSourceService : BaseService() {
             if (finalCheckMessage.isNotBlank()) throw NoStackTraceException(finalCheckMessage)
         }.timeout(CheckSource.timeout)
             .onError(searchCoroutine) {
-                when(it) {
+                when (it) {
                     is TimeoutCancellationException -> source.addGroup("校验超时")
                     is ScriptException, is WrappedException -> source.addGroup("js失效")
                     !is NoStackTraceException -> source.addGroup("网站失效")

@@ -11,6 +11,7 @@ import splitties.init.appCtx
 
 object CheckSource {
     var keyword = "我的"
+
     //校验设置
     var timeout = CacheManager.getLong("checkSourceTimeout") ?: 180000L
     var checkSearch = CacheManager.get("checkSearch")?.toBoolean() ?: true
@@ -53,6 +54,10 @@ object CheckSource {
         if (checkInfo) checkItem = "$checkItem ${appCtx.getString(R.string.source_tab_info)}"
         if (checkCategory) checkItem = "$checkItem ${appCtx.getString(R.string.chapter_list)}"
         if (checkContent) checkItem = "$checkItem ${appCtx.getString(R.string.main_body)}"
-        return appCtx.getString(R.string.check_source_config_summary, (timeout / 1000).toString(), checkItem)
+        return appCtx.getString(
+            R.string.check_source_config_summary,
+            (timeout / 1000).toString(),
+            checkItem
+        )
     }
 }

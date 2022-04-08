@@ -278,7 +278,7 @@ object FileUtils {
             //返回当前目录所有以某些扩展名结尾的文件
             val extension = getExtension(name)
             allowExtensions?.contentDeepToString()?.contains(extension) == true
-                || allowExtensions == null
+                    || allowExtensions == null
         }
     }
 

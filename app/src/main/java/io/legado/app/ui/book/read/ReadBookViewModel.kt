@@ -178,7 +178,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }.onSuccess { progress ->
             if (progress.durChapterIndex < book.durChapterIndex ||
                 (progress.durChapterIndex == book.durChapterIndex
-                    && progress.durChapterPos < book.durChapterPos)
+                        && progress.durChapterPos < book.durChapterPos)
             ) {
                 alertSync?.invoke(progress)
             } else {

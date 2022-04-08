@@ -109,7 +109,10 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @param saveTime 保存的时间，单位：秒
      */
     fun put(key: String, value: String, saveTime: Int) {
-        if (saveTime == 0) put(key, value) else put(key, Utils.newStringWithDateInfo(saveTime, value))
+        if (saveTime == 0) put(key, value) else put(
+            key,
+            Utils.newStringWithDateInfo(saveTime, value)
+        )
     }
 
     /**
@@ -245,7 +248,8 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      * @param saveTime 保存的时间，单位：秒
      */
     fun put(key: String, value: ByteArray, saveTime: Int) {
-        if (saveTime == 0) put(key, value) else put(key, Utils.newByteArrayWithDateInfo(saveTime, value))
+        if (saveTime == 0) put(key, value)
+        else put(key, Utils.newByteArrayWithDateInfo(saveTime, value))
     }
 
     /**

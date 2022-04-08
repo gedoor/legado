@@ -48,7 +48,7 @@ class BookmarkAdapter(context: Context, val callback: Callback) :
         val lastItem = getItem(position - 1)
         val curItem = getItem(position)
         return !(lastItem?.bookName == curItem?.bookName
-            && lastItem?.bookAuthor == curItem?.bookAuthor)
+                && lastItem?.bookAuthor == curItem?.bookAuthor)
     }
 
     interface Callback {

@@ -44,12 +44,15 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
                     //先搜索没有启用净化的正文
                     withContext(Dispatchers.IO) {
                         chapter.title = when (AppConfig.chineseConverterType) {
-                            1    -> ChineseUtils.t2s(chapter.title)
-                            2    -> ChineseUtils.s2t(chapter.title)
+                            1 -> ChineseUtils.t2s(chapter.title)
+                            2 -> ChineseUtils.s2t(chapter.title)
                             else -> chapter.title
                         }
                         mContent = contentProcessor!!.getContent(
-                            book, chapter, chapterContent, chineseConvert = false, reSegment = false, useReplace = false
+                            book, chapter, chapterContent,
+                            chineseConvert = false,
+                            reSegment = false,
+                            useReplace = false
                         ).joinToString("")
                     }
                     val positions = searchPosition(query)
@@ -90,7 +93,11 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         return position
     }
 
-    private fun getResultAndQueryIndex(content: String, queryIndexInContent: Int, query: String): Pair<Int, String> {
+    private fun getResultAndQueryIndex(
+        content: String,
+        queryIndexInContent: Int,
+        query: String
+    ): Pair<Int, String> {
         // 左右移动20个字符，构建关键词周边文字，在搜索结果里显示
         // todo: 判断段落，只在关键词所在段落内分割
         // todo: 利用标点符号分割完整的句

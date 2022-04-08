@@ -622,8 +622,8 @@ object ChapterProvider {
      */
     fun upLayout() {
         doublePage = (viewWidth > viewHeight || appCtx.isPad)
-            && ReadBook.pageAnim() != 3
-            && AppConfig.doublePageHorizontal
+                && ReadBook.pageAnim() != 3
+                && AppConfig.doublePageHorizontal
         if (viewWidth > 0 && viewHeight > 0) {
             paddingLeft = ReadBookConfig.paddingLeft.dpToPx()
             paddingTop = ReadBookConfig.paddingTop.dpToPx()

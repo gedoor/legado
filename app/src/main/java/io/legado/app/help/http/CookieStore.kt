@@ -34,7 +34,7 @@ object CookieStore : CookieManager {
         val cookieBean = appDb.cookieDao.get(NetworkUtils.getSubDomain(url))
         return cookieBean?.cookie ?: ""
     }
-    
+
     fun getKey(url: String, key: String): String {
         val cookie = getCookie(url)
         val cookieMap = cookieToMap(cookie)

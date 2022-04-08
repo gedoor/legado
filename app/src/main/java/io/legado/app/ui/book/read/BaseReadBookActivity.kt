@@ -45,7 +45,7 @@ abstract class BaseReadBookActivity :
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
     override val viewModel by viewModels<ReadBookViewModel>()
     var bottomDialog = 0
-    private val selectBookFolderResult = registerForActivityResult(HandleFileContract()){
+    private val selectBookFolderResult = registerForActivityResult(HandleFileContract()) {
         it.uri?.let {
             ReadBook.book?.let { book ->
                 viewModel.loadChapterList(book)

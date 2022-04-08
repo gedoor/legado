@@ -91,7 +91,7 @@ object ReadBook : CoroutineScope by MainScope() {
     fun setProgress(progress: BookProgress) {
         if (progress.durChapterIndex < chapterSize &&
             (durChapterIndex != progress.durChapterIndex
-                || durChapterPos != progress.durChapterPos)
+                    || durChapterPos != progress.durChapterPos)
         ) {
             durChapterIndex = progress.durChapterIndex
             durChapterPos = progress.durChapterPos

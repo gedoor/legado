@@ -145,7 +145,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 drawImage(canvas, it, lineTop, lineBottom, isImageLine)
             } else {
                 textPaint.color = textColor
-                if(it.isSearchResult) {
+                if (it.isSearchResult) {
                     textPaint.color = context.accentColor
                 }
                 canvas.drawText(it.charData, it.start, lineBase, textPaint)

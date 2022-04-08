@@ -63,18 +63,18 @@ data class RssSource(
 
     fun equal(source: RssSource): Boolean {
         return equal(sourceUrl, source.sourceUrl)
-            && equal(sourceIcon, source.sourceIcon)
-            && enabled == source.enabled
-            && equal(sourceGroup, source.sourceGroup)
-            && equal(ruleArticles, source.ruleArticles)
-            && equal(ruleNextPage, source.ruleNextPage)
-            && equal(ruleTitle, source.ruleTitle)
-            && equal(rulePubDate, source.rulePubDate)
-            && equal(ruleDescription, source.ruleDescription)
-            && equal(ruleLink, source.ruleLink)
-            && equal(ruleContent, source.ruleContent)
-            && enableJs == source.enableJs
-            && loadWithBaseUrl == source.loadWithBaseUrl
+                && equal(sourceIcon, source.sourceIcon)
+                && enabled == source.enabled
+                && equal(sourceGroup, source.sourceGroup)
+                && equal(ruleArticles, source.ruleArticles)
+                && equal(ruleNextPage, source.ruleNextPage)
+                && equal(ruleTitle, source.ruleTitle)
+                && equal(rulePubDate, source.rulePubDate)
+                && equal(ruleDescription, source.ruleDescription)
+                && equal(ruleLink, source.ruleLink)
+                && equal(ruleContent, source.ruleContent)
+                && enableJs == source.enableJs
+                && loadWithBaseUrl == source.loadWithBaseUrl
     }
 
     private fun equal(a: String?, b: String?): Boolean {

@@ -229,7 +229,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     private fun md5SpeakFileName(url: String, ttsConfig: String, content: String): String {
         return MD5Utils.md5Encode16(textChapter?.title ?: "") + "_" +
-            MD5Utils.md5Encode16("$url-|-$ttsConfig-|-$content")
+                MD5Utils.md5Encode16("$url-|-$ttsConfig-|-$content")
     }
 
     private fun createSilentSound(fileName: String) {

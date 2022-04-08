@@ -600,9 +600,9 @@ class AnalyzeRule(
 
         private fun isRule(ruleStr: String): Boolean {
             return ruleStr.startsWith('@') //js首个字符不可能是@，除非是装饰器，所以@开头规定为规则
-                || ruleStr.startsWith("$.")
-                || ruleStr.startsWith("$[")
-                || ruleStr.startsWith("//")
+                    || ruleStr.startsWith("$.")
+                    || ruleStr.startsWith("$[")
+                    || ruleStr.startsWith("//")
         }
     }
 

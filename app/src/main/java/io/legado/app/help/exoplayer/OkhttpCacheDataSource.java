@@ -173,7 +173,7 @@ public final class OkhttpCacheDataSource implements DataSource {
             return this;
         }
 
-        public Factory setDefaultRequestProperties(Map<String, String> defaultRequestProperties){
+        public Factory setDefaultRequestProperties(Map<String, String> defaultRequestProperties) {
             if (this.upstreamDataSourceFactory != null) {
                 this.upstreamDataSourceFactory.setDefaultRequestProperties(defaultRequestProperties);
             }

@@ -23,9 +23,9 @@ data class SearchResult(
             val rightString =
                 resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
             val html = leftString.colorTextForHtml(textColor) +
-                query.colorTextForHtml(accentColor) +
-                rightString.colorTextForHtml(textColor) +
-                chapterTitle.colorTextForHtml(accentColor)
+                    query.colorTextForHtml(accentColor) +
+                    rightString.colorTextForHtml(textColor) +
+                    chapterTitle.colorTextForHtml(accentColor)
             HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
             HtmlCompat.fromHtml(
@@ -35,6 +35,7 @@ data class SearchResult(
         }
     }
 
-    private fun String.colorTextForHtml(textColor: String) = "<font color=#${textColor}>$this</font>"
+    private fun String.colorTextForHtml(textColor: String) =
+        "<font color=#${textColor}>$this</font>"
 
 }

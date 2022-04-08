@@ -43,12 +43,12 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 newItem: BookChapter
             ): Boolean {
                 return oldItem.bookUrl == newItem.bookUrl
-                    && oldItem.url == newItem.url
-                    && oldItem.isVip == newItem.isVip
-                    && oldItem.isPay == newItem.isPay
-                    && oldItem.title == newItem.title
-                    && oldItem.tag == newItem.tag
-                    && oldItem.isVolume == newItem.isVolume
+                        && oldItem.url == newItem.url
+                        && oldItem.isVip == newItem.isVip
+                        && oldItem.isPay == newItem.isPay
+                        && oldItem.title == newItem.title
+                        && oldItem.tag == newItem.tag
+                        && oldItem.isVolume == newItem.isVolume
             }
 
         }

@@ -52,10 +52,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
             override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
                 return oldItem.bookSourceName == newItem.bookSourceName
-                    && oldItem.bookSourceGroup == newItem.bookSourceGroup
-                    && oldItem.enabled == newItem.enabled
-                    && oldItem.enabledExplore == newItem.enabledExplore
-                    && oldItem.exploreUrl == newItem.exploreUrl
+                        && oldItem.bookSourceGroup == newItem.bookSourceGroup
+                        && oldItem.enabled == newItem.enabled
+                        && oldItem.enabledExplore == newItem.enabledExplore
+                        && oldItem.exploreUrl == newItem.exploreUrl
             }
 
             override fun getChangePayload(oldItem: BookSource, newItem: BookSource): Any? {
