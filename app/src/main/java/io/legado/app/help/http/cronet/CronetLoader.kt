@@ -55,9 +55,12 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
      * 判断Cronet是否安装完成
      */
     fun install(): Boolean {
-        if (cacheInstall) {
-            return true
+        synchronized(this) {
+            if (cacheInstall) {
+                return true
+            }
         }
+
         if (AppConfig.isGooglePlay) {
             return false
         }

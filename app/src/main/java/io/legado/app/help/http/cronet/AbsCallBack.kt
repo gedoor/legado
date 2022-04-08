@@ -2,6 +2,7 @@ package io.legado.app.help.http.cronet
 
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
+import io.legado.app.utils.rethrowAsIOException
 import okhttp3.*
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -123,7 +124,7 @@ abstract class AbsCallBack(
     //UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
         DebugLog.i(javaClass.name, error.message.toString())
-        mException = IOException(error.message, error)
+        mException = error.rethrowAsIOException()
         this.eventListener?.callFailed(mCall, error)
         responseCallback?.onFailure(mCall, error)
     }
