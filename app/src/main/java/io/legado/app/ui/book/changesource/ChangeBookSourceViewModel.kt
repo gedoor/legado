@@ -195,7 +195,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     private suspend fun loadBookToc(scope: CoroutineScope, source: BookSource, book: Book) {
-        val chapters = WebBook.getChapterListAwait(scope, source, book)
+        val chapters = WebBook.getChapterListAwait(scope, source, book).getOrThrow()
         tocMap[book.bookUrl] = chapters
         book.latestChapterTitle = chapters.last().title
         val searchBook: SearchBook = book.toSearchBook()
@@ -300,7 +300,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 if (book.tocUrl.isEmpty()) {
                     WebBook.getBookInfoAwait(this, source, book)
                 }
-                val toc = WebBook.getChapterListAwait(this, source, book)
+                val toc = WebBook.getChapterListAwait(this, source, book).getOrThrow()
                 Pair(toc, source)
             }
         }

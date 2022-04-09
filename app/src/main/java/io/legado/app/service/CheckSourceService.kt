@@ -213,7 +213,7 @@ class CheckSourceService : BaseService() {
                 }
                 //校验目录
                 if (CheckSource.checkCategory) {
-                    val toc = WebBook.getChapterListAwait(this, source, mBook)
+                    val toc = WebBook.getChapterListAwait(this, source, mBook).getOrThrow()
                     val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
                     //校验正文
                     if (CheckSource.checkContent) {

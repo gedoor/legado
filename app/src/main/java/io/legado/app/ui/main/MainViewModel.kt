@@ -118,7 +118,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (book.tocUrl.isBlank()) {
                 WebBook.getBookInfoAwait(this, source, book)
             }
-            val toc = WebBook.getChapterListAwait(this, source, book)
+            val toc = WebBook.getChapterListAwait(this, source, book).getOrThrow()
             appDb.bookDao.update(book)
             appDb.bookChapterDao.delByBook(book.bookUrl)
             appDb.bookChapterDao.insert(*toc.toTypedArray())

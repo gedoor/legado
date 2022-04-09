@@ -8,6 +8,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.utils.toastOnUi
 
 
 class BookshelfManageViewModel(application: Application) : BaseViewModel(application) {
@@ -47,11 +48,17 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                 if (book.isLocalBook()) return@forEachIndexed
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
                 WebBook.preciseSearchAwait(this, source, book.name, book.author)
-                    .getOrNull()?.let { newBook ->
-                        val toc = WebBook.getChapterListAwait(this, source, newBook)
-                        book.changeTo(newBook, toc)
-                        appDb.bookDao.insert(newBook)
-                        appDb.bookChapterDao.insert(*toc.toTypedArray())
+                    .onFailure {
+                        context.toastOnUi("获取书籍出错\n${it.localizedMessage}")
+                    }.getOrNull()?.let { newBook ->
+                        WebBook.getChapterListAwait(this, source, newBook)
+                            .onFailure {
+                                context.toastOnUi("获取目录出错\n${it.localizedMessage}")
+                            }.getOrNull()?.let { toc ->
+                                book.changeTo(newBook, toc)
+                                appDb.bookDao.insert(newBook)
+                                appDb.bookChapterDao.insert(*toc.toTypedArray())
+                            }
                     }
             }
         }.onFinally {

@@ -231,7 +231,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     if (book.tocUrl.isEmpty()) {
                         WebBook.getBookInfoAwait(this, source, book)
                     }
-                    val toc = WebBook.getChapterListAwait(this, source, book)
+                    val toc = WebBook.getChapterListAwait(this, source, book).getOrThrow()
                     changeTo(source, book, toc)
                     return@execute
                 }

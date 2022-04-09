@@ -124,7 +124,7 @@ object BookController {
                     if (book.tocUrl.isBlank()) {
                         WebBook.getBookInfoAwait(this, bookSource, book)
                     }
-                    WebBook.getChapterListAwait(this, bookSource, book)
+                    WebBook.getChapterListAwait(this, bookSource, book).getOrThrow()
                 }
                 appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())

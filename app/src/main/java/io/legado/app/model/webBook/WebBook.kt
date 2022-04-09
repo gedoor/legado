@@ -188,7 +188,7 @@ object WebBook {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<BookChapter>> {
         return Coroutine.async(scope, context) {
-            getChapterListAwait(scope, bookSource, book)
+            getChapterListAwait(scope, bookSource, book).getOrThrow()
         }
     }
 
@@ -196,40 +196,42 @@ object WebBook {
         scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
-    ): List<BookChapter> {
+    ): Result<List<BookChapter>> {
         book.type = bookSource.bookSourceType
-        return if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
-            BookChapterList.analyzeChapterList(
-                scope = scope,
-                bookSource = bookSource,
-                book = book,
-                baseUrl = book.tocUrl,
-                redirectUrl = book.tocUrl,
-                body = book.tocHtml
-            )
-        } else {
-            val analyzeUrl = AnalyzeUrl(
-                mUrl = book.tocUrl,
-                baseUrl = book.bookUrl,
-                source = bookSource,
-                ruleData = book,
-                headerMapF = bookSource.getHeaderMap(true)
-            )
-            var res = analyzeUrl.getStrResponseAwait()
-            //检测书源是否已登录
-            bookSource.loginCheckJs?.let { checkJs ->
-                if (checkJs.isNotBlank()) {
-                    res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
+        return kotlin.runCatching {
+            if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
+                BookChapterList.analyzeChapterList(
+                    scope = scope,
+                    bookSource = bookSource,
+                    book = book,
+                    baseUrl = book.tocUrl,
+                    redirectUrl = book.tocUrl,
+                    body = book.tocHtml
+                )
+            } else {
+                val analyzeUrl = AnalyzeUrl(
+                    mUrl = book.tocUrl,
+                    baseUrl = book.bookUrl,
+                    source = bookSource,
+                    ruleData = book,
+                    headerMapF = bookSource.getHeaderMap(true)
+                )
+                var res = analyzeUrl.getStrResponseAwait()
+                //检测书源是否已登录
+                bookSource.loginCheckJs?.let { checkJs ->
+                    if (checkJs.isNotBlank()) {
+                        res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
+                    }
                 }
+                BookChapterList.analyzeChapterList(
+                    scope = scope,
+                    bookSource = bookSource,
+                    book = book,
+                    baseUrl = book.tocUrl,
+                    redirectUrl = res.url,
+                    body = res.body
+                )
             }
-            BookChapterList.analyzeChapterList(
-                scope = scope,
-                bookSource = bookSource,
-                book = book,
-                baseUrl = book.tocUrl,
-                redirectUrl = res.url,
-                body = res.body
-            )
         }
     }
 
