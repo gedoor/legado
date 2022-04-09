@@ -9,6 +9,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.withTimeout
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
@@ -67,7 +68,7 @@ class ContentProcessor private constructor(
         return contentReplaceRules
     }
 
-    fun getContent(
+    suspend fun getContent(
         book: Book,
         chapter: BookChapter,
         content: String,
@@ -128,18 +129,20 @@ class ContentProcessor private constructor(
         return contents
     }
 
-    fun replaceContent(content: String): String {
+    suspend fun replaceContent(content: String): String {
         var mContent = content
         getContentReplaceRules().forEach { item ->
             if (item.pattern.isNotEmpty()) {
-                try {
-                    mContent = if (item.isRegex) {
-                        mContent.replace(item.pattern.toRegex(), item.replacement)
-                    } else {
-                        mContent.replace(item.pattern, item.replacement)
+                kotlin.runCatching {
+                    withTimeout(1000) {
+                        mContent = if (item.isRegex) {
+                            mContent.replace(item.pattern.toRegex(), item.replacement)
+                        } else {
+                            mContent.replace(item.pattern, item.replacement)
+                        }
                     }
-                } catch (e: Exception) {
-                    AppLog.put("${item.name}替换出错\n${e.localizedMessage}")
+                }.onFailure {
+                    AppLog.put("${item.name}替换出错\n${it.localizedMessage}")
                     appCtx.toastOnUi("${item.name}替换出错")
                 }
             }

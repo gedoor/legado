@@ -183,23 +183,24 @@ object BookController {
         if (content != null) {
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             saveBookReadIndex(book, index)
-            return returnData.setData(
-                contentProcessor.getContent(book, chapter, content, includeTitle = false)
+            content = runBlocking {
+                contentProcessor.getContent(book, chapter, content!!, includeTitle = false)
                     .joinToString("\n")
-            )
+            }
+            return returnData.setData(content)
         }
         val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
             ?: return returnData.setErrorMsg("未找到书源")
         try {
             content = runBlocking {
-                WebBook.getContentAwait(this, bookSource, book, chapter)
+                WebBook.getContentAwait(this, bookSource, book, chapter).let {
+                    val contentProcessor = ContentProcessor.get(book.name, book.origin)
+                    saveBookReadIndex(book, index)
+                    contentProcessor.getContent(book, chapter, it, includeTitle = false)
+                        .joinToString("\n")
+                }
             }
-            val contentProcessor = ContentProcessor.get(book.name, book.origin)
-            saveBookReadIndex(book, index)
-            returnData.setData(
-                contentProcessor.getContent(book, chapter, content, includeTitle = false)
-                    .joinToString("\n")
-            )
+            returnData.setData(content)
         } catch (e: Exception) {
             returnData.setErrorMsg(e.msg)
         }

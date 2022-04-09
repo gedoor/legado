@@ -137,7 +137,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun getAllContents(
+    private suspend fun getAllContents(
         scope: CoroutineScope,
         book: Book,
         append: (text: String, srcList: ArrayList<Triple<String, Int, String>>?) -> Unit
@@ -214,7 +214,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    private fun exportEpub(scope: CoroutineScope, doc: DocumentFile, book: Book) {
+    private suspend fun exportEpub(scope: CoroutineScope, doc: DocumentFile, book: Book) {
         val filename = "${getExportFileName(book)}.epub"
         DocumentUtils.delete(doc, filename)
         val epubBook = EpubBook()
@@ -237,7 +237,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
 
-    private fun exportEpub(scope: CoroutineScope, file: File, book: Book) {
+    private suspend fun exportEpub(scope: CoroutineScope, file: File, book: Book) {
         val filename = "${getExportFileName(book)}.epub"
         val epubBook = EpubBook()
         epubBook.version = "2.0"
@@ -252,6 +252,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         //设置正文
         setEpubContent(scope, contentModel, book, epubBook)
+        @Suppress("BlockingMethodInNonBlockingContext")
         EpubWriter().write(epubBook, FileOutputStream(bookFile))
     }
 
@@ -404,7 +405,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             })
     }
 
-    private fun setEpubContent(
+    private suspend fun setEpubContent(
         scope: CoroutineScope,
         contentModel: String,
         book: Book,

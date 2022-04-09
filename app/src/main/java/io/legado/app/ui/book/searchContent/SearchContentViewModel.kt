@@ -76,7 +76,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         return searchResultsWithinChapter
     }
 
-    private fun searchPosition(pattern: String): List<Int> {
+    private suspend fun searchPosition(pattern: String): List<Int> {
         val position: MutableList<Int> = mutableListOf()
         var index = mContent.indexOf(pattern)
         if (index >= 0) {
