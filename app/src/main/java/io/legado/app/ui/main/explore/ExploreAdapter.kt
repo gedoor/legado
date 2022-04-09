@@ -59,9 +59,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 Coroutine.async(callBack.scope) {
                     item.exploreKinds
                 }.onSuccess { kindList ->
-                    kotlin.runCatching {
-                        upKindList(flexbox, item.bookSourceUrl, kindList)
-                    }
+                    upKindList(flexbox, item.bookSourceUrl, kindList)
                 }.onFinally {
                     rotateLoading.hide()
                     if (scrollTo >= 0) {
@@ -79,7 +77,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
     }
 
     private fun upKindList(flexbox: FlexboxLayout, sourceUrl: String, kinds: List<ExploreKind>) {
-        if (!kinds.isNullOrEmpty()) {
+        if (!kinds.isNullOrEmpty()) kotlin.runCatching {
             recyclerFlexbox(flexbox)
             flexbox.visible()
             kinds.forEach { kind ->
