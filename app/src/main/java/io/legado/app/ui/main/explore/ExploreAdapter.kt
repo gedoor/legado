@@ -59,7 +59,9 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 Coroutine.async(callBack.scope) {
                     item.exploreKinds
                 }.onSuccess { kindList ->
-                    upKindList(flexbox, item.bookSourceUrl, kindList)
+                    kotlin.runCatching {
+                        upKindList(flexbox, item.bookSourceUrl, kindList)
+                    }
                 }.onFinally {
                     rotateLoading.hide()
                     if (scrollTo >= 0) {
@@ -67,7 +69,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                         scrollTo = -1
                     }
                 }
-            } else {
+            } else kotlin.runCatching {
                 ivStatus.setImageResource(R.drawable.ic_arrow_right)
                 rotateLoading.hide()
                 recyclerFlexbox(flexbox)
