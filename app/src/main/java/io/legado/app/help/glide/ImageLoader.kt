@@ -28,7 +28,9 @@ object ImageLoader {
             }
             path.isAbsUrl() -> {
                 kotlin.runCatching {
-                    val source = sourceOrigin?.let { appDb.bookSourceDao.getBookSource(it) }
+                    val source = sourceOrigin?.let {
+                        appDb.bookSourceDao.getBookSource(it) ?: appDb.rssSourceDao.getByKey(it)
+                    }
                     val url = AnalyzeUrl(path, source = source).getGlideUrl()
                     GlideApp.with(context).load(url)
                 }.getOrDefault(

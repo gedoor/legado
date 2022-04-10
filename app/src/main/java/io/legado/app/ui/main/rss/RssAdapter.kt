@@ -27,7 +27,7 @@ class RssAdapter(context: Context, val callBack: CallBack) :
     ) {
         binding.apply {
             tvName.text = item.sourceName
-            ImageLoader.load(context, item.sourceIcon)
+            ImageLoader.load(context, item.sourceIcon, item.sourceUrl)
                 .centerCrop()
                 .placeholder(R.drawable.image_rss)
                 .error(R.drawable.image_rss)
