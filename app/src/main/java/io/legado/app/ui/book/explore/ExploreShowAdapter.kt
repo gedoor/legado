@@ -43,7 +43,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                 llKind.visible()
                 llKind.setLabels(kinds)
             }
-            ivCover.load(item.coverUrl, item.name, item.author, AppConfig.loadOnlyWifi)
+            ivCover.load(item.coverUrl, item.name, item.author, AppConfig.loadOnlyWifi, item.origin)
         }
     }
 
