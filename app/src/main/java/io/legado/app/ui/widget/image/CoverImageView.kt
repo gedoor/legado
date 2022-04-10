@@ -175,7 +175,8 @@ class CoverImageView @JvmOverloads constructor(
         path: String? = null,
         name: String? = null,
         author: String? = null,
-        loadOnlyWifi: Boolean = false
+        loadOnlyWifi: Boolean = false,
+        sourceOrigin: String? = null
     ) {
         this.bitmapPath = path
         this.name = name?.replace(AppPattern.bdRegex, "")?.trim()
@@ -186,7 +187,7 @@ class CoverImageView @JvmOverloads constructor(
                 .centerCrop()
                 .into(this)
         } else {
-            ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
+            ImageLoader.load(context, path, sourceOrigin)//Glide自动识别http://,content://和file://
                 .apply(RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi))
                 .placeholder(BookCover.defaultDrawable)
                 .error(BookCover.defaultDrawable)
