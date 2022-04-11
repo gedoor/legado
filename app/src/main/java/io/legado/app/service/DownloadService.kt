@@ -186,7 +186,7 @@ class DownloadService : BaseService() {
     private fun upSummaryNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
-            .setContentTitle(getString(R.string.action_download))
+            .setSubText(getString(R.string.action_download))
             .setGroup(groupKey)
             .setGroupSummary(true)
             .setOngoing(true)
@@ -200,7 +200,8 @@ class DownloadService : BaseService() {
     private fun upDownloadNotification(downloadId: Long, content: String, max: Int, progress: Int) {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
-            .setContentTitle(getString(R.string.action_download))
+            .setSubText(getString(R.string.action_download))
+            .setContentTitle(content)
             .setContentIntent(
                 servicePendingIntent<DownloadService>(IntentAction.play) {
                     putExtra("downloadId", downloadId)
@@ -212,7 +213,6 @@ class DownloadService : BaseService() {
                 }
             )
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentText(content)
             .setProgress(max, progress, false)
             .setGroup(groupKey)
             .build()
