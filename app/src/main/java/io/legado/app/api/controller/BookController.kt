@@ -79,7 +79,6 @@ object BookController {
             ?: return returnData.setErrorMsg("bookUrl为空")
         val src = parameters["path"]?.firstOrNull()
             ?: return returnData.setErrorMsg("图片链接为空")
-        val width = parameters["width"]?.firstOrNull()?.toInt() ?: 640
         if (this.bookUrl != bookUrl) {
             this.book = appDb.bookDao.getBook(bookUrl)
                 ?: return returnData.setErrorMsg("bookUrl不对")
@@ -95,7 +94,7 @@ object BookController {
         }
         this.bookUrl = bookUrl
         return returnData.setData(
-            BitmapUtils.decodeBitmap(vFile.absolutePath, width, width)
+            ImageLoader.loadBitmap(appCtx, vFile.absolutePath).submit().get()
         )
     }
 

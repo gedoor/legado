@@ -55,7 +55,6 @@ object ReadBook : CoroutineScope by MainScope() {
         callBack?.upMenuView()
         callBack?.upPageAnim()
         upWebBook(book)
-        ImageProvider.clearAllCache()
         synchronized(this) {
             loadingChapters.clear()
         }
@@ -207,7 +206,6 @@ object ReadBook : CoroutineScope by MainScope() {
         }
         upReadTime()
         preDownload()
-        ImageProvider.clearOut(durChapterIndex)
     }
 
     /**
