@@ -4,31 +4,16 @@ import android.graphics.Bitmap
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
+import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import kotlinx.coroutines.runBlocking
+import splitties.init.appCtx
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
 
 object ImageProvider {
-
-    private val cache = ConcurrentHashMap<Int, ConcurrentHashMap<String, Bitmap>>()
-
-    @Synchronized
-    fun getCache(chapterIndex: Int, src: String): Bitmap? {
-        return cache[chapterIndex]?.get(src)
-    }
-
-    @Synchronized
-    fun setCache(chapterIndex: Int, src: String, bitmap: Bitmap) {
-        var indexCache = cache[chapterIndex]
-        if (indexCache == null) {
-            indexCache = ConcurrentHashMap()
-            cache[chapterIndex] = indexCache
-        }
-        indexCache[src] = bitmap
-    }
 
     fun getImage(
         book: Book,
@@ -37,9 +22,6 @@ object ImageProvider {
         bookSource: BookSource?,
         onUi: Boolean = false,
     ): Bitmap? {
-        getCache(chapterIndex, src)?.let {
-            return it
-        }
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) {
             if (book.isEpub()) {
@@ -56,37 +38,9 @@ object ImageProvider {
             }
         }
         return try {
-            val bitmap = BitmapUtils.decodeBitmap(
-                vFile.absolutePath,
-                ChapterProvider.visibleWidth,
-                ChapterProvider.visibleHeight
-            )
-            setCache(chapterIndex, src, bitmap)
-            bitmap
+            ImageLoader.loadBitmap(appCtx, vFile.absolutePath).submit().get()
         } catch (e: Exception) {
             null
-        }
-    }
-
-    @Synchronized
-    fun clearAllCache() {
-        cache.forEach { indexCache ->
-            indexCache.value.forEach {
-                it.value.recycle()
-            }
-        }
-        cache.clear()
-    }
-
-    @Synchronized
-    fun clearOut(chapterIndex: Int) {
-        cache.forEach { indexCache ->
-            if (indexCache.key !in chapterIndex - 1..chapterIndex + 1) {
-                indexCache.value.forEach {
-                    it.value.recycle()
-                }
-                cache.remove(indexCache.key)
-            }
         }
     }
 
