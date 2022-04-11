@@ -51,8 +51,17 @@ java.put(key, value)
 ```
 * 网络请求
 ```
-java.ajax(urlStr)
+java.ajax(urlStr): String
 java.ajaxAll(urlList: Array<String>): Array<StrResponse?>
+//返回Response 方法body() code() message() header() raw() toString() 
+java.connect(urlStr): Response<String>
+
+* 使用webView访问网络
+* @param html 直接用webView载入的html, 如果html为空直接访问url
+* @param url html内如果有相对路径的资源不传入url访问不了
+* @param js 用来取返回值的js语句, 没有就返回整个源代码
+* @return 返回js获取的内容
+java.webView(html: String?, url: String?, js: String?): String
 ```
 * 调试
 ```
@@ -142,7 +151,8 @@ java.md5Encode(str)
 java.md5Encode16(str)
 ```
 
-## book对象的可用属性
+## book对象的可用属性和方法
+### 属性
 > 使用方法: 在js中或{{}}中使用book.属性的方式即可获取.如在正文内容后加上 ##{{book.name+"正文卷"+title}} 可以净化 书名+正文卷+章节名称（如 我是大明星正文卷第二章我爸是豪门总裁） 这一类的字符.
 ```
 bookUrl // 详情页Url(本地书源存储完整文件路径)
@@ -174,6 +184,11 @@ order // 手动排序
 originOrder //书源排序
 variable // 自定义书籍变量信息(用于书源规则检索书籍信息)
  ```
+### 方法
+```
+//可在正文js中关闭净化 对于漫画源有用
+book.setUseReplaceRule(boolean)
+```
 
 ## chapter对象的部分可用属性
 > 使用方法: 在js中或{{}}中使用chapter.属性的方式即可获取.如在正文内容后加上 ##{{chapter.title+chapter.index}} 可以净化 章节标题+序号(如 第二章 天仙下凡2) 这一类的字符.
