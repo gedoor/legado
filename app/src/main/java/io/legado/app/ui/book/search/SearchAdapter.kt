@@ -86,7 +86,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                 searchBook.coverUrl,
                 searchBook.name,
                 searchBook.author,
-                AppConfig.loadOnlyWifi,
+                AppConfig.loadCoverOnlyWifi,
                 searchBook.origin
             )
         }

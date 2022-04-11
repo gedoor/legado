@@ -304,7 +304,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val recordLog get() = appCtx.getPrefBoolean(PreferKey.recordLog)
 
-    val loadOnlyWifi = appCtx.getPrefBoolean(PreferKey.loadCoverOnlyWifi, false)
+    val loadCoverOnlyWifi = appCtx.getPrefBoolean(PreferKey.loadCoverOnlyWifi, false)
 
     val doublePageHorizontal: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.doublePageHorizontal, true)
