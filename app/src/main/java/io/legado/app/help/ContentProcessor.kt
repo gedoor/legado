@@ -8,7 +8,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.utils.regexReplace
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
@@ -135,12 +134,12 @@ class ContentProcessor private constructor(
             if (item.pattern.isNotEmpty()) {
                 kotlin.runCatching {
                     mContent = if (item.isRegex) {
-                        mContent.regexReplace(item.pattern, item.replacement, 1000L)
+                        mContent.replace(item.pattern.toRegex(), item.replacement)
                     } else {
                         mContent.replace(item.pattern, item.replacement)
                     }
                 }.onFailure {
-                    AppLog.put("${item.name}替换出错\n${it.localizedMessage}")
+                    AppLog.put("${item.name}替换出错\n${it.localizedMessage}", it)
                     appCtx.toastOnUi("${item.name}替换出错")
                 }
             }
