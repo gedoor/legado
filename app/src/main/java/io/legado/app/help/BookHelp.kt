@@ -122,7 +122,7 @@ object BookHelp {
                     cacheFolderName,
                     book.getFolderName(),
                     cacheImageFolderName,
-                    "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}"
+                    "${MD5Utils.md5Encode16(src)}.${getImageSuffix(src)}"
                 ).writeBytes(it)
             }
         } catch (e: Exception) {
@@ -137,14 +137,14 @@ object BookHelp {
             cacheFolderName,
             book.getFolderName(),
             cacheImageFolderName,
-            "${MD5Utils.md5Encode16(src)}${getImageSuffix(src)}"
+            "${MD5Utils.md5Encode16(src)}.${getImageSuffix(src)}"
         )
     }
 
     fun getImageSuffix(src: String): String {
         var suffix = src.substringAfterLast(".").substringBefore(",")
         if (suffix.length > 5) {
-            suffix = ".jpg"
+            suffix = "jpg"
         }
         return suffix
     }
