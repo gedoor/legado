@@ -317,6 +317,7 @@ abstract class BaseReadAloudService : BaseService(),
             val builder = NotificationCompat
                 .Builder(this@BaseReadAloudService, AppConst.channelIdReadAloud)
                 .setSmallIcon(R.drawable.ic_volume_up)
+                .setSubText(getString(R.string.read_aloud))
                 .setOngoing(true)
                 .setContentTitle(nTitle)
                 .setContentText(nSubtitle)
