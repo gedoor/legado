@@ -35,7 +35,7 @@ class RssFavoritesAdapter(context: Context, val callBack: CallBack) :
             if (item.image.isNullOrBlank()) {
                 imageView.gone()
             } else {
-                ImageLoader.load(context, item.image)
+                ImageLoader.load(context, item.image, item.origin)
                     .addListener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,

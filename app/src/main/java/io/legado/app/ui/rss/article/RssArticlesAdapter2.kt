@@ -36,7 +36,7 @@ class RssArticlesAdapter2(context: Context, callBack: CallBack) :
             if (item.image.isNullOrBlank() && !callBack.isGridLayout) {
                 imageView.gone()
             } else {
-                ImageLoader.load(context, item.image).apply {
+                ImageLoader.load(context, item.image, item.origin).apply {
                     if (callBack.isGridLayout) {
                         placeholder(R.drawable.image_rss_article)
                     } else {

@@ -73,7 +73,7 @@ class AnalyzeUrl(
     init {
         val urlMatcher = paramPattern.matcher(baseUrl)
         if (urlMatcher.find()) baseUrl = baseUrl.substring(0, urlMatcher.start())
-        headerMapF?.let {
+        (headerMapF ?: source?.getHeaderMap(true))?.let {
             headerMap.putAll(it)
             if (it.containsKey("proxy")) {
                 proxy = it["proxy"]

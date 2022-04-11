@@ -123,7 +123,9 @@ interface JsExtensions {
             BackstageWebView(
                 url = url,
                 html = html,
-                javaScript = js
+                javaScript = js,
+                headerMap = getSource()?.getHeaderMap(true),
+                tag =  getSource()?.getKey()
             ).getStrResponse().body
         }
     }
