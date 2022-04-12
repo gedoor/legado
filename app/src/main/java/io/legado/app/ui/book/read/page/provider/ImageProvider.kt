@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
 import io.legado.app.R
+import io.legado.app.constant.AppLog.putDebug
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
@@ -10,6 +11,7 @@ import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.BitmapUtils
+import io.legado.app.utils.isXml
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
@@ -52,8 +54,13 @@ object ImageProvider {
                 .submit(ChapterProvider.visibleWidth,ChapterProvider.visibleHeight)
                 .get()
        } catch (e: Exception) {
-           e.printStackTrace()
-           Coroutine.async { vFile.delete() }
+           Coroutine.async {
+               putDebug("${vFile.absolutePath} 解码失败", e)
+               if (FileUtils.readText(vFile.absolutePath).isXml()) {
+                   putDebug("${vFile.absolutePath}为xml，自动删除")
+                   vFile.delete()
+               }
+           }
            errorBitmap
        }
     }
