@@ -13,12 +13,22 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.BitmapUtils
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
 
 object ImageProvider {
+
+    private val errorBitmap: Bitmap? by lazy {
+        BitmapUtils.decodeBitmap(
+           appCtx,
+           R.drawable.image_loading_error,
+           ChapterProvider.visibleWidth,
+           ChapterProvider.visibleHeight
+        )
+    }
 
     fun getImage(
         book: Book,
@@ -41,41 +51,14 @@ object ImageProvider {
                 }
             }
         }
-        return ImageLoader.loadBitmap(appCtx, vFile.absolutePath)
-            .error(R.drawable.image_loading_error)
-            .listener(glideListener)
-            .submit()
-            .get()
-    }
-
-    private val glideListener by lazy {
-        object : RequestListener<Bitmap> {
-
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any?,
-                target: Target<Bitmap>?,
-                isFirstResource: Boolean
-            ): Boolean {
-                Coroutine.async {
-                    (model as? String)?.let { path ->
-                        File(path).delete()
-                    }
-                }
-                return false
-            }
-
-            override fun onResourceReady(
-                resource: Bitmap?,
-                model: Any?,
-                target: Target<Bitmap>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-                return false
-            }
-
-        }
+       return try {
+            ImageLoader.loadBitmap(appCtx, vFile.absolutePath).submit().get()
+       } catch (e: Exception) {
+            Coroutine.async { vFile.delete() }
+            //must call this method on a background thread
+            //ImageLoader.loadBitmap(appCtx, R.drawable.image_loading_error).submit().get()
+            errorBitmap
+       }
     }
 
 }
