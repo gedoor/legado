@@ -1,6 +1,6 @@
 package io.legado.app.utils
 
-import io.legado.app.exception.NoStackTraceException
+import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
 import splitties.init.appCtx
@@ -34,4 +34,3 @@ suspend fun CharSequence.replace(regex: Regex, replacement: String, timeout: Lon
     }
 }
 
-class RegexTimeoutException(msg: String) : NoStackTraceException(msg)

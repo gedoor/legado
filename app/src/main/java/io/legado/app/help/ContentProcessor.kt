@@ -6,9 +6,9 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.utils.RegexTimeoutException
 import io.legado.app.utils.msg
 import io.legado.app.utils.replace
 import io.legado.app.utils.toastOnUi
@@ -137,7 +137,7 @@ class ContentProcessor private constructor(
             if (item.pattern.isNotEmpty()) {
                 kotlin.runCatching {
                     mContent = if (item.isRegex) {
-                        mContent.replace(item.pattern.toRegex(), item.replacement, 1000L)
+                        mContent.replace(item.pattern.toRegex(), item.replacement, 2000L)
                     } else {
                         mContent.replace(item.pattern, item.replacement)
                     }
@@ -146,7 +146,7 @@ class ContentProcessor private constructor(
                         is RegexTimeoutException -> {
                             item.isEnabled = false
                             appDb.replaceRuleDao.update(item)
-                            return it.msg
+                            return item.name + it.msg
                         }
                         else -> {
                             AppLog.put("${item.name}替换出错\n${it.localizedMessage}", it)
