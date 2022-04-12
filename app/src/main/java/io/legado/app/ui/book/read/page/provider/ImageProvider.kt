@@ -1,29 +1,27 @@
 package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
-import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.localBook.EpubFile
-import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.R
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
-import java.io.FileOutputStream
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
+import java.io.FileOutputStream
 
 object ImageProvider {
 
     fun getImage(
         book: Book,
-        chapterIndex: Int,
         src: String,
         bookSource: BookSource?,
         onUi: Boolean = false,
@@ -59,7 +57,11 @@ object ImageProvider {
                 target: Target<Bitmap>?,
                 isFirstResource: Boolean
             ): Boolean {
-                File(model as String).delete()
+                Coroutine.async {
+                    (model as? String)?.let { path ->
+                        File(path).delete()
+                    }
+                }
                 return false
             }
 

@@ -169,7 +169,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val book = ReadBook.book ?: return
         ImageProvider.getImage(
             book,
-            textPage.chapterIndex,
             textChar.charData,
             ReadBook.bookSource,
             true
