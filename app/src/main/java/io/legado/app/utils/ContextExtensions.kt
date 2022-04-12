@@ -33,6 +33,7 @@ import splitties.systemservices.clipboardManager
 import splitties.systemservices.connectivityManager
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.system.exitProcess
 
 inline fun <reified A : Activity> Context.startActivity(configIntent: Intent.() -> Unit = {}) {
     val intent = Intent(this, A::class.java)
@@ -168,6 +169,7 @@ fun Context.restart() {
         startActivity(intent)
         //杀掉以前进程
         Process.killProcess(Process.myPid())
+        exitProcess(0)
     }
 }
 
