@@ -1,10 +1,6 @@
 package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
@@ -52,12 +48,13 @@ object ImageProvider {
             }
         }
        return try {
-            ImageLoader.loadBitmap(appCtx, vFile.absolutePath).submit().get()
+            ImageLoader.loadBitmap(appCtx, vFile.absolutePath)
+                .submit(ChapterProvider.visibleWidth,ChapterProvider.visibleHeight)
+                .get()
        } catch (e: Exception) {
-            Coroutine.async { vFile.delete() }
-            //must call this method on a background thread
-            //ImageLoader.loadBitmap(appCtx, R.drawable.image_loading_error).submit().get()
-            errorBitmap
+           e.printStackTrace()
+           Coroutine.async { vFile.delete() }
+           errorBitmap
        }
     }
 
