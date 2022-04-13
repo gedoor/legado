@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Size
 import io.legado.app.R
 import io.legado.app.constant.AppLog.putDebug
@@ -10,7 +11,6 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.localBook.EpubFile
-import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isXml
 import kotlinx.coroutines.runBlocking
@@ -22,13 +22,8 @@ import kotlin.coroutines.resume
 
 object ImageProvider {
 
-    private val errorBitmap: Bitmap? by lazy {
-        BitmapUtils.decodeBitmap(
-            appCtx,
-            R.drawable.image_loading_error,
-            ChapterProvider.visibleWidth,
-            ChapterProvider.visibleHeight
-        )
+    private val errorBitmap: Bitmap by lazy {
+        BitmapFactory.decodeResource(appCtx.resources, R.drawable.image_loading_error)
     }
 
     private suspend fun cacheImage(
@@ -66,12 +61,12 @@ object ImageProvider {
                         block.resume(Size(width, height))
                     }
             }.onFailure {
-                block.cancel(it)
+                block.resume(Size(errorBitmap.width, errorBitmap.height))
             }
         }
     }
 
-    fun getImage(
+    suspend fun getImage(
         book: Book,
         src: String,
         bookSource: BookSource?,
