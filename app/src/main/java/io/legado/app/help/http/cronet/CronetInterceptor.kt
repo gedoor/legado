@@ -49,7 +49,6 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
             OldCallback(request, call)
         }
         buildRequest(request, callBack)?.let {
-            it.start()
             return callBack.waitForDone(it)
         }
         return null

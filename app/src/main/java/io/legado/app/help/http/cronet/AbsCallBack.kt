@@ -2,7 +2,7 @@ package io.legado.app.help.http.cronet
 
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
-import io.legado.app.utils.rethrowAsIOException
+import io.legado.app.utils.asIOException
 import okhttp3.*
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -27,11 +27,23 @@ abstract class AbsCallBack(
 
     var mResponse: Response
 
-    var mException: IOException? = null
     private var followCount = 0
 
 
+    @Throws(IOException::class)
     abstract fun waitForDone(urlRequest: UrlRequest): Response
+
+    /**
+     * 当发生错误时，通知子类终止阻塞抛出错误
+     * @param error
+     */
+    abstract fun onError(error: IOException)
+
+    /**
+     * 请求成功后，通知子类结束阻塞，返回response
+     * @param response
+     */
+    abstract fun onSuccess(response: Response)
 
 
     override fun onRedirectReceived(
@@ -41,10 +53,13 @@ abstract class AbsCallBack(
     ) {
         if (followCount > MAX_FOLLOW_COUNT) {
             request.cancel()
-            mException = IOException("Too many redirect")
+            onError(IOException("Too many redirect"))
+            return
         }
         if (mCall.isCanceled()) {
-            mException = IOException("Request Canceled")
+            onError(IOException("Request Canceled"))
+            request.cancel()
+            return
         }
         followCount += 1
         val client = okHttpClient
@@ -55,7 +70,7 @@ abstract class AbsCallBack(
         } else if (okHttpClient.followRedirects) {
             request.followRedirect()
         } else {
-            mException = IOException("Too many redirect")
+            onError(IOException("Too many redirect"))
             request.cancel()
         }
     }
@@ -73,7 +88,7 @@ abstract class AbsCallBack(
     }
 
 
-    @Throws(Exception::class)
+    @Throws(IOException::class)
     override fun onReadCompleted(
         request: UrlRequest,
         info: UrlResponseInfo,
@@ -83,7 +98,7 @@ abstract class AbsCallBack(
 
         if (mCall.isCanceled()) {
             request.cancel()
-            mException = IOException("Request Canceled")
+            onError(IOException("Request Canceled"))
         }
 
         byteBuffer.flip()
@@ -91,9 +106,9 @@ abstract class AbsCallBack(
         try {
             buffer.write(byteBuffer)
         } catch (e: IOException) {
-            DebugLog.i(javaClass.name, "IOException during ByteBuffer read. Details: ", e)
-            mException = IOException("IOException during ByteBuffer read. Details:", e)
-            throw e
+            DebugLog.e(javaClass.name, "IOException during ByteBuffer read. Details: ", e)
+            onError(IOException("IOException during ByteBuffer read. Details:", e))
+            return
         }
         byteBuffer.clear()
         request.read(byteBuffer)
@@ -108,7 +123,8 @@ abstract class AbsCallBack(
             buffer.asResponseBody(contentType)
         val newRequest = originalRequest.newBuilder().url(info.url).build()
         this.mResponse = this.mResponse.newBuilder().body(responseBody).request(newRequest).build()
-        DebugLog.i(javaClass.simpleName, "end[${info.negotiatedProtocol}]${info.url}")
+        onSuccess(this.mResponse)
+        //DebugLog.i(javaClass.simpleName, "end[${info.negotiatedProtocol}]${info.url}")
 
         eventListener?.callEnd(mCall)
         if (responseCallback != null) {
@@ -123,8 +139,8 @@ abstract class AbsCallBack(
 
     //UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
-        DebugLog.i(javaClass.name, error.message.toString())
-        mException = error.rethrowAsIOException()
+        DebugLog.e(javaClass.name, error.message.toString())
+        onError(error.asIOException())
         this.eventListener?.callFailed(mCall, error)
         responseCallback?.onFailure(mCall, error)
     }
@@ -132,7 +148,7 @@ abstract class AbsCallBack(
     override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
         super.onCanceled(request, info)
         this.eventListener?.callEnd(mCall)
-        mException = IOException("Cronet Request Canceled")
+        onError(IOException("Cronet Request Canceled"))
     }
 
 
