@@ -4,6 +4,8 @@ import com.bumptech.glide.load.Option
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.ModelLoader
+import io.legado.app.model.analyzeRule.AnalyzeUrl
+
 import java.io.InputStream
 
 object OkHttpModelLoader : ModelLoader<GlideUrl?, InputStream?> {
@@ -17,7 +19,8 @@ object OkHttpModelLoader : ModelLoader<GlideUrl?, InputStream?> {
         height: Int,
         options: Options
     ): ModelLoader.LoadData<InputStream?> {
-        return ModelLoader.LoadData(model, OkHttpStreamFetcher(model, options))
+        val modelWithHeader = AnalyzeUrl(model.toString()).getGlideUrl()
+        return ModelLoader.LoadData(modelWithHeader, OkHttpStreamFetcher(modelWithHeader, options))
     }
 
     override fun handles(model: GlideUrl): Boolean {

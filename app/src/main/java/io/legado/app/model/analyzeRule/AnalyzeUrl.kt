@@ -518,22 +518,28 @@ class AnalyzeUrl(
         }
     }
 
+    /**
+     *设置cookie urlOption的优先级大于书源保存的cookie
+     *@param tag 书源url 缺省为传入的url
+     */
     private fun setCookie(tag: String?) {
-        if (tag != null) {
-            val cookie = CookieStore.getCookie(tag)
-            if (cookie.isNotEmpty()) {
-                val cookieMap = CookieStore.cookieToMap(cookie)
-                val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
-                cookieMap.putAll(customCookieMap)
-                val newCookie = CookieStore.mapToCookie(cookieMap)
-                newCookie?.let {
-                    headerMap.put("Cookie", it)
-                }
+        val cookie = CookieStore.getCookie(tag ?: url)
+        if (cookie.isNotEmpty()) {
+            val cookieMap = CookieStore.cookieToMap(cookie)
+            val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
+            cookieMap.putAll(customCookieMap)
+            val newCookie = CookieStore.mapToCookie(cookieMap)
+            newCookie?.let {
+                headerMap.put("Cookie", it)
             }
         }
     }
 
+    /**
+     *获取处理过阅读定义的urlOption和cookie的GlideUrl
+     */
     fun getGlideUrl(): GlideUrl {
+        setCookie(source?.getKey())
         val headers = LazyHeaders.Builder()
         headerMap.forEach { (key, value) ->
             headers.addHeader(key, value)
