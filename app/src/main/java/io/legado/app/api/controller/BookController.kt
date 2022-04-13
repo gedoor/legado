@@ -89,7 +89,7 @@ object BookController {
         this.bookUrl = bookUrl
         return ImageProvider.getImage(book, src, bookSource, width, width)?.let {
             returnData.setData(it)
-        }
+        } ?: returnData.setErrorMsg("图片加载失败或不存在")
     }
 
     /**
