@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.RssStar
 import io.legado.app.databinding.ItemRssArticleBinding
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
@@ -35,7 +37,10 @@ class RssFavoritesAdapter(context: Context, val callBack: CallBack) :
             if (item.image.isNullOrBlank()) {
                 imageView.gone()
             } else {
-                ImageLoader.load(context, item.image, item.origin)
+                val options =
+                    RequestOptions().set(OkHttpModelLoader.sourceOriginOption, item.origin)
+                ImageLoader.load(context, item.image)
+                    .apply(options)
                     .addListener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,

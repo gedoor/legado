@@ -8,6 +8,7 @@ import com.bumptech.glide.load.data.DataFetcher
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
+import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.isWifiConnect
@@ -36,6 +37,13 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
             return
         }
         val requestBuilder: Request.Builder = Request.Builder().url(url.toStringUrl())
+        options.get(OkHttpModelLoader.sourceOriginOption)?.let { sourceUrl ->
+            val source = appDb.bookSourceDao.getBookSource(sourceUrl)
+                ?: appDb.rssSourceDao.getByKey(sourceUrl)
+            source?.getHeaderMap(true)?.forEach {
+                requestBuilder.addHeader(it.key, it.value)
+            }
+        }
         for ((key, value) in url.headers.entries) {
             requestBuilder.addHeader(key, value)
         }

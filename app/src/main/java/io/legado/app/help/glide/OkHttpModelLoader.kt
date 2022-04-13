@@ -9,6 +9,7 @@ import java.io.InputStream
 object OkHttpModelLoader : ModelLoader<GlideUrl?, InputStream?> {
 
     val loadOnlyWifiOption = Option.memory("loadOnlyWifi", false)
+    val sourceOriginOption = Option.memory<String>("sourceOrigin")
 
     override fun buildLoadData(
         model: GlideUrl,

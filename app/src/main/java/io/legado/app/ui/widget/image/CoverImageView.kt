@@ -187,8 +187,12 @@ class CoverImageView @JvmOverloads constructor(
                 .centerCrop()
                 .into(this)
         } else {
-            ImageLoader.load(context, path, sourceOrigin)//Glide自动识别http://,content://和file://
-                .apply(RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi))
+            var options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+            if (sourceOrigin != null) {
+                options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
+            }
+            ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
+                .apply(options)
                 .placeholder(BookCover.defaultDrawable)
                 .error(BookCover.defaultDrawable)
                 .listener(glideListener)

@@ -7,7 +7,6 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.RequestBuilder
 import io.legado.app.constant.AppPattern.dataUriRegex
-import io.legado.app.data.appDb
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentScheme
@@ -19,24 +18,14 @@ object ImageLoader {
     /**
      * 自动判断path类型
      */
-    fun load(context: Context, path: String?, sourceOrigin: String? = null): RequestBuilder<Drawable> {
+    fun load(context: Context, path: String?): RequestBuilder<Drawable> {
         return when {
             path.isNullOrEmpty() -> GlideApp.with(context).load(path)
             dataUriRegex.find(path) != null -> {
                 //glide内部已经实现dataUri解析
                 GlideApp.with(context).load(path)
             }
-            path.isAbsUrl() -> {
-                kotlin.runCatching {
-                    val source = sourceOrigin?.let {
-                        appDb.bookSourceDao.getBookSource(it) ?: appDb.rssSourceDao.getByKey(it)
-                    }
-                    val url = AnalyzeUrl(path, source = source).getGlideUrl()
-                    GlideApp.with(context).load(url)
-                }.getOrDefault(
-                    GlideApp.with(context).load(path)
-                )
-            }
+            path.isAbsUrl() -> GlideApp.with(context).load(path)
             path.isContentScheme() -> GlideApp.with(context).load(Uri.parse(path))
             else -> kotlin.runCatching {
                 val file = File(path)
