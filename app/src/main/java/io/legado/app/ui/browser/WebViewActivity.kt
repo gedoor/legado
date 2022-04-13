@@ -15,8 +15,10 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityWebViewBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.http.CookieStore
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
@@ -41,12 +43,13 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.title = intent.getStringExtra("title") ?: getString(R.string.loading)
-        initWebView()
         viewModel.initData(intent) {
             val url = viewModel.baseUrl
+            val headerMap = viewModel.headerMap
+            initWebView(url, headerMap)
             val html = viewModel.html
             if (html.isNullOrEmpty()) {
-                binding.webView.loadUrl(url, viewModel.headerMap)
+                binding.webView.loadUrl(url, headerMap)
             } else {
                 binding.webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
             }
@@ -67,7 +70,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     @SuppressLint("JavascriptInterface")
-    private fun initWebView() {
+    private fun initWebView(url: String, headerMap: HashMap<String, String>) {
         binding.webView.webChromeClient = CustomWebChromeClient()
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
@@ -76,7 +79,13 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             allowContentAccess = true
             useWideViewPort = true
             loadWithOverviewMode = true
+            javaScriptEnabled = true
+            headerMap[AppConst.UA_NAME]?.let {
+                userAgentString = it
+            }
         }
+        val cookieManager = CookieManager.getInstance()
+        cookieManager.setCookie(url, CookieStore.getCookie(url))
         binding.webView.addJavascriptInterface(this, "app")
         upWebViewTheme()
         binding.webView.setOnLongClickListener {
@@ -207,6 +216,10 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
+            val cookieManager = CookieManager.getInstance()
+            url?.let {
+                CookieStore.setCookie(it, cookieManager.getCookie(it))
+            }
             view?.title?.let { title ->
                 if (title != url && title != view.url && title.isNotBlank()) {
                     binding.titleBar.title = title

@@ -22,6 +22,7 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.localBook.UmdFile
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
@@ -79,23 +80,16 @@ object BookController {
             ?: return returnData.setErrorMsg("bookUrl为空")
         val src = parameters["path"]?.firstOrNull()
             ?: return returnData.setErrorMsg("图片链接为空")
+        val width = parameters["width"]?.firstOrNull()?.toInt() ?: 640
         if (this.bookUrl != bookUrl) {
             this.book = appDb.bookDao.getBook(bookUrl)
                 ?: return returnData.setErrorMsg("bookUrl不对")
-        }
-        val vFile = BookHelp.getImage(book, src)
-        if (!vFile.exists()) {
-            if (this.bookUrl != bookUrl) {
-                this.bookSource = appDb.bookSourceDao.getBookSource(book.origin)
-            }
-            runBlocking {
-                BookHelp.saveImage(bookSource, book, src)
-            }
+            this.bookSource = appDb.bookSourceDao.getBookSource(book.origin)
         }
         this.bookUrl = bookUrl
-        return returnData.setData(
-            ImageLoader.loadBitmap(appCtx, vFile.absolutePath).submit().get()
-        )
+        return ImageProvider.getImage(book, src, bookSource, width, width)?.let {
+            returnData.setData(it)
+        } ?: returnData.setErrorMsg("图片加载失败或不存在")
     }
 
     /**
