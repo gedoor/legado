@@ -59,6 +59,9 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
         binding.webView.settings.apply {
             builtInZoomControls = true
             javaScriptEnabled = true
+            source.getHeaderMap()[AppConst.UA_NAME]?.let {
+                userAgentString = it
+            }
         }
         val cookieManager = CookieManager.getInstance()
         source.loginUrl?.let {

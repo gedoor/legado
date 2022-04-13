@@ -15,6 +15,7 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityWebViewBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
@@ -44,10 +45,11 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         binding.titleBar.title = intent.getStringExtra("title") ?: getString(R.string.loading)
         viewModel.initData(intent) {
             val url = viewModel.baseUrl
-            initWebView(url)
+            val headerMap = viewModel.headerMap
+            initWebView(url, headerMap)
             val html = viewModel.html
             if (html.isNullOrEmpty()) {
-                binding.webView.loadUrl(url, viewModel.headerMap)
+                binding.webView.loadUrl(url, headerMap)
             } else {
                 binding.webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
             }
@@ -68,7 +70,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     @SuppressLint("JavascriptInterface")
-    private fun initWebView(url: String) {
+    private fun initWebView(url: String, headerMap: HashMap<String, String>) {
         binding.webView.webChromeClient = CustomWebChromeClient()
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
@@ -78,6 +80,9 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             useWideViewPort = true
             loadWithOverviewMode = true
             javaScriptEnabled = true
+            headerMap[AppConst.UA_NAME]?.let {
+                userAgentString = it
+            }
         }
         val cookieManager = CookieManager.getInstance()
         cookieManager.setCookie(url, CookieStore.getCookie(url))
