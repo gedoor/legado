@@ -268,7 +268,8 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             return
         }
         download = true
-        executor.execute {
+
+        Coroutine.async {
             val result = downloadFileIfNotExist(url, downloadTempFile)
             DebugLog.d(javaClass.simpleName, "download result:$result")
             //文件md5再次校验
@@ -279,7 +280,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
                     downloadTempFile.deleteOnExit()
                 }
                 download = false
-                return@execute
+                return@async
             }
             DebugLog.d(javaClass.simpleName, "download success, copy to $destSuccessFile")
             //下载成功拷贝文件
@@ -289,6 +290,9 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader() {
             @Suppress("SameParameterValue")
             deleteHistoryFile(parentFile!!, null)
         }
+//        executor.execute {
+//
+//        }
     }
 
     /**

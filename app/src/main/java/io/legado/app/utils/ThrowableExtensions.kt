@@ -12,8 +12,8 @@ val Throwable.msg: String
         }
     }
 
-fun Throwable.rethrowAsIOException(): IOException {
+fun Throwable.asIOException(): IOException {
     val newException = IOException(this.message)
     newException.initCause(this)
-    throw newException
+    return newException
 }

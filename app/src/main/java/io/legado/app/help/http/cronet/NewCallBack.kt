@@ -6,11 +6,8 @@ import androidx.annotation.RequiresApi
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
-import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
-import org.chromium.net.UrlResponseInfo
 import java.io.IOException
-import java.nio.ByteBuffer
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -21,45 +18,29 @@ class NewCallBack(originalRequest: Request, mCall: Call) : AbsCallBack(originalR
 
     @Throws(IOException::class)
     override fun waitForDone(urlRequest: UrlRequest): Response {
-        return responseFuture.get(mCall.timeout().timeoutNanos(), TimeUnit.NANOSECONDS)
-    }
-
-    override fun onRedirectReceived(
-        request: UrlRequest,
-        info: UrlResponseInfo,
-        newLocationUrl: String
-    ) {
-        super.onRedirectReceived(request, info, newLocationUrl)
-        if (mException != null) {
-            responseFuture.completeExceptionally(mException)
+        urlRequest.start()
+        return if (mCall.timeout().timeoutNanos() > 0) {
+            responseFuture.get(mCall.timeout().timeoutNanos(), TimeUnit.NANOSECONDS)
+        } else {
+            return responseFuture.get()
         }
+
     }
 
-
-    override fun onReadCompleted(
-        request: UrlRequest,
-        info: UrlResponseInfo,
-        byteBuffer: ByteBuffer
-    ) {
-        super.onReadCompleted(request, info, byteBuffer)
-        if (mException != null) {
-            responseFuture.completeExceptionally(mException)
-        }
+    /**
+     * 当发生错误时，通知子类终止阻塞抛出错误
+     * @param error
+     */
+    override fun onError(error: IOException) {
+        responseFuture.completeExceptionally(error)
     }
 
-    override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
-        super.onSucceeded(request, info)
-        responseFuture.complete(mResponse)
-    }
-
-    override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
-        super.onFailed(request, info, error)
-        responseFuture.completeExceptionally(mException)
-    }
-
-    override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
-        super.onCanceled(request, info)
-        responseFuture.completeExceptionally(mException)
+    /**
+     * 请求成功后，通知子类结束阻塞，返回response
+     * @param response
+     */
+    override fun onSuccess(response: Response) {
+        responseFuture.complete(response)
     }
 
 
