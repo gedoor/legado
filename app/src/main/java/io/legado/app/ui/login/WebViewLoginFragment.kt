@@ -44,8 +44,10 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
                 if (!checking) {
                     checking = true
                     binding.titleBar.snackbar(R.string.check_host_cookie)
-                    viewModel.source?.loginUrl?.let {
-                        binding.webView.loadUrl(it)
+                    viewModel.source?.let { source ->
+                        source.loginUrl?.let {
+                            binding.webView.loadUrl(it, source.getHeaderMap(true))
+                        }
                     }
                 }
             }
@@ -57,9 +59,6 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
         binding.webView.settings.apply {
             builtInZoomControls = true
             javaScriptEnabled = true
-            source.getHeaderMap()[AppConst.UA_NAME]?.let {
-                userAgentString = it
-            }
         }
         val cookieManager = CookieManager.getInstance()
         source.loginUrl?.let {
@@ -82,7 +81,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
             }
         }
         source.loginUrl?.let {
-            binding.webView.loadUrl(it)
+            binding.webView.loadUrl(it, source.getHeaderMap(true))
         }
     }
 
