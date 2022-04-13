@@ -68,6 +68,11 @@ java.webView(html: String?, url: String?, js: String?): String
 java.log(msg)
 java.logType(var)
 ```
+* 弹窗提示
+```
+java.longToast(msg: Any?)
+java.toast(msg: Any?)
+```
 * 从网络(由java.cacheFile实现)、本地导入JavaScript脚本
 ```
 {{java.importScript(url)}}

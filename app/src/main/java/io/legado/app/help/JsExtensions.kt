@@ -34,6 +34,7 @@ import java.util.zip.ZipInputStream
 
 /**
  * js扩展类, 在js中通过java变量调用
+ * 添加方法，请更新文档/legado/app/src/main/assets/help/JsHelp.md
  * 所有对于文件的读写删操作都是相对路径,只能操作阅读缓存内的文件
  * /android/data/{package}/cache/...
  */
@@ -524,6 +525,20 @@ interface JsExtensions {
             }
         }
         return contentArray.joinToString("")
+    }
+
+    /**
+     * 弹窗提示
+     */
+    fun toast(msg: Any?) {
+        appCtx.toastOnUi(msg.toString())
+    }
+
+    /**
+     * 弹窗提示 停留时间较长
+     */
+    fun longToast(msg: Any?) {
+        appCtx.longToastOnUi(msg.toString())
     }
 
     /**
