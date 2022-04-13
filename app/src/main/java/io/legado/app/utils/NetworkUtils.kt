@@ -130,6 +130,8 @@ object NetworkUtils {
      */
     fun getAbsoluteURL(baseURL: URL?, relativePath: String): String {
         if (baseURL == null) return relativePath
+        if (relativePath.isAbsUrl()) return relativePath
+        if (relativePath.matches(AppPattern.dataUriRegex)) return relativePath
         if (relativePath.startsWith("javascript")) return ""
         var relativeUrl = relativePath
         try {
@@ -156,7 +158,7 @@ object NetworkUtils {
     }
 
     /**
-     * 获取域名，供cookie保存和读取
+     * 获取域名，供cookie保存和读取，处理失败返回传入的url
      * http://1.2.3.4 => 1.2.3.4
      * https://www.example.com =>  example.com
      * http://www.biquge.com.cn => biquge.com.cn
@@ -167,10 +169,11 @@ object NetworkUtils {
         return kotlin.runCatching {
             val mURL = URL(baseUrl)
             val host: String = mURL.host
+            //mURL.scheme https/http
             //判断是否为ip
-            if (isIPAddress(host)) return baseUrl
+            if (isIPAddress(host)) return host
             //PublicSuffixDatabase处理域名
-            PublicSuffixDatabase.get().getEffectiveTldPlusOne(host) ?: baseUrl
+            PublicSuffixDatabase.get().getEffectiveTldPlusOne(host) ?: host
         }.getOrDefault(baseUrl)
     }
 
