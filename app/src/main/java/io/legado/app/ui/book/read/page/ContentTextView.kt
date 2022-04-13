@@ -171,18 +171,19 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             book,
             textChar.charData,
             ReadBook.bookSource,
-            true
-        )?.let {
+            (textChar.end - textChar.start).toInt(),
+            (lineBottom - lineTop).toInt()
+        )?.let { bitmap ->
             val rectF = if (isImageLine) {
                 RectF(textChar.start, lineTop, textChar.end, lineBottom)
             } else {
                 /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
-                val h = (textChar.end - textChar.start) / it.width * it.height
+                val h = (textChar.end - textChar.start) / bitmap.width * bitmap.height
                 val div = (lineBottom - lineTop - h) / 2
                 RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
             }
             kotlin.runCatching {
-                canvas.drawBitmap(it, null, rectF, null)
+                canvas.drawBitmap(bitmap, null, rectF, null)
             }.onFailure { e ->
                 context.toastOnUi(e.localizedMessage)
             }

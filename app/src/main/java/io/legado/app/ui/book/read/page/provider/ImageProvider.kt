@@ -66,41 +66,54 @@ object ImageProvider {
         }
     }
 
-    suspend fun getImage(
+    fun getImage(
         book: Book,
         src: String,
         bookSource: BookSource?,
-        onUi: Boolean = false,
+        width: Int,
+        height: Int
     ): Bitmap? {
-        val vFile = BookHelp.getImage(book, src)
-        if (!vFile.exists()) {
-            if (book.isEpub()) {
-                EpubFile.getImage(book, src)?.use { input ->
-                    val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
-                    FileOutputStream(newFile).use { output ->
-                        input.copyTo(output)
-                    }
-                }
-            } else if (!onUi) {
-                runBlocking {
-                    BookHelp.saveImage(bookSource, book, src)
+        val vFile = runBlocking {
+            cacheImage(book, src, bookSource)
+        }
+        return try {
+            ImageLoader.loadBitmap(appCtx, vFile.absolutePath)
+                .submit(width, height)
+                .get()
+        } catch (e: Exception) {
+            Coroutine.async {
+                putDebug("${vFile.absolutePath} 解码失败", e)
+                if (FileUtils.readText(vFile.absolutePath).isXml()) {
+                    putDebug("${vFile.absolutePath}为xml，自动删除")
+                    vFile.delete()
                 }
             }
+            errorBitmap
         }
-       return try {
+    }
+
+    fun getImage(
+        book: Book,
+        src: String,
+        bookSource: BookSource?
+    ): Bitmap? {
+        val vFile = runBlocking {
+            cacheImage(book, src, bookSource)
+        }
+        return try {
             ImageLoader.loadBitmap(appCtx, vFile.absolutePath)
-                .submit(ChapterProvider.visibleWidth,ChapterProvider.visibleHeight)
+                .submit(ChapterProvider.visibleWidth, ChapterProvider.visibleHeight)
                 .get()
-       } catch (e: Exception) {
-           Coroutine.async {
-               putDebug("${vFile.absolutePath} 解码失败", e)
-               if (FileUtils.readText(vFile.absolutePath).isXml()) {
-                   putDebug("${vFile.absolutePath}为xml，自动删除")
-                   vFile.delete()
-               }
-           }
-           errorBitmap
-       }
+        } catch (e: Exception) {
+            Coroutine.async {
+                putDebug("${vFile.absolutePath} 解码失败", e)
+                if (FileUtils.readText(vFile.absolutePath).isXml()) {
+                    putDebug("${vFile.absolutePath}为xml，自动删除")
+                    vFile.delete()
+                }
+            }
+            errorBitmap
+        }
     }
 
 }
