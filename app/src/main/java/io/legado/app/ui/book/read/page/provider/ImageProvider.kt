@@ -1,11 +1,8 @@
 package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Bitmap
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import io.legado.app.R
+import io.legado.app.constant.AppLog.putDebug
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
@@ -14,6 +11,7 @@ import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.BitmapUtils
+import io.legado.app.utils.isXml
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
@@ -52,12 +50,18 @@ object ImageProvider {
             }
         }
        return try {
-            ImageLoader.loadBitmap(appCtx, vFile.absolutePath).submit().get()
+            ImageLoader.loadBitmap(appCtx, vFile.absolutePath)
+                .submit(ChapterProvider.visibleWidth,ChapterProvider.visibleHeight)
+                .get()
        } catch (e: Exception) {
-            Coroutine.async { vFile.delete() }
-            //must call this method on a background thread
-            //ImageLoader.loadBitmap(appCtx, R.drawable.image_loading_error).submit().get()
-            errorBitmap
+           Coroutine.async {
+               putDebug("${vFile.absolutePath} 解码失败", e)
+               if (FileUtils.readText(vFile.absolutePath).isXml()) {
+                   putDebug("${vFile.absolutePath}为xml，自动删除")
+                   vFile.delete()
+               }
+           }
+           errorBitmap
        }
     }
 
