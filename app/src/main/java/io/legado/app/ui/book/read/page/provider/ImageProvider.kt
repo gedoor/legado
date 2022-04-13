@@ -82,7 +82,7 @@ object ImageProvider {
                 .get()
         } catch (e: Exception) {
             Coroutine.async {
-                putDebug("${vFile.absolutePath} 解码失败", e)
+                putDebug("${vFile.absolutePath} 解码失败\n${e.toString()}", e)
                 if (FileUtils.readText(vFile.absolutePath).isXml()) {
                     putDebug("${vFile.absolutePath}为xml，自动删除")
                     vFile.delete()
@@ -106,7 +106,7 @@ object ImageProvider {
                 .get()
         } catch (e: Exception) {
             Coroutine.async {
-                putDebug("${vFile.absolutePath} 解码失败", e)
+                putDebug("${vFile.absolutePath} 解码失败\n${e.toString()}", e)
                 if (FileUtils.readText(vFile.absolutePath).isXml()) {
                     putDebug("${vFile.absolutePath}为xml，自动删除")
                     vFile.delete()
