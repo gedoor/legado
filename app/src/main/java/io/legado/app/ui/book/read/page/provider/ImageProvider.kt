@@ -46,8 +46,8 @@ object ImageProvider {
         ) {
             if (evicted) {
                 oldBitmap.recycle()
-                putDebug("自动回收Bitmap path: $key")
-                putDebug("bitmapLruCache : ${size()} / ${maxSize()}")
+                putDebug("ImageProvider: trigger bitmap recycle. URI: $key")
+                putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
             }
         }
     }
@@ -90,7 +90,7 @@ object ImageProvider {
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
-        if (op.outWidth == 0 && op.outHeight == 0) {
+        if (op.outWidth < 1 && op.outHeight < 1) {
             return Size(errorBitmap.width, errorBitmap.height)
         }
         return Size(op.outWidth, op.outHeight)
@@ -116,9 +116,9 @@ object ImageProvider {
             bitmap
         }.onFailure {
             Coroutine.async {
-                putDebug("${vFile.absolutePath} 解码失败\n$it", it)
+                putDebug("ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it", it)
                 if (FileUtils.readText(vFile.absolutePath).isXml()) {
-                    putDebug("${vFile.absolutePath}为xml，自动删除")
+                    putDebug("ImageProvider: delete xml file. path: ${vFile.absolutePath}")
                     vFile.delete()
                 }
             }
