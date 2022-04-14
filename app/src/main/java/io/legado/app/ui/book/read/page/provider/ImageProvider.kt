@@ -17,6 +17,8 @@ import io.legado.app.utils.isXml
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.max
+import kotlin.math.min
 
 object ImageProvider {
 
@@ -27,10 +29,10 @@ object ImageProvider {
     /**
      *缓存bitmap LruCache实现
      */
-    //private val maxMemory = Runtime.getRuntime().maxMemory()
-    //private val cacheMemorySize = (maxMemory / 8) as Int
-    private const val cacheMemorySize: Int = 1024 * 1024 * 1024 //1G
-    private val bitmapLruCache = object : LruCache<String, Bitmap>(cacheMemorySize) {
+    private const val M = 1024 * 1024
+    private val cacheSize =
+        max(50 * M, min(100 * M, (Runtime.getRuntime().maxMemory() / 8).toInt()))
+    private val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
         override fun sizeOf(key: String, bitmap: Bitmap): Int {
             return bitmap.byteCount
         }
@@ -42,9 +44,9 @@ object ImageProvider {
             newBitmap: Bitmap?
         ) {
             if (evicted) {
-               oldBitmap.recycle()
-               putDebug("自动回收Bitmap path: $key")
-               putDebug("bitmapLruCache : ${size()} / ${maxSize()}")
+                oldBitmap.recycle()
+                putDebug("自动回收Bitmap path: $key")
+                putDebug("bitmapLruCache : ${size()} / ${maxSize()}")
             }
         }
     }
