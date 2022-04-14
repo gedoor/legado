@@ -150,6 +150,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 绘制图片
      */
+    @Suppress("UNUSED_PARAMETER")
     private fun drawImage(
         canvas: Canvas,
         textPage: TextPage,
@@ -165,22 +166,18 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             (textChar.end - textChar.start).toInt(),
             (lineBottom - lineTop).toInt()
         )
-        relativeOffset(textPage)?.let { relativeOffset ->
-            val lineTopNow = textLine.lineTop + relativeOffset
-            val lineBottomNow = textLine.lineBottom + relativeOffset
-            val rectF = if (textLine.isImage) {
-                RectF(textChar.start, lineTopNow, textChar.end, lineBottomNow)
-            } else {
-                /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
-                val h = (textChar.end - textChar.start) / bitmap.width * bitmap.height
-                val div = (lineBottomNow - lineTopNow - h) / 2
-                RectF(textChar.start, lineTopNow + div, textChar.end, lineBottomNow - div)
-            }
-            kotlin.runCatching {
-                canvas.drawBitmap(bitmap, null, rectF, null)
-            }.onFailure { e ->
-                context.toastOnUi(e.localizedMessage)
-            }
+        val rectF = if (textLine.isImage) {
+            RectF(textChar.start, lineTop, textChar.end, lineBottom)
+        } else {
+            /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
+            val h = (textChar.end - textChar.start) / bitmap.width * bitmap.height
+            val div = (lineBottom - lineTop - h) / 2
+            RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
+        }
+        kotlin.runCatching {
+            canvas.drawBitmap(bitmap, null, rectF, null)
+        }.onFailure { e ->
+            context.toastOnUi(e.localizedMessage)
         }
     }
 
@@ -519,15 +516,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             0 -> pageOffset.toFloat()
             1 -> pageOffset + textPage.height
             else -> pageOffset + textPage.height + pageFactory.nextPage.height
-        }
-    }
-
-    private fun relativeOffset(textPage: TextPage): Float? {
-        return when (textPage) {
-            this.textPage -> relativeOffset(0)
-            pageFactory.nextPage -> relativeOffset(1)
-            pageFactory.nextPlusPage -> relativeOffset(2)
-            else -> null
         }
     }
 
