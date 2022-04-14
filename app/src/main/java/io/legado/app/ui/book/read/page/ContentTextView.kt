@@ -10,7 +10,6 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.PhotoDialog
@@ -134,7 +133,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textColor = if (textLine.isReadAloud) context.accentColor else ReadBookConfig.textColor
         textLine.textChars.forEach {
             if (it.isImage) {
-                drawImage(canvas, textPage, textLine, it, lineTop, lineBottom, textLine.isImage)
+                drawImage(canvas, textPage, textLine, it, lineTop, lineBottom)
             } else {
                 textPaint.color = textColor
                 if (it.isSearchResult) {
@@ -157,35 +156,31 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         textLine: TextLine,
         textChar: TextChar,
         lineTop: Float,
-        lineBottom: Float,
-        isImageLine: Boolean
+        lineBottom: Float
     ) {
         val book = ReadBook.book ?: return
-        Coroutine.async {
-            ImageProvider.getImage(
-                book,
-                textChar.charData,
-                ReadBook.bookSource,
-                (textChar.end - textChar.start).toInt(),
-                (lineBottom - lineTop).toInt()
-            )
-        }.onSuccess { bitmap ->
-            relativeOffset(textPage)?.let { relativeOffset ->
-                val lineTopNow = textLine.lineTop + relativeOffset
-                val lineBottomNow = textLine.lineBottom + relativeOffset
-                val rectF = if (isImageLine) {
-                    RectF(textChar.start, lineTopNow, textChar.end, lineBottomNow)
-                } else {
-                    /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
-                    val h = (textChar.end - textChar.start) / bitmap.width * bitmap.height
-                    val div = (lineBottomNow - lineTopNow - h) / 2
-                    RectF(textChar.start, lineTopNow + div, textChar.end, lineBottomNow - div)
-                }
-                kotlin.runCatching {
-                    canvas.drawBitmap(bitmap, null, rectF, null)
-                }.onFailure { e ->
-                    context.toastOnUi(e.localizedMessage)
-                }
+        val bitmap = ImageProvider.getImage(
+            book,
+            textChar.charData,
+            ReadBook.bookSource,
+            (textChar.end - textChar.start).toInt(),
+            (lineBottom - lineTop).toInt()
+        )
+        relativeOffset(textPage)?.let { relativeOffset ->
+            val lineTopNow = textLine.lineTop + relativeOffset
+            val lineBottomNow = textLine.lineBottom + relativeOffset
+            val rectF = if (textLine.isImage) {
+                RectF(textChar.start, lineTopNow, textChar.end, lineBottomNow)
+            } else {
+                /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
+                val h = (textChar.end - textChar.start) / bitmap.width * bitmap.height
+                val div = (lineBottomNow - lineTopNow - h) / 2
+                RectF(textChar.start, lineTopNow + div, textChar.end, lineBottomNow - div)
+            }
+            kotlin.runCatching {
+                canvas.drawBitmap(bitmap, null, rectF, null)
+            }.onFailure { e ->
+                context.toastOnUi(e.localizedMessage)
             }
         }
     }

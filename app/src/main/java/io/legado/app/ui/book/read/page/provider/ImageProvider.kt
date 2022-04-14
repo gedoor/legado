@@ -9,17 +9,13 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.localBook.EpubFile
+import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isXml
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.coroutines.resume
 
 object ImageProvider {
 
@@ -55,42 +51,33 @@ object ImageProvider {
         bookSource: BookSource?
     ): Size {
         val file = cacheImage(book, src, bookSource)
-        return suspendCancellableCoroutine { block ->
-            kotlin.runCatching {
-                ImageLoader.loadBitmap(appCtx, file.absolutePath).submit()
-                    .getSize { width, height ->
-                        block.resume(Size(width, height))
-                    }
-            }.onFailure {
-                block.resume(Size(errorBitmap.width, errorBitmap.height))
-            }
-        }
+        val op = BitmapFactory.Options()
+        // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
+        op.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(file.absolutePath, op)
+        return Size(op.outWidth, op.outHeight)
     }
 
-    suspend fun getImage(
+    fun getImage(
         book: Book,
         src: String,
         bookSource: BookSource?,
         width: Int,
         height: Int
     ): Bitmap {
-        return withContext(IO) {
-            val vFile = cacheImage(book, src, bookSource)
-            try {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                ImageLoader.loadBitmap(appCtx, vFile.absolutePath)
-                    .submit(width, height)
-                    .get()
-            } catch (e: Exception) {
-                Coroutine.async {
-                    putDebug("${vFile.absolutePath} 解码失败\n$e", e)
-                    if (FileUtils.readText(vFile.absolutePath).isXml()) {
-                        putDebug("${vFile.absolutePath}为xml，自动删除")
-                        vFile.delete()
-                    }
+        val vFile = BookHelp.getImage(book, src)
+        @Suppress("BlockingMethodInNonBlockingContext")
+        return try {
+            BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
+        } catch (e: Exception) {
+            Coroutine.async {
+                putDebug("${vFile.absolutePath} 解码失败\n$e", e)
+                if (FileUtils.readText(vFile.absolutePath).isXml()) {
+                    putDebug("${vFile.absolutePath}为xml，自动删除")
+                    vFile.delete()
                 }
-                errorBitmap
             }
+            errorBitmap
         }
     }
 
