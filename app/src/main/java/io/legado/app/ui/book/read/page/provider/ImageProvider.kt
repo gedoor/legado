@@ -109,21 +109,20 @@ object ImageProvider {
         if (cacheBitmap != null) return cacheBitmap
         val vFile = BookHelp.getImage(book, src)
         @Suppress("BlockingMethodInNonBlockingContext")
-        return try {
+        return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
                 ?: throw NoStackTraceException("解析图片失败")
             bitmapLruCache.put(src, bitmap)
             bitmap
-        } catch (e: Exception) {
+        }.onFailure {
             Coroutine.async {
-                putDebug("${vFile.absolutePath} 解码失败\n$e", e)
+                putDebug("${vFile.absolutePath} 解码失败\n$it", it)
                 if (FileUtils.readText(vFile.absolutePath).isXml()) {
                     putDebug("${vFile.absolutePath}为xml，自动删除")
                     vFile.delete()
                 }
             }
-            errorBitmap
-        }
+        }.getOrDefault(errorBitmap)
     }
 
 }
