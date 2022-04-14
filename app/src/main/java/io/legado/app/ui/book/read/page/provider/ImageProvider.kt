@@ -29,11 +29,12 @@ object ImageProvider {
      */
     //private val maxMemory = Runtime.getRuntime().maxMemory()
     //private val cacheMemorySize = (maxMemory / 8) as Int
-    private val cacheMemorySize: Int = 1024 * 1024 * 1024 //1G
+    private const val cacheMemorySize: Int = 1024 * 1024 * 1024 //1G
     private val bitmapLruCache = object : LruCache<String, Bitmap>(cacheMemorySize) {
         override fun sizeOf(key: String, bitmap: Bitmap): Int {
-            return bitmap.getByteCount()
+            return bitmap.byteCount
         }
+
         override fun entryRemoved(
             evicted: Boolean,
             key: String,
