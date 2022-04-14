@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog.putDebug
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
@@ -110,6 +111,7 @@ object ImageProvider {
         @Suppress("BlockingMethodInNonBlockingContext")
         return try {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
+                ?: throw NoStackTraceException("解析图片失败")
             bitmapLruCache.put(src, bitmap)
             bitmap
         } catch (e: Exception) {

@@ -27,8 +27,7 @@ object BitmapUtils {
      * @return
      */
     @Throws(IOException::class)
-    fun decodeBitmap(path: String, width: Int, height: Int? = null): Bitmap {
-
+    fun decodeBitmap(path: String, width: Int, height: Int? = null): Bitmap? {
         val fis = FileInputStream(path)
         return fis.use {
             val op = BitmapFactory.Options()
@@ -38,7 +37,6 @@ object BitmapUtils {
             op.inSampleSize = calculateInSampleSize(op, width, height)
             op.inJustDecodeBounds = false
             BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
-
         }
     }
 
@@ -71,7 +69,7 @@ object BitmapUtils {
      * @return
      */
     @Throws(IOException::class)
-    fun decodeBitmap(path: String): Bitmap {
+    fun decodeBitmap(path: String): Bitmap? {
         val fis = FileInputStream(path)
         return fis.use {
             val opts = BitmapFactory.Options()
@@ -82,7 +80,6 @@ object BitmapUtils {
             opts.inJustDecodeBounds = false
             BitmapFactory.decodeFileDescriptor(fis.fd, null, opts)
         }
-
     }
 
     /**
