@@ -25,7 +25,7 @@ import java.util.zip.ZipFile
 
 class EpubFile(var book: Book) {
 
-    companion object {
+    companion object : BaseLocalBookParse {
         private var eFile: EpubFile? = null
 
         @Synchronized
@@ -41,17 +41,17 @@ class EpubFile(var book: Book) {
         }
 
         @Synchronized
-        fun getChapterList(book: Book): ArrayList<BookChapter> {
+        override fun getChapterList(book: Book): ArrayList<BookChapter> {
             return getEFile(book).getChapterList()
         }
 
         @Synchronized
-        fun getContent(book: Book, chapter: BookChapter): String? {
+        override fun getContent(book: Book, chapter: BookChapter): String? {
             return getEFile(book).getContent(chapter)
         }
 
         @Synchronized
-        fun getImage(
+        override fun getImage(
             book: Book,
             href: String
         ): InputStream? {
@@ -59,7 +59,7 @@ class EpubFile(var book: Book) {
         }
 
         @Synchronized
-        fun upBookInfo(book: Book) {
+        override fun upBookInfo(book: Book) {
             return getEFile(book).upBookInfo()
         }
     }

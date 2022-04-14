@@ -71,16 +71,18 @@ class AnalyzeUrl(
     private var webJs: String? = null
 
     init {
-        val urlMatcher = paramPattern.matcher(baseUrl)
-        if (urlMatcher.find()) baseUrl = baseUrl.substring(0, urlMatcher.start())
-        (headerMapF ?: source?.getHeaderMap(true))?.let {
-            headerMap.putAll(it)
-            if (it.containsKey("proxy")) {
-                proxy = it["proxy"]
-                headerMap.remove("proxy")
+        if (!mUrl.isDataUrl()) {
+            val urlMatcher = paramPattern.matcher(baseUrl)
+            if (urlMatcher.find()) baseUrl = baseUrl.substring(0, urlMatcher.start())
+            (headerMapF ?: source?.getHeaderMap(true))?.let {
+                headerMap.putAll(it)
+                if (it.containsKey("proxy")) {
+                    proxy = it["proxy"]
+                    headerMap.remove("proxy")
+                }
             }
+            initUrl()
         }
-        initUrl()
     }
 
     /**
@@ -457,10 +459,9 @@ class AnalyzeUrl(
      * 访问网站,返回ByteArray
      */
     suspend fun getByteArrayAwait(): ByteArray {
+        val concurrentRecord = fetchStart()
         @Suppress("RegExpRedundantEscape")
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
-        val concurrentRecord = fetchStart()
-        setCookie(source?.getKey())
         @Suppress("BlockingMethodInNonBlockingContext")
         if (dataUriFindResult != null) {
             val dataUriBase64 = dataUriFindResult.groupValues[1]
@@ -468,6 +469,7 @@ class AnalyzeUrl(
             fetchEnd(concurrentRecord)
             return byteArray
         } else {
+            setCookie(source?.getKey())
             val byteArray = getProxyClient(proxy).newCallResponseBody(retry) {
                 addHeaders(headerMap)
                 when (method) {
