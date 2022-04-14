@@ -44,6 +44,22 @@ object BitmapUtils {
         return BitmapFactory.decodeFile(path, op)
     }
 
+    @Throws(IOException::class)
+    fun decodeBitmap(path: String, width: Int): Bitmap {
+        val op = BitmapFactory.Options()
+        // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
+        op.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(path, op)
+        //获取比例大小
+        val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
+        //如果超出指定大小，则缩小相应的比例
+        if (wRatio > 1) {
+            op.inSampleSize = wRatio
+        }
+        op.inJustDecodeBounds = false
+        return BitmapFactory.decodeFile(path, op)
+    }
+
     /** 从path中获取Bitmap图片
      * @param path 图片路径
      * @return
