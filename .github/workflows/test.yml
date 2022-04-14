@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**'
+      - '!**/assets/**'
+      - '!**.md'
   pull_request:
   workflow_dispatch:
 
