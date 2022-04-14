@@ -80,4 +80,25 @@ object ImageProvider {
         }
     }
 
+    fun getImage(
+        book: Book,
+        src: String,
+        width: Int
+    ): Bitmap {
+        val vFile = BookHelp.getImage(book, src)
+        @Suppress("BlockingMethodInNonBlockingContext")
+        return try {
+            BitmapUtils.decodeBitmap(vFile.absolutePath, width)
+        } catch (e: Exception) {
+            Coroutine.async {
+                putDebug("${vFile.absolutePath} 解码失败\n$e", e)
+                if (FileUtils.readText(vFile.absolutePath).isXml()) {
+                    putDebug("${vFile.absolutePath}为xml，自动删除")
+                    vFile.delete()
+                }
+            }
+            errorBitmap
+        }
+    }
+
 }
