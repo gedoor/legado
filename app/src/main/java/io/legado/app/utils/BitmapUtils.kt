@@ -3,9 +3,11 @@
 package io.legado.app.utils
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
-import android.view.View
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Matrix
 import com.google.android.renderscript.Toolkit
 import java.io.IOException
 import kotlin.math.*
@@ -83,9 +85,7 @@ object BitmapUtils {
     fun decodeBitmap(context: Context, resId: Int): Bitmap? {
         val opt = BitmapFactory.Options()
         opt.inPreferredConfig = Config.RGB_565
-        //获取资源图片
-        val `is` = context.resources.openRawResource(resId)
-        return BitmapFactory.decodeStream(`is`, null, opt)
+        return BitmapFactory.decodeResource(context.resources, resId, opt)
     }
 
     /**
@@ -96,13 +96,10 @@ object BitmapUtils {
      * @return
      */
     fun decodeBitmap(context: Context, resId: Int, width: Int, height: Int): Bitmap? {
-
-        var inputStream = context.resources.openRawResource(resId)
-
         val op = BitmapFactory.Options()
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
-        BitmapFactory.decodeStream(inputStream, null, op) //获取尺寸信息
+        BitmapFactory.decodeResource(context.resources, resId, op) //获取尺寸信息
         //获取比例大小
         val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
         val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
@@ -114,9 +111,8 @@ object BitmapUtils {
                 op.inSampleSize = hRatio
             }
         }
-        inputStream = context.resources.openRawResource(resId)
         op.inJustDecodeBounds = false
-        return BitmapFactory.decodeStream(inputStream, null, op)
+        return BitmapFactory.decodeResource(context.resources, resId, op)
     }
 
     /**
@@ -135,31 +131,26 @@ object BitmapUtils {
         height: Int
     ): Bitmap? {
         var inputStream = context.assets.open(fileNameInAssets)
-        val op = BitmapFactory.Options()
-        // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
-        op.inJustDecodeBounds = true
-        BitmapFactory.decodeStream(inputStream, null, op) //获取尺寸信息
-        //获取比例大小
-        val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
-        val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
-        //如果超出指定大小，则缩小相应的比例
-        if (wRatio > 1 && hRatio > 1) {
-            if (wRatio > hRatio) {
-                op.inSampleSize = wRatio
-            } else {
-                op.inSampleSize = hRatio
+        return inputStream.use {
+            val op = BitmapFactory.Options()
+            // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
+            op.inJustDecodeBounds = true
+            BitmapFactory.decodeStream(inputStream, null, op) //获取尺寸信息
+            //获取比例大小
+            val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
+            val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
+            //如果超出指定大小，则缩小相应的比例
+            if (wRatio > 1 && hRatio > 1) {
+                if (wRatio > hRatio) {
+                    op.inSampleSize = wRatio
+                } else {
+                    op.inSampleSize = hRatio
+                }
             }
+            inputStream = context.assets.open(fileNameInAssets)
+            op.inJustDecodeBounds = false
+            BitmapFactory.decodeStream(inputStream, null, op)
         }
-        inputStream = context.assets.open(fileNameInAssets)
-        op.inJustDecodeBounds = false
-        return BitmapFactory.decodeStream(inputStream, null, op)
-    }
-
-    //图片不被压缩
-    fun convertViewToBitmap(view: View, bitmapWidth: Int, bitmapHeight: Int): Bitmap {
-        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Config.ARGB_8888)
-        view.draw(Canvas(bitmap))
-        return bitmap
     }
 
     /**
