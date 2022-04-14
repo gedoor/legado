@@ -11,7 +11,7 @@ import java.io.File
 import java.io.InputStream
 
 class UmdFile(var book: Book) {
-    companion object {
+    companion object : BaseLocalBookParse {
         private var uFile: UmdFile? = null
 
         @Synchronized
@@ -25,17 +25,17 @@ class UmdFile(var book: Book) {
         }
 
         @Synchronized
-        fun getChapterList(book: Book): ArrayList<BookChapter> {
+        override fun getChapterList(book: Book): ArrayList<BookChapter> {
             return getUFile(book).getChapterList()
         }
 
         @Synchronized
-        fun getContent(book: Book, chapter: BookChapter): String? {
+        override fun getContent(book: Book, chapter: BookChapter): String? {
             return getUFile(book).getContent(chapter)
         }
 
         @Synchronized
-        fun getImage(
+        override fun getImage(
             book: Book,
             href: String
         ): InputStream? {
@@ -44,7 +44,7 @@ class UmdFile(var book: Book) {
 
 
         @Synchronized
-        fun upBookInfo(book: Book) {
+        override fun upBookInfo(book: Book) {
             return getUFile(book).upBookInfo()
         }
     }
