@@ -40,16 +40,13 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
         arguments?.let {
             val path = it.getString("path")
             if (path.isNullOrEmpty()) {
-                val chapterIndex = it.getInt("chapterIndex")
                 val src = it.getString("src")
                 ReadBook.book?.let { book ->
                     src?.let {
                         execute {
                             ImageProvider.getImage(book, src, ReadBook.bookSource)
                         }.onSuccess { bitmap ->
-                            if (bitmap != null) {
-                                binding.photoView.setImageBitmap(bitmap)
-                            }
+                            binding.photoView.setImageBitmap(bitmap)
                         }
                     }
                 }

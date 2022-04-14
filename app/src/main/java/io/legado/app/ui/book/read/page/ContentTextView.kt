@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.PhotoDialog
@@ -167,13 +168,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         isImageLine: Boolean
     ) {
         val book = ReadBook.book ?: return
-        ImageProvider.getImage(
-            book,
-            textChar.charData,
-            ReadBook.bookSource,
-            (textChar.end - textChar.start).toInt(),
-            (lineBottom - lineTop).toInt()
-        )?.let { bitmap ->
+        Coroutine.async {
+            ImageProvider.getImage(
+                book,
+                textChar.charData,
+                ReadBook.bookSource,
+                (textChar.end - textChar.start).toInt(),
+                (lineBottom - lineTop).toInt()
+            )
+        }.onSuccess { bitmap ->
             val rectF = if (isImageLine) {
                 RectF(textChar.start, lineTop, textChar.end, lineBottom)
             } else {

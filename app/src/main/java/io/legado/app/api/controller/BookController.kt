@@ -21,8 +21,8 @@ import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.localBook.UmdFile
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.*
 import io.legado.app.ui.book.read.page.provider.ImageProvider
+import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
@@ -87,9 +87,10 @@ object BookController {
             this.bookSource = appDb.bookSourceDao.getBookSource(book.origin)
         }
         this.bookUrl = bookUrl
-        return ImageProvider.getImage(book, src, bookSource, width, width)?.let {
-            returnData.setData(it)
-        } ?: returnData.setErrorMsg("图片加载失败或不存在")
+        val bitmap = runBlocking {
+            ImageProvider.getImage(book, src, bookSource, width, width)
+        }
+        return returnData.setData(bitmap)
     }
 
     /**
