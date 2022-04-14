@@ -23,7 +23,7 @@ object ImageProvider {
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.image_loading_error)
     }
 
-    private suspend fun cacheImage(
+    suspend fun cacheImage(
         book: Book,
         src: String,
         bookSource: BookSource?
