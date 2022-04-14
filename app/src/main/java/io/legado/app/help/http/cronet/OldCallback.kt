@@ -4,20 +4,19 @@ import android.os.ConditionVariable
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
-import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
-import org.chromium.net.UrlResponseInfo
 import java.io.IOException
-import java.nio.ByteBuffer
 
 class OldCallback(originalRequest: Request, mCall: Call) : AbsCallBack(originalRequest, mCall) {
 
     private val mResponseCondition = ConditionVariable()
+    private var mException: IOException? = null
 
     @Throws(IOException::class)
     override fun waitForDone(urlRequest: UrlRequest): Response {
         //获取okhttp call的完整请求的超时时间
         val timeOutMs: Long = mCall.timeout().timeoutNanos() / 1000000
+        urlRequest.start()
         if (timeOutMs > 0) {
             mResponseCondition.block(timeOutMs)
         } else {
@@ -32,35 +31,25 @@ class OldCallback(originalRequest: Request, mCall: Call) : AbsCallBack(originalR
         if (mException != null) {
             throw mException as IOException
         }
-        return this.mResponse
+        return mResponse
     }
 
-
-    override fun onReadCompleted(
-        request: UrlRequest,
-        info: UrlResponseInfo,
-        byteBuffer: ByteBuffer
-    ) {
-        super.onReadCompleted(request, info, byteBuffer)
-        if (mException != null) {
-            mResponseCondition.open()
-        }
-    }
-
-    override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
-        super.onSucceeded(request, info)
+    /**
+     * 当发生错误时，通知子类终止阻塞抛出错误
+     * @param error
+     */
+    override fun onError(error: IOException) {
+        mException = error
         mResponseCondition.open()
     }
 
-    override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
-        super.onFailed(request, info, error)
+    /**
+     * 请求成功后，通知子类结束阻塞，返回response
+     * @param response
+     */
+    override fun onSuccess(response: Response) {
         mResponseCondition.open()
     }
 
-
-    override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
-        super.onCanceled(request, info)
-        mResponseCondition.open()
-    }
 
 }

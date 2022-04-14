@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
@@ -126,7 +127,7 @@ object BookHelp {
                 ).writeBytes(it)
             }
         } catch (e: Exception) {
-            e.printOnDebug()
+            AppLog.putDebug("${src}下载错误", e)
         } finally {
             downloadImages.remove(src)
         }

@@ -2,6 +2,7 @@ package io.legado.app.help.http.cronet
 
 import io.legado.app.constant.AppLog
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import okhttp3.Headers
 import okhttp3.MediaType
@@ -13,11 +14,8 @@ import org.chromium.net.UploadDataProviders
 import org.chromium.net.UrlRequest
 import splitties.init.appCtx
 
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
-
-val executor: ExecutorService by lazy { Executors.newCachedThreadPool() }
+//val executor: ExecutorService by lazy { Executors.newCachedThreadPool() }
 
 val cronetEngine: ExperimentalCronetEngine? by lazy {
     if (!AppConfig.isGooglePlay) {
@@ -48,7 +46,11 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
     val url = request.url.toString()
     val headers: Headers = request.headers
     val requestBody = request.body
-    return cronetEngine?.newUrlRequestBuilder(url, callback, executor)?.apply {
+    return cronetEngine?.newUrlRequestBuilder(
+        url,
+        callback,
+        okHttpClient.dispatcher.executorService
+    )?.apply {
         setHttpMethod(request.method)//设置
         allowDirectExecutor()
         headers.forEachIndexed { index, _ ->
@@ -65,7 +67,7 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
             requestBody.writeTo(buffer)
             setUploadDataProvider(
                 UploadDataProviders.create(buffer.readByteArray()),
-                executor
+                okHttpClient.dispatcher.executorService
             )
 
         }

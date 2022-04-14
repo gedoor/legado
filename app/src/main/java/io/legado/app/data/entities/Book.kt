@@ -193,7 +193,14 @@ data class Book(
     }
 
     fun getUseReplaceRule(): Boolean {
-        return config.useReplaceRule ?: AppConfig.replaceEnableDefault
+        val useReplaceRule = config.useReplaceRule
+        if (useReplaceRule != null) {
+            return useReplaceRule
+        }
+        if (type == BookType.image) {
+            return false
+        }
+        return AppConfig.replaceEnableDefault
     }
 
     fun setReSegment(reSegment: Boolean) {

@@ -82,43 +82,36 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private fun drawPage(canvas: Canvas) {
         var relativeOffset = relativeOffset(0)
         textPage.textLines.forEach { textLine ->
-            draw(canvas, textLine, relativeOffset)
+            draw(canvas, textPage, textLine, relativeOffset)
         }
         if (!callBack.isScroll) return
         //滚动翻页
         if (!pageFactory.hasNext()) return
-        val nextPage = relativePage(1)
+        val textPage1 = relativePage(1)
         relativeOffset = relativeOffset(1)
-        nextPage.textLines.forEach { textLine ->
-            draw(canvas, textLine, relativeOffset)
+        textPage1.textLines.forEach { textLine ->
+            draw(canvas, textPage1, textLine, relativeOffset)
         }
         if (!pageFactory.hasNextPlus()) return
         relativeOffset = relativeOffset(2)
         if (relativeOffset < ChapterProvider.visibleHeight) {
-            relativePage(2).textLines.forEach { textLine ->
-                draw(canvas, textLine, relativeOffset)
+            val textPage2 = relativePage(2)
+            textPage2.textLines.forEach { textLine ->
+                draw(canvas, textPage2, textLine, relativeOffset)
             }
         }
     }
 
     private fun draw(
         canvas: Canvas,
+        textPage: TextPage,
         textLine: TextLine,
         relativeOffset: Float,
     ) {
         val lineTop = textLine.lineTop + relativeOffset
         val lineBase = textLine.lineBase + relativeOffset
         val lineBottom = textLine.lineBottom + relativeOffset
-        drawChars(
-            canvas,
-            textLine.textChars,
-            lineTop,
-            lineBase,
-            lineBottom,
-            textLine.isTitle,
-            textLine.isReadAloud,
-            textLine.isImage
-        )
+        drawChars(canvas, textPage, textLine, lineTop, lineBase, lineBottom)
     }
 
     /**
@@ -126,23 +119,21 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     private fun drawChars(
         canvas: Canvas,
-        textChars: List<TextChar>,
+        textPage: TextPage,
+        textLine: TextLine,
         lineTop: Float,
         lineBase: Float,
         lineBottom: Float,
-        isTitle: Boolean,
-        isReadAloud: Boolean,
-        isImageLine: Boolean
     ) {
-        val textPaint = if (isTitle) {
+        val textPaint = if (textLine.isTitle) {
             ChapterProvider.titlePaint
         } else {
             ChapterProvider.contentPaint
         }
-        val textColor = if (isReadAloud) context.accentColor else ReadBookConfig.textColor
-        textChars.forEach {
+        val textColor = if (textLine.isReadAloud) context.accentColor else ReadBookConfig.textColor
+        textLine.textChars.forEach {
             if (it.isImage) {
-                drawImage(canvas, it, lineTop, lineBottom, isImageLine)
+                drawImage(canvas, textPage, textLine, it, lineTop, lineBottom)
             } else {
                 textPaint.color = textColor
                 if (it.isSearchResult) {
@@ -159,34 +150,34 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 绘制图片
      */
+    @Suppress("UNUSED_PARAMETER")
     private fun drawImage(
         canvas: Canvas,
+        textPage: TextPage,
+        textLine: TextLine,
         textChar: TextChar,
         lineTop: Float,
-        lineBottom: Float,
-        isImageLine: Boolean
+        lineBottom: Float
     ) {
         val book = ReadBook.book ?: return
-        ImageProvider.getImage(
+        val bitmap = ImageProvider.getImage(
             book,
             textChar.charData,
-            ReadBook.bookSource,
             (textChar.end - textChar.start).toInt(),
             (lineBottom - lineTop).toInt()
-        )?.let { bitmap ->
-            val rectF = if (isImageLine) {
-                RectF(textChar.start, lineTop, textChar.end, lineBottom)
-            } else {
-                /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
-                val h = (textChar.end - textChar.start) / bitmap.width * bitmap.height
-                val div = (lineBottom - lineTop - h) / 2
-                RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
-            }
-            kotlin.runCatching {
-                canvas.drawBitmap(bitmap, null, rectF, null)
-            }.onFailure { e ->
-                context.toastOnUi(e.localizedMessage)
-            }
+        )
+        val rectF = if (textLine.isImage) {
+            RectF(textChar.start, lineTop, textChar.end, lineBottom)
+        } else {
+            /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
+            val h = (textChar.end - textChar.start) / bitmap.width * bitmap.height
+            val div = (lineBottom - lineTop - h) / 2
+            RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
+        }
+        kotlin.runCatching {
+            canvas.drawBitmap(bitmap, null, rectF, null)
+        }.onFailure { e ->
+            context.toastOnUi(e.localizedMessage)
         }
     }
 

@@ -31,7 +31,7 @@ object AppLog {
     }
 
     fun putDebug(message: String?, throwable: Throwable? = null) {
-        if (AppConfig.recordLog) {
+        if (AppConfig.recordLog || BuildConfig.DEBUG) {
             put(message, throwable)
         }
     }

@@ -208,22 +208,23 @@ object ChapterProvider {
         imageStyle: String?,
     ): Float {
         var durY = y
-        ImageProvider.getImageSize(book, src, ReadBook.bookSource).let {
+        val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
+        if (size.width > 0 && size.height > 0) {
             if (durY > visibleHeight) {
                 textPages.last().height = durY
                 textPages.add(TextPage())
                 durY = 0f
             }
-            var height = it.height
-            var width = it.width
+            var height = size.height
+            var width = size.width
             when (imageStyle?.toUpperCase(Locale.ROOT)) {
                 Book.imgStyleFull -> {
                     width = visibleWidth
-                    height = it.height * visibleWidth / it.width
+                    height = size.height * visibleWidth / size.width
                 }
                 else -> {
-                    if (it.width > visibleWidth) {
-                        height = it.height * visibleWidth / it.width
+                    if (size.width > visibleWidth) {
+                        height = size.height * visibleWidth / size.width
                         width = visibleWidth
                     }
                     if (height > visibleHeight) {

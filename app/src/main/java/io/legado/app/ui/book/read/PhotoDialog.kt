@@ -5,9 +5,10 @@ import android.view.View
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogPhotoViewBinding
+import io.legado.app.help.BookHelp
+import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -40,17 +41,12 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
         arguments?.let {
             val path = it.getString("path")
             if (path.isNullOrEmpty()) {
-                val chapterIndex = it.getInt("chapterIndex")
-                val src = it.getString("src")
                 ReadBook.book?.let { book ->
-                    src?.let {
-                        execute {
-                            ImageProvider.getImage(book, src, ReadBook.bookSource)
-                        }.onSuccess { bitmap ->
-                            if (bitmap != null) {
-                                binding.photoView.setImageBitmap(bitmap)
-                            }
-                        }
+                    it.getString("src")?.let { src ->
+                        val file = BookHelp.getImage(book, src)
+                        ImageLoader.load(requireContext(), file)
+                            .error(R.drawable.image_loading_error)
+                            .into(binding.photoView)
                     }
                 }
             } else {
