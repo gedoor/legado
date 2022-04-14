@@ -17,7 +17,7 @@
 * js文档：java.toast java.longToast
 * cookie保存策略更改，若登录失效请重新登录
 * cronet和okHttp共用线程池
-* 设置图片缓存为1G超过1G自动清理图片缓存
+* 限制图片缓存大小,超过自动清除,防止OOM
 * 其它一些优化
 
 **2022/04/12**
