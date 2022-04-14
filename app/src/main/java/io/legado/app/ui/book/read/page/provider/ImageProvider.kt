@@ -94,29 +94,4 @@ object ImageProvider {
         }
     }
 
-    suspend fun getImage(
-        book: Book,
-        src: String,
-        bookSource: BookSource?
-    ): Bitmap {
-        return withContext(IO) {
-            val vFile = cacheImage(book, src, bookSource)
-            try {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                ImageLoader.loadBitmap(appCtx, vFile.absolutePath)
-                    .submit(ChapterProvider.visibleWidth, ChapterProvider.visibleHeight)
-                    .get()
-            } catch (e: Exception) {
-                Coroutine.async {
-                    putDebug("${vFile.absolutePath} 解码失败\n$e", e)
-                    if (FileUtils.readText(vFile.absolutePath).isXml()) {
-                        putDebug("${vFile.absolutePath}为xml，自动删除")
-                        vFile.delete()
-                    }
-                }
-                errorBitmap
-            }
-        }
-    }
-
 }
