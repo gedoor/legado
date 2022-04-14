@@ -16,6 +16,7 @@
 * 修复解码正文图片报错，添加解码日志
 * js文档：java.toast java.longToast
 * cookie保存策略更改，若登录失效请重新登录
+* cronet和okHttp共用线程池
 
 **2022/04/12**
 

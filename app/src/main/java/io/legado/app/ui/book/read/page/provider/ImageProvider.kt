@@ -55,6 +55,9 @@ object ImageProvider {
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
+        if (op.outWidth == 0 && op.outHeight == 0) {
+            return Size(errorBitmap.width, errorBitmap.height)
+        }
         return Size(op.outWidth, op.outHeight)
     }
 

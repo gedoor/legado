@@ -15,8 +15,6 @@ import org.chromium.net.UrlRequest
 import splitties.init.appCtx
 
 
-//val executor: ExecutorService by lazy { Executors.newCachedThreadPool() }
-
 val cronetEngine: ExperimentalCronetEngine? by lazy {
     if (!AppConfig.isGooglePlay) {
         CronetLoader.preDownload()
