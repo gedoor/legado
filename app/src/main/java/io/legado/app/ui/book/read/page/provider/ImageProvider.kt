@@ -96,7 +96,7 @@ object ImageProvider {
         book: Book,
         src: String,
         width: Int,
-        height: Int
+        height: Int? = null
     ): Bitmap {
         val cacheBitmap = bitmapLruCache.get(src)
         if (cacheBitmap != null) return cacheBitmap
@@ -104,34 +104,6 @@ object ImageProvider {
         @Suppress("BlockingMethodInNonBlockingContext")
         return try {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
-            bitmapLruCache.put(src, bitmap)
-            bitmap
-        } catch (e: Exception) {
-            Coroutine.async {
-                putDebug("${vFile.absolutePath} 解码失败\n$e", e)
-                if (FileUtils.readText(vFile.absolutePath).isXml()) {
-                    putDebug("${vFile.absolutePath}为xml，自动删除")
-                    vFile.delete()
-                }
-            }
-            errorBitmap
-        }
-    }
-
-   /**
-    *获取bitmap 使用LruCache缓存
-    */
-    fun getImage(
-        book: Book,
-        src: String,
-        width: Int
-    ): Bitmap {
-        val cacheBitmap = bitmapLruCache.get(src)
-        if (cacheBitmap != null) return cacheBitmap
-        val vFile = BookHelp.getImage(book, src)
-        @Suppress("BlockingMethodInNonBlockingContext")
-        return try {
-            val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width)
             bitmapLruCache.put(src, bitmap)
             bitmap
         } catch (e: Exception) {
