@@ -162,7 +162,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val bitmap = ImageProvider.getImage(
             book,
             textChar.charData,
-            ReadBook.bookSource,
             (textChar.end - textChar.start).toInt(),
             (lineBottom - lineTop).toInt()
         )

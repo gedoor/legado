@@ -61,7 +61,6 @@ object ImageProvider {
     fun getImage(
         book: Book,
         src: String,
-        bookSource: BookSource?,
         width: Int,
         height: Int
     ): Bitmap {
