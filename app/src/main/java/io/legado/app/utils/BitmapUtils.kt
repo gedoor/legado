@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
 import com.google.android.renderscript.Toolkit
+import java.io.FileInputStream
 import java.io.IOException
 import kotlin.math.*
 
@@ -27,39 +28,51 @@ object BitmapUtils {
      */
     @Throws(IOException::class)
     fun decodeBitmap(path: String, width: Int, height: Int): Bitmap {
-        val op = BitmapFactory.Options()
-        // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
-        op.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, op)
-        //获取比例大小
-        val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
-        val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
-        //如果超出指定大小，则缩小相应的比例
-        if (wRatio > 1 && hRatio > 1) {
-            if (wRatio > hRatio) {
-                op.inSampleSize = wRatio
-            } else {
-                op.inSampleSize = hRatio
+
+        val fis = FileInputStream(path)
+        return fis.use {
+            val op = BitmapFactory.Options()
+            // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
+            op.inJustDecodeBounds = true
+            BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
+            //获取比例大小
+            val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
+            val hRatio = ceil((op.outHeight / height).toDouble()).toInt()
+            //如果超出指定大小，则缩小相应的比例
+            if (wRatio > 1 && hRatio > 1) {
+                if (wRatio > hRatio) {
+                    op.inSampleSize = wRatio
+                } else {
+                    op.inSampleSize = hRatio
+                }
             }
+            op.inJustDecodeBounds = false
+            BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
+
         }
-        op.inJustDecodeBounds = false
-        return BitmapFactory.decodeFile(path, op)
     }
 
     @Throws(IOException::class)
     fun decodeBitmap(path: String, width: Int): Bitmap {
-        val op = BitmapFactory.Options()
-        // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
-        op.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, op)
-        //获取比例大小
-        val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
-        //如果超出指定大小，则缩小相应的比例
-        if (wRatio > 1) {
-            op.inSampleSize = wRatio
+
+        val fis = FileInputStream(path)
+
+        return fis.use {
+            val op = BitmapFactory.Options()
+            // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
+            op.inJustDecodeBounds = true
+
+            BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
+            //获取比例大小
+            val wRatio = ceil((op.outWidth / width).toDouble()).toInt()
+            //如果超出指定大小，则缩小相应的比例
+            if (wRatio > 1) {
+                op.inSampleSize = wRatio
+            }
+            op.inJustDecodeBounds = false
+            BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
         }
-        op.inJustDecodeBounds = false
-        return BitmapFactory.decodeFile(path, op)
+
     }
 
     /** 从path中获取Bitmap图片
@@ -68,12 +81,17 @@ object BitmapUtils {
      */
     @Throws(IOException::class)
     fun decodeBitmap(path: String): Bitmap {
-        val opts = BitmapFactory.Options()
-        opts.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, opts)
-        opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
-        opts.inJustDecodeBounds = false
-        return BitmapFactory.decodeFile(path, opts)
+        val fis = FileInputStream(path)
+        return fis.use {
+            val opts = BitmapFactory.Options()
+            opts.inJustDecodeBounds = true
+
+            BitmapFactory.decodeFileDescriptor(fis.fd, null, opts)
+            opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
+            opts.inJustDecodeBounds = false
+            BitmapFactory.decodeFileDescriptor(fis.fd, null, opts)
+        }
+
     }
 
     /**
