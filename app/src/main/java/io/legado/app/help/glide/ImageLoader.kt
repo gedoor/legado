@@ -6,8 +6,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.RequestBuilder
-import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isDataUrl
 import io.legado.app.utils.isContentScheme
 import java.io.File
 
@@ -20,7 +20,7 @@ object ImageLoader {
     fun load(context: Context, path: String?): RequestBuilder<Drawable> {
         return when {
             path.isNullOrEmpty() -> GlideApp.with(context).load(path)
-            dataUriRegex.find(path) != null -> GlideApp.with(context).load(path)
+            path.isDataUrl() -> GlideApp.with(context).load(path)
             path.isAbsUrl() -> GlideApp.with(context).load(path)
             path.isContentScheme() -> GlideApp.with(context).load(Uri.parse(path))
             else -> kotlin.runCatching {
@@ -34,6 +34,7 @@ object ImageLoader {
     fun loadBitmap(context: Context, path: String?): RequestBuilder<Bitmap> {
         return when {
             path.isNullOrEmpty() -> GlideApp.with(context).asBitmap().load(path)
+            path.isDataUrl() -> GlideApp.with(context).asBitmap().load(path)
             path.isAbsUrl() -> GlideApp.with(context).asBitmap().load(path)
             path.isContentScheme() -> GlideApp.with(context).asBitmap().load(Uri.parse(path))
             else -> kotlin.runCatching {

@@ -2,6 +2,7 @@
 
 package io.legado.app.utils
 
+import io.legado.app.constant.AppPattern.dataUriRegex
 import android.icu.text.Collator
 import android.icu.util.ULocale
 import android.net.Uri
@@ -23,6 +24,11 @@ fun String.parseToUri(): Uri {
 fun String?.isAbsUrl() =
     this?.let {
         it.startsWith("http://", true) || it.startsWith("https://", true)
+    } ?: false
+
+fun String?.isDataUrl() =
+    this?.let {
+        dataUriRegex.matches(it)
     } ?: false
 
 fun String?.isJson(): Boolean =
