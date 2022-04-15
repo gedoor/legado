@@ -16,6 +16,7 @@ import io.legado.app.ui.book.read.PhotoDialog
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
@@ -36,8 +37,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
     private var callBack: CallBack
     private val visibleRect = RectF()
-    private val selectStart = Pos(0, 0, 0)
-    private val selectEnd = Pos(0, 0, 0)
+    private val selectStart = TextPos(0, 0, 0)
+    private val selectEnd = TextPos(0, 0, 0)
     var textPage: TextPage = TextPage()
         private set
 
@@ -240,7 +241,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     fun selectStartMove(x: Float, y: Float) {
         touch(x, y) { relativePos, _, relativeOffset, lineIndex, textLine, charIndex, textChar ->
-            val pos = Pos(relativePos, lineIndex, charIndex)
+            val pos = TextPos(relativePos, lineIndex, charIndex)
             if (selectStart.compare(pos) != 0) {
                 if (pos.compare(selectEnd) <= 0) {
                     selectStart.upData(pos = pos)
@@ -260,7 +261,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     fun selectEndMove(x: Float, y: Float) {
         touch(x, y) { relativePos, _, relativeOffset, lineIndex, textLine, charIndex, textChar ->
-            val pos = Pos(relativePos, lineIndex, charIndex)
+            val pos = TextPos(relativePos, lineIndex, charIndex)
             if (pos.compare(selectEnd) != 0) {
                 if (pos.compare(selectStart) >= 0) {
                     selectEnd.upData(pos)
@@ -345,15 +346,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     private fun upSelectChars() {
         val last = if (callBack.isScroll) 2 else 0
-        val charPos = Pos(0, 0, 0)
+        val textPos = TextPos(0, 0, 0)
         for (relativePos in 0..last) {
-            charPos.relativePos = relativePos
+            textPos.relativePos = relativePos
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
-                charPos.lineIndex = lineIndex
+                textPos.lineIndex = lineIndex
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    charPos.charIndex = charIndex
+                    textPos.charIndex = charIndex
                     textChar.selected =
-                        charPos.compare(selectStart) >= 0 && charPos.compare(selectEnd) <= 0
+                        textPos.compare(selectStart) >= 0 && textPos.compare(selectEnd) <= 0
                     textChar.isSearchResult = textChar.selected && callBack.isSelectingSearchResult
                 }
             }
@@ -383,17 +384,17 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun getSelectedText(): String {
-        val pos = Pos(0, 0, 0)
+        val textPos = TextPos(0, 0, 0)
         val builder = StringBuilder()
         for (relativePos in selectStart.relativePos..selectEnd.relativePos) {
             val textPage = relativePage(relativePos)
-            pos.relativePos = relativePos
+            textPos.relativePos = relativePos
             textPage.textLines.forEachIndexed { lineIndex, textLine ->
-                pos.lineIndex = lineIndex
+                textPos.lineIndex = lineIndex
                 textLine.textChars.forEachIndexed { charIndex, textChar ->
-                    pos.charIndex = charIndex
-                    val compareStart = pos.compare(selectStart)
-                    val compareEnd = pos.compare(selectEnd)
+                    textPos.charIndex = charIndex
+                    val compareStart = textPos.compare(selectStart)
+                    val compareEnd = textPos.compare(selectEnd)
                     if (compareStart >= 0 && compareEnd <= 0) {
                         builder.append(textChar.charData)
                         if (
@@ -439,31 +440,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             0 -> textPage
             1 -> pageFactory.nextPage
             else -> pageFactory.nextPlusPage
-        }
-    }
-
-    private data class Pos(
-        var relativePos: Int,
-        var lineIndex: Int,
-        var charIndex: Int
-    ) {
-
-        fun upData(pos: Pos) {
-            relativePos = pos.relativePos
-            lineIndex = pos.lineIndex
-            charIndex = pos.charIndex
-        }
-
-        fun compare(pos: Pos): Int {
-            return when {
-                relativePos < pos.relativePos -> -3
-                relativePos > pos.relativePos -> 3
-                lineIndex < pos.lineIndex -> -2
-                lineIndex > pos.lineIndex -> 2
-                charIndex < pos.charIndex -> -1
-                charIndex > pos.charIndex -> 1
-                else -> 0
-            }
         }
     }
 
