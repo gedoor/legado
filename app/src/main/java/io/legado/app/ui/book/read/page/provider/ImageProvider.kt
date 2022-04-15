@@ -14,7 +14,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isXml
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
@@ -91,6 +90,10 @@ object ImageProvider {
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
         if (op.outWidth < 1 && op.outHeight < 1) {
+            Coroutine.async {
+                putDebug("ImageProvider: delete file due to image size ${op.outHeight}*${op.outWidth}. path: ${file.absolutePath}")
+                file.delete()
+            }
             return Size(errorBitmap.width, errorBitmap.height)
         }
         return Size(op.outWidth, op.outHeight)
@@ -114,14 +117,6 @@ object ImageProvider {
                 ?: throw NoStackTraceException("解析图片失败")
             bitmapLruCache.put(src, bitmap)
             bitmap
-        }.onFailure {
-            Coroutine.async {
-                putDebug("ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it", it)
-                if (FileUtils.readText(vFile.absolutePath).isXml()) {
-                    putDebug("ImageProvider: delete xml file. path: ${vFile.absolutePath}")
-                    vFile.delete()
-                }
-            }
         }.getOrDefault(errorBitmap)
     }
 
