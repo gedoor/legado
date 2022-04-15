@@ -347,9 +347,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val last = if (callBack.isScroll) 2 else 0
         val charPos = Pos(0, 0, 0)
         for (relativePos in 0..last) {
+            charPos.relativePos = relativePos
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
+                charPos.lineIndex = lineIndex
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
-                    charPos.upData(relativePos, lineIndex, charIndex)
+                    charPos.charIndex = charIndex
                     textChar.selected =
                         charPos.compare(selectStart) >= 0 && charPos.compare(selectEnd) <= 0
                     textChar.isSearchResult = textChar.selected && callBack.isSelectingSearchResult
@@ -446,12 +448,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         var lineIndex: Int,
         var charIndex: Int
     ) {
-
-        fun upData(relativePos: Int, lineIndex: Int, charIndex: Int) {
-            this.relativePos = relativePos
-            this.lineIndex = lineIndex
-            this.charIndex = charIndex
-        }
 
         fun upData(pos: Pos) {
             relativePos = pos.relativePos
