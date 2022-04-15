@@ -4,7 +4,7 @@ import android.text.TextPaint
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.textHeight
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextLine(
     var text: String = "",
     val textChars: ArrayList<TextChar> = arrayListOf(),

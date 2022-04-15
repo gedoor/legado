@@ -295,7 +295,7 @@ class PageView(context: Context) : FrameLayout(context) {
         return binding.contentTextView.relativePage(relativePos)
     }
 
-    val selectedText: String get() = binding.contentTextView.selectedText
+    val selectedText: String get() = binding.contentTextView.getSelectedText()
 
     val textPage get() = binding.contentTextView.textPage
 }
