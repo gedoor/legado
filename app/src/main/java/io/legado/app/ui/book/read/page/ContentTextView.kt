@@ -454,10 +454,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
 
         fun compare(pos: Pos): Int {
-            if (relativePos < pos.relativePos) return -1
-            if (relativePos > pos.relativePos) return 1
-            if (lineIndex < pos.lineIndex) return -1
-            if (lineIndex > pos.lineIndex) return 1
+            if (relativePos < pos.relativePos) return -3
+            if (relativePos > pos.relativePos) return 3
+            if (lineIndex < pos.lineIndex) return -2
+            if (lineIndex > pos.lineIndex) return 2
             if (charIndex < pos.charIndex) return -1
             if (charIndex > pos.charIndex) return 1
             return 0
