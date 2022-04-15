@@ -14,7 +14,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isXml
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
@@ -88,7 +87,11 @@ object ImageProvider {
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
-        if (op.outWidth <= 0 && op.outHeight <= 0) {
+        if (op.outWidth < 1 && op.outHeight < 1) {
+            Coroutine.async {
+                putDebug("ImageProvider: delete file due to image size ${op.outHeight}*${op.outWidth}. path: ${file.absolutePath}")
+                file.delete()
+            }
             return Size(errorBitmap.width, errorBitmap.height)
         }
         return Size(op.outWidth, op.outHeight)
