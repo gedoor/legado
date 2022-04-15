@@ -392,11 +392,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 pos.lineIndex = lineIndex
                 textLine.textChars.forEachIndexed { charIndex, textChar ->
                     pos.charIndex = charIndex
-                    if (pos.compare(selectStart) >= 0
-                        && pos.compare(selectEnd) <= 0
-                    ) {
+                    val compareStart = pos.compare(selectStart)
+                    val compareEnd = pos.compare(selectEnd)
+                    if (compareStart >= 0 && compareEnd <= 0) {
                         builder.append(textChar.charData)
-                        if (charIndex == textLine.charSize - 1
+                        if (compareEnd != 0
+                            && charIndex == textLine.charSize - 1
                             && textLine.text.endsWith("\n")
                         ) {
                             builder.append("\n")
@@ -404,9 +405,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     }
                 }
             }
-        }
-        if (builder.endsWith("\n")) {
-            return builder.substring(0, builder.lastIndex)
         }
         return builder.toString()
     }
