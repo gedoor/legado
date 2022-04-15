@@ -276,12 +276,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private fun onLongPress() {
         kotlin.runCatching {
             curPage.selectText(startX, startY) { relativePage, lineIndex, charIndex ->
+                isTextSelected = true
+                firstRelativePage = relativePage
+                firstLineIndex = lineIndex
+                firstCharIndex = charIndex
                 val page = curPage.relativePage(relativePage)
                 with(page) {
-                    isTextSelected = true
-                    firstRelativePage = relativePage
-                    firstLineIndex = lineIndex
-                    firstCharIndex = charIndex
                     var lineStart = lineIndex
                     var lineEnd = lineIndex
                     var start: Int

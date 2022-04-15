@@ -331,7 +331,6 @@ object ChapterProvider {
             val words =
                 text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
             val desiredWidth = layout.getLineWidth(lineIndex)
-            var isLastLine = false
             when {
                 lineIndex == 0 && layout.lineCount > 1 && !isTitle -> {
                     //第一行 非标题
@@ -347,8 +346,8 @@ object ChapterProvider {
                 }
                 lineIndex == layout.lineCount - 1 -> {
                     //最后一行
-                    textLine.text = "$words\n"
-                    isLastLine = true
+                    textLine.text = words
+                    textLine.isLastLine = true
                     //标题x轴居中
                     val startX =
                         if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
@@ -378,7 +377,7 @@ object ChapterProvider {
                 }
             }
             stringBuilder.append(words)
-            if (isLastLine) stringBuilder.append("\n")
+            if (textLine.isLastLine) stringBuilder.append("\n")
             textPages.last().textLines.add(textLine)
             textLine.upTopBottom(durY, textPaint)
             durY += textPaint.textHeight * lineSpacingExtra

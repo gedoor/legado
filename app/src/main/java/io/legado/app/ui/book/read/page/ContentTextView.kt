@@ -396,9 +396,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     val compareEnd = pos.compare(selectEnd)
                     if (compareStart >= 0 && compareEnd <= 0) {
                         builder.append(textChar.charData)
-                        if (compareEnd != 0
+                        if (
+                            textLine.isLastLine
                             && charIndex == textLine.charSize - 1
-                            && textLine.text.endsWith("\n")
+                            && compareEnd != 0
                         ) {
                             builder.append("\n")
                         }
