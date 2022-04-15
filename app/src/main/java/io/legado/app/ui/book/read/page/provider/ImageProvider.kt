@@ -43,11 +43,9 @@ object ImageProvider {
             oldBitmap: Bitmap,
             newBitmap: Bitmap?
         ) {
-            if (evicted) {
-                oldBitmap.recycle()
-                putDebug("ImageProvider: trigger bitmap recycle. URI: $key")
-                putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
-            }
+            oldBitmap.recycle()
+            putDebug("ImageProvider: trigger bitmap recycle. URI: $key")
+            putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
         }
     }
 
@@ -117,6 +115,17 @@ object ImageProvider {
                 ?: throw NoStackTraceException("解析图片失败")
             bitmapLruCache.put(src, bitmap)
             bitmap
+        }.onFailure {
+            Coroutine.async {
+                putDebug(
+                    "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
+                    it
+                )
+                if (FileUtils.readText(vFile.absolutePath).isXml()) {
+                    putDebug("ImageProvider: delete xml file. path: ${vFile.absolutePath}")
+                    vFile.delete()
+                }
+            }
         }.getOrDefault(errorBitmap)
     }
 
