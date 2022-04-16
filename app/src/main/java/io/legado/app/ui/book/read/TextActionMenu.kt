@@ -304,6 +304,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             textToSpeech = null
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onError(utteranceId: String?) {
 
         }
