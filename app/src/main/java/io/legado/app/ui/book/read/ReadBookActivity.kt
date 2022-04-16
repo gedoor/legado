@@ -959,6 +959,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     /**
      * 长按图片
      */
+    @SuppressLint("RtlHardcoded")
     override fun onImageLongPress(x: Float, y: Float, src: String) {
         imagePopupAction.setItems(
             listOf(
@@ -979,7 +980,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
                 navigationBarHeight else 0
         imagePopupAction.showAtLocation(
-            binding.readView, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0,
+            binding.readView, Gravity.BOTTOM or Gravity.LEFT, x.toInt(),
             binding.root.height + navigationBarHeight - y.toInt()
         )
     }
