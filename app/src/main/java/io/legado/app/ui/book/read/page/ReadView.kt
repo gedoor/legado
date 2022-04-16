@@ -286,7 +286,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 var lineEnd = lineIndex
                 for (index in lineIndex - 1 downTo 0) {
                     val textLine = page.getLine(index)
-                    if (textLine.isLastLine) {
+                    if (textLine.isParagraphEnd) {
                         break
                     } else {
                         stringBuilder.insert(0, textLine.text)
@@ -298,7 +298,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     val textLine = page.getLine(index)
                     stringBuilder.append(textLine.text)
                     lineEnd += 1
-                    if (textLine.isLastLine) {
+                    if (textLine.isParagraphEnd) {
                         break
                     }
                 }

@@ -128,14 +128,14 @@ data class TextPage(
         for ((index, textLine) in textLines.withIndex()) {
             if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + textLine.text.length) {
                 for (i in index - 1 downTo 0) {
-                    if (textLines[i].isLastLine) {
+                    if (textLines[i].isParagraphEnd) {
                         break
                     } else {
                         textLines[i].isReadAloud = true
                     }
                 }
                 for (i in index until textLines.size) {
-                    if (textLines[i].isLastLine) {
+                    if (textLines[i].isParagraphEnd) {
                         textLines[i].isReadAloud = true
                         break
                     } else {

@@ -415,7 +415,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (compareStart >= 0 && compareEnd <= 0) {
                         builder.append(textChar.charData)
                         if (
-                            textLine.isLastLine
+                            textLine.isParagraphEnd
                             && charIndex == textLine.charSize - 1
                             && compareEnd != 0
                         ) {

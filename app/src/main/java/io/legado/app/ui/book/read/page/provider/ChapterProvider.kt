@@ -347,7 +347,7 @@ object ChapterProvider {
                 lineIndex == layout.lineCount - 1 -> {
                     //最后一行
                     textLine.text = words
-                    textLine.isLastLine = true
+                    textLine.isParagraphEnd = true
                     //标题x轴居中
                     val startX =
                         if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
@@ -377,7 +377,7 @@ object ChapterProvider {
                 }
             }
             stringBuilder.append(words)
-            if (textLine.isLastLine) {
+            if (textLine.isParagraphEnd) {
                 stringBuilder.append("\n")
             }
             textPages.last().textLines.add(textLine)

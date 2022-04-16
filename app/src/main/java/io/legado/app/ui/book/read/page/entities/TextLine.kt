@@ -12,7 +12,7 @@ data class TextLine(
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
     val isTitle: Boolean = false,
-    var isLastLine: Boolean = false,
+    var isParagraphEnd: Boolean = false,
     var isReadAloud: Boolean = false,
     var isImage: Boolean = false
 ) {
