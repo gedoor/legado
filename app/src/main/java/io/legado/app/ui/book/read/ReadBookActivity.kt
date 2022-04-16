@@ -972,6 +972,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 "show" -> showDialogFragment(PhotoDialog(src))
                 "refresh" -> {
                     ImageProvider.bitmapLruCache.remove(src)
+                    ReadBook.loadContent(false)
                 }
             }
             imagePopupAction.dismiss()
