@@ -19,8 +19,10 @@ import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
-import io.legado.app.ui.widget.dialog.PhotoDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.activity
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.toastOnUi
 import kotlin.math.min
 
 /**
@@ -217,16 +219,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     /**
-     *
+     * 长按
      */
     fun longPress(
         x: Float,
         y: Float,
         select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
-        touch(x, y) { _, relativePos, textPage, lineIndex, _, charIndex, textChar ->
+        touch(x, y) { _, relativePos, _, lineIndex, _, charIndex, textChar ->
             if (textChar.isImage) {
-                activity?.showDialogFragment(PhotoDialog(textPage.chapterIndex, textChar.charData))
+                callBack.onImageLongPress(textChar.charData)
             } else {
                 if (!selectAble) return@touch
                 textChar.selected = true
@@ -459,12 +461,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     interface CallBack {
-        fun upSelectedStart(x: Float, y: Float, top: Float)
-        fun upSelectedEnd(x: Float, y: Float)
-        fun onCancelSelect()
         val headerHeight: Int
         val pageFactory: TextPageFactory
         val isScroll: Boolean
         var isSelectingSearchResult: Boolean
+        fun upSelectedStart(x: Float, y: Float, top: Float)
+        fun upSelectedEnd(x: Float, y: Float)
+        fun onCancelSelect()
+        fun onImageLongPress(src: String)
     }
 }

@@ -60,6 +60,7 @@ import io.legado.app.ui.dict.DictDialog
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
+import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -948,6 +949,13 @@ class ReadBookActivity : BaseReadBookActivity(),
             BaseReadAloudService.pause -> ReadAloud.resume(this)
             else -> ReadAloud.pause(this)
         }
+    }
+
+    /**
+     * 长按图片
+     */
+    override fun onImageLongPress(src: String) {
+        showDialogFragment(PhotoDialog(src))
     }
 
     /**

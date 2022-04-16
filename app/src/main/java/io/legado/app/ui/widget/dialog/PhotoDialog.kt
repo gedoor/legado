@@ -17,16 +17,9 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  */
 class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
-    constructor(chapterIndex: Int, src: String) : this() {
+    constructor(src: String) : this() {
         arguments = Bundle().apply {
-            putInt("chapterIndex", chapterIndex)
             putString("src", src)
-        }
-    }
-
-    constructor(path: String) : this() {
-        arguments = Bundle().apply {
-            putString("path", path)
         }
     }
 
@@ -38,19 +31,16 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.let {
-            val path = it.getString("path")
-            if (path.isNullOrEmpty()) {
-                ReadBook.book?.let { book ->
-                    it.getString("src")?.let { src ->
-                        val file = BookHelp.getImage(book, src)
-                        ImageLoader.load(requireContext(), file)
-                            .error(R.drawable.image_loading_error)
-                            .into(binding.photoView)
-                    }
-                }
+        arguments?.getString("src")?.let { src ->
+            val file = ReadBook.book?.let { book ->
+                BookHelp.getImage(book, src)
+            }
+            if (file?.exists() == true) {
+                ImageLoader.load(requireContext(), file)
+                    .error(R.drawable.image_loading_error)
+                    .into(binding.photoView)
             } else {
-                BookCover.load(requireContext(), path = path)
+                BookCover.load(requireContext(), path = src)
                     .into(binding.photoView)
             }
         }
