@@ -12,7 +12,6 @@ import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.PhotoDialog
 import io.legado.app.ui.book.read.page.entities.TextChar
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
@@ -20,6 +19,7 @@ import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
+import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.*
 import kotlin.math.min
 
@@ -217,18 +217,18 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     /**
-     * 选择文字
+     *
      */
-    fun selectText(
+    fun longPress(
         x: Float,
         y: Float,
         select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
-        if (!selectAble) return
-        touch(x, y) { relativePos, textPage, _, lineIndex, _, charIndex, textChar ->
+        touch(x, y) { _, relativePos, textPage, lineIndex, _, charIndex, textChar ->
             if (textChar.isImage) {
                 activity?.showDialogFragment(PhotoDialog(textPage.chapterIndex, textChar.charData))
             } else {
+                if (!selectAble) return@touch
                 textChar.selected = true
                 invalidate()
                 select(relativePos, lineIndex, charIndex)
@@ -237,10 +237,25 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     /**
+     * 选择文字
+     */
+    fun selectText(
+        x: Float,
+        y: Float,
+        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
+    ) {
+        touch(x, y) { _, relativePos, _, lineIndex, _, charIndex, textChar ->
+            textChar.selected = true
+            invalidate()
+            select(relativePos, lineIndex, charIndex)
+        }
+    }
+
+    /**
      * 开始选择符移动
      */
     fun selectStartMove(x: Float, y: Float) {
-        touch(x, y) { relativePos, _, relativeOffset, lineIndex, textLine, charIndex, textChar ->
+        touch(x, y) { relativeOffset, relativePos, _, lineIndex, textLine, charIndex, textChar ->
             val pos = TextPos(relativePos, lineIndex, charIndex)
             if (selectStart.compare(pos) != 0) {
                 if (pos.compare(selectEnd) <= 0) {
@@ -260,7 +275,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 结束选择符移动
      */
     fun selectEndMove(x: Float, y: Float) {
-        touch(x, y) { relativePos, _, relativeOffset, lineIndex, textLine, charIndex, textChar ->
+        touch(x, y) { relativeOffset, relativePos, _, lineIndex, textLine, charIndex, textChar ->
             val pos = TextPos(relativePos, lineIndex, charIndex)
             if (pos.compare(selectEnd) != 0) {
                 if (pos.compare(selectStart) >= 0) {
@@ -276,9 +291,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         x: Float,
         y: Float,
         touched: (
+            relativeOffset: Float,
             relativePos: Int,
             textPage: TextPage,
-            relativeOffset: Float,
             lineIndex: Int,
             textLine: TextLine,
             charIndex: Int,
@@ -300,8 +315,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                         if (textChar.isTouch(x)) {
                             touched.invoke(
-                                relativePos, textPage,
                                 relativeOffset,
+                                relativePos, textPage,
                                 lineIndex, textLine,
                                 charIndex, textChar
                             )

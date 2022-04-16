@@ -260,6 +260,13 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.selectAble = selectAble
     }
 
+    fun longPress(
+        x: Float, y: Float,
+        select: (relativePagePos: Int, lineIndex: Int, charIndex: Int) -> Unit,
+    ) {
+        return binding.contentTextView.longPress(x, y - headerHeight, select)
+    }
+
     fun selectText(
         x: Float, y: Float,
         select: (relativePagePos: Int, lineIndex: Int, charIndex: Int) -> Unit,

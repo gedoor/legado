@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.read
+package io.legado.app.ui.widget.dialog
 
 import android.os.Bundle
 import android.view.View
