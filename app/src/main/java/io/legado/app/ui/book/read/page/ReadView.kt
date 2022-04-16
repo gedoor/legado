@@ -22,6 +22,7 @@ import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
@@ -76,9 +77,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
     var isTextSelected = false
     private var pressOnTextSelected = false
-    private var firstRelativePage = 0
-    private var firstLineIndex: Int = 0
-    private var firstCharIndex: Int = 0
+    private val initialTextPos = TextPos(0, 0, 0)
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
     private val tlRect = RectF()
@@ -275,106 +274,73 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     private fun onLongPress() {
         kotlin.runCatching {
-            curPage.selectText(startX, startY) { relativePage, lineIndex, charIndex ->
+            curPage.selectText(startX, startY) { relativePos, lineIndex, charIndex ->
                 isTextSelected = true
-                firstRelativePage = relativePage
-                firstLineIndex = lineIndex
-                firstCharIndex = charIndex
-                val page = curPage.relativePage(relativePage)
-                with(page) {
-                    var lineStart = lineIndex
-                    var lineEnd = lineIndex
-                    var start: Int
-                    var end: Int
-                    if (lineIndex - 1 > 0 && lineIndex + 1 < lineSize) {
-                        // 中间行
-                        val lineText = with(textLines) {
-                            get(lineIndex - 1).text + get(lineIndex).text + get(lineIndex + 1).text
-                        }
-                        boundary.setText(lineText)
-                        start = boundary.first()
-                        end = boundary.next()
-                        val cIndex = textLines[lineIndex - 1].text.length + charIndex
-                        while (end != BreakIterator.DONE) {
-                            if (cIndex in start until end) {
-                                break
-                            }
-                            start = end
-                            end = boundary.next()
-                        }
-                        if (start < textLines[lineIndex - 1].text.length) {
-                            lineStart = lineIndex - 1
-                        } else {
-                            start -= textLines[lineIndex - 1].text.length
-                        }
-                        if (end > textLines[lineIndex - 1].text.length + textLines[lineIndex].text.length) {
-                            lineEnd = lineIndex + 1
-                            end = (end - textLines[lineIndex - 1].text.length
-                                    - textLines[lineIndex].text.length)
-                        } else {
-                            end = end - textLines[lineIndex - 1].text.length - 1
-                        }
-                    } else if (lineIndex - 1 > 0) {
-                        // 尾行
-                        val lineText = with(textLines) {
-                            get(lineIndex - 1).text + get(lineIndex).text
-                        }
-                        boundary.setText(lineText)
-                        start = boundary.first()
-                        end = boundary.next()
-                        val cIndex = textLines[lineIndex - 1].text.length + charIndex
-                        while (end != BreakIterator.DONE) {
-                            if (cIndex in start until end) {
-                                break
-                            }
-                            start = end
-                            end = boundary.next()
-                        }
-                        if (start < textLines[lineIndex - 1].text.length) {
-                            lineStart = lineIndex - 1
-                        } else {
-                            start -= textLines[lineIndex - 1].text.length
-                        }
-                        end = end - textLines[lineIndex - 1].text.length - 1
-                    } else if (lineIndex + 1 < lineSize) {
-                        // 首行
-                        val lineText = with(textLines) {
-                            get(lineIndex).text + get(lineIndex + 1).text
-                        }
-                        boundary.setText(lineText)
-                        start = boundary.first()
-                        end = boundary.next()
-                        while (end != BreakIterator.DONE) {
-                            if (charIndex in start until end) {
-                                break
-                            }
-                            start = end
-                            end = boundary.next()
-                        }
-                        if (end > textLines[lineIndex].text.length) {
-                            lineEnd = lineIndex + 1
-                            end -= textLines[lineIndex].text.length
-                        } else {
-                            end -= 1
-                        }
+                initialTextPos.upData(relativePos, lineIndex, charIndex)
+                val startPos = TextPos(relativePos, lineIndex, charIndex)
+                val endPos = TextPos(relativePos, lineIndex, charIndex)
+                val page = curPage.relativePage(relativePos)
+                val stringBuilder = StringBuilder()
+                var cIndex = charIndex
+                var lineStart = lineIndex
+                var lineEnd = lineIndex
+                for (index in lineIndex - 1 downTo 0) {
+                    val textLine = page.getLine(index)
+                    if (textLine.isLastLine) {
+                        break
                     } else {
-                        // 单行
-                        val lineText = textLines[lineIndex].text
-                        boundary.setText(lineText)
-                        start = boundary.first()
-                        end = boundary.next()
-                        while (end != BreakIterator.DONE) {
-                            if (charIndex in start until end) {
-                                break
-                            }
-                            start = end
-                            end = boundary.next()
-                        }
-                        end -= 1
+                        stringBuilder.insert(0, textLine.text)
+                        lineStart -= 1
+                        cIndex += textLine.charSize
                     }
-                    curPage.selectStartMoveIndex(firstRelativePage, lineStart, start)
-                    curPage.selectEndMoveIndex(firstRelativePage, lineEnd, end)
                 }
+                for (index in lineIndex until page.lineSize) {
+                    val textLine = page.getLine(index)
+                    stringBuilder.append(textLine.text)
+                    lineEnd += 1
+                    if (textLine.isLastLine) {
+                        break
+                    }
+                }
+                var start: Int
+                var end: Int
+                boundary.setText(stringBuilder.toString())
+                start = boundary.first()
+                end = boundary.next()
+                while (end != BreakIterator.DONE) {
+                    if (cIndex in start until end) {
+                        break
+                    }
+                    start = end
+                    end = boundary.next()
+                }
+                kotlin.run {
+                    var ci = 0
+                    for (index in lineStart..lineEnd) {
+                        val textLine = page.getLine(index)
+                        for (j in 0 until textLine.charSize) {
+                            if (ci == start) {
+                                startPos.lineIndex = index
+                                startPos.charIndex = j
+                            } else if (ci == end) {
+                                endPos.lineIndex = index
+                                endPos.charIndex = j - 1
+                                return@run
+                            }
+                            ci++
+                        }
+                    }
+                }
+                curPage.selectStartMoveIndex(
+                    startPos.relativePagePos,
+                    startPos.lineIndex,
+                    startPos.charIndex
+                )
+                curPage.selectEndMoveIndex(
+                    endPos.relativePagePos,
+                    endPos.lineIndex,
+                    endPos.charIndex
+                )
             }
         }
     }
@@ -431,31 +397,24 @@ class ReadView(context: Context, attrs: AttributeSet) :
      * 选择文本
      */
     private fun selectText(x: Float, y: Float) {
-        curPage.selectText(x, y) { relativePage, lineIndex, charIndex ->
+        curPage.selectText(x, y) { relativePagePos, lineIndex, charIndex ->
+            val compare = initialTextPos.compare(relativePagePos, lineIndex, charIndex)
             when {
-                relativePage > firstRelativePage -> {
-                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                relativePage < firstRelativePage -> {
-                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                lineIndex > firstLineIndex -> {
-                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                lineIndex < firstLineIndex -> {
-                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
-                }
-                charIndex > firstCharIndex -> {
-                    curPage.selectStartMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectEndMoveIndex(relativePage, lineIndex, charIndex)
+                compare >= 0 -> {
+                    curPage.selectStartMoveIndex(relativePagePos, lineIndex, charIndex)
+                    curPage.selectEndMoveIndex(
+                        initialTextPos.relativePagePos,
+                        initialTextPos.lineIndex,
+                        initialTextPos.charIndex
+                    )
                 }
                 else -> {
-                    curPage.selectEndMoveIndex(firstRelativePage, firstLineIndex, firstCharIndex)
-                    curPage.selectStartMoveIndex(relativePage, lineIndex, charIndex)
+                    curPage.selectStartMoveIndex(
+                        initialTextPos.relativePagePos,
+                        initialTextPos.lineIndex,
+                        initialTextPos.charIndex
+                    )
+                    curPage.selectEndMoveIndex(relativePagePos, lineIndex, charIndex)
                 }
             }
         }

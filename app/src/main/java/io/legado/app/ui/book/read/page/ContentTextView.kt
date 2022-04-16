@@ -317,16 +317,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 选择开始文字
      */
-    fun selectStartMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        selectStart.relativePos = relativePage
+    fun selectStartMoveIndex(relativePagePos: Int, lineIndex: Int, charIndex: Int) {
+        selectStart.relativePagePos = relativePagePos
         selectStart.lineIndex = lineIndex
         selectStart.charIndex = charIndex
-        val textLine = relativePage(relativePage).getLine(lineIndex)
+        val textLine = relativePage(relativePagePos).getLine(lineIndex)
         val textChar = textLine.getTextChar(charIndex)
         upSelectedStart(
             textChar.start,
-            textLine.lineBottom + relativeOffset(relativePage),
-            textLine.lineTop + relativeOffset(relativePage)
+            textLine.lineBottom + relativeOffset(relativePagePos),
+            textLine.lineTop + relativeOffset(relativePagePos)
         )
         upSelectChars()
     }
@@ -335,7 +335,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 选择结束文字
      */
     fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
-        selectEnd.relativePos = relativePage
+        selectEnd.relativePagePos = relativePage
         selectEnd.lineIndex = lineIndex
         selectEnd.charIndex = charIndex
         val textLine = relativePage(relativePage).getLine(lineIndex)
@@ -348,7 +348,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val last = if (callBack.isScroll) 2 else 0
         val textPos = TextPos(0, 0, 0)
         for (relativePos in 0..last) {
-            textPos.relativePos = relativePos
+            textPos.relativePagePos = relativePos
             for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
                 textPos.lineIndex = lineIndex
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
@@ -386,9 +386,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun getSelectedText(): String {
         val textPos = TextPos(0, 0, 0)
         val builder = StringBuilder()
-        for (relativePos in selectStart.relativePos..selectEnd.relativePos) {
+        for (relativePos in selectStart.relativePagePos..selectEnd.relativePagePos) {
             val textPage = relativePage(relativePos)
-            textPos.relativePos = relativePos
+            textPos.relativePagePos = relativePos
             textPage.textLines.forEachIndexed { lineIndex, textLine ->
                 textPos.lineIndex = lineIndex
                 textLine.textChars.forEachIndexed { charIndex, textChar ->
@@ -412,7 +412,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun createBookmark(): Bookmark? {
-        val page = relativePage(selectStart.relativePos)
+        val page = relativePage(selectStart.relativePagePos)
         page.getTextChapter()?.let { chapter ->
             ReadBook.book?.let { book ->
                 return book.createBookMark().apply {
