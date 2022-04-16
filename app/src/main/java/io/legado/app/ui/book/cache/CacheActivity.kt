@@ -10,6 +10,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.charsets
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -160,7 +161,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { books ->
                 val booksDownload = books.filter {
-                    it.type == 0
+                    it.type == BookType.default || it.type == BookType.image
                 }
                 when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> booksDownload.sortedByDescending { it.latestChapterTime }
