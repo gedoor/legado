@@ -25,6 +25,7 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
+import io.legado.app.ui.widget.PopupAction
 import io.legado.app.utils.activity
 import io.legado.app.utils.screenshot
 import java.text.BreakIterator
@@ -206,6 +207,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 if (!pressDown) return true
                 pressDown = false
                 if (!isMove) {
+                    if (!longPressed && callBack.imagePopupAction.isShowing) {
+                        callBack.imagePopupAction.dismiss()
+                        return true
+                    }
                     if (!longPressed && !pressOnTextSelected) {
                         onSingleTapUp()
                         return true
@@ -539,6 +544,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         val isInitFinish: Boolean
         val isAutoPage: Boolean
         val autoPageProgress: Int
+        val imagePopupAction: PopupAction
         fun showActionMenu()
         fun screenOffTimerStart()
         fun showTextActionMenu()

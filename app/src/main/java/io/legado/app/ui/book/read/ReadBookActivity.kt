@@ -134,7 +134,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
-    private val popupAction by lazy {
+    override val imagePopupAction: PopupAction by lazy {
         PopupAction(this)
     }
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
@@ -960,26 +960,26 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 长按图片
      */
     override fun onImageLongPress(x: Float, y: Float, src: String) {
-        popupAction.setItems(
+        imagePopupAction.setItems(
             listOf(
                 SelectItem("查看", "show"),
                 SelectItem("刷新", "refresh")
             )
         )
-        popupAction.onActionClick = {
+        imagePopupAction.onActionClick = {
             when (it) {
                 "show" -> showDialogFragment(PhotoDialog(src))
                 "refresh" -> {
                     ImageProvider.bitmapLruCache.remove(src)
                 }
             }
-            popupAction.dismiss()
+            imagePopupAction.dismiss()
         }
         val navigationBarHeight =
             if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
                 navigationBarHeight else 0
-        popupAction.showAtLocation(
-            binding.readView, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, x.toInt(),
+        imagePopupAction.showAtLocation(
+            binding.readView, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0,
             binding.root.height + navigationBarHeight - y.toInt()
         )
     }
@@ -1102,7 +1102,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onDestroy() {
         super.onDestroy()
         textActionMenu.dismiss()
-        popupAction.dismiss()
+        imagePopupAction.dismiss()
         binding.readView.onDestroy()
         ReadBook.msg = null
         ReadBook.callBack = null
