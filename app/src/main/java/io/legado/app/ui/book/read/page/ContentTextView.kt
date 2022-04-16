@@ -228,7 +228,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     ) {
         touch(x, y) { _, relativePos, _, lineIndex, _, charIndex, textChar ->
             if (textChar.isImage) {
-                callBack.onImageLongPress(textChar.charData)
+                callBack.onImageLongPress(x, y, textChar.charData)
             } else {
                 if (!selectAble) return@touch
                 textChar.selected = true
@@ -467,7 +467,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         var isSelectingSearchResult: Boolean
         fun upSelectedStart(x: Float, y: Float, top: Float)
         fun upSelectedEnd(x: Float, y: Float)
+        fun onImageLongPress(x: Float, y: Float, src: String)
         fun onCancelSelect()
-        fun onImageLongPress(src: String)
     }
 }

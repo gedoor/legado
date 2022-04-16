@@ -31,6 +31,7 @@ import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.AppWebDav
 import io.legado.app.help.storage.Backup
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
@@ -50,6 +51,7 @@ import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
@@ -60,6 +62,7 @@ import io.legado.app.ui.dict.DictDialog
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
+import io.legado.app.ui.widget.PopupAction
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
@@ -131,7 +134,9 @@ class ReadBookActivity : BaseReadBookActivity(),
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
-
+    private val popupAction by lazy {
+        PopupAction(this)
+    }
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
     private var keepScreenJon: Job? = null
@@ -954,8 +959,29 @@ class ReadBookActivity : BaseReadBookActivity(),
     /**
      * 长按图片
      */
-    override fun onImageLongPress(src: String) {
-        showDialogFragment(PhotoDialog(src))
+    override fun onImageLongPress(x: Float, y: Float, src: String) {
+        popupAction.setItems(
+            listOf(
+                SelectItem("查看", "show"),
+                SelectItem("刷新", "refresh")
+            )
+        )
+        popupAction.onActionClick = {
+            when (it) {
+                "show" -> showDialogFragment(PhotoDialog(src))
+                "refresh" -> {
+                    ImageProvider.bitmapLruCache.remove(src)
+                }
+            }
+            popupAction.dismiss()
+        }
+        val navigationBarHeight =
+            if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
+                navigationBarHeight else 0
+        popupAction.showAtLocation(
+            binding.readView, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, x.toInt(),
+            binding.root.height + navigationBarHeight - y.toInt()
+        )
     }
 
     /**
@@ -1076,6 +1102,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onDestroy() {
         super.onDestroy()
         textActionMenu.dismiss()
+        popupAction.dismiss()
         binding.readView.onDestroy()
         ReadBook.msg = null
         ReadBook.callBack = null

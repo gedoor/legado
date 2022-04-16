@@ -33,7 +33,7 @@ object ImageProvider {
     private const val M = 1024 * 1024
     private val cacheSize =
         max(50 * M, min(100 * M, (Runtime.getRuntime().maxMemory() / 8).toInt()))
-    private val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
+    val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
         override fun sizeOf(key: String, bitmap: Bitmap): Int {
             return bitmap.byteCount
         }
