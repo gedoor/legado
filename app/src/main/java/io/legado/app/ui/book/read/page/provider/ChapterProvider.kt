@@ -377,7 +377,9 @@ object ChapterProvider {
                 }
             }
             stringBuilder.append(words)
-            if (textLine.isLastLine) stringBuilder.append("\n")
+            if (textLine.isLastLine) {
+                stringBuilder.append("\n")
+            }
             textPages.last().textLines.add(textLine)
             textLine.upTopBottom(durY, textPaint)
             durY += textPaint.textHeight * lineSpacingExtra
