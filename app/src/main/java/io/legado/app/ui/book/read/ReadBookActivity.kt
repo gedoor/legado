@@ -963,8 +963,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onImageLongPress(x: Float, y: Float, src: String) {
         imagePopupAction.setItems(
             listOf(
-                SelectItem("查看", "show"),
-                SelectItem("刷新", "refresh")
+                SelectItem(getString(R.string.show), "show"),
+                SelectItem(getString(R.string.refresh), "refresh")
             )
         )
         imagePopupAction.onActionClick = {
