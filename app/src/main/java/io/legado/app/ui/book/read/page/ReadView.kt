@@ -322,9 +322,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
                             if (ci == start) {
                                 startPos.lineIndex = index
                                 startPos.charIndex = j
-                            } else if (ci == end) {
+                            } else if (ci == end - 1) {
                                 endPos.lineIndex = index
-                                endPos.charIndex = j - 1
+                                endPos.charIndex = j
                                 return@run
                             }
                             ci++
