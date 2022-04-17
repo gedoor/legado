@@ -131,17 +131,17 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var menu: Menu? = null
     private var changeSourceMenu: PopupMenu? = null
     private var refreshMenu: PopupMenu? = null
+    private var autoPageJob: Job? = null
+    private var backupJob: Job? = null
+    private var keepScreenJon: Job? = null
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
-    override val imagePopupAction: PopupAction by lazy {
+    private val imagePopupAction: PopupAction by lazy {
         PopupAction(this)
     }
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
-    private var keepScreenJon: Job? = null
-    private var autoPageJob: Job? = null
-    private var backupJob: Job? = null
     override var autoPageProgress = 0
     override var isAutoPage = false
     override var isShowingSearchResult = false

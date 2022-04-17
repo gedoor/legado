@@ -24,7 +24,7 @@ class PopupAction(private val context: Context) :
 
         isTouchable = true
         isOutsideTouchable = false
-        isFocusable = false
+        isFocusable = true
 
         binding.recyclerView.adapter = adapter
     }
