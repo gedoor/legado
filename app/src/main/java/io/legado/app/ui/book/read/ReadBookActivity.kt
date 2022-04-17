@@ -51,7 +51,6 @@ import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
-import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
@@ -137,7 +136,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
-    private val imagePopupAction: PopupAction by lazy {
+    private val popupAction: PopupAction by lazy {
         PopupAction(this)
     }
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
@@ -961,26 +960,23 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     @SuppressLint("RtlHardcoded")
     override fun onImageLongPress(x: Float, y: Float, src: String) {
-        imagePopupAction.setItems(
+        popupAction.setItems(
             listOf(
                 SelectItem(getString(R.string.show), "show"),
                 SelectItem(getString(R.string.refresh), "refresh")
             )
         )
-        imagePopupAction.onActionClick = {
+        popupAction.onActionClick = {
             when (it) {
                 "show" -> showDialogFragment(PhotoDialog(src))
-                "refresh" -> {
-                    ImageProvider.bitmapLruCache.remove(src)
-                    ReadBook.loadContent(false)
-                }
+                "refresh" -> viewModel.refreshImage(src)
             }
-            imagePopupAction.dismiss()
+            popupAction.dismiss()
         }
         val navigationBarHeight =
             if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
                 navigationBarHeight else 0
-        imagePopupAction.showAtLocation(
+        popupAction.showAtLocation(
             binding.readView, Gravity.BOTTOM or Gravity.LEFT, x.toInt(),
             binding.root.height + navigationBarHeight - y.toInt()
         )
@@ -1104,7 +1100,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onDestroy() {
         super.onDestroy()
         textActionMenu.dismiss()
-        imagePopupAction.dismiss()
+        popupAction.dismiss()
         binding.readView.onDestroy()
         ReadBook.msg = null
         ReadBook.callBack = null

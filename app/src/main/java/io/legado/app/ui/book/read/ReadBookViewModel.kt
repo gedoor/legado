@@ -25,6 +25,7 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.msg
 import io.legado.app.utils.postEvent
@@ -396,6 +397,17 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             charIndex2 = charIndex + searchContentQuery.length - currentLine.text.length - 1
         }
         return arrayOf(pageIndex, lineIndex, charIndex, addLine, charIndex2)
+    }
+
+    fun refreshImage(src: String) {
+        execute {
+            ImageProvider.bitmapLruCache.remove(src)
+            ReadBook.book?.let { book ->
+                BookHelp.getImage(book, src).delete()
+            }
+        }.onFinally {
+            ReadBook.loadContent(false)
+        }
     }
 
     /**
