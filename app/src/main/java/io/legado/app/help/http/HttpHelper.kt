@@ -1,5 +1,6 @@
 package io.legado.app.help.http
 
+import io.legado.app.constant.AppConst
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.cronet.CronetInterceptor
 import io.legado.app.help.http.cronet.CronetLoader
@@ -36,12 +37,14 @@ val okHttpClient: OkHttpClient by lazy {
         .followSslRedirects(true)
         .addInterceptor(Interceptor { chain ->
             val request = chain.request()
-                .newBuilder()
-                .addHeader("Keep-Alive", "300")
-                .addHeader("Connection", "Keep-Alive")
-                .addHeader("Cache-Control", "no-cache")
-                .build()
-            chain.proceed(request)
+            val builder = request.newBuilder()
+            if (request.header(AppConst.UA_NAME) == null) {
+                builder.addHeader(AppConst.UA_NAME, AppConfig.userAgent)
+            }
+            builder.addHeader("Keep-Alive", "300")
+            builder.addHeader("Connection", "Keep-Alive")
+            builder.addHeader("Cache-Control", "no-cache")
+            chain.proceed(builder.build())
         })
     if (!AppConfig.isGooglePlay && AppConfig.isCronet && CronetLoader.install()) {
         builder.addInterceptor(CronetInterceptor(null))

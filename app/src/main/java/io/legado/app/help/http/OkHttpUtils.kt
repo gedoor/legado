@@ -1,7 +1,5 @@
 package io.legado.app.help.http
 
-import io.legado.app.constant.AppConst
-import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.GSON
 import io.legado.app.utils.Utf8BomUtils
@@ -25,7 +23,6 @@ suspend fun OkHttpClient.newCallResponse(
 ): Response {
     return withContext(IO) {
         val requestBuilder = Request.Builder()
-        requestBuilder.header(AppConst.UA_NAME, AppConfig.userAgent)
         requestBuilder.apply(builder)
         var response: Response? = null
         for (i in 0..retry) {
@@ -94,10 +91,6 @@ fun ResponseBody.text(encode: String? = null): String {
 
 fun Request.Builder.addHeaders(headers: Map<String, String>) {
     headers.forEach {
-        if (it.key == AppConst.UA_NAME) {
-            //防止userAgent重复
-            removeHeader(AppConst.UA_NAME)
-        }
         addHeader(it.key, it.value)
     }
 }
