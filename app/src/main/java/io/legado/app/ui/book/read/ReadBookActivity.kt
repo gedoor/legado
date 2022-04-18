@@ -919,21 +919,15 @@ class ReadBookActivity : BaseReadBookActivity(),
             if (payAction.isNullOrEmpty()) {
                 throw NoStackTraceException("no pay action")
             }
-            if (payAction.isAbsUrl()) {
-                payAction
-            } else {
-                source.evalJS(payAction) {
-                    put("book", book)
-                    put("chapter", chapter)
-                }?.toString()
+            JsUtils.evalJs(payAction) {
+                it["book"] = book
+                it["chapter"] = chapter
             }
         }.onSuccess {
-            it?.let {
-                startActivity<WebViewActivity> {
-                    putExtra("title", getString(R.string.chapter_pay))
-                    putExtra("url", it)
-                    IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
-                }
+            startActivity<WebViewActivity> {
+                putExtra("title", getString(R.string.chapter_pay))
+                putExtra("url", it)
+                IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
             }
         }.onError {
             toastOnUi(it.localizedMessage)

@@ -460,6 +460,7 @@ class AnalyzeUrl(
      */
     suspend fun getByteArrayAwait(): ByteArray {
         val concurrentRecord = fetchStart()
+
         @Suppress("RegExpRedundantEscape")
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
         @Suppress("BlockingMethodInNonBlockingContext")
