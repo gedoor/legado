@@ -40,7 +40,8 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
                     .error(R.drawable.image_loading_error)
                     .into(binding.photoView)
             } else {
-                BookCover.load(requireContext(), path = src)
+                ImageLoader.load(requireContext(), src)
+                    .error(BookCover.defaultDrawable)
                     .into(binding.photoView)
             }
         }
