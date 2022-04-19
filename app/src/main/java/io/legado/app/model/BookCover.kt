@@ -70,13 +70,17 @@ object BookCover {
     fun load(
         context: Context,
         path: String?,
-        loadOnlyWifi: Boolean = false
+        loadOnlyWifi: Boolean = false,
+        sourceOrigin: String? = null
     ): RequestBuilder<Drawable> {
         if (AppConfig.useDefaultCover) {
             return ImageLoader.load(context, defaultDrawable)
                 .centerCrop()
         }
-        val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+        var options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+        if (sourceOrigin != null) {
+            options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
+        }
         return ImageLoader.load(context, path)
             .apply(options)
             .placeholder(defaultDrawable)
@@ -90,14 +94,18 @@ object BookCover {
     fun loadBlur(
         context: Context,
         path: String?,
-        loadOnlyWifi: Boolean = false
+        loadOnlyWifi: Boolean = false,
+        sourceOrigin: String? = null
     ): RequestBuilder<Drawable> {
         val loadBlur = ImageLoader.load(context, defaultDrawable)
             .transform(BlurTransformation(25), CenterCrop())
         if (AppConfig.useDefaultCover) {
             return loadBlur
         }
-        val options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+        var options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+        if (sourceOrigin != null) {
+            options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
+        }
         return ImageLoader.load(context, path)
             .apply(options)
             .transform(BlurTransformation(25), CenterCrop())
