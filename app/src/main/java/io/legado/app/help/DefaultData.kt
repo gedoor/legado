@@ -16,13 +16,10 @@ import java.io.File
 
 object DefaultData {
 
-    const val httpTtsFileName = "httpTTS.json"
-    const val txtTocRuleFileName = "txtTocRule.json"
-
     val httpTTS: List<HttpTTS> by lazy {
         val json =
             String(
-                appCtx.assets.open("defaultData${File.separator}$httpTtsFileName")
+                appCtx.assets.open("defaultData${File.separator}httpTTS.json")
                     .readBytes()
             )
         HttpTTS.fromJsonArray(json)
@@ -39,7 +36,7 @@ object DefaultData {
 
     val txtTocRules: List<TxtTocRule> by lazy {
         val json = String(
-            appCtx.assets.open("defaultData${File.separator}$txtTocRuleFileName")
+            appCtx.assets.open("defaultData${File.separator}txtTocRule.json")
                 .readBytes()
         )
         GSON.fromJsonArray<TxtTocRule>(json).getOrNull() ?: emptyList()

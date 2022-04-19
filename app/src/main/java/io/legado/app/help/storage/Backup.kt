@@ -7,7 +7,6 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.help.DefaultData
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -38,8 +37,9 @@ object Backup {
             "readRecord.json",
             "searchHistory.json",
             "sourceSub.json",
-            DefaultData.txtTocRuleFileName,
-            DefaultData.httpTtsFileName,
+            "txtTocRule.json",
+            "httpTTS.json",
+            "keyboardAssists.json",
             ReadBookConfig.configFileName,
             ReadBookConfig.shareConfigFileName,
             ThemeConfig.configFileName,
@@ -77,8 +77,9 @@ object Backup {
             writeListToJson(appDb.readRecordDao.all, "readRecord.json", backupPath)
             writeListToJson(appDb.searchKeywordDao.all, "searchHistory.json", backupPath)
             writeListToJson(appDb.ruleSubDao.all, "sourceSub.json", backupPath)
-            writeListToJson(appDb.txtTocRuleDao.all, DefaultData.txtTocRuleFileName, backupPath)
-            writeListToJson(appDb.httpTTSDao.all, DefaultData.httpTtsFileName, backupPath)
+            writeListToJson(appDb.txtTocRuleDao.all, "txtTocRule.json", backupPath)
+            writeListToJson(appDb.httpTTSDao.all, "httpTTS.json", backupPath)
+            writeListToJson(appDb.keyboardAssistsDao.all, "keyboardAssists.json", backupPath)
             GSON.toJson(ReadBookConfig.configList).let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
                     .writeText(it)

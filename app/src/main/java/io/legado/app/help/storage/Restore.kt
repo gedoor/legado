@@ -11,7 +11,6 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
-import io.legado.app.help.DefaultData
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
@@ -96,10 +95,10 @@ object Restore {
             fileToListT<RuleSub>(path, "sourceSub.json")?.let {
                 appDb.ruleSubDao.insert(*it.toTypedArray())
             }
-            fileToListT<TxtTocRule>(path, DefaultData.txtTocRuleFileName)?.let {
+            fileToListT<TxtTocRule>(path, "txtTocRule.json")?.let {
                 appDb.txtTocRuleDao.insert(*it.toTypedArray())
             }
-            fileToListT<HttpTTS>(path, DefaultData.httpTtsFileName)?.let {
+            fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
                 appDb.httpTTSDao.insert(*it.toTypedArray())
             }
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
