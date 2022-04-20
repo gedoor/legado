@@ -19,8 +19,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import okhttp3.Response
 import org.mozilla.javascript.WrappedException
 import java.io.File
@@ -43,9 +41,10 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
     private var speechRate: Int = AppConfig.speechRatePlay
     private val cacheFiles = hashSetOf<String>()
-    private var task: Coroutine<*>? = null
+    private var downloadTask: Coroutine<*>? = null
     private var playIndexJob: Job? = null
-    private val mutex = Mutex()
+    private var downloadErrorNo: Int = 0
+    private var playErrorNo = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -54,7 +53,7 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onDestroy() {
         super.onDestroy()
-        task?.cancel()
+        downloadTask?.cancel()
         exoPlayer.release()
     }
 
@@ -73,7 +72,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         AppConfig.ttsSpeechRate.toString(),
                         contentList[nowSpeak]
                     )
-                if (nowSpeak == 0) {
+                if (nowSpeak == 0 && downloadTask?.isActive != true) {
                     downloadAudio()
                 } else {
                     val file = getSpeakFileAsMd5(fileName)
@@ -103,11 +102,9 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
-    private var downloadErrorNo: Int = 0
-
     private fun downloadAudio() {
-        task?.cancel()
-        task = execute {
+        downloadTask?.cancel()
+        downloadTask = execute {
             clearSpeakCache()
             removeCacheFile()
             val httpTts = ReadAloud.httpTTS ?: return@execute
@@ -136,9 +133,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                             source = httpTts,
                             headerMapF = httpTts.getHeaderMap(true)
                         )
-                        var response = mutex.withLock {
-                            analyzeUrl.getResponseAwait()
-                        }
+                        var response = analyzeUrl.getResponseAwait()
                         ensureActive()
                         httpTts.loginCheckJs?.takeIf { checkJs ->
                             checkJs.isNotBlank()
@@ -156,7 +151,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                         }
                         ensureActive()
                         response.body!!.bytes().let { bytes ->
-                            ensureActive()
                             val file = createSpeakFileAsMd5IfNotExist(fileName)
                             file.writeBytes(bytes)
                             removeSpeakCache(fileName)
@@ -316,7 +310,7 @@ class HttpReadAloudService : BaseReadAloudService(),
      * 更新朗读速度
      */
     override fun upSpeechRate(reset: Boolean) {
-        task?.cancel()
+        downloadTask?.cancel()
         exoPlayer.stop()
         speechRate = AppConfig.speechRatePlay
         downloadAudio()
@@ -344,8 +338,6 @@ class HttpReadAloudService : BaseReadAloudService(),
             }
         }
     }
-
-    private var playErrorNo = 0
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
