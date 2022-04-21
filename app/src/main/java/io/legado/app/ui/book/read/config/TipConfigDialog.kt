@@ -110,48 +110,54 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
         }
         llHeaderLeft.setOnClickListener {
             context?.selector(items = ReadTipConfig.tipNames) { _, i ->
-                clearRepeat(i)
-                ReadTipConfig.tipHeaderLeft = ReadTipConfig.tipValues[i]
+                val tipValue = ReadTipConfig.tipValues[i]
+                clearRepeat(tipValue)
+                ReadTipConfig.tipHeaderLeft = tipValue
                 tvHeaderLeft.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llHeaderMiddle.setOnClickListener {
             context?.selector(items = ReadTipConfig.tipNames) { _, i ->
-                clearRepeat(i)
-                ReadTipConfig.tipHeaderMiddle = ReadTipConfig.tipValues[i]
+                val tipValue = ReadTipConfig.tipValues[i]
+                clearRepeat(tipValue)
+                ReadTipConfig.tipHeaderMiddle = tipValue
                 tvHeaderMiddle.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llHeaderRight.setOnClickListener {
             context?.selector(items = ReadTipConfig.tipNames) { _, i ->
-                clearRepeat(i)
-                ReadTipConfig.tipHeaderRight = ReadTipConfig.tipValues[i]
+                val tipValue = ReadTipConfig.tipValues[i]
+                clearRepeat(tipValue)
+                ReadTipConfig.tipHeaderRight = tipValue
                 tvHeaderRight.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llFooterLeft.setOnClickListener {
             context?.selector(items = ReadTipConfig.tipNames) { _, i ->
-                clearRepeat(i)
-                ReadTipConfig.tipFooterLeft = ReadTipConfig.tipValues[i]
+                val tipValue = ReadTipConfig.tipValues[i]
+                clearRepeat(tipValue)
+                ReadTipConfig.tipFooterLeft = tipValue
                 tvFooterLeft.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llFooterMiddle.setOnClickListener {
             context?.selector(items = ReadTipConfig.tipNames) { _, i ->
-                clearRepeat(i)
-                ReadTipConfig.tipFooterMiddle = ReadTipConfig.tipValues[i]
+                val tipValue = ReadTipConfig.tipValues[i]
+                clearRepeat(tipValue)
+                ReadTipConfig.tipFooterMiddle = tipValue
                 tvFooterMiddle.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
         }
         llFooterRight.setOnClickListener {
             context?.selector(items = ReadTipConfig.tipNames) { _, i ->
-                clearRepeat(i)
-                ReadTipConfig.tipFooterRight = ReadTipConfig.tipValues[i]
+                val tipValue = ReadTipConfig.tipValues[i]
+                clearRepeat(tipValue)
+                ReadTipConfig.tipFooterRight = tipValue
                 tvFooterRight.text = ReadTipConfig.tipNames[i]
                 postEvent(EventBus.UP_CONFIG, true)
             }
