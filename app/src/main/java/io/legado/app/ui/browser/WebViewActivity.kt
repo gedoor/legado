@@ -69,7 +69,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    @SuppressLint("JavascriptInterface")
+    @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
     private fun initWebView(url: String, headerMap: HashMap<String, String>) {
         binding.webView.webChromeClient = CustomWebChromeClient()
         binding.webView.webViewClient = CustomWebViewClient()
@@ -100,11 +100,11 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             }
             return@setOnLongClickListener false
         }
-        binding.webView.setDownloadListener { url, _, contentDisposition, _, _ ->
-            var fileName = URLUtil.guessFileName(url, contentDisposition, null)
+        binding.webView.setDownloadListener { downloadUrl, _, contentDisposition, _, _ ->
+            var fileName = URLUtil.guessFileName(downloadUrl, contentDisposition, null)
             fileName = URLDecoder.decode(fileName, "UTF-8")
             binding.llView.longSnackbar(fileName, getString(R.string.action_download)) {
-                Download.start(this, url, fileName)
+                Download.start(this, downloadUrl, fileName)
             }
         }
     }
@@ -206,6 +206,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             return true
         }
 
+        @Deprecated("Deprecated in Java")
         @Suppress("DEPRECATION")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             url?.let {

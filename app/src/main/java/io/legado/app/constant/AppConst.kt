@@ -3,12 +3,11 @@ package io.legado.app.constant
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.provider.Settings
+import com.script.javascript.RhinoScriptEngine
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
 
 @SuppressLint("SimpleDateFormat")
 object AppConst {
@@ -23,8 +22,8 @@ object AppConst {
 
     const val MAX_THREAD = 9
 
-    val SCRIPT_ENGINE: ScriptEngine by lazy {
-        ScriptEngineManager().getEngineByName("rhino")
+    val SCRIPT_ENGINE: RhinoScriptEngine by lazy {
+        RhinoScriptEngine()
     }
 
     val timeFormat: SimpleDateFormat by lazy {

@@ -14,6 +14,19 @@
 **2022/04/21**
 
 * 修复一些bug
+* 更新js库
+
+```
+实现 ES6 Object.values Object.entries Object.fromEntries
+实现 ES2017 Object.getOwnPropertyDescriptors
+添加：支持“catch”中的可选变量绑定
+添加：反单引号里`${}`语法支持（用于字符串连接）
+添加：equals (==) 等号的支持
+添加：NativeArray.subList()
+添加：Object.hasOwn
+修复：（for of）导出字符串 of前无空格导致语法错误问题
+其他一些优化
+```
 
 **2022/04/17**
 

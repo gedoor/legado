@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -28,7 +29,6 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import org.mozilla.javascript.WrappedException
 import java.util.concurrent.Executors
-import javax.script.ScriptException
 import kotlin.math.min
 
 /**

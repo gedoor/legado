@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
+import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
@@ -25,7 +26,6 @@ import java.io.File
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.*
-import javax.script.ScriptException
 
 /**
  * 在线朗读

@@ -2,6 +2,7 @@ package io.legado.app.model.localBook
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import com.script.SimpleBindings
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
@@ -17,7 +18,6 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.util.regex.Pattern
-import javax.script.SimpleBindings
 
 object LocalBook {
 

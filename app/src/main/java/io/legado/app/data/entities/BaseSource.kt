@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import android.util.Base64
+import com.script.SimpleBindings
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi
@@ -9,7 +10,6 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
-import javax.script.SimpleBindings
 
 /**
  * 可在js里调用,source.xxx()
