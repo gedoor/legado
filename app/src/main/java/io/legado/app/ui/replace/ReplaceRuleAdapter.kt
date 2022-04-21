@@ -25,15 +25,11 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
     private val selected = linkedSetOf<ReplaceRule>()
 
-    val selection: LinkedHashSet<ReplaceRule>
+    val selection: List<ReplaceRule>
         get() {
-            val selection = linkedSetOf<ReplaceRule>()
-            getItems().map {
-                if (selected.contains(it)) {
-                    selection.add(it)
-                }
+            return getItems().filter {
+                selected.contains(it)
             }
-            return selection
         }
 
     val diffItemCallBack = object : DiffUtil.ItemCallback<ReplaceRule>() {

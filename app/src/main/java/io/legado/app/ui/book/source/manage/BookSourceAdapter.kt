@@ -34,13 +34,9 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     val selection: List<BookSource>
         get() {
-            val selection = arrayListOf<BookSource>()
-            getItems().map {
-                if (selected.contains(it)) {
-                    selection.add(it)
-                }
+            return getItems().filter {
+                selected.contains(it)
             }
-            return selection.sortedBy { it.customOrder }
         }
 
     val diffItemCallback: DiffUtil.ItemCallback<BookSource>

@@ -65,23 +65,21 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun enableSelection(rules: LinkedHashSet<ReplaceRule>) {
+    fun enableSelection(rules: List<ReplaceRule>) {
         execute {
-            val list = arrayListOf<ReplaceRule>()
-            rules.forEach {
-                list.add(it.copy(isEnabled = true))
+            val array = Array(rules.size) {
+                rules[it].copy(isEnabled = true)
             }
-            appDb.replaceRuleDao.update(*list.toTypedArray())
+            appDb.replaceRuleDao.update(*array)
         }
     }
 
-    fun disableSelection(rules: LinkedHashSet<ReplaceRule>) {
+    fun disableSelection(rules: List<ReplaceRule>) {
         execute {
-            val list = arrayListOf<ReplaceRule>()
-            rules.forEach {
-                list.add(it.copy(isEnabled = false))
+            val array = Array(rules.size) {
+                rules[it].copy(isEnabled = false)
             }
-            appDb.replaceRuleDao.update(*list.toTypedArray())
+            appDb.replaceRuleDao.update(*array)
         }
     }
 

@@ -13,6 +13,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun topSource(vararg sources: BookSource) {
         execute {
+            sources.sortBy { it.customOrder }
             val minOrder = appDb.bookSourceDao.minOrder - 1
             val array = Array(sources.size) {
                 sources[it].copy(customOrder = minOrder - it)
@@ -23,6 +24,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun bottomSource(vararg sources: BookSource) {
         execute {
+            sources.sortBy { it.customOrder }
             val maxOrder = appDb.bookSourceDao.maxOrder + 1
             val array = Array(sources.size) {
                 sources[it].copy(customOrder = maxOrder + it)

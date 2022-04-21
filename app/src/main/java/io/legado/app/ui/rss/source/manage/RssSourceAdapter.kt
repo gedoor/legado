@@ -27,13 +27,9 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
 
     val selection: List<RssSource>
         get() {
-            val selection = arrayListOf<RssSource>()
-            getItems().forEach {
-                if (selected.contains(it)) {
-                    selection.add(it)
-                }
+            return getItems().filter {
+                selected.contains(it)
             }
-            return selection.sortedBy { it.customOrder }
         }
 
     val diffItemCallback = object : DiffUtil.ItemCallback<RssSource>() {

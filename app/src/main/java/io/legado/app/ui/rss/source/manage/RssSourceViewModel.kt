@@ -13,21 +13,23 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
 
     fun topSource(vararg sources: RssSource) {
         execute {
+            sources.sortBy { it.customOrder }
             val minOrder = appDb.rssSourceDao.minOrder - 1
-            sources.forEachIndexed { index, rssSource ->
-                rssSource.customOrder = minOrder - index
+            val array = Array(sources.size) {
+                sources[it].copy(customOrder = minOrder - it)
             }
-            appDb.rssSourceDao.update(*sources)
+            appDb.rssSourceDao.update(*array)
         }
     }
 
     fun bottomSource(vararg sources: RssSource) {
         execute {
+            sources.sortBy { it.customOrder }
             val maxOrder = appDb.rssSourceDao.maxOrder + 1
-            sources.forEachIndexed { index, rssSource ->
-                rssSource.customOrder = maxOrder + index
+            val array = Array(sources.size) {
+                sources[it].copy(customOrder = maxOrder + it)
             }
-            appDb.rssSourceDao.update(*sources)
+            appDb.rssSourceDao.update(*array)
         }
     }
 
@@ -51,21 +53,19 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
 
     fun enableSelection(sources: List<RssSource>) {
         execute {
-            val list = arrayListOf<RssSource>()
-            sources.forEach {
-                list.add(it.copy(enabled = true))
+            val array = Array(sources.size) {
+                sources[it].copy(enabled = true)
             }
-            appDb.rssSourceDao.update(*list.toTypedArray())
+            appDb.rssSourceDao.update(*array)
         }
     }
 
     fun disableSelection(sources: List<RssSource>) {
         execute {
-            val list = arrayListOf<RssSource>()
-            sources.forEach {
-                list.add(it.copy(enabled = false))
+            val array = Array(sources.size) {
+                sources[it].copy(enabled = false)
             }
-            appDb.rssSourceDao.update(*list.toTypedArray())
+            appDb.rssSourceDao.update(*array)
         }
     }
 
