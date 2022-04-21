@@ -14,6 +14,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
+import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.nio.charset.Charset
@@ -283,9 +284,11 @@ data class Book(
     fun changeTo(newBook: Book, toc: List<BookChapter>): Book {
         newBook.durChapterIndex = BookHelp
             .getDurChapter(durChapterIndex, durChapterTitle, toc, totalChapterNum)
-        newBook.durChapterTitle = toc[newBook.durChapterIndex].getDisplayTitle(
-            ContentProcessor.get(newBook.name, newBook.origin).getTitleReplaceRules()
-        )
+        newBook.durChapterTitle = runBlocking {
+            toc[newBook.durChapterIndex].getDisplayTitle(
+                ContentProcessor.get(newBook.name, newBook.origin).getTitleReplaceRules()
+            )
+        }
         newBook.durChapterPos = durChapterPos
         newBook.group = group
         newBook.order = order

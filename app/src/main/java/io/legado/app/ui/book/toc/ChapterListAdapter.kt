@@ -20,6 +20,7 @@ import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
@@ -97,7 +98,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         if (displayTitle != null) {
             return displayTitle
         }
-        displayTitle = chapter.getDisplayTitle(replaceRules, useReplace)
+        displayTitle = runBlocking {
+            chapter.getDisplayTitle(replaceRules, useReplace)
+        }
         displayTitleMap[chapter.title] = displayTitle
         return displayTitle
     }
