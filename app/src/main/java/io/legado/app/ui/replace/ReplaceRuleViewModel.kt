@@ -28,7 +28,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun topSelect(rules: LinkedHashSet<ReplaceRule>) {
+    fun topSelect(rules: List<ReplaceRule>) {
         execute {
             var minOrder = appDb.replaceRuleDao.minOrder - rules.size
             rules.forEach {
@@ -45,7 +45,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun bottomSelect(rules: LinkedHashSet<ReplaceRule>) {
+    fun bottomSelect(rules: List<ReplaceRule>) {
         execute {
             var maxOrder = appDb.replaceRuleDao.maxOrder
             rules.forEach {
@@ -83,7 +83,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun delSelection(rules: LinkedHashSet<ReplaceRule>) {
+    fun delSelection(rules: List<ReplaceRule>) {
         execute {
             appDb.replaceRuleDao.delete(*rules.toTypedArray())
         }
