@@ -66,7 +66,9 @@ object AppWebDav {
             val password = appCtx.getPrefString(PreferKey.webDavPassword)
             if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
                 HttpAuth.auth = HttpAuth.Auth(account, password)
-                isOk = WebDav(rootWebDavUrl).makeAsDir() && WebDav(bookProgressUrl).makeAsDir()
+                WebDav(rootWebDavUrl).makeAsDir()
+                WebDav(bookProgressUrl).makeAsDir()
+                isOk = true
             }
         }
     }
