@@ -18,12 +18,12 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
     val batchChangeSourcePosition = mutableStateOf(0)
     var batchChangeSourceCoroutine: Coroutine<Unit>? = null
 
-    fun upCanUpdate(books: Array<Book>, canUpdate: Boolean) {
+    fun upCanUpdate(books: List<Book>, canUpdate: Boolean) {
         execute {
-            books.forEach {
-                it.canUpdate = canUpdate
+            val array = Array(books.size) {
+                books[it].copy(canUpdate = canUpdate)
             }
-            appDb.bookDao.update(*books)
+            appDb.bookDao.update(*array)
         }
     }
 
@@ -39,7 +39,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
         }
     }
 
-    fun changeSource(books: Array<Book>, source: BookSource) {
+    fun changeSource(books: List<Book>, source: BookSource) {
         batchChangeSourceCoroutine?.cancel()
         batchChangeSourceCoroutine = execute {
             batchChangeSourceSize.value = books.size

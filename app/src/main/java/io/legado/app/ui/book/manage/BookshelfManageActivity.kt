@@ -183,13 +183,13 @@ class BookshelfManageActivity :
         when (item?.itemId) {
             R.id.menu_del_selection ->
                 alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-                    okButton { viewModel.deleteBook(*adapter.selectedBooks()) }
+                    okButton { viewModel.deleteBook(*adapter.selection.toTypedArray()) }
                     noButton()
                 }
             R.id.menu_update_enable ->
-                viewModel.upCanUpdate(adapter.selectedBooks(), true)
+                viewModel.upCanUpdate(adapter.selection, true)
             R.id.menu_update_disable ->
-                viewModel.upCanUpdate(adapter.selectedBooks(), false)
+                viewModel.upCanUpdate(adapter.selection, false)
             R.id.menu_add_to_group -> selectGroup(addToGroupRequestCode, 0)
             R.id.menu_change_source -> showDialogFragment<SourcePickerDialog>()
         }
@@ -213,30 +213,29 @@ class BookshelfManageActivity :
 
     override fun upGroup(requestCode: Int, groupId: Long) {
         when (requestCode) {
-            groupRequestCode -> {
-                val books = arrayListOf<Book>()
-                adapter.selectedBooks().forEach {
-                    books.add(it.copy(group = groupId))
+            groupRequestCode -> adapter.selection.let { books ->
+                val array = Array(books.size) {
+                    books[it].copy(group = groupId)
                 }
-                viewModel.updateBook(*books.toTypedArray())
+                viewModel.updateBook(*array)
             }
             adapter.groupRequestCode -> {
                 adapter.actionItem?.let {
                     viewModel.updateBook(it.copy(group = groupId))
                 }
             }
-            addToGroupRequestCode -> {
-                val books = arrayListOf<Book>()
-                adapter.selectedBooks().forEach {
-                    books.add(it.copy(group = it.group or groupId))
+            addToGroupRequestCode -> adapter.selection.let { books ->
+                val array = Array(books.size) { index ->
+                    val book = books[index]
+                    book.copy(group = book.group or groupId)
                 }
-                viewModel.updateBook(*books.toTypedArray())
+                viewModel.updateBook(*array)
             }
         }
     }
 
     override fun upSelectCount() {
-        binding.selectActionBar.upCountView(adapter.selectedBooks().size, adapter.getItems().size)
+        binding.selectActionBar.upCountView(adapter.selection.size, adapter.getItems().size)
     }
 
     override fun updateBook(vararg book: Book) {
@@ -252,7 +251,7 @@ class BookshelfManageActivity :
     }
 
     override fun sourceOnClick(source: BookSource) {
-        viewModel.changeSource(adapter.selectedBooks(), source)
+        viewModel.changeSource(adapter.selection, source)
         viewModel.batchChangeSourceState.value = true
     }
 

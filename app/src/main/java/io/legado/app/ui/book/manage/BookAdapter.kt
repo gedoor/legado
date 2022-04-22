@@ -23,6 +23,13 @@ class BookAdapter(context: Context, val callBack: CallBack) :
     private val selectedBooks: HashSet<Book> = hashSetOf()
     var actionItem: Book? = null
 
+    val selection: List<Book>
+        get() {
+            return getItems().filter {
+                selectedBooks.contains(it)
+            }
+        }
+
     override fun getViewBinding(parent: ViewGroup): ItemArrangeBookBinding {
         return ItemArrangeBookBinding.inflate(inflater, parent, false)
     }
@@ -112,16 +119,6 @@ class BookAdapter(context: Context, val callBack: CallBack) :
         }
         notifyDataSetChanged()
         callBack.upSelectCount()
-    }
-
-    fun selectedBooks(): Array<Book> {
-        val books = arrayListOf<Book>()
-        selectedBooks.forEach {
-            if (getItems().contains(it)) {
-                books.add(it)
-            }
-        }
-        return books.toTypedArray()
     }
 
     private fun getGroupList(groupId: Long): List<String> {
