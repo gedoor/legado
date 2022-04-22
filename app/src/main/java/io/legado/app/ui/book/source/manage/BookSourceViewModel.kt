@@ -9,6 +9,10 @@ import io.legado.app.utils.*
 import java.io.File
 import java.io.FileOutputStream
 
+/**
+ * 书源管理数据修改
+ * 修改数据要copy,直接修改会导致界面不刷新
+ */
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
     fun topSource(vararg sources: BookSource) {

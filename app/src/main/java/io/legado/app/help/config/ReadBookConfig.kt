@@ -328,7 +328,7 @@ object ReadBookConfig {
         }
 
     fun getExportConfig(): Config {
-        val exportConfig = durConfig.deepCopy()
+        val exportConfig = durConfig.copy()
         if (shareLayout) {
             exportConfig.textFont = shareConfig.textFont
             exportConfig.textBold = shareConfig.textBold
@@ -430,7 +430,7 @@ object ReadBookConfig {
     }
 
     @Keep
-    class Config(
+    data class Config(
         var name: String = "",
         var bgStr: String = "#EEEEEE",//白天背景
         var bgStrNight: String = "#000000",//夜间背景

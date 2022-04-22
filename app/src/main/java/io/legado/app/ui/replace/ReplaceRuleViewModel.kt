@@ -7,6 +7,10 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.splitNotBlank
 
+/**
+ * 替换规则数据修改
+ * 修改数据要copy,直接修改会导致界面不刷新
+ */
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
 
     fun update(vararg rule: ReplaceRule) {

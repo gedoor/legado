@@ -249,7 +249,7 @@ object ThemeConfig {
     }
 
     @Keep
-    class Config(
+    data class Config(
         var themeName: String,
         var isNightTheme: Boolean,
         var primaryColor: String,
