@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.PaintFlagsDrawFilter
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
@@ -162,6 +163,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineTop: Float,
         lineBottom: Float
     ) {
+
+        canvas.drawFilter =
+            PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
         val book = ReadBook.book ?: return
         val bitmap = ImageProvider.getImage(
             book,
