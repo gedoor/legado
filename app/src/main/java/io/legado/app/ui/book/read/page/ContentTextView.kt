@@ -163,7 +163,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineTop: Float,
         lineBottom: Float
     ) {
-
         canvas.drawFilter =
             PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
         val book = ReadBook.book ?: return
