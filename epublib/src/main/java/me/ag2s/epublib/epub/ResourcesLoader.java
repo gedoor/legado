@@ -74,7 +74,9 @@ public class ResourcesLoader {
                         .createResource(zipEntry, zipFile.getInputStream(zipEntry));
                 /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
                 if (href.endsWith("opf")) {
-                    String string = new String(resource.getData()).replace("smlns=\"", "xmlns=\"");
+                    String string = new String(resource.getData())
+                            .replace(" smlns=\"", " xmlns=\"")
+                            .replace(" mlns=\"", " xmlns=\"");
                     resource.setData(string.getBytes());
                 }
 
@@ -135,7 +137,9 @@ public class ResourcesLoader {
             Resource resource = ResourceUtil.createResource(zipEntry, zipInputStream);
             ///*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
             if (href.endsWith("opf")) {
-                String string = new String(resource.getData()).replace("smlns=\"", "xmlns=\"");
+                String string = new String(resource.getData())
+                        .replace(" smlns=\"", " xmlns=\"")
+                        .replace(" mlns=\"", " xmlns=\"");
                 resource.setData(string.getBytes());
             }
             if (resource.getMediaType() == MediaTypes.XHTML) {
