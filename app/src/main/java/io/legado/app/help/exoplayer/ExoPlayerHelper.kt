@@ -6,7 +6,9 @@ import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.upstream.cache.Cache
+import com.google.android.exoplayer2.upstream.cache.CacheDataSink
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import io.legado.app.help.http.okHttpClient
@@ -36,6 +38,12 @@ object ExoPlayerHelper {
         return@lazy OkhttpCacheDataSource.Factory()
             .setCache(cache)
             .setUpstreamDataSourceFactory(okhttpDataFactory)
+            .setCacheReadDataSourceFactory(FileDataSource.Factory())
+            .setCacheWriteDataSinkFactory(
+                CacheDataSink.Factory()
+                    .setCache(cache)
+                    .setFragmentSize(CacheDataSink.DEFAULT_FRAGMENT_SIZE)
+            )
     }
 
     /**

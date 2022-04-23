@@ -13,6 +13,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.AudioFocusRequestCompat
+import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
@@ -57,7 +58,14 @@ class AudioPlayService : BaseService(),
         MediaHelp.getFocusRequest(this)
     }
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayer.Builder(this).build()
+        ExoPlayer.Builder(this).setLoadControl(
+            DefaultLoadControl.Builder().setBufferDurationsMs(
+                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS / 10,
+                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS / 10
+            ).build()
+        ).build()
     }
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
@@ -302,6 +310,8 @@ class AudioPlayService : BaseService(),
         upPlayProgressJob = launch {
             while (isActive) {
                 AudioPlay.book?.let {
+                    //更新buffer位置
+                    postEvent(EventBus.AUDIO_BUFFER_PROGRESS, exoPlayer.bufferedPosition.toInt())
                     it.durChapterPos = exoPlayer.currentPosition.toInt()
                     postEvent(EventBus.AUDIO_PROGRESS, it.durChapterPos)
                     saveProgress(it)

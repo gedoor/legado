@@ -1,8 +1,29 @@
 package io.legado.app.help.exoplayer;
 
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
 import static java.lang.Math.min;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.net.Uri;
 
@@ -37,9 +58,11 @@ import java.io.InterruptedIOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * A {@link DataSource} that reads and writes a {@link Cache}. Requests are fulfilled from the cache
@@ -66,8 +89,7 @@ public final class OkhttpCacheDataSource implements DataSource {
         @Nullable
         private PriorityTaskManager upstreamPriorityTaskManager;
         private int upstreamPriority;
-        @OkhttpCacheDataSource.Flags
-        private int flags;
+        private @OkhttpCacheDataSource.Flags int flags;
         @Nullable
         private OkhttpCacheDataSource.EventListener eventListener;
 
@@ -351,6 +373,7 @@ public final class OkhttpCacheDataSource implements DataSource {
      */
     @Documented
     @Retention(RetentionPolicy.SOURCE)
+    @Target(TYPE_USE)
     @IntDef(
             flag = true,
             value = {
@@ -384,8 +407,11 @@ public final class OkhttpCacheDataSource implements DataSource {
      * Reasons the cache may be ignored. One of {@link #CACHE_IGNORED_REASON_ERROR} or {@link
      * #CACHE_IGNORED_REASON_UNSET_LENGTH}.
      */
+    // @Target list includes both 'default' targets and TYPE_USE, to ensure backwards compatibility
+    // with Kotlin usages from before TYPE_USE was added.
     @Documented
     @Retention(RetentionPolicy.SOURCE)
+    @Target({FIELD, METHOD, PARAMETER, LOCAL_VARIABLE, TYPE_USE})
     @IntDef({CACHE_IGNORED_REASON_ERROR, CACHE_IGNORED_REASON_UNSET_LENGTH})
     public @interface CacheIgnoredReason {
     }
@@ -641,15 +667,15 @@ public final class OkhttpCacheDataSource implements DataSource {
     }
 
     @Override
-    public int read(@NonNull byte[] buffer, int offset, int length) throws IOException {
-        DataSpec requestDataSpec = checkNotNull(this.requestDataSpec);
-        DataSpec currentDataSpec = checkNotNull(this.currentDataSpec);
+    public int read(byte[] buffer, int offset, int length) throws IOException {
         if (length == 0) {
             return 0;
         }
         if (bytesRemaining == 0) {
             return C.RESULT_END_OF_INPUT;
         }
+        DataSpec requestDataSpec = checkNotNull(this.requestDataSpec);
+        DataSpec currentDataSpec = checkNotNull(this.currentDataSpec);
         try {
             if (readPosition >= checkCachePosition) {
                 openNextSource(requestDataSpec, true);
@@ -683,9 +709,8 @@ public final class OkhttpCacheDataSource implements DataSource {
         }
     }
 
-
-    @Nullable
     @Override
+    @Nullable
     public Uri getUri() {
         return actualUri;
     }
@@ -693,6 +718,7 @@ public final class OkhttpCacheDataSource implements DataSource {
     @NonNull
     @Override
     public Map<String, List<String>> getResponseHeaders() {
+        // TODO: Implement.
         return isReadingFromUpstream()
                 ? upstreamDataSource.getResponseHeaders()
                 : Collections.emptyMap();

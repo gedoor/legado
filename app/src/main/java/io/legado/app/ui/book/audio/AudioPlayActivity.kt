@@ -273,6 +273,10 @@ class AudioPlayActivity :
             if (!adjustProgress) binding.playerProgress.progress = it
             binding.tvDurTime.text = progressTimeFormat.format(it.toLong())
         }
+        observeEventSticky<Int>(EventBus.AUDIO_BUFFER_PROGRESS) {
+            binding.playerProgress.secondaryProgress = it
+
+        }
         observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
             binding.tvSpeed.text = String.format("%.1fX", it)
             binding.tvSpeed.visible()
