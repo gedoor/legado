@@ -11,12 +11,17 @@
 * 正文出现缺字漏字、内容缺失、排版错乱等情况，有可能是净化规则或简繁转换出现问题。
 * 漫画源看书显示乱码，**阅读与其他软件的源并不通用**，请导入阅读的支持的漫画源！
 
+**2022/04/23**
+
+* 修复js问题
+
 **2022/04/22**
 
 * 键盘辅助配置加入备份恢复文件
 * 修复源管理界面添加删除分组不及时显示的bug
 * 修复其它一些bug
 * 更新js库
+
 ```
 实现 ES6 Object.values Object.entries Object.fromEntries
 实现 ES2017 Object.getOwnPropertyDescriptors
