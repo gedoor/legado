@@ -15,6 +15,7 @@ import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isXml
+import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
@@ -103,11 +104,14 @@ object ImageProvider {
         book: Book,
         src: String,
         width: Int,
-        height: Int? = null
+        height: Int? = null,
+        bookSource: BookSource? = null
     ): Bitmap {
         val cacheBitmap = bitmapLruCache.get(src)
         if (cacheBitmap != null) return cacheBitmap
-        val vFile = BookHelp.getImage(book, src)
+        val vFile = runBlocking {
+            cacheImage(book, src, bookSource)
+        }
         @Suppress("BlockingMethodInNonBlockingContext")
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)

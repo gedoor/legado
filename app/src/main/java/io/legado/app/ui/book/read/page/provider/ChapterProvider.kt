@@ -116,7 +116,7 @@ object ChapterProvider {
         if (ReadBookConfig.titleMode != 2) {
             displayTitle.splitNotBlank("\n").forEach { text ->
                 setTypeText(
-                    absStartX, durY, text, textPages, stringBuilder, titlePaint,
+                    book, absStartX, durY, text, textPages, stringBuilder, titlePaint,
                     isTitle = true,
                     isTitleWithNoContent = contents.isEmpty(),
                     isVolumeTitle = bookChapter.isVolume
@@ -142,7 +142,7 @@ object ChapterProvider {
                 matcher.appendTail(sb)
                 text = sb.toString()
                 setTypeText(
-                    absStartX, durY, text, textPages, stringBuilder, contentPaint,
+                    book, absStartX, durY, text, textPages, stringBuilder, contentPaint,
                     srcList = srcList
                 ).let {
                     absStartX = it.first
@@ -155,7 +155,7 @@ object ChapterProvider {
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
                         setTypeText(
-                            absStartX, durY, text, textPages, stringBuilder, contentPaint
+                            book, absStartX, durY, text, textPages, stringBuilder, contentPaint
                         ).let {
                             absStartX = it.first
                             durY = it.second
@@ -171,7 +171,7 @@ object ChapterProvider {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
                         setTypeText(
-                            absStartX, durY, text, textPages, stringBuilder, contentPaint
+                            book, absStartX, durY, text, textPages, stringBuilder, contentPaint
                         ).let {
                             absStartX = it.first
                             durY = it.second
@@ -199,6 +199,9 @@ object ChapterProvider {
         )
     }
 
+    /**
+     * 排版图片
+     */
     private suspend fun setTypeImage(
         book: Book,
         src: String,
@@ -264,7 +267,8 @@ object ChapterProvider {
     /**
      * 排版文字
      */
-    private fun setTypeText(
+    private suspend fun setTypeText(
+        book: Book,
         x: Int,
         y: Float,
         text: String,
@@ -336,12 +340,8 @@ object ChapterProvider {
                     //第一行 非标题
                     textLine.text = words
                     addCharsToLineFirst(
-                        absStartX,
-                        textLine,
-                        words.toStringArray(),
-                        textPaint,
-                        desiredWidth,
-                        srcList
+                        book, absStartX, textLine, words.toStringArray(),
+                        textPaint, desiredWidth, srcList
                     )
                 }
                 lineIndex == layout.lineCount - 1 -> {
@@ -354,25 +354,16 @@ object ChapterProvider {
                             (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                         else 0f
                     addCharsToLineLast(
-                        absStartX,
-                        textLine,
-                        words.toStringArray(),
-                        textPaint,
-                        startX,
-                        srcList
+                        book, absStartX, textLine, words.toStringArray(),
+                        textPaint, startX, srcList
                     )
                 }
                 else -> {
                     //中间行
                     textLine.text = words
                     addCharsToLineMiddle(
-                        absStartX,
-                        textLine,
-                        words.toStringArray(),
-                        textPaint,
-                        desiredWidth,
-                        0f,
-                        srcList
+                        book, absStartX, textLine, words.toStringArray(),
+                        textPaint, desiredWidth, 0f, srcList
                     )
                 }
             }
@@ -392,7 +383,8 @@ object ChapterProvider {
     /**
      * 有缩进,两端对齐
      */
-    private fun addCharsToLineFirst(
+    private suspend fun addCharsToLineFirst(
+        book: Book,
         absStartX: Int,
         textLine: TextLine,
         words: Array<String>,
@@ -402,7 +394,7 @@ object ChapterProvider {
     ) {
         var x = 0f
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(absStartX, textLine, words, textPaint, x, srcList)
+            addCharsToLineLast(book, absStartX, textLine, words, textPaint, x, srcList)
             return
         }
         val bodyIndent = ReadBookConfig.paragraphIndent
@@ -420,14 +412,17 @@ object ChapterProvider {
         }
         if (words.size > bodyIndent.length) {
             val words1 = words.copyOfRange(bodyIndent.length, words.size)
-            addCharsToLineMiddle(absStartX, textLine, words1, textPaint, desiredWidth, x, srcList)
+            addCharsToLineMiddle(
+                book, absStartX, textLine, words1, textPaint, desiredWidth, x, srcList
+            )
         }
     }
 
     /**
      * 无缩进,两端对齐
      */
-    private fun addCharsToLineMiddle(
+    private suspend fun addCharsToLineMiddle(
+        book: Book,
         absStartX: Int,
         textLine: TextLine,
         words: Array<String>,
@@ -437,7 +432,7 @@ object ChapterProvider {
         srcList: LinkedList<String>?
     ) {
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(absStartX, textLine, words, textPaint, startX, srcList)
+            addCharsToLineLast(book, absStartX, textLine, words, textPaint, startX, srcList)
             return
         }
         val gapCount: Int = words.lastIndex
@@ -446,24 +441,7 @@ object ChapterProvider {
         words.forEachIndexed { index, char ->
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
-            if (srcList != null && char == srcReplaceChar) {
-                textLine.textChars.add(
-                    TextChar(
-                        charData = srcList.removeFirst(),
-                        start = absStartX + x,
-                        end = absStartX + x1,
-                        isImage = true
-                    )
-                )
-            } else {
-                textLine.textChars.add(
-                    TextChar(
-                        charData = char,
-                        start = absStartX + x,
-                        end = absStartX + x1
-                    )
-                )
-            }
+            addCharToLine(book, absStartX, textLine, char, x, x1, srcList)
             x = x1
         }
         exceed(absStartX, textLine, words)
@@ -472,7 +450,8 @@ object ChapterProvider {
     /**
      * 最后一行,自然排列
      */
-    private fun addCharsToLineLast(
+    private suspend fun addCharsToLineLast(
+        book: Book,
         absStartX: Int,
         textLine: TextLine,
         words: Array<String>,
@@ -484,27 +463,44 @@ object ChapterProvider {
         words.forEach { char ->
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = x + cw
-            if (srcList != null && char == srcReplaceChar) {
-                textLine.textChars.add(
-                    TextChar(
-                        charData = srcList.removeFirst(),
-                        start = absStartX + x,
-                        end = absStartX + x1,
-                        isImage = true
-                    )
-                )
-            } else {
-                textLine.textChars.add(
-                    TextChar(
-                        charData = char,
-                        start = absStartX + x,
-                        end = absStartX + x1
-                    )
-                )
-            }
+            addCharToLine(book, absStartX, textLine, char, x, x1, srcList)
             x = x1
         }
         exceed(absStartX, textLine, words)
+    }
+
+    /**
+     * 添加字符
+     */
+    private suspend fun addCharToLine(
+        book: Book,
+        absStartX: Int,
+        textLine: TextLine,
+        char: String,
+        xStart: Float,
+        xEnd: Float,
+        srcList: LinkedList<String>?
+    ) {
+        if (srcList != null && char == srcReplaceChar) {
+            val src = srcList.removeFirst()
+            ImageProvider.cacheImage(book, src, ReadBook.bookSource)
+            textLine.textChars.add(
+                TextChar(
+                    charData = src,
+                    start = absStartX + xStart,
+                    end = absStartX + xEnd,
+                    isImage = true
+                )
+            )
+        } else {
+            textLine.textChars.add(
+                TextChar(
+                    charData = char,
+                    start = absStartX + xStart,
+                    end = absStartX + xEnd
+                )
+            )
+        }
     }
 
     /**

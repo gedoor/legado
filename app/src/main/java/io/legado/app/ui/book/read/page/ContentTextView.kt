@@ -170,7 +170,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             book,
             textChar.charData,
             (textChar.end - textChar.start).toInt(),
-            (lineBottom - lineTop).toInt()
+            (lineBottom - lineTop).toInt(),
+            ReadBook.bookSource
         )
         val rectF = if (textLine.isImage) {
             RectF(textChar.start, lineTop, textChar.end, lineBottom)
