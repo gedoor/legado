@@ -15,7 +15,9 @@ import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isXml
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
@@ -59,21 +61,23 @@ object ImageProvider {
         src: String,
         bookSource: BookSource?
     ): File {
-        val vFile = BookHelp.getImage(book, src)
-        if (!vFile.exists()) {
-            if (book.isEpub()) {
-                EpubFile.getImage(book, src)?.use { input ->
-                    val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
-                    @Suppress("BlockingMethodInNonBlockingContext")
-                    FileOutputStream(newFile).use { output ->
-                        input.copyTo(output)
+        return withContext(IO) {
+            val vFile = BookHelp.getImage(book, src)
+            if (!vFile.exists()) {
+                if (book.isEpub()) {
+                    EpubFile.getImage(book, src)?.use { input ->
+                        val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
+                        @Suppress("BlockingMethodInNonBlockingContext")
+                        FileOutputStream(newFile).use { output ->
+                            input.copyTo(output)
+                        }
                     }
+                } else {
+                    BookHelp.saveImage(bookSource, book, src)
                 }
-            } else {
-                BookHelp.saveImage(bookSource, book, src)
             }
+            return@withContext vFile
         }
-        return vFile
     }
 
     /**
