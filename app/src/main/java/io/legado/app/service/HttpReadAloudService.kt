@@ -64,14 +64,14 @@ class HttpReadAloudService : BaseReadAloudService(),
         } else {
             super.play()
             kotlin.runCatching {
-                if (nowSpeak == 0 && downloadTask?.isActive != true) {
+                if (nowSpeak == 0) {
                     downloadAudio()
                 } else {
                     val fileName = md5SpeakFileName(contentList[nowSpeak])
                     val file = getSpeakFileAsMd5(fileName)
                     if (file.exists()) {
                         playAudio(file)
-                    } else if (downloadTask?.isActive != true) {
+                    } else if (!downloadTaskIsActive) {
                         downloadAudio()
                     }
                 }
@@ -193,6 +193,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                 }
             }.onStart {
                 downloadTaskIsActive = true
+            }.onError {
+                AppLog.put("朗读下载出错\n${it.localizedMessage}")
             }.onFinally {
                 downloadTaskIsActive = false
             }
