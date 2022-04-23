@@ -25,7 +25,6 @@ import org.mozilla.javascript.WrappedException
 import java.io.File
 import java.net.ConnectException
 import java.net.SocketTimeoutException
-import java.util.*
 
 /**
  * 在线朗读
@@ -269,7 +268,9 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun removeCacheFile() {
         val titleMd5 = MD5Utils.md5Encode16(textChapter?.title ?: "")
         FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
-            if (!it.name.startsWith(titleMd5) && Date().time - it.lastModified() > 600000) {
+            if (!it.name.startsWith(titleMd5)
+                && System.currentTimeMillis() - it.lastModified() > 600000
+            ) {
                 FileUtils.delete(it.absolutePath)
             }
         }
