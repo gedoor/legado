@@ -39,7 +39,6 @@ class HttpReadAloudService : BaseReadAloudService(),
         cacheDir.absolutePath + File.separator + "httpTTS" + File.separator
     }
     private var speechRate: Int = AppConfig.speechRatePlay
-    private val cacheFiles = hashSetOf<String>()
     private var downloadTask: Coroutine<*>? = null
     private var playIndexJob: Job? = null
     private var downloadTaskIsActive = false
@@ -65,17 +64,14 @@ class HttpReadAloudService : BaseReadAloudService(),
         } else {
             super.play()
             kotlin.runCatching {
-                val tts = ReadAloud.httpTTS ?: throw NoStackTraceException("httpTts is null")
-                val fileName = md5SpeakFileName(
-                    tts.url, AppConfig.ttsSpeechRate.toString(), contentList[nowSpeak]
-                )
                 if (nowSpeak == 0 && downloadTask?.isActive != true) {
                     downloadAudio()
                 } else {
+                    val fileName = md5SpeakFileName(contentList[nowSpeak])
                     val file = getSpeakFileAsMd5(fileName)
                     if (file.exists()) {
                         playAudio(file)
-                    } else {
+                    } else if (downloadTask?.isActive != true) {
                         downloadAudio()
                     }
                 }
@@ -107,27 +103,22 @@ class HttpReadAloudService : BaseReadAloudService(),
                 delay(100)
             }
             downloadTask = execute {
-                clearSpeakCache()
                 removeCacheFile()
-                val httpTts = ReadAloud.httpTTS ?: return@execute
+                val httpTts = ReadAloud.httpTTS ?: throw NoStackTraceException("tts is null")
                 contentList.forEachIndexed { index, content ->
                     ensureActive()
-                    val fileName =
-                        md5SpeakFileName(httpTts.url, speechRate.toString(), content)
+                    val fileName = md5SpeakFileName(content)
                     val speakText = content.replace(AppPattern.notReadAloudRegex, "")
                     if (hasSpeakFile(fileName)) { //已经下载好的语音缓存
                         if (index == nowSpeak) {
                             val file = getSpeakFileAsMd5(fileName)
                             playAudio(file)
                         }
-                    } else if (hasSpeakCache(fileName)) { //缓存文件还在，可能还没下载完
-                        return@forEachIndexed
                     } else if (speakText.isEmpty()) {
                         createSilentSound(fileName)
                         return@forEachIndexed
                     } else {
                         runCatching {
-                            createSpeakCache(fileName)
                             val analyzeUrl = AnalyzeUrl(
                                 httpTts.url,
                                 speakText = speakText,
@@ -155,7 +146,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                             response.body!!.bytes().let { bytes ->
                                 val file = createSpeakFileAsMd5IfNotExist(fileName)
                                 file.writeBytes(bytes)
-                                removeSpeakCache(fileName)
                                 if (index == nowSpeak) {
                                     playAudio(file)
                                 }
@@ -163,9 +153,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                             downloadErrorNo = 0
                         }.onFailure {
                             when (it) {
-                                is CancellationException -> removeSpeakCache(fileName)
+                                is CancellationException -> Unit
                                 is ConcurrentException -> {
-                                    removeSpeakCache(fileName)
                                     delay(it.waitTime.toLong())
                                     downloadAudio()
                                 }
@@ -177,7 +166,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     pauseReadAloud(true)
                                 }
                                 is SocketTimeoutException, is ConnectException -> {
-                                    removeSpeakCache(fileName)
                                     downloadErrorNo++
                                     if (downloadErrorNo > 5) {
                                         val msg = "tts超时或连接错误超过5次\n${it.localizedMessage}"
@@ -189,7 +177,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     }
                                 }
                                 else -> {
-                                    removeSpeakCache(fileName)
                                     downloadErrorNo++
                                     val msg = "tts下载错误\n${it.localizedMessage}"
                                     AppLog.put(msg, it)
@@ -228,9 +215,9 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
-    private fun md5SpeakFileName(url: String, ttsConfig: String, content: String): String {
+    private fun md5SpeakFileName(content: String): String {
         return MD5Utils.md5Encode16(textChapter?.title ?: "") + "_" +
-                MD5Utils.md5Encode16("$url-|-$ttsConfig-|-$content")
+                MD5Utils.md5Encode16("${ReadAloud.httpTTS?.url}-|-$speechRate-|-$content")
     }
 
     private fun createSilentSound(fileName: String) {
@@ -238,26 +225,17 @@ class HttpReadAloudService : BaseReadAloudService(),
         file.writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
     }
 
-    @Synchronized
-    private fun clearSpeakCache() = cacheFiles.clear()
+    private fun hasSpeakFile(name: String): Boolean {
+        return FileUtils.exist("${ttsFolderPath}$name.mp3")
+    }
 
-    @Synchronized
-    private fun hasSpeakCache(name: String) = cacheFiles.contains(name)
+    private fun getSpeakFileAsMd5(name: String): File {
+        return File("${ttsFolderPath}$name.mp3")
+    }
 
-    @Synchronized
-    private fun createSpeakCache(name: String) = cacheFiles.add(name)
-
-    @Synchronized
-    private fun removeSpeakCache(name: String) = cacheFiles.remove(name)
-
-    private fun hasSpeakFile(name: String) =
-        FileUtils.exist("${ttsFolderPath}$name.mp3")
-
-    private fun getSpeakFileAsMd5(name: String): File =
-        File("${ttsFolderPath}$name.mp3")
-
-    private fun createSpeakFileAsMd5IfNotExist(name: String): File =
-        FileUtils.createFileIfNotExist("${ttsFolderPath}$name.mp3")
+    private fun createSpeakFileAsMd5IfNotExist(name: String): File {
+        return FileUtils.createFileIfNotExist("${ttsFolderPath}$name.mp3")
+    }
 
     /**
      * 移除缓存文件
