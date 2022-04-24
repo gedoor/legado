@@ -127,7 +127,7 @@ class AudioPlayService : BaseService(),
     private fun play() {
         upNotification()
         if (requestFocus()) {
-            kotlin.runCatching {
+            execute {
                 AudioPlay.status = Status.STOP
                 postEvent(EventBus.AUDIO_STATE, Status.STOP)
                 upPlayProgressJob?.cancel()
@@ -141,13 +141,13 @@ class AudioPlayService : BaseService(),
                 val uri = Uri.parse(analyzeUrl.url)
                 ExoPlayerHelper.preDownload(uri, analyzeUrl.headerMap)
                 //休息1秒钟，防止403
-                Thread.sleep(1000)
+                delay(1000)
                 val mediaSource = ExoPlayerHelper
                     .createMediaSource(uri, analyzeUrl.headerMap)
                 exoPlayer.setMediaSource(mediaSource)
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
-            }.onFailure {
+            }.onError {
                 it.printOnDebug()
                 toastOnUi("$url ${it.localizedMessage}")
                 stopSelf()
