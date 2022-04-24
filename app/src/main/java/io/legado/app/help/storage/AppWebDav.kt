@@ -1,8 +1,6 @@
 package io.legado.app.help.storage
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -24,11 +22,14 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * webDav初始化会访问网络,不要放到主线程
+ */
 object AppWebDav {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
-    private val bookProgressUrl = "${rootWebDavUrl}bookProgress/"
     private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
-
+    private val bookProgressUrl get() = "${rootWebDavUrl}bookProgress/"
+    private val exportsWebDavUrl get() = "$rootWebDavUrl${EncoderUtils.escape("exports")}/"
     val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
 
     var authorization: Authorization? = null
@@ -70,7 +71,7 @@ object AppWebDav {
                 val mAuthorization = Authorization(account, password)
                 WebDav(rootWebDavUrl, mAuthorization).makeAsDir()
                 WebDav(bookProgressUrl, mAuthorization).makeAsDir()
-
+                WebDav(exportsWebDavUrl, mAuthorization).makeAsDir()
                 authorization = mAuthorization
             }
         }
@@ -155,18 +156,12 @@ object AppWebDav {
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         try {
             authorization?.let {
-                // 默认导出到legado文件夹下exports目录
-                val exportsWebDavUrl = rootWebDavUrl + EncoderUtils.escape("exports") + "/"
-                // 在legado文件夹创建exports目录,如果不存在的话
-                WebDav(exportsWebDavUrl, it).makeAsDir()
                 // 如果导出的本地文件存在,开始上传
                 val putUrl = exportsWebDavUrl + fileName
                 WebDav(putUrl, it).upload(byteArray, "text/plain")
             }
         } catch (e: Exception) {
-            Handler(Looper.getMainLooper()).post {
-                appCtx.toastOnUi("WebDav导出\n${e.localizedMessage}")
-            }
+            appCtx.toastOnUi("WebDav导出\n${e.localizedMessage}")
         }
     }
 
@@ -206,9 +201,9 @@ object AppWebDav {
         authorization ?: return
         appDb.bookDao.all.forEach { book ->
             getBookProgress(book)?.let { bookProgress ->
-                if (bookProgress.durChapterIndex > book.durChapterIndex ||
-                    (bookProgress.durChapterIndex == book.durChapterIndex &&
-                            bookProgress.durChapterPos > book.durChapterPos)
+                if (bookProgress.durChapterIndex > book.durChapterIndex
+                    || (bookProgress.durChapterIndex == book.durChapterIndex
+                            && bookProgress.durChapterPos > book.durChapterPos)
                 ) {
                     book.durChapterIndex = bookProgress.durChapterIndex
                     book.durChapterPos = bookProgress.durChapterPos
