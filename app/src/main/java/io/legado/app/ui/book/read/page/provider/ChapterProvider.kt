@@ -128,7 +128,7 @@ object ChapterProvider {
             durY += titleBottomSpacing
         }
         contents.forEach { content ->
-            if (book.getImageStyle() == Book.imgStyleText) {
+            if (book.getImageStyle().equals(Book.imgStyleText, true)) {
                 var text = content.replace(srcReplaceChar, "▣")
                 val srcList = LinkedList<String>()
                 val sb = StringBuffer()
