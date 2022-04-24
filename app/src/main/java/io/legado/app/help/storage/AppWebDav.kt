@@ -136,6 +136,7 @@ object AppWebDav {
     }
 
     suspend fun backUpWebDav(path: String) {
+        if (!NetworkUtils.isAvailable()) return
         try {
             authorization?.let {
                 val paths = arrayListOf(*Backup.backupFileNames)
@@ -154,6 +155,7 @@ object AppWebDav {
     }
 
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
+        if (!NetworkUtils.isAvailable()) return
         try {
             authorization?.let {
                 // 如果导出的本地文件存在,开始上传
