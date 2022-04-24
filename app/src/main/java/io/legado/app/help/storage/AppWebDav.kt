@@ -199,6 +199,7 @@ object AppWebDav {
 
     suspend fun downloadAllBookProgress() {
         authorization ?: return
+        if (!NetworkUtils.isAvailable()) return
         appDb.bookDao.all.forEach { book ->
             getBookProgress(book)?.let { bookProgress ->
                 if (bookProgress.durChapterIndex > book.durChapterIndex
