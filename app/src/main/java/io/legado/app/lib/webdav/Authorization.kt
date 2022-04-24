@@ -13,7 +13,7 @@ data class Authorization(
     val data: String = Credentials.basic(username, password, charset)
 
     override fun toString(): String {
-        return data
+        return "$username:$password"
     }
 
 }
