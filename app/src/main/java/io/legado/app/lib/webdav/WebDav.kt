@@ -1,17 +1,17 @@
 package io.legado.app.lib.webdav
 
+import android.util.Log
 import io.legado.app.constant.AppLog
+import io.legado.app.help.http.newCallResponse
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.printOnDebug
-import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.intellij.lang.annotations.Language
 import org.jsoup.Jsoup
-
 import java.io.File
 import java.io.InputStream
 import java.net.MalformedURLException
@@ -19,7 +19,7 @@ import java.net.URL
 import java.net.URLEncoder
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class WebDav(urlStr: String) {
+class WebDav(urlStr: String, val authorization: Authorization) {
     companion object {
         // 指定返回哪些属性
         @Language("xml")
@@ -88,24 +88,20 @@ class WebDav(urlStr: String) {
         } else {
             String.format(DIR, requestProps.toString() + "\n")
         }
-        val url = httpUrl
-        val auth = HttpAuth.auth
-        if (url != null && auth != null) {
-            return kotlin.runCatching {
-                okHttpClient.newCallResponseBody {
-                    url(url)
-                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                    addHeader("Depth", "1")
-                    // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
-                    // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-                    val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
-                    method("PROPFIND", requestBody)
-                }.text()
-            }.onFailure { e ->
-                e.printOnDebug()
-            }.getOrNull()
-        }
-        return null
+        val url = httpUrl ?: return null
+        return kotlin.runCatching {
+            okHttpClient.newCallResponseBody {
+                url(url)
+                addHeader("Authorization", authorization.data)
+                addHeader("Depth", "1")
+                // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+                // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+                val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
+                method("PROPFIND", requestBody)
+            }.text()
+        }.onFailure { e ->
+            e.printOnDebug()
+        }.getOrNull()
     }
 
     private fun parseDir(s: String): List<WebDav> {
@@ -120,7 +116,7 @@ class WebDav(urlStr: String) {
                     val fileName = href.substring(href.lastIndexOf("/") + 1)
                     val webDavFile: WebDav
                     try {
-                        webDavFile = WebDav(baseUrl + fileName)
+                        webDavFile = WebDav(baseUrl + fileName, authorization)
                         webDavFile.displayName = fileName
                         webDavFile.contentType = element
                             .getElementsByTag("d:getcontenttype")
@@ -157,23 +153,19 @@ class WebDav(urlStr: String) {
      * @return 是否创建成功
      */
     suspend fun makeAsDir(): Boolean {
-        val url = httpUrl
-        val auth = HttpAuth.auth
-        if (url != null && auth != null) {
-            //防止报错
-            return kotlin.runCatching {
-                if (!exists()) {
-                    okHttpClient.newCallResponseBody {
-                        url(url)
-                        method("MKCOL", null)
-                        addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                    }.close()
-                }
-            }.onFailure {
-                AppLog.put(it.localizedMessage)
-            }.isSuccess
-        }
-        return false
+        val url = httpUrl ?: return false
+        //防止报错
+        return kotlin.runCatching {
+            if (!exists()) {
+                okHttpClient.newCallResponseBody {
+                    url(url)
+                    method("MKCOL", null)
+                    addHeader("Authorization", authorization.data)
+                }.close()
+            }
+        }.onFailure {
+            AppLog.put(it.localizedMessage)
+        }.isSuccess
     }
 
     /**
@@ -208,49 +200,41 @@ class WebDav(urlStr: String) {
         if (!file.exists()) return false
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = file.asRequestBody(contentType.toMediaType())
-        val url = httpUrl
-        val auth = HttpAuth.auth
-        if (url != null && auth != null) {
-            return kotlin.runCatching {
-                okHttpClient.newCallResponseBody {
-                    url(url)
-                    put(fileBody)
-                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                }.close()
-            }.isSuccess
-        }
-        return false
+        val url = httpUrl ?: return false
+        return kotlin.runCatching {
+            okHttpClient.newCallResponse {
+                url(url)
+                put(fileBody)
+                addHeader("Authorization", authorization.data)
+            }.body?.string()?.let {
+                Log.d("webDav", it)
+            }
+        }.onFailure {
+            it.printOnDebug()
+        }.isSuccess
     }
 
     suspend fun upload(byteArray: ByteArray, contentType: String): Boolean {
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         val fileBody = byteArray.toRequestBody(contentType.toMediaType())
-        val url = httpUrl
-        val auth = HttpAuth.auth
-        if (url != null && auth != null) {
-            return kotlin.runCatching {
-                okHttpClient.newCallResponseBody {
-                    url(url)
-                    put(fileBody)
-                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                }.close()
-            }.isSuccess
-        }
-        return false
+        val url = httpUrl ?: return false
+        return kotlin.runCatching {
+            okHttpClient.newCallResponseBody {
+                url(url)
+                put(fileBody)
+                addHeader("Authorization", authorization.data)
+            }.close()
+        }.isSuccess
     }
 
     private suspend fun getInputStream(): InputStream? {
-        val url = httpUrl
-        val auth = HttpAuth.auth
-        if (url != null && auth != null) {
-            return kotlin.runCatching {
-                okHttpClient.newCallResponseBody {
-                    url(url)
-                    addHeader("Authorization", Credentials.basic(auth.user, auth.pass))
-                }.byteStream()
-            }.getOrNull()
-        }
-        return null
+        val url = httpUrl ?: return null
+        return kotlin.runCatching {
+            okHttpClient.newCallResponseBody {
+                url(url)
+                addHeader("Authorization", authorization.data)
+            }.byteStream()
+        }.getOrNull()
     }
 
 }

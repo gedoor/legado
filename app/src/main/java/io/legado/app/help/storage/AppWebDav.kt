@@ -12,7 +12,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.lib.webdav.HttpAuth
+import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -31,7 +31,9 @@ object AppWebDav {
 
     val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
 
-    var isOk = false
+    var authorization: Authorization? = null
+
+    val isOk get() = authorization != null
 
     init {
         runBlocking {
@@ -61,14 +63,15 @@ object AppWebDav {
 
     suspend fun upConfig() {
         kotlin.runCatching {
-            isOk = false
+            authorization = null
             val account = appCtx.getPrefString(PreferKey.webDavAccount)
             val password = appCtx.getPrefString(PreferKey.webDavPassword)
             if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
-                HttpAuth.auth = HttpAuth.Auth(account, password)
-                WebDav(rootWebDavUrl).makeAsDir()
-                WebDav(bookProgressUrl).makeAsDir()
-                isOk = true
+                val mAuthorization = Authorization(account, password)
+                WebDav(rootWebDavUrl, mAuthorization).makeAsDir()
+                WebDav(bookProgressUrl, mAuthorization).makeAsDir()
+
+                authorization = mAuthorization
             }
         }
     }
@@ -77,18 +80,16 @@ object AppWebDav {
     private suspend fun getWebDavFileNames(): ArrayList<String> {
         val url = rootWebDavUrl
         val names = arrayListOf<String>()
-        if (isOk) {
-            var files = WebDav(url).listFiles()
+        authorization?.let {
+            var files = WebDav(url, it).listFiles()
             files = files.reversed()
-            files.forEach {
-                val name = it.displayName
+            files.forEach { webDav ->
+                val name = webDav.displayName
                 if (name?.startsWith("backup") == true) {
                     names.add(name)
                 }
             }
-        } else {
-            throw NoStackTraceException("webDav没有配置")
-        }
+        } ?: throw NoStackTraceException("webDav没有配置")
         return names
     }
 
@@ -115,8 +116,8 @@ object AppWebDav {
     }
 
     private suspend fun restoreWebDav(name: String) {
-        rootWebDavUrl.let {
-            val webDav = WebDav(it + name)
+        authorization?.let {
+            val webDav = WebDav(rootWebDavUrl + name, it)
             webDav.downloadTo(zipFilePath, true)
             @Suppress("BlockingMethodInNonBlockingContext")
             ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
@@ -126,16 +127,16 @@ object AppWebDav {
     }
 
     suspend fun hasBackUp(): Boolean {
-        if (isOk) {
+        authorization?.let {
             val url = "${rootWebDavUrl}${backupFileName}"
-            return WebDav(url).exists()
+            return WebDav(url, it).exists()
         }
         return false
     }
 
     suspend fun backUpWebDav(path: String) {
         try {
-            if (isOk && NetworkUtils.isAvailable()) {
+            authorization?.let {
                 val paths = arrayListOf(*Backup.backupFileNames)
                 for (i in 0 until paths.size) {
                     paths[i] = path + File.separator + paths[i]
@@ -143,7 +144,7 @@ object AppWebDav {
                 FileUtils.delete(zipFilePath)
                 if (ZipUtils.zipFiles(paths, zipFilePath)) {
                     val putUrl = "${rootWebDavUrl}${backupFileName}"
-                    WebDav(putUrl).upload(zipFilePath)
+                    WebDav(putUrl, it).upload(zipFilePath)
                 }
             }
         } catch (e: Exception) {
@@ -153,14 +154,14 @@ object AppWebDav {
 
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         try {
-            if (isOk && NetworkUtils.isAvailable()) {
+            authorization?.let {
                 // 默认导出到legado文件夹下exports目录
                 val exportsWebDavUrl = rootWebDavUrl + EncoderUtils.escape("exports") + "/"
                 // 在legado文件夹创建exports目录,如果不存在的话
-                WebDav(exportsWebDavUrl).makeAsDir()
+                WebDav(exportsWebDavUrl, it).makeAsDir()
                 // 如果导出的本地文件存在,开始上传
                 val putUrl = exportsWebDavUrl + fileName
-                WebDav(putUrl).upload(byteArray, "text/plain")
+                WebDav(putUrl, it).upload(byteArray, "text/plain")
             }
         } catch (e: Exception) {
             Handler(Looper.getMainLooper()).post {
@@ -170,14 +171,14 @@ object AppWebDav {
     }
 
     fun uploadBookProgress(book: Book) {
-        if (!isOk) return
+        val authorization = authorization ?: return
         if (!syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
             val bookProgress = BookProgress(book)
             val json = GSON.toJson(bookProgress)
             val url = getProgressUrl(book)
-            WebDav(url).upload(json.toByteArray(), "application/json")
+            WebDav(url, authorization).upload(json.toByteArray(), "application/json")
         }
     }
 
@@ -189,9 +190,9 @@ object AppWebDav {
      * 获取书籍进度
      */
     suspend fun getBookProgress(book: Book): BookProgress? {
-        if (isOk && NetworkUtils.isAvailable()) {
+        authorization?.let {
             val url = getProgressUrl(book)
-            WebDav(url).download()?.let { byteArray ->
+            WebDav(url, it).download()?.let { byteArray ->
                 val json = String(byteArray)
                 if (json.isJson()) {
                     return GSON.fromJsonObject<BookProgress>(json).getOrNull()
@@ -202,7 +203,7 @@ object AppWebDav {
     }
 
     suspend fun downloadAllBookProgress() {
-        if (!isOk) return
+        authorization ?: return
         appDb.bookDao.all.forEach { book ->
             getBookProgress(book)?.let { bookProgress ->
                 if (bookProgress.durChapterIndex > book.durChapterIndex ||
