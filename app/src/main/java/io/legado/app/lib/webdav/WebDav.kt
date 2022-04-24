@@ -157,11 +157,13 @@ class WebDav(urlStr: String, val authorization: Authorization) {
         //防止报错
         return kotlin.runCatching {
             if (!exists()) {
-                okHttpClient.newCallResponseBody {
+                okHttpClient.newCallResponse {
                     url(url)
                     method("MKCOL", null)
                     addHeader("Authorization", authorization.data)
-                }.close()
+                }.body?.string()?.let {
+                    Log.d("webDav/makAsDir", it)
+                }
             }
         }.onFailure {
             AppLog.put(it.localizedMessage)
@@ -207,7 +209,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 put(fileBody)
                 addHeader("Authorization", authorization.data)
             }.body?.string()?.let {
-                Log.d("webDav", it)
+                Log.d("webDav/upload", it)
             }
         }.onFailure {
             it.printOnDebug()
@@ -219,11 +221,15 @@ class WebDav(urlStr: String, val authorization: Authorization) {
         val fileBody = byteArray.toRequestBody(contentType.toMediaType())
         val url = httpUrl ?: return false
         return kotlin.runCatching {
-            okHttpClient.newCallResponseBody {
+            okHttpClient.newCallResponse {
                 url(url)
                 put(fileBody)
                 addHeader("Authorization", authorization.data)
-            }.close()
+            }.body?.string()?.let {
+                Log.d("webDav/upload", it)
+            }
+        }.onFailure {
+            it.printOnDebug()
         }.isSuccess
     }
 
