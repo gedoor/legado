@@ -139,6 +139,7 @@ class AudioPlayService : BaseService(),
                     headerMapF = AudioPlay.headers(true),
                 )
                 val uri = Uri.parse(analyzeUrl.url)
+                ExoPlayerHelper.preDownload(uri, analyzeUrl.headerMap)
                 val mediaSource = ExoPlayerHelper
                     .createMediaSource(uri, analyzeUrl.headerMap)
                 exoPlayer.setMediaSource(mediaSource)
