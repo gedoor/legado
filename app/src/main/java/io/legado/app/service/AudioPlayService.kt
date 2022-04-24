@@ -140,6 +140,8 @@ class AudioPlayService : BaseService(),
                 )
                 val uri = Uri.parse(analyzeUrl.url)
                 ExoPlayerHelper.preDownload(uri, analyzeUrl.headerMap)
+                //休息1秒钟，防止403
+                Thread.sleep(1000)
                 val mediaSource = ExoPlayerHelper
                     .createMediaSource(uri, analyzeUrl.headerMap)
                 exoPlayer.setMediaSource(mediaSource)
