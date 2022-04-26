@@ -148,7 +148,7 @@ class AudioPlayService : BaseService(),
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             }.onError {
-                it.printOnDebug()
+                AppLog.put("播放出错\n${it.localizedMessage}", it)
                 toastOnUi("$url ${it.localizedMessage}")
                 stopSelf()
             }
