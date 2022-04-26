@@ -1,7 +1,7 @@
 package io.legado.app.lib.webdav
 
-import android.util.Log
 import io.legado.app.constant.AppLog
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
@@ -10,6 +10,7 @@ import io.legado.app.utils.printOnDebug
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import org.intellij.lang.annotations.Language
 import org.jsoup.Jsoup
 import java.io.File
@@ -161,12 +162,12 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                     url(url)
                     method("MKCOL", null)
                     addHeader("Authorization", authorization.data)
-                }.body?.string()?.let {
-                    Log.d("webDav/makAsDir", it)
+                }.let {
+                    checkResult(it)
                 }
             }
         }.onFailure {
-            AppLog.put(it.localizedMessage)
+            AppLog.put("WebDav创建目录失败\n${it.localizedMessage}")
         }.isSuccess
     }
 
@@ -208,11 +209,11 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 url(url)
                 put(fileBody)
                 addHeader("Authorization", authorization.data)
-            }.body?.string()?.let {
-                Log.d("webDav/upload", it)
+            }.let {
+                checkResult(it)
             }
         }.onFailure {
-            it.printOnDebug()
+            AppLog.put("WebDav上传失败\n${it.localizedMessage}")
         }.isSuccess
     }
 
@@ -225,11 +226,11 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 url(url)
                 put(fileBody)
                 addHeader("Authorization", authorization.data)
-            }.body?.string()?.let {
-                Log.d("webDav/upload", it)
+            }.let {
+                checkResult(it)
             }
         }.onFailure {
-            it.printOnDebug()
+            AppLog.put("WebDav上传失败\n${it.localizedMessage}")
         }.isSuccess
     }
 
@@ -241,6 +242,12 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 addHeader("Authorization", authorization.data)
             }.byteStream()
         }.getOrNull()
+    }
+
+    private fun checkResult(response: Response) {
+        if (!response.isSuccessful) {
+            throw NoStackTraceException(response.message)
+        }
     }
 
 }
