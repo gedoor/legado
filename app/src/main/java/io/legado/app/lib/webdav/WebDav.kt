@@ -195,16 +195,17 @@ class WebDav(urlStr: String, val authorization: Authorization) {
     /**
      * 上传文件
      */
+    @Throws(Exception::class)
     suspend fun upload(
         localPath: String,
         contentType: String = "application/octet-stream"
-    ): Boolean {
-        val file = File(localPath)
-        if (!file.exists()) return false
-        // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
-        val fileBody = file.asRequestBody(contentType.toMediaType())
-        val url = httpUrl ?: return false
-        return kotlin.runCatching {
+    ) {
+        kotlin.runCatching {
+            val file = File(localPath)
+            if (!file.exists()) throw NoStackTraceException("文件不存在")
+            // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
+            val fileBody = file.asRequestBody(contentType.toMediaType())
+            val url = httpUrl ?: throw NoStackTraceException("url不能为空")
             okHttpClient.newCallResponse {
                 url(url)
                 put(fileBody)
@@ -213,15 +214,18 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
-            AppLog.put("WebDav上传失败\n${it.localizedMessage}")
-        }.isSuccess
+            val message = "WebDav上传失败\n${it.localizedMessage}"
+            AppLog.put(message)
+            throw NoStackTraceException(message)
+        }
     }
 
-    suspend fun upload(byteArray: ByteArray, contentType: String): Boolean {
+    @Throws(Exception::class)
+    suspend fun upload(byteArray: ByteArray, contentType: String) {
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
-        val fileBody = byteArray.toRequestBody(contentType.toMediaType())
-        val url = httpUrl ?: return false
-        return kotlin.runCatching {
+        kotlin.runCatching {
+            val fileBody = byteArray.toRequestBody(contentType.toMediaType())
+            val url = httpUrl ?: throw NoStackTraceException("url不能为空")
             okHttpClient.newCallResponse {
                 url(url)
                 put(fileBody)
@@ -230,8 +234,10 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
-            AppLog.put("WebDav上传失败\n${it.localizedMessage}")
-        }.isSuccess
+            val message = "WebDav上传失败\n${it.localizedMessage}"
+            AppLog.put(message)
+            throw NoStackTraceException(message)
+        }
     }
 
     private suspend fun getInputStream(): InputStream? {
@@ -246,7 +252,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
 
     private fun checkResult(response: Response) {
         if (!response.isSuccessful) {
-            throw NoStackTraceException(response.message)
+            throw NoStackTraceException("${url}\n${response.code}:${response.message}")
         }
     }
 

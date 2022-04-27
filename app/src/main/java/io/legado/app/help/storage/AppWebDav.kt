@@ -135,22 +135,19 @@ object AppWebDav {
         return false
     }
 
+    @Throws(Exception::class)
     suspend fun backUpWebDav(path: String) {
         if (!NetworkUtils.isAvailable()) return
-        try {
-            authorization?.let {
-                val paths = arrayListOf(*Backup.backupFileNames)
-                for (i in 0 until paths.size) {
-                    paths[i] = path + File.separator + paths[i]
-                }
-                FileUtils.delete(zipFilePath)
-                if (ZipUtils.zipFiles(paths, zipFilePath)) {
-                    val putUrl = "${rootWebDavUrl}${backupFileName}"
-                    WebDav(putUrl, it).upload(zipFilePath)
-                }
+        authorization?.let {
+            val paths = arrayListOf(*Backup.backupFileNames)
+            for (i in 0 until paths.size) {
+                paths[i] = path + File.separator + paths[i]
             }
-        } catch (e: Exception) {
-            appCtx.toastOnUi("WebDav\n${e.localizedMessage}")
+            FileUtils.delete(zipFilePath)
+            if (ZipUtils.zipFiles(paths, zipFilePath)) {
+                val putUrl = "${rootWebDavUrl}${backupFileName}"
+                WebDav(putUrl, it).upload(zipFilePath)
+            }
         }
     }
 
