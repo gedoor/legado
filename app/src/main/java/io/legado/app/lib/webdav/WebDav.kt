@@ -69,6 +69,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
      *
      * @return 文件列表
      */
+    @Throws(WebDavException::class)
     suspend fun listFiles(): List<WebDav> {
         propFindResponse()?.let { body ->
             return parseDir(body)
@@ -79,6 +80,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
     /**
      * @param propsList 指定列出文件的哪些属性
      */
+    @Throws(WebDavException::class)
     private suspend fun propFindResponse(propsList: List<String> = emptyList()): String? {
         val requestProps = StringBuilder()
         for (p in propsList) {
@@ -90,19 +92,17 @@ class WebDav(urlStr: String, val authorization: Authorization) {
             String.format(DIR, requestProps.toString() + "\n")
         }
         val url = httpUrl ?: return null
-        return kotlin.runCatching {
-            okHttpClient.newCallResponseBody {
-                url(url)
-                addHeader(authorization.name, authorization.data)
-                addHeader("Depth", "1")
-                // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
-                // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
-                val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
-                method("PROPFIND", requestBody)
-            }.text()
-        }.onFailure { e ->
-            e.printOnDebug()
-        }.getOrNull()
+        return okHttpClient.newCallResponse {
+            url(url)
+            addHeader(authorization.name, authorization.data)
+            addHeader("Depth", "1")
+            // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
+            // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
+            val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
+            method("PROPFIND", requestBody)
+        }.apply {
+            checkResult(this)
+        }.body?.text()
     }
 
     private fun parseDir(s: String): List<WebDav> {
@@ -143,10 +143,14 @@ class WebDav(urlStr: String, val authorization: Authorization) {
      * 文件是否存在
      */
     suspend fun exists(): Boolean {
-        val response = propFindResponse() ?: return false
-        val document = Jsoup.parse(response)
-        val elements = document.getElementsByTag("d:response")
-        return elements.isNotEmpty()
+        return kotlin.runCatching {
+            val response = propFindResponse() ?: return false
+            val document = Jsoup.parse(response)
+            val elements = document.getElementsByTag("d:response")
+            return elements.isNotEmpty()
+        }.onFailure {
+            AppLog.put("WebDav检测是否存在出错\n${it.localizedMessage}")
+        }.getOrDefault(false)
     }
 
     /**
@@ -195,17 +199,17 @@ class WebDav(urlStr: String, val authorization: Authorization) {
     /**
      * 上传文件
      */
-    @Throws(Exception::class)
+    @Throws(WebDavException::class)
     suspend fun upload(
         localPath: String,
         contentType: String = "application/octet-stream"
     ) {
         kotlin.runCatching {
             val file = File(localPath)
-            if (!file.exists()) throw NoStackTraceException("文件不存在")
+            if (!file.exists()) throw WebDavException("文件不存在")
             // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
             val fileBody = file.asRequestBody(contentType.toMediaType())
-            val url = httpUrl ?: throw NoStackTraceException("url不能为空")
+            val url = httpUrl ?: throw WebDavException("url不能为空")
             okHttpClient.newCallResponse {
                 url(url)
                 put(fileBody)
@@ -214,11 +218,11 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
-            throw NoStackTraceException("WebDav上传失败\n${it.localizedMessage}")
+            throw WebDavException("WebDav上传失败\n${it.localizedMessage}")
         }
     }
 
-    @Throws(Exception::class)
+    @Throws(WebDavException::class)
     suspend fun upload(byteArray: ByteArray, contentType: String) {
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         kotlin.runCatching {
@@ -232,7 +236,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
-            throw NoStackTraceException("WebDav上传失败\n${it.localizedMessage}")
+            throw WebDavException("WebDav上传失败\n${it.localizedMessage}")
         }
     }
 
@@ -248,7 +252,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
 
     private fun checkResult(response: Response) {
         if (!response.isSuccessful) {
-            throw NoStackTraceException("${url}\n${response.code}:${response.message}")
+            throw WebDavException("${url}\n${response.code}:${response.message}")
         }
     }
 

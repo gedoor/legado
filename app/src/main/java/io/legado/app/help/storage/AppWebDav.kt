@@ -79,8 +79,12 @@ object AppWebDav {
     }
 
     @Throws(Exception::class)
-    private suspend fun getWebDavFileNames(): ArrayList<String> {
-        val url = rootWebDavUrl
+    private suspend fun getWebDavFileNames(relativePath: String? = null): ArrayList<String> {
+        val url = if (relativePath == null) {
+            rootWebDavUrl
+        } else {
+            NetworkUtils.getAbsoluteURL(rootWebDavUrl, relativePath)
+        }
         val names = arrayListOf<String>()
         authorization?.let {
             var files = WebDav(url, it).listFiles()
@@ -107,7 +111,7 @@ object AppWebDav {
                         Coroutine.async {
                             restoreWebDav(names[index])
                         }.onError {
-                            appCtx.toastOnUi("WebDavError:${it.localizedMessage}")
+                            appCtx.toastOnUi("WebDavError\n${it.localizedMessage}")
                         }
                     }
                 }

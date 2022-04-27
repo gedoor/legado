@@ -292,7 +292,7 @@ class BackupConfigFragment : BasePreferenceFragment(),
         }.onError {
             alert {
                 setTitle(R.string.restore)
-                setMessage("WebDavError:${it.localizedMessage}\n将从本地备份恢复。")
+                setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。")
                 okButton {
                     restoreFromLocal()
                 }
