@@ -93,7 +93,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
         return kotlin.runCatching {
             okHttpClient.newCallResponseBody {
                 url(url)
-                addHeader("Authorization", authorization.data)
+                addHeader(authorization.name, authorization.data)
                 addHeader("Depth", "1")
                 // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
                 // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
@@ -161,7 +161,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 okHttpClient.newCallResponse {
                     url(url)
                     method("MKCOL", null)
-                    addHeader("Authorization", authorization.data)
+                    addHeader(authorization.name, authorization.data)
                 }.let {
                     checkResult(it)
                 }
@@ -208,7 +208,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
             okHttpClient.newCallResponse {
                 url(url)
                 put(fileBody)
-                addHeader("Authorization", authorization.data)
+                addHeader(authorization.name, authorization.data)
             }.let {
                 checkResult(it)
             }
@@ -225,7 +225,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
             okHttpClient.newCallResponse {
                 url(url)
                 put(fileBody)
-                addHeader("Authorization", authorization.data)
+                addHeader(authorization.name, authorization.data)
             }.let {
                 checkResult(it)
             }
@@ -239,7 +239,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
         return kotlin.runCatching {
             okHttpClient.newCallResponseBody {
                 url(url)
-                addHeader("Authorization", authorization.data)
+                addHeader(authorization.name, authorization.data)
             }.byteStream()
         }.getOrNull()
     }

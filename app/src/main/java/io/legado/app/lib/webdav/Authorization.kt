@@ -10,6 +10,8 @@ data class Authorization(
     val charset: Charset = StandardCharsets.ISO_8859_1
 ) {
 
+    val name = "Authorization"
+
     val data: String = Credentials.basic(username, password, charset)
 
     override fun toString(): String {
