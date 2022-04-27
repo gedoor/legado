@@ -2,6 +2,7 @@ package io.legado.app.help.storage
 
 import android.content.Context
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -160,7 +161,9 @@ object AppWebDav {
                 WebDav(putUrl, it).upload(byteArray, "text/plain")
             }
         } catch (e: Exception) {
-            appCtx.toastOnUi("WebDav导出\n${e.localizedMessage}")
+            val msg = "WebDav导出\n${e.localizedMessage}"
+            AppLog.put(msg)
+            appCtx.toastOnUi(msg)
         }
     }
 
@@ -173,6 +176,8 @@ object AppWebDav {
             val json = GSON.toJson(bookProgress)
             val url = getProgressUrl(book)
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
+        }.onError {
+            AppLog.put("上传进度失败\n${it.localizedMessage}")
         }
     }
 
