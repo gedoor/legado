@@ -3,6 +3,7 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.config.ReadBookConfig
@@ -54,6 +55,8 @@ object Backup {
                 } else {
                     context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
                 }
+            }.onError {
+                AppLog.put("自动备份失败\n${it.localizedMessage}")
             }
         }
     }

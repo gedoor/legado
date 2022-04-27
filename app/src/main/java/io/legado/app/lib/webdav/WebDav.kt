@@ -214,9 +214,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
-            val message = "WebDav上传失败\n${it.localizedMessage}"
-            AppLog.put(message)
-            throw NoStackTraceException(message)
+            throw NoStackTraceException("WebDav上传失败\n${it.localizedMessage}")
         }
     }
 
@@ -234,9 +232,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
-            val message = "WebDav上传失败\n${it.localizedMessage}"
-            AppLog.put(message)
-            throw NoStackTraceException(message)
+            throw NoStackTraceException("WebDav上传失败\n${it.localizedMessage}")
         }
     }
 
