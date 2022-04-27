@@ -81,7 +81,10 @@ class WebDav(urlStr: String, val authorization: Authorization) {
      * @param propsList 指定列出文件的哪些属性
      */
     @Throws(WebDavException::class)
-    private suspend fun propFindResponse(propsList: List<String> = emptyList()): String? {
+    private suspend fun propFindResponse(
+        propsList: List<String> = emptyList(),
+        depth: Int = 1
+    ): String? {
         val requestProps = StringBuilder()
         for (p in propsList) {
             requestProps.append("<a:").append(p).append("/>\n")
@@ -95,7 +98,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
         return okHttpClient.newCallResponse {
             url(url)
             addHeader(authorization.name, authorization.data)
-            addHeader("Depth", "1")
+            addHeader("Depth", depth.toString())
             // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
             // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
             val requestBody = requestPropsStr.toRequestBody("text/plain".toMediaType())
@@ -144,12 +147,10 @@ class WebDav(urlStr: String, val authorization: Authorization) {
      */
     suspend fun exists(): Boolean {
         return kotlin.runCatching {
-            val response = propFindResponse() ?: return false
+            val response = propFindResponse(depth = 0) ?: return false
             val document = Jsoup.parse(response)
             val elements = document.getElementsByTag("d:response")
             return elements.isNotEmpty()
-        }.onFailure {
-            AppLog.put("WebDav检测是否存在出错\n${it.localizedMessage}")
         }.getOrDefault(false)
     }
 
