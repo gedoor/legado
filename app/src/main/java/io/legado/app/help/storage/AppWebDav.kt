@@ -13,6 +13,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
+import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -111,7 +112,7 @@ object AppWebDav {
                         Coroutine.async {
                             restoreWebDav(names[index])
                         }.onError {
-                            appCtx.toastOnUi("WebDavError\n${it.localizedMessage}")
+                            appCtx.toastOnUi("WebDav恢复出错\n${it.localizedMessage}")
                         }
                     }
                 }
@@ -121,6 +122,7 @@ object AppWebDav {
         }
     }
 
+    @Throws(WebDavException::class)
     private suspend fun restoreWebDav(name: String) {
         authorization?.let {
             val webDav = WebDav(rootWebDavUrl + name, it)
@@ -195,10 +197,12 @@ object AppWebDav {
     suspend fun getBookProgress(book: Book): BookProgress? {
         authorization?.let {
             val url = getProgressUrl(book)
-            WebDav(url, it).download()?.let { byteArray ->
-                val json = String(byteArray)
-                if (json.isJson()) {
-                    return GSON.fromJsonObject<BookProgress>(json).getOrNull()
+            kotlin.runCatching {
+                WebDav(url, it).download().let { byteArray ->
+                    val json = String(byteArray)
+                    if (json.isJson()) {
+                        return GSON.fromJsonObject<BookProgress>(json).getOrNull()
+                    }
                 }
             }
         }

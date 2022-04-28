@@ -3,7 +3,6 @@ package io.legado.app.lib.webdav
 import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
-import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.printOnDebug
@@ -14,6 +13,7 @@ import okhttp3.Response
 import org.intellij.lang.annotations.Language
 import org.jsoup.Jsoup
 import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
@@ -178,23 +178,31 @@ class WebDav(urlStr: String, val authorization: Authorization) {
 
     /**
      * 下载到本地
-     *
      * @param savedPath       本地的完整路径，包括最后的文件名
      * @param replaceExisting 是否替换本地的同名文件
-     * @return 下载是否成功
      */
-    suspend fun downloadTo(savedPath: String, replaceExisting: Boolean): Boolean {
-        if (File(savedPath).exists()) {
-            if (!replaceExisting) return false
+    @Suppress("BlockingMethodInNonBlockingContext")
+    @Throws(WebDavException::class)
+    suspend fun downloadTo(savedPath: String, replaceExisting: Boolean) {
+        val file = File(savedPath)
+        if (file.exists() && !replaceExisting) {
+            return
         }
-        val inputS = getInputStream() ?: return false
-        File(savedPath).writeBytes(inputS.readBytes())
-        return true
+        downloadInputStream().use { byteStream ->
+            FileOutputStream(file).use {
+                byteStream.copyTo(it)
+            }
+        }
     }
 
-    suspend fun download(): ByteArray? {
-        val inputS = getInputStream() ?: return null
-        return inputS.readBytes()
+    /**
+     * 下载文件,返回ByteArray
+     */
+    @Throws(WebDavException::class)
+    suspend fun download(): ByteArray {
+        return downloadInputStream().use {
+            it.readBytes()
+        }
     }
 
     /**
@@ -241,14 +249,16 @@ class WebDav(urlStr: String, val authorization: Authorization) {
         }
     }
 
-    private suspend fun getInputStream(): InputStream? {
-        val url = httpUrl ?: return null
-        return kotlin.runCatching {
-            okHttpClient.newCallResponseBody {
-                url(url)
-                addHeader(authorization.name, authorization.data)
-            }.byteStream()
-        }.getOrNull()
+    @Throws(WebDavException::class)
+    private suspend fun downloadInputStream(): InputStream {
+        val url = httpUrl ?: throw WebDavException("WebDav下载出错\nurl为空")
+        val byteStream = okHttpClient.newCallResponse {
+            url(url)
+            addHeader(authorization.name, authorization.data)
+        }.apply {
+            checkResult(this)
+        }.body?.byteStream()
+        return byteStream ?: throw WebDavException("WebDav下载出错\nNull Exception")
     }
 
     private fun checkResult(response: Response) {
