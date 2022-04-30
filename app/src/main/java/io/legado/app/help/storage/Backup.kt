@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -47,13 +48,13 @@ object Backup {
     }
 
     fun autoBack(context: Context) {
-        val lastBackup = context.getPrefLong(PreferKey.lastBackup)
+        val lastBackup = LocalConfig.getLong(PreferKey.lastBackup, 0)
         if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
             Coroutine.async {
                 if (!AppWebDav.hasBackUp()) {
                     backup(context, context.getPrefString(PreferKey.backupPath), true)
                 } else {
-                    context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
+                    LocalConfig.putLong(PreferKey.lastBackup, System.currentTimeMillis())
                 }
             }.onError {
                 AppLog.put("自动备份失败\n${it.localizedMessage}")
