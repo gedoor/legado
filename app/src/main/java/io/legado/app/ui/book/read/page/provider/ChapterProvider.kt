@@ -252,12 +252,7 @@ object ChapterProvider {
                 Pair(0f, width.toFloat())
             }
             textLine.textChars.add(
-                TextChar(
-                    charData = src,
-                    start = x + start,
-                    end = x + end,
-                    isImage = true
-                )
+                TextChar(charData = src, start = x + start, end = x + end, isImage = true)
             )
             textPages.last().textLines.add(textLine)
         }
@@ -349,10 +344,14 @@ object ChapterProvider {
                     textLine.text = words
                     textLine.isParagraphEnd = true
                     //标题x轴居中
-                    val startX =
-                        if (isTitle && ReadBookConfig.titleMode == 1 || isTitleWithNoContent || isVolumeTitle)
-                            (visibleWidth - layout.getLineWidth(lineIndex)) / 2
-                        else 0f
+                    val startX = if (isTitle && ReadBookConfig.titleMode == 1
+                        || isTitleWithNoContent
+                        || isVolumeTitle
+                    ) {
+                        (visibleWidth - layout.getLineWidth(lineIndex)) / 2
+                    } else {
+                        0f
+                    }
                     addCharsToLineLast(
                         book, absStartX, textLine, words.toStringArray(),
                         textPaint, startX, srcList
@@ -402,11 +401,7 @@ object ChapterProvider {
         bodyIndent.toStringArray().forEach { char ->
             val x1 = x + icw
             textLine.textChars.add(
-                TextChar(
-                    charData = char,
-                    start = absStartX + x,
-                    end = absStartX + x1
-                )
+                TextChar(charData = char, start = absStartX + x, end = absStartX + x1)
             )
             x = x1
         }
