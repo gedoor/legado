@@ -89,7 +89,7 @@ object BookController {
         this.bookUrl = bookUrl
         val bitmap = runBlocking {
             ImageProvider.cacheImage(book, src, bookSource)
-            ImageProvider.getImage(book, src, width, bookSource = bookSource)
+            ImageProvider.getImage(book, src, width)
         }
         return returnData.setData(bitmap)
     }

@@ -16,7 +16,6 @@ import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isXml
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
@@ -108,14 +107,11 @@ object ImageProvider {
         book: Book,
         src: String,
         width: Int,
-        height: Int? = null,
-        bookSource: BookSource? = null
+        height: Int? = null
     ): Bitmap {
         val cacheBitmap = bitmapLruCache.get(src)
         if (cacheBitmap != null) return cacheBitmap
-        val vFile = runBlocking {
-            cacheImage(book, src, bookSource)
-        }
+        val vFile = BookHelp.getImage(book, src)
         @Suppress("BlockingMethodInNonBlockingContext")
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
