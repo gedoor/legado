@@ -12,5 +12,5 @@ class WebDavFile(
     val urlName: String,
     val size: Long,
     val contentType: String,
-    val lastModify: Date
+    val lastModify: Date?
 ) : WebDav(urlStr, authorization)

@@ -133,12 +133,12 @@ open class WebDav(urlStr: String, val authorization: Authorization) {
                             element.getElementsByTag("d:getcontentlength")
                                 .firstOrNull()?.text()?.toLong() ?: 0
                         }.getOrDefault(0)
-                        val lastModify: Date = kotlin.runCatching {
+                        val lastModify: Date? = kotlin.runCatching {
                             element.getElementsByTag("d:getcontentlength")
                                 .firstOrNull()?.text()?.let {
                                     dateFormat.parse(it)
                                 }
-                        }.getOrNull() ?: Date()
+                        }.getOrNull()
                         webDavFile = WebDavFile(
                             baseUrl + fileName,
                             authorization,

@@ -63,6 +63,7 @@ object Backup {
     }
 
     suspend fun backup(context: Context, path: String?, isAuto: Boolean = false) {
+        LocalConfig.lastBackup = System.currentTimeMillis()
         withContext(IO) {
             FileUtils.delete(backupPath)
             writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
@@ -118,7 +119,6 @@ object Backup {
             }
             AppWebDav.backUpWebDav(backupPath)
         }
-        LocalConfig.lastBackup = System.currentTimeMillis()
     }
 
     private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
