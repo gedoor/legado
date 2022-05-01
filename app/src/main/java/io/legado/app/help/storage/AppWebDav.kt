@@ -119,7 +119,7 @@ object AppWebDav {
     }
 
     @Throws(WebDavException::class)
-    private suspend fun restoreWebDav(name: String) {
+    suspend fun restoreWebDav(name: String) {
         authorization?.let {
             val webDav = WebDav(rootWebDavUrl + name, it)
             webDav.downloadTo(zipFilePath, true)
@@ -138,21 +138,22 @@ object AppWebDav {
         return false
     }
 
-    suspend fun lastBackUp(): WebDavFile? {
-        authorization?.let {
-            var lastBackupFile: WebDavFile? = null
-            WebDav(rootWebDavUrl, it).listFiles().forEach { webDavFile ->
-                if (webDavFile.displayName.startsWith("backup")) {
-                    if (lastBackupFile == null
-                        || webDavFile.lastModify > lastBackupFile!!.lastModify
-                    ) {
-                        lastBackupFile = webDavFile
+    suspend fun lastBackUp(): Result<WebDavFile?> {
+        return kotlin.runCatching {
+            authorization?.let {
+                var lastBackupFile: WebDavFile? = null
+                WebDav(rootWebDavUrl, it).listFiles().forEach { webDavFile ->
+                    if (webDavFile.displayName.startsWith("backup")) {
+                        if (lastBackupFile == null
+                            || webDavFile.lastModify > lastBackupFile!!.lastModify
+                        ) {
+                            lastBackupFile = webDavFile
+                        }
                     }
                 }
+                lastBackupFile
             }
-            return lastBackupFile
         }
-        return null
     }
 
     @Throws(Exception::class)

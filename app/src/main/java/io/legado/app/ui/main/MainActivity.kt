@@ -3,6 +3,7 @@
 package io.legado.app.ui.main
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -23,7 +24,9 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.storage.AppWebDav
 import io.legado.app.help.storage.Backup
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.BaseReadAloudService
@@ -39,6 +42,9 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 主界面
@@ -88,6 +94,20 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         binding.viewPagerMain.postDelayed({
             viewModel.postLoad()
         }, 3000)
+        launch {
+            val lastBackupFile = withContext(IO) { AppWebDav.lastBackUp().getOrNull() }
+            if (System.currentTimeMillis() - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS
+                && lastBackupFile != null
+            ) {
+
+                alert("恢复", "webDav书源比本地新,是否恢复") {
+                    cancelButton()
+                    okButton {
+                        viewModel.restoreWebDav(lastBackupFile.displayName)
+                    }
+                }
+            }
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean = binding.run {
