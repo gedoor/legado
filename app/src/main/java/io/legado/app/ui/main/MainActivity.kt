@@ -185,17 +185,13 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         return super.onKeyUp(keyCode, event)
     }
 
-    override fun onPause() {
-        super.onPause()
-        if (!BuildConfig.DEBUG) {
-            Backup.autoBack(this)
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         Coroutine.async {
             BookHelp.clearInvalidCache()
+        }
+        if (!BuildConfig.DEBUG) {
+            Backup.autoBack(this)
         }
     }
 
