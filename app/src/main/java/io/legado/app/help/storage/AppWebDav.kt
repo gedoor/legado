@@ -142,7 +142,7 @@ object AppWebDav {
         return kotlin.runCatching {
             authorization?.let {
                 var lastBackupFile: WebDavFile? = null
-                WebDav(rootWebDavUrl, it).listFiles().forEach { webDavFile ->
+                WebDav(rootWebDavUrl, it).listFiles().reversed().forEach { webDavFile ->
                     if (webDavFile.displayName.startsWith("backup")) {
                         if (lastBackupFile == null
                             || webDavFile.lastModify > lastBackupFile!!.lastModify

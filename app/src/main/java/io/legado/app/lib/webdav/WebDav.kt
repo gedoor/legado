@@ -20,7 +20,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
-import java.util.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(urlStr: String, val authorization: Authorization) {
@@ -133,12 +132,12 @@ open class WebDav(urlStr: String, val authorization: Authorization) {
                             element.getElementsByTag("d:getcontentlength")
                                 .firstOrNull()?.text()?.toLong() ?: 0
                         }.getOrDefault(0)
-                        val lastModify: Date? = kotlin.runCatching {
+                        val lastModify: Long = kotlin.runCatching {
                             element.getElementsByTag("d:getcontentlength")
                                 .firstOrNull()?.text()?.let {
                                     dateFormat.parse(it)
                                 }
-                        }.getOrNull()
+                        }.getOrNull()?.time ?: 0
                         webDavFile = WebDavFile(
                             baseUrl + fileName,
                             authorization,

@@ -97,7 +97,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         launch {
             val lastBackupFile = withContext(IO) { AppWebDav.lastBackUp().getOrNull() }
                 ?: return@launch
-            if (lastBackupFile.lastModify?.time ?: 0 - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
+            if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
                 alert("恢复", "webDav书源比本地新,是否恢复") {
                     cancelButton()
                     okButton {

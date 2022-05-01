@@ -1,10 +1,9 @@
 package io.legado.app.lib.webdav
 
-import java.util.*
-
 /**
  * webDavFile
  */
+@Suppress("unused")
 class WebDavFile(
     urlStr: String,
     authorization: Authorization,
@@ -12,5 +11,5 @@ class WebDavFile(
     val urlName: String,
     val size: Long,
     val contentType: String,
-    val lastModify: Date?
+    val lastModify: Long
 ) : WebDav(urlStr, authorization)
