@@ -130,6 +130,14 @@ object AppWebDav {
         }
     }
 
+    suspend fun hasBackUp(): Boolean {
+        authorization?.let {
+            val url = "${rootWebDavUrl}${backupFileName}"
+            return WebDav(url, it).exists()
+        }
+        return false
+    }
+
     suspend fun lastBackUp(): WebDavFile? {
         authorization?.let {
             var lastBackupFile: WebDavFile? = null

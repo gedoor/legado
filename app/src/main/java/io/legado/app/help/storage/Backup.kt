@@ -51,8 +51,7 @@ object Backup {
         val lastBackup = LocalConfig.lastBackup
         if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
             Coroutine.async {
-                val lastBackupWebDav = AppWebDav.lastBackUp()
-                if (lastBackupWebDav == null || lastBackup > lastBackupWebDav.lastModify.time) {
+                if (!AppWebDav.hasBackUp()) {
                     backup(context, context.getPrefString(PreferKey.backupPath), true)
                 } else {
                     LocalConfig.lastBackup = System.currentTimeMillis()
