@@ -61,7 +61,6 @@ object PreferKey {
     const val chineseConverterType = "chineseConverterType"
     const val launcherIcon = "launcherIcon"
     const val textSelectAble = "selectText"
-    const val lastBackup = "lastBackup"
     const val shareLayout = "shareLayout"
     const val readStyleSelect = "readStyleSelect"
     const val systemTypefaces = "system_typefaces"

@@ -48,13 +48,13 @@ object Backup {
     }
 
     fun autoBack(context: Context) {
-        val lastBackup = LocalConfig.getLong(PreferKey.lastBackup, 0)
+        val lastBackup = LocalConfig.lastBackup
         if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
             Coroutine.async {
                 if (!AppWebDav.hasBackUp()) {
                     backup(context, context.getPrefString(PreferKey.backupPath), true)
                 } else {
-                    LocalConfig.putLong(PreferKey.lastBackup, System.currentTimeMillis())
+                    LocalConfig.lastBackup = System.currentTimeMillis()
                 }
             }.onError {
                 AppLog.put("自动备份失败\n${it.localizedMessage}")
@@ -63,7 +63,6 @@ object Backup {
     }
 
     suspend fun backup(context: Context, path: String?, isAuto: Boolean = false) {
-        context.putPrefLong(PreferKey.lastBackup, System.currentTimeMillis())
         withContext(IO) {
             FileUtils.delete(backupPath)
             writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
@@ -119,6 +118,7 @@ object Backup {
             }
             AppWebDav.backUpWebDav(backupPath)
         }
+        LocalConfig.lastBackup = System.currentTimeMillis()
     }
 
     private fun writeListToJson(list: List<Any>, fileName: String, path: String) {

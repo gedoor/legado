@@ -3,11 +3,18 @@ package io.legado.app.help.config
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import io.legado.app.utils.putLong
 import splitties.init.appCtx
 
 object LocalConfig :
     SharedPreferences by appCtx.getSharedPreferences("local", Context.MODE_PRIVATE) {
     private const val versionCodeKey = "appVersionCode"
+
+    var lastBackup: Long
+        get() = getLong("lastBackup", 0)
+        set(value) {
+            putLong("lastBackup", value)
+        }
 
     val readHelpVersionIsLast: Boolean
         get() = isLastVersion(1, "readHelpVersion", "firstRead")
