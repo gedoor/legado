@@ -137,7 +137,7 @@ class ContentProcessor private constructor(
             if (item.pattern.isNotEmpty()) {
                 kotlin.runCatching {
                     mContent = if (item.isRegex) {
-                        mContent.replace(item.pattern.toRegex(), item.replacement, 2000L)
+                        mContent.replace(item.pattern.toRegex(), item.replacement, 3000L)
                     } else {
                         mContent.replace(item.pattern, item.replacement)
                     }

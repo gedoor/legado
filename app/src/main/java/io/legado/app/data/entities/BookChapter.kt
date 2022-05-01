@@ -98,7 +98,7 @@ data class BookChapter(
                 if (item.pattern.isNotEmpty()) {
                     try {
                         val mDisplayTitle = if (item.isRegex) {
-                            displayTitle.replace(item.pattern.toRegex(), item.replacement, 100)
+                            displayTitle.replace(item.pattern.toRegex(), item.replacement, 1000)
                         } else {
                             displayTitle.replace(item.pattern, item.replacement)
                         }
