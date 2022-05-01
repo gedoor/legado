@@ -1,5 +1,6 @@
 package io.legado.app.lib.webdav
 
+import android.annotation.SuppressLint
 import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
@@ -18,10 +19,16 @@ import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class WebDav(urlStr: String, val authorization: Authorization) {
+open class WebDav(urlStr: String, val authorization: Authorization) {
     companion object {
+
+        @SuppressLint("SimpleDateFormat")
+        private val dateFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ZZZ")
+
         // 指定返回哪些属性
         @Language("xml")
         private const val DIR =
@@ -50,11 +57,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
     }
     val host: String? get() = url.host
     val path get() = url.toString()
-    var displayName: String? = null
-    var size: Long = 0
-    var parent = ""
-    var urlName = ""
-    var contentType = ""
+
 
     /**
      * 填充文件信息。实例化WebDAVFile对象时，并没有将远程文件的信息填充到实例中。需要手动填充！
@@ -70,7 +73,7 @@ class WebDav(urlStr: String, val authorization: Authorization) {
      * @return 文件列表
      */
     @Throws(WebDavException::class)
-    suspend fun listFiles(): List<WebDav> {
+    suspend fun listFiles(): List<WebDavFile> {
         propFindResponse()?.let { body ->
             return parseDir(body)
         }
@@ -108,8 +111,8 @@ class WebDav(urlStr: String, val authorization: Authorization) {
         }.body?.text()
     }
 
-    private fun parseDir(s: String): List<WebDav> {
-        val list = ArrayList<WebDav>()
+    private fun parseDir(s: String): List<WebDavFile> {
+        val list = ArrayList<WebDavFile>()
         val document = Jsoup.parse(s)
         val elements = document.getElementsByTag("d:response")
         httpUrl?.let { urlStr ->
@@ -120,18 +123,31 @@ class WebDav(urlStr: String, val authorization: Authorization) {
                     val fileName = href.substring(href.lastIndexOf("/") + 1)
                     val webDavFile: WebDav
                     try {
-                        webDavFile = WebDav(baseUrl + fileName, authorization)
-                        webDavFile.displayName = fileName
-                        webDavFile.contentType = element
-                            .getElementsByTag("d:getcontenttype")
-                            .getOrNull(0)?.text() ?: ""
-                        if (href.isEmpty()) {
-                            webDavFile.urlName =
-                                if (parent.isEmpty()) url.file.replace("/", "")
-                                else url.toString().replace(parent, "").replace("/", "")
-                        } else {
-                            webDavFile.urlName = href
+                        val urlName = href.ifEmpty {
+                            url.file.replace("/", "")
                         }
+                        val contentType = element
+                            .getElementsByTag("d:getcontenttype")
+                            .firstOrNull()?.text().orEmpty()
+                        val size = kotlin.runCatching {
+                            element.getElementsByTag("d:getcontentlength")
+                                .firstOrNull()?.text()?.toLong() ?: 0
+                        }.getOrDefault(0)
+                        val lastModify: Date = kotlin.runCatching {
+                            element.getElementsByTag("d:getcontentlength")
+                                .firstOrNull()?.text()?.let {
+                                    dateFormat.parse(it)
+                                }
+                        }.getOrNull() ?: Date()
+                        webDavFile = WebDavFile(
+                            baseUrl + fileName,
+                            authorization,
+                            displayName = fileName,
+                            urlName = urlName,
+                            size = size,
+                            contentType = contentType,
+                            lastModify = lastModify
+                        )
                         list.add(webDavFile)
                     } catch (e: MalformedURLException) {
                         e.printOnDebug()
