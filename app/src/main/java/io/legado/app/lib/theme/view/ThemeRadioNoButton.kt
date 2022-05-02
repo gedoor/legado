@@ -1,6 +1,7 @@
 package io.legado.app.lib.theme.view
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatRadioButton
 import io.legado.app.R
@@ -29,35 +30,47 @@ class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
         when {
             isInEditMode -> Unit
             isBottomBackground -> {
+                val accentColor = context.accentColor
                 val isLight = ColorUtils.isColorLight(context.bottomBackground)
                 val textColor = context.getPrimaryTextColor(isLight)
+                val checkedTextColor = if (ColorUtils.isColorLight(accentColor)) {
+                    Color.BLACK
+                } else {
+                    Color.WHITE
+                }
                 background = Selector.shapeBuild()
                     .setCornerRadius(2.dpToPx())
                     .setStrokeWidth(2.dpToPx())
-                    .setCheckedBgColor(context.accentColor)
-                    .setCheckedStrokeColor(context.accentColor)
+                    .setCheckedBgColor(accentColor)
+                    .setCheckedStrokeColor(accentColor)
                     .setDefaultStrokeColor(textColor)
                     .create()
                 setTextColor(
                     Selector.colorBuild()
                         .setDefaultColor(textColor)
-                        .setCheckedColor(context.getPrimaryTextColor(ColorUtils.isColorLight(context.accentColor)))
+                        .setCheckedColor(checkedTextColor)
                         .create()
                 )
             }
             else -> {
-                val textColor = context.getCompatColor(R.color.primaryText)
+                val accentColor = context.accentColor
+                val defaultTextColor = context.getCompatColor(R.color.primaryText)
+                val checkedTextColor = if (ColorUtils.isColorLight(accentColor)) {
+                    Color.BLACK
+                } else {
+                    Color.WHITE
+                }
                 background = Selector.shapeBuild()
                     .setCornerRadius(2.dpToPx())
                     .setStrokeWidth(2.dpToPx())
-                    .setCheckedBgColor(context.accentColor)
-                    .setCheckedStrokeColor(context.accentColor)
-                    .setDefaultStrokeColor(textColor)
+                    .setCheckedBgColor(accentColor)
+                    .setCheckedStrokeColor(accentColor)
+                    .setDefaultStrokeColor(defaultTextColor)
                     .create()
                 setTextColor(
                     Selector.colorBuild()
-                        .setDefaultColor(textColor)
-                        .setCheckedColor(context.getPrimaryTextColor(ColorUtils.isColorLight(context.accentColor)))
+                        .setDefaultColor(defaultTextColor)
+                        .setCheckedColor(checkedTextColor)
                         .create()
                 )
             }
