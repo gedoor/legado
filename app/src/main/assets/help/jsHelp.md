@@ -62,6 +62,11 @@ java.connect(urlStr): Response<String>
 * @param js 用来取返回值的js语句, 没有就返回整个源代码
 * @return 返回js获取的内容
 java.webView(html: String?, url: String?, js: String?): String
+
+* 使用内置浏览器打开链接，可用于获取验证码 手动验证网站防爬
+* @param url 要打开的链接
+* @param title 浏览器的标题
+java.startBrowser(url: String, title: String)
 ```
 * 调试
 ```
