@@ -37,16 +37,21 @@ class AccentStrokeTextView(context: Context, attrs: AttributeSet) :
         } else {
             context.getCompatColor(R.color.disabled)
         }
+        val accentColor = if (isInEditMode) {
+            context.getCompatColor(R.color.accent)
+        } else {
+            ThemeStore.accentColor(context)
+        }
         background = Selector.shapeBuild()
             .setCornerRadius(radius)
             .setStrokeWidth(1.dpToPx())
             .setDisabledStrokeColor(disableColor)
-            .setDefaultStrokeColor(ThemeStore.accentColor(context))
+            .setDefaultStrokeColor(accentColor)
             .setPressedBgColor(context.getCompatColor(R.color.transparent30))
             .create()
         setTextColor(
             Selector.colorBuild()
-                .setDefaultColor(ThemeStore.accentColor(context))
+                .setDefaultColor(accentColor)
                 .setDisabledColor(disableColor)
                 .create()
         )
