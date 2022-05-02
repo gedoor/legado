@@ -127,7 +127,7 @@ class AudioPlayService : BaseService(),
     private fun play() {
         upNotification()
         if (requestFocus()) {
-            execute {
+            execute(context = Main) {
                 AudioPlay.status = Status.STOP
                 postEvent(EventBus.AUDIO_STATE, Status.STOP)
                 upPlayProgressJob?.cancel()
