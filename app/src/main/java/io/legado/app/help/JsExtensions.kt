@@ -6,15 +6,18 @@ import androidx.annotation.Keep
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.symmetric.AES
 import cn.hutool.crypto.symmetric.DESede
+import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.*
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
+import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
@@ -128,6 +131,26 @@ interface JsExtensions {
                 headerMap = getSource()?.getHeaderMap(true),
                 tag =  getSource()?.getKey()
             ).getStrResponse().body
+        }
+    }
+
+    /**
+     * 使用内置浏览器打开链接，可用于获取验证码 手动验证网站防爬
+     * @param url 要打开的链接
+     * @param title 对话框的标题
+     * @param message 对话框的详细提示信息
+     */
+    fun startBrowser(url: String, title: String, message: String) {
+        appCtx.alert(title) {
+            setMessage(message)
+            positiveButton(R.string.yes) {
+                appCtx.startActivity<WebViewActivity> {
+                    putExtra("title", title)
+                    putExtra("url", url)
+                    IntentData.put(url, getSource()?.getHeaderMap(true))
+                }
+            }
+            negativeButton(R.string.no)
         }
     }
 
