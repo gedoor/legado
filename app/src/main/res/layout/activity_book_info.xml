@@ -383,11 +383,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/selector_btn_accent_bg"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/reading"
-                android:textColor="@color/tv_text_button_nor"
                 android:textSize="15sp" />
 
         </LinearLayout>

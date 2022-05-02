@@ -23,7 +23,6 @@ class AccentBgTextView @JvmOverloads constructor(
         radius = typedArray.getDimensionPixelOffset(R.styleable.AccentBgTextView_radius, radius)
         typedArray.recycle()
         upBackground()
-        setTextColor(Color.WHITE)
     }
 
     fun setRadius(radius: Int) {
@@ -32,18 +31,22 @@ class AccentBgTextView @JvmOverloads constructor(
     }
 
     private fun upBackground() {
-        background = if (isInEditMode) {
-            Selector.shapeBuild()
-                .setCornerRadius(radius)
-                .setDefaultBgColor(context.getCompatColor(R.color.accent))
-                .setPressedBgColor(ColorUtils.darkenColor(context.getCompatColor(R.color.accent)))
-                .create()
+        val accentColor = if (isInEditMode) {
+            context.getCompatColor(R.color.accent)
         } else {
-            Selector.shapeBuild()
-                .setCornerRadius(radius)
-                .setDefaultBgColor(ThemeStore.accentColor(context))
-                .setPressedBgColor(ColorUtils.darkenColor(ThemeStore.accentColor(context)))
-                .create()
+            ThemeStore.accentColor(context)
         }
+        background = Selector.shapeBuild()
+            .setCornerRadius(radius)
+            .setDefaultBgColor(accentColor)
+            .setPressedBgColor(ColorUtils.darkenColor(accentColor))
+            .create()
+        setTextColor(
+            if (ColorUtils.isColorLight(accentColor)) {
+                Color.BLACK
+            } else {
+                Color.WHITE
+            }
+        )
     }
 }
