@@ -8,7 +8,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
-import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.BookHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
@@ -169,9 +168,7 @@ object CacheBook {
 
         @Synchronized
         private fun onError(index: Int, error: Throwable, chapterTitle: String) {
-            if (error !is ConcurrentException) {
-                errorDownloadMap[index] = (errorDownloadMap[index] ?: 0) + 1
-            }
+            errorDownloadMap[index] = (errorDownloadMap[index] ?: 0) + 1
             onDownloadSet.remove(index)
             //重试3次
             if (errorDownloadMap[index] ?: 0 < 3) {
