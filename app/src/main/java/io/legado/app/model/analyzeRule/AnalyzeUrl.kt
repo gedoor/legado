@@ -325,7 +325,6 @@ class AnalyzeUrl(
         }
         if (waitTime > 0) {
             log("根据并发率，${waitTime}毫秒后发起请求")
-            toast("根据并发率，${waitTime}毫秒后发起请求")
             delay(waitTime)
         }
         return fetchRecord
