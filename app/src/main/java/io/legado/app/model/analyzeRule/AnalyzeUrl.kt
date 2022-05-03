@@ -13,13 +13,13 @@ import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.*
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
@@ -277,7 +277,7 @@ class AnalyzeUrl(
     /**
      * 开始访问,并发判断
      */
-    private fun fetchStart(): ConcurrentRecord? {
+    private suspend fun fetchStart(): ConcurrentRecord? {
         source ?: return null
         val concurrentRate = source.concurrentRate
         if (concurrentRate.isNullOrEmpty()) {
@@ -290,30 +290,30 @@ class AnalyzeUrl(
             concurrentRecordMap[source.getKey()] = fetchRecord
             return fetchRecord
         }
-        val waitTime: Int = synchronized(fetchRecord) {
+        val waitTime: Long = synchronized(fetchRecord) {
             try {
                 if (rateIndex == -1) {
                     if (fetchRecord.frequency > 0) {
-                        return@synchronized concurrentRate.toInt()
+                        return@synchronized concurrentRate.toLong()
                     }
-                    val nextTime = fetchRecord.time + concurrentRate.toInt()
+                    val nextTime = fetchRecord.time + concurrentRate.toLong()
                     if (System.currentTimeMillis() >= nextTime) {
                         fetchRecord.time = System.currentTimeMillis()
                         fetchRecord.frequency = 1
                         return@synchronized 0
                     }
-                    return@synchronized (nextTime - System.currentTimeMillis()).toInt()
+                    return@synchronized (nextTime - System.currentTimeMillis()).toLong()
                 } else {
                     val sj = concurrentRate.substring(rateIndex + 1)
-                    val nextTime = fetchRecord.time + sj.toInt()
+                    val nextTime = fetchRecord.time + sj.toLong()
                     if (System.currentTimeMillis() >= nextTime) {
                         fetchRecord.time = System.currentTimeMillis()
                         fetchRecord.frequency = 1
                         return@synchronized 0
                     }
                     val cs = concurrentRate.substring(0, rateIndex)
-                    if (fetchRecord.frequency > cs.toInt()) {
-                        return@synchronized (nextTime - System.currentTimeMillis()).toInt()
+                    if (fetchRecord.frequency > cs.toLong()) {
+                        return@synchronized (nextTime - System.currentTimeMillis()).toLong()
                     } else {
                         fetchRecord.frequency = fetchRecord.frequency + 1
                         return@synchronized 0
@@ -324,7 +324,9 @@ class AnalyzeUrl(
             }
         }
         if (waitTime > 0) {
-            throw ConcurrentException("根据并发率还需等待${waitTime}毫秒才可以访问", waitTime = waitTime)
+            log("根据并发率，${waitTime}毫秒后发起请求")
+            toast("根据并发率，${waitTime}毫秒后发起请求")
+            delay(waitTime)
         }
         return fetchRecord
     }
