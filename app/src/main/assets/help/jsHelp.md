@@ -73,6 +73,10 @@ java.startBrowser(url: String, title: String)
 java.log(msg)
 java.logType(var)
 ```
+* 获取用户输入的验证码
+```
+java.getVerificationCode(imageUrl)
+```
 * 弹窗提示
 ```
 java.longToast(msg: Any?)

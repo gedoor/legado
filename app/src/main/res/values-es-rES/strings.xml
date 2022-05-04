@@ -969,5 +969,7 @@
     <string name="change_source_batch">批量换源</string>
     <string name="book_type_different">书籍类型不一样</string>
     <string name="soure_change_source">是否确认换源</string>
+    <string name="input_verification_code">输入验证码</string>
+    <string name="verification_code">验证码</string>
     <!-- string end -->
 </resources>

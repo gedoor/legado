@@ -15,11 +15,13 @@ import io.legado.app.help.http.*
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
+import io.legado.app.ui.association.VerificationCodeActivity
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import splitties.init.appCtx
@@ -143,6 +145,34 @@ interface JsExtensions {
             putExtra("url", url)
             IntentData.put(url, getSource()?.getHeaderMap(true))
         }
+    }
+
+    /**
+     * 打开验证码对话框，等待输入验证码
+     */
+    fun getVerificationCode(imageUrl: String): String {
+        return runBlocking {
+            val key = "${getSource()?.getKey() ?: ""}_verificationCode"
+            CacheManager.delete(key)
+            appCtx.startActivity<VerificationCodeActivity> {
+                putExtra("imageUrl", imageUrl)
+                putExtra("sourceOrigin", getSource()?.getKey())
+            }
+            var waitUserInput: Boolean = false
+            while(CacheManager.get(key) == null) {
+                if (!waitUserInput) {
+                    log("等待输入验证码...")
+                    waitUserInput = true
+                }
+            }
+            CacheManager.get(key)!!.let {
+                if (it.isBlank()) {
+                    throw NoStackTraceException("未输入验证码或者验证码为空")
+                } else {
+                   it
+                }
+            }
+       }
     }
 
     /**
