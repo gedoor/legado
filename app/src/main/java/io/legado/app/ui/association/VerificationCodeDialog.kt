@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.net.Uri
+import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -17,8 +18,13 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-//图片验证码输入对话框
-class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification_code_view) {
+/**
+ * 图片验证码对话框
+ * 结果保存在数据库中
+ * val key = "${sourceOrigin ?: ""}_verificationResult"
+ * CacheManager.get(key)
+ */
+class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification_code_view), Toolbar.OnMenuItemClickListener {
 
     constructor(imageUrl: String, sourceOrigin: String? = null) : this() {
         arguments = Bundle().apply {
@@ -38,7 +44,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         binding.run {
             toolBar.setBackgroundColor(primaryColor)
             val sourceOrigin = arguments?.getString("sourceOrigin")
-            val key = "${sourceOrigin ?: ""}_verificationCode"
+            val key = "${sourceOrigin ?: ""}_verificationResult"
             arguments?.getString("imageUrl")?.let { imageUrl ->
                 ImageLoader.load(requireContext(), imageUrl).apply {
                     sourceOrigin?.let {
@@ -53,10 +59,6 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
                     .into(ivImage)
                 ivImage.setOnClickListener {
                     showDialogFragment(PhotoDialog(imageUrl, sourceOrigin))
-                }
-                ivImage.setOnLongClickListener {
-                    showDialogFragment(PhotoDialog(imageUrl, sourceOrigin))
-                    true
                 }
             }
             tvOk.setOnClickListener {
@@ -74,7 +76,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
 
     override fun onDestroy() {
         val sourceOrigin = arguments?.getString("sourceOrigin")
-        val key = "${sourceOrigin ?: ""}_verificationCode"
+        val key = "${sourceOrigin ?: ""}_verificationResult"
         CacheManager.get(key) ?: CacheManager.put(key, "")
         super.onDestroy()
         activity?.finish()

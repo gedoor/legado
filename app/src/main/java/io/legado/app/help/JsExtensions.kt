@@ -135,39 +135,62 @@ interface JsExtensions {
     }
 
     /**
-     * 使用内置浏览器打开链接，可用于获取验证码 手动验证网站防爬
+     * 使用内置浏览器打开链接，手动验证网站防爬
      * @param url 要打开的链接
      * @param title 浏览器页面的标题
      */
-    fun startBrowser(url: String, title: String) {
+    fun startBrowser(url: String, title: String, saveResult: Boolean? = false) {
         appCtx.startActivity<WebViewActivity> {
             putExtra("title", title)
             putExtra("url", url)
+            putExtra("sourceVerificationEnable", saveResult)
             IntentData.put(url, getSource()?.getHeaderMap(true))
         }
     }
 
     /**
-     * 打开验证码对话框，等待输入验证码
+     * 使用内置浏览器打开链接，并等待网页结果
      */
-    fun getVerificationCode(imageUrl: String): String {
+    fun startBrowserAwait(url: String, title: String): String {
+        return getVerificationResult(url, title, true)
+    }
+
+    /**
+     * 打开图片验证码对话框，等待返回验证结果
+     */
+     fun getVerificationCode(imageUrl: String): String {
+         return getVerificationResult(imageUrl)
+     }
+
+    /** 
+     * 获取书源验证结果
+     * 图片验证码 防爬 滑动验证码 点击字符 等等
+     */
+    private fun getVerificationResult(url: String, title: String? = "", useBrowser: Boolean? = false): String {
         return runBlocking {
-            val key = "${getSource()?.getKey() ?: ""}_verificationCode"
+            val source = getSource()
+            val key = "${source?.getKey() ?: ""}_verificationResult"
             CacheManager.delete(key)
-            appCtx.startActivity<VerificationCodeActivity> {
-                putExtra("imageUrl", imageUrl)
-                putExtra("sourceOrigin", getSource()?.getKey())
+
+            if (!useBrowser) {
+                appCtx.startActivity<VerificationCodeActivity> {
+                    putExtra("imageUrl", url)
+                    putExtra("sourceOrigin", source?.getKey())
+                }
+            } else {
+                startBrowser(url, title, true)
             }
+
             var waitUserInput: Boolean = false
             while(CacheManager.get(key) == null) {
                 if (!waitUserInput) {
-                    log("等待输入验证码...")
+                    log("等待验证...")
                     waitUserInput = true
                 }
             }
             CacheManager.get(key)!!.let {
                 if (it.isBlank()) {
-                    throw NoStackTraceException("未输入验证码或者验证码为空")
+                    throw NoStackTraceException("验证结果为空")
                 } else {
                    it
                 }
