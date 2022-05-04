@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import androidx.collection.LruCache
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cache
 import io.legado.app.model.analyzeRule.QueryTTF
@@ -10,6 +11,11 @@ import splitties.init.appCtx
 object CacheManager {
 
     private val queryTTFMap = hashMapOf<String, Pair<Long, QueryTTF>>()
+    private val memoryLruCache = object : LruCache<String, Cache>(100) {
+        override fun sizeOf(key: String, value: Any): Int {
+            return 1
+        }
+    }
 
     /**
      * saveTime 单位为秒
@@ -23,13 +29,26 @@ object CacheManager {
             is ByteArray -> ACache.get(appCtx).put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
+                memoryLruCache.put(key, cache)
                 appDb.cacheDao.insert(cache)
             }
         }
     }
 
     fun get(key: String): String? {
-        return appDb.cacheDao.get(key, System.currentTimeMillis())
+        return getFromMemory(key) ?: appDb.cacheDao.get(key, System.currentTimeMillis())
+    }
+
+    //从内存中获取数据 使用lrucache 支持过期功能
+    private fun getFromMemory(key: String): String? {
+        val cache = memoryLruCache.get(key) ?: return null
+        val deadline = cache!!.deadline
+        return if (deadline == 0 || deadline > System.currentTimeMillis()) {
+            cache!!.value
+        } else {
+            memoryLruCache.remove(key)
+            null
+        }
     }
 
     fun getInt(key: String): Int? {
@@ -70,6 +89,7 @@ object CacheManager {
 
     fun delete(key: String) {
         appDb.cacheDao.delete(key)
+        memoryLruCache.remove(key)
         ACache.get(appCtx).remove(key)
     }
 }
