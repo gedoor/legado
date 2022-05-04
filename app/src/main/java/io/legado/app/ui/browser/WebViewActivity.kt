@@ -66,6 +66,12 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         when (item.itemId) {
             R.id.menu_open_in_browser -> openUrl(viewModel.baseUrl)
             R.id.menu_copy_url -> sendToClip(viewModel.baseUrl)
+            R.id.menu_ok -> {
+                if (viewModel.sourceVerificationEnable) {
+                    binding.titleBar.snackbar(R.string.ok)
+                    activity?.finish()
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
