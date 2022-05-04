@@ -35,7 +35,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
-        menuInflater.inflate(R.menu.source_login, menu)
+        menuInflater.inflate(R.menu.source_webview_login, menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
