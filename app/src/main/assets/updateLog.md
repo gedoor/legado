@@ -13,7 +13,7 @@
 
 **2022/05/04**
 
-* js添加 getVerificationCode
+* js添加 getVerificationCode startBrowserAwait
 
 **2022/05/02**
 

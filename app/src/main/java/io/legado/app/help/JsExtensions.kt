@@ -15,13 +15,10 @@ import io.legado.app.help.http.*
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
-import io.legado.app.ui.association.VerificationCodeActivity
-import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import splitties.init.appCtx
@@ -135,45 +132,27 @@ interface JsExtensions {
     }
 
     /**
-     * 使用内置浏览器打开链接，可用于获取验证码 手动验证网站防爬
+     * 使用内置浏览器打开链接，手动验证网站防爬
      * @param url 要打开的链接
      * @param title 浏览器页面的标题
      */
     fun startBrowser(url: String, title: String) {
-        appCtx.startActivity<WebViewActivity> {
-            putExtra("title", title)
-            putExtra("url", url)
-            IntentData.put(url, getSource()?.getHeaderMap(true))
-        }
+        SourceVerificationHelp.startBrowser(getSource(), url, title)
     }
 
     /**
-     * 打开验证码对话框，等待输入验证码
+     * 使用内置浏览器打开链接，并等待网页结果
      */
-    fun getVerificationCode(imageUrl: String): String {
-        return runBlocking {
-            val key = "${getSource()?.getKey() ?: ""}_verificationCode"
-            CacheManager.delete(key)
-            appCtx.startActivity<VerificationCodeActivity> {
-                putExtra("imageUrl", imageUrl)
-                putExtra("sourceOrigin", getSource()?.getKey())
-            }
-            var waitUserInput: Boolean = false
-            while(CacheManager.get(key) == null) {
-                if (!waitUserInput) {
-                    log("等待输入验证码...")
-                    waitUserInput = true
-                }
-            }
-            CacheManager.get(key)!!.let {
-                if (it.isBlank()) {
-                    throw NoStackTraceException("未输入验证码或者验证码为空")
-                } else {
-                   it
-                }
-            }
-       }
+    fun startBrowserAwait(url: String, title: String): StrResponse {
+        return StrResponse(url, SourceVerificationHelp.getVerificationResult(getSource(), url, title, true))
     }
+
+    /**
+     * 打开图片验证码对话框，等待返回验证结果
+     */
+     fun getVerificationCode(imageUrl: String): String {
+         return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false)
+     }
 
     /**
      * 可从网络，本地文件(阅读私有缓存目录和书籍保存位置支持相对路径)导入JavaScript脚本
