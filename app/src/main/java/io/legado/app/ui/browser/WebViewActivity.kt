@@ -177,6 +177,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     override fun onDestroy() {
         super.onDestroy()
         binding.webView.destroy()
+        viewModel.saveVerificationResult()
     }
 
     inner class CustomWebChromeClient : WebChromeClient() {
@@ -214,6 +215,11 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             }
             return true
         }
+
+        override fun onLoadResource(view: WebView, resUrl: String) {
+            if (viewModel.sourceVerificationEnable) viewModel.html = resUrl
+        }
+
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
