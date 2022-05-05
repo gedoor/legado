@@ -67,11 +67,18 @@ java.webView(html: String?, url: String?, js: String?): String
 * @param url 要打开的链接
 * @param title 浏览器的标题
 java.startBrowser(url: String, title: String)
+
+* 使用内置浏览器打开链接，并等待网页结果 .body()获取网页内容
+java.startBrowserAwait(url: String, title: String): StrResponse
 ```
 * 调试
 ```
 java.log(msg)
 java.logType(var)
+```
+* 获取用户输入的验证码
+```
+java.getVerificationCode(imageUrl)
 ```
 * 弹窗提示
 ```

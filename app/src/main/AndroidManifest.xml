@@ -359,6 +359,13 @@
                 <data android:scheme="yuedu" />
             </intent-filter>
         </activity>
+        <!-- 验证码输入 -->
+        <activity
+            android:name=".ui.association.VerificationCodeActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:exported="true"
+            android:theme="@style/AppTheme.Transparent">
+        </activity>
         <!-- 打开文件 -->
         <activity
             android:name=".ui.association.FileAssociationActivity"

@@ -9,6 +9,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.CacheManager
 import io.legado.app.help.IntentData
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
@@ -21,6 +22,8 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
     var baseUrl: String = ""
     var html: String? = null
     val headerMap: HashMap<String, String> = hashMapOf()
+    var sourceVerificationEnable: Boolean = false
+    var sourceOrigin: String = ""
 
     fun initData(
         intent: Intent,
@@ -29,6 +32,8 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         execute {
             val url = intent.getStringExtra("url")
                 ?: throw NoStackTraceException("url不能为空")
+            sourceOrigin = intent.getStringExtra("sourceOrigin") ?: ""
+            sourceVerificationEnable = intent.getBooleanExtra("sourceVerificationEnable", false)
             val headerMapF = IntentData.get<Map<String, String>>(url)
             val analyzeUrl = AnalyzeUrl(url, headerMapF = headerMapF)
             baseUrl = analyzeUrl.url
@@ -78,5 +83,12 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun saveVerificationResult() {
+        if (sourceVerificationEnable) {
+            val key = "${sourceOrigin}_verificationResult"
+            html = AnalyzeUrl(baseUrl, headerMapF = headerMap).getStrResponse(useWebView = false).body
+            CacheManager.put(key, html ?: "")
+        }
+    }
 
 }

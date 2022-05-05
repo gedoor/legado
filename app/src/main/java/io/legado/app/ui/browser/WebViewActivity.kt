@@ -26,6 +26,7 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.net.URLDecoder
+import kotlinx.coroutines.runBlocking
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
@@ -65,6 +66,12 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         when (item.itemId) {
             R.id.menu_open_in_browser -> openUrl(viewModel.baseUrl)
             R.id.menu_copy_url -> sendToClip(viewModel.baseUrl)
+            R.id.menu_ok -> {
+                if (viewModel.sourceVerificationEnable) {
+                    binding.titleBar.snackbar(R.string.ok)
+                    finish()
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -135,7 +142,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             viewModel.saveImage(webPic, path)
         }
     }
-
     private fun selectSaveFolder() {
         val default = arrayListOf<SelectItem<Int>>()
         val path = ACache.get(this).getAsString(imagePathKey)
@@ -176,6 +182,9 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     override fun onDestroy() {
         super.onDestroy()
+        runBlocking {
+            viewModel.saveVerificationResult()
+        }
         binding.webView.destroy()
     }
 
