@@ -41,15 +41,23 @@ object CacheManager {
     }
 
     fun get(key: String): String? {
-        return getFromMemory(key) ?: appDb.cacheDao.get(key, System.currentTimeMillis())
+        getFromMemory(key)?.let {
+            return it
+        }
+        val cache = appDb.cacheDao.get(key)
+        if (cache != null && (cache.deadline == 0L || cache.deadline > System.currentTimeMillis())) {
+            memoryLruCache.put(key, cache)
+            return cache.value
+        }
+        return null
     }
 
-    //从内存中获取数据 使用lrucache 支持过期功能
+    //从内存中获取数据 使用lruCache 支持过期功能
     private fun getFromMemory(key: String): String? {
         val cache = memoryLruCache.get(key) ?: return null
-        val deadline = cache!!.deadline
+        val deadline = cache.deadline
         return if (deadline == 0L || deadline > System.currentTimeMillis()) {
-            cache!!.value
+            cache.value
         } else {
             memoryLruCache.remove(key)
             null

@@ -1,9 +1,9 @@
 package io.legado.app.ui.association
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.net.Uri
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -39,11 +39,12 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         setLayout(1f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
+    @SuppressLint("CheckResult")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.run {
             toolBar.setBackgroundColor(primaryColor)
             val sourceOrigin = arguments?.getString("sourceOrigin")
-            val key = "${sourceOrigin ?: ""}_verificationResult"
+            val key = "${sourceOrigin}_verificationResult"
             arguments?.getString("imageUrl")?.let { imageUrl ->
                 ImageLoader.load(requireContext(), imageUrl).apply {
                     sourceOrigin?.let {
