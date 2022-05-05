@@ -19,7 +19,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
  * 图片验证码对话框
- * 结果保存在数据库中
+ * 结果保存在内存中
  * val key = "${sourceOrigin ?: ""}_verificationResult"
  * CacheManager.get(key)
  */
@@ -64,7 +64,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
             tvOk.setOnClickListener {
                 val verificationCode = binding.verificationCode.text.toString()
                 verificationCode.let {
-                    CacheManager.put(key, it)
+                    CacheManager.putMemory(key, it)
                     dismiss()
                 }
             }
@@ -77,7 +77,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     override fun onDestroy() {
         val sourceOrigin = arguments?.getString("sourceOrigin")
         val key = "${sourceOrigin}_verificationResult"
-        CacheManager.get(key) ?: CacheManager.put(key, "")
+        CacheManager.get(key) ?: CacheManager.putMemory(key, "")
         super.onDestroy()
         activity?.finish()
     }
