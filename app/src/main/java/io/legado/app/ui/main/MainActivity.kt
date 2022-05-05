@@ -71,7 +71,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
-        binding.apply {
+        binding.run {
             viewPagerMain.setEdgeEffectColor(primaryColor)
             viewPagerMain.offscreenPageLimit = 3
             viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
