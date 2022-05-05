@@ -11,11 +11,7 @@ import splitties.init.appCtx
 object CacheManager {
 
     private val queryTTFMap = hashMapOf<String, Pair<Long, QueryTTF>>()
-    private val memoryLruCache = object : LruCache<String, Cache>(100) {
-        override fun sizeOf(key: String, value: Cache): Int {
-            return 1
-        }
-    }
+    private val memoryLruCache = object : LruCache<String, Cache>(100) {}
 
     /**
      * saveTime 单位为秒
@@ -88,6 +84,8 @@ object CacheManager {
         val cache = queryTTFMap[key] ?: return null
         if (cache.first == 0L || cache.first > System.currentTimeMillis()) {
             return cache.second
+        } else {
+            queryTTFMap.remove(key)
         }
         return null
     }
