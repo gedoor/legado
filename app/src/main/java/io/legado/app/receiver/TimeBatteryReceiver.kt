@@ -11,17 +11,9 @@ import io.legado.app.utils.postEvent
 
 class TimeBatteryReceiver : BroadcastReceiver() {
 
-    companion object {
-
-        fun register(context: Context): TimeBatteryReceiver {
-            val receiver = TimeBatteryReceiver()
-            val filter = IntentFilter()
-            filter.addAction(Intent.ACTION_TIME_TICK)
-            filter.addAction(Intent.ACTION_BATTERY_CHANGED)
-            context.registerReceiver(receiver, filter)
-            return receiver
-        }
-
+    val filter = IntentFilter().apply {
+        addAction(Intent.ACTION_TIME_TICK)
+        addAction(Intent.ACTION_BATTERY_CHANGED)
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {

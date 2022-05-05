@@ -148,8 +148,8 @@ class ReadBookActivity : BaseReadBookActivity(),
         set(value) {
             field = value && isShowingSearchResult
         }
+    private val timeBatteryReceiver = TimeBatteryReceiver()
     private var screenTimeOut: Long = 0
-    private var timeBatteryReceiver: TimeBatteryReceiver? = null
     private var loadStates: Boolean = false
     override val pageFactory: TextPageFactory get() = binding.readView.pageFactory
     override val headerHeight: Int get() = binding.readView.curPage.headerHeight
@@ -185,7 +185,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         super.onResume()
         ReadBook.readStartTime = System.currentTimeMillis()
         upSystemUiVisibility()
-        timeBatteryReceiver = TimeBatteryReceiver.register(this)
+        registerReceiver(timeBatteryReceiver, timeBatteryReceiver.filter)
         binding.readView.upTime()
     }
 
@@ -194,10 +194,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         autoPageStop()
         backupJob?.cancel()
         ReadBook.saveRead()
-        timeBatteryReceiver?.let {
-            unregisterReceiver(it)
-            timeBatteryReceiver = null
-        }
+        unregisterReceiver(timeBatteryReceiver)
         upSystemUiVisibility()
         if (!BuildConfig.DEBUG) {
             ReadBook.uploadProgress()

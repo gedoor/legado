@@ -10,6 +10,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.PreferKey
+import io.legado.app.receiver.NetworkChangedReceiver
 import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
@@ -35,6 +36,7 @@ class WebService : BaseService() {
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
     private var notificationContent = ""
+    private val networkChangedReceiver = NetworkChangedReceiver()
 
     override fun onCreate() {
         super.onCreate()
@@ -42,6 +44,7 @@ class WebService : BaseService() {
         notificationContent = getString(R.string.service_starting)
         upNotification()
         upTile(true)
+        registerReceiver(networkChangedReceiver, networkChangedReceiver.filter)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -55,6 +58,7 @@ class WebService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(networkChangedReceiver)
         isRun = false
         if (httpServer?.isAlive == true) {
             httpServer?.stop()
