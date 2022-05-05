@@ -1,13 +1,13 @@
 package io.legado.app.help
 
-import io.legado.app.utils.startActivity
 import io.legado.app.constant.AppLog
-import io.legado.app.exception.NoStackTraceException
 import io.legado.app.data.entities.BaseSource
-import io.legado.app.ui.browser.WebViewActivity
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.ui.association.VerificationCodeActivity
-import splitties.init.appCtx
+import io.legado.app.ui.browser.WebViewActivity
+import io.legado.app.utils.startActivity
 import kotlinx.coroutines.runBlocking
+import splitties.init.appCtx
 
 
 object SourceVerificationHelp {
@@ -19,13 +19,13 @@ object SourceVerificationHelp {
     fun getVerificationResult(source: BaseSource?, url: String, title: String, useBrowser: Boolean): String {
         source ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
         return runBlocking {
-            val key = "${source?.getKey() ?: ""}_verificationResult"
+            val key = "${source.getKey()}_verificationResult"
             CacheManager.delete(key)
 
             if (!useBrowser) {
                 appCtx.startActivity<VerificationCodeActivity> {
                     putExtra("imageUrl", url)
-                    putExtra("sourceOrigin", source?.getKey())
+                    putExtra("sourceOrigin", source.getKey())
                 }
             } else {
                 startBrowser(source, url, title, true)
@@ -39,10 +39,8 @@ object SourceVerificationHelp {
                 }
             }
             CacheManager.get(key)!!.let {
-                if (it.isBlank()) {
+                it.ifBlank {
                     throw NoStackTraceException("验证结果为空")
-                } else {
-                   it
                 }
             }
        }
@@ -57,9 +55,9 @@ object SourceVerificationHelp {
         appCtx.startActivity<WebViewActivity> {
             putExtra("title", title)
             putExtra("url", url)
-            putExtra("sourceOrigin", source?.getKey())
+            putExtra("sourceOrigin", source.getKey())
             putExtra("sourceVerificationEnable", saveResult)
-            IntentData.put(url, source?.getHeaderMap(true))
+            IntentData.put(url, source.getHeaderMap(true))
         }
     }
 
