@@ -35,6 +35,11 @@ object CacheManager {
         }
     }
 
+    fun putMemory(key: String, value: Any) {
+        val cache = Cache(key, value.toString(), 0)
+        memoryLruCache.put(key, cache)
+    }
+
     fun get(key: String): String? {
         return getFromMemory(key) ?: appDb.cacheDao.get(key, System.currentTimeMillis())
     }

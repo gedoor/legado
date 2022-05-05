@@ -87,7 +87,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         if (sourceVerificationEnable) {
             val key = "${sourceOrigin}_verificationResult"
             html = AnalyzeUrl(baseUrl, headerMapF = headerMap).getStrResponse(useWebView = false).body
-            CacheManager.put(key, html ?: "")
+            CacheManager.putMemory(key, html ?: "")
         }
     }
 
