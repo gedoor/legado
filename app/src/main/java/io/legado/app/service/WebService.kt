@@ -45,6 +45,9 @@ class WebService : BaseService() {
         upNotification()
         upTile(true)
         registerReceiver(networkChangedReceiver, networkChangedReceiver.filter)
+        networkChangedReceiver.onReceiver = { _, _ ->
+            upWebServer()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

@@ -4,20 +4,22 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.ConnectivityManager
 
 /**
  * 监测网络变化
  */
 class NetworkChangedReceiver : BroadcastReceiver() {
 
+    var onReceiver: ((context: Context, intent: Intent) -> Unit)? = null
+
     val filter = IntentFilter().apply {
-        addAction("android.net.conn.CONNECTIVITY_CHANGE")
-        addAction("android.net.wifi.WIFI_STATE_CHANGED")
-        addAction("android.net.wifi.STATE_CHANGE")
+        @Suppress("DEPRECATION")
+        addAction(ConnectivityManager.CONNECTIVITY_ACTION)
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-
+    override fun onReceive(context: Context, intent: Intent) {
+        onReceiver?.invoke(context, intent)
     }
 
 }

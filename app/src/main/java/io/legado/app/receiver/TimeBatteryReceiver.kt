@@ -16,8 +16,8 @@ class TimeBatteryReceiver : BroadcastReceiver() {
         addAction(Intent.ACTION_BATTERY_CHANGED)
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        when (intent?.action) {
+    override fun onReceive(context: Context, intent: Intent) {
+        when (intent.action) {
             Intent.ACTION_TIME_TICK -> {
                 postEvent(EventBus.TIME_CHANGED, "")
             }
