@@ -68,8 +68,9 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             R.id.menu_copy_url -> sendToClip(viewModel.baseUrl)
             R.id.menu_ok -> {
                 if (viewModel.sourceVerificationEnable) {
-                    binding.titleBar.snackbar(R.string.ok)
-                    finish()
+                    viewModel.saveVerificationResult {
+                        finish()
+                    }
                 }
             }
         }
@@ -182,9 +183,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        runBlocking {
-            viewModel.saveVerificationResult()
-        }
         binding.webView.destroy()
     }
 

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -13,8 +15,7 @@ import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.PhotoDialog
-import io.legado.app.utils.setLayout
-import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
@@ -23,7 +24,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  * val key = "${sourceOrigin ?: ""}_verificationResult"
  * CacheManager.get(key)
  */
-class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification_code_view) {
+class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification_code_view), Toolbar.OnMenuItemClickListener {
 
     constructor(imageUrl: String, sourceOrigin: String? = null) : this() {
         arguments = Bundle().apply {
@@ -41,6 +42,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
 
     @SuppressLint("CheckResult")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        initMenu()
         binding.run {
             toolBar.setBackgroundColor(primaryColor)
             val sourceOrigin = arguments?.getString("sourceOrigin")
@@ -61,17 +63,29 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
                     showDialogFragment(PhotoDialog(imageUrl, sourceOrigin))
                 }
             }
-            tvOk.setOnClickListener {
+        }
+    }
+
+    private fun initMenu() {
+        binding.toolBar.setOnMenuItemClickListener(this)
+        binding.toolBar.inflateMenu(R.menu.verification_code)
+        binding.toolBar.menu.applyTint(requireContext())
+    }
+
+    @SuppressLint("InflateParams")
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_ok -> {
+                val sourceOrigin = arguments?.getString("sourceOrigin")
+                val key = "${sourceOrigin}_verificationResult"
                 val verificationCode = binding.verificationCode.text.toString()
                 verificationCode.let {
                     CacheManager.putMemory(key, it)
                     dismiss()
                 }
-            }
-            tvCancel.setOnClickListener {
-                dismiss()
-            }
+           }
         }
+        return false
     }
 
     override fun onDestroy() {
