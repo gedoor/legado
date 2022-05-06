@@ -567,14 +567,14 @@ interface JsExtensions {
      * 弹窗提示
      */
     fun toast(msg: Any?) {
-        appCtx.toastOnUi(msg.toString())
+        appCtx.toastOnUi("${getSource()?.getTag()}: ${msg.toString()}")
     }
 
     /**
      * 弹窗提示 停留时间较长
      */
     fun longToast(msg: Any?) {
-        appCtx.longToastOnUi(msg.toString())
+        appCtx.longToastOnUi("${getSource()?.getTag()}: ${msg.toString()}")
     }
 
     /**

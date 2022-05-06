@@ -83,11 +83,15 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun saveVerificationResult() {
-        if (sourceVerificationEnable) {
-            val key = "${sourceOrigin}_verificationResult"
-            html = AnalyzeUrl(baseUrl, headerMapF = headerMap).getStrResponse(useWebView = false).body
-            CacheManager.putMemory(key, html ?: "")
+    fun saveVerificationResult(success: () -> Unit) {
+        execute {
+            if (sourceVerificationEnable) {
+                val key = "${sourceOrigin}_verificationResult"
+                html = AnalyzeUrl(baseUrl, headerMapF = headerMap).getStrResponseAwait(useWebView = false).body
+                CacheManager.putMemory(key, html ?: "")
+            }
+        }.onSuccess {
+            success.invoke()
         }
     }
 
