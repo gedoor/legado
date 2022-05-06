@@ -59,6 +59,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
                     }
                 }.error(R.drawable.image_loading_error)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(verificationCodeImageView)
                 verificationCodeImageView.setOnClickListener {
                     showDialogFragment(PhotoDialog(imageUrl, sourceOrigin))
