@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Base64
 import androidx.annotation.Keep
 import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 import com.script.SimpleBindings
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
@@ -17,6 +16,7 @@ import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
@@ -540,13 +540,7 @@ class AnalyzeUrl(
      */
     fun getGlideUrl(): GlideUrl {
         setCookie(source?.getKey())
-        val headers = LazyHeaders.Builder()
-        //删除glide默认ua
-        headers.setHeader(UA_NAME, null as String?)
-        headerMap.forEach { (key, value) ->
-            headers.addHeader(key, value)
-        }
-        return GlideUrl(url, headers.build())
+        return GlideUrl(url, GlideHeaders(headerMap))
     }
 
     fun getUserAgent(): String {
