@@ -4,13 +4,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.cronet.CronetInterceptor
 import io.legado.app.help.http.cronet.CronetLoader
-import okhttp3.ConnectionSpec
-import okhttp3.Credentials
-import okhttp3.CookieJar
-import okhttp3.Cookie
-import okhttp3.HttpUrl
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
+import okhttp3.*
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -18,6 +12,22 @@ import java.util.concurrent.TimeUnit
 
 private val proxyClientCache: ConcurrentHashMap<String, OkHttpClient> by lazy {
     ConcurrentHashMap()
+}
+
+val cookieJar by lazy {
+    object : CookieJar {
+
+        override fun loadForRequest(url: HttpUrl): List<Cookie> {
+            return emptyList()
+        }
+
+        override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+            cookies.forEach {
+                CookieStore.replaceCookie(url.toString(), "${it.name}=${it.value}")
+            }
+        }
+
+    }
 }
 
 val okHttpClient: OkHttpClient by lazy {
@@ -32,16 +42,7 @@ val okHttpClient: OkHttpClient by lazy {
         .writeTimeout(15, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
         .callTimeout(60, TimeUnit.SECONDS)
-        .cookieJar(object : CookieJar {
-            override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-                 cookies.forEach {
-                     CookieStore.replaceCookie(url.toString(), "${it.name}=${it.value}")
-                 }
-            }
-            override fun loadForRequest(url: HttpUrl): List<Cookie> {
-                return ArrayList<Cookie>()
-            }
-        })
+        .cookieJar(cookieJar = cookieJar)
         .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory, SSLHelper.unsafeTrustManager)
         .retryOnConnectionFailure(true)
         .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
@@ -60,7 +61,7 @@ val okHttpClient: OkHttpClient by lazy {
             chain.proceed(builder.build())
         })
     if (!AppConfig.isGooglePlay && AppConfig.isCronet && CronetLoader.install()) {
-        builder.addInterceptor(CronetInterceptor(null))
+        builder.addInterceptor(CronetInterceptor(cookieJar = cookieJar))
     }
     builder.build()
 }

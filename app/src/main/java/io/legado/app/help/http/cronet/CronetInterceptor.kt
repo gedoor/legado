@@ -1,12 +1,12 @@
 package io.legado.app.help.http.cronet
 
 import android.os.Build
-import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.printOnDebug
 import okhttp3.*
+import okhttp3.internal.http.receiveHeaders
 
 
-class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
+class CronetInterceptor(private val cookieJar: CookieJar = CookieJar.NO_COOKIES) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original: Request = chain.request()
@@ -18,15 +18,18 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
             //移除Keep-Alive,手动设置会导致400 BadRequest
             builder.removeHeader("Keep-Alive")
             builder.removeHeader("Accept-Encoding")
-            val cookieStr = getCookie(original.url)
-            //设置Cookie
-            if (cookieStr.length > 3) {
-                builder.header("Cookie", cookieStr)
+            if (cookieJar != CookieJar.NO_COOKIES) {
+                val cookieStr = getCookie(original.url)
+                //设置Cookie
+                if (cookieStr.length > 3) {
+                    builder.addHeader("Cookie", cookieStr)
+                }
             }
-            val new = builder.build()
-            proceedWithCronet(new, chain.call())?.let { response ->
+
+            val newReq = builder.build()
+            proceedWithCronet(newReq, chain.call())?.let { response ->
                 //从Response 中保存Cookie到CookieJar
-                cookieJar?.saveFromResponse(new.url, Cookie.parseAll(new.url, response.headers))
+                cookieJar.receiveHeaders(newReq.url, response.headers)
                 response
             } ?: chain.proceed(original)
         } catch (e: Exception) {
@@ -54,21 +57,14 @@ class CronetInterceptor(private val cookieJar: CookieJar?) : Interceptor {
         return null
     }
 
-    private fun getCookie(url: HttpUrl): String {
-        val sb = StringBuilder()
-        //处理从 Cookiejar 获取到的Cookies
-        if (cookieJar != null) {
-            val cookies = cookieJar.loadForRequest(url)
-            for (cookie in cookies) {
-                sb.append(cookie.name).append("=").append(cookie.value).append("; ")
-            }
+
+    /** Returns a 'Cookie' HTTP request header with all cookies, like `a=b; c=d`. */
+    private fun getCookie(url: HttpUrl): String = buildString {
+        val cookies = cookieJar.loadForRequest(url)
+        cookies.forEachIndexed { index, cookie ->
+            if (index > 0) append("; ")
+            append(cookie.name).append('=').append(cookie.value)
         }
-        //处理自定义的Cookie
-        val cookie = CookieStore.getCookie(url.toString())
-        if (cookie.length > 3) {
-            sb.append(cookie)
-        }
-        return sb.toString()
     }
 
 }
