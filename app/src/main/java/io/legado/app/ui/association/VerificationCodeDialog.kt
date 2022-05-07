@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogVerificationCodeViewBinding
@@ -46,7 +47,6 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         binding.run {
             toolBar.setBackgroundColor(primaryColor)
             val sourceOrigin = arguments?.getString("sourceOrigin")
-            val key = "${sourceOrigin}_verificationResult"
             arguments?.getString("imageUrl")?.let { imageUrl ->
                 ImageLoader.load(requireContext(), imageUrl).apply {
                     sourceOrigin?.let {
@@ -58,8 +58,10 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
                         )
                     }
                 }.error(R.drawable.image_loading_error)
-                    .into(ivImage)
-                ivImage.setOnClickListener {
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(verificationCodeImageView)
+                verificationCodeImageView.setOnClickListener {
                     showDialogFragment(PhotoDialog(imageUrl, sourceOrigin))
                 }
             }
