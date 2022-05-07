@@ -76,6 +76,8 @@ object CacheManager {
         val cache = queryTTFMap[key] ?: return null
         if (cache.first == 0L || cache.first > System.currentTimeMillis()) {
             return cache.second
+        } else {
+            queryTTFMap.remove(key)
         }
         return null
     }

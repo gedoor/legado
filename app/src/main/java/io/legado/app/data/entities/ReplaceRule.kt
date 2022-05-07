@@ -43,6 +43,9 @@ data class ReplaceRule(
     //是否正则
     @ColumnInfo(defaultValue = "1")
     var isRegex: Boolean = true,
+    //超时时间
+    @ColumnInfo(defaultValue = "3000")
+    var timeoutMillisecond: Long = 3000L,
     //排序
     @ColumnInfo(name = "sortOrder", defaultValue = "0")
     var order: Int = 0
