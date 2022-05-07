@@ -23,15 +23,22 @@ class NetworkChangedListener(private val context: Context) {
         return@lazy null
     }
 
+    private val networkCallback: ConnectivityManager.NetworkCallback? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return@lazy object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    onNetworkChanged?.invoke()
+                }
+            }
+        }
+        return@lazy null
+    }
+
     fun register() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connectivityManager.registerDefaultNetworkCallback(
-                object : ConnectivityManager.NetworkCallback() {
-                    override fun onAvailable(network: Network) {
-                        onNetworkChanged?.invoke()
-                    }
-                }
-            )
+            networkCallback?.let {
+                connectivityManager.registerDefaultNetworkCallback(it)
+            }
         } else {
             receiver?.let {
                 context.registerReceiver(it, it.filter)
@@ -40,8 +47,14 @@ class NetworkChangedListener(private val context: Context) {
     }
 
     fun unRegister() {
-        receiver?.let {
-            context.unregisterReceiver(it)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            networkCallback?.let {
+                connectivityManager.unregisterNetworkCallback(it)
+            }
+        } else {
+            receiver?.let {
+                context.unregisterReceiver(it)
+            }
         }
     }
 
