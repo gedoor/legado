@@ -6,6 +6,9 @@ import io.legado.app.help.http.cronet.CronetInterceptor
 import io.legado.app.help.http.cronet.CronetLoader
 import okhttp3.ConnectionSpec
 import okhttp3.Credentials
+import okhttp3.CookieJar
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.net.InetSocketAddress
@@ -29,6 +32,16 @@ val okHttpClient: OkHttpClient by lazy {
         .writeTimeout(15, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
         .callTimeout(60, TimeUnit.SECONDS)
+        .cookieJar(object : CookieJar {
+            override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+                 cookies.forEach {
+                     CookieStore.replaceCookie(url.toString(), "${it.name}=${it.value}")
+                 }
+            }
+            override fun loadForRequest(url: HttpUrl): List<Cookie> {
+                return ArrayList<Cookie>()
+            }
+        })
         .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory, SSLHelper.unsafeTrustManager)
         .retryOnConnectionFailure(true)
         .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)

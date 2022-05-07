@@ -18,11 +18,10 @@
         app:titleTextAppearance="@style/ToolbarTitle" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_image"
-        android:scaleType="fitXY"
+        android:id="@+id/verification_code_image_view"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:padding="3dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         tools:ignore="UnusedAttribute" />
 

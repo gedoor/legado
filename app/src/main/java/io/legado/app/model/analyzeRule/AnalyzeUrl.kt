@@ -192,9 +192,6 @@ class AnalyzeUrl(
                     }
                 }
         }
-        headerMap[UA_NAME] ?: let {
-            headerMap[UA_NAME] = AppConfig.userAgent
-        }
         urlNoQuery = url
         when (method) {
             RequestMethod.GET -> {
