@@ -12,6 +12,7 @@ import splitties.init.appCtx
 
 object SourceVerificationHelp {
 
+    private var key: String = ""
     /** 
      * 获取书源验证结果
      * 图片验证码 防爬 滑动验证码 点击字符 等等
@@ -19,7 +20,7 @@ object SourceVerificationHelp {
     fun getVerificationResult(source: BaseSource?, url: String, title: String, useBrowser: Boolean): String {
         source ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
         return runBlocking {
-            val key = "${source.getKey()}_verificationResult"
+            key = "${source.getKey()}_verificationResult"
             CacheManager.delete(key)
 
             if (!useBrowser) {
@@ -52,6 +53,7 @@ object SourceVerificationHelp {
      */
     fun startBrowser(source: BaseSource?, url: String, title: String, saveResult: Boolean? = false) {
         source ?: throw NoStackTraceException("startBrowser parameter source cannot be null")
+        key = "${source.getKey()}_verificationResult"
         appCtx.startActivity<WebViewActivity> {
             putExtra("title", title)
             putExtra("url", url)
@@ -61,7 +63,7 @@ object SourceVerificationHelp {
         }
     }
 
-    private fun checkActivityStatus(): Boolean {
-        return true
+    fun checkResult() {
+        CacheManager.get(key) ?: CacheManager.putMemory(key, "")
     }
 }

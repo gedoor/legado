@@ -135,17 +135,19 @@ class CheckSourceService : BaseService() {
                 ?.filterNot {
                     it.startsWith("Error: ")
                 }?.joinToString("\n")
-            //校验搜索书籍 用户设置校验搜索 并且 搜索链接不为空
-            if (CheckSource.checkSearch && !source.searchUrl.isNullOrBlank()) {
-                val searchBooks = WebBook.searchBookAwait(this, source, searchWord)
-                if (searchBooks.isEmpty()) {
-                    source.addGroup("搜索失效")
-                    if (!CheckSource.checkDiscovery) {
-                        throw NoStackTraceException("搜索书籍为空")
+            //校验搜索书籍
+            if (CheckSource.checkSearch) {
+                if (!source.searchUrl.isNullOrBlank()) {
+                    source.removeGroup("搜索链接规则为空")
+                    val searchBooks = WebBook.searchBookAwait(this, source, searchWord)
+                    if (searchBooks.isEmpty()) {
+                        source.addGroup("搜索失效")
+                    } else {
+                        source.removeGroup("搜索失效")
+                        checkBook(searchBooks.first().toBook(), source)
                     }
                 } else {
-                    source.removeGroup("搜索失效")
-                    checkBook(searchBooks.first().toBook(), source)
+                    source.addGroup("搜索链接规则为空")
                 }
             }
             //校验发现书籍
@@ -159,18 +161,12 @@ class CheckSourceService : BaseService() {
                     }
                 }
                 if (url.isNullOrBlank()) {
-                    when {
-                        !CheckSource.checkSearch -> throw NoStackTraceException("没有发现")
-                        source.hasGroup("搜索失效") -> throw NoStackTraceException("搜索内容为空并且没有发现")
-                    }
+                   source.addGroup("发现规则为空")
                 } else {
+                    source.removeGroup("发现规则为空")
                     val exploreBooks = WebBook.exploreBookAwait(this, source, url)
                     if (exploreBooks.isEmpty()) {
                         source.addGroup("发现失效")
-                        when {
-                            !CheckSource.checkSearch -> throw NoStackTraceException("发现书籍为空")
-                            source.hasGroup("搜索失效") -> throw NoStackTraceException("搜索内容和发现书籍为空")
-                        }
                     } else {
                         source.removeGroup("发现失效")
                         checkBook(exploreBooks.first().toBook(), source, false)

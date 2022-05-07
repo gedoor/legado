@@ -12,6 +12,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogVerificationCodeViewBinding
 import io.legado.app.help.CacheManager
+import io.legado.app.help.SourceVerificationHelp
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.lib.theme.primaryColor
@@ -91,9 +92,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     }
 
     override fun onDestroy() {
-        val sourceOrigin = arguments?.getString("sourceOrigin")
-        val key = "${sourceOrigin}_verificationResult"
-        CacheManager.get(key) ?: CacheManager.putMemory(key, "")
+        SourceVerificationHelp.checkResult()
         super.onDestroy()
         activity?.finish()
     }
