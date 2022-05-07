@@ -48,7 +48,17 @@ class WebService : BaseService() {
         upTile(true)
         networkChangedListener.register()
         networkChangedListener.onNetworkChanged = {
-            upWebServer()
+            val address = NetworkUtils.getLocalIPAddress()
+            if (address == null) {
+                hostAddress = getString(R.string.network_connection_unavailable)
+                notificationContent = hostAddress
+                upNotification()
+            } else {
+                hostAddress = getString(R.string.http_ip, address.hostAddress, getPort())
+                notificationContent = hostAddress
+                upNotification()
+            }
+            postEvent(EventBus.WEB_SERVICE, hostAddress)
         }
     }
 
