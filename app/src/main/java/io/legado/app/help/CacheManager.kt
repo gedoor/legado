@@ -35,6 +35,15 @@ object CacheManager {
         memoryLruCache.put(key, value)
     }
 
+    //从内存中获取数据 使用lruCache
+    fun getFromMemory(key: String): String? {
+        return memoryLruCache.get(key)
+    }
+
+    fun deleteMemory(key: String) {
+        memoryLruCache.remove(key)
+    }
+
     fun get(key: String): String? {
         getFromMemory(key)?.let {
             return it
@@ -45,11 +54,6 @@ object CacheManager {
             return cache.value
         }
         return null
-    }
-
-    //从内存中获取数据 使用lruCache
-    fun getFromMemory(key: String): String? {
-        return memoryLruCache.get(key)
     }
 
     fun getInt(key: String): Int? {
@@ -92,7 +96,7 @@ object CacheManager {
 
     fun delete(key: String) {
         appDb.cacheDao.delete(key)
-        memoryLruCache.remove(key)
+        deleteMemory(key)
         ACache.get(appCtx).remove(key)
     }
 }
