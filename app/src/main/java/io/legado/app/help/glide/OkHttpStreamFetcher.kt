@@ -39,7 +39,6 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
         }
         val requestBuilder: Request.Builder = Request.Builder().url(url.toStringUrl())
         val headerMap = HashMap<String, String>()
-        headerMap.putAll(url.headers)
         options.get(OkHttpModelLoader.sourceOriginOption)?.let { sourceUrl ->
             val source = appDb.bookSourceDao.getBookSource(sourceUrl)
                 ?: appDb.rssSourceDao.getByKey(sourceUrl)
@@ -47,6 +46,7 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
                 headerMap.putAll(it)
             }
         }
+        headerMap.putAll(url.headers)
         requestBuilder.addHeaders(headerMap)
         val request: Request = requestBuilder.build()
         this.callback = callback
