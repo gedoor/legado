@@ -11,7 +11,7 @@ import splitties.init.appCtx
 object CacheManager {
 
     private val queryTTFMap = hashMapOf<String, Pair<Long, QueryTTF>>()
-    private val memoryLruCache = object : LruCache<String, String>(100)
+    private val memoryLruCache = object : LruCache<String, String>(100) {}
 
     /**
      * saveTime 单位为秒
