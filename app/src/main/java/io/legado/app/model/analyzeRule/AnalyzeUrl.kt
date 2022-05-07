@@ -541,6 +541,8 @@ class AnalyzeUrl(
     fun getGlideUrl(): GlideUrl {
         setCookie(source?.getKey())
         val headers = LazyHeaders.Builder()
+        //删除glide默认ua
+        headers.setHeader(UA_NAME, null as String?)
         headerMap.forEach { (key, value) ->
             headers.addHeader(key, value)
         }
