@@ -17,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityWebViewBinding
+import io.legado.app.help.SourceVerificationHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.lib.dialogs.SelectItem
@@ -182,6 +183,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     override fun onDestroy() {
+        SourceVerificationHelp.checkResult()
         super.onDestroy()
         binding.webView.destroy()
     }
