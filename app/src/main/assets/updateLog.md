@@ -14,6 +14,7 @@
 **2022/05/04**
 
 * js添加 getVerificationCode startBrowserAwait
+* 监测网络变化及时更新web服务的IP
 
 **2022/05/02**
 
