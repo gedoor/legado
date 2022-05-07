@@ -6,6 +6,7 @@ import android.text.TextUtils
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cookie
 import io.legado.app.help.http.api.CookieManager
+import io.legado.app.help.CacheManager
 import io.legado.app.utils.NetworkUtils
 
 object CookieStore : CookieManager {
@@ -14,6 +15,7 @@ object CookieStore : CookieManager {
      *保存cookie到数据库，会自动识别url的二级域名
      */
     override fun setCookie(url: String, cookie: String?) {
+        CacheManager.putMemory(url, cookie ?: "")
         val cookieBean = Cookie(NetworkUtils.getSubDomain(url), cookie ?: "")
         appDb.cookieDao.insert(cookieBean)
     }
@@ -37,8 +39,11 @@ object CookieStore : CookieManager {
      *获取url所属的二级域名的cookie
      */
     override fun getCookie(url: String): String {
+        CacheManager.getFromMemory(url)?.let { return it }
         val cookieBean = appDb.cookieDao.get(NetworkUtils.getSubDomain(url))
-        return cookieBean?.cookie ?: ""
+        val cookie = cookieBean?.cookie ?: ""
+        CacheManager.putMemory(url, cookie ?: "")
+        return cookie
     }
 
     fun getKey(url: String, key: String): String {

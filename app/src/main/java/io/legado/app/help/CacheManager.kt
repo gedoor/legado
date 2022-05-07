@@ -11,11 +11,7 @@ import splitties.init.appCtx
 object CacheManager {
 
     private val queryTTFMap = hashMapOf<String, Pair<Long, QueryTTF>>()
-    private val memoryLruCache = object : LruCache<String, Cache>(100) {
-        override fun sizeOf(key: String, value: Cache): Int {
-            return 1
-        }
-    }
+    private val memoryLruCache = object : LruCache<String, String>(100)
 
     /**
      * saveTime 单位为秒
@@ -29,15 +25,14 @@ object CacheManager {
             is ByteArray -> ACache.get(appCtx).put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
-                memoryLruCache.put(key, cache)
+                putMemory(key, value.toString())
                 appDb.cacheDao.insert(cache)
             }
         }
     }
 
-    fun putMemory(key: String, value: Any) {
-        val cache = Cache(key, value.toString(), 0)
-        memoryLruCache.put(key, cache)
+    fun putMemory(key: String, value: String) {
+        memoryLruCache.put(key, value)
     }
 
     fun get(key: String): String? {
@@ -46,22 +41,15 @@ object CacheManager {
         }
         val cache = appDb.cacheDao.get(key)
         if (cache != null && (cache.deadline == 0L || cache.deadline > System.currentTimeMillis())) {
-            memoryLruCache.put(key, cache)
+            putMemory(key, cache.value ?: "")
             return cache.value
         }
         return null
     }
 
-    //从内存中获取数据 使用lruCache 支持过期功能
-    private fun getFromMemory(key: String): String? {
-        val cache = memoryLruCache.get(key) ?: return null
-        val deadline = cache.deadline
-        return if (deadline == 0L || deadline > System.currentTimeMillis()) {
-            cache.value
-        } else {
-            memoryLruCache.remove(key)
-            null
-        }
+    //从内存中获取数据 使用lruCache
+    fun getFromMemory(key: String): String? {
+        return memoryLruCache.get(key)
     }
 
     fun getInt(key: String): Int? {

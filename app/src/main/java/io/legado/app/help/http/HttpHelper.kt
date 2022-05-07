@@ -35,7 +35,7 @@ val okHttpClient: OkHttpClient by lazy {
         .cookieJar(object : CookieJar {
             override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                  cookies.forEach {
-                     CookieStore.setCookie(url.toString(), it.value)
+                     CookieStore.replaceCookie(url.toString(), "${it.name}=${it.value}")
                  }
             }
             override fun loadForRequest(url: HttpUrl): List<Cookie> {
