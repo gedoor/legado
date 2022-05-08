@@ -97,6 +97,7 @@ class ReplaceEditActivity :
         cbScopeTitle.isChecked = replaceRule.scopeTitle
         cbScopeContent.isChecked = replaceRule.scopeContent
         etScope.setText(replaceRule.scope)
+        etTimeout.setText(replaceRule.timeoutMillisecond.toString())
     }
 
     private fun getReplaceRule(): ReplaceRule = binding.run {
@@ -109,6 +110,7 @@ class ReplaceEditActivity :
         replaceRule.scopeTitle = cbScopeTitle.isChecked
         replaceRule.scopeContent = cbScopeContent.isChecked
         replaceRule.scope = etScope.text.toString()
+        replaceRule.timeoutMillisecond = etTimeout.text.toString().toLong()
         return replaceRule
     }
 
