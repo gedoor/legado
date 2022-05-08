@@ -93,8 +93,10 @@ object ImageProvider {
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
         if (op.outWidth < 1 && op.outHeight < 1) {
-            putDebug("ImageProvider: delete file due to image size ${op.outHeight}*${op.outWidth}. path: ${file.absolutePath}")
-            file.delete()
+            Coroutine.async {
+                putDebug("ImageProvider: delete file due to image size ${op.outHeight}*${op.outWidth}. path: ${file.absolutePath}")
+                file.delete()
+            }
             return Size(errorBitmap.width, errorBitmap.height)
         }
         return Size(op.outWidth, op.outHeight)
@@ -112,6 +114,7 @@ object ImageProvider {
         val cacheBitmap = bitmapLruCache.get(src)
         if (cacheBitmap != null) return cacheBitmap
         val vFile = BookHelp.getImage(book, src)
+        if (!vFile.exists()) return errorBitmap
         @Suppress("BlockingMethodInNonBlockingContext")
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
@@ -119,16 +122,10 @@ object ImageProvider {
             bitmapLruCache.put(src, bitmap)
             bitmap
         }.onFailure {
-            Coroutine.async {
-                putDebug(
-                    "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
-                    it
-                )
-                if (FileUtils.readText(vFile.absolutePath).isXml()) {
-                    putDebug("ImageProvider: delete xml file. path: ${vFile.absolutePath}")
-                    vFile.delete()
-                }
-            }
+            putDebug(
+                "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
+                it
+            )
         }.getOrDefault(errorBitmap)
     }
 
