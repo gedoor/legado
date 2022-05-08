@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
@@ -16,10 +17,12 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.CodeDialog
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.GSON
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import splitties.views.onClick
 
 class ImportHttpTtsDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) {
@@ -33,6 +36,7 @@ class ImportHttpTtsDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) 
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val viewModel by viewModels<ImportHttpTtsViewModel>()
+    private val adapter by lazy { SourcesAdapter(requireContext()) }
 
     override fun onStart() {
         super.onStart()
@@ -51,6 +55,57 @@ class ImportHttpTtsDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) 
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_book_source)
         binding.rotateLoading.show()
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+        binding.tvCancel.visible()
+        binding.tvCancel.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+        binding.tvOk.visible()
+        binding.tvOk.setOnClickListener {
+            val waitDialog = WaitDialog(requireContext())
+            waitDialog.show()
+            viewModel.importSelect {
+                waitDialog.dismiss()
+                dismissAllowingStateLoss()
+            }
+        }
+        binding.tvFooterLeft.visible()
+        binding.tvFooterLeft.setOnClickListener {
+            val selectAll = viewModel.isSelectAll
+            viewModel.selectStatus.forEachIndexed { index, b ->
+                if (b != !selectAll) {
+                    viewModel.selectStatus[index] = !selectAll
+                }
+            }
+            adapter.notifyDataSetChanged()
+            upSelectText()
+        }
+        viewModel.errorLiveData.observe(this) {
+            binding.rotateLoading.hide()
+            binding.tvMsg.apply {
+                text = it
+                visible()
+            }
+        }
+        viewModel.successLiveData.observe(this) {
+            binding.rotateLoading.hide()
+            if (it > 0) {
+                adapter.setItems(viewModel.allSources)
+                upSelectText()
+            } else {
+                binding.tvMsg.apply {
+                    setText(R.string.wrong_format)
+                    visible()
+                }
+            }
+        }
+        val source = arguments?.getString("source")
+        if (source.isNullOrEmpty()) {
+            dismiss()
+            return
+        }
+        viewModel.importSource(source)
     }
 
     private fun upSelectText() {

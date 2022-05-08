@@ -55,9 +55,9 @@ class OnLineImportActivity :
                 "/textTocRule" -> viewModel.getText(url) { json ->
                     viewModel.importTextTocRule(json, this::finallyDialog)
                 }
-                "/httpTTS" -> viewModel.getText(url) { json ->
-                    viewModel.importHttpTTS(json, this::finallyDialog)
-                }
+                "/httpTTS" -> showDialogFragment(
+                    ImportHttpTtsDialog(url, true)
+                )
                 "/theme" -> viewModel.getText(url) { json ->
                     viewModel.importTheme(json, this::finallyDialog)
                 }
