@@ -31,6 +31,9 @@ class OnLineImportActivity :
                 "replaceRule" -> showDialogFragment(
                     ImportReplaceRuleDialog(it.second, true)
                 )
+                "httpTts" -> showDialogFragment(
+                    ImportHttpTtsDialog(it.second, true)
+                )
             }
         }
         viewModel.errorLive.observe(this) {

@@ -88,7 +88,7 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
                         json.contains("name") && json.contains("rule") ->
                             importTextTocRule(json, finally)
                         json.contains("name") && json.contains("url") ->
-                            importHttpTTS(json, finally)
+                            successLive.postValue(Pair("httpTts", json))
                         else -> errorLive.postValue("格式不对")
                     }
                 }
