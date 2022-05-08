@@ -4,11 +4,15 @@ import android.os.Build
 import io.legado.app.utils.printOnDebug
 import okhttp3.*
 import okhttp3.internal.http.receiveHeaders
+import java.io.IOException
 
 
 class CronetInterceptor(private val cookieJar: CookieJar = CookieJar.NO_COOKIES) : Interceptor {
-
+    @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
+        if (chain.call().isCanceled()) {
+            throw IOException("Canceled")
+        }
         val original: Request = chain.request()
         //Cronet未初始化
         return if (!CronetLoader.install() || cronetEngine == null) {

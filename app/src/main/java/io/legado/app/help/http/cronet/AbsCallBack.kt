@@ -21,7 +21,7 @@ abstract class AbsCallBack(
     private val eventListener: EventListener? = null,
     private val responseCallback: Callback? = null
 
-) : UrlRequest.Callback() {
+) : UrlRequest.Callback(), AutoCloseable {
 
     val buffer = Buffer()
 
@@ -224,5 +224,9 @@ abstract class AbsCallBack(
                 .headers(headers)
                 .build()
         }
+    }
+
+    override fun close() {
+        buffer.clear()
     }
 }

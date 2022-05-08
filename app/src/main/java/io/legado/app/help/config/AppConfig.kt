@@ -11,7 +11,8 @@ import splitties.init.appCtx
 @Suppress("MemberVisibilityCanBePrivate")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val isGooglePlay = appCtx.channel == "google"
-    val isCronet = appCtx.getPrefBoolean("Cronet")
+    val isCronet = appCtx.getPrefBoolean(PreferKey.cronet)
+    val useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
     var userAgent: String = getPrefUserAgent()
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)

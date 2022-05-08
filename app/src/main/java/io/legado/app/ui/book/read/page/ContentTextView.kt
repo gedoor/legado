@@ -3,13 +3,13 @@ package io.legado.app.ui.book.read.page
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.PaintFlagsDrawFilter
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadBook
@@ -49,12 +49,20 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
     private var pageOffset = 0
 
+    //绘制图片的paint
+    private val imagePaint by lazy {
+        Paint().apply {
+            isAntiAlias = AppConfig.useAntiAlias
+        }
+    }
+
     init {
         callBack = activity as CallBack
     }
 
     fun setContent(textPage: TextPage) {
         this.textPage = textPage
+        imagePaint.isAntiAlias = AppConfig.useAntiAlias
         invalidate()
     }
 
@@ -163,8 +171,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         lineTop: Float,
         lineBottom: Float
     ) {
-        canvas.drawFilter =
-            PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+
         val book = ReadBook.book ?: return
         val bitmap = ImageProvider.getImage(
             book,
@@ -181,7 +188,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             RectF(textChar.start, lineTop + div, textChar.end, lineBottom - div)
         }
         kotlin.runCatching {
-            canvas.drawBitmap(bitmap, null, rectF, null)
+            canvas.drawBitmap(bitmap, null, rectF, imagePaint)
         }.onFailure { e ->
             context.toastOnUi(e.localizedMessage)
         }
