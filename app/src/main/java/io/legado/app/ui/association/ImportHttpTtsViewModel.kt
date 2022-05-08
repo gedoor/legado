@@ -6,12 +6,9 @@ import com.jayway.jsonpath.JsonPath
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.ContentProcessor
-import io.legado.app.help.SourceHelp
-import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -52,9 +49,13 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
 
     fun importSelect(finally: () -> Unit) {
         execute {
-            val keepName = AppConfig.importKeepName
-            val selectSource = arrayListOf<BookSource>()
-            SourceHelp.insertBookSource(*selectSource.toTypedArray())
+            val selectSource = arrayListOf<HttpTTS>()
+            selectStatus.forEachIndexed { index, b ->
+                if (b) {
+                    selectSource.add(allSources[index])
+                }
+            }
+            appDb.httpTTSDao.insert(*selectSource.toTypedArray())
             ContentProcessor.upReplaceRules()
         }.onFinally {
             finally.invoke()
