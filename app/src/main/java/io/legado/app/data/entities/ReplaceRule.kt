@@ -84,4 +84,11 @@ data class ReplaceRule(
         }
         return true
     }
+
+    fun getValidTimeoutMillisecond(): Long {
+        if (timeoutMillisecond <= 0) {
+            return 3000L
+        }
+        return timeoutMillisecond
+    }
 }
