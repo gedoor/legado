@@ -870,6 +870,8 @@
     <string name="check_source_show_debug_message_summary">Show network status and timestamp during source checking</string>
     <string name="need_login">need login</string>
     <string name="pref_cronet_summary">use Cronet access network</string>
+    <string name="anti_alias">Anti-Aliasing</string>
+    <string name="pref_anti_alias_summary">Anti-Aliasing when draw picture</string>
     <string name="upload_url">upload url</string>
     <string name="download_url_rule">下载URL规则</string>
     <string name="export_success">export success</string>
@@ -974,5 +976,7 @@
     <string name="soure_change_source">是否确认换源</string>
     <string name="input_verification_code">输入验证码</string>
     <string name="verification_code">验证码</string>
+
+
     <!-- string end -->
 </resources>

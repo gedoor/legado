@@ -80,6 +80,8 @@ object PreferKey {
     const val importKeepName = "importKeepName"
     const val screenOrientation = "screenOrientation"
     const val syncBookProgress = "syncBookProgress"
+    const val cronet = "Cronet"
+    const val antiAlias = "antiAlias"
     const val preDownloadNum = "preDownloadNum"
     const val autoRefresh = "auto_refresh"
     const val defaultToRead = "defaultToRead"
