@@ -25,6 +25,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.association.ImportHttpTtsDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.*
@@ -183,7 +184,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
                         cacheUrls.add(0, url)
                         aCache.put(ttsUrlKey, cacheUrls.joinToString(","))
                     }
-                    viewModel.importOnLine(url)
+                    showDialogFragment(ImportHttpTtsDialog(url))
                 }
             }
         }
