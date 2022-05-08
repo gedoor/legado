@@ -57,19 +57,17 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
         execute {
             when {
                 text1.isJsonObject() -> {
-                    HttpTTS.fromJson(text1)
+                    HttpTTS.fromJson(text1).getOrThrow()
                 }
                 text1.isJsonArray() -> {
-                    HttpTTS.fromJsonArray(text1).firstOrNull()
+                    HttpTTS.fromJsonArray(text1).getOrThrow().first()
                 }
                 else -> {
                     throw NoStackTraceException("格式不对")
                 }
             }
         }.onSuccess {
-            it?.let { httpTts ->
-                onSuccess.invoke(httpTts)
-            } ?: context.toastOnUi("格式不对")
+            onSuccess.invoke(it)
         }.onError {
             context.toastOnUi(it.localizedMessage)
         }

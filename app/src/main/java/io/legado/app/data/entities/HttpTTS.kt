@@ -1,5 +1,6 @@
 package io.legado.app.data.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.jayway.jsonpath.DocumentContext
@@ -18,11 +19,14 @@ data class HttpTTS(
     var name: String = "",
     var url: String = "",
     var contentType: String? = null,
+    @ColumnInfo(defaultValue = "0")
     override var concurrentRate: String? = "0",
     override var loginUrl: String? = null,
     override var loginUi: String? = null,
     override var header: String? = null,
     var loginCheckJs: String? = null,
+    @ColumnInfo(defaultValue = "0")
+    var lastUpdateTime: Long = System.currentTimeMillis()
 ) : BaseSource {
 
     override fun getTag(): String {
@@ -36,7 +40,7 @@ data class HttpTTS(
     @Suppress("MemberVisibilityCanBePrivate")
     companion object {
 
-        fun fromJsonDoc(doc: DocumentContext): HttpTTS? {
+        fun fromJsonDoc(doc: DocumentContext): Result<HttpTTS> {
             return kotlin.runCatching {
                 val loginUi = doc.read<Any>("$.loginUi")
                 HttpTTS(
@@ -50,23 +54,25 @@ data class HttpTTS(
                     header = doc.readString("$.header"),
                     loginCheckJs = doc.readString("$.loginCheckJs")
                 )
-            }.getOrNull()
+            }
         }
 
-        fun fromJson(json: String): HttpTTS? {
+        fun fromJson(json: String): Result<HttpTTS> {
             return fromJsonDoc(jsonPath.parse(json))
         }
 
-        fun fromJsonArray(jsonArray: String): ArrayList<HttpTTS> {
-            val sources = arrayListOf<HttpTTS>()
-            val doc = jsonPath.parse(jsonArray).read<List<*>>("$")
-            doc.forEach {
-                val jsonItem = jsonPath.parse(it)
-                fromJsonDoc(jsonItem)?.let { source ->
-                    sources.add(source)
+        fun fromJsonArray(jsonArray: String): Result<ArrayList<HttpTTS>> {
+            return kotlin.runCatching {
+                val sources = arrayListOf<HttpTTS>()
+                val doc = jsonPath.parse(jsonArray).read<List<*>>("$")
+                doc.forEach {
+                    val jsonItem = jsonPath.parse(it)
+                    fromJsonDoc(jsonItem).getOrThrow().let { source ->
+                        sources.add(source)
+                    }
                 }
+                return@runCatching sources
             }
-            return sources
         }
 
     }

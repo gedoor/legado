@@ -18,7 +18,7 @@ import io.legado.app.utils.toastOnUi
 
 class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
 
-    val sysEngines = TextToSpeech(context, null).engines
+    val sysEngines: List<TextToSpeech.EngineInfo> = TextToSpeech(context, null).engines
 
     fun importDefault() {
         execute {
@@ -53,12 +53,12 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
     fun import(text: String) {
         when {
             text.isJsonArray() -> {
-                HttpTTS.fromJsonArray(text).let {
+                HttpTTS.fromJsonArray(text).getOrThrow().let {
                     appDb.httpTTSDao.insert(*it.toTypedArray())
                 }
             }
             text.isJsonObject() -> {
-                HttpTTS.fromJson(text)?.let {
+                HttpTTS.fromJson(text).getOrThrow().let {
                     appDb.httpTTSDao.insert(it)
                 }
             }

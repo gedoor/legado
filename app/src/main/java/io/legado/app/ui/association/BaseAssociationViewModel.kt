@@ -40,15 +40,15 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
     fun importHttpTTS(json: String, finally: (title: String, msg: String) -> Unit) {
         execute {
             if (json.isJsonArray()) {
-                HttpTTS.fromJsonArray(json).let {
+                HttpTTS.fromJsonArray(json).getOrThrow().let {
                     appDb.httpTTSDao.insert(*it.toTypedArray())
                     return@execute it.size
                 }
             } else {
-                HttpTTS.fromJson(json)?.let {
+                HttpTTS.fromJson(json).getOrThrow().let {
                     appDb.httpTTSDao.insert(it)
                     return@execute 1
-                } ?: throw NoStackTraceException("格式不对")
+                }
             }
         }.onSuccess {
             finally.invoke(context.getString(R.string.success), "导入${it}朗读引擎")

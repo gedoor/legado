@@ -22,7 +22,9 @@ object DefaultData {
                 appCtx.assets.open("defaultData${File.separator}httpTTS.json")
                     .readBytes()
             )
-        HttpTTS.fromJsonArray(json)
+        HttpTTS.fromJsonArray(json).getOrElse {
+            emptyList()
+        }
     }
 
     val readConfigs: List<ReadBookConfig.Config> by lazy {
