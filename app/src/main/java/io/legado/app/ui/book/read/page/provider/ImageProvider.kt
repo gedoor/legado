@@ -14,7 +14,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isXml
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
