@@ -12,8 +12,8 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readText
-import java.io.File
 import splitties.init.appCtx
+import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val importBookLiveData = MutableLiveData<Uri>()
@@ -41,7 +41,10 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                         importJson(content)
                     }
                     !fileName.matches(bookFileRegex) -> {
-                        appCtx.alert(title = appCtx.getString(R.string.draw), message = appCtx.getString(R.string.file_not_supported, fileName)) {
+                        appCtx.alert(
+                            title = appCtx.getString(R.string.draw),
+                            message = appCtx.getString(R.string.file_not_supported, fileName)
+                        ) {
                             okButton {
                                 importBookLiveData.postValue(uri)
                             }
