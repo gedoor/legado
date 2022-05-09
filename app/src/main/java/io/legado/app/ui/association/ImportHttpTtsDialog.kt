@@ -53,7 +53,7 @@ class ImportHttpTtsDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) 
     @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        binding.toolBar.setTitle(R.string.import_book_source)
+        binding.toolBar.setTitle(R.string.import_tts)
         binding.rotateLoading.show()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
