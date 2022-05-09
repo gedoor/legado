@@ -19,6 +19,9 @@ interface TxtTocRuleDao {
     @get:Query("select * from txtTocRules where enable != 1 order by serialNumber")
     val disabled: List<TxtTocRule>
 
+    @Query("select * from txtTocRules where id = :id")
+    fun get(id: Long): TxtTocRule?
+
     @get:Query("select ifNull(min(serialNumber), 0) from txtTocRules")
     val minOrder: Int
 

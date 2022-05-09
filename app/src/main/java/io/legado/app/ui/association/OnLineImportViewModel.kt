@@ -1,7 +1,6 @@
 package io.legado.app.ui.association
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.R
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.http.newCallResponseBody
@@ -10,8 +9,6 @@ import io.legado.app.help.http.text
 import okhttp3.MediaType.Companion.toMediaType
 
 class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
-    val successLive = MutableLiveData<Pair<String, String>>()
-    val errorLive = MutableLiveData<String>()
 
     fun getText(url: String, success: (text: String) -> Unit) {
         execute {
@@ -76,21 +73,7 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
                 }
                 else -> {
                     val json = rs.text("utf-8")
-                    when {
-                        json.contains("bookSourceUrl") ->
-                            successLive.postValue(Pair("bookSource", json))
-                        json.contains("sourceUrl") ->
-                            successLive.postValue(Pair("rssSource", json))
-                        json.contains("replacement") ->
-                            successLive.postValue(Pair("replaceRule", json))
-                        json.contains("themeName") ->
-                            importTheme(json, finally)
-                        json.contains("name") && json.contains("rule") ->
-                            importTextTocRule(json, finally)
-                        json.contains("name") && json.contains("url") ->
-                            successLive.postValue(Pair("httpTts", json))
-                        else -> errorLive.postValue("格式不对")
-                    }
+                    importJson(json)
                 }
             }
         }

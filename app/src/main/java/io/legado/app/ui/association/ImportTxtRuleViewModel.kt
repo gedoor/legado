@@ -5,23 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.HttpTTS
+import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.isJsonArray
-import io.legado.app.utils.isJsonObject
-import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.*
 
-class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
+class ImportTxtRuleViewModel(app: Application) : BaseViewModel(app) {
 
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
 
-    val allSources = arrayListOf<HttpTTS>()
-    val checkSources = arrayListOf<HttpTTS?>()
+    val allSources = arrayListOf<TxtTocRule>()
+    val checkSources = arrayListOf<TxtTocRule?>()
     val selectStatus = arrayListOf<Boolean>()
 
     val isSelectAll: Boolean
@@ -47,13 +44,13 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
 
     fun importSelect(finally: () -> Unit) {
         execute {
-            val selectSource = arrayListOf<HttpTTS>()
+            val selectSource = arrayListOf<TxtTocRule>()
             selectStatus.forEachIndexed { index, b ->
                 if (b) {
                     selectSource.add(allSources[index])
                 }
             }
-            appDb.httpTTSDao.insert(*selectSource.toTypedArray())
+            appDb.txtTocRuleDao.insert(*selectSource.toTypedArray())
         }.onFinally {
             finally.invoke()
         }
@@ -61,21 +58,7 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
 
     fun importSource(text: String) {
         execute {
-            val mText = text.trim()
-            when {
-                mText.isJsonObject() -> {
-                    HttpTTS.fromJson(mText).getOrThrow().let {
-                        allSources.add(it)
-                    }
-                }
-                mText.isJsonArray() -> HttpTTS.fromJsonArray(mText).getOrThrow().let { items ->
-                    allSources.addAll(items)
-                }
-                mText.isAbsUrl() -> {
-                    importSourceUrl(mText)
-                }
-                else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
-            }
+            importSourceAwait(text.trim())
         }.onError {
             it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage ?: "")
@@ -84,20 +67,38 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
+    private suspend fun importSourceAwait(text: String) {
+        when {
+            text.isJsonObject() -> {
+                GSON.fromJsonObject<TxtTocRule>(text).getOrThrow()?.let {
+                    allSources.add(it)
+                }
+            }
+            text.isJsonArray() -> GSON.fromJsonArray<TxtTocRule>(text).getOrThrow()
+                ?.let { items ->
+                    allSources.addAll(items)
+                }
+            text.isAbsUrl() -> {
+                importSourceUrl(text)
+            }
+            else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
+        }
+    }
+
     private suspend fun importSourceUrl(url: String) {
         okHttpClient.newCallResponseBody {
             url(url)
         }.text().let {
-            allSources.addAll(HttpTTS.fromJsonArray(it).getOrThrow())
+            importSourceAwait(it)
         }
     }
 
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val source = appDb.httpTTSDao.get(it.id)
+                val source = appDb.txtTocRuleDao.get(it.id)
                 checkSources.add(source)
-                selectStatus.add(source == null || source.lastUpdateTime < it.lastUpdateTime)
+                selectStatus.add(source == null || it != source)
             }
             successLiveData.postValue(allSources.size)
         }

@@ -34,6 +34,12 @@ class OnLineImportActivity :
                 "httpTts" -> showDialogFragment(
                     ImportHttpTtsDialog(it.second, true)
                 )
+                "theme" -> showDialogFragment(
+                    ImportThemeDialog(it.second, true)
+                )
+                "txtRule" -> showDialogFragment(
+                    ImportTxtRuleDialog(it.second, true)
+                )
             }
         }
         viewModel.errorLive.observe(this) {

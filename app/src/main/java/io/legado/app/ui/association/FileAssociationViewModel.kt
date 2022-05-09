@@ -15,14 +15,10 @@ import java.io.File
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val importBookLiveData = MutableLiveData<Uri>()
     val onLineImportLive = MutableLiveData<Uri>()
-    val importBookSourceLive = MutableLiveData<String>()
-    val importRssSourceLive = MutableLiveData<String>()
-    val importReplaceRuleLive = MutableLiveData<String>()
     val openBookLiveData = MutableLiveData<String>()
-    val errorLiveData = MutableLiveData<String>()
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun dispatchIndent(uri: Uri, finally: (title: String, msg: String) -> Unit) {
+    fun dispatchIndent(uri: Uri) {
         execute {
             lateinit var fileName: String
             lateinit var content: String
@@ -39,22 +35,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                 }
                 when {
                     content.isJson() -> {
-                        //暂时根据文件内容判断属于什么
-                        when {
-                            content.contains("bookSourceUrl") ->
-                                importBookSourceLive.postValue(content)
-                            content.contains("sourceUrl") ->
-                                importRssSourceLive.postValue(content)
-                            content.contains("pattern") ->
-                                importReplaceRuleLive.postValue(content)
-                            content.contains("themeName") ->
-                                importTheme(content, finally)
-                            content.contains("name") && content.contains("rule") ->
-                                importTextTocRule(content, finally)
-                            content.contains("name") && content.contains("url") ->
-                                importHttpTTS(content, finally)
-                            else -> errorLiveData.postValue("格式不对")
-                        }
+                        importJson(content)
                     }
                     fileName.matches(bookFileRegex) -> {
                         importBookLiveData.postValue(uri)
@@ -68,7 +49,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
             }
         }.onError {
             it.printOnDebug()
-            errorLiveData.postValue(it.localizedMessage)
+            errorLive.postValue(it.localizedMessage)
         }
     }
 

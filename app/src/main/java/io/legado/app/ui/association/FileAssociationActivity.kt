@@ -70,19 +70,29 @@ class FileAssociationActivity :
             }
             finish()
         }
-        viewModel.importBookSourceLive.observe(this) {
-            binding.rotateLoading.hide()
-            showDialogFragment(ImportBookSourceDialog(it, true))
+        viewModel.successLive.observe(this) {
+            when (it.first) {
+                "bookSource" -> showDialogFragment(
+                    ImportBookSourceDialog(it.second, true)
+                )
+                "rssSource" -> showDialogFragment(
+                    ImportRssSourceDialog(it.second, true)
+                )
+                "replaceRule" -> showDialogFragment(
+                    ImportReplaceRuleDialog(it.second, true)
+                )
+                "httpTts" -> showDialogFragment(
+                    ImportHttpTtsDialog(it.second, true)
+                )
+                "theme" -> showDialogFragment(
+                    ImportThemeDialog(it.second, true)
+                )
+                "txtRule" -> showDialogFragment(
+                    ImportTxtRuleDialog(it.second, true)
+                )
+            }
         }
-        viewModel.importRssSourceLive.observe(this) {
-            binding.rotateLoading.hide()
-            showDialogFragment(ImportRssSourceDialog(it, true))
-        }
-        viewModel.importReplaceRuleLive.observe(this) {
-            binding.rotateLoading.hide()
-            showDialogFragment(ImportReplaceRuleDialog(it, true))
-        }
-        viewModel.errorLiveData.observe(this) {
+        viewModel.errorLive.observe(this) {
             binding.rotateLoading.hide()
             toastOnUi(it)
             finish()
@@ -95,7 +105,7 @@ class FileAssociationActivity :
             finish()
         }
         intent.data?.let { data ->
-            viewModel.dispatchIndent(data, this::finallyDialog)
+            viewModel.dispatchIndent(data)
         }
     }
 
