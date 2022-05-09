@@ -44,24 +44,21 @@ class FileAssociationActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
-        viewModel.importBookLiveData.observe(this) { uri ->
-            if (uri.isContentScheme()) {
-                val treeUriStr = AppConfig.defaultBookTreeUri
-                if (treeUriStr.isNullOrEmpty()) {
-                    localBookTreeSelect.launch {
-                        title = "选择保存书籍的文件夹"
-                        mode = HandleFileContract.DIR_SYS
-                    }
-                } else {
-                    importBook(Uri.parse(treeUriStr), uri)
-                }
+        viewModel.importBookLiveData.observe(this) {
+            val uri = it.first
+            val extraMessage = it.second
+            if (extraMessage == null) {
+                importBook(uri)
             } else {
-                PermissionsCompat.Builder(this)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted {
-                        viewModel.importBook(uri)
-                    }.request()
+                binding.rotateLoading.hide()
+                alert(title = getString(R.string.draw), message = extraMessage) {
+                    okButton {
+                       importBook(uri)
+                    }
+                    cancelButton {
+                        finish()
+                    }
+                }
             }
         }
         viewModel.onLineImportLive.observe(this) {
@@ -158,6 +155,27 @@ class FileAssociationActivity :
             onDismiss {
                 finish()
             }
+        }
+    }
+
+    private fun importBook(uri: Uri) {
+        if (uri.isContentScheme()) {
+            val treeUriStr = AppConfig.defaultBookTreeUri
+            if (treeUriStr.isNullOrEmpty()) {
+                localBookTreeSelect.launch {
+                    title = "选择保存书籍的文件夹"
+                    mode = HandleFileContract.DIR_SYS
+                }
+            } else {
+                importBook(Uri.parse(treeUriStr), uri)
+            }
+        } else {
+            PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted {
+                    viewModel.importBook(uri)
+                }.request()
         }
     }
 

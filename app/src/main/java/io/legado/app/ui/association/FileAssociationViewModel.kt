@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.R
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
@@ -11,9 +12,11 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readText
 import java.io.File
+import splitties.init.appCtx
+
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
-    val importBookLiveData = MutableLiveData<Uri>()
+    val importBookLiveData = MutableLiveData<Pair<Uri, String?>>()
     val onLineImportLive = MutableLiveData<Uri>()
     val importBookSourceLive = MutableLiveData<String>()
     val importRssSourceLive = MutableLiveData<String>()
@@ -53,14 +56,15 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                                 importTextTocRule(content, finally)
                             content.contains("name") && content.contains("url") ->
                                 importHttpTTS(content, finally)
-                            else -> errorLiveData.postValue("格式不对")
+                            else -> errorLiveData.postValue(appCtx.getString(R.string.wrong_format))
                         }
                     }
-                    fileName.matches(bookFileRegex) -> {
-                        importBookLiveData.postValue(uri)
+                    !fileName.matches(bookFileRegex) -> {
+                        val extraMessage = appCtx.getString(R.string.file_not_supported, fileName)
+                        importBookLiveData.postValue(Pai(uri, extraMessage))
                     }
                     else -> {
-                        throw NoStackTraceException("$fileName 暂未支持的本地书籍格式(TXT/UMD/EPUB)")
+                        importBookLiveData.postValue(Pair(uri, null))
                     }
                 }
             } else {
