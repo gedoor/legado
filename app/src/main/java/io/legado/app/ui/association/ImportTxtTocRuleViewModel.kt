@@ -12,7 +12,7 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.*
 
-class ImportTxtRuleViewModel(app: Application) : BaseViewModel(app) {
+class ImportTxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
 
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()

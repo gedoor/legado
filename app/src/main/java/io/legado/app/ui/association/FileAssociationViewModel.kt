@@ -4,21 +4,19 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
-import io.legado.app.R
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readText
-import splitties.init.appCtx
 import java.io.File
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val importBookLiveData = MutableLiveData<Uri>()
     val onLineImportLive = MutableLiveData<Uri>()
     val openBookLiveData = MutableLiveData<String>()
+    val notSupportedLiveData = MutableLiveData<Pair<Uri, String>>()
 
     @Suppress("BlockingMethodInNonBlockingContext")
     fun dispatchIndent(uri: Uri) {
@@ -40,19 +38,11 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                     content.isJson() -> {
                         importJson(content)
                     }
-                    !fileName.matches(bookFileRegex) -> {
-                        appCtx.alert(
-                            title = appCtx.getString(R.string.draw),
-                            message = appCtx.getString(R.string.file_not_supported, fileName)
-                        ) {
-                            okButton {
-                                importBookLiveData.postValue(uri)
-                            }
-                            cancelButton()
-                        }
+                    fileName.matches(bookFileRegex) -> {
+                        importBookLiveData.postValue(uri)
                     }
                     else -> {
-                        importBookLiveData.postValue(uri)
+                        notSupportedLiveData.postValue(Pair(uri, fileName))
                     }
                 }
             } else {

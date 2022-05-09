@@ -19,6 +19,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 
 import java.io.File
 import java.io.FileOutputStream
@@ -45,24 +46,7 @@ class FileAssociationActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.rotateLoading.show()
         viewModel.importBookLiveData.observe(this) { uri ->
-            if (uri.isContentScheme()) {
-                val treeUriStr = AppConfig.defaultBookTreeUri
-                if (treeUriStr.isNullOrEmpty()) {
-                    localBookTreeSelect.launch {
-                        title = "选择保存书籍的文件夹"
-                        mode = HandleFileContract.DIR_SYS
-                    }
-                } else {
-                    importBook(Uri.parse(treeUriStr), uri)
-                }
-            } else {
-                PermissionsCompat.Builder(this)
-                    .addPermissions(*Permissions.Group.STORAGE)
-                    .rationale(R.string.tip_perm_request_storage)
-                    .onGranted {
-                        viewModel.importBook(uri)
-                    }.request()
-            }
+            importBook(uri)
         }
         viewModel.onLineImportLive.observe(this) {
             startActivity<OnLineImportActivity> {
@@ -88,7 +72,7 @@ class FileAssociationActivity :
                     ImportThemeDialog(it.second, true)
                 )
                 "txtRule" -> showDialogFragment(
-                    ImportTxtRuleDialog(it.second, true)
+                    ImportTxtTocRuleDialog(it.second, true)
                 )
             }
         }
@@ -104,8 +88,40 @@ class FileAssociationActivity :
             }
             finish()
         }
+        viewModel.notSupportedLiveData.observe(this) { data ->
+            appCtx.alert(
+                title = appCtx.getString(R.string.draw),
+                message = appCtx.getString(R.string.file_not_supported, data.second)
+            ) {
+                okButton {
+                    importBook(data.first)
+                }
+                cancelButton()
+            }
+        }
         intent.data?.let { data ->
             viewModel.dispatchIndent(data)
+        }
+    }
+
+    private fun importBook(uri: Uri) {
+        if (uri.isContentScheme()) {
+            val treeUriStr = AppConfig.defaultBookTreeUri
+            if (treeUriStr.isNullOrEmpty()) {
+                localBookTreeSelect.launch {
+                    title = "选择保存书籍的文件夹"
+                    mode = HandleFileContract.DIR_SYS
+                }
+            } else {
+                importBook(Uri.parse(treeUriStr), uri)
+            }
+        } else {
+            PermissionsCompat.Builder(this)
+                .addPermissions(*Permissions.Group.STORAGE)
+                .rationale(R.string.tip_perm_request_storage)
+                .onGranted {
+                    viewModel.importBook(uri)
+                }.request()
         }
     }
 
@@ -158,15 +174,6 @@ class FileAssociationActivity :
                         finish()
                     }
                 }
-            }
-        }
-    }
-
-    private fun finallyDialog(title: String, msg: String) {
-        alert(title, msg) {
-            okButton()
-            onDismiss {
-                finish()
             }
         }
     }
