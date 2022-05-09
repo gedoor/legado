@@ -65,11 +65,11 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
             if (json.isJsonArray()) {
                 GSON.fromJsonArray<ThemeConfig.Config>(json).getOrThrow()?.forEach {
                     ThemeConfig.addConfig(it)
-                } ?: throw NoStackTraceException("格式不对")
+                }
             } else {
                 GSON.fromJsonObject<ThemeConfig.Config>(json).getOrThrow()?.let {
                     ThemeConfig.addConfig(it)
-                } ?: throw NoStackTraceException("格式不对")
+                }
             }
         }.onSuccess {
             finally.invoke(context.getString(R.string.success), "导入主题成功")
