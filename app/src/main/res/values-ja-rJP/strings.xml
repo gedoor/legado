@@ -977,5 +977,6 @@
     <string name="input_verification_code">输入验证码</string>
     <string name="verification_code">验证码</string>
     <string name="timeout_millisecond">超时毫秒数</string>
+    <string name="file_not_supported">Continue to open although %1$s is not supported ?</string>
     <!-- string end -->
 </resources>

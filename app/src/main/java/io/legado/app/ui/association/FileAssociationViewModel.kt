@@ -4,13 +4,16 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.R
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readText
 import java.io.File
+import splitties.init.appCtx
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val importBookLiveData = MutableLiveData<Uri>()
@@ -37,11 +40,16 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                     content.isJson() -> {
                         importJson(content)
                     }
-                    fileName.matches(bookFileRegex) -> {
-                        importBookLiveData.postValue(uri)
+                    !fileName.matches(bookFileRegex) -> {
+                        appCtx.alert(title = appCtx.getString(R.string.draw), message = appCtx.getString(R.string.file_not_supported, fileName)) {
+                            okButton {
+                                importBookLiveData.postValue(uri)
+                            }
+                            cancelButton()
+                        }
                     }
                     else -> {
-                        throw NoStackTraceException("$fileName 暂未支持的本地书籍格式(TXT/UMD/EPUB)")
+                        importBookLiveData.postValue(uri)
                     }
                 }
             } else {
