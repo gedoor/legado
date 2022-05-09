@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
@@ -357,7 +359,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     @SuppressLint("InflateParams")
     private fun checkSource() {
-        alert(titleResource = R.string.search_book_key) {
+        val dialog = alert(titleResource = R.string.search_book_key) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "search word"
                 editView.setText(CheckSource.keyword)
@@ -375,11 +377,16 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 Debug.isChecking = firstItem >= 0 && lastItem >= 0
                 checkMessageRefreshJob(firstItem, lastItem).start()
             }
-            neutralButton(R.string.check_source_config) {
-                checkSource()
-                showDialogFragment<CheckSourceConfig>()
-            }
+            neutralButton(R.string.check_source_config, null)
             cancelButton()
+        }
+        //手动设置监听 避免点击打开校验设置后对话框关闭
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.let {
+            it.setOnClickListener(object: View.OnClickListener {
+                override fun onClick(view: View) {
+                    showDialogFragment<CheckSourceConfig>()
+                }
+           })
         }
     }
 
