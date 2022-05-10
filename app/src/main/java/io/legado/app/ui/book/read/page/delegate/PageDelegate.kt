@@ -183,7 +183,7 @@ abstract class PageDelegate(protected val readView: ReadView) {
     }
 
     open fun onDestroy() {
-
+        // run on destroy
     }
 
 }

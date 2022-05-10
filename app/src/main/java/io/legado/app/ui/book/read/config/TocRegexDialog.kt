@@ -24,6 +24,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.association.ImportTxtTocRuleDialog
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
@@ -153,9 +154,7 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                         cacheUrls.add(0, it)
                         aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
                     }
-                    viewModel.importOnLine(it) { msg ->
-                        toastOnUi(msg)
-                    }
+                    showDialogFragment(ImportTxtTocRuleDialog(it))
                 }
             }
             cancelButton()
