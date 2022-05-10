@@ -16,7 +16,9 @@
 * js添加 getVerificationCode startBrowserAwait
 * 监测网络变化及时更新web服务的IP
 * 优化在线tts导入
+* 优化txt规则导入
 * 替换规则添加超时字段
+* 其它一些bug修复
 
 **2022/05/02**
 

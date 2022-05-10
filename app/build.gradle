@@ -20,6 +20,7 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    namespace 'io.legado.app'
     signingConfigs {
         if (project.hasProperty("RELEASE_STORE_FILE")) {
             myConfig {

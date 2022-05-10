@@ -89,7 +89,7 @@ class FileAssociationActivity :
             finish()
         }
         viewModel.notSupportedLiveData.observe(this) { data ->
-            appCtx.alert(
+            alert(
                 title = appCtx.getString(R.string.draw),
                 message = appCtx.getString(R.string.file_not_supported, data.second)
             ) {
