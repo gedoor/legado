@@ -89,6 +89,7 @@ class FileAssociationActivity :
             finish()
         }
         viewModel.notSupportedLiveData.observe(this) { data ->
+            binding.rotateLoading.hide()
             alert(
                 title = appCtx.getString(R.string.draw),
                 message = appCtx.getString(R.string.file_not_supported, data.second)
@@ -96,7 +97,9 @@ class FileAssociationActivity :
                 okButton {
                     importBook(data.first)
                 }
-                cancelButton()
+                cancelButton {
+                    finish()
+                }
             }
         }
         intent.data?.let { data ->
