@@ -90,13 +90,14 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
             val mText = text.trim()
             when {
                 mText.isJsonObject() -> {
-                    val json = JsonPath.parse(mText)
-                    val urls = json.read<List<String>>("$.sourceUrls")
-                    if (!urls.isNullOrEmpty()) {
-                        urls.forEach {
+                    kotlin.runCatching {
+                        val json = JsonPath.parse(mText)
+                        json.read<List<String>>("$.sourceUrls")
+                    }.onSuccess {
+                        it.forEach {
                             importSourceUrl(it)
                         }
-                    } else {
+                    }.onFailure {
                         BookSource.fromJson(mText).getOrThrow().let {
                             allSources.add(it)
                         }
