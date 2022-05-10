@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.Preference
 import io.legado.app.R
-import io.legado.app.base.BasePreferenceFragment
+import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
@@ -16,7 +16,7 @@ import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 import java.io.FileOutputStream
 
-class CoverConfigFragment : BasePreferenceFragment(),
+class CoverConfigFragment : PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val requestCodeCover = 111

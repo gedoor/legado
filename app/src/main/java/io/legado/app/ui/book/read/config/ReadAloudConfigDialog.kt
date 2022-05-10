@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import io.legado.app.R
-import io.legado.app.base.BasePreferenceFragment
+import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -54,7 +54,7 @@ class ReadAloudConfigDialog : DialogFragment() {
             .commit()
     }
 
-    class ReadAloudPreferenceFragment : BasePreferenceFragment(),
+    class ReadAloudPreferenceFragment : PreferenceFragment(),
         SpeakEngineDialog.CallBack,
         SharedPreferences.OnSharedPreferenceChangeListener {
 

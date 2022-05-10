@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
 import io.legado.app.R
-import io.legado.app.base.BasePreferenceFragment
+import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.config.ReadBookConfig
@@ -67,7 +67,7 @@ class MoreConfigDialog : DialogFragment() {
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    class ReadPreferenceFragment : BasePreferenceFragment(),
+    class ReadPreferenceFragment : PreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         @SuppressLint("RestrictedApi")

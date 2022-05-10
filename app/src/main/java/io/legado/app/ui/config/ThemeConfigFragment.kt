@@ -13,7 +13,7 @@ import android.widget.SeekBar
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.AppContextWrapper
-import io.legado.app.base.BasePreferenceFragment
+import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -33,7 +33,7 @@ import java.io.FileOutputStream
 
 
 @Suppress("SameParameterValue")
-class ThemeConfigFragment : BasePreferenceFragment(),
+class ThemeConfigFragment : PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val requestCodeBgLight = 121

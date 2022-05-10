@@ -7,7 +7,7 @@ import io.legado.app.ui.widget.prefs.EditTextPreferenceDialog
 import io.legado.app.ui.widget.prefs.ListPreferenceDialog
 import io.legado.app.ui.widget.prefs.MultiSelectListPreferenceDialog
 
-abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
+abstract class PreferenceFragment : PreferenceFragmentCompat() {
 
     private val dialogFragmentTag = "androidx.preference.PreferenceFragment.DIALOG"
 
@@ -58,6 +58,5 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
 
         f.show(parentFragmentManager, dialogFragmentTag)
     }
-
 
 }
