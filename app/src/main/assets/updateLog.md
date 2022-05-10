@@ -14,6 +14,7 @@
 **2022/05/10**
 
 * 更新cronet: 101.0.4951.61
+* 更新到SDK 32
 * js添加 getVerificationCode startBrowserAwait
 * 监测网络变化及时更新web服务的IP
 * 优化在线tts导入
