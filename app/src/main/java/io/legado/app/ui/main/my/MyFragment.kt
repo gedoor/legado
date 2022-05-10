@@ -8,7 +8,6 @@ import android.view.View
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.FragmentMyConfigBinding
@@ -29,6 +28,7 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.prefs.NameListPreference
 import io.legado.app.ui.widget.prefs.PreferenceCategory
 import io.legado.app.ui.widget.prefs.SwitchPreference
+import io.legado.app.ui.widget.prefs.fragment.PreferenceFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 

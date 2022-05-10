@@ -10,7 +10,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import io.legado.app.R
-import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -20,6 +19,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.ui.widget.prefs.fragment.PreferenceFragment
 import io.legado.app.utils.*
 
 class ReadAloudConfigDialog : DialogFragment() {

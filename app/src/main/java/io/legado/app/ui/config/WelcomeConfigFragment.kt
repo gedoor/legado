@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.Preference
 import io.legado.app.R
-import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.BookCover
+import io.legado.app.ui.widget.prefs.fragment.PreferenceFragment
 import io.legado.app.utils.*
 import java.io.FileOutputStream
 

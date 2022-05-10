@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import io.legado.app.R
-import io.legado.app.base.PreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
@@ -22,6 +21,7 @@ import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
+import io.legado.app.ui.widget.prefs.fragment.PreferenceFragment
 import io.legado.app.utils.*
 import splitties.init.appCtx
 

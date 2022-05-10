@@ -1,4 +1,4 @@
-package io.legado.app.base
+package io.legado.app.ui.widget.prefs.fragment
 
 import android.annotation.SuppressLint
 import androidx.fragment.app.DialogFragment
@@ -34,7 +34,7 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
             return
         }
 
-        val f: DialogFragment = when (preference) {
+        val dialogFragment: DialogFragment = when (preference) {
             is EditTextPreference -> {
                 EditTextPreferenceDialog.newInstance(preference.getKey())
             }
@@ -54,9 +54,9 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
             }
         }
         @Suppress("DEPRECATION")
-        f.setTargetFragment(this, 0)
+        dialogFragment.setTargetFragment(this, 0)
 
-        f.show(parentFragmentManager, dialogFragmentTag)
+        dialogFragment.show(parentFragmentManager, dialogFragmentTag)
     }
 
 }
