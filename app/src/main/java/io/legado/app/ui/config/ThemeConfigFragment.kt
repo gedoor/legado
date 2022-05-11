@@ -23,10 +23,10 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.prefs.ColorPreference
+import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.number.NumberPickerDialog
-import io.legado.app.ui.widget.prefs.ColorPreference
-import io.legado.app.ui.widget.prefs.fragment.PreferenceFragment
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import java.io.FileOutputStream

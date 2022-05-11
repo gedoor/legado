@@ -1,11 +1,11 @@
-package io.legado.app.ui.widget.prefs.fragment
+package io.legado.app.lib.prefs.fragment
 
 import android.annotation.SuppressLint
 import androidx.fragment.app.DialogFragment
 import androidx.preference.*
-import io.legado.app.ui.widget.prefs.EditTextPreferenceDialog
-import io.legado.app.ui.widget.prefs.ListPreferenceDialog
-import io.legado.app.ui.widget.prefs.MultiSelectListPreferenceDialog
+import io.legado.app.lib.prefs.EditTextPreferenceDialog
+import io.legado.app.lib.prefs.ListPreferenceDialog
+import io.legado.app.lib.prefs.MultiSelectListPreferenceDialog
 
 abstract class PreferenceFragment : PreferenceFragmentCompat() {
 

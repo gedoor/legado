@@ -15,11 +15,11 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.IntentHelp
 import io.legado.app.lib.dialogs.SelectItem
+import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.ui.widget.prefs.fragment.PreferenceFragment
 import io.legado.app.utils.*
 
 class ReadAloudConfigDialog : DialogFragment() {

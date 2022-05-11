@@ -24,11 +24,11 @@ import io.legado.app.help.storage.*
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
+import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.ui.widget.prefs.fragment.PreferenceFragment
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -127,7 +127,7 @@ class BackupConfigFragment : PreferenceFragment(),
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
         upPreferenceSummary(PreferKey.webDavDir, AppConfig.webDavDir)
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
-        findPreference<io.legado.app.ui.widget.prefs.Preference>("web_dav_restore")
+        findPreference<io.legado.app.lib.prefs.Preference>("web_dav_restore")
             ?.onLongClick { restoreDir.launch(); true }
     }
 
