@@ -95,7 +95,7 @@ data class BookChapter(
                 2 -> displayTitle = ChineseUtils.s2t(displayTitle)
             }
         }
-        if (useReplace && replaceRules != null) {
+        if (useReplace && replaceRules != null) kotlin.run {
             replaceRules.forEach { item ->
                 if (item.pattern.isNotEmpty()) {
                     try {
@@ -115,7 +115,7 @@ data class BookChapter(
                         item.isEnabled = false
                         appDb.replaceRuleDao.update(item)
                     } catch (e: CancellationException) {
-                        return displayTitle
+                        return@run
                     } catch (e: Exception) {
                         AppLog.put("${item.name}替换出错\n替换内容\n${displayTitle}", e)
                         appCtx.toastOnUi("${item.name}替换出错")
