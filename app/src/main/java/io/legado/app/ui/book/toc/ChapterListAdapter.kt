@@ -19,7 +19,9 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
@@ -84,7 +86,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     val displayTitle = item.getDisplayTitle(replaceRules, useReplace)
                     ensureActive()
                     displayTitleMap[item.title] = displayTitle
-                    notifyItemChanged(i, true)
+                    withContext(Main) {
+                        notifyItemChanged(i, true)
+                    }
                 }
             }
             for (i in 0 until startIndex) {
@@ -94,7 +98,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     val displayTitle = item.getDisplayTitle(replaceRules, useReplace)
                     ensureActive()
                     displayTitleMap[item.title] = displayTitle
-                    notifyItemChanged(i, true)
+                    withContext(Main) {
+                        notifyItemChanged(i, true)
+                    }
                 }
             }
         }
