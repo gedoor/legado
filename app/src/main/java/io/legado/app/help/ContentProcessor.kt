@@ -153,7 +153,7 @@ class ContentProcessor private constructor(
                             return item.name + it.msg
                         }
                         else -> {
-                            AppLog.put("${item.name}替换出错\n${it.localizedMessage}", it)
+                            AppLog.put("${item.name}替换出错\n替换内容\n${mContent}", it)
                             appCtx.toastOnUi("${item.name}替换出错")
                         }
                     }

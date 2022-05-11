@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.exception.RegexTimeoutException
@@ -113,6 +114,7 @@ data class BookChapter(
                         item.isEnabled = false
                         appDb.replaceRuleDao.update(item)
                     } catch (e: Exception) {
+                        AppLog.put("${item.name}替换出错\n替换内容\n${displayTitle}", e)
                         appCtx.toastOnUi("${item.name}替换出错")
                     }
                 }
