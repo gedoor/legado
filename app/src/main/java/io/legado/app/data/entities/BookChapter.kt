@@ -16,6 +16,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
@@ -113,6 +114,8 @@ data class BookChapter(
                     } catch (e: RegexTimeoutException) {
                         item.isEnabled = false
                         appDb.replaceRuleDao.update(item)
+                    } catch (e: CancellationException) {
+                        return displayTitle
                     } catch (e: Exception) {
                         AppLog.put("${item.name}替换出错\n替换内容\n${displayTitle}", e)
                         appCtx.toastOnUi("${item.name}替换出错")
