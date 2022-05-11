@@ -12,6 +12,7 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
     var bookData = MutableLiveData<Book>()
     var chapterListCallBack: ChapterListCallBack? = null
     var bookMarkCallBack: BookmarkCallBack? = null
+    var searchKey: String? = null
 
     fun initBook(bookUrl: String) {
         this.bookUrl = bookUrl

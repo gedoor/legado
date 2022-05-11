@@ -97,7 +97,15 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             viewModel.bookData.value?.bookUrl?.let { bookUrl ->
                 if (chapter.bookUrl == bookUrl) {
                     adapter.cacheFileNames.add(chapter.getFileName())
-                    adapter.notifyItemChanged(chapter.index, true)
+                    if (viewModel.searchKey.isNullOrEmpty()) {
+                        adapter.notifyItemChanged(chapter.index, true)
+                    } else {
+                        adapter.getItems().forEachIndexed { index, bookChapter ->
+                            if (bookChapter.index == chapter.index) {
+                                adapter.notifyItemChanged(index, true)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -128,12 +136,13 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 }
             }
             mLayoutManager.scrollToPositionWithOffset(scrollPos, 0)
+            adapter.upDisplayTitle(scrollPos)
         }
     }
 
     override fun clearDisplayTitle() {
         adapter.clearDisplayTitle()
-        adapter.upDisplayTitle()
+        adapter.upDisplayTitle(mLayoutManager.findFirstVisibleItemPosition())
     }
 
     override val scope: CoroutineScope
