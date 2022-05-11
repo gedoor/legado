@@ -141,6 +141,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 }
                 upHasCache(binding, isDur, cached)
             } else {
+                tvChapterName.text = getDisplayTitle(item)
                 upHasCache(binding, isDur, cached)
             }
         }
