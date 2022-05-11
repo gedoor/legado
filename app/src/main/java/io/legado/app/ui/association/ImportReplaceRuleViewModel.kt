@@ -6,12 +6,15 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.ReplaceAnalyzer
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
 import io.legado.app.utils.splitNotBlank
 
 class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
@@ -83,21 +86,34 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
 
     fun import(text: String) {
         execute {
-            if (text.isAbsUrl()) {
-                okHttpClient.newCallResponseBody {
-                    url(text)
-                }.text("utf-8").let {
-                    val rules = ReplaceAnalyzer.jsonToReplaceRules(it)
-                    allRules.addAll(rules)
-                }
-            } else {
-                val rules = ReplaceAnalyzer.jsonToReplaceRules(text)
-                allRules.addAll(rules)
-            }
+            importAwait(text.trim())
         }.onError {
             errorLiveData.postValue(it.localizedMessage ?: "ERROR")
         }.onSuccess {
             comparisonSource()
+        }
+    }
+
+    private suspend fun importAwait(text: String) {
+        when {
+            text.isAbsUrl() -> importUrl(text)
+            text.isJsonArray() -> {
+                val rules = ReplaceAnalyzer.jsonToReplaceRules(text).getOrThrow()
+                allRules.addAll(rules)
+            }
+            text.isJsonObject() -> {
+                val rule = ReplaceAnalyzer.jsonToReplaceRule(text).getOrThrow()
+                allRules.add(rule)
+            }
+            else -> throw NoStackTraceException("格式不对")
+        }
+    }
+
+    private suspend fun importUrl(url: String) {
+        okHttpClient.newCallResponseBody {
+            url(url)
+        }.text("utf-8").let {
+            importAwait(it)
         }
     }
 

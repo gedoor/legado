@@ -61,21 +61,7 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
 
     fun importSource(text: String) {
         execute {
-            val mText = text.trim()
-            when {
-                mText.isJsonObject() -> {
-                    HttpTTS.fromJson(mText).getOrThrow().let {
-                        allSources.add(it)
-                    }
-                }
-                mText.isJsonArray() -> HttpTTS.fromJsonArray(mText).getOrThrow().let { items ->
-                    allSources.addAll(items)
-                }
-                mText.isAbsUrl() -> {
-                    importSourceUrl(mText)
-                }
-                else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
-            }
+            importSourceAwait(text.trim())
         }.onError {
             it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage ?: "")
@@ -84,11 +70,28 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
+    private suspend fun importSourceAwait(text: String) {
+        when {
+            text.isJsonObject() -> {
+                HttpTTS.fromJson(text).getOrThrow().let {
+                    allSources.add(it)
+                }
+            }
+            text.isJsonArray() -> HttpTTS.fromJsonArray(text).getOrThrow().let { items ->
+                allSources.addAll(items)
+            }
+            text.isAbsUrl() -> {
+                importSourceUrl(text)
+            }
+            else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
+        }
+    }
+
     private suspend fun importSourceUrl(url: String) {
         okHttpClient.newCallResponseBody {
             url(url)
         }.text().let {
-            allSources.addAll(HttpTTS.fromJsonArray(it).getOrThrow())
+            importSourceAwait(it)
         }
     }
 
