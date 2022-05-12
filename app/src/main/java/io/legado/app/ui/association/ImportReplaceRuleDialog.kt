@@ -88,14 +88,14 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
             adapter.notifyDataSetChanged()
             upSelectText()
         }
-        viewModel.errorLiveData.observe(this, {
+        viewModel.errorLiveData.observe(this) {
             binding.rotateLoading.hide()
             binding.tvMsg.apply {
                 text = it
                 visible()
             }
-        })
-        viewModel.successLiveData.observe(this, {
+        }
+        viewModel.successLiveData.observe(this) {
             binding.rotateLoading.hide()
             if (it > 0) {
                 adapter.setItems(viewModel.allRules)
@@ -106,7 +106,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
                     visible()
                 }
             }
-        })
+        }
         val source = arguments?.getString("source")
         if (source.isNullOrEmpty()) {
             dismiss()
