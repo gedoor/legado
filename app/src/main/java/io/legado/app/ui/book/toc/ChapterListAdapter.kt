@@ -68,7 +68,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
         displayTitleMap.clear()
     }
 
-    fun upDisplayTitle(startIndex: Int) {
+    fun upDisplayTitles(startIndex: Int) {
         upDisplayTileJob?.cancel()
         upDisplayTileJob = Coroutine.async(callback.scope) {
             val book = callback.book ?: return@async
