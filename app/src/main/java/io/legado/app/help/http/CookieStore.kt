@@ -5,8 +5,8 @@ package io.legado.app.help.http
 import android.text.TextUtils
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cookie
-import io.legado.app.help.http.api.CookieManager
 import io.legado.app.help.CacheManager
+import io.legado.app.help.http.api.CookieManager
 import io.legado.app.utils.NetworkUtils
 
 object CookieStore : CookieManager {
@@ -44,7 +44,7 @@ object CookieStore : CookieManager {
         CacheManager.getFromMemory("${domain}_cookie")?.let { return it }
         val cookieBean = appDb.cookieDao.get(domain)
         val cookie = cookieBean?.cookie ?: ""
-        CacheManager.putMemory(url, cookie ?: "")
+        CacheManager.putMemory(url, cookie)
         return cookie
     }
 
