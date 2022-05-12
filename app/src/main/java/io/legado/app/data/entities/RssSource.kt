@@ -1,6 +1,7 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -19,6 +20,8 @@ data class RssSource(
     var sourceGroup: String? = null,
     var sourceComment: String? = null,
     var enabled: Boolean = true,
+    @ColumnInfo(defaultValue = "0")
+    override var enabledCookieJar: Boolean? = false,
     override var concurrentRate: String? = null,    //并发率
     override var header: String? = null,            // 请求头
     override var loginUrl: String? = null,          // 登录地址

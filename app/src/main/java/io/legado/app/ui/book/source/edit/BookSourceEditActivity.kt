@@ -190,7 +190,7 @@ class BookSourceEditActivity :
         source?.let {
             binding.cbIsEnable.isChecked = it.enabled
             binding.cbIsEnableFind.isChecked = it.enabledExplore
-            binding.cbIsEnableCookie.isChecked = it.enabledCookieJar
+            binding.cbIsEnableCookie.isChecked = it.enabledCookieJar ?: false
             binding.spType.setSelection(
                 when (it.bookSourceType) {
                     BookType.file -> 3

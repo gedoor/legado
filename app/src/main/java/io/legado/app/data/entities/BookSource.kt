@@ -40,7 +40,7 @@ data class BookSource(
     var enabledExplore: Boolean = true,
     // 启用okhttp CookieJAr 自动保存每次请求的cookie
     @ColumnInfo(defaultValue = "0")
-    var enabledCookieJar: Boolean = false,
+    override var enabledCookieJar: Boolean? = false,
     // 并发率
     override var concurrentRate: String? = null,
     // 请求头
