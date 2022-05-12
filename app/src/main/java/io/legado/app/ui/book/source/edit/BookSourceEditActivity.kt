@@ -192,6 +192,7 @@ class BookSourceEditActivity :
             binding.cbIsEnableFind.isChecked = it.enabledExplore
             binding.spType.setSelection(
                 when (it.bookSourceType) {
+                    BookType.file -> 3
                     BookType.image -> 2
                     BookType.audio -> 1
                     else -> 0
@@ -296,6 +297,7 @@ class BookSourceEditActivity :
         source.enabled = binding.cbIsEnable.isChecked
         source.enabledExplore = binding.cbIsEnableFind.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
+            3 -> BookType.file
             2 -> BookType.image
             1 -> BookType.audio
             else -> BookType.default
