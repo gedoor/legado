@@ -978,5 +978,6 @@
     <string name="import_tts">导入TTS</string>
     <string name="import_theme">导入主题</string>
     <string name="import_txt_toc_rule">导入txt目录规则</string>
+    <string name="auto_save_cookie">自动保存cookie</string>
     <!-- string end -->
 </resources>
