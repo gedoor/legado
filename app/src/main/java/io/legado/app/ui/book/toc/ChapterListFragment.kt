@@ -136,13 +136,13 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
                 }
             }
             mLayoutManager.scrollToPositionWithOffset(scrollPos, 0)
-            adapter.upDisplayTitle(scrollPos)
+            adapter.upDisplayTitles(scrollPos)
         }
     }
 
     override fun clearDisplayTitle() {
         adapter.clearDisplayTitle()
-        adapter.upDisplayTitle(mLayoutManager.findFirstVisibleItemPosition())
+        adapter.upDisplayTitles(mLayoutManager.findFirstVisibleItemPosition())
     }
 
     override val scope: CoroutineScope
