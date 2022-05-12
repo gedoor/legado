@@ -27,7 +27,7 @@ data class BookSource(
     var bookSourceName: String = "",
     // 分组
     var bookSourceGroup: String? = null,
-    // 类型，0 文本，1 音频, 2 图片
+    // 类型，0 文本，1 音频, 2 图片, 3 文件（指的是类似知轩藏书只提供下载的网站）
     @BookType.Type
     var bookSourceType: Int = 0,
     // 详情页url正则

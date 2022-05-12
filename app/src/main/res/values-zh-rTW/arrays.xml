@@ -4,6 +4,7 @@
         <item>文字</item>
         <item>音訊</item>
         <item>图片</item>
+        <item>文件</item>
     </string-array>
 
     <string-array name="group_style">
