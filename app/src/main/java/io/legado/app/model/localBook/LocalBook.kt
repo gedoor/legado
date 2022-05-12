@@ -1,6 +1,7 @@
 package io.legado.app.model.localBook
 
 import android.net.Uri
+import android.util.Base64
 import androidx.documentfile.provider.DocumentFile
 import com.script.SimpleBindings
 import io.legado.app.R
@@ -8,13 +9,17 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.TocEmptyException
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.util.regex.Pattern
@@ -79,6 +84,32 @@ object LocalBook {
         }
     }
 
+    //导入在线的文件
+    fun importFile(
+        str: String,
+        fileName: String,
+        source: BaseSource? = null
+    ): Book {
+        val bytes = when {
+            str.isAbsUrl() -> AnalyzeUrl(str, source = source).getByteArray()
+            str.isDataUrl() -> Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT)
+            else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
+        }
+        //从文件头识别文件格式
+        
+        return importFile(bytes, fileName)
+    }
+
+    fun importFile(
+        bytes: ByteArray,
+        fileName: String
+    ): Book {
+        return saveBookFile(bytes, fileName).let {
+            importFile(it)
+        }
+    }
+
+    //导入本地文件
     fun importFile(uri: Uri): Book {
         val bookUrl: String
         val updateTime: Long
@@ -119,7 +150,7 @@ object LocalBook {
         return book
     }
 
-    fun analyzeNameAuthor(fileName: String): Pair<String, String> {
+    private fun analyzeNameAuthor(fileName: String): Pair<String, String> {
         val tempFileName = fileName.substringBeforeLast(".")
         var name: String
         var author: String
@@ -169,6 +200,34 @@ object LocalBook {
                     FileUtils.delete(book.bookUrl)
                 }
             }
+        }
+    }
+
+    private fun saveBookFile(
+        bytes: ByteArray,
+        fileName: String
+    ): Uri {
+        val defaultBookTreeUri = AppConfig.defaultBookTreeUri
+        if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
+        val treeUri = Uri.parse(defaultBookTreeUri)
+        return if (treeUri.isContentScheme()) {
+            val treeDoc = DocumentFile.fromTreeUri(appCtx, treeUri)
+            var doc = treeDoc!!.findFile(fileName)
+            if (doc == null) {
+                doc = treeDoc.createFile(FileUtils.getMimeType(fileName), fileName)
+                    ?: throw SecurityException("Permission Denial")
+            }
+            appCtx.contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
+                oStream.write(bytes)
+            }
+            doc.uri
+        } else {
+            val treeFile = File(treeUri.path!!)
+            val file = treeFile.getFile(fileName)
+            FileOutputStream(file).use { oStream ->
+                oStream.write(bytes)
+            }
+            Uri.fromFile(file)
         }
     }
 }
