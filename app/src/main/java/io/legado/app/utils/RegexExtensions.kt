@@ -6,6 +6,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import splitties.init.appCtx
 import kotlin.concurrent.thread
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * 带有超时检测的正则替换
@@ -19,7 +20,7 @@ suspend fun CharSequence.replace(regex: Regex, replacement: String, timeout: Lon
                 val result = regex.replace(charSequence, replacement)
                 block.resume(result)
             } catch (e: Exception) {
-                block.cancel(e)
+                block.resumeWithException(e)
             }
         }
         mainHandler.postDelayed({

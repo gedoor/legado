@@ -18,6 +18,7 @@ import org.apache.commons.text.StringEscapeUtils
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * 后台webView
@@ -50,14 +51,14 @@ class BackstageWebView(
 
             override fun onError(error: Throwable) {
                 if (!block.isCompleted)
-                    block.cancel(error)
+                    block.resumeWithException(error)
             }
         }
         runOnUI {
             try {
                 load()
             } catch (error: Throwable) {
-                block.cancel(error)
+                block.resumeWithException(error)
             }
         }
     }

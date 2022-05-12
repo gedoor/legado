@@ -59,10 +59,12 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
             setOnSearchClickListener { tabLayout.gone() }
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
+                    viewModel.searchKey = query
                     return false
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
+                    viewModel.searchKey = newText
                     if (tabLayout.selectedTabPosition == 1) {
                         viewModel.startBookmarkSearch(newText)
                     } else {

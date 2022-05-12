@@ -12,6 +12,7 @@ import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.utils.msg
 import io.legado.app.utils.replace
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.CancellationException
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
@@ -135,7 +136,7 @@ class ContentProcessor private constructor(
         var mContent = content
         getContentReplaceRules().forEach { item ->
             if (item.pattern.isNotEmpty()) {
-                kotlin.runCatching {
+                try {
                     mContent = if (item.isRegex) {
                         mContent.replace(
                             item.pattern.toRegex(),
@@ -145,18 +146,15 @@ class ContentProcessor private constructor(
                     } else {
                         mContent.replace(item.pattern, item.replacement)
                     }
-                }.onFailure {
-                    when (it) {
-                        is RegexTimeoutException -> {
-                            item.isEnabled = false
-                            appDb.replaceRuleDao.update(item)
-                            return item.name + it.msg
-                        }
-                        else -> {
-                            AppLog.put("${item.name}替换出错\n${it.localizedMessage}", it)
-                            appCtx.toastOnUi("${item.name}替换出错")
-                        }
-                    }
+                } catch (e: RegexTimeoutException) {
+                    item.isEnabled = false
+                    appDb.replaceRuleDao.update(item)
+                    return item.name + e.msg
+                } catch (e: CancellationException) {
+                    return mContent
+                } catch (e: Exception) {
+                    AppLog.put("${item.name}替换出错\n替换内容\n${mContent}", e)
+                    appCtx.toastOnUi("${item.name}替换出错")
                 }
             }
         }

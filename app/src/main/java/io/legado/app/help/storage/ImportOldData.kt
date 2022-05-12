@@ -98,9 +98,12 @@ object ImportOldData {
     }
 
     private fun importOldReplaceRule(json: String): Int {
-        val rules = ReplaceAnalyzer.jsonToReplaceRules(json)
-        appDb.replaceRuleDao.insert(*rules.toTypedArray())
-        return rules.size
+        val rules = ReplaceAnalyzer.jsonToReplaceRules(json).getOrNull()
+        rules?.let {
+            appDb.replaceRuleDao.insert(*rules.toTypedArray())
+            return rules.size
+        }
+        return 0
     }
 
     private fun fromOldBooks(json: String): List<Book> {

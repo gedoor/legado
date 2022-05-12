@@ -8,13 +8,16 @@ import android.view.View
 import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.base.BasePreferenceFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.FragmentMyConfigBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.prefs.NameListPreference
+import io.legado.app.lib.prefs.PreferenceCategory
+import io.legado.app.lib.prefs.SwitchPreference
+import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.WebService
 import io.legado.app.ui.about.AboutActivity
@@ -26,9 +29,6 @@ import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigTag
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.ui.widget.prefs.NameListPreference
-import io.legado.app.ui.widget.prefs.PreferenceCategory
-import io.legado.app.ui.widget.prefs.SwitchPreference
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -40,7 +40,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         setSupportToolbar(binding.titleBar.toolbar)
         val fragmentTag = "prefFragment"
         var preferenceFragment = childFragmentManager.findFragmentByTag(fragmentTag)
-        if (preferenceFragment == null) preferenceFragment = PreferenceFragment()
+        if (preferenceFragment == null) preferenceFragment = MyPreferenceFragment()
         childFragmentManager.beginTransaction()
             .replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
     }
@@ -61,7 +61,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
     /**
      * 配置
      */
-    class PreferenceFragment : BasePreferenceFragment(),
+    class MyPreferenceFragment : PreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
