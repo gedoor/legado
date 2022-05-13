@@ -92,9 +92,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 viewModel.upAllBookToc()
             }
         }
-        binding.viewPagerMain.postDelayed({
+        binding.viewPagerMain.postDelayed(3000) {
             viewModel.postLoad()
-        }, 3000)
+        }
         launch {
             val lastBackupFile = withContext(IO) { AppWebDav.lastBackUp().getOrNull() }
                 ?: return@launch

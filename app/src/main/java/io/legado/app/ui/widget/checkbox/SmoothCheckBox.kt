@@ -299,10 +299,10 @@ class SmoothCheckBox @JvmOverloads constructor(
     }
 
     private fun drawTickDelayed() {
-        postDelayed({
+        postDelayed(mAnimDuration.toLong()) {
             mTickDrawing = true
             postInvalidate()
-        }, mAnimDuration.toLong())
+        }
     }
 
     companion object {
