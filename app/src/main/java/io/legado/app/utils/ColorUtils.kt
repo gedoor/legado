@@ -4,6 +4,7 @@ import android.graphics.Color
 
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
+import androidx.core.graphics.ColorUtils
 import java.util.*
 import kotlin.math.*
 
@@ -40,9 +41,7 @@ object ColorUtils {
     }
 
     fun isColorLight(@ColorInt color: Int): Boolean {
-        val darkness =
-            1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
-        return darkness < 0.4
+        return ColorUtils.calculateLuminance(color) >= 0.65
     }
 
     @ColorInt
