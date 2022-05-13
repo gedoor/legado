@@ -111,7 +111,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute(scope) {
             if (book.isLocalBook()) {
                 loadChapter(book, scope)
-            } else if (!isImportBookOnLine) {
+            } else {
                 bookSource?.let { bookSource ->
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
@@ -144,6 +144,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     chapterListData.postValue(it)
                 }
+            } else if(!isImportBookOnLine) {
+                chapterListData.postValue(emptyList())
             } else {
                 bookSource?.let { bookSource ->
                     WebBook.getChapterList(this, bookSource, book)
