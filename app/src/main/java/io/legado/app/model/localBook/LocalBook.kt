@@ -24,6 +24,10 @@ import java.io.FileNotFoundException
 import java.io.InputStream
 import java.util.regex.Pattern
 
+/**
+ * 书籍文件导入 目录正文解析
+ * 支持在线文件(txt epub umd 压缩文件需要用户解压) 本地文件
+ */
 object LocalBook {
 
     private val nameAuthorPatterns = arrayOf(
@@ -84,32 +88,25 @@ object LocalBook {
         }
     }
 
-    //导入在线的文件
+    /**
+     * 下载在线的文件并自动导入到阅读（txt umd epub)
+     * 压缩文件请先提示用户解压
+     */
     fun importFile(
         str: String,
-        fileName: String,
+        fileName: String? = null,
         source: BaseSource? = null,
         onLineBook: Book? = null
     ): Book {
-        val bytes = when {
-            str.isAbsUrl() -> AnalyzeUrl(str, source = source).getByteArray()
-            str.isDataUrl() -> Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT)
-            else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
-        }
-        val localBook = importFile(bytes, fileName)
-        return mergeBook(localBook, onLineBook)
-    }
-
-    fun importFile(
-        bytes: ByteArray,
-        fileName: String
-    ): Book {
-        return saveBookFile(bytes, fileName).let {
-            importFile(it)
+        val fileUri = saveBookFile(str, fileName, source, onLineBook)
+        return importFile(fileUri).let {
+            mergeBook(it, onLineBook)
         }
     }
 
-    //导入本地文件
+    /**
+     * 导入本地文件
+     */
     fun importFile(uri: Uri): Book {
         val bookUrl: String
         val updateTime: Long
@@ -150,6 +147,9 @@ object LocalBook {
         return book
     }
 
+    /**
+     * 从文件分析书籍必要信息（书名 作者等）
+     */
     private fun analyzeNameAuthor(fileName: String): Pair<String, String> {
         val tempFileName = fileName.substringBeforeLast(".")
         var name: String
@@ -203,6 +203,45 @@ object LocalBook {
         }
     }
 
+    /**
+     * 下载在线的文件
+     * fileName为空时 传入onLineBook
+     */
+    fun saveBookFile(
+        str: String,
+        fileName: String? = null,
+        source: BaseSource? = null,
+        onLineBook: Book? = null
+    ): Uri {
+        val bytes = when {
+            str.isAbsUrl() -> AnalyzeUrl(str, source = source).getByteArray()
+            str.isDataUrl() -> Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT)
+            else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
+        }
+        val mFileName = fileName ?: extractDownloadName(str, onLineBook)
+        return saveBookFile(bytes, mFileName)
+    }
+
+    /**
+     * 分析下载文件类书源的下载链接
+     * https://www.example.com/download/{fileName}.{type} 含有文件名和后缀
+     * https://www.example.com/download/?fileid=1234, {type: "txt"}
+     */
+    fun extractDownloadName(uri: String, onLineBook: Book?): String {
+        val analyzeUrl = AnalyzeUrl(uri)
+        val urlNoOption = analyzeUrl.url
+        val lastPath = urlNoOption.substringAfterLast("/")
+        val fileType = lastPath.substringAfterLast(".")
+        val type = analyzeUrl.type
+        val fileName = when {
+            onLineBook != null -> "${onLineBook.name}_${onLineBook.author}_${onLineBook.origin}"
+            type == null-> lastPath
+            else -> lastPath.substringBeforeAfter(".")
+        }
+        val fileSuffix = fileType ?: type ?: "unknown"
+        return "${fileName}.${fileSuffix}"
+    }
+
     private fun saveBookFile(
         bytes: ByteArray,
         fileName: String
@@ -232,7 +271,7 @@ object LocalBook {
     }
 
     //文件类书源 合并在线书籍信息 在线 > 本地
-    private fun mergeBook(localBook: Book, onLineBook: Book?): Book {
+    fun mergeBook(localBook: Book, onLineBook: Book?): Book {
         onLineBook ?: return localBook
         val mergeBook = localBook
         mergeBook.name = if (onLineBook.name.isBlank()) localBook.name else onLineBook.name
