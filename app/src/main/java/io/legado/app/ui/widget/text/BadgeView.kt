@@ -15,6 +15,7 @@ import android.widget.FrameLayout.LayoutParams
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
@@ -87,8 +88,6 @@ class BadgeView @JvmOverloads constructor(
             setLayoutParams(layoutParams)
         }
 
-        // set default font
-        setTextColor(Color.WHITE)
         //setTypeface(Typeface.DEFAULT_BOLD);
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
         setPadding(dip2Px(5f), dip2Px(1f), dip2Px(5f), dip2Px(1f))
@@ -106,6 +105,10 @@ class BadgeView @JvmOverloads constructor(
         minHeight = dip2Px(16f)
     }
 
+    override fun setBackgroundColor(color: Int) {
+        setBackground(radius, color)
+    }
+
     fun setBackground(dipRadius: Float, badgeColor: Int) {
         val radius = dip2Px(dipRadius).toFloat()
         val radiusArray =
@@ -118,10 +121,13 @@ class BadgeView @JvmOverloads constructor(
         val bgDrawable = ShapeDrawable(roundRect)
         bgDrawable.paint.color = badgeColor
         background = bgDrawable
-    }
-
-    fun setBackground(badgeColor: Int) {
-        setBackground(radius, badgeColor)
+        setTextColor(
+            if (ColorUtils.isColorLight(badgeColor)) {
+                Color.BLACK
+            } else {
+                Color.WHITE
+            }
+        )
     }
 
     /**
@@ -142,9 +148,9 @@ class BadgeView @JvmOverloads constructor(
 
     fun setHighlight(highlight: Boolean) {
         if (highlight) {
-            setBackground(context.accentColor)
+            setBackgroundColor(context.accentColor)
         } else {
-            setBackground(context.getCompatColor(R.color.darker_gray))
+            setBackgroundColor(context.getCompatColor(R.color.darker_gray))
         }
     }
 

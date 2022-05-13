@@ -7,6 +7,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.RuleComplete
+import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.*
@@ -92,6 +93,12 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 BookSource.fromJson(text).getOrThrow()
             }
             else -> throw NoStackTraceException("格式不对")
+        }
+    }
+
+    fun clearCookie(url: String) {
+        execute {
+            CookieStore.removeCookie(url)
         }
     }
 
