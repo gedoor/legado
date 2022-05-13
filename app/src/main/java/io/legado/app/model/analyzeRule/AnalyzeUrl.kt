@@ -528,8 +528,10 @@ class AnalyzeUrl(
         val domain = NetworkUtils.getSubDomain(tag ?: url)
         //书源启用保存cookie时 添加内存中的cookie到数据库
         if (enabledCookieJar) {
-            CacheManager.getFromMemory("${domain}_cookieJar")?.let {
+            val key = "${domain}_cookieJar"
+            CacheManager.getFromMemory(key)?.let {
                 CookieStore.replaceCookie(domain, it)
+                CacheManager.deleteMemory(key)
             }
         }
         val cookie = CookieStore.getCookie(domain)

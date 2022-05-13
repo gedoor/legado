@@ -32,6 +32,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
+import kotlin.collections.set
 
 class BackupConfigFragment : PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -209,7 +210,9 @@ class BackupConfigFragment : PreferenceFragment(),
         return super.onPreferenceTreeClick(preference)
     }
 
-
+    /**
+     * 备份忽略设置
+     */
     private fun backupIgnore() {
         val checkedItems = BooleanArray(BackupConfig.ignoreKeys.size) {
             BackupConfig.ignoreConfig[BackupConfig.ignoreKeys[it]] ?: false
