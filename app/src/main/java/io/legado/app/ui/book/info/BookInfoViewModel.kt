@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -30,6 +31,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
+    var isImportBookOnLine = false
 
     fun initData(intent: Intent) {
         execute {
@@ -73,9 +75,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             upCoverByRule(book)
             bookSource = if (book.isLocalBook()) null else
                 appDb.bookSourceDao.getBookSource(book.origin)
+            isImportBookOnLine = bookSource?.bookSourceType ?: BookType.local == BookType.file
             if (book.tocUrl.isEmpty()) {
                 loadBookInfo(book)
-            } else {
+            } else if (!isImportBookOnLine) {
                 val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
                 if (chapterList.isNotEmpty()) {
                     chapterListData.postValue(chapterList)
@@ -108,7 +111,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute(scope) {
             if (book.isLocalBook()) {
                 loadChapter(book, scope)
-            } else {
+            } else if (!isImportBookOnLine) {
                 bookSource?.let { bookSource ->
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
@@ -282,4 +285,28 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             }
         }
     }
+
+    fun importBookFileOnLine() {
+        execute {
+            //下载类书源的目录链接视为文件链接
+            val book = bookData.value!!
+            val fileUrl = book.tocUrl
+            //切下载链接获取文件名
+            var fileName = fileUrl.substringAfterLast("/")
+            if (fileName.isEmpty()) {
+                fileName = book.name
+            }
+            LocalBook.importFile(fileUrl, fileName, bookSource, book)
+        }.onSuccess {
+            bookData.postValue(it)
+            LocalBook.getChapterList(it).let { toc ->
+                chapterListData.postValue(toc)
+            }
+            isImportBookOnLine = false
+            inBookshelf = true
+        }.onError {
+            context.toastOnUi("自动导入出错\n${it.localizedMessage}")
+        }
+    }
+
 }

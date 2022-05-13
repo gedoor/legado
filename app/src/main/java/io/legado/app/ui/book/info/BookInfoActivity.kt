@@ -100,7 +100,7 @@ class BookInfoActivity :
         binding.scrollView.setBackgroundColor(backgroundColor)
         binding.flAction.setBackgroundColor(bottomBackground)
         binding.tvShelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
-        binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
+        binding.tvToc.text = getString(R.string.toc_s, getString(R.string.
         viewModel.bookData.observe(this) { showBook(it) }
         viewModel.chapterListData.observe(this) { upLoading(false, it) }
         viewModel.initData(intent)
@@ -279,7 +279,11 @@ class BookInfoActivity :
         }
         tvRead.setOnClickListener {
             viewModel.bookData.value?.let {
-                readBook(it)
+                if (viewModel.isImportBookOnLine) {
+                    viewModel.importBookFileOnLine()
+                } else {
+                    readBook(it)
+                }
             } ?: toastOnUi("Book is null")
         }
         tvShelf.setOnClickListener {
