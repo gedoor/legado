@@ -75,7 +75,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             upCoverByRule(book)
             bookSource = if (book.isLocalBook()) null else
                 appDb.bookSourceDao.getBookSource(book.origin)
-            isImportBookOnLine = bookSource?.bookSourceType ?: BookType.local == BookType.file
+            isImportBookOnLine = (bookSource?.bookSourceType ?: BookType.local) == BookType.file
             if (book.tocUrl.isEmpty()) {
                 loadBookInfo(book)
             } else if (!isImportBookOnLine) {
