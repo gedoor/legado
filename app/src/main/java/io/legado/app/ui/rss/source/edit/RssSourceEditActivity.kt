@@ -130,6 +130,7 @@ class RssSourceEditActivity :
                     }
                 }
             }
+            R.id.menu_clear_cookie -> viewModel.clearCookie(getRssSource().sourceUrl)
             R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getRssSource()))
             R.id.menu_qr_code_camera -> qrCodeResult.launch()

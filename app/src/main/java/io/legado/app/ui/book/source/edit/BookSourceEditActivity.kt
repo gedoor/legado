@@ -109,7 +109,7 @@ class BookSourceEditActivity :
                     }
                 }
             }
-            R.id.menu_clear_cookie -> getSource().let { viewModel.clearCookie(it.bookSourceUrl) }
+            R.id.menu_clear_cookie -> viewModel.clearCookie(getSource().bookSourceUrl)
             R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
             R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }

@@ -6,6 +6,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.RuleComplete
+import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.getClipText
 import io.legado.app.utils.msg
 import io.legado.app.utils.printOnDebug
@@ -74,6 +75,12 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             }
         }.onError {
             context.toastOnUi(it.msg)
+        }
+    }
+
+    fun clearCookie(url: String) {
+        execute {
+            CookieStore.removeCookie(url)
         }
     }
 
