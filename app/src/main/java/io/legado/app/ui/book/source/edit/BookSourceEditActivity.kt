@@ -190,6 +190,7 @@ class BookSourceEditActivity :
         source?.let {
             binding.cbIsEnable.isChecked = it.enabled
             binding.cbIsEnableFind.isChecked = it.enabledExplore
+            binding.cbIsEnableCookie.isChecked = it.enabledCookieJar ?: false
             binding.spType.setSelection(
                 when (it.bookSourceType) {
                     BookType.file -> 3
@@ -296,6 +297,7 @@ class BookSourceEditActivity :
         val source = viewModel.bookSource?.copy() ?: BookSource()
         source.enabled = binding.cbIsEnable.isChecked
         source.enabledExplore = binding.cbIsEnableFind.isChecked
+        source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
             3 -> BookType.file
             2 -> BookType.image

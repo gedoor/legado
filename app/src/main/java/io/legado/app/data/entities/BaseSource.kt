@@ -21,6 +21,7 @@ interface BaseSource : JsExtensions {
     var loginUrl: String?       // 登录地址
     var loginUi: String?   // 登录UI
     var header: String?         // 请求头
+    var enabledCookieJar: Boolean?    //启用cookieJar
 
     fun getTag(): String
 

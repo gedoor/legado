@@ -33,6 +33,13 @@
             android:checked="true"
             android:text="@string/discovery" />
 
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/cb_is_enable_cookie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/auto_save_cookie" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
