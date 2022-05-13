@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.Checkable
+import androidx.core.view.postDelayed
 import io.legado.app.R
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dpToPx
@@ -244,7 +245,7 @@ class SmoothCheckBox @JvmOverloads constructor(
         }
         // invalidate
         if (mDrewDistance < mLeftLineDistance + mRightLineDistance) {
-            postDelayed({ this.postInvalidate() }, 10)
+            postDelayed(10) { this.postInvalidate() }
         }
     }
 

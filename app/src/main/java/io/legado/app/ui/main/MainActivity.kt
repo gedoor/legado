@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.activity.viewModels
+import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -87,9 +88,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         upVersion()
         //自动更新书籍
         if (AppConfig.autoRefreshBook) {
-            binding.viewPagerMain.postDelayed({
+            binding.viewPagerMain.postDelayed(1000) {
                 viewModel.upAllBookToc()
-            }, 1000)
+            }
         }
         binding.viewPagerMain.postDelayed({
             viewModel.postLoad()
