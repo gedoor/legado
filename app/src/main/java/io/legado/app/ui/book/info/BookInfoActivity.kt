@@ -230,7 +230,7 @@ class BookInfoActivity :
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
             }
             chapterList.isNullOrEmpty() -> {
-                binding.tvToc.text = getString(R.string.toc_s, getString(R.string.error_load_toc))
+                binding.tvToc.text = if (viewModel.isImportBookOnLine) getString(R.string.click_read_button_load) else getString(R.string.toc_s, getString(R.string.error_load_toc))
             }
             else -> {
                 viewModel.bookData.value?.let {
