@@ -47,7 +47,7 @@ class BookSourceEditActivity :
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         viewModel.importSource(it) { source ->
-            upRecyclerView(source)
+            upSourceView(source)
         }
     }
     private val selectDoc = registerForActivityResult(HandleFileContract()) {
@@ -68,7 +68,7 @@ class BookSourceEditActivity :
         softKeyboardTool.attachToWindow(window)
         initView()
         viewModel.initData(intent) {
-            upRecyclerView()
+            upSourceView()
         }
     }
 
@@ -112,7 +112,7 @@ class BookSourceEditActivity :
             R.id.menu_clear_cookie -> viewModel.clearCookie(getSource().bookSourceUrl)
             R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
-            R.id.menu_paste_source -> viewModel.pasteSource { upRecyclerView(it) }
+            R.id.menu_paste_source -> viewModel.pasteSource { upSourceView(it) }
             R.id.menu_qr_code_camera -> qrCodeResult.launch()
             R.id.menu_share_str -> share(GSON.toJson(getSource()))
             R.id.menu_share_qr -> shareWithQr(
@@ -187,7 +187,7 @@ class BookSourceEditActivity :
         binding.recyclerView.scrollToPosition(0)
     }
 
-    private fun upRecyclerView(source: BookSource? = viewModel.bookSource) {
+    private fun upSourceView(source: BookSource? = viewModel.bookSource) {
         source?.let {
             binding.cbIsEnable.isChecked = it.enabled
             binding.cbIsEnableFind.isChecked = it.enabledExplore
