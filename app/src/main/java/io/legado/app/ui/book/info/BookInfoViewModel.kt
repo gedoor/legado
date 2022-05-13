@@ -78,7 +78,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             isImportBookOnLine = (bookSource?.bookSourceType ?: BookType.local) == BookType.file
             if (book.tocUrl.isEmpty()) {
                 loadBookInfo(book)
-            } else if (!isImportBookOnLine) {
+            } else if (isImportBookOnLine) {
+                chapterListData.postValue(emptyList())
+            } else {
                 val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
                 if (chapterList.isNotEmpty()) {
                     chapterListData.postValue(chapterList)
@@ -111,7 +113,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute(scope) {
             if (book.isLocalBook()) {
                 loadChapter(book, scope)
-            } else if (!isImportBookOnLine) {
+            } else {
                 bookSource?.let { bookSource ->
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
@@ -144,7 +146,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     chapterListData.postValue(it)
                 }
-            } else if(!isImportBookOnLine) {
+            } else if (isImportBookOnLine) {
                 chapterListData.postValue(emptyList())
             } else {
                 bookSource?.let { bookSource ->
