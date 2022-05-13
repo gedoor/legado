@@ -11,6 +11,6 @@ object BookType {
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(default, audio, image)
+    @IntDef(default, audio, image, file)
     annotation class Type
 }
