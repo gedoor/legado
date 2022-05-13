@@ -279,7 +279,11 @@ class BookInfoActivity :
         }
         tvRead.setOnClickListener {
             viewModel.bookData.value?.let {
-                readBook(it)
+                if (viewModel.isImportBookOnLine) {
+                    viewModel.importBookFileOnLine()
+                } else {
+                    readBook(it)
+                }
             } ?: toastOnUi("Book is null")
         }
         tvShelf.setOnClickListener {

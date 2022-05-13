@@ -88,16 +88,16 @@ object LocalBook {
     fun importFile(
         str: String,
         fileName: String,
-        source: BaseSource? = null
+        source: BaseSource? = null,
+        onLineBook: Book? = null
     ): Book {
         val bytes = when {
             str.isAbsUrl() -> AnalyzeUrl(str, source = source).getByteArray()
             str.isDataUrl() -> Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT)
             else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
         }
-        //从文件头识别文件格式
-        
-        return importFile(bytes, fileName)
+        val localBook = importFile(bytes, fileName)
+        return mergeBook(localBook, onLineBook)
     }
 
     fun importFile(
@@ -230,4 +230,17 @@ object LocalBook {
             Uri.fromFile(file)
         }
     }
+
+    //文件类书源 合并在线书籍信息 在线 > 本地
+    private fun mergeBook(localBook: Book, onLineBook: Book?): Book {
+        onLineBook ?: return localBook
+        val mergeBook = localBook
+        mergeBook.name = if (onLineBook.name.isBlank()) localBook.name else onLineBook.name
+        mergeBook.author = if (onLineBook.author.isBlank()) localBook.author else onLineBook.author
+        mergeBook.coverUrl = onLineBook.coverUrl
+        mergeBook.intro = if (onLineBook.intro.isNullOrBlank()) localBook.intro else onLineBook.intro
+        mergeBook.save()
+        return mergeBook
+    }
+
 }
