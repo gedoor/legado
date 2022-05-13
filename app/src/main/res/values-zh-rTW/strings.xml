@@ -981,6 +981,7 @@
     <string name="import_theme">导入主题</string>
     <string name="import_txt_toc_rule">导入txt目录规则</string>
     <string name="auto_save_cookie">CookieJar</string>
+    <string name="click_read_button_load">点击阅读加载目录</string>
     <string name="cookie">清除cookie</string>
     <!-- string end -->
 </resources>
