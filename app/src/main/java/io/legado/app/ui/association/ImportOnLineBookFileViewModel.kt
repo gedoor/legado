@@ -19,6 +19,8 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
 
     val allBookFiles = arrayListOf<Triple<String, String, Boolean>>()
     val selectStatus = arrayListOf<Boolean>()
+    val errorLiveData = MutableLiveData<String>()
+    val successLiveData = MutableLiveData<Int>()
 
     fun initData(bookUrl: String?, infoHtml: String?) {
         execute {
@@ -42,7 +44,10 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
                     selectStatus.add(isSupportedFile)
                 }
             } ?: throw NoStackTraceException("下载链接规则解析为空")
+        }.onSuccess {
+            successLiveData.postValue(allBookFiles.size)
         }.onError {
+            errorLiveData.postValue(it.localizedMessage ?: "")
             context.toastOnUi("获取书籍下载链接失败\n${it.localizedMessage}")
         }
         

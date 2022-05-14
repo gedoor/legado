@@ -74,8 +74,20 @@ class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler
             adapter.notifyDataSetChanged()
             upSelectText()
         }
-        adapter.setItems(viewModel.allBookFiles)
-        upSelectText()
+        viewModel.errorLiveData.observe(this) {
+            binding.rotateLoading.hide()
+            binding.tvMsg.apply {
+                text = it
+                visible()
+            }
+        }
+        viewModel.successLiveData.observe(this) {
+            binding.rotateLoading.hide()
+            if (it > 0) {
+                adapter.setItems(viewModel.allBookFiles)
+                upSelectText()
+            }
+        }
     }
 
     private fun upSelectText() {
