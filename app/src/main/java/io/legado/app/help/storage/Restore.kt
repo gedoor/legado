@@ -51,7 +51,7 @@ object Restore {
                 }
             }
         }.onFailure {
-            AppLog.put("", it)
+            AppLog.put("恢复复制文件出错\n${it.localizedMessage}", it)
         }
         restoreDatabase()
         restoreConfig()
