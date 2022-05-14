@@ -1,15 +1,17 @@
 package io.legado.app.utils
 
 import android.graphics.Color
-
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.core.graphics.ColorUtils
-import java.util.*
 import kotlin.math.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ColorUtils {
+
+    fun isColorLight(@ColorInt color: Int): Boolean {
+        return ColorUtils.calculateLuminance(color) >= 0.65
+    }
 
     fun intToString(intColor: Int): String {
         return String.format("#%06X", 0xFFFFFF and intColor)
@@ -37,10 +39,6 @@ object ColorUtils {
     @ColorInt
     fun lightenColor(@ColorInt color: Int): Int {
         return shiftColor(color, 1.1f)
-    }
-
-    fun isColorLight(@ColorInt color: Int): Boolean {
-        return ColorUtils.calculateLuminance(color) >= 0.65
     }
 
     @ColorInt
@@ -77,83 +75,6 @@ object ColorUtils {
         val g = Color.green(color1) * inverseRatio + Color.green(color2) * ratio
         val b = Color.blue(color1) * inverseRatio + Color.blue(color2) * ratio
         return Color.argb(a.toInt(), r.toInt(), g.toInt(), b.toInt())
-    }
-
-    /**
-     * 按条件的到随机颜色
-     *
-     * @param alpha 透明
-     * @param lower 下边界
-     * @param upper 上边界
-     * @return 颜色值
-     */
-    fun getRandomColor(alpha: Int, lower: Int, upper: Int): Int {
-        return RandomColor(alpha, lower, upper).color
-    }
-
-    /**
-     * @return 获取随机色
-     */
-    fun getRandomColor(): Int {
-        return RandomColor(255, 80, 200).color
-    }
-
-
-    /**
-     * 随机颜色
-     */
-    class RandomColor(alpha: Int, lower: Int, upper: Int) {
-        private var alpha: Int = 0
-        private var lower: Int = 0
-        private var upper: Int = 0
-
-        //随机数是前闭  后开
-        val color: Int
-            get() {
-                val red = getLower() + Random().nextInt(getUpper() - getLower() + 1)
-                val green = getLower() + Random().nextInt(getUpper() - getLower() + 1)
-                val blue = getLower() + Random().nextInt(getUpper() - getLower() + 1)
-
-                return Color.argb(getAlpha(), red, green, blue)
-            }
-
-        init {
-            require(upper > lower) { "must be lower < upper" }
-            setAlpha(alpha)
-            setLower(lower)
-            setUpper(upper)
-        }
-
-        private fun getAlpha(): Int {
-            return alpha
-        }
-
-        private fun setAlpha(alpha: Int) {
-            var alpha1 = alpha
-            if (alpha1 > 255) alpha1 = 255
-            if (alpha1 < 0) alpha1 = 0
-            this.alpha = alpha1
-        }
-
-        private fun getLower(): Int {
-            return lower
-        }
-
-        private fun setLower(lower: Int) {
-            var lower1 = lower
-            if (lower1 < 0) lower1 = 0
-            this.lower = lower1
-        }
-
-        private fun getUpper(): Int {
-            return upper
-        }
-
-        private fun setUpper(upper: Int) {
-            var upper1 = upper
-            if (upper1 > 255) upper1 = 255
-            this.upper = upper1
-        }
     }
 
     fun argb(R: Int, G: Int, B: Int): Int {
