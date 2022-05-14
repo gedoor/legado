@@ -2,6 +2,7 @@ package io.legado.app.model
 
 import android.annotation.SuppressLint
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.*
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.rss.Rss
@@ -238,7 +239,11 @@ object Debug {
             .onSuccess {
                 log(debugSource, "︽详情页解析完成")
                 log(debugSource, showTime = false)
-                tocDebug(scope, bookSource, book)
+                if (book.type != BookType.file) {
+                    tocDebug(scope, bookSource, book)
+                } else {
+                    log(debugSource, "≡文件类书源跳过解析目录", state = 1000)
+                }
             }
             .onError {
                 log(debugSource, it.msg, state = -1)

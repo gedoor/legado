@@ -152,10 +152,15 @@ object BookInfo {
             scope.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取文件下载链接")
             book.downloadUrls = analyzeRule.getStringList(infoRule.downloadUrls, isUrl = true)
-            Debug.log(
-                bookSource.bookSourceUrl,
-                "└" + TextUtils.join("，\n", book.downloadUrls!!)
-            )
+            if (book.downloadUrls == null) {
+                Debug.log(bookSource.bookSourceUrl, "└")
+                throw NoStackTraceException("下载链接为空")
+            } else {
+                Debug.log(
+                    bookSource.bookSourceUrl,
+                    "└" + TextUtils.join("，\n", book.downloadUrls!!)
+                )
+            }
         }
     }
 
