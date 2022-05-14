@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'de.timfreiheit.resourceplaceholders'
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 apply from: 'download.gradle'
 
 static def releaseTime() {
@@ -178,9 +178,9 @@ dependencies {
     // UI Tests
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
 
-    //firebase
-    //implementation platform('com.google.firebase:firebase-bom:29.1.0')
-    //implementation 'com.google.firebase:firebase-analytics-ktx'
+    //firebase 只在google play版本启用,防止没有google组件崩溃
+    implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
 
     //media
     implementation("androidx.media:media:1.6.0")
@@ -219,7 +219,7 @@ dependencies {
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
-    def glideVersion = "4.13.1"
+    def glideVersion = "4.13.2"
     implementation("com.github.bumptech.glide:glide:$glideVersion")
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
 
