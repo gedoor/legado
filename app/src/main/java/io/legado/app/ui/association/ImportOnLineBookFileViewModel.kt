@@ -84,7 +84,11 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
                     val fileName: String = selectedFile.second
                     when {
                         isSupportedFile -> importOnLineBookFile(fileUrl, fileName)
-                        else -> downloadUrl(fileUrl, fileName)
+                        else -> {
+                            downloadUrl(fileUrl, fileName) {
+                              //  AppLog.putDebug("下载文件路径: ${it.toString()}")
+                            }
+                        }
                     }
                 }
             }
@@ -96,8 +100,14 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
     }
 
 
-    fun downloadUrl(url: String, fileName: String): Uri {
-        return LocalBook.saveBookFile(url, fileName)
+    fun downloadUrl(url: String, fileName: String, success: () -> Unit) {
+        execute {
+            LocalBook.saveBookFile(url, fileName)
+        }.onSuccess {
+            success.invoke()
+        }.onError {
+            context.toastOnUi("下载书籍文件失败\n${it.localizedMessage}")
+        }
     }
 
     fun importOnLineBookFile(url: String, fileName: String) {
