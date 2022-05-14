@@ -92,7 +92,7 @@ object LocalBook {
      * 下载在线的文件并自动导入到阅读（txt umd epub)
      * 压缩文件请先提示用户解压
      */
-    fun importFile(
+    fun importFileOnLine(
         str: String,
         fileName: String? = null,
         source: BaseSource? = null,
@@ -236,7 +236,7 @@ object LocalBook {
         val fileName = when {
             onLineBook != null -> "${onLineBook.name}_${onLineBook.author}_${onLineBook.origin}"
             type == null-> lastPath
-            else -> lastPath.substringBeforeAfter(".")
+            else -> lastPath.substringBeforeLast(".")
         }
         val fileSuffix = fileType ?: type ?: "unknown"
         return "${fileName}.${fileSuffix}"

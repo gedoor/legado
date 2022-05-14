@@ -244,7 +244,7 @@ object BookController {
         val fileData = parameters["fileData"]?.firstOrNull()
             ?: return returnData.setErrorMsg("fileData 不能为空")
         kotlin.runCatching {
-           LocalBook.importFile(fileData, fileName)
+           LocalBook.importFileOnLine(fileData, fileName)
         }.onFailure {
             return when (it) {
                 is SecurityException -> returnData.setErrorMsg("需重新设置书籍保存位置!")

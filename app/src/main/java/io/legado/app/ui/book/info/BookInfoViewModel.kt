@@ -2,6 +2,7 @@ package io.legado.app.ui.book.info
 
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
@@ -290,27 +291,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun importBookFileOnLine() {
-        execute {
-            //下载类书源的目录链接视为文件链接
-            val book = bookData.value!!
-            val fileUrl = book.tocUrl
-            //切下载链接获取文件名
-            var fileName = fileUrl.substringAfterLast("/")
-            if (fileName.isEmpty()) {
-                fileName = book.name
-            }
-            LocalBook.importFile(fileUrl, fileName, bookSource, book)
-        }.onSuccess {
-            bookData.postValue(it)
-            LocalBook.getChapterList(it).let { toc ->
-                chapterListData.postValue(toc)
-            }
-            isImportBookOnLine = false
-            inBookshelf = true
-        }.onError {
-            context.toastOnUi("自动导入出错\n${it.localizedMessage}")
+    private fun changeToLocalBook(book: Book) {
+        bookData.postValue(book)
+        LocalBook.getChapterList(book).let {
+            chapterListData.postValue(it)
         }
+        isImportBookOnLine = false
+        inBookshelf = true
     }
 
 }

@@ -25,6 +25,7 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.association.ImportOnLineBookFileDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
@@ -278,11 +279,14 @@ class BookInfoActivity :
             true
         }
         tvRead.setOnClickListener {
-            viewModel.bookData.value?.let {
+            viewModel.bookData.value?.let { book ->
                 if (viewModel.isImportBookOnLine) {
-                    viewModel.importBookFileOnLine()
+                    showDialogFragment<ImportOnLineBookFileDialog> {
+                        putString("bookUrl", book.bookUrl)
+                        putString("infoHtml", book.infoHtml)
+                    }
                 } else {
-                    readBook(it)
+                    readBook(book)
                 }
             } ?: toastOnUi("Book is null")
         }
