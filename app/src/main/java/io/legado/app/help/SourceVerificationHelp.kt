@@ -32,7 +32,7 @@ object SourceVerificationHelp {
                 startBrowser(source, url, title, true)
             }
 
-            var waitUserInput: Boolean = false
+            var waitUserInput = false
             while(CacheManager.get(key) == null) {
                 if (!waitUserInput) {
                     AppLog.putDebug("等待返回验证结果...")
