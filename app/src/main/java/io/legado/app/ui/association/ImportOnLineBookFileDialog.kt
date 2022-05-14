@@ -139,7 +139,7 @@ class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler
                         if (selectFile.third) {
                             viewModel.selectStatus[holder.layoutPosition] = isChecked
                         } else {
-                            toastOnUi("不支持直接导入")
+                            toastOnUi("不支持直接导入，点击打开后解压")
                         }
                         upSelectText()
                     }
@@ -152,8 +152,8 @@ class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler
                 tvOpen.setOnClickListener {
                     val bookFile = viewModel.allBookFiles[holder.layoutPosition]
                     //intent解压
-                    viewModel.downloadUrl(bookFile.first, bookFile.second) {
-                        //openFileUri(it)
+                    viewModel.downloadUrl(bookFile.first, bookFile.second).let {
+                        openFileUri(it)
                     }
                 }
             }
