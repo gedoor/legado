@@ -6,11 +6,12 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <io.legado.app.lib.theme.view.ThemeCheckBox
+    <TextView
         android:id="@+id/cb_file_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="1"
+        android:textColor="@color/primaryText"
+        android:textSize="14sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -18,17 +19,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
-
- 
-    <TextView
-        android:id="@+id/tv_open"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="@string/open"
-        android:textColor="@color/secondaryText"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

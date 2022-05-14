@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -283,7 +284,6 @@ class BookInfoActivity :
                 if (viewModel.isImportBookOnLine) {
                     showDialogFragment<ImportOnLineBookFileDialog> {
                         putString("bookUrl", book.bookUrl)
-                        putString("infoHtml", book.infoHtml)
                     }
                 } else {
                     readBook(book)
@@ -490,4 +490,9 @@ class BookInfoActivity :
         }
     }
 
+    override fun observeLiveBus() {
+        observeEvent<String>(EventBus.BOOK_URL_CHANGED) {
+            viewModel.changeToLocalBook(it)
+        }
+    }
 }

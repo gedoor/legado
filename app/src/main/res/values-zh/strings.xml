@@ -983,5 +983,6 @@
     <string name="auto_save_cookie">CookieJar</string>
     <string name="click_read_button_load">点击阅读加载目录</string>
     <string name="cookie">清除cookie</string>
+    <string name="download_and_import_file">导入在线书籍文件</string>
     <!-- string end -->
 </resources>

@@ -119,6 +119,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
                             bookData.postValue(book)
+                            if (isImportBookOnLine) {
+                                appDb.searchBookDao.update(book.toSearchBook())
+                            }
                             if (inBookshelf) {
                                 appDb.bookDao.update(book)
                             }
@@ -291,13 +294,17 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun changeToLocalBook(book: Book) {
-        bookData.postValue(book)
-        LocalBook.getChapterList(book).let {
-            chapterListData.postValue(it)
+    fun changeToLocalBook(bookUrl: String) {
+        appDb.bookDao.getBook(bookUrl)?.let { localBook ->
+            LocalBook.mergeBook(localBook, bookData.value).let {
+                bookData.postValue(it)
+            }
+            LocalBook.getChapterList(localBook).let {
+                chapterListData.postValue(it)
+            }
+            isImportBookOnLine = false
+            inBookshelf = true
         }
-        isImportBookOnLine = false
-        inBookshelf = true
     }
 
 }

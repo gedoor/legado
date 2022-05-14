@@ -94,13 +94,11 @@ object LocalBook {
      */
     fun importFileOnLine(
         str: String,
-        fileName: String? = null,
+        fileName: String,
         source: BaseSource? = null,
-        onLineBook: Book? = null
     ): Book {
-        val fileUri = saveBookFile(str, fileName, source, onLineBook)
-        return importFile(fileUri).let {
-            mergeBook(it, onLineBook)
+        return saveBookFile(str, fileName, source).let {
+            importFile(it)
         }
     }
 
@@ -205,41 +203,32 @@ object LocalBook {
 
     /**
      * 下载在线的文件
-     * fileName为空时 传入onLineBook
      */
     fun saveBookFile(
         str: String,
-        fileName: String? = null,
+        fileName: String,
         source: BaseSource? = null,
-        onLineBook: Book? = null
     ): Uri {
         val bytes = when {
             str.isAbsUrl() -> AnalyzeUrl(str, source = source).getByteArray()
             str.isDataUrl() -> Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT)
             else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
         }
-        val mFileName = fileName ?: extractDownloadName(str, onLineBook)
-        return saveBookFile(bytes, mFileName)
+        return saveBookFile(bytes, fileName)
     }
 
     /**
-     * 分析下载文件类书源的下载链接
+     * 分析下载文件类书源的下载链接的文件后缀
      * https://www.example.com/download/{fileName}.{type} 含有文件名和后缀
-     * https://www.example.com/download/?fileid=1234, {type: "txt"}
+     * https://www.example.com/download/?fileid=1234, {type: "txt"} 规则设置
      */
-    fun extractDownloadName(uri: String, onLineBook: Book?): String {
-        val analyzeUrl = AnalyzeUrl(uri)
+    fun parseFileSuffix(url: String): String {
+        val analyzeUrl = AnalyzeUrl(url)
         val urlNoOption = analyzeUrl.url
         val lastPath = urlNoOption.substringAfterLast("/")
         val fileType = lastPath.substringAfterLast(".")
         val type = analyzeUrl.type
-        val fileName = when {
-            onLineBook != null -> "${onLineBook.name}_${onLineBook.author}_${onLineBook.origin}"
-            type == null-> lastPath
-            else -> lastPath.substringBeforeLast(".")
-        }
-        val fileSuffix = fileType ?: type ?: "unknown"
-        return "${fileName}.${fileSuffix}"
+        return type ?: fileType ?: "unknown"
     }
 
     private fun saveBookFile(

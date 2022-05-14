@@ -1,6 +1,5 @@
 package io.legado.app.ui.association
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -21,7 +20,6 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import splitties.views.onClick
 
 
 /**
@@ -39,60 +37,49 @@ class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         val bookUrl = arguments?.getString("bookUrl")
-        val infoHtml = arguments?.getString("infoHtml")
-        viewModel.initData(bookUrl, infoHtml)
+        viewModel.initData(bookUrl)
         binding.toolBar.setBackgroundColor(primaryColor)
-        //标题
-        binding.toolBar.setTitle("导入在线书籍文件")
+        binding.toolBar.setTitle(R.string.download_and_import_file)
         binding.rotateLoading.show()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
-        binding.tvCancel.visible()
-        binding.tvCancel.setOnClickListener {
-            dismissAllowingStateLoss()
-        }
-        binding.tvOk.visible()
-        binding.tvOk.setOnClickListener {
-            val waitDialog = WaitDialog(requireContext())
-            waitDialog.show()
-            viewModel.importSelect {
-                waitDialog.dismiss()
-                dismissAllowingStateLoss()
+        viewModel.errorLiveData.observe(this) {
+            binding.rotateLoading.hide()
+            binding.tvMsg.apply {
+                text = it
+                visible()
             }
         }
-        binding.tvFooterLeft.visible()
-        binding.tvFooterLeft.setOnClickListener {
-            val selectAll = viewModel.isSelectAll
-            viewModel.selectStatus.forEachIndexed { index, b ->
-                if (b != !selectAll) {
-                    viewModel.selectStatus[index] = !selectAll
-                }
+        viewModel.successLiveData.observe(this) {
+            binding.rotateLoading.hide()
+            if (it > 0) {
+                adapter.setItems(viewModel.allBookFiles)
             }
-            adapter.notifyDataSetChanged()
-            upSelectText()
         }
-        adapter.setItems(viewModel.allBookFiles)
-        upSelectText()
+        viewModel.savedFileUriData.observe(this) {
+            requireContext().openFileUri(it, "*/*")
+        }
     }
 
-    private fun upSelectText() {
-        if (viewModel.isSelectAll) {
-            binding.tvFooterLeft.text = getString(
-                R.string.select_cancel_count,
-                viewModel.selectCount,
-                viewModel.allBookFiles.size
-            )
-        } else {
-            binding.tvFooterLeft.text = getString(
-                R.string.select_all_count,
-                viewModel.selectCount,
-                viewModel.allBookFiles.size
-            )
+    private fun importFileAndUpdate(url: String, fileName: String) {
+        val waitDialog = WaitDialog(requireContext())
+        waitDialog.show()
+        viewModel.importOnLineBookFile(url, fileName) {
+           waitDialog.dismiss()
+           dismissAllowingStateLoss()
         }
     }
+
+    private fun downloadFile(url: String, fileName: String) {
+        val waitDialog = WaitDialog(requireContext())
+        waitDialog.show()
+        viewModel.downloadUrl(url, fileName) {
+            waitDialog.dismiss()
+            dismissAllowingStateLoss()
+    }
+}
 
     inner class BookFileAdapter(context: Context) :
         RecyclerAdapter<Triple<String, String, Boolean>
@@ -109,39 +96,32 @@ class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler
             payloads: MutableList<Any>
         ) {
             binding.apply {
-                cbFileName.isChecked = viewModel.selectStatus[holder.layoutPosition] 
                 cbFileName.text = item.second
-                if (item.third) {
-                    tvOpen.invisible()
-                } else {
-                    tvOpen.visible()
-                }
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemBookFileImportBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemBookFileImportBinding
+        ) {
             binding.apply {
-                cbFileName.setOnCheckedChangeListener { buttonView, isChecked ->
-                    if (buttonView.isPressed) {
-                        val selectFile = viewModel.allBookFiles[holder.layoutPosition]
-                        if (selectFile.third) {
-                            viewModel.selectStatus[holder.layoutPosition] = isChecked
-                        } else {
-                            toastOnUi("不支持直接导入")
+                cbFileName.setOnClickListener {
+                    val selectFile = viewModel.allBookFiles[holder.layoutPosition]
+                    if (selectFile.third) {
+                        importFileAndUpdate(selectFile.first, selectFile.second)
+                    } else {
+                        alert(
+                            title = getString(R.string.draw),
+                            message = getString(R.string.file_not_supported, selectFile.second)
+                        ) {
+                            okButton {
+                                importFileAndUpdate(selectFile.first, selectFile.second)
+                            }
+                            neutralButton(R.string.open_fun) {
+                                downloadFile(selectFile.first, selectFile.second)
+                            }
+                            cancelButton()
                         }
-                        upSelectText()
-                    }
-                }
-                root.onClick {
-                    cbFileName.isChecked = !cbFileName.isChecked
-                    viewModel.selectStatus[holder.layoutPosition] = cbFileName.isChecked
-                    upSelectText()
-                }
-                tvOpen.setOnClickListener {
-                    val bookFile = viewModel.allBookFiles[holder.layoutPosition]
-                    //intent解压
-                    viewModel.downloadUrl(bookFile.first, bookFile.second) {
-                        //openFileUri(it)
                     }
                 }
             }
