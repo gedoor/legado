@@ -18,6 +18,7 @@
 * 源编辑菜单里添加清除cookie,如果之前能用的书源不能用了,可以关闭cookieJar后点下菜单里的清除cookie后再试
 * 书源支持文件类型 by Xwite
 * 启用firebase收集崩溃日志
+* web端阅读实现无限滚动 by Xwite
 
 **2022/05/11**
 
