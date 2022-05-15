@@ -61,41 +61,33 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun initBook(book: Book) {
-        if (ReadBook.book?.bookUrl != book.bookUrl) {
-            ReadBook.resetData(book)
-            isInitFinish = true
-            if (ReadBook.chapterSize == 0) {
-                if (book.tocUrl.isEmpty()) {
-                    loadBookInfo(book)
-                } else {
-                    loadChapterList(book)
-                }
+        val isSameBook = ReadBook.book?.bookUrl == book.bookUrl
+        if (isSameBook) ReadBook.upData(book) else ReadBook.resetData(book)
+        isInitFinish = true
+        if (ReadBook.chapterSize == 0) {
+            if (book.tocUrl.isEmpty()) {
+                loadBookInfo(book)
             } else {
-                if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
-                    ReadBook.durChapterIndex = ReadBook.chapterSize - 1
-                }
+                loadChapterList(book)
+            }
+        } else if (book.isLocalBook()
+            && LocalBook.getLastModified(book).getOrDefault(0L) > book.latestChapterTime
+        ) {
+            loadChapterList(book)
+        } else if (isSameBook) {
+            if (ReadBook.curTextChapter != null) {
+                ReadBook.callBack?.upContent(resetPageOffset = false)
+            } else {
                 ReadBook.loadContent(resetPageOffset = true)
             }
-            syncBookProgress(book)
         } else {
-            ReadBook.upData(book)
-            isInitFinish = true
-            if (ReadBook.chapterSize == 0) {
-                if (book.tocUrl.isEmpty()) {
-                    loadBookInfo(book)
-                } else {
-                    loadChapterList(book)
-                }
-            } else {
-                if (ReadBook.curTextChapter != null) {
-                    ReadBook.callBack?.upContent(resetPageOffset = false)
-                } else {
-                    ReadBook.loadContent(resetPageOffset = true)
-                }
+            if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
+                ReadBook.durChapterIndex = ReadBook.chapterSize - 1
             }
-            if (!BaseReadAloudService.isRun) {
-                syncBookProgress(book)
-            }
+            ReadBook.loadContent(resetPageOffset = isSameBook)
+        }
+        if (!isSameBook || !BaseReadAloudService.isRun) {
+            syncBookProgress(book)
         }
         if (!book.isLocalBook() && ReadBook.bookSource == null) {
             autoChangeSource(book.name, book.author)
