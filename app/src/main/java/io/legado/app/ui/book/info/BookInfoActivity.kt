@@ -127,6 +127,8 @@ class BookInfoActivity :
             viewModel.bookSource != null
         menu.findItem(R.id.menu_split_long_chapter)?.isVisible =
             viewModel.bookData.value?.isLocalTxt() ?: false
+        menu.findItem(R.id.menu_upload)?.isVisible =
+            viewModel.bookData.value?.isLocalBook() ?: false
         return super.onMenuOpened(featureId, menu)
     }
 
