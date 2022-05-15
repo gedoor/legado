@@ -18,7 +18,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -61,7 +60,6 @@ class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler
         }
         viewModel.savedFileUriData.observe(this) {
             requireContext().openFileUri(it, "*/*")
-            startActivity<ImportBookActivity>()
         }
     }
 
