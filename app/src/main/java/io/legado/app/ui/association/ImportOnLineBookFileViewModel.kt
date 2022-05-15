@@ -39,8 +39,8 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
             val fileName = "${book.name} 作者：${book.author}"
             analyzeRule.getStringList(ruleDownloadUrls, isUrl = true)?.let {
                 it.forEach { url ->
-                    val isSupportedFile = AppPattern.bookFileRegex.matches(fileName)
                     val mFileName = "${fileName}.${LocalBook.parseFileSuffix(url)}"
+                    val isSupportedFile = AppPattern.bookFileRegex.matches(mFileName)
                     allBookFiles.add(Triple(url, mFileName, isSupportedFile))
                 }
             } ?: throw NoStackTraceException("下载链接规则解析为空")
