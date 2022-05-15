@@ -296,14 +296,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeToLocalBook(bookUrl: String) {
         appDb.bookDao.getBook(bookUrl)?.let { localBook ->
-            LocalBook.mergeBook(localBook, bookData.value).let {
-                bookData.postValue(it)
-            }
-            LocalBook.getChapterList(localBook).let {
-                chapterListData.postValue(it)
-            }
             isImportBookOnLine = false
             inBookshelf = true
+            LocalBook.mergeBook(localBook, bookData.value).let {
+                bookData.postValue(it)
+                loadChapter(it)
+            }
         }
     }
 
