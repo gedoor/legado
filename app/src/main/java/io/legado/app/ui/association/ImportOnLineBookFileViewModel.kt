@@ -10,6 +10,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -22,13 +23,14 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
     val savedFileUriData = MutableLiveData<Uri>()
+    var bookSource: BookSource? = null
 
     fun initData(bookUrl: String?) {
         execute {
             bookUrl ?: throw NoStackTraceException("书籍详情页链接为空")
             val book = appDb.searchBookDao.getSearchBook(bookUrl)?.toBook()
                 ?: throw NoStackTraceException("book is null")
-            val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
+            bookSource = appDb.bookSourceDao.getBookSource(book.origin)
                 ?: throw NoStackTraceException("bookSource is null")
             val ruleDownloadUrls = bookSource?.getBookInfoRule()?.downloadUrls
             val content = AnalyzeUrl(bookUrl, source = bookSource).getStrResponse().body
@@ -53,7 +55,7 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
 
     fun downloadUrl(url: String, fileName: String, success: () -> Unit) {
         execute {
-            LocalBook.saveBookFile(url, fileName).let {
+            LocalBook.saveBookFile(url, fileName, bookSource).let {
                 savedFileUriData.postValue(it)
             }
         }.onSuccess {
@@ -65,7 +67,7 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
 
     fun importOnLineBookFile(url: String, fileName: String, success: () -> Unit) {
         execute {
-            LocalBook.importFileOnLine(url, fileName).let {
+            LocalBook.importFileOnLine(url, fileName, bookSource).let {
                 postEvent(EventBus.BOOK_URL_CHANGED, it.bookUrl)
             }
         }.onSuccess {
