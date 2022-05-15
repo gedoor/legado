@@ -266,6 +266,7 @@ class BookSourceEditActivity :
             add(EditEntity("coverUrl", ir?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("tocUrl", ir?.tocUrl, R.string.rule_toc_url))
             add(EditEntity("canReName", ir?.canReName, R.string.rule_can_re_name))
+            add(EditEntity("downloadUrls", ir?.downloadUrls, R.string.download_url_rule))
         }
         //目录页
         val tr = source?.getTocRule()
@@ -396,6 +397,7 @@ class BookSourceEditActivity :
                 "tocUrl" -> bookInfoRule.tocUrl =
                     viewModel.ruleComplete(it.value, bookInfoRule.init, 2)
                 "canReName" -> bookInfoRule.canReName = it.value
+                "downloadUrls" -> bookInfoRule.downloadUrls = viewModel.ruleComplete(it.value, bookInfoRule.init)
             }
         }
         tocEntities.forEach {

@@ -2,6 +2,7 @@ package io.legado.app.ui.book.info
 
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
@@ -118,6 +119,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
                             bookData.postValue(book)
+                            if (isImportBookOnLine) {
+                                appDb.searchBookDao.update(book.toSearchBook())
+                            }
                             if (inBookshelf) {
                                 appDb.bookDao.update(book)
                             }
@@ -290,26 +294,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun importBookFileOnLine() {
-        execute {
-            //下载类书源的目录链接视为文件链接
-            val book = bookData.value!!
-            val fileUrl = book.tocUrl
-            //切下载链接获取文件名
-            var fileName = fileUrl.substringAfterLast("/")
-            if (fileName.isEmpty()) {
-                fileName = book.name
-            }
-            LocalBook.importFile(fileUrl, fileName, bookSource, book)
-        }.onSuccess {
-            bookData.postValue(it)
-            LocalBook.getChapterList(it).let { toc ->
-                chapterListData.postValue(toc)
-            }
+    fun changeToLocalBook(bookUrl: String) {
+        appDb.bookDao.getBook(bookUrl)?.let { localBook ->
             isImportBookOnLine = false
             inBookshelf = true
-        }.onError {
-            context.toastOnUi("自动导入出错\n${it.localizedMessage}")
+            LocalBook.mergeBook(localBook, bookData.value).let {
+                bookData.postValue(it)
+                loadChapter(it)
+            }
         }
     }
 

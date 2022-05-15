@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -25,6 +26,7 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.association.ImportOnLineBookFileDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
@@ -278,11 +280,13 @@ class BookInfoActivity :
             true
         }
         tvRead.setOnClickListener {
-            viewModel.bookData.value?.let {
+            viewModel.bookData.value?.let { book ->
                 if (viewModel.isImportBookOnLine) {
-                    viewModel.importBookFileOnLine()
+                    showDialogFragment<ImportOnLineBookFileDialog> {
+                        putString("bookUrl", book.bookUrl)
+                    }
                 } else {
-                    readBook(it)
+                    readBook(book)
                 }
             } ?: toastOnUi("Book is null")
         }
@@ -486,4 +490,9 @@ class BookInfoActivity :
         }
     }
 
+    override fun observeLiveBus() {
+        observeEvent<String>(EventBus.BOOK_URL_CHANGED) {
+            viewModel.changeToLocalBook(it)
+        }
+    }
 }
