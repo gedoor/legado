@@ -194,15 +194,28 @@ object AppWebDav {
         Coroutine.async {
             val bookProgress = BookProgress(book)
             val json = GSON.toJson(bookProgress)
-            val url = getProgressUrl(book)
+            val url = getProgressUrl(book.name, book.author)
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
         }.onError {
             AppLog.put("上传进度失败\n${it.localizedMessage}")
         }
     }
 
-    private fun getProgressUrl(book: Book): String {
-        return bookProgressUrl + book.name + "_" + book.author + ".json"
+    fun uploadBookProgress(bookProgress: BookProgress) {
+        val authorization = authorization ?: return
+        if (!syncBookProgress) return
+        if (!NetworkUtils.isAvailable()) return
+        Coroutine.async {
+            val json = GSON.toJson(bookProgress)
+            val url = getProgressUrl(bookProgress.name, bookProgress.author)
+            WebDav(url, authorization).upload(json.toByteArray(), "application/json")
+        }.onError {
+            AppLog.put("上传进度失败\n${it.localizedMessage}")
+        }
+    }
+
+    private fun getProgressUrl(name: String, author: String): String {
+        return bookProgressUrl + name + "_" + author + ".json"
     }
 
     /**
@@ -210,7 +223,7 @@ object AppWebDav {
      */
     suspend fun getBookProgress(book: Book): BookProgress? {
         authorization?.let {
-            val url = getProgressUrl(book)
+            val url = getProgressUrl(book.name, book.author)
             kotlin.runCatching {
                 WebDav(url, it).download().let { byteArray ->
                     val json = String(byteArray)

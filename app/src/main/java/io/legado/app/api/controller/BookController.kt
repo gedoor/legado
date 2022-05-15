@@ -5,6 +5,7 @@ import io.legado.app.api.ReturnData
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.BookHelp
 import io.legado.app.help.CacheManager
@@ -205,6 +206,27 @@ object BookController {
                 ReadBook.durChapterIndex = book.durChapterIndex
             }
             return returnData.setData("")
+        }
+        return returnData.setErrorMsg("格式不对")
+    }
+
+    /**
+     * 保存进度
+     */
+    fun saveBookProgress(postData: String?): ReturnData {
+        val returnData = ReturnData()
+        GSON.fromJsonObject<BookProgress>(postData).getOrNull()?.let { bookProgress ->
+            appDb.bookDao.getBook(bookProgress.name, bookProgress.author)?.let { book ->
+                book.durChapterIndex = bookProgress.durChapterIndex
+                book.durChapterPos = bookProgress.durChapterPos
+                appDb.bookDao.update(book)
+                AppWebDav.uploadBookProgress(bookProgress)
+                if (ReadBook.book?.bookUrl == book.bookUrl) {
+                    ReadBook.book = book
+                    ReadBook.durChapterIndex = book.durChapterIndex
+                }
+                return returnData.setData("")
+            }
         }
         return returnData.setErrorMsg("格式不对")
     }
