@@ -29,9 +29,12 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
+//        initEvent()
         initData()
 //        toastOnUi("远程书籍")
     }
+
+
 
     private fun initView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -48,20 +51,21 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 //        viewModel.getRemoteBooks().observe(this, {
 //            adapter.submitList(it)
 //        })
-
+        viewModel.loadRemoteBookList()
 
         launch {
-            Log.e("TAG", "2")
-            viewModel.dataFlow.conflate().collect { remoteBooks ->
+            viewModel.dataFlow.collect { remoteBooks ->
                 adapter.setItems(remoteBooks)
             }
         }
 
 
 //        toastOnUi("1")
-        viewModel.loadRemoteBookList()
+
     }
-    override fun showRemoteBookInfo(book: Book) {
-        TODO("Not yet implemented")
+
+
+    override fun download(remoteBook: RemoteBook) {
+        viewModel.downloadRemoteBook(remoteBook.url)
     }
 }
