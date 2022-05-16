@@ -10,7 +10,7 @@ import kotlin.math.*
 object ColorUtils {
 
     fun isColorLight(@ColorInt color: Int): Boolean {
-        return ColorUtils.calculateLuminance(color) >= 0.65
+        return ColorUtils.calculateLuminance(color) >= 0.5
     }
 
     fun intToString(intColor: Int): String {
