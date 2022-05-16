@@ -222,6 +222,7 @@ object BookController {
                     book.durChapterIndex = bookProgress.durChapterIndex
                     book.durChapterPos = bookProgress.durChapterPos
                     book.durChapterTitle = bookProgress.durChapterTitle
+                    book.durChapterTime = bookProgress.durChapterTime
                     appDb.bookDao.update(book)
                     AppWebDav.uploadBookProgress(bookProgress)
                     if (ReadBook.book?.bookUrl == book.bookUrl) {
