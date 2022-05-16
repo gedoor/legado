@@ -38,8 +38,8 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.run {
-            tvName.text = item.name.substringBeforeLast(".")
-            tvContentType.text = item.name.substringAfterLast(".")
+            tvName.text = item.filename
+            tvContentType.text = item.contentType
             tvSize.text = ConvertUtils.formatFileSize(item.size)
             tvDate.text = LocalDateTimeUtil.format(LocalDateTimeUtil.of(item.lastModify), "yyyy-MM-dd")
         }

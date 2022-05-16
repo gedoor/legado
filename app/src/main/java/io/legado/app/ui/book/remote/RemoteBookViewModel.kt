@@ -1,13 +1,15 @@
 package io.legado.app.ui.book.remote
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.PreferKey
 import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
+import io.legado.app.model.localBook.LocalBook
+import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.exists
 import io.legado.app.utils.externalFiles
 import io.legado.app.utils.getPrefString
 import kotlinx.coroutines.*
@@ -60,35 +62,18 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
     fun loadRemoteBookList() {
         execute {
             dataCallback?.clear()
-            kotlin.runCatching {
-                authorization = null
-                val account = appCtx.getPrefString(PreferKey.webDavAccount)
-                val password = appCtx.getPrefString(PreferKey.webDavPassword)
-                if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
-                    val mAuthorization = Authorization(account, password)
-                    authorization = mAuthorization
-                }
-            }
-            authorization?.let { it ->
-                val remoteWebDavFileList = WebDav("http://txc.qianfanguojin.top/",it).listFiles()
-                val remoteList = remoteWebDavFileList.map {
-                    RemoteBook(it.displayName,it.urlName,it.size,"epub",it.lastModify)
-                }
-                dataCallback?.setItems(remoteList)
-            }
+            RemoteBookWebDav.getRemoteBookList()
+        }
 //            dataCallback?.setItems()
         }
 //        dataCallback?.setItems(listOf("1", "2", "3"))
-    }
+
 
     fun downloadRemoteBook(urlName: String) {
+        val saveFolder = "${appCtx.externalFiles.absolutePath}${File.separator}${remoteBookFolderName}"
+        val trueCodeURLName = String(urlName.toByteArray(Charset.forName("GBK")), Charset.forName("UTF-8"))
+        val saveFilePath = "${saveFolder}${trueCodeURLName}"
         execute {
-//            kotlin.runCatching {
-//                val remoteWebDavFile = WebDav("http://txc.qianfanguojin.top/",authorization!!).getFile(url)
-//                val remoteBook = RemoteBook(remoteWebDavFile.displayName,remoteWebDavFile.urlName,remoteWebDavFile.size,"epub",remoteWebDavFile.lastModify)
-//                dataCallback?.addItems(listOf(remoteBook))
-//            }
-
             kotlin.runCatching {
                 authorization = null
                 val account = appCtx.getPrefString(PreferKey.webDavAccount)
@@ -100,19 +85,30 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
             }
 
             authorization?.let { it ->
-                Log.e("TAG", "downloadRemoteBook: 1", )
-                val saveFolder = "${appCtx.externalFiles.absolutePath}${File.separator}${remoteBookFolderName}"
                 FileUtils.createFolderIfNotExist(saveFolder).run{
-
-//                Log.e("TAG", "downloadRemoteBook: 2 ${appCtx.externalFiles.absoluteFile}", )
-                val trueCodeURLName = String(urlName.toByteArray(Charset.forName("GBK")), Charset.forName("UTF-8"))
-                withTimeout(15000L) {
-                    val webdav = WebDav("http://txc.qianfanguojin.top${trueCodeURLName}", it)
-                    webdav.downloadTo("${saveFolder}${trueCodeURLName}", true).apply {
+                    withTimeout(15000L) {
+                        val webdav = WebDav(
+                            "http://txc.qianfanguojin.top${trueCodeURLName}",
+                            it
+                        )
+                        webdav.downloadTo(saveFilePath, true)
                     }
                 }
-                }
             }
+        }.onFinally {
+            addToBookshelf(hashSetOf("${saveFolder}${trueCodeURLName}")){
+                Log.e("TAG", "downloadRemoteBook: add", )
+            }
+        }
+
+    }
+    fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
+        execute {
+            uriList.forEach {
+                LocalBook.importFile(Uri.parse(it))
+            }
+        }.onFinally {
+            finally.invoke()
         }
     }
     interface DataCallback {
@@ -127,9 +123,10 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
 }
 
 data class RemoteBook(
-    val name: String,
-    val url: String,
+    val filename: String,
+    val urlName: String,
     val size: Long,
     val contentType: String,
     val lastModify: Long
 )
+

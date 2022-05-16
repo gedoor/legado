@@ -2,6 +2,7 @@ package io.legado.app.ui.book.info
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -31,6 +32,7 @@ import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -197,6 +199,19 @@ class BookInfoActivity :
                 }
                 item.isChecked = !item.isChecked
                 if (!item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
+            }
+
+            R.id.menu_upload -> {
+                launch {
+                    val uri = Uri.parse(viewModel.bookData.value?.bookUrl.toString())
+                    RemoteBookWebDav.getFilePathFromContentUri(uri, contentResolver)
+//                    val doc = DocumentFile.fromTreeUri(appCtx,uri)
+
+                //                   if (uri.isContentScheme()){
+//                        uri.path
+//                    }
+//                    RemoteBookWebDav.upload()
+                }
             }
         }
         return super.onCompatOptionsItemSelected(item)

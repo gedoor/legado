@@ -1,19 +1,14 @@
 package io.legado.app.ui.book.remote
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.data.entities.Book
 
 
 import io.legado.app.databinding.ActivityRemoteBookBinding
-import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.toastOnUi
 
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
@@ -51,7 +46,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 //        viewModel.getRemoteBooks().observe(this, {
 //            adapter.submitList(it)
 //        })
-        viewModel.loadRemoteBookList()
+//        viewModel.loadRemoteBookList()
 
         launch {
             viewModel.dataFlow.collect { remoteBooks ->
@@ -66,6 +61,6 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 
 
     override fun download(remoteBook: RemoteBook) {
-        viewModel.downloadRemoteBook(remoteBook.url)
+        viewModel.downloadRemoteBook(remoteBook.urlName)
     }
 }

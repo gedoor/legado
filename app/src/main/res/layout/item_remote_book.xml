@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
-            android:text="\u4e28"
+            android:text="丨"
             android:textColor="@color/tv_text_summary"
             android:textSize="11sp" />
 
