@@ -215,19 +215,23 @@ object BookController {
      */
     fun saveBookProgress(postData: String?): ReturnData {
         val returnData = ReturnData()
-        GSON.fromJsonObject<BookProgress>(postData).getOrNull()?.let { bookProgress ->
-            appDb.bookDao.getBook(bookProgress.name, bookProgress.author)?.let { book ->
-                book.durChapterIndex = bookProgress.durChapterIndex
-                book.durChapterPos = bookProgress.durChapterPos
-                appDb.bookDao.update(book)
-                AppWebDav.uploadBookProgress(bookProgress)
-                if (ReadBook.book?.bookUrl == book.bookUrl) {
-                    ReadBook.book = book
-                    ReadBook.durChapterIndex = book.durChapterIndex
+        GSON.fromJsonObject<BookProgress>(postData)
+            .onFailure { it.printOnDebug() }
+            .getOrNull()?.let { bookProgress ->
+                appDb.bookDao.getBook(bookProgress.name, bookProgress.author)?.let { book ->
+                    book.durChapterIndex = bookProgress.durChapterIndex
+                    book.durChapterPos = bookProgress.durChapterPos
+                    book.durChapterTitle = bookProgress.durChapterTitle
+                    book.durChapterTime = bookProgress.durChapterTime
+                    appDb.bookDao.update(book)
+                    AppWebDav.uploadBookProgress(bookProgress)
+                    if (ReadBook.book?.bookUrl == book.bookUrl) {
+                        ReadBook.book = book
+                        ReadBook.durChapterIndex = book.durChapterIndex
+                    }
+                    return returnData.setData("")
                 }
-                return returnData.setData("")
             }
-        }
         return returnData.setErrorMsg("格式不对")
     }
 
@@ -241,7 +245,7 @@ object BookController {
         val fileData = parameters["fileData"]?.firstOrNull()
             ?: return returnData.setErrorMsg("fileData 不能为空")
         kotlin.runCatching {
-           LocalBook.importFileOnLine(fileData, fileName)
+            LocalBook.importFileOnLine(fileData, fileName)
         }.onFailure {
             return when (it) {
                 is SecurityException -> returnData.setErrorMsg("需重新设置书籍保存位置!")
