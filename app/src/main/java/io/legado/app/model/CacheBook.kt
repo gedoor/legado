@@ -131,9 +131,9 @@ object CacheBook {
 
     class CacheBookModel(var bookSource: BookSource, var book: Book) {
 
-        private val waitDownloadSet = hashSetOf<Int>()
-        private val onDownloadSet = hashSetOf<Int>()
-        private val successDownloadSet = hashSetOf<Int>()
+        private val waitDownloadSet = linkedSetOf<Int>()
+        private val onDownloadSet = linkedSetOf<Int>()
+        private val successDownloadSet = linkedSetOf<Int>()
         private val errorDownloadMap = hashMapOf<Int, Int>()
 
         val waitCount get() = waitDownloadSet.size
@@ -174,7 +174,7 @@ object CacheBook {
             }
             onDownloadSet.remove(index)
             //重试3次
-            if (errorDownloadMap[index] ?: 0 < 3) {
+            if ((errorDownloadMap[index] ?: 0) < 3) {
                 waitDownloadSet.add(index)
             } else {
                 AppLog.put(

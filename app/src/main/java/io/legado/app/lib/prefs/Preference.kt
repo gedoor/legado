@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.prefs
+package io.legado.app.lib.prefs
 
 import android.content.Context
 import android.graphics.drawable.Drawable

@@ -38,7 +38,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private val ttsFolderPath: String by lazy {
         cacheDir.absolutePath + File.separator + "httpTTS" + File.separator
     }
-    private var speechRate: Int = AppConfig.speechRatePlay
+    private var speechRate: Int = AppConfig.speechRatePlay + 5
     private var downloadTask: Coroutine<*>? = null
     private var playIndexJob: Job? = null
     private var downloadTaskIsActive = false
@@ -301,7 +301,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun upSpeechRate(reset: Boolean) {
         downloadTask?.cancel()
         exoPlayer.stop()
-        speechRate = AppConfig.speechRatePlay
+        speechRate = AppConfig.speechRatePlay + 5
         downloadAudio()
     }
 

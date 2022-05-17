@@ -1,9 +1,11 @@
 package io.legado.app.help.http
 
 import io.legado.app.constant.AppConst
+import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.cronet.CronetInterceptor
 import io.legado.app.help.http.cronet.CronetLoader
+import io.legado.app.utils.NetworkUtils
 import okhttp3.*
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -23,7 +25,10 @@ val cookieJar by lazy {
 
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
             cookies.forEach {
-                CookieStore.replaceCookie(url.toString(), "${it.name}=${it.value}")
+                //CookieStore.replaceCookie(url.toString(), "${it.name}=${it.value}")
+                //临时保存 书源启用cookie选项再添加到数据库
+                val domain = NetworkUtils.getSubDomain(url.toString())
+                CacheManager.putMemory("${domain}_cookieJar", "${it.name}=${it.value}")
             }
         }
 

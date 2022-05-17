@@ -154,6 +154,10 @@ data class Book(
     @IgnoredOnParcel
     override var tocHtml: String? = null
 
+    @Ignore
+    @IgnoredOnParcel
+    var downloadUrls: List<String>? = null
+
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)

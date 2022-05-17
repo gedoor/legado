@@ -197,12 +197,10 @@ interface JsExtensions {
      *js实现读取cookie
      */
     fun getCookie(tag: String, key: String? = null): String {
-        val cookie = CookieStore.getCookie(tag)
-        val cookieMap = CookieStore.cookieToMap(cookie)
         return if (key != null) {
-            cookieMap[key] ?: ""
+            CookieStore.getKey(tag, key)
         } else {
-            cookie
+            CookieStore.getCookie(tag)
         }
     }
 
@@ -470,10 +468,8 @@ interface JsExtensions {
      * @return zip指定文件的数据
      */
     fun getZipByteArrayContent(url: String, path: String): ByteArray? {
-        val bytes = if (url.startsWith("http://") || url.startsWith("https://")) {
-            runBlocking {
-                return@runBlocking okHttpClient.newCallResponseBody { url(url) }.bytes()
-            }
+        val bytes = if (url.isAbsUrl()) {
+            AnalyzeUrl(url, source = getSource()).getByteArray()
         } else {
             StringUtils.hexStringToByte(url)
         }
@@ -517,7 +513,7 @@ interface JsExtensions {
                 str.isAbsUrl() -> runBlocking {
                     var x = CacheManager.getByteArray(key)
                     if (x == null) {
-                        x = okHttpClient.newCallResponseBody { url(str) }.bytes()
+                        x = AnalyzeUrl(str, source = getSource()).getByteArray()
                         x.let {
                             CacheManager.put(key, it)
                         }

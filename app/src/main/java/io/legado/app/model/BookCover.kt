@@ -150,6 +150,7 @@ object BookCover {
         override var loginUrl: String? = null,
         override var loginUi: String? = null,
         override var header: String? = null,
+        override var enabledCookieJar: Boolean? = false,
     ) : BaseSource {
 
         override fun getTag(): String {

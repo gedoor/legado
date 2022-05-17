@@ -28,4 +28,5 @@ object EventBus {
     const val TIP_COLOR = "tipColor"
     const val SOURCE_CHANGED = "sourceChanged"
     const val SEARCH_RESULT = "searchResult"
+    const val BOOK_URL_CHANGED = "bookUrlChanged"
 }

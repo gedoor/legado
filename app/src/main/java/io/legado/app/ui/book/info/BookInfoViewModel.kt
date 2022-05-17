@@ -2,11 +2,13 @@ package io.legado.app.ui.book.info
 
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -30,6 +32,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
+    var isImportBookOnLine = false
 
     fun initData(intent: Intent) {
         execute {
@@ -73,8 +76,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             upCoverByRule(book)
             bookSource = if (book.isLocalBook()) null else
                 appDb.bookSourceDao.getBookSource(book.origin)
+            isImportBookOnLine = (bookSource?.bookSourceType ?: BookType.local) == BookType.file
             if (book.tocUrl.isEmpty()) {
                 loadBookInfo(book)
+            } else if (isImportBookOnLine) {
+                chapterListData.postValue(emptyList())
             } else {
                 val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
                 if (chapterList.isNotEmpty()) {
@@ -113,6 +119,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
                             bookData.postValue(book)
+                            if (isImportBookOnLine) {
+                                appDb.searchBookDao.update(book.toSearchBook())
+                            }
                             if (inBookshelf) {
                                 appDb.bookDao.update(book)
                             }
@@ -141,6 +150,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     chapterListData.postValue(it)
                 }
+            } else if (isImportBookOnLine) {
+                chapterListData.postValue(emptyList())
             } else {
                 bookSource?.let { bookSource ->
                     WebBook.getChapterList(this, bookSource, book)
@@ -282,4 +293,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             }
         }
     }
+
+    fun changeToLocalBook(bookUrl: String) {
+        appDb.bookDao.getBook(bookUrl)?.let { localBook ->
+            isImportBookOnLine = false
+            inBookshelf = true
+            LocalBook.mergeBook(localBook, bookData.value).let {
+                bookData.postValue(it)
+                loadChapter(it)
+            }
+        }
+    }
+
 }

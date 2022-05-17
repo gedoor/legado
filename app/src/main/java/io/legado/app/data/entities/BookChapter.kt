@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.exception.RegexTimeoutException
@@ -15,6 +16,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
 import io.legado.app.utils.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
@@ -93,7 +95,7 @@ data class BookChapter(
                 2 -> displayTitle = ChineseUtils.s2t(displayTitle)
             }
         }
-        if (useReplace && replaceRules != null) {
+        if (useReplace && replaceRules != null) kotlin.run {
             replaceRules.forEach { item ->
                 if (item.pattern.isNotEmpty()) {
                     try {
@@ -112,7 +114,10 @@ data class BookChapter(
                     } catch (e: RegexTimeoutException) {
                         item.isEnabled = false
                         appDb.replaceRuleDao.update(item)
+                    } catch (e: CancellationException) {
+                        return@run
                     } catch (e: Exception) {
+                        AppLog.put("${item.name}替换出错\n替换内容\n${displayTitle}", e)
                         appCtx.toastOnUi("${item.name}替换出错")
                     }
                 }

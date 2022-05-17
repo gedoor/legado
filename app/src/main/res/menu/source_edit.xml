@@ -22,6 +22,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_clear_cookie"
+        android:title="@string/cookie"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_auto_complete"
         android:title="@string/auto_complete"
         android:checkable="true"

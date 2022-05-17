@@ -1,4 +1,4 @@
-package io.legado.app.ui.widget.prefs
+package io.legado.app.lib.prefs
 
 import android.content.Context
 import android.util.AttributeSet
@@ -25,14 +25,8 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         val v = Preference.bindView<TextView>(
-            context,
-            holder,
-            icon,
-            title,
-            summary,
-            widgetLayoutResource,
-            R.id.text_view,
-            isBottomBackground = isBottomBackground
+            context, holder, icon, title, summary, widgetLayoutResource,
+            R.id.text_view, isBottomBackground = isBottomBackground
         )
         if (v is TextView) {
             v.text = entry

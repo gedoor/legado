@@ -1,6 +1,8 @@
 package io.legado.app.model.webBook
 
+import android.text.TextUtils
 import io.legado.app.R
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
@@ -137,14 +139,29 @@ object BookInfo {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取封面出错", e)
         }
-        scope.ensureActive()
-        Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
-        book.tocUrl = analyzeRule.getString(infoRule.tocUrl, isUrl = true)
-        if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
-        if (book.tocUrl == baseUrl) {
-            book.tocHtml = body
+        if (book.type != BookType.file) {
+            scope.ensureActive()
+            Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
+            book.tocUrl = analyzeRule.getString(infoRule.tocUrl, isUrl = true)
+            if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
+            if (book.tocUrl == baseUrl) {
+                book.tocHtml = body
+            }
+            Debug.log(bookSource.bookSourceUrl, "└${book.tocUrl}")
+        } else {
+            scope.ensureActive()
+            Debug.log(bookSource.bookSourceUrl, "┌获取文件下载链接")
+            book.downloadUrls = analyzeRule.getStringList(infoRule.downloadUrls, isUrl = true)
+            if (book.downloadUrls == null) {
+                Debug.log(bookSource.bookSourceUrl, "└")
+                throw NoStackTraceException("下载链接为空")
+            } else {
+                Debug.log(
+                    bookSource.bookSourceUrl,
+                    "└" + TextUtils.join("，\n", book.downloadUrls!!)
+                )
+            }
         }
-        Debug.log(bookSource.bookSourceUrl, "└${book.tocUrl}")
     }
 
 }

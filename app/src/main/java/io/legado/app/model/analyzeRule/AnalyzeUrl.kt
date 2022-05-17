@@ -69,6 +69,7 @@ class AnalyzeUrl(
     private var retry: Int = 0
     private var useWebView: Boolean = false
     private var webJs: String? = null
+    private val enabledCookieJar = source?.enabledCookieJar ?: false
 
     init {
         if (!mUrl.isDataUrl()) {
@@ -519,17 +520,26 @@ class AnalyzeUrl(
     }
 
     /**
-     *设置cookie urlOption的优先级大于书源保存的cookie
+     *设置cookie 优先级
+     * urlOption临时cookie > 数据库cookie = okhttp CookieJar保存在内存中的cookie
      *@param tag 书源url 缺省为传入的url
      */
     private fun setCookie(tag: String?) {
-        val cookie = CookieStore.getCookie(tag ?: url)
+        val domain = NetworkUtils.getSubDomain(tag ?: url)
+        //书源启用保存cookie时 添加内存中的cookie到数据库
+        if (enabledCookieJar) {
+            val key = "${domain}_cookieJar"
+            CacheManager.getFromMemory(key)?.let {
+                CookieStore.replaceCookie(domain, it)
+                CacheManager.deleteMemory(key)
+            }
+        }
+        val cookie = CookieStore.getCookie(domain)
         if (cookie.isNotEmpty()) {
             val cookieMap = CookieStore.cookieToMap(cookie)
             val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
             cookieMap.putAll(customCookieMap)
-            val newCookie = CookieStore.mapToCookie(cookieMap)
-            newCookie?.let {
+            CookieStore.mapToCookie(cookieMap)?.let {
                 headerMap.put("Cookie", it)
             }
         }

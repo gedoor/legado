@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -26,6 +27,7 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.association.ImportOnLineBookFileDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
@@ -245,7 +247,7 @@ class BookInfoActivity :
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
             }
             chapterList.isNullOrEmpty() -> {
-                binding.tvToc.text = getString(R.string.toc_s, getString(R.string.error_load_toc))
+                binding.tvToc.text = if (viewModel.isImportBookOnLine) getString(R.string.click_read_button_load) else getString(R.string.toc_s, getString(R.string.error_load_toc))
             }
             else -> {
                 viewModel.bookData.value?.let {
@@ -293,8 +295,14 @@ class BookInfoActivity :
             true
         }
         tvRead.setOnClickListener {
-            viewModel.bookData.value?.let {
-                readBook(it)
+            viewModel.bookData.value?.let { book ->
+                if (viewModel.isImportBookOnLine) {
+                    showDialogFragment<ImportOnLineBookFileDialog> {
+                        putString("bookUrl", book.bookUrl)
+                    }
+                } else {
+                    readBook(book)
+                }
             } ?: toastOnUi("Book is null")
         }
         tvShelf.setOnClickListener {
@@ -497,4 +505,9 @@ class BookInfoActivity :
         }
     }
 
+    override fun observeLiveBus() {
+        observeEvent<String>(EventBus.BOOK_URL_CHANGED) {
+            viewModel.changeToLocalBook(it)
+        }
+    }
 }

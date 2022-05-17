@@ -2,41 +2,41 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.legado.app.ui.widget.prefs.NameListPreference
+    <io.legado.app.lib.prefs.NameListPreference
         android:defaultValue="auto"
         android:key="language"
         android:title="@string/language"
         app:entries="@array/language"
         app:entryValues="@array/language_value" />
 
-    <io.legado.app.ui.widget.prefs.PreferenceCategory
+    <io.legado.app.lib.prefs.PreferenceCategory
         android:title="@string/main_activity"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="auto_refresh"
             android:summary="@string/ps_auto_refresh"
             android:title="@string/pt_auto_refresh"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="defaultToRead"
             android:summary="@string/ps_default_read"
             android:title="@string/pt_default_read"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="showDiscovery"
             android:title="@string/show_discovery"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="showRss"
             android:title="@string/show_rss"
@@ -44,99 +44,99 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+    </io.legado.app.lib.prefs.PreferenceCategory>
 
-    <io.legado.app.ui.widget.prefs.PreferenceCategory
+    <io.legado.app.lib.prefs.PreferenceCategory
         android:title="@string/other_setting"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="userAgent"
             android:title="@string/user_agent" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="defaultBookTreeUri"
             android:summary="@string/book_tree_uri_s"
             android:title="@string/book_tree_uri_t" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="checkSource"
             android:title="@string/check_source_config" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="uploadRule"
             android:summary="@string/direct_link_upload_rule_summary"
             android:title="@string/direct_link_upload_rule" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="Cronet"
             android:summary="@string/pref_cronet_summary"
             android:title="Cronet" />
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="antiAlias"
             android:summary="@string/pref_anti_alias_summary"
             android:title="@string/anti_alias" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="preDownloadNum"
             android:summary="@string/pre_download_s"
             android:title="@string/pre_download" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="replaceEnableDefault"
             android:summary="@string/replace_enable_default_s"
             android:title="@string/replace_enable_default_t"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="mediaButtonOnExit"
             android:summary="@string/media_button_on_exit_summary"
             android:title="@string/media_button_on_exit_title"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="autoClearExpired"
             android:summary="@string/auto_clear_expired_summary"
             android:title="@string/auto_clear_expired" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="webPort"
             android:title="@string/web_port_title"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="cleanCache"
             android:summary="@string/clear_cache_summary"
             android:title="@string/clear_cache"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.Preference
+        <io.legado.app.lib.prefs.Preference
             android:key="threadCount"
             android:title="@string/threads_num_title"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="process_text"
             android:summary="@string/add_to_text_context_menu_s"
             android:title="@string/add_to_text_context_menu_t"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.ui.widget.prefs.SwitchPreference
+        <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="recordLog"
             android:summary="@string/record_debug_log"
             android:title="@string/record_log"
             app:iconSpaceReserved="false" />
 
-    </io.legado.app.ui.widget.prefs.PreferenceCategory>
+    </io.legado.app.lib.prefs.PreferenceCategory>
 
 
 </androidx.preference.PreferenceScreen>

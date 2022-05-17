@@ -331,6 +331,7 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
 
 @Suppress("DEPRECATION")
 val Context.isWifiConnect: Boolean
+    @SuppressLint("MissingPermission")
     get() {
         val info = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
         return info?.isConnected == true
@@ -338,7 +339,7 @@ val Context.isWifiConnect: Boolean
 
 val Context.isPad: Boolean
     get() {
-        return resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
+        return (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE
     }
 
 val Context.channel: String

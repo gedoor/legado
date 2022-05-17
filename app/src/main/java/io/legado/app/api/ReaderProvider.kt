@@ -21,7 +21,8 @@ class ReaderProvider : ContentProvider() {
     private enum class RequestCode {
         SaveBookSource, SaveBookSources, DeleteBookSources, GetBookSource, GetBookSources,
         SaveRssSource, SaveRssSources, DeleteRssSources, GetRssSource, GetRssSources,
-        SaveBook, GetBookshelf, RefreshToc, GetChapterList, GetBookContent, GetBookCover
+        SaveBook, GetBookshelf, RefreshToc, GetChapterList, GetBookContent, GetBookCover,
+        SaveBookProgress
     }
 
     private val postBodyKey = "json"
@@ -85,6 +86,9 @@ class ReaderProvider : ContentProvider() {
             }
             RequestCode.SaveBook -> values?.let {
                 BookController.saveBook(values.getAsString(postBodyKey))
+            }
+            RequestCode.SaveBookProgress -> values?.let {
+                BookController.saveBookProgress(values.getAsString(postBodyKey))
             }
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name

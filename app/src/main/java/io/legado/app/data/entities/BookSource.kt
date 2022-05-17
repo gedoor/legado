@@ -13,6 +13,7 @@ import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 import java.io.InputStream
 
+@Suppress("unused")
 @Parcelize
 @TypeConverters(BookSource.Converters::class)
 @Entity(
@@ -27,7 +28,7 @@ data class BookSource(
     var bookSourceName: String = "",
     // 分组
     var bookSourceGroup: String? = null,
-    // 类型，0 文本，1 音频, 2 图片
+    // 类型，0 文本，1 音频, 2 图片, 3 文件（指的是类似知轩藏书只提供下载的网站）
     @BookType.Type
     var bookSourceType: Int = 0,
     // 详情页url正则
@@ -38,6 +39,9 @@ data class BookSource(
     var enabled: Boolean = true,
     // 启用发现
     var enabledExplore: Boolean = true,
+    // 启用okhttp CookieJAr 自动保存每次请求的cookie
+    @ColumnInfo(defaultValue = "0")
+    override var enabledCookieJar: Boolean? = false,
     // 并发率
     override var concurrentRate: String? = null,
     // 请求头
@@ -158,7 +162,7 @@ data class BookSource(
 
     fun removeGroup(groups: String): BookSource {
         bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
-            it.removeAll(groups.splitNotBlank(AppPattern.splitGroupRegex))
+            it.removeAll(groups.splitNotBlank(AppPattern.splitGroupRegex).toSet())
             bookSourceGroup = TextUtils.join(",", it)
         }
         return this
@@ -190,6 +194,7 @@ data class BookSource(
                 && equal(bookSourceComment, source.bookSourceComment)
                 && enabled == source.enabled
                 && enabledExplore == source.enabledExplore
+                && enabledCookieJar == source.enabledCookieJar
                 && equal(header, source.header)
                 && loginUrl == source.loginUrl
                 && equal(exploreUrl, source.exploreUrl)
