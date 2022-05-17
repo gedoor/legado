@@ -13,7 +13,7 @@
     <item
         android:id="@+id/menu_remote"
         android:icon="@drawable/ic_add"
-        android:title="远程书籍"
+        android:title="@string/add_remote_book"
         app:showAsAction="always" />
 
     <item

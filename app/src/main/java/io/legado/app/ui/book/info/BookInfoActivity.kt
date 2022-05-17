@@ -204,12 +204,11 @@ class BookInfoActivity :
             R.id.menu_upload -> {
                 launch {
                     val uri = Uri.parse(viewModel.bookData.value?.bookUrl.toString())
-//                    val doc = DocumentFile.fromTreeUri(appCtx,uri)
+                    if (RemoteBookWebDav.upload(uri))
+                        toastOnUi(getString(R.string.upload_book_success))
+                    else
+                        toastOnUi(getString(R.string.upload_book_fail))
 
-                //                   if (uri.isContentScheme()){
-//                        uri.path
-//                    }
-                    RemoteBookWebDav.upload(uri)
                 }
             }
         }

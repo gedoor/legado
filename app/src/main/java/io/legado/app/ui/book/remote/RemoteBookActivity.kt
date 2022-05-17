@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 
 
 import io.legado.app.databinding.ActivityRemoteBookBinding
+import io.legado.app.utils.toastOnUi
 
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
@@ -28,42 +31,34 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 //        initEvent()
         initData()
 //        toastOnUi("远程书籍")
+        onFinally()
     }
+
 
 
 
     private fun initView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-//        binding.layTop.setBackgroundColor(backgroundColor)
-//        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-//        binding.recyclerView.adapter = adapter
-//        binding.selectActionBar.setMainActionText(R.string.add_to_shelf)
-//        binding.selectActionBar.inflateMenu(R.menu.import_book_sel)
-//        binding.selectActionBar.setOnMenuItemClickListener(this)
-//        binding.selectActionBar.setCallBack(this)
     }
     private fun initData() {
-//        viewModel.getRemoteBooks().observe(this, {
-//            adapter.submitList(it)
-//        })
         binding.refreshProgressBar.isAutoLoading = true
         viewModel.loadRemoteBookList()
         launch {
-            viewModel.dataFlow.collect { remoteBooks ->
+            viewModel.dataFlow.conflate().collect { remoteBooks ->
                 adapter.setItems(remoteBooks)
             }
+            binding.refreshProgressBar.isAutoLoading = false
         }
-
-
-//        toastOnUi("1")
-
     }
 
+    private fun onFinally() {
 
+    }
     @SuppressLint("NotifyDataSetChanged")
     override fun addToBookshelf(remoteBook: RemoteBook) {
         viewModel.addToBookshelf(remoteBook){
+            toastOnUi(getString(R.string.download_book_fail))
             adapter.notifyDataSetChanged()
         }
     }

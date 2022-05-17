@@ -5,12 +5,8 @@ import android.view.ViewGroup
 import cn.hutool.core.date.LocalDateTimeUtil
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemRemoteBookBinding
 import io.legado.app.utils.ConvertUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.toastOnUi
-import splitties.init.appCtx
 
 
 /**
@@ -38,6 +34,7 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.run {
+            //Todo：需要判断书籍是否已经加入书架，来改变“下载”按钮的文本，暂时还没有比较好的方案
             tvName.text = item.filename.substringBeforeLast(".")
             tvContentType.text = item.contentType
             tvSize.text = ConvertUtils.formatFileSize(item.size)
@@ -48,9 +45,7 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemRemoteBookBinding) {
         binding.btnDownload.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
-                    context.toastOnUi("开始加入")
                     callBack.addToBookshelf(it)
-                    context.toastOnUi("加入成功")
                 }
         }
 

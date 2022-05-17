@@ -16,7 +16,7 @@
 
     <item
         android:id="@+id/menu_upload"
-        android:title="上传到云"
+        android:title="@string/upload_to_remote"
         app:showAsAction="never" />
 
     <item
