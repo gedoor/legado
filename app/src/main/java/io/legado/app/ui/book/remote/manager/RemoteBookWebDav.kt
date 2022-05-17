@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.remote.manager
 
 
+import android.net.Uri
 import io.legado.app.constant.PreferKey
 
 import io.legado.app.exception.NoStackTraceException
@@ -9,6 +10,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavFile
+import io.legado.app.ui.book.info.BookInfoActivity
 
 import io.legado.app.ui.book.remote.RemoteBook
 import io.legado.app.ui.book.remote.RemoteBookManager
@@ -98,12 +100,21 @@ object RemoteBookWebDav : RemoteBookManager() {
     /**
      * 上传本地导入的书籍到远程
      */
-    override suspend fun upload(localBookUrl: String): Boolean {
+    override suspend fun upload(localBookUri: Uri): Boolean {
         if (!NetworkUtils.isAvailable()) return false
-        val localBookName = localBookUrl.substringAfterLast(File.separator)
-        authorization?.let {
-            val putUrl = "${remoteBookUrl}${File.separator}${localBookName}"
-            WebDav(putUrl, it).upload(localBookUrl)
+
+        val localBookName = localBookUri.path?.substringAfterLast(File.separator)
+        val putUrl = "${remoteBookUrl}${File.separator}${localBookName}"
+        kotlin.runCatching {
+            authorization?.let {
+                if (localBookUri.isContentScheme()){
+                    WebDav(putUrl, it).upload(byteArray = localBookUri.readBytes(appCtx),contentType = "application/octet-stream")
+                }else{
+                    WebDav(putUrl, it).upload(localBookUri.path!!)
+                }
+            }
+        }.onFailure {
+            return false
         }
         return true
     }
