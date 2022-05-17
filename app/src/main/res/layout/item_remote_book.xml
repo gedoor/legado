@@ -97,12 +97,12 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="3dp"
         >
+
         <Button
             android:id="@+id/btn_download"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="下载"
-            >
+            android:text="加入书架">
 
         </Button>
     </LinearLayout>

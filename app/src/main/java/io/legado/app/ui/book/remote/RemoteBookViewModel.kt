@@ -55,56 +55,37 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
 //        }
 
         awaitClose {
-//            dataCallback = null
+            dataCallback = null
         }
     }.flowOn(Dispatchers.IO)
 
     fun loadRemoteBookList() {
         execute {
             dataCallback?.clear()
-            RemoteBookWebDav.getRemoteBookList()
+            val bookList = RemoteBookWebDav.getRemoteBookList()
+            dataCallback?.setItems(bookList)
         }
-//            dataCallback?.setItems()
-        }
-//        dataCallback?.setItems(listOf("1", "2", "3"))
-
-
-    fun downloadRemoteBook(urlName: String) {
-        val saveFolder = "${appCtx.externalFiles.absolutePath}${File.separator}${remoteBookFolderName}"
-        val trueCodeURLName = String(urlName.toByteArray(Charset.forName("GBK")), Charset.forName("UTF-8"))
-        val saveFilePath = "${saveFolder}${trueCodeURLName}"
-        execute {
-            kotlin.runCatching {
-                authorization = null
-                val account = appCtx.getPrefString(PreferKey.webDavAccount)
-                val password = appCtx.getPrefString(PreferKey.webDavPassword)
-                if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
-                    val mAuthorization = Authorization(account, password)
-                    authorization = mAuthorization
-                }
-            }
-
-            authorization?.let { it ->
-                FileUtils.createFolderIfNotExist(saveFolder).run{
-                    withTimeout(15000L) {
-                        val webdav = WebDav(
-                            "http://txc.qianfanguojin.top${trueCodeURLName}",
-                            it
-                        )
-                        webdav.downloadTo(saveFilePath, true)
-                    }
-                }
-            }
-        }.onFinally {
-            addToBookshelf(hashSetOf("${saveFolder}${trueCodeURLName}")){
-                Log.e("TAG", "downloadRemoteBook: add", )
-            }
-        }
-
     }
+
+
+
     fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
         execute {
             uriList.forEach {
+                LocalBook.importFile(Uri.parse(it))
+            }
+        }.onFinally {
+            finally.invoke()
+        }
+    }
+
+    /**
+     * 添加书籍到本地书架
+     */
+    fun addToBookshelf(remoteBook: RemoteBook, finally: () -> Unit) {
+        execute {
+            val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
+            downloadBookPath?.let {
                 LocalBook.importFile(Uri.parse(it))
             }
         }.onFinally {

@@ -38,7 +38,7 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.run {
-            tvName.text = item.filename
+            tvName.text = item.filename.substringBeforeLast(".")
             tvContentType.text = item.contentType
             tvSize.text = ConvertUtils.formatFileSize(item.size)
             tvDate.text = LocalDateTimeUtil.format(LocalDateTimeUtil.of(item.lastModify), "yyyy-MM-dd")
@@ -48,8 +48,9 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemRemoteBookBinding) {
         binding.btnDownload.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
-                    context.toastOnUi("开始下载")
-                    callBack.download(it)
+                    context.toastOnUi("开始加入")
+                    callBack.addToBookshelf(it)
+                    context.toastOnUi("加入成功")
                 }
         }
 
@@ -57,6 +58,6 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
-        fun download(remoteBook: RemoteBook)
+        fun addToBookshelf(remoteBook: RemoteBook)
     }
 }

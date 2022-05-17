@@ -1,13 +1,7 @@
 package io.legado.app.ui.book.remote
 
-import android.content.ContentResolver
-import android.database.Cursor
 import android.net.Uri
-import android.provider.MediaStore
-import android.provider.OpenableColumns
-import android.webkit.MimeTypeMap
-import java.io.File
-import kotlin.random.Random
+
 
 
 abstract class RemoteBookManager {
@@ -17,5 +11,9 @@ abstract class RemoteBookManager {
     abstract suspend fun getRemoteBookList(): MutableList<RemoteBook>
     abstract suspend fun upload(localBookUri: Uri): Boolean
     abstract suspend fun delete(remoteBookUrl: String): Boolean
-    abstract suspend fun getRemoteBook(remoteBookUrl: String): RemoteBook
+
+    /**
+     * @return String：下载到本地的路径
+     */
+    abstract suspend fun getRemoteBook(remoteBook: RemoteBook): String?
 }

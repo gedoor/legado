@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.remote
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,8 +47,8 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 //        viewModel.getRemoteBooks().observe(this, {
 //            adapter.submitList(it)
 //        })
-//        viewModel.loadRemoteBookList()
-
+        binding.refreshProgressBar.isAutoLoading = true
+        viewModel.loadRemoteBookList()
         launch {
             viewModel.dataFlow.collect { remoteBooks ->
                 adapter.setItems(remoteBooks)
@@ -60,7 +61,10 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
     }
 
 
-    override fun download(remoteBook: RemoteBook) {
-        viewModel.downloadRemoteBook(remoteBook.urlName)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun addToBookshelf(remoteBook: RemoteBook) {
+        viewModel.addToBookshelf(remoteBook){
+            adapter.notifyDataSetChanged()
+        }
     }
 }
