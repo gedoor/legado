@@ -178,9 +178,11 @@ dependencies {
     // UI Tests
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
 
-    //firebase 只在google play版本启用,防止没有google组件崩溃
+    //firebase
     implementation platform('com.google.firebase:firebase-bom:30.0.1')
     implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
+    implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
 
     //media
     implementation("androidx.media:media:1.6.0")

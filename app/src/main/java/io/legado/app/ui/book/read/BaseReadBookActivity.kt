@@ -229,8 +229,12 @@ abstract class BaseReadBookActivity :
                 customView { alertBinding.root }
                 yesButton {
                     alertBinding.run {
-                        val start = editStart.text?.toString()?.toInt() ?: 0
-                        val end = editEnd.text?.toString()?.toInt() ?: book.totalChapterNum
+                        val start = editStart.text!!.toString().let {
+                            if (it.isEmpty()) 0 else it.toInt()
+                        }
+                        val end = editEnd.text!!.toString().let {
+                            if (it.isEmpty()) book.totalChapterNum else it.toInt()
+                        }
                         CacheBook.start(this@BaseReadBookActivity, book, start - 1, end - 1)
                     }
                 }

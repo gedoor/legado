@@ -153,6 +153,7 @@ data class RssSource(
                     style = doc.readString("$.style"),
                     enableJs = doc.readBool("$.enableJs") ?: true,
                     loadWithBaseUrl = doc.readBool("$.loadWithBaseUrl") ?: true,
+                    enabledCookieJar = doc.readBool("$.enabledCookieJar") ?: false,
                     customOrder = doc.readInt("$.customOrder") ?: 0
                 )
             }
