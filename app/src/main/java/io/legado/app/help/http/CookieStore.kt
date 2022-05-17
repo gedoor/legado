@@ -58,6 +58,7 @@ object CookieStore : CookieManager {
         val domain = NetworkUtils.getSubDomain(url)
         appDb.cookieDao.delete(domain)
         CacheManager.deleteMemory("${domain}_cookie")
+        android.webkit.CookieManager.getInstance().removeAllCookies(null)
     }
 
     override fun cookieToMap(cookie: String): MutableMap<String, String> {
