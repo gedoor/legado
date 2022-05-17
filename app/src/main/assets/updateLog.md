@@ -14,6 +14,7 @@
 **2022/05/16**
 
 * 添加firebase性能监测
+* 清除cookie时清除webView的cookie
 
 **2022/05/15**
 
