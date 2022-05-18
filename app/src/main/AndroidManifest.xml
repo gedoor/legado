@@ -281,6 +281,10 @@
         <activity
             android:name=".ui.book.local.ImportBookActivity"
             android:launchMode="singleTop" />
+        <!-- 添加远程 -->
+        <activity
+            android:name=".ui.book.remote.RemoteBookActivity"
+            android:launchMode="singleTop" />
         <!-- 发现界面 -->
         <activity
             android:name=".ui.book.explore.ExploreShowActivity"
