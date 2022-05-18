@@ -570,20 +570,14 @@ object ReadBookConfig {
                 bgDrawable = when (curBgType()) {
                     0 -> ColorDrawable(Color.parseColor(curBgStr()))
                     1 -> {
-                        BitmapDrawable(
-                            resources,
-                            BitmapUtils.decodeAssetsBitmap(
-                                appCtx,
-                                "bg" + File.separator + curBgStr(),
-                                width,
-                                height
-                            )
-                        )
+                        val path = "bg" + File.separator + curBgStr()
+                        val bitmap = BitmapUtils.decodeAssetsBitmap(appCtx, path, width, height)
+                        BitmapDrawable(resources, bitmap)
                     }
-                    else -> BitmapDrawable(
-                        resources,
-                        BitmapUtils.decodeBitmap(curBgStr(), width, height)
-                    )
+                    else -> {
+                        val bitmap = BitmapUtils.decodeBitmap(curBgStr(), width, height)
+                        BitmapDrawable(resources, bitmap)
+                    }
                 }
             } catch (e: OutOfMemoryError) {
                 e.printOnDebug()
