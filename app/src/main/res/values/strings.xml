@@ -6,6 +6,13 @@
     <string name="tip_perm_request_storage">Legado needs storage access to find and read books. please go "App Settings" to allow "Storage permission".</string>
 
     <!--Other-->
+    <string name="upload_book_success" translatable="false">Upload Success</string>
+    <string name="upload_book_fail" translatable="false">Upload Fail</string>
+    <string name="download_book_success" translatable="false">Download Success</string>
+    <string name="download_book_fail" translatable="false">Download Fail</string>
+    <string name="separator" translatable="false">丨</string>
+    <string name="upload_to_remote" translatable="false">Upload</string>
+    <string name="add_remote_book" translatable="false">Add Remote</string>
     <string name="menu_backup">Home</string>
     <string name="menu_restore">Restore</string>
     <string name="menu_import_old">Import Legado data</string>

@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.activityViewModels
@@ -23,6 +24,7 @@ import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.local.ImportBookActivity
 import io.legado.app.ui.book.manage.BookshelfManageActivity
+import io.legado.app.ui.book.remote.RemoteBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.main.MainViewModel
@@ -74,6 +76,8 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         super.onCompatOptionsItemSelected(item)
         when (item.itemId) {
+            // 查看远程书籍
+            R.id.menu_remote -> startActivity<RemoteBookActivity>()
             R.id.menu_search -> startActivity<SearchActivity>()
             R.id.menu_update_toc -> activityViewModel.upToc(books)
             R.id.menu_bookshelf_layout -> configBookshelf()

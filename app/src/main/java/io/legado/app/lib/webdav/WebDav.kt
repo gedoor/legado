@@ -19,14 +19,16 @@ import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(urlStr: String, val authorization: Authorization) {
     companion object {
 
-        @SuppressLint("SimpleDateFormat")
-        private val dateFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ZZZ")
+        @SuppressLint("DateTimeFormatter")
+        private val dateTimeFormatter = DateTimeFormatter.RFC_1123_DATE_TIME
 
         // 指定返回哪些属性
         @Language("xml")
@@ -133,11 +135,11 @@ open class WebDav(urlStr: String, val authorization: Authorization) {
                                 .firstOrNull()?.text()?.toLong() ?: 0
                         }.getOrDefault(0)
                         val lastModify: Long = kotlin.runCatching {
-                            element.getElementsByTag("d:getcontentlength")
+                            element.getElementsByTag("d:getlastmodified")
                                 .firstOrNull()?.text()?.let {
-                                    dateFormat.parse(it)
+                                    LocalDateTime.parse(it, dateTimeFormatter).toInstant(ZoneOffset.of("+8")).toEpochMilli()
                                 }
-                        }.getOrNull()?.time ?: 0
+                        }.getOrNull() ?: 0
                         webDavFile = WebDavFile(
                             baseUrl + fileName,
                             authorization,
