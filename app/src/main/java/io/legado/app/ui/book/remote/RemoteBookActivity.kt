@@ -28,14 +28,8 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
-//        initEvent()
         initData()
-//        toastOnUi("远程书籍")
-        onFinally()
     }
-
-
-
 
     private fun initView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -43,18 +37,15 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
     }
     private fun initData() {
         binding.refreshProgressBar.isAutoLoading = true
-        viewModel.loadRemoteBookList()
         launch {
             viewModel.dataFlow.conflate().collect { remoteBooks ->
                 adapter.setItems(remoteBooks)
             }
             binding.refreshProgressBar.isAutoLoading = false
         }
+        viewModel.loadRemoteBookList()
     }
 
-    private fun onFinally() {
-
-    }
     @SuppressLint("NotifyDataSetChanged")
     override fun addToBookshelf(remoteBook: RemoteBook) {
         viewModel.addToBookshelf(remoteBook){
