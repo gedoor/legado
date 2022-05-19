@@ -60,7 +60,7 @@ object AppConst {
     val sysElevation = appCtx.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
 
     val androidId: String by lazy {
-        Settings.System.getString(appCtx.contentResolver, Settings.Secure.ANDROID_ID)
+        Settings.System.getString(appCtx.contentResolver, Settings.Secure.ANDROID_ID) ?: "null"
     }
 
     val appInfo: AppInfo by lazy {
