@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
@@ -93,12 +93,3 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
 
     }
 }
-
-data class RemoteBook(
-    val filename: String,
-    val urlName: String,
-    val size: Long,
-    val contentType: String,
-    val lastModify: Long
-)
-
