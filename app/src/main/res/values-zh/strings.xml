@@ -984,5 +984,11 @@
     <string name="click_read_button_load">点击阅读加载目录</string>
     <string name="cookie">清除cookie</string>
     <string name="download_and_import_file">导入在线书籍文件</string>
+    <string name="upload_book_success">Upload Success</string>
+    <string name="upload_book_fail">Upload Fail</string>
+    <string name="download_book_success">Download Success</string>
+    <string name="download_book_fail">Download Fail</string>
+    <string name="upload_to_remote">上传WebDav</string>
+    <string name="add_remote_book">WebDav书籍</string>
     <!-- string end -->
 </resources>

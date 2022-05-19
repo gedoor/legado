@@ -20,4 +20,6 @@
     <string name="vip_title">🔒%s</string>
     <string name="payed_title">🔓%s</string>
 
+    <string name="separator">丨</string>
+
 </resources>
