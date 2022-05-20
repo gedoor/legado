@@ -39,9 +39,9 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
         binding.refreshProgressBar.isAutoLoading = true
         launch {
             viewModel.dataFlow.conflate().collect { remoteBooks ->
+                binding.refreshProgressBar.isAutoLoading = false
                 adapter.setItems(remoteBooks)
             }
-            binding.refreshProgressBar.isAutoLoading = false
         }
         viewModel.loadRemoteBookList()
     }
