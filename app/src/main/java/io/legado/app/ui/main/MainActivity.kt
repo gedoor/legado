@@ -86,6 +86,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         upVersion()
+        privacyPolicy()
         //自动更新书籍
         if (AppConfig.autoRefreshBook) {
             binding.viewPagerMain.postDelayed(1000) {
@@ -149,13 +150,24 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             if (LocalConfig.isFirstOpenApp) {
                 val help = String(assets.open("help/appHelp.md").readBytes())
                 showDialogFragment(TextDialog(help, TextDialog.Mode.MD))
-                val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
-                showDialogFragment(TextDialog(privacyPolicy, TextDialog.Mode.MD))
             } else if (!BuildConfig.DEBUG) {
                 val log = String(assets.open("updateLog.md").readBytes())
                 showDialogFragment(TextDialog(log, TextDialog.Mode.MD))
             }
             viewModel.upVersion()
+        }
+    }
+
+    private fun privacyPolicy() {
+        if (LocalConfig.privacyPolicyOk) return
+        val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
+        alert("用户隐私与协议", privacyPolicy) {
+            noButton {
+                finish()
+            }
+            yesButton {
+                LocalConfig.privacyPolicyOk = true
+            }
         }
     }
 

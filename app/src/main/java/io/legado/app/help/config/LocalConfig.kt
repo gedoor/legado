@@ -3,6 +3,8 @@ package io.legado.app.help.config
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import io.legado.app.utils.getBoolean
+import io.legado.app.utils.putBoolean
 import io.legado.app.utils.putLong
 import splitties.init.appCtx
 
@@ -14,6 +16,12 @@ object LocalConfig :
         get() = getLong("lastBackup", 0)
         set(value) {
             putLong("lastBackup", value)
+        }
+
+    var privacyPolicyOk: Boolean
+        get() = getBoolean("privacyPolicyOk")
+        set(value) {
+            putBoolean("privacyPolicyOk", value)
         }
 
     val readHelpVersionIsLast: Boolean
