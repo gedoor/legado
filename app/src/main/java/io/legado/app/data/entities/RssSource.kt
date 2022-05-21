@@ -69,6 +69,16 @@ data class RssSource(
                 && equal(sourceIcon, source.sourceIcon)
                 && enabled == source.enabled
                 && equal(sourceGroup, source.sourceGroup)
+                && enabledCookieJar == source.enabledCookieJar
+                && equal(sourceComment, source.sourceComment)
+                && equal(concurrentRate, source.concurrentRate)
+                && equal(header, source.header)
+                && equal(loginUrl, source.loginUrl)
+                && equal(loginUi, source.loginUi)
+                && equal(loginCheckJs, source.loginCheckJs)
+                && equal(sortUrl, source.sortUrl)
+                && singleUrl == source.singleUrl
+                && articleStyle == source.articleStyle
                 && equal(ruleArticles, source.ruleArticles)
                 && equal(ruleNextPage, source.ruleNextPage)
                 && equal(ruleTitle, source.ruleTitle)

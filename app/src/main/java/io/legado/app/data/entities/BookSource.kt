@@ -192,11 +192,15 @@ data class BookSource(
                 && bookSourceType == source.bookSourceType
                 && equal(bookUrlPattern, source.bookUrlPattern)
                 && equal(bookSourceComment, source.bookSourceComment)
+                && customOrder == source.customOrder
                 && enabled == source.enabled
                 && enabledExplore == source.enabledExplore
                 && enabledCookieJar == source.enabledCookieJar
+                && equal(concurrentRate, source.concurrentRate)
                 && equal(header, source.header)
-                && loginUrl == source.loginUrl
+                && equal(loginUrl, source.loginUrl)
+                && equal(loginUi, source.loginUi)
+                && equal(loginCheckJs, source.loginCheckJs)
                 && equal(exploreUrl, source.exploreUrl)
                 && equal(searchUrl, source.searchUrl)
                 && getSearchRule() == source.getSearchRule()
