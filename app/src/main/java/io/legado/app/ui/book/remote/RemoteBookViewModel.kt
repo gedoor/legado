@@ -2,7 +2,6 @@ package io.legado.app.ui.book.remote
 
 import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
@@ -13,11 +12,7 @@ import kotlinx.coroutines.flow.flowOn
 import java.util.*
 
 class RemoteBookViewModel(application: Application): BaseViewModel(application){
-    private val remoteBookFolderName = "book_remote"
     private var dataCallback : DataCallback? = null
-    var isRemoteBookLiveData = MutableLiveData<Boolean>()
-    var dataFlowStart: (() -> Unit)? = null
-
 
     val dataFlow = callbackFlow<List<RemoteBook>> {
 
@@ -41,14 +36,17 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
                 trySend(emptyList())
             }
         }
-//        withContext(Dispatchers.Main) {
-//            dataFlowStart?.invoke()
-//        }
 
         awaitClose {
             dataCallback = null
         }
     }.flowOn(Dispatchers.IO)
+
+    init {
+        execute {
+            RemoteBookWebDav.initRemoteContext()
+        }
+    }
 
     fun loadRemoteBookList() {
         execute {
@@ -57,8 +55,6 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
             dataCallback?.setItems(bookList)
         }
     }
-
-
 
     fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
         execute {

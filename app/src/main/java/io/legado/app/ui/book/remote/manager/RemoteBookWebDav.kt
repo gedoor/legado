@@ -3,30 +3,22 @@ package io.legado.app.ui.book.remote.manager
 
 import android.net.Uri
 import io.legado.app.constant.PreferKey
-
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.AppWebDav
 import io.legado.app.help.config.AppConfig
-
-import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
-import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.lib.webdav.WebDavFile
-import io.legado.app.ui.book.info.BookInfoActivity
-
 import io.legado.app.ui.book.remote.RemoteBook
 import io.legado.app.ui.book.remote.RemoteBookManager
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import splitties.init.appCtx
 import java.io.File
-import java.nio.charset.Charset
 
 object RemoteBookWebDav : RemoteBookManager() {
-    private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
-    private var authorization: Authorization? = null
     private val remoteBookUrl get() = "${rootWebDavUrl}${remoteBookFolder}"
     private val localSaveFolder get() = "${appCtx.externalFiles.absolutePath}${File.separator}${remoteBookFolder}"
+
     init {
         runBlocking {
             initRemoteContext()
@@ -36,7 +28,7 @@ object RemoteBookWebDav : RemoteBookManager() {
     private val rootWebDavUrl: String
         get() {
             val configUrl = appCtx.getPrefString(PreferKey.webDavUrl)?.trim()
-            var url = if (configUrl.isNullOrEmpty()) defaultWebDavUrl else configUrl
+            var url = if (configUrl.isNullOrEmpty()) AppWebDav.defaultWebDavUrl else configUrl
             if (!url.endsWith("/")) url = "${url}/"
             AppConfig.webDavDir?.trim()?.let {
                 if (it.isNotEmpty()) {
@@ -47,27 +39,17 @@ object RemoteBookWebDav : RemoteBookManager() {
         }
 
     override suspend fun initRemoteContext() {
-        kotlin.runCatching {
-            authorization = null
-            val account = appCtx.getPrefString(PreferKey.webDavAccount)
-            val password = appCtx.getPrefString(PreferKey.webDavPassword)
-            if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
-                val mAuthorization = Authorization(account, password)
-                WebDav(rootWebDavUrl, mAuthorization).makeAsDir()
-                WebDav(remoteBookUrl, mAuthorization).makeAsDir()
-                authorization = mAuthorization
-            }
-        }.onFailure {
-            it.printStackTrace()
+        AppWebDav.authorization?.let {
+            WebDav(remoteBookUrl, it).makeAsDir()
         }
     }
 
     @Throws(Exception::class)
     override suspend fun getRemoteBookList(): MutableList<RemoteBook> {
         val remoteBooks = mutableListOf<RemoteBook>()
-        authorization?.let {
+        AppWebDav.authorization?.let {
             //读取文件列表
-            var remoteWebDavFileList : List<WebDavFile>? = null
+            var remoteWebDavFileList: List<WebDavFile>? = null
             kotlin.runCatching {
                 remoteWebDavFileList = WebDav(remoteBookUrl, it).listFiles()
             }
@@ -97,13 +79,13 @@ object RemoteBookWebDav : RemoteBookManager() {
     override suspend fun getRemoteBook(remoteBook: RemoteBook): String? {
         val saveFilePath= "${localSaveFolder}${File.separator}${remoteBook.filename}"
         kotlin.runCatching {
-            authorization?.let {
-                FileUtils.createFolderIfNotExist(localSaveFolder).run{
-                        val webdav = WebDav(
-                            remoteBook.urlName,
-                            it
-                        )
-                        webdav.downloadTo(saveFilePath, true)
+            AppWebDav.authorization?.let {
+                FileUtils.createFolderIfNotExist(localSaveFolder).run {
+                    val webdav = WebDav(
+                        remoteBook.urlName,
+                        it
+                    )
+                    webdav.downloadTo(saveFilePath, true)
                 }
             }
         }.onFailure {
@@ -122,10 +104,13 @@ object RemoteBookWebDav : RemoteBookManager() {
         val localBookName = localBookUri.path?.substringAfterLast(File.separator)
         val putUrl = "${remoteBookUrl}${File.separator}${localBookName}"
         kotlin.runCatching {
-            authorization?.let {
-                if (localBookUri.isContentScheme()){
-                    WebDav(putUrl, it).upload(byteArray = localBookUri.readBytes(appCtx),contentType = "application/octet-stream")
-                }else{
+            AppWebDav.authorization?.let {
+                if (localBookUri.isContentScheme()) {
+                    WebDav(putUrl, it).upload(
+                        byteArray = localBookUri.readBytes(appCtx),
+                        contentType = "application/octet-stream"
+                    )
+                } else {
                     WebDav(putUrl, it).upload(localBookUri.path!!)
                 }
             }
