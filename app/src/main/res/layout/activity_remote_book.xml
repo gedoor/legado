@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
         android:text="webDav book文件夹为空"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:layout_constraintBottom_toBottomOf="parent"

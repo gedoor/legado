@@ -41,7 +41,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
         launch {
             viewModel.dataFlow.conflate().collect { remoteBooks ->
                 binding.refreshProgressBar.isAutoLoading = false
-                binding.tvEmptyMsg.isGone = remoteBooks.isEmpty()
+                binding.tvEmptyMsg.isGone = remoteBooks.isNotEmpty()
                 adapter.setItems(remoteBooks)
             }
         }
