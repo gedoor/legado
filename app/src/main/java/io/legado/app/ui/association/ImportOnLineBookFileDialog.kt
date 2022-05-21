@@ -1,11 +1,9 @@
 package io.legado.app.ui.association
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.net.Uri
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -14,12 +12,13 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemBookFileImportBinding
-import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.openFileUri
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 
 /**
@@ -114,13 +113,13 @@ class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler
                             title = getString(R.string.draw),
                             message = getString(R.string.file_not_supported, selectFile.second)
                         ) {
-                            okButton {
+                            yesButton {
                                 importFileAndUpdate(selectFile.first, selectFile.second)
                             }
                             neutralButton(R.string.open_fun) {
                                 downloadFile(selectFile.first, selectFile.second)
                             }
-                            cancelButton()
+                            noButton()
                         }
                     }
                 }
