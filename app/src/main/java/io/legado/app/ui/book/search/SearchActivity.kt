@@ -72,8 +72,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
-                        cancelButton()
-                        okButton {
+                        noButton()
+                        yesButton {
                             AppConfig.searchGroup = ""
                             viewModel.searchKey = ""
                             viewModel.search(searchView.query.toString())

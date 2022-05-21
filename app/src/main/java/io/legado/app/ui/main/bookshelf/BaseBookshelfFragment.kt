@@ -1,7 +1,6 @@
 package io.legado.app.ui.main.bookshelf
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.activityViewModels
@@ -166,7 +165,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     }
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 

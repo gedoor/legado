@@ -94,10 +94,10 @@ class FileAssociationActivity :
                 title = appCtx.getString(R.string.draw),
                 message = appCtx.getString(R.string.file_not_supported, data.second)
             ) {
-                okButton {
+                yesButton {
                     importBook(data.first)
                 }
-                cancelButton {
+                noButton {
                     finish()
                 }
             }

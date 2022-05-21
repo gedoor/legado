@@ -79,8 +79,8 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
-                        cancelButton()
-                        okButton {
+                        noButton()
+                        yesButton {
                             AppConfig.searchGroup = ""
                             viewModel.startSearch()
                         }

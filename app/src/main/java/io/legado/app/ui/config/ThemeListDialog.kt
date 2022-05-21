@@ -72,7 +72,7 @@ class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     fun delete(index: Int) {
         alert(R.string.delete, R.string.sure_del) {
-            okButton {
+            yesButton {
                 ThemeConfig.delConfig(index)
                 initData()
             }

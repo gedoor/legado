@@ -182,7 +182,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
                     }
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 

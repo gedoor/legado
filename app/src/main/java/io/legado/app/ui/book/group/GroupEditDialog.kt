@@ -93,7 +93,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
 
     private fun deleteGroup(ok: () -> Unit) {
         alert(R.string.delete, R.string.sure_del) {
-            okButton {
+            yesButton {
                 ok.invoke()
             }
             noButton()

@@ -68,7 +68,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         recyclerView.adapter = adapter
         readRecord.tvRemove.setOnClickListener {
             alert(R.string.delete, R.string.sure_del) {
-                okButton {
+                yesButton {
                     appDb.readRecordDao.clear()
                     initData()
                 }
@@ -144,7 +144,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         private fun sureDelAlert(item: ReadRecordShow) {
             alert(R.string.delete) {
                 setMessage(getString(R.string.sure_del_any, item.bookName))
-                okButton {
+                yesButton {
                     appDb.readRecordDao.deleteByName(item.bookName)
                     initData()
                 }

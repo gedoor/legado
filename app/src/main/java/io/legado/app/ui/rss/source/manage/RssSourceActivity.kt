@@ -219,7 +219,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun delSourceDialog() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.del(*adapter.selection.toTypedArray()) }
+            yesButton { viewModel.del(*adapter.selection.toTypedArray()) }
             noButton()
         }
     }

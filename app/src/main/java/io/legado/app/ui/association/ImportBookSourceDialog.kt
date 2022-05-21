@@ -183,7 +183,7 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
                     }
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 
