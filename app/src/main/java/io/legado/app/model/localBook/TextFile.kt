@@ -173,13 +173,13 @@ class TextFile(private val book: Book) {
                                 val qyChapter = BookChapter()
                                 qyChapter.title = "前言"
                                 qyChapter.start = curOffset
-                                qyChapter.end = chapterLength.toLong()
+                                qyChapter.end = curOffset + chapterLength.toLong()
                                 toc.add(qyChapter)
                             }
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
-                            curChapter.start = chapterLength.toLong()
+                            curChapter.start = curOffset + chapterLength.toLong()
                             toc.add(curChapter)
                         } else { //否则就block分割之后，上一个章节的剩余内容
                             //获取上一章节
