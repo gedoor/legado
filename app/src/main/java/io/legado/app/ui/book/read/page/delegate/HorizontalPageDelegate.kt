@@ -20,15 +20,15 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
         when (mDirection) {
             PageDirection.PREV -> {
                 prevBitmap?.recycle()
-                prevBitmap = prevPage.getBitmap()?.copy(Bitmap.Config.ARGB_8888, false)
+                prevBitmap = prevPage.getBitmap()
                 curBitmap?.recycle()
-                curBitmap = curPage.getBitmap()?.copy(Bitmap.Config.ARGB_8888, false)
+                curBitmap = curPage.getBitmap()
             }
             PageDirection.NEXT -> {
                 nextBitmap?.recycle()
-                nextBitmap = nextPage.getBitmap()?.copy(Bitmap.Config.ARGB_8888, false)
+                nextBitmap = nextPage.getBitmap()
                 curBitmap?.recycle()
-                curBitmap = curPage.getBitmap()?.copy(Bitmap.Config.ARGB_8888, false)
+                curBitmap = curPage.getBitmap()
             }
             else -> Unit
         }

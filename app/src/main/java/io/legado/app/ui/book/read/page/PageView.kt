@@ -66,7 +66,7 @@ class PageView(context: Context) : FrameLayout(context) {
 
     fun getBitmap(): Bitmap? {
         synchronized(this) {
-            return bitmap
+            return bitmap?.copy(Bitmap.Config.ARGB_8888, false)
         }
     }
 
