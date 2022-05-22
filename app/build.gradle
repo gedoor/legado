@@ -181,7 +181,6 @@ dependencies {
     //firebase
     implementation platform('com.google.firebase:firebase-bom:30.0.1')
     implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
-    implementation platform('com.google.firebase:firebase-bom:30.0.1')
     implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
 
     //media
@@ -207,7 +206,7 @@ dependencies {
     implementation('io.github.jeremyliao:live-event-bus-x:1.8.0')
 
     //规则相关
-    implementation('org.jsoup:jsoup:1.14.3')
+    implementation('org.jsoup:jsoup:1.15.1')
     implementation('com.jayway.jsonpath:json-path:2.7.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.1')
     implementation(project(path: ':epublib'))
@@ -250,7 +249,7 @@ dependencies {
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
 
     //加解密类库
-    implementation('cn.hutool:hutool-crypto:5.8.0.M1')
+    implementation('cn.hutool:hutool-crypto:5.8.1')
 
     //renderscriptToolkit
     implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
