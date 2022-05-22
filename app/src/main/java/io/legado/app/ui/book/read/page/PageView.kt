@@ -10,6 +10,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import io.legado.app.R
 import io.legado.app.constant.AppConst.timeFormat
+import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
 import io.legado.app.help.config.ReadBookConfig
@@ -43,8 +44,7 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
 
-    var bitmap: Bitmap? = null
-        private set
+    private var bitmap: Bitmap? = null
 
     val headerHeight: Int
         get() {
@@ -64,11 +64,22 @@ class PageView(context: Context) : FrameLayout(context) {
         }
     }
 
+    fun getBitmap(): Bitmap? {
+        synchronized(this) {
+            return bitmap
+        }
+    }
+
     private fun upBitmap() {
         Coroutine.async {
             val screenshot = screenshot()
-            bitmap?.recycle()
-            bitmap = screenshot
+            val tmp = bitmap
+            synchronized(this@PageView) {
+                bitmap = screenshot
+            }
+            tmp?.recycle()
+        }.onError {
+            AppLog.put("更新PageView图片出错", it)
         }
     }
 
