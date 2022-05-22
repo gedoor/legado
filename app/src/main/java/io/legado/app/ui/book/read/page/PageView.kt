@@ -65,18 +65,15 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun getBitmap(): Bitmap? {
-        synchronized(this) {
-            return bitmap?.copy(Bitmap.Config.ARGB_8888, false)
-        }
+        return bitmap?.copy(Bitmap.Config.ARGB_8888, false)
     }
 
     private fun upBitmap() {
         Coroutine.async {
-            val screenshot = screenshot()
+            screenshot()
+        }.onSuccess {
             val tmp = bitmap
-            synchronized(this@PageView) {
-                bitmap = screenshot
-            }
+            bitmap = it
             tmp?.recycle()
         }.onError {
             AppLog.put("更新PageView图片出错", it)
