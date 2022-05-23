@@ -98,6 +98,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         addView(curPage)
         addView(prevPage)
         if (!isInEditMode) {
+            upBg()
             setWillNotDraw(false)
             upPageAnim()
         }
