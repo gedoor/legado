@@ -23,9 +23,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    lintOptions{
-        checkDependencies true
-    }
 
     signingConfigs {
         if (project.hasProperty("RELEASE_STORE_FILE")) {
@@ -119,6 +116,9 @@ android {
     sourceSets {
         // Adds exported schema location as test app assets.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+    lint {
+        checkDependencies true
     }
     tasks.withType(JavaCompile) {
         //options.compilerArgs << "-Xlint:unchecked"

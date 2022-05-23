@@ -6,9 +6,6 @@ android {
     compileSdkVersion 32
     buildToolsVersion '32.0.0'
     namespace 'me.ag2s.epublib'
-    lintOptions{
-        checkDependencies true
-    }
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
@@ -22,11 +19,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        android {
+        }
 
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lint {
+        checkDependencies true
     }
 }
 
