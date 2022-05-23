@@ -41,6 +41,7 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
+    private var bitmap: Bitmap? = null
 
     val headerHeight: Int
         get() {
@@ -61,7 +62,12 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun getBitmap(): Bitmap? {
-        return drawingCache?.copy(Bitmap.Config.ARGB_8888, false)
+        return bitmap?.copy(Bitmap.Config.ARGB_8888, false)
+    }
+
+    private fun upBitmap() {
+        bitmap?.recycle()
+        bitmap = screenshot()
     }
 
     fun upStyle() = binding.run {
@@ -230,8 +236,7 @@ class PageView(context: Context) : FrameLayout(context) {
         val time = timeFormat.format(Date(System.currentTimeMillis()))
         tvTimeBattery?.setBattery(battery, time)
         tvTimeBatteryP?.text = "$time $battery%"
-        destroyDrawingCache()
-        buildDrawingCache()
+        upBitmap()
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
@@ -240,8 +245,7 @@ class PageView(context: Context) : FrameLayout(context) {
             resetPageOffset()
         }
         binding.contentTextView.setContent(textPage)
-        destroyDrawingCache()
-        buildDrawingCache()
+        upBitmap()
     }
 
     fun setContentDescription(content: String) {

@@ -126,14 +126,13 @@ fun View.visible(visible: Boolean) {
     }
 }
 
-fun View.screenshot(): Bitmap? {
-    return runCatching {
-        val screenshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val c = Canvas(screenshot)
-        c.translate(-scrollX.toFloat(), -scrollY.toFloat())
-        draw(c)
-        screenshot
-    }.getOrNull()
+fun View.screenshot(): Bitmap {
+    val screenshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val c = Canvas(screenshot)
+    c.translate(-scrollX.toFloat(), -scrollY.toFloat())
+    this.draw(c)
+    c.setBitmap(null)
+    return screenshot
 }
 
 fun SeekBar.progressAdd(int: Int) {
