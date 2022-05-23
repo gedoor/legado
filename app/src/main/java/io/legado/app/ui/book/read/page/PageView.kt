@@ -69,14 +69,16 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     private fun upBitmap() {
-        Coroutine.async {
-            screenshot()
-        }.onSuccess {
-            val tmp = bitmap
-            bitmap = it
-            tmp?.recycle()
-        }.onError {
-            AppLog.put("更新PageView图片出错", it)
+        post {
+            Coroutine.async {
+                screenshot()
+            }.onSuccess {
+                val tmp = bitmap
+                bitmap = it
+                tmp?.recycle()
+            }.onError {
+                AppLog.put("更新PageView图片出错", it)
+            }
         }
     }
 
