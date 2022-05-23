@@ -98,7 +98,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         addView(curPage)
         addView(prevPage)
         if (!isInEditMode) {
-            upBg()
             setWillNotDraw(false)
             upPageAnim()
         }
@@ -121,6 +120,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         setRect9x()
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
+        if (w > 0 && h > 0) {
+            upBg()
+        }
     }
 
     override fun dispatchDraw(canvas: Canvas) {
