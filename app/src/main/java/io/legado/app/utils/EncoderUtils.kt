@@ -47,7 +47,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the Base64-encode bytes of AES encryption
@@ -56,7 +56,7 @@ object EncoderUtils {
     fun encryptAES2Base64(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String? = "DES/ECB/PKCS5Padding",
+        transformation: String? = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return Base64.encode(encryptAES(data, key, transformation, iv), Base64.NO_WRAP)
@@ -68,7 +68,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the bytes of AES encryption
@@ -77,7 +77,7 @@ object EncoderUtils {
     fun encryptAES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String? = "DES/ECB/PKCS5Padding",
+        transformation: String? = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return symmetricTemplate(data, key, "AES", transformation!!, iv, true)
@@ -90,7 +90,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the bytes of AES decryption for Base64-encode bytes
@@ -99,7 +99,7 @@ object EncoderUtils {
     fun decryptBase64AES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String = "DES/ECB/PKCS5Padding",
+        transformation: String = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return decryptAES(Base64.decode(data, Base64.NO_WRAP), key, transformation, iv)
@@ -111,7 +111,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the bytes of AES decryption
@@ -120,7 +120,7 @@ object EncoderUtils {
     fun decryptAES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String = "DES/ECB/PKCS5Padding",
+        transformation: String = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return symmetricTemplate(data, key, "AES", transformation, iv, false)
