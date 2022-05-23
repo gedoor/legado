@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
+import io.legado.app.utils.screenshot
 
 abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
@@ -20,15 +21,15 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
         when (mDirection) {
             PageDirection.PREV -> {
                 prevBitmap?.recycle()
-                prevBitmap = prevPage.getBitmap()
+                prevBitmap = prevPage.screenshot()
                 curBitmap?.recycle()
-                curBitmap = curPage.getBitmap()
+                curBitmap = curPage.screenshot()
             }
             PageDirection.NEXT -> {
                 nextBitmap?.recycle()
-                nextBitmap = nextPage.getBitmap()
+                nextBitmap = nextPage.screenshot()
                 curBitmap?.recycle()
-                curBitmap = curPage.getBitmap()
+                curBitmap = curPage.screenshot()
             }
             else -> Unit
         }
