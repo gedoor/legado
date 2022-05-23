@@ -3,7 +3,6 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
-import cn.hutool.crypto.digest.DigestUtil
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -960,8 +959,8 @@ interface JsExtensions {
     fun digestHex(
         data: String,
         algorithm: String,
-    ): String? {
-        return DigestUtil.digester(algorithm).digestHex(data)
+    ): String {
+        return DigestUtils.getDigest(algorithm, data)
     }
 
     /**
@@ -974,8 +973,8 @@ interface JsExtensions {
     fun digestBase64Str(
         data: String,
         algorithm: String,
-    ): String? {
-        return Base64.encodeToString(DigestUtil.digester(algorithm).digest(data), Base64.NO_WRAP)
+    ): String {
+        return Base64.encodeToString(DigestUtils.getDigest(algorithm, data.toByteArray()), Base64.NO_WRAP)
     }
 
     fun md5Encode(str: String): String {
