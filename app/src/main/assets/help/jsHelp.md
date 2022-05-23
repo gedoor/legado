@@ -143,6 +143,16 @@ java.aesEncodeToString(str: String, key: String, transformation: String, iv: Str
 
 java.aesEncodeToBase64String(str: String, key: String, transformation: String, iv: String)
 ```
+* DES
+```
+java.desDecodeToString(str: String, key: String, transformation: String, iv: String)
+
+java.desBase64DecodeToString(str: String, key: String, transformation: String, iv: String)
+
+java.desEncodeToString(str: String, key: String, transformation: String, iv: String)
+
+java.desEncodeToBase64String(str: String, key: String, transformation: String, iv: String)
+```
 * 3DES
 ```
 * @param data 被加密的字符串
