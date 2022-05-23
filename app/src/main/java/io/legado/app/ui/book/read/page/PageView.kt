@@ -10,12 +10,10 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import io.legado.app.R
 import io.legado.app.constant.AppConst.timeFormat
-import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextPage
@@ -44,8 +42,6 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
 
-    private var bitmap: Bitmap? = null
-
     val headerHeight: Int
         get() {
             val h1 = if (ReadBookConfig.hideStatusBar) 0 else context.statusBarHeight
@@ -65,21 +61,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun getBitmap(): Bitmap? {
-        return bitmap?.copy(Bitmap.Config.ARGB_8888, false)
-    }
-
-    private fun upBitmap() {
-        post {
-            Coroutine.async {
-                screenshot()
-            }.onSuccess {
-                val tmp = bitmap
-                bitmap = it
-                tmp?.recycle()
-            }.onError {
-                AppLog.put("更新PageView图片出错", it)
-            }
-        }
+        return drawingCache?.copy(Bitmap.Config.ARGB_8888, false)
     }
 
     fun upStyle() = binding.run {
@@ -248,7 +230,6 @@ class PageView(context: Context) : FrameLayout(context) {
         val time = timeFormat.format(Date(System.currentTimeMillis()))
         tvTimeBattery?.setBattery(battery, time)
         tvTimeBatteryP?.text = "$time $battery%"
-        upBitmap()
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
@@ -257,7 +238,6 @@ class PageView(context: Context) : FrameLayout(context) {
             resetPageOffset()
         }
         binding.contentTextView.setContent(textPage)
-        upBitmap()
     }
 
     fun setContentDescription(content: String) {
