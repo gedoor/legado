@@ -489,12 +489,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
 
     fun upBg() {
-        ReadBookConfig.bg ?: let {
-            ReadBookConfig.upBg()
-        }
-        curPage.setBg(ReadBookConfig.bg)
-        prevPage.setBg(ReadBookConfig.bg)
-        nextPage.setBg(ReadBookConfig.bg)
+        ReadBookConfig.upBg(width, height)
+        curPage.upBg()
+        prevPage.upBg()
+        nextPage.upBg()
     }
 
     fun upBgAlpha() {

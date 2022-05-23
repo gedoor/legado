@@ -41,7 +41,6 @@ class BgAdapter(context: Context, val textColor: Int) :
             this.setOnClickListener {
                 getItemByLayoutPosition(holder.layoutPosition)?.let {
                     ReadBookConfig.durConfig.setCurBg(1, it)
-                    ReadBookConfig.upBg()
                     postEvent(EventBus.UP_CONFIG, false)
                 }
             }

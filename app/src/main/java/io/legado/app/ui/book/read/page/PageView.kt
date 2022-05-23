@@ -2,8 +2,6 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isGone
@@ -41,7 +39,6 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
-    private var bitmap: Bitmap? = null
 
     val headerHeight: Int
         get() {
@@ -61,13 +58,9 @@ class PageView(context: Context) : FrameLayout(context) {
         }
     }
 
-    fun getBitmap(): Bitmap? {
-        return bitmap?.copy(Bitmap.Config.ARGB_8888, false)
-    }
-
-    private fun upBitmap() {
-        bitmap?.recycle()
-        bitmap = screenshot()
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        upBg()
     }
 
     fun upStyle() = binding.run {
@@ -208,9 +201,9 @@ class PageView(context: Context) : FrameLayout(context) {
         }
     }
 
-    fun setBg(bg: Drawable?) {
+    fun upBg() {
         binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
-        binding.vwBg.background = bg
+        binding.vwBg.background = ReadBookConfig.bg
         upBgAlpha()
     }
 
@@ -236,7 +229,6 @@ class PageView(context: Context) : FrameLayout(context) {
         val time = timeFormat.format(Date(System.currentTimeMillis()))
         tvTimeBattery?.setBattery(battery, time)
         tvTimeBatteryP?.text = "$time $battery%"
-        upBitmap()
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
@@ -245,7 +237,6 @@ class PageView(context: Context) : FrameLayout(context) {
             resetPageOffset()
         }
         binding.contentTextView.setContent(textPage)
-        upBitmap()
     }
 
     fun setContentDescription(content: String) {

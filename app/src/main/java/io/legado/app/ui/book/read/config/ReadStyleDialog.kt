@@ -158,7 +158,6 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         val oldIndex = ReadBookConfig.styleSelect
         if (index != oldIndex) {
             ReadBookConfig.styleSelect = index
-            ReadBookConfig.upBg()
             upView()
             styleAdapter.notifyItemChanged(oldIndex)
             styleAdapter.notifyItemChanged(index)

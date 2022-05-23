@@ -37,7 +37,6 @@ object ReadBookConfig {
             if (shareLayout) {
                 shareConfig = value
             }
-            upBg()
         }
 
     var bg: Drawable? = null
@@ -88,11 +87,8 @@ object ReadBookConfig {
         shareConfig = c ?: configList.getOrNull(5) ?: Config()
     }
 
-    fun upBg() {
-        val resources = appCtx.resources
-        val dm = resources.displayMetrics
-        val width = dm.widthPixels
-        val height = dm.heightPixels
+    fun upBg(width: Int, height: Int) {
+        val tmp = bg
         bg = durConfig.curBgDrawable(width, height).apply {
             if (this is BitmapDrawable) {
                 bgMeanColor = bitmap.getMeanColor()
@@ -100,6 +96,7 @@ object ReadBookConfig {
                 bgMeanColor = color
             }
         }
+        (tmp as? BitmapDrawable)?.bitmap?.recycle()
     }
 
     fun save() {
@@ -123,7 +120,6 @@ object ReadBookConfig {
             if (styleSelect > 0) {
                 styleSelect -= 1
             }
-            upBg()
             return true
         }
         return false
@@ -572,11 +568,11 @@ object ReadBookConfig {
                     1 -> {
                         val path = "bg" + File.separator + curBgStr()
                         val bitmap = BitmapUtils.decodeAssetsBitmap(appCtx, path, width, height)
-                        BitmapDrawable(resources, bitmap)
+                        BitmapDrawable(resources, bitmap?.copyAndRecycle(width, height))
                     }
                     else -> {
                         val bitmap = BitmapUtils.decodeBitmap(curBgStr(), width, height)
-                        BitmapDrawable(resources, bitmap)
+                        BitmapDrawable(resources, bitmap?.copyAndRecycle(width, height))
                     }
                 }
             } catch (e: OutOfMemoryError) {

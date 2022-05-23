@@ -210,27 +210,27 @@ object BitmapUtils {
 
 }
 
-fun Bitmap.changeSize(newWidth: Int, newHeight: Int): Bitmap {
+/**
+ * 获取指定宽高的图片
+ */
+fun Bitmap.copyAndRecycle(newWidth: Int, newHeight: Int): Bitmap {
     val width = this.width
     val height = this.height
 
     //计算压缩的比率
-    var scaleWidth = newWidth.toFloat() / width
-    var scaleHeight = newHeight.toFloat() / height
-
-    if (scaleWidth > scaleHeight) {
-        scaleWidth = scaleHeight
-    } else {
-        scaleHeight = scaleWidth
-    }
+    val scaleWidth = newWidth.toFloat() / width
+    val scaleHeight = newHeight.toFloat() / height
 
     //获取想要缩放的matrix
     val matrix = Matrix()
     matrix.postScale(scaleWidth, scaleHeight)
 
     //获取新的bitmap
-    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+    val bitmap = Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
 
+    recycle()
+
+    return bitmap
 }
 
 /**
