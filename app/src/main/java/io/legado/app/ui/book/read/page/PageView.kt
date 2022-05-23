@@ -230,6 +230,8 @@ class PageView(context: Context) : FrameLayout(context) {
         val time = timeFormat.format(Date(System.currentTimeMillis()))
         tvTimeBattery?.setBattery(battery, time)
         tvTimeBatteryP?.text = "$time $battery%"
+        destroyDrawingCache()
+        buildDrawingCache()
     }
 
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
@@ -238,6 +240,8 @@ class PageView(context: Context) : FrameLayout(context) {
             resetPageOffset()
         }
         binding.contentTextView.setContent(textPage)
+        destroyDrawingCache()
+        buildDrawingCache()
     }
 
     fun setContentDescription(content: String) {

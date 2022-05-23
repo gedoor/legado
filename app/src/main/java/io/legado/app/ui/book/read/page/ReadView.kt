@@ -439,9 +439,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun upPageAnim() {
         isScroll = ReadBook.pageAnim() == 3
-        prevPage.isDrawingCacheEnabled = !isScroll
-        curPage.isDrawingCacheEnabled = !isScroll
-        nextPage.isDrawingCacheEnabled = !isScroll
         ChapterProvider.upLayout()
         when (ReadBook.pageAnim()) {
             PageAnim.coverPageAnim -> if (pageDelegate !is CoverPageDelegate) {

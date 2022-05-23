@@ -49,7 +49,6 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
     }
 
     private fun onScroll(event: MotionEvent) {
-
         val action: Int = event.action
         val pointerUp =
             action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_POINTER_UP
