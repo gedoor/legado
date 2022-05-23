@@ -9,7 +9,8 @@ object DigestUtils {
 
     /**
      * 消息摘要
-     * MD2 MD5 SHA-1 SHA-256 SHA-384 SHA-512
+     * 支持MD5 SHA-1 SHA-224 SHA-256 SHA-384 SHA-512
+     * https://developer.android.google.cn/reference/java/security/MessageDigest?hl=en
      */
     fun getDigest(
         algorithm: String,
@@ -36,7 +37,8 @@ object DigestUtils {
 
     /**
      * 散列消息鉴别码
-     * HmacMD5 HmacSHA1 HmacSHA224 HmacSHA256 HmacSHA384 HmacSHA512
+     * 支持DESMAC DESMAC/CFB8 DESedeMAC DESedeMAC/CFB8 DESedeMAC64 DESwithISO9797 HmacMD5 HmacSHA* ISO9797ALG3MAC PBEwithSHA*
+     * https://developer.android.google.cn/reference/kotlin/javax/crypto/Mac?hl=en
      */
     fun getHMac(
         algorithm: String,

@@ -6,6 +6,9 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * transformations https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en
+ */
 @Suppress("unused")
 object EncoderUtils {
 
