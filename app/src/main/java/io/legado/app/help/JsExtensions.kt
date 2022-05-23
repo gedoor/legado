@@ -947,7 +947,7 @@ interface JsExtensions {
         )?.let { String(it) }
     }
 
-//******************消息摘要************************//
+//******************消息摘要/散列消息鉴别码************************//
 
     /**
      * 生成摘要，并转为16进制字符串
@@ -975,6 +975,38 @@ interface JsExtensions {
         algorithm: String,
     ): String {
         return Base64.encodeToString(DigestUtils.getDigest(algorithm, data.toByteArray()), Base64.NO_WRAP)
+    }
+
+    /**
+     * 生成散列消息鉴别码，并转为16进制字符串
+     *
+     * @param data 被摘要数据
+     * @param algorithm 签名算法
+     * @param key 密钥
+     * @return 16进制字符串
+     */
+    fun HMacHex(
+        data: String,
+        algorithm: String,
+        key: String
+    ): String {
+        return DigestUtils.getHMac(algorithm, key, data)
+    }
+
+    /**
+     * 生成散列消息鉴别码，并转为Base64字符串
+     *
+     * @param data 被摘要数据
+     * @param algorithm 签名算法
+     * @param key 密钥
+     * @return Base64字符串
+     */
+    fun HMacBase64(
+        data: String,
+        algorithm: String,
+        key: String
+    ): String {
+        return Base64.encodeToString(DigestUtils.getHMac(algorithm, key.toByteArray(), data.toByteArray()), Base64.NO_WRAP)
     }
 
     fun md5Encode(str: String): String {
