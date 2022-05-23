@@ -568,11 +568,11 @@ object ReadBookConfig {
                     1 -> {
                         val path = "bg" + File.separator + curBgStr()
                         val bitmap = BitmapUtils.decodeAssetsBitmap(appCtx, path, width, height)
-                        BitmapDrawable(resources, bitmap?.changeSize(width, height))
+                        BitmapDrawable(resources, bitmap?.copyAndRecycle(width, height))
                     }
                     else -> {
                         val bitmap = BitmapUtils.decodeBitmap(curBgStr(), width, height)
-                        BitmapDrawable(resources, bitmap?.changeSize(width, height))
+                        BitmapDrawable(resources, bitmap?.copyAndRecycle(width, height))
                     }
                 }
             } catch (e: OutOfMemoryError) {
