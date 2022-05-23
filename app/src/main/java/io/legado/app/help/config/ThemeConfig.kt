@@ -38,7 +38,6 @@ object ThemeConfig {
     }
 
     fun applyDayNight(context: Context) {
-        ReadBookConfig.upBg()
         applyTheme(context)
         initNightMode()
         BookCover.upDefaultCover()

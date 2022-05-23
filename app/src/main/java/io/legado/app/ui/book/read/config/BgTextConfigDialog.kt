@@ -358,7 +358,6 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 inputStream.copyTo(outputStream)
             }
             ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
-            ReadBookConfig.upBg()
             postEvent(EventBus.UP_CONFIG, false)
         }
     }

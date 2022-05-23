@@ -984,7 +984,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
             BG_COLOR -> {
                 setCurBg(0, "#${color.hexString}")
-                ReadBookConfig.upBg()
                 postEvent(EventBus.UP_CONFIG, false)
             }
             TIP_COLOR -> {

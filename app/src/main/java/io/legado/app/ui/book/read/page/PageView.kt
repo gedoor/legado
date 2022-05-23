@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isGone
@@ -57,6 +56,11 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.upView = {
             setProgress(it)
         }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        upBg()
     }
 
     fun upStyle() = binding.run {
@@ -197,9 +201,9 @@ class PageView(context: Context) : FrameLayout(context) {
         }
     }
 
-    fun setBg(bg: Drawable?) {
+    fun upBg() {
         binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
-        binding.vwBg.background = bg
+        binding.vwBg.background = ReadBookConfig.bg
         upBgAlpha()
     }
 
