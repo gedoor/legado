@@ -14,6 +14,7 @@ import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextPage
@@ -66,8 +67,14 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     private fun upBitmap() {
-        bitmap?.recycle()
-        bitmap = screenshot()
+        post {
+            Coroutine.async {
+                screenshot()
+            }.onSuccess {
+                bitmap?.recycle()
+                bitmap = screenshot()
+            }
+        }
     }
 
     fun upStyle() = binding.run {
