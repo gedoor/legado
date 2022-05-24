@@ -100,10 +100,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             val lastBackupFile = withContext(IO) { AppWebDav.lastBackUp().getOrNull() }
                 ?: return@launch
             if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
+                LocalConfig.lastBackup = lastBackupFile.lastModify
                 alert("恢复", "webDav书源比本地新,是否恢复") {
                     cancelButton()
                     okButton {
-                        LocalConfig.lastBackup = lastBackupFile.lastModify
                         viewModel.restoreWebDav(lastBackupFile.displayName)
                     }
                 }
@@ -162,11 +162,12 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         if (LocalConfig.privacyPolicyOk) return
         val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
         alert("用户隐私与协议", privacyPolicy) {
-            noButton {
-                finish()
-            }
+            noButton()
             yesButton {
                 LocalConfig.privacyPolicyOk = true
+            }
+            onCancelled {
+                finish()
             }
         }
     }
