@@ -1,7 +1,6 @@
 package io.legado.app.utils
 
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -25,14 +24,10 @@ object DigestUtils {
         algorithm: String,
         data: ByteArray
     ): ByteArray {
-        lateinit var bytes: ByteArray
-        try {
+        return kotlin.runCatching {
             val messageDigest = MessageDigest.getInstance(algorithm)
-            bytes = messageDigest.digest(data)
-        } catch (e: NoSuchAlgorithmException) {
-            e.printOnDebug()
-        }
-        return bytes
+            messageDigest.digest(data)
+        }.getOrThrow()
     }
 
     /**
@@ -55,17 +50,13 @@ object DigestUtils {
         key: ByteArray,
         data: ByteArray
     ): ByteArray {
-        lateinit var bytes: ByteArray
-        try {
+        return kotlin.runCatching {
             val mac= Mac.getInstance(algorithm)
             val keySpec = SecretKeySpec(key, algorithm)
             mac.init(keySpec)
             mac.update(data)
-            bytes = mac.doFinal()
-        } catch(e: NoSuchAlgorithmException) {
-            e.printOnDebug()
-        }
-        return bytes
+            mac.doFinal()
+        }.getOrThrow()
     }
 
 }
