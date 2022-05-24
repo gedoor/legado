@@ -3,9 +3,6 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
-import cn.hutool.crypto.digest.DigestUtil
-import cn.hutool.crypto.symmetric.AES
-import cn.hutool.crypto.symmetric.DESede
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -297,14 +294,6 @@ interface JsExtensions {
 
     fun base64Encode(str: String, flags: Int): String? {
         return EncoderUtils.base64Encode(str, flags)
-    }
-
-    fun md5Encode(str: String): String {
-        return MD5Utils.md5Encode(str)
-    }
-
-    fun md5Encode16(str: String): String {
-        return MD5Utils.md5Encode16(str)
     }
 
     /**
@@ -602,6 +591,13 @@ interface JsExtensions {
         return UUID.randomUUID().toString()
     }
 
+    fun androidId(): String {
+        return AppConst.androidId
+    }
+
+//******************对称加密解密************************//
+
+    /////AES
     /**
      * AES 解码为 ByteArray
      * @param str 传入的AES加密的数据
@@ -638,6 +634,31 @@ interface JsExtensions {
         str: String, key: String, transformation: String, iv: String
     ): String? {
         return aesDecodeToByteArray(str, key, transformation, iv)?.let { String(it) }
+    }
+
+    /**
+     * AES解码为String，算法参数经过Base64加密
+     *
+     * @param data 加密的字符串
+     * @param key Base64后的密钥
+     * @param mode 模式
+     * @param padding 补码方式
+     * @param iv Base64后的加盐
+     * @return 解密后的字符串
+     */
+    fun aesDecodeArgsBase64Str(
+        data: String,
+        key: String,
+        mode: String,
+        padding: String,
+        iv: String
+    ): String? {
+        return EncoderUtils.decryptAES(
+            data.encodeToByteArray(),
+            Base64.decode(key, Base64.NO_WRAP),
+            "AES/${mode}/${padding}",
+            Base64.decode(iv, Base64.NO_WRAP)
+        )?.let { String(it) }
     }
 
     /**
@@ -753,35 +774,78 @@ interface JsExtensions {
         return aesEncodeToBase64ByteArray(data, key, transformation, iv)?.let { String(it) }
     }
 
-    fun androidId(): String {
-        return AppConst.androidId
-    }
 
     /**
-     * AES解密，算法参数经过Base64加密
+     * AES加密并转为Base64，算法参数经过Base64加密
      *
-     * @param data 加密的字符串
+     * @param data 被加密的字符串
      * @param key Base64后的密钥
      * @param mode 模式
      * @param padding 补码方式
      * @param iv Base64后的加盐
-     * @return 解密后的字符串
+     * @return 加密后的Base64
      */
-    fun aesDecodeArgsBase64Str(
+    fun aesEncodeArgsBase64Str(
         data: String,
         key: String,
         mode: String,
         padding: String,
         iv: String
     ): String? {
-        return AES(
-            mode,
-            padding,
+        return EncoderUtils.encryptAES2Base64(
+            data.encodeToByteArray(),
             Base64.decode(key, Base64.NO_WRAP),
+            "AES/${mode}/${padding}",
             Base64.decode(iv, Base64.NO_WRAP)
-        ).decryptStr(data)
+        )?.let { String(it) }
     }
 
+    /////DES
+    fun desDecodeToString(
+        data: String, key: String, transformation: String, iv: String
+    ): String? {
+        return EncoderUtils.decryptDES(
+            data.encodeToByteArray(),
+            key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )?.let { String(it) }
+    }
+
+    fun desBase64DecodeToString(
+       data: String, key: String, transformation: String, iv: String
+    ): String? {
+        return EncoderUtils.decryptBase64DES(
+            data.encodeToByteArray(),
+            key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )?.let { String(it) }
+    }
+
+    fun desEncodeToString(
+        data: String, key: String, transformation: String, iv: String
+    ): String? {
+        return EncoderUtils.encryptDES(
+            data.encodeToByteArray(),
+            key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )?.let { String(it) }
+    }
+
+    fun desEncodeToBase64String(
+        data: String, key: String, transformation: String, iv: String
+    ): String? {
+        return EncoderUtils.encryptDES2Base64(
+            data.encodeToByteArray(),
+            key.encodeToByteArray(),
+            transformation,
+            iv.encodeToByteArray()
+        )?.let { String(it) }
+    }
+
+    //////3DES
     /**
      * 3DES解密
      *
@@ -799,7 +863,12 @@ interface JsExtensions {
         padding: String,
         iv: String
     ): String? {
-        return DESede(mode, padding, key.toByteArray(), iv.toByteArray()).decryptStr(data)
+        return EncoderUtils.decryptDESede(
+            data.encodeToByteArray(),
+            key.encodeToByteArray(),
+            "DESede/${mode}/${padding}",
+            iv.encodeToByteArray()
+        )?.let { String(it) }
     }
 
     /**
@@ -819,38 +888,14 @@ interface JsExtensions {
         padding: String,
         iv: String
     ): String? {
-        return DESede(
-            mode,
-            padding,
+        return EncoderUtils.decryptDESede(
+            data.encodeToByteArray(),
             Base64.decode(key, Base64.NO_WRAP),
+            "DESede/${mode}/${padding}",
             Base64.decode(iv, Base64.NO_WRAP)
-        ).decryptStr(data)
+        )?.let { String(it) }
     }
 
-    /**
-     * AES加密并转为Base64，算法参数经过Base64加密
-     *
-     * @param data 被加密的字符串
-     * @param key Base64后的密钥
-     * @param mode 模式
-     * @param padding 补码方式
-     * @param iv Base64后的加盐
-     * @return 加密后的Base64
-     */
-    fun aesEncodeArgsBase64Str(
-        data: String,
-        key: String,
-        mode: String,
-        padding: String,
-        iv: String
-    ): String? {
-        return AES(
-            mode,
-            padding,
-            Base64.decode(key, Base64.NO_WRAP),
-            Base64.decode(iv, Base64.NO_WRAP)
-        ).encryptBase64(data)
-    }
 
     /**
      * 3DES加密并转为Base64
@@ -869,7 +914,12 @@ interface JsExtensions {
         padding: String,
         iv: String
     ): String? {
-        return DESede(mode, padding, key.toByteArray(), iv.toByteArray()).encryptBase64(data)
+        return EncoderUtils.encryptDESede2Base64(
+            data.encodeToByteArray(),
+            key.encodeToByteArray(),
+            "DESede/${mode}/${padding}",
+            iv.encodeToByteArray()
+        )?.let { String(it) }
     }
 
     /**
@@ -889,13 +939,15 @@ interface JsExtensions {
         padding: String,
         iv: String
     ): String? {
-        return DESede(
-            mode,
-            padding,
+        return EncoderUtils.encryptDESede2Base64(
+            data.encodeToByteArray(),
             Base64.decode(key, Base64.NO_WRAP),
+            "DESede/${mode}/${padding}",
             Base64.decode(iv, Base64.NO_WRAP)
-        ).encryptBase64(data)
+        )?.let { String(it) }
     }
+
+//******************消息摘要/散列消息鉴别码************************//
 
     /**
      * 生成摘要，并转为16进制字符串
@@ -907,8 +959,8 @@ interface JsExtensions {
     fun digestHex(
         data: String,
         algorithm: String,
-    ): String? {
-        return DigestUtil.digester(algorithm).digestHex(data)
+    ): String {
+        return DigestUtils.getDigest(algorithm, data)
     }
 
     /**
@@ -921,8 +973,48 @@ interface JsExtensions {
     fun digestBase64Str(
         data: String,
         algorithm: String,
-    ): String? {
-        return Base64.encodeToString(DigestUtil.digester(algorithm).digest(data), Base64.NO_WRAP)
+    ): String {
+        return Base64.encodeToString(DigestUtils.getDigest(algorithm, data.toByteArray()), Base64.NO_WRAP)
+    }
+
+    /**
+     * 生成散列消息鉴别码，并转为16进制字符串
+     *
+     * @param data 被摘要数据
+     * @param algorithm 签名算法
+     * @param key 密钥
+     * @return 16进制字符串
+     */
+    fun HMacHex(
+        data: String,
+        algorithm: String,
+        key: String
+    ): String {
+        return DigestUtils.getHMac(algorithm, key, data)
+    }
+
+    /**
+     * 生成散列消息鉴别码，并转为Base64字符串
+     *
+     * @param data 被摘要数据
+     * @param algorithm 签名算法
+     * @param key 密钥
+     * @return Base64字符串
+     */
+    fun HMacBase64(
+        data: String,
+        algorithm: String,
+        key: String
+    ): String {
+        return Base64.encodeToString(DigestUtils.getHMac(algorithm, key.toByteArray(), data.toByteArray()), Base64.NO_WRAP)
+    }
+
+    fun md5Encode(str: String): String {
+        return MD5Utils.md5Encode(str)
+    }
+
+    fun md5Encode16(str: String): String {
+        return MD5Utils.md5Encode16(str)
     }
 
 }

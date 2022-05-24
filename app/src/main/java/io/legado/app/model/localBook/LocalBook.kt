@@ -219,6 +219,8 @@ object LocalBook {
         fileName: String,
         source: BaseSource? = null,
     ): Uri {
+        AppConfig.defaultBookTreeUri
+            ?: throw NoStackTraceException("没有设置书籍保存位置!")
         val bytes = when {
             str.isAbsUrl() -> AnalyzeUrl(str, source = source).getByteArray()
             str.isDataUrl() -> Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT)
@@ -241,7 +243,7 @@ object LocalBook {
         return type ?: fileType
     }
 
-    private fun saveBookFile(
+    fun saveBookFile(
         bytes: ByteArray,
         fileName: String
     ): Uri {
@@ -267,6 +269,26 @@ object LocalBook {
             }
             Uri.fromFile(file)
         }
+    }
+
+    fun isOnBookShelf(
+        fileName: String
+    ): Boolean {
+        val defaultBookTreeUri = AppConfig.defaultBookTreeUri
+        if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
+        val treeUri = Uri.parse(defaultBookTreeUri)
+        var bookUrl: String = ""
+        if (treeUri.isContentScheme()) {
+            val treeDoc = DocumentFile.fromTreeUri(appCtx, treeUri)
+            var doc = treeDoc!!.findFile(fileName) ?: return false
+            bookUrl = doc.uri.toString()
+        } else {
+            val treeFile = File(treeUri.path!!)
+            val file = treeFile.getFile(fileName)
+            if (!file.exists()) return false
+            bookUrl = file.absolutePath
+        }
+        return appDb.bookDao.getBook(bookUrl) != null
     }
 
     //文件类书源 合并在线书籍信息 在线 > 本地

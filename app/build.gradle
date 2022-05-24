@@ -1,9 +1,11 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'de.timfreiheit.resourceplaceholders'
-apply plugin: 'com.google.gms.google-services'
+plugins {
+    id "com.android.application"
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id "de.timfreiheit.resourceplaceholders"
+    id "com.google.gms.google-services"
+}
 apply from: 'download.gradle'
 
 static def releaseTime() {
@@ -16,11 +18,12 @@ def gitCommits = Integer.parseInt('git rev-list HEAD --count'.execute().text.tri
 
 android {
     compileSdkVersion 32
-    buildToolsVersion '32.0.0'
+    buildToolsVersion "32.0.0"
+    namespace 'io.legado.app'
     kotlinOptions {
         jvmTarget = "11"
     }
-    namespace 'io.legado.app'
+
     signingConfigs {
         if (project.hasProperty("RELEASE_STORE_FILE")) {
             myConfig {
@@ -113,6 +116,9 @@ android {
     sourceSets {
         // Adds exported schema location as test app assets.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+    lint {
+        checkDependencies true
     }
     tasks.withType(JavaCompile) {
         //options.compilerArgs << "-Xlint:unchecked"
@@ -249,7 +255,7 @@ dependencies {
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
 
     //加解密类库
-    implementation('cn.hutool:hutool-crypto:5.8.1')
+    //implementation('cn.hutool:hutool-crypto:5.8.1')
 
     //renderscriptToolkit
     implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')

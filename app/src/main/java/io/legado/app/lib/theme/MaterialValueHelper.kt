@@ -19,34 +19,52 @@ import io.legado.app.utils.dpToPx
 @ColorInt
 fun Context.getPrimaryTextColor(dark: Boolean): Int {
     return if (dark) {
-        ContextCompat.getColor(this, R.color.primary_text_default_material_light)
-    } else ContextCompat.getColor(this, R.color.primary_text_default_material_dark)
+        ContextCompat.getColor(this, androidx.appcompat.R.color.primary_text_default_material_light)
+    } else ContextCompat.getColor(
+        this,
+        androidx.appcompat.R.color.primary_text_default_material_dark
+    )
 }
 
 @ColorInt
 fun Context.getSecondaryTextColor(dark: Boolean): Int {
     return if (dark) {
-        ContextCompat.getColor(this, R.color.secondary_text_default_material_light)
+        ContextCompat.getColor(
+            this,
+            androidx.appcompat.R.color.secondary_text_default_material_light
+        )
     } else {
-        ContextCompat.getColor(this, R.color.secondary_text_default_material_dark)
+        ContextCompat.getColor(
+            this,
+            androidx.appcompat.R.color.secondary_text_default_material_dark
+        )
     }
 }
 
 @ColorInt
 fun Context.getPrimaryDisabledTextColor(dark: Boolean): Int {
     return if (dark) {
-        ContextCompat.getColor(this, R.color.primary_text_disabled_material_light)
+        ContextCompat.getColor(
+            this,
+            androidx.appcompat.R.color.primary_text_disabled_material_light
+        )
     } else {
-        ContextCompat.getColor(this, R.color.primary_text_disabled_material_dark)
+        ContextCompat.getColor(this, androidx.appcompat.R.color.primary_text_disabled_material_dark)
     }
 }
 
 @ColorInt
 fun Context.getSecondaryDisabledTextColor(dark: Boolean): Int {
     return if (dark) {
-        ContextCompat.getColor(this, R.color.secondary_text_disabled_material_light)
+        ContextCompat.getColor(
+            this,
+            androidx.appcompat.R.color.secondary_text_disabled_material_light
+        )
     } else {
-        ContextCompat.getColor(this, R.color.secondary_text_disabled_material_dark)
+        ContextCompat.getColor(
+            this,
+            androidx.appcompat.R.color.secondary_text_disabled_material_dark
+        )
     }
 }
 
@@ -124,7 +142,7 @@ val Context.elevation: Float
             ThemeUtils.resolveFloat(
                 this,
                 android.R.attr.elevation,
-                resources.getDimension(R.dimen.design_appbar_elevation)
+                resources.getDimension(com.google.android.material.R.dimen.design_appbar_elevation)
             )
         } else {
             AppConfig.elevation.toFloat().dpToPx()
