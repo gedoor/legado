@@ -31,9 +31,9 @@ object TintHelper {
         // Light ripple is actually translucent black, and vice versa
         return ContextCompat.getColor(
             context, if (useDarkRipple)
-                R.color.ripple_material_light
+                androidx.appcompat.R.color.ripple_material_light
             else
-                R.color.ripple_material_dark
+                androidx.appcompat.R.color.ripple_material_dark
         )
     }
 
@@ -170,7 +170,7 @@ object TintHelper {
                 val rd = view.background as RippleDrawable
                 @SuppressLint("PrivateResource") val unchecked = ContextCompat.getColor(
                     view.context,
-                    if (isDark) R.color.ripple_material_dark else R.color.ripple_material_light
+                    if (isDark) androidx.appcompat.R.color.ripple_material_dark else androidx.appcompat.R.color.ripple_material_light
                 )
                 val checked = ColorUtils.adjustAlpha(color, 0.4f)
                 val sl = ColorStateList(

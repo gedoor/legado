@@ -1,36 +1,22 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
-    repositories {
-        //原仓库
-        google()
-        mavenCentral()
-        maven { url 'https://plugins.gradle.org/m2/' }
-        //镜像仓库,无法连接源仓库自行启用镜像仓库,不要提交修改
-        //maven { url 'https://maven.aliyun.com/repository/google' }
-        //maven { url 'https://maven.aliyun.com/repository/public' }
-        //maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'de.timfreiheit.resourceplaceholders:placeholders:0.4'
-        classpath 'de.undercouch:gradle-download-task:5.0.1'
-        classpath 'com.google.gms:google-services:4.3.10'
+    ext{
+        kotlin_version = '1.6.10'
+        agp_version='7.2.0'
     }
 }
 
-allprojects {
-    repositories {
-        //原仓库
-        google()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-        //镜像仓库,无法连接源仓库自行启用镜像仓库,不要提交修改
-        //maven { url 'https://maven.aliyun.com/repository/google' }
-        //maven { url 'https://maven.aliyun.com/repository/public' }
-    }
+
+
+plugins {
+    id 'com.android.application' version "$agp_version" apply false
+    id 'com.android.library' version "$agp_version" apply false
+    id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
+    id "de.timfreiheit.resourceplaceholders" version "0.4" apply false
+    id "de.undercouch.download" version "5.1.0" apply false
+    id "com.google.gms.google-services" version "4.3.10" apply false
+
 }
 
 task clean(type: Delete) {

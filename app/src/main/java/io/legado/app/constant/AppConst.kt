@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.provider.Settings
 import com.script.javascript.RhinoScriptEngine
 import io.legado.app.BuildConfig
-import io.legado.app.R
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 
@@ -57,7 +56,9 @@ object AppConst {
     )
 
     @SuppressLint("PrivateResource")
-    val sysElevation = appCtx.resources.getDimension(R.dimen.design_appbar_elevation).toInt()
+    val sysElevation =
+        appCtx.resources.getDimension(com.google.android.material.R.dimen.design_appbar_elevation)
+            .toInt()
 
     val androidId: String by lazy {
         Settings.System.getString(appCtx.contentResolver, Settings.Secure.ANDROID_ID) ?: "null"
