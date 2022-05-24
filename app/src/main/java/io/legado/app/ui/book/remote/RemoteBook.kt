@@ -5,5 +5,6 @@ data class RemoteBook(
     val urlName: String,
     val size: Long,
     val contentType: String,
-    val lastModify: Long
+    val lastModify: Long,
+    val isOnBookShelf: Boolean
 )
