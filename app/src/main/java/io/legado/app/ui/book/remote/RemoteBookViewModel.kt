@@ -73,7 +73,7 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
         execute {
             val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
             downloadBookPath?.let {
-                LocalBook.importFile(Uri.parse(it))
+                LocalBook.importFile(it)
             }
         }.onFinally {
             finally.invoke()

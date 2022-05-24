@@ -12,5 +12,5 @@ abstract class RemoteBookManager {
     /**
      * @return String：下载到本地的路径
      */
-    abstract suspend fun getRemoteBook(remoteBook: RemoteBook): String?
+    abstract suspend fun getRemoteBook(remoteBook: RemoteBook): Uri?
 }

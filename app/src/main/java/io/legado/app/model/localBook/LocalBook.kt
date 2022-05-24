@@ -243,7 +243,7 @@ object LocalBook {
         return type ?: fileType
     }
 
-    private fun saveBookFile(
+    fun saveBookFile(
         bytes: ByteArray,
         fileName: String
     ): Uri {

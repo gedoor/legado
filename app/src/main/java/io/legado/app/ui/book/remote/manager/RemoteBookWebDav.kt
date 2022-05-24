@@ -9,6 +9,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavFile
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.remote.RemoteBook
 import io.legado.app.ui.book.remote.RemoteBookManager
 import io.legado.app.utils.*
@@ -18,7 +19,6 @@ import java.io.File
 
 object RemoteBookWebDav : RemoteBookManager() {
     private val remoteBookUrl get() = "${rootWebDavUrl}${remoteBookFolder}"
-    private val localSaveFolder get() = "${appCtx.externalFiles.absolutePath}${File.separator}${remoteBookFolder}"
 
     init {
         runBlocking {
@@ -83,23 +83,21 @@ object RemoteBookWebDav : RemoteBookManager() {
         return remoteBooks
     }
 
-    override suspend fun getRemoteBook(remoteBook: RemoteBook): String? {
-        val saveFilePath= "${localSaveFolder}${File.separator}${remoteBook.filename}"
-        kotlin.runCatching {
+    override suspend fun getRemoteBook(remoteBook: RemoteBook): Uri? {
+        return kotlin.runCatching {
             AppWebDav.authorization?.let {
-                FileUtils.createFolderIfNotExist(localSaveFolder).run {
-                    val webdav = WebDav(
-                        remoteBook.urlName,
-                        it
-                    )
-                    webdav.downloadTo(saveFilePath, true)
+                val webdav = WebDav(
+                    remoteBook.urlName,
+                    it
+                )
+                webdav.download().let { bytes ->
+                    LocalBook.saveBookFile(bytes, remoteBook.filename)
                 }
             }
         }.onFailure {
             it.printStackTrace()
-            return null
-        }
-        return saveFilePath
+            null
+        }.getOrNull()
     }
 
     /**
