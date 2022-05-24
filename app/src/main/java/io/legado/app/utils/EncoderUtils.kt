@@ -6,6 +6,9 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * transformations https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en
+ */
 @Suppress("unused")
 object EncoderUtils {
 
@@ -47,7 +50,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the Base64-encode bytes of AES encryption
@@ -56,7 +59,7 @@ object EncoderUtils {
     fun encryptAES2Base64(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String? = "DES/ECB/PKCS5Padding",
+        transformation: String? = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return Base64.encode(encryptAES(data, key, transformation, iv), Base64.NO_WRAP)
@@ -68,7 +71,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the bytes of AES encryption
@@ -77,7 +80,7 @@ object EncoderUtils {
     fun encryptAES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String? = "DES/ECB/PKCS5Padding",
+        transformation: String? = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return symmetricTemplate(data, key, "AES", transformation!!, iv, true)
@@ -90,7 +93,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the bytes of AES decryption for Base64-encode bytes
@@ -99,7 +102,7 @@ object EncoderUtils {
     fun decryptBase64AES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String = "DES/ECB/PKCS5Padding",
+        transformation: String = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return decryptAES(Base64.decode(data, Base64.NO_WRAP), key, transformation, iv)
@@ -111,7 +114,7 @@ object EncoderUtils {
      * @param data           The data.
      * @param key            The key.
      * @param transformation The name of the transformation,
-     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * 加密算法/加密模式/填充类型, *AES/CBC/PKCS5Padding*.
      * @param iv             The buffer with the IV. The contents of the
      * buffer are copied to protect against subsequent modification.
      * @return the bytes of AES decryption
@@ -120,12 +123,185 @@ object EncoderUtils {
     fun decryptAES(
         data: ByteArray?,
         key: ByteArray?,
-        transformation: String = "DES/ECB/PKCS5Padding",
+        transformation: String = "AES/ECB/PKCS5Padding",
         iv: ByteArray? = null
     ): ByteArray? {
         return symmetricTemplate(data, key, "AES", transformation, iv, false)
     }
 
+    //////////DES Start
+
+    /**
+     * Return the Base64-encode bytes of DES encryption.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the Base64-encode bytes of AES encryption
+     */
+    @Throws(Exception::class)
+    fun encryptDES2Base64(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String? = "DES/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return Base64.encode(encryptDES(data, key, transformation, iv), Base64.NO_WRAP)
+    }
+
+    /**
+     * Return the bytes of DES encryption.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the bytes of AES encryption
+     */
+    @Throws(Exception::class)
+    fun encryptDES(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String? = "DES/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return symmetricTemplate(data, key, "DES", transformation!!, iv, true)
+    }
+
+
+    /**
+     * Return the bytes of DES decryption for Base64-encode bytes.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the bytes of AES decryption for Base64-encode bytes
+     */
+    @Throws(Exception::class)
+    fun decryptBase64DES(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String = "DES/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return decryptDES(Base64.decode(data, Base64.NO_WRAP), key, transformation, iv)
+    }
+
+    /**
+     * Return the bytes of DES decryption.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DES/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the bytes of AES decryption
+     */
+    @Throws(Exception::class)
+    fun decryptDES(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String = "DES/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return symmetricTemplate(data, key, "DES", transformation, iv, false)
+    }
+
+    //////////DESede Start
+
+    /**
+     * Return the Base64-encode bytes of DESede encryption.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DESede/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the Base64-encode bytes of AES encryption
+     */
+    @Throws(Exception::class)
+    fun encryptDESede2Base64(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String? = "DESede/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return Base64.encode(encryptDESede(data, key, transformation, iv), Base64.NO_WRAP)
+    }
+
+    /**
+     * Return the bytes of DESede encryption.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DESede/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the bytes of AES encryption
+     */
+    @Throws(Exception::class)
+    fun encryptDESede(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String? = "DESede/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return symmetricTemplate(data, key, "DESede", transformation!!, iv, true)
+    }
+
+
+    /**
+     * Return the bytes of DESede decryption for Base64-encode bytes.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DESede/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the bytes of AES decryption for Base64-encode bytes
+     */
+    @Throws(Exception::class)
+    fun decryptBase64DESede(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String = "DESede/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return decryptDESede(Base64.decode(data, Base64.NO_WRAP), key, transformation, iv)
+    }
+
+    /**
+     * Return the bytes of DESede decryption.
+     *
+     * @param data           The data.
+     * @param key            The key.
+     * @param transformation The name of the transformation,
+     * 加密算法/加密模式/填充类型, *DESede/CBC/PKCS5Padding*.
+     * @param iv             The buffer with the IV. The contents of the
+     * buffer are copied to protect against subsequent modification.
+     * @return the bytes of AES decryption
+     */
+    @Throws(Exception::class)
+    fun decryptDESede(
+        data: ByteArray?,
+        key: ByteArray?,
+        transformation: String = "DESede/ECB/PKCS5Padding",
+        iv: ByteArray? = null
+    ): ByteArray? {
+        return symmetricTemplate(data, key, "DESede", transformation, iv, false)
+    }
 
     /**
      * Return the bytes of symmetric encryption or decryption.

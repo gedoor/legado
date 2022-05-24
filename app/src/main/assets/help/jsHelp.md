@@ -54,7 +54,11 @@ java.put(key, value)
 java.ajax(urlStr): String
 java.ajaxAll(urlList: Array<String>): Array<StrResponse?>
 //返回Response 方法body() code() message() header() raw() toString() 
-java.connect(urlStr): Response<String>
+java.connect(urlStr): StrResponse
+
+java.post(url: String, body: String, headerMap: Map<String, String>): Connection.Response
+java.get(url: String, headerMap: Map<String, String>): Connection.Response
+java.head(url: String, headerMap: Map<String, String>): Connection.Response
 
 * 使用webView访问网络
 * @param html 直接用webView载入的html, 如果html为空直接访问url
@@ -128,13 +132,11 @@ deleteFile(path: String)
 ```
 ****
 > [常见加密解密算法介绍](https://www.yijiyong.com/algorithm/encryption/01-intro.html)
-> [相关概念](https://blog.csdn.net/OrangeJack/article/details/82913804)  
+> [相关概念](https://blog.csdn.net/OrangeJack/article/details/82913804)
+> [Android支持的transformation](https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en)
 * AES
+> transformation默认实现AES/ECB/PKCS5Padding
 ```
-* @param data 传入的原始数据
-* @param key AES加密的key
-* @param transformation AES加密的方式 例如AES/ECB/PKCS5Padding
-* @param iv ECB模式的偏移向量
 java.aesDecodeToString(str: String, key: String, transformation: String, iv: String)
 
 java.aesBase64DecodeToString(str: String, key: String, transformation: String, iv: String)
@@ -143,24 +145,37 @@ java.aesEncodeToString(str: String, key: String, transformation: String, iv: Str
 
 java.aesEncodeToBase64String(str: String, key: String, transformation: String, iv: String)
 ```
-* 3DES
+* DES
+> transformation默认实现DES/ECB/PKCS5Padding
 ```
-* @param data 被加密的字符串
-* @param key 密钥
-* @param mode 模式 ECB/CBC/CFB/OFB/CTR
-* @param padding 补码方式 NoPadding/PKCS5Padding/
-* @param iv 加盐
+java.desDecodeToString(str: String, key: String, transformation: String, iv: String)
+
+java.desBase64DecodeToString(str: String, key: String, transformation: String, iv: String)
+
+java.desEncodeToString(str: String, key: String, transformation: String, iv: String)
+
+java.desEncodeToBase64String(str: String, key: String, transformation: String, iv: String)
+```
+* 3DES
+> tansformation默认实现DESede/ECB/PKCS5Padding
+```
 java.tripleDESEncodeBase64Str(data: String,key: String,mode: String,padding: String,iv: String): String?
 
 java.tripleDESDecodeStr(data: String,key: String,mode: String,padding: String,iv: String): String?
 ```
 * 摘要
+> algorithm支持MD5 SHA-1 SHA-224 SHA-256 SHA-384 SHA-512
 ```
-* @param data 被摘要数据
-* @param algorithm 签名算法 MD5/SHA1/SHA256/SHA512
-java.digestHex(data: String,algorithm: String,): String?
+java.digestHex(data: String, algorithm: String,): String?
 
-java.digestBase64Str(data: String,algorithm: String,): String?
+java.digestBase64Str(data: String, algorithm: String,): String?
+```
+* HMac(散列消息鉴别码)
+> algorithm支持DESMAC DESMAC/CFB8 DESedeMAC DESedeMAC/CFB8 DESedeMAC64 DESwithISO9797 HmacMD5 HmacSHA* ISO9797ALG3MAC PBEwithSHA*
+```
+java.HMacHex(data: String, algorithm: String, key: String): String
+
+java.HMacBase64(data: String, algorithm: String, key: String): String
 ```
 * md5
 ```
