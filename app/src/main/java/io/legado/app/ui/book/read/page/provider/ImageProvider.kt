@@ -46,6 +46,7 @@ object ImageProvider {
             oldBitmap: Bitmap,
             newBitmap: Bitmap?
         ) {
+            //错误图片不能释放,占位用,防止一直重复获取图片
             if (oldBitmap != errorBitmap) {
                 oldBitmap.recycle()
                 putDebug("ImageProvider: trigger bitmap recycle. URI: $key")
