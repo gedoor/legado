@@ -152,6 +152,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
+    //图像处理库Toolkit
+    implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
+
     //androidX
     implementation('androidx.core:core-ktx:1.7.0')
     implementation('androidx.appcompat:appcompat:1.4.1')
@@ -256,9 +259,6 @@ dependencies {
 
     //加解密类库
     //implementation('cn.hutool:hutool-crypto:5.8.1')
-
-    //renderscriptToolkit
-    implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
 
     //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
     //epubLib集成到应用内
