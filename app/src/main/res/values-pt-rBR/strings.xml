@@ -737,7 +737,7 @@
     <string name="alipay_red_envelope_qr_code">Envelope vermelho de AliPay código QR</string>
     <string name="alipay_payment_qr_code">AliPay código QR</string>
     <string name="qq_collection_qr_code">Coleção QQ Código QR</string>
-    <string name="contributors_summary">gedoor,Invinciblelee etc. Para mais detalhes vá ao Github</string>
+    <string name="contributors_summary">gedoor,Invinciblelee,Xwite etc. Para mais detalhes vá ao Github</string>
     <string name="clear_cache_summary">Limpar o cache dos livros e fontes baixados</string>
     <string name="default_cover">Capa padrão</string>
     <string name="restore_ignore">Lista de ignorados</string>
