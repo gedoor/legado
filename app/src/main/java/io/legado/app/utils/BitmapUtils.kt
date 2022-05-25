@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.Matrix
 import com.google.android.renderscript.Toolkit
 import java.io.FileInputStream
 import java.io.IOException
@@ -213,23 +212,10 @@ object BitmapUtils {
 /**
  * 获取指定宽高的图片
  */
-fun Bitmap.copyAndRecycle(newWidth: Int, newHeight: Int): Bitmap {
-    val width = this.width
-    val height = this.height
-
-    //计算压缩的比率
-    val scaleWidth = newWidth.toFloat() / width
-    val scaleHeight = newHeight.toFloat() / height
-
-    //获取想要缩放的matrix
-    val matrix = Matrix()
-    matrix.postScale(scaleWidth, scaleHeight)
-
+fun Bitmap.resizeAndRecycle(newWidth: Int, newHeight: Int): Bitmap {
     //获取新的bitmap
-    val bitmap = Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
-
+    val bitmap = Toolkit.resize(this, newWidth, newHeight)
     recycle()
-
     return bitmap
 }
 
@@ -237,8 +223,7 @@ fun Bitmap.copyAndRecycle(newWidth: Int, newHeight: Int): Bitmap {
  * 高斯模糊
  */
 fun Bitmap.stackBlur(radius: Int = 8): Bitmap {
-    val blurredBitmap = this.copy(Config.ARGB_8888, true)
-    return Toolkit.blur(blurredBitmap, radius)
+    return Toolkit.blur(this, radius)
 }
 
 /**

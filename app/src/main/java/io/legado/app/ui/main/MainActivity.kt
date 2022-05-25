@@ -96,19 +96,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         binding.viewPagerMain.postDelayed(3000) {
             viewModel.postLoad()
         }
-        launch {
-            val lastBackupFile = withContext(IO) { AppWebDav.lastBackUp().getOrNull() }
-                ?: return@launch
-            if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
-                alert("恢复", "webDav书源比本地新,是否恢复") {
-                    cancelButton()
-                    okButton {
-                        LocalConfig.lastBackup = lastBackupFile.lastModify
-                        viewModel.restoreWebDav(lastBackupFile.displayName)
-                    }
-                }
-            }
-        }
+        syncAlert()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean = binding.run {
@@ -158,15 +146,36 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    /**
+     * 同步提示
+     */
+    private fun syncAlert() = launch {
+        val lastBackupFile = withContext(IO) { AppWebDav.lastBackUp().getOrNull() }
+            ?: return@launch
+        if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
+            LocalConfig.lastBackup = lastBackupFile.lastModify
+            alert("恢复", "webDav书源比本地新,是否恢复") {
+                cancelButton()
+                okButton {
+                    viewModel.restoreWebDav(lastBackupFile.displayName)
+                }
+            }
+        }
+    }
+
+    /**
+     * 用户隐私与协议
+     */
     private fun privacyPolicy() {
         if (LocalConfig.privacyPolicyOk) return
         val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
         alert("用户隐私与协议", privacyPolicy) {
-            noButton {
-                finish()
-            }
+            noButton()
             yesButton {
                 LocalConfig.privacyPolicyOk = true
+            }
+            onCancelled {
+                finish()
             }
         }
     }

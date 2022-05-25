@@ -35,6 +35,7 @@ object ImageProvider {
     private val cacheSize =
         max(50 * M, min(100 * M, (Runtime.getRuntime().maxMemory() / 8).toInt()))
     val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
+
         override fun sizeOf(key: String, bitmap: Bitmap): Int {
             return bitmap.byteCount
         }
@@ -45,9 +46,12 @@ object ImageProvider {
             oldBitmap: Bitmap,
             newBitmap: Bitmap?
         ) {
-            oldBitmap.recycle()
-            putDebug("ImageProvider: trigger bitmap recycle. URI: $key")
-            putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
+            //错误图片不能释放,占位用,防止一直重复获取图片
+            if (oldBitmap != errorBitmap) {
+                oldBitmap.recycle()
+                putDebug("ImageProvider: trigger bitmap recycle. URI: $key")
+                putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
+            }
         }
     }
 
@@ -121,6 +125,8 @@ object ImageProvider {
             bitmapLruCache.put(src, bitmap)
             bitmap
         }.onFailure {
+            //错误图片占位,防止重复获取
+            bitmapLruCache.put(src, errorBitmap)
             putDebug(
                 "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
                 it
