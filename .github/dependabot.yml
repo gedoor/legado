@@ -1,0 +1,34 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+registries:
+  maven-google:
+    type: maven-repository
+    url: https://maven.google.com
+    password: dummy
+    username: dummy
+  maven-central:
+    type: maven-repository
+    url: https://repo1.maven.org/maven2/
+    password: dummy
+    username: dummy
+  maven-jitpack:
+    type: maven-repository
+    url: https://jitpack.io
+    password: dummy
+    username: dummy
+
+updates:
+  - package-ecosystem: gradle
+    directory: "app"
+    schedule:
+      interval: "daily"
+    registries: "*"
+  - package-ecosystem: gradle
+    directory: "epublib"
+    schedule:
+      interval: "daily"
+    registries: "*"
