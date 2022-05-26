@@ -52,8 +52,8 @@ object BitmapUtils {
         height: Int? = null
     ): Int {
         //获取比例大小
-        val wRatio = width?.let { ceil((options.outWidth / it.toFloat())).toInt() } ?: -1
-        val hRatio = height?.let { ceil((options.outHeight / it.toFloat())).toInt() } ?: -1
+        val wRatio = width?.let { options.outWidth / it } ?: -1
+        val hRatio = height?.let { options.outHeight / it } ?: -1
         //如果超出指定大小，则缩小相应的比例
         return when {
             wRatio > 1 && hRatio > 1 -> max(wRatio, hRatio)
