@@ -255,7 +255,7 @@ dependencies {
     implementation("io.noties.markwon:html:$markwonVersion")
 
     //转换繁体
-    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.3')
+    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.4')
 
     //加解密类库
     //implementation('cn.hutool:hutool-crypto:5.8.1')
