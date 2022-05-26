@@ -3,7 +3,7 @@
 buildscript {
     ext{
         kotlin_version = '1.6.10'
-        agp_version='7.2.0'
+        agp_version= '7.2.1'
     }
 }
 
