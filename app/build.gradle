@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
     id "de.timfreiheit.resourceplaceholders"
-    id "com.google.gms.google-services"
+    //id "com.google.gms.google-services"
 }
 apply from: 'download.gradle'
 
@@ -188,9 +188,9 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
 
     //firebase
-    implementation platform('com.google.firebase:firebase-bom:30.0.1')
-    implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
-    implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
+    //implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    //implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
+    //implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
 
     //media
     implementation("androidx.media:media:1.6.0")
