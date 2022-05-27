@@ -335,7 +335,7 @@ object EncoderUtils {
                 params = IvParameterSpec(iv)
             }
             val symmetricCrypto = SymmetricCrypto(transformation, keySpec, params)
-            return if (isEncrypt) symmetricCrypto.encrypt(data) else symmetricCrypto.decrypt(data)
+            if (isEncrypt) symmetricCrypto.encrypt(data) else symmetricCrypto.decrypt(data)
         }
     }
 
