@@ -187,11 +187,6 @@ dependencies {
     // UI Tests
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
 
-    //firebase
-    //implementation platform('com.google.firebase:firebase-bom:30.0.1')
-    //implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
-    //implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
-
     //media
     implementation("androidx.media:media:1.6.0")
     def exoplayer_version = '2.17.1'
@@ -257,12 +252,17 @@ dependencies {
     //转换繁体
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.4')
 
-    //加解密类库
-    //implementation('cn.hutool:hutool-crypto:5.8.1')
+    //加解密类库,有些书源使用
+    implementation('cn.hutool:hutool-crypto:5.8.1')
 
-    //代码编辑com.github.AmrDeveloper:CodeView已集成到应用内
-    //epubLib集成到应用内
+    //firebase, 崩溃统计和性能统计, 会导致共存版本崩溃
+    //implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    //implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
+    //implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
 
     // LeakCanary
     //debugImplementation('com.squareup.leakcanary:leakcanary-android:2.7')
+
+    //com.github.AmrDeveloper:CodeView代码编辑已集成到应用内
+    //epubLib集成到应用内
 }
