@@ -5,6 +5,7 @@ import android.util.Base64
 import androidx.annotation.Keep
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
+import cn.hutool.crypto.symmetric.AES
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -655,12 +656,12 @@ interface JsExtensions {
         padding: String,
         iv: String
     ): String? {
-        return EncoderUtils.decryptAES(
-            data.encodeToByteArray(),
+        return AES(
+            mode,
+            padding,
             Base64.decode(key, Base64.NO_WRAP),
-            "AES/${mode}/${padding}",
             Base64.decode(iv, Base64.NO_WRAP)
-        )?.let { String(it) }
+        ).decryptStr(data)
     }
 
     /**
