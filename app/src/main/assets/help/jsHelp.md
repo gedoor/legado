@@ -134,6 +134,7 @@ deleteFile(path: String)
 > [常见加密解密算法介绍](https://www.yijiyong.com/algorithm/encryption/01-intro.html)
 > [相关概念](https://blog.csdn.net/OrangeJack/article/details/82913804)
 > [Android支持的transformation](https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en)
+> 其他加密方式 可在js中[调用](https://m.jb51.net/article/92138.htm)[hutool-crypto](https://www.hutool.cn/docs/#/)
 * AES
 > transformation默认实现AES/ECB/PKCS5Padding
 ```
