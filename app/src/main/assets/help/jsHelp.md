@@ -57,7 +57,9 @@ java.ajaxAll(urlList: Array<String>): Array<StrResponse?>
 java.connect(urlStr): StrResponse
 
 java.post(url: String, body: String, headerMap: Map<String, String>): Connection.Response
+
 java.get(url: String, headerMap: Map<String, String>): Connection.Response
+
 java.head(url: String, headerMap: Map<String, String>): Connection.Response
 
 * 使用webView访问网络
@@ -132,8 +134,13 @@ deleteFile(path: String)
 ```
 ****
 > [常见加密解密算法介绍](https://www.yijiyong.com/algorithm/encryption/01-intro.html)
+
 > [相关概念](https://blog.csdn.net/OrangeJack/article/details/82913804)
+
 > [Android支持的transformation](https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en)
+
+> 其他加密方式 可在js中[调用](https://m.jb51.net/article/92138.htm)[hutool-crypto](https://www.hutool.cn/docs/#/)
+
 * AES
 > transformation默认实现AES/ECB/PKCS5Padding
 ```
@@ -164,14 +171,14 @@ java.tripleDESEncodeBase64Str(data: String,key: String,mode: String,padding: Str
 java.tripleDESDecodeStr(data: String,key: String,mode: String,padding: String,iv: String): String?
 ```
 * 摘要
-> algorithm支持MD5 SHA-1 SHA-224 SHA-256 SHA-384 SHA-512
+> MD5 SHA-1 SHA-224 SHA-256 SHA-384 SHA-512
 ```
 java.digestHex(data: String, algorithm: String,): String?
 
 java.digestBase64Str(data: String, algorithm: String,): String?
 ```
-* HMac(散列消息鉴别码)
-> algorithm支持DESMAC DESMAC/CFB8 DESedeMAC DESedeMAC/CFB8 DESedeMAC64 DESwithISO9797 HmacMD5 HmacSHA* ISO9797ALG3MAC PBEwithSHA*
+* HMac(部分算法暂不支持)
+> DESMAC DESMAC/CFB8 DESedeMAC DESedeMAC/CFB8 DESedeMAC64 DESwithISO9797 HmacMD5 HmacSHA* ISO9797ALG3MAC PBEwithSHA*
 ```
 java.HMacHex(data: String, algorithm: String, key: String): String
 

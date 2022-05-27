@@ -2,9 +2,9 @@ package io.legado.app.utils
 
 import android.util.Base64
 import java.security.spec.AlgorithmParameterSpec
-import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import cn.hutool.crypto.symmetric.SymmetricCrypto
 
 /**
  * transformations https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en
@@ -328,16 +328,14 @@ object EncoderUtils {
     ): ByteArray? {
         return if (data == null || data.isEmpty() || key == null || key.isEmpty()) null
         else {
+            //hutool support zeropadding
             val keySpec = SecretKeySpec(key, algorithm)
-            val cipher = Cipher.getInstance(transformation)
-            val mode = if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE
-            if (iv == null || iv.isEmpty()) {
-                cipher.init(mode, keySpec)
-            } else {
-                val params: AlgorithmParameterSpec = IvParameterSpec(iv)
-                cipher.init(mode, keySpec, params)
+            var params: AlgorithmParameterSpec? = null
+            if (iv != null && !iv.isEmpty()) {
+                params = IvParameterSpec(iv)
             }
-            cipher.doFinal(data)
+            val symmetricCrypto = SymmetricCrypto(transformation, keySpec, params)
+            if (isEncrypt) symmetricCrypto.encrypt(data) else symmetricCrypto.decrypt(data)
         }
     }
 
