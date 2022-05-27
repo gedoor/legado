@@ -3,6 +3,8 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
+import cn.hutool.crypto.digest.DigestUtil
+import cn.hutool.crypto.digest.HMac
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -960,7 +962,7 @@ interface JsExtensions {
         data: String,
         algorithm: String,
     ): String {
-        return DigestUtils.getDigest(algorithm, data)
+        return DigestUtil.digester(algorithm).digestHex(data)
     }
 
     /**
@@ -974,7 +976,7 @@ interface JsExtensions {
         data: String,
         algorithm: String,
     ): String {
-        return Base64.encodeToString(DigestUtils.getDigest(algorithm, data.toByteArray()), Base64.NO_WRAP)
+        return Base64.encodeToString(DigestUtil.digester(algorithm).digest(data), Base64.NO_WRAP)
     }
 
     /**
@@ -990,7 +992,7 @@ interface JsExtensions {
         algorithm: String,
         key: String
     ): String {
-        return DigestUtils.getHMac(algorithm, key, data)
+        return HMac(algorithm, key.toByteArray()).digestHex(data)
     }
 
     /**
@@ -1006,7 +1008,7 @@ interface JsExtensions {
         algorithm: String,
         key: String
     ): String {
-        return Base64.encodeToString(DigestUtils.getHMac(algorithm, key.toByteArray(), data.toByteArray()), Base64.NO_WRAP)
+        return Base64.encodeToString(HMac(algorithm, key.toByteArray()).digest(data), Base64.NO_WRAP)
     }
 
     fun md5Encode(str: String): String {

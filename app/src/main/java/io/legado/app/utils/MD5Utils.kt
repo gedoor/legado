@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import cn.hutool.crypto.digest.DigestUtil
 /**
  * 将字符串转化为MD5
  */
@@ -7,7 +8,7 @@ package io.legado.app.utils
 object MD5Utils {
 
     fun md5Encode(str: String?): String {
-        return DigestUtils.getDigest("MD5", str)
+        return DigestUtil.digester("MD5").digestHex(str)
     }
 
     fun md5Encode16(str: String): String {
