@@ -115,7 +115,7 @@ interface BaseSource : JsExtensions {
      */
     fun getLoginInfo(): String? {
         try {
-            val key = AppConst.androidId.encodeToByteArray(0, 8)
+            val key = AppConst.androidId.encodeToByteArray(0, 16)
             val cache = CacheManager.get("userInfo_${getKey()}") ?: return null
             val encodeBytes = Base64.decode(cache, Base64.DEFAULT)
             val decodeBytes = EncoderUtils.decryptAES(encodeBytes, key)
@@ -136,7 +136,7 @@ interface BaseSource : JsExtensions {
      */
     fun putLoginInfo(info: String): Boolean {
         return try {
-            val key = (AppConst.androidId).encodeToByteArray(0, 8)
+            val key = (AppConst.androidId).encodeToByteArray(0, 16)
             val encodeBytes = EncoderUtils.encryptAES(info.toByteArray(), key)
             val encodeStr = Base64.encodeToString(encodeBytes, Base64.DEFAULT)
             CacheManager.put("userInfo_${getKey()}", encodeStr)
