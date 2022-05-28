@@ -277,16 +277,15 @@ object LocalBook {
         val defaultBookTreeUri = AppConfig.defaultBookTreeUri
         if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
         val treeUri = Uri.parse(defaultBookTreeUri)
-        var bookUrl: String = ""
-        if (treeUri.isContentScheme()) {
+        val bookUrl = if (treeUri.isContentScheme()) {
             val treeDoc = DocumentFile.fromTreeUri(appCtx, treeUri)
-            var doc = treeDoc!!.findFile(fileName) ?: return false
-            bookUrl = doc.uri.toString()
+            val doc = treeDoc!!.findFile(fileName) ?: return false
+            doc.uri.toString()
         } else {
             val treeFile = File(treeUri.path!!)
             val file = treeFile.getFile(fileName)
             if (!file.exists()) return false
-            bookUrl = file.absolutePath
+            file.absolutePath
         }
         return appDb.bookDao.getBook(bookUrl) != null
     }

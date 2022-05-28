@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TocRule(
+    var preUpdateJs: String? = null,
     var chapterList: String? = null,
     var chapterName: String? = null,
     var chapterUrl: String? = null,

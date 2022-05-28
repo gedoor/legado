@@ -130,21 +130,43 @@ data class BookSource(
         return bookSourceUrl.hashCode()
     }
 
-    override fun equals(other: Any?) =
-        if (other is BookSource) other.bookSourceUrl == bookSourceUrl else false
+    override fun equals(other: Any?): Boolean {
+        return if (other is BookSource) other.bookSourceUrl == bookSourceUrl else false
+    }
 
-    fun getSearchRule() = ruleSearch ?: SearchRule()
+    fun getSearchRule(): SearchRule {
+        ruleSearch?.let { return it }
+        val rule = SearchRule()
+        ruleSearch = rule
+        return rule
+    }
 
-    fun getExploreRule() = ruleExplore ?: ExploreRule()
+    fun getExploreRule(): ExploreRule {
+        ruleExplore?.let { return it }
+        val rule = ExploreRule()
+        ruleExplore = rule
+        return rule
+    }
 
-    fun getBookInfoRule() = ruleBookInfo ?: BookInfoRule()
+    fun getBookInfoRule(): BookInfoRule {
+        ruleBookInfo?.let { return it }
+        val rule = BookInfoRule()
+        ruleBookInfo = rule
+        return rule
+    }
 
-    fun getTocRule() = ruleToc ?: TocRule()
+    fun getTocRule(): TocRule {
+        ruleToc?.let { return it }
+        val rule = TocRule()
+        ruleToc = rule
+        return rule
+    }
 
-    fun getContentRule() = ruleContent ?: ContentRule()
-
-    fun isReGetTocUrlOnRefresh(): Boolean {
-        return ruleBookInfo?.reGetTocUrlOnRefresh.isTrue()
+    fun getContentRule(): ContentRule {
+        ruleContent?.let { return it }
+        val rule = ContentRule()
+        ruleContent = rule
+        return rule
     }
 
     fun getDisPlayNameGroup(): String {

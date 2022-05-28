@@ -419,7 +419,7 @@
     <string name="rule_is_volume">Volume标识(isVolume)</string>
     <string name="rule_is_vip">VIP标识(isVip)</string>
     <string name="rule_update_time">更新时间(ChapterInfo)</string>
-    <string name="rule_re_get_toc_url">刷新时重新获取目录Url(reGetTocUrlOnRefresh)</string>
+    <string name="pre_update_js">更新之前Js</string>
     <string name="rule_book_content">正文规则(content)</string>
     <string name="rule_next_content">正文下一页URL规则(nextContentUrl)</string>
     <string name="rule_web_js">WebViewJs(webJs)</string>
@@ -991,5 +991,6 @@
     <string name="download_book_fail">Download Fail</string>
     <string name="upload_to_remote">上传WebDav</string>
     <string name="add_remote_book">WebDav书籍</string>
+
     <!-- string end -->
 </resources>

@@ -269,12 +269,12 @@ class BookSourceEditActivity :
             add(EditEntity("tocUrl", ir?.tocUrl, R.string.rule_toc_url))
             add(EditEntity("canReName", ir?.canReName, R.string.rule_can_re_name))
             add(EditEntity("downloadUrls", ir?.downloadUrls, R.string.download_url_rule))
-            add(EditEntity("reGetTocUrl", ir?.reGetTocUrlOnRefresh, R.string.rule_re_get_toc_url))
         }
         //目录页
         val tr = source?.getTocRule()
         tocEntities.clear()
         tocEntities.apply {
+            add(EditEntity("preUpdateJs", tr?.preUpdateJs, R.string.pre_update_js))
             add(EditEntity("chapterList", tr?.chapterList, R.string.rule_chapter_list))
             add(EditEntity("chapterName", tr?.chapterName, R.string.rule_chapter_name))
             add(EditEntity("chapterUrl", tr?.chapterUrl, R.string.rule_chapter_url))
@@ -402,12 +402,12 @@ class BookSourceEditActivity :
                 "canReName" -> bookInfoRule.canReName = it.value
                 "downloadUrls" -> bookInfoRule.downloadUrls =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
-                "reGetTocUrl" -> bookInfoRule.reGetTocUrlOnRefresh = it.value
             }
         }
         tocEntities.forEach {
             when (it.key) {
-                "chapterList" -> tocRule.chapterList = it.value ?: ""
+                "preUpdateJs" -> tocRule.preUpdateJs = it.value
+                "chapterList" -> tocRule.chapterList = it.value
                 "chapterName" -> tocRule.chapterName =
                     viewModel.ruleComplete(it.value, tocRule.chapterList)
                 "chapterUrl" -> tocRule.chapterUrl =
