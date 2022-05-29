@@ -217,7 +217,9 @@ class BookSourceEditActivity :
             add(EditEntity("header", source?.header, R.string.source_http_header))
             add(
                 EditEntity(
-                    "concurrentRate", source?.concurrentRate, R.string.source_concurrent_rate
+                    "concurrentRate",
+                    source?.concurrentRate,
+                    R.string.source_concurrent_rate
                 )
             )
         }
@@ -267,6 +269,7 @@ class BookSourceEditActivity :
             add(EditEntity("tocUrl", ir?.tocUrl, R.string.rule_toc_url))
             add(EditEntity("canReName", ir?.canReName, R.string.rule_can_re_name))
             add(EditEntity("downloadUrls", ir?.downloadUrls, R.string.download_url_rule))
+            add(EditEntity("reGetTocUrl", ir?.reGetTocUrlOnRefresh, R.string.rule_re_get_toc_url))
         }
         //目录页
         val tr = source?.getTocRule()
@@ -397,7 +400,9 @@ class BookSourceEditActivity :
                 "tocUrl" -> bookInfoRule.tocUrl =
                     viewModel.ruleComplete(it.value, bookInfoRule.init, 2)
                 "canReName" -> bookInfoRule.canReName = it.value
-                "downloadUrls" -> bookInfoRule.downloadUrls = viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "downloadUrls" -> bookInfoRule.downloadUrls =
+                    viewModel.ruleComplete(it.value, bookInfoRule.init)
+                "reGetTocUrl" -> bookInfoRule.reGetTocUrlOnRefresh = it.value
             }
         }
         tocEntities.forEach {

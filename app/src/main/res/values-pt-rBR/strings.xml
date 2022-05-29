@@ -418,6 +418,7 @@
     <string name="rule_is_volume">卷标识(isVolume)</string>
     <string name="rule_is_vip">VIP标识(éVip)</string>
     <string name="rule_update_time">更新时间(capítuloInfo)</string>
+    <string name="rule_re_get_toc_url">刷新时重新获取目录Url(reGetTocUrlOnRefresh)</string>
     <string name="rule_book_content">正文规则(conteúdo)</string>
     <string name="rule_next_content">正文下一页URL规则(proxConteúdoUrl)</string>
     <string name="rule_web_js">WebViewJs(webJs)</string>

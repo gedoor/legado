@@ -143,6 +143,10 @@ data class BookSource(
 
     fun getContentRule() = ruleContent ?: ContentRule()
 
+    fun isReGetTocUrlOnRefresh(): Boolean {
+        return ruleBookInfo?.reGetTocUrlOnRefresh.isTrue()
+    }
+
     fun getDisPlayNameGroup(): String {
         return if (bookSourceGroup.isNullOrBlank()) {
             bookSourceName

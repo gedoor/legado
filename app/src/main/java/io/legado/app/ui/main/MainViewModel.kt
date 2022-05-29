@@ -116,7 +116,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         onUpTocBooks.add(book.bookUrl)
         postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
         execute(context = upTocPool) {
-            if (book.tocUrl.isBlank()) {
+            if (book.tocUrl.isBlank() || source.isReGetTocUrlOnRefresh()) {
                 WebBook.getBookInfoAwait(this, source, book)
             }
             val toc = WebBook.getChapterListAwait(this, source, book).getOrThrow()

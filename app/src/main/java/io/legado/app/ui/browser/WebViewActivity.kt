@@ -27,7 +27,6 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.net.URLDecoder
-import kotlinx.coroutines.runBlocking
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
@@ -72,6 +71,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     viewModel.saveVerificationResult {
                         finish()
                     }
+                } else {
+                    finish()
                 }
             }
         }
