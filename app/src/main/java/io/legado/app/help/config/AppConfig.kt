@@ -323,5 +323,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
         return ua
     }
+
+    var bitmapCacheSize: Int
+        get() = appCtx.getPrefInt(PreferKey.bitmapCacheSize, 50)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.bitmapCacheSize, value)
+        }
 }
 
