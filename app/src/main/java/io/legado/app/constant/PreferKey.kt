@@ -55,6 +55,7 @@ object PreferKey {
     const val exportToWebDav = "webDavCacheBackup"
     const val exportNoChapterName = "exportNoChapterName"
     const val exportType = "exportType"
+    const val exportPictureFile = "exportPictureFile"
     const val changeSourceCheckAuthor = "changeSourceCheckAuthor"
     const val changeSourceLoadToc = "changeSourceLoadToc"
     const val changeSourceLoadInfo = "changeSourceLoadInfo"

@@ -243,6 +243,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefInt(PreferKey.exportType, value)
         }
+    var exportPictureFile: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportPictureFile, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportPictureFile, value)
+        }
 
     var changeSourceCheckAuthor: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.changeSourceCheckAuthor)
