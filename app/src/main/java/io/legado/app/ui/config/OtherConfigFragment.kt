@@ -105,14 +105,17 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.cleanCache -> clearCache()
             PreferKey.uploadRule -> showDialogFragment<DirectLinkUploadConfig>()
             PreferKey.checkSource -> showDialogFragment<CheckSourceConfig>()
-            PreferKey.bitmapCacheSize -> NumberPickerDialog(requireContext())
-                .setTitle(getString(R.string.bitmap_cache_size))
-                .setMaxValue(9999)
-                .setMinValue(1)
-                .setValue(AppConfig.bitmapCacheSize)
-                .show {
-                    AppConfig.bitmapCacheSize = it
-                }
+            PreferKey.bitmapCacheSize -> {
+                toastOnUi(R.string.restart_to_apply_changes)
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.bitmap_cache_size))
+                    .setMaxValue(9999)
+                    .setMinValue(1)
+                    .setValue(AppConfig.bitmapCacheSize)
+                    .show {
+                        AppConfig.bitmapCacheSize = it
+                    }
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -152,8 +155,6 @@ class OtherConfigFragment : PreferenceFragment(),
             }
             PreferKey.bitmapCacheSize -> {
                 upPreferenceSummary(key, AppConfig.bitmapCacheSize.toString())
-                // restart to apply changes
-                appCtx.restart()
             }
         }
     }
