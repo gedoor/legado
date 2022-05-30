@@ -339,20 +339,20 @@ object WebBook {
         bookSource: BookSource,
         name: String,
         author: String,
-    ): Result<Book?> {
+    ): Result<Book> {
         return kotlin.runCatching {
-            if (!scope.isActive) return@runCatching null
+            scope.isActive
             searchBookAwait(scope, bookSource, name).firstOrNull {
                 it.name == name && it.author == author
             }?.let { searchBook ->
-                if (!scope.isActive) return@runCatching null
+                scope.isActive
                 var book = searchBook.toBook()
                 if (book.tocUrl.isBlank()) {
                     book = getBookInfoAwait(scope, bookSource, book)
                 }
                 return@runCatching book
             }
-            return@runCatching null
+            throw NoStackTraceException("未搜索到 $name($author) 书籍")
         }
     }
 
