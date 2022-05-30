@@ -27,7 +27,8 @@ object BackupConfig {
         PreferKey.webDavDir,
         PreferKey.webDavAccount,
         PreferKey.webDavPassword,
-        PreferKey.launcherIcon
+        PreferKey.launcherIcon,
+        PreferKey.bitmapCacheSize
     )
 
     //配置忽略标题

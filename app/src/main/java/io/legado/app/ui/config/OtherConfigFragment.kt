@@ -21,6 +21,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.CheckSource
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
@@ -56,6 +57,7 @@ class OtherConfigFragment : PreferenceFragment(),
             upPreferenceSummary(PreferKey.defaultBookTreeUri, it)
         }
         upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
+        upPreferenceSummary(PreferKey.bitmapCacheSize, AppConfig.bitmapCacheSize.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,6 +106,17 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.cleanCache -> clearCache()
             PreferKey.uploadRule -> showDialogFragment<DirectLinkUploadConfig>()
             PreferKey.checkSource -> showDialogFragment<CheckSourceConfig>()
+            PreferKey.bitmapCacheSize -> {
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.bitmap_cache_size))
+                    .setMaxValue(9999)
+                    .setMinValue(1)
+                    .setValue(AppConfig.bitmapCacheSize)
+                    .show {
+                        AppConfig.bitmapCacheSize = it
+                        ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
+                    }
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -141,6 +154,9 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.checkSource -> listView.post {
                 upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
             }
+            PreferKey.bitmapCacheSize -> {
+                upPreferenceSummary(key, AppConfig.bitmapCacheSize.toString())
+            }
         }
     }
 
@@ -151,6 +167,7 @@ class OtherConfigFragment : PreferenceFragment(),
                 getString(R.string.pre_download_s, value)
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
+            PreferKey.bitmapCacheSize -> preference.summary = getString(R.string.bitmap_cache_size_summary, value)
             else -> if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.

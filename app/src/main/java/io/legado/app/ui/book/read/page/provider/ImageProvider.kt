@@ -10,6 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.BookHelp
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
@@ -19,8 +20,6 @@ import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.max
-import kotlin.math.min
 
 object ImageProvider {
 
@@ -32,8 +31,7 @@ object ImageProvider {
      *缓存bitmap LruCache实现
      */
     private const val M = 1024 * 1024
-    private val cacheSize =
-        max(50 * M, min(100 * M, (Runtime.getRuntime().maxMemory() / 8).toInt()))
+    val cacheSize get() = AppConfig.bitmapCacheSize * M
     val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
 
         override fun sizeOf(key: String, bitmap: Bitmap): Int {

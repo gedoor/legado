@@ -75,11 +75,17 @@
             android:key="Cronet"
             android:summary="@string/pref_cronet_summary"
             android:title="Cronet" />
+
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="antiAlias"
             android:summary="@string/pref_anti_alias_summary"
             android:title="@string/anti_alias" />
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="bitmapCacheSize"
+            android:summary="@string/bitmap_cache_size_summary"
+            android:title="@string/bitmap_cache_size" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="preDownloadNum"
