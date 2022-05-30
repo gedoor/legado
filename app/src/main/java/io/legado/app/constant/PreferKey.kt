@@ -55,6 +55,7 @@ object PreferKey {
     const val exportToWebDav = "webDavCacheBackup"
     const val exportNoChapterName = "exportNoChapterName"
     const val exportType = "exportType"
+    const val exportPictureFile = "exportPictureFile"
     const val changeSourceCheckAuthor = "changeSourceCheckAuthor"
     const val changeSourceLoadToc = "changeSourceLoadToc"
     const val changeSourceLoadInfo = "changeSourceLoadInfo"
@@ -82,6 +83,7 @@ object PreferKey {
     const val syncBookProgress = "syncBookProgress"
     const val cronet = "Cronet"
     const val antiAlias = "antiAlias"
+    const val bitmapCacheSize = "bitmapCacheSize"
     const val preDownloadNum = "preDownloadNum"
     const val autoRefresh = "auto_refresh"
     const val defaultToRead = "defaultToRead"
@@ -107,7 +109,6 @@ object PreferKey {
     const val welcomeShowIcon = "welcomeShowIcon"
     const val welcomeShowIconDark = "welcomeShowIconDark"
 
-
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
     const val cBackground = "colorBackground"
@@ -121,4 +122,5 @@ object PreferKey {
     const val cNBBackground = "colorBottomBackgroundNight"
     const val bgImageN = "backgroundImageNight"
     const val bgImageNBlurring = "backgroundImageNightBlurring"
+
 }

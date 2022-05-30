@@ -243,6 +243,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefInt(PreferKey.exportType, value)
         }
+    var exportPictureFile: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.exportPictureFile, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.exportPictureFile, value)
+        }
 
     var changeSourceCheckAuthor: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.changeSourceCheckAuthor)
@@ -323,5 +328,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
         return ua
     }
+
+    var bitmapCacheSize: Int
+        get() = appCtx.getPrefInt(PreferKey.bitmapCacheSize, 50)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.bitmapCacheSize, value)
+        }
 }
 
