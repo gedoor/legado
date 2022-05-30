@@ -21,6 +21,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.CheckSource
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
@@ -106,7 +107,6 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.uploadRule -> showDialogFragment<DirectLinkUploadConfig>()
             PreferKey.checkSource -> showDialogFragment<CheckSourceConfig>()
             PreferKey.bitmapCacheSize -> {
-                toastOnUi(R.string.restart_to_apply_changes)
                 NumberPickerDialog(requireContext())
                     .setTitle(getString(R.string.bitmap_cache_size))
                     .setMaxValue(9999)
@@ -114,6 +114,7 @@ class OtherConfigFragment : PreferenceFragment(),
                     .setValue(AppConfig.bitmapCacheSize)
                     .show {
                         AppConfig.bitmapCacheSize = it
+                        ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
                     }
             }
         }
