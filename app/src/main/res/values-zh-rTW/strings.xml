@@ -917,7 +917,7 @@
     <string name="open_sys_doc_picker_error">打開系統檔案選擇器出錯,自動打開應用文件選擇器</string>
     <string name="expand_text_menu">展開文字選擇選單</string>
     <string name="search_content_size">搜尋結果</string>
-    <string name="search_content_empty">搜尋結果為空</string>
+    <string name="search_content_empty">搜索内容为空，检查净化/简繁设置</string>
     <string name="book_tree_uri_t">書籍儲存位置</string>
     <string name="book_tree_uri_s">從其它應用程式打開的書籍儲存位置</string>
     <string name="select_book_folder">選擇儲存書籍的資料夾</string>
