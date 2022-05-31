@@ -134,8 +134,12 @@ class EpubFile(var book: Book) {
                 if (chapter.url.substringBeforeLast("#") == res.href) {
                     elements.add(getBody(res, startFragmentId, endFragmentId))
                     isChapter = true
-                   //fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
-                   if (chapter.isVolume) break
+                   /**
+                    * fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
+                    * content src text/000001.html（当前章节）
+-                   * content src text/000001.html#toc_id_x (下一章节）
+                     */
+                   if (res.href == nextUrl?.substringBeforeLast("#")) break
                 } else if (isChapter) {
                     if (nextUrl.isNullOrBlank() || res.href == nextUrl.substringBeforeLast("#")) {
                         break
@@ -314,11 +318,9 @@ class EpubFile(var book: Book) {
                 chapter.startFragmentId = ref.fragmentId
                 chapterList.lastOrNull()?.endFragmentId = chapter.startFragmentId
                 /**
-                 * 二级目录判定
-                 * content src text/000001.html (二级目录）（上一章节）
-                 * content src text/000001.html#toc_id_x (当前章节）
+                 * 二级目录判定 todo
                  */
-                val isVolume = chapter.url.substringBeforeLast("#") == chapterList.lastOrNull()?.url?.substringBeforeLast("#")
+                val isVolume = false
                 chapterList.lastOrNull()?.isVolume = isVolume
                 chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
                 chapterList.add(chapter)
