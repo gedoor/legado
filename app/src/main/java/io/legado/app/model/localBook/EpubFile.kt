@@ -317,16 +317,12 @@ class EpubFile(var book: Book) {
                 chapter.url = ref.completeHref
                 chapter.startFragmentId = ref.fragmentId
                 chapterList.lastOrNull()?.endFragmentId = chapter.startFragmentId
-                /**
-                 * 二级目录判定 todo
-                 */
-                val isVolume = false
-                chapterList.lastOrNull()?.isVolume = isVolume
                 chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
                 chapterList.add(chapter)
                 durIndex++
             }
             if (ref.children != null && ref.children.isNotEmpty()) {
+                chapterList.lastOrNull()?.isVolume = true
                 parseMenu(chapterList, ref.children, level + 1)
             }
         }
