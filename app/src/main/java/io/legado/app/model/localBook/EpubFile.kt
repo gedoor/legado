@@ -159,7 +159,10 @@ class EpubFile(var book: Book) {
             body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
-            body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
+            body.getElementById(endFragmentId)?.run {
+                nextElementSiblings()?.remove()
+                remove()
+            }
         }
         /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
         val tag = Book.hTag
