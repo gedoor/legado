@@ -139,7 +139,7 @@ class EpubFile(var book: Book) {
                     * content src text/000001.html（当前章节）
 -                   * content src text/000001.html#toc_id_x (下一章节）
                      */
-                   if (res.href == nextUrl?.substringBeforeLast("#")) break
+                    if (!nextUrl.isNullOrBlank() && res.href == nextUrl!!.substringBeforeLast("#")) break
                 } else if (isChapter) {
                     if (nextUrl.isNullOrBlank() || res.href == nextUrl.substringBeforeLast("#")) {
                         break
