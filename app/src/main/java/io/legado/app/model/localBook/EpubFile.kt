@@ -121,14 +121,11 @@ class EpubFile(var book: Book) {
     }
 
     private fun getContent(chapter: BookChapter): String? {
-        val nextUrl = chapter.getVariable("nextUrl")
-        val startFragmentId = chapter.startFragmentId
-        val endFragmentId = chapter.endFragmentId
-        /*当前章节resource href 和下一章href相同时 应该视为二级目录 返回空白*/
-        //fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
-        if (chapter.isVolume) return ""
         /*获取当前章节文本*/
         epubBook?.let { epubBook ->
+            val nextUrl = chapter.getVariable("nextUrl")
+            val startFragmentId = chapter.startFragmentId
+            val endFragmentId = chapter.endFragmentId
             val elements = Elements()
             var isChapter = false
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
@@ -137,6 +134,12 @@ class EpubFile(var book: Book) {
                 if (chapter.url.substringBeforeLast("#") == res.href) {
                     elements.add(getBody(res, startFragmentId, endFragmentId))
                     isChapter = true
+                   /**
+                    * fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
+                    * content src text/000001.html（当前章节）
+-                   * content src text/000001.html#toc_id_x (下一章节）
+                     */
+                    if (!nextUrl.isNullOrBlank() && res.href == nextUrl!!.substringBeforeLast("#")) break
                 } else if (isChapter) {
                     if (nextUrl.isNullOrBlank() || res.href == nextUrl.substringBeforeLast("#")) {
                         break
@@ -160,7 +163,10 @@ class EpubFile(var book: Book) {
             body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
-            body.getElementById(endFragmentId)?.nextElementSiblings()?.remove()
+            body.getElementById(endFragmentId)?.run {
+                nextElementSiblings()?.remove()
+                remove()
+            }
         }
         /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
         val tag = Book.hTag
@@ -311,18 +317,12 @@ class EpubFile(var book: Book) {
                 chapter.url = ref.completeHref
                 chapter.startFragmentId = ref.fragmentId
                 chapterList.lastOrNull()?.endFragmentId = chapter.startFragmentId
-                /**
-                 * 二级目录判定
-                 * content src text/000001.html (二级目录）（上一章节）
-                 * content src text/000001.html#toc_id_x (当前章节）
-                 */
-                val isVolume = chapter.url.substringBeforeLast("#") == chapterList.lastOrNull()?.url?.substringBeforeLast("#")
-                chapterList.lastOrNull()?.isVolume = isVolume
                 chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
                 chapterList.add(chapter)
                 durIndex++
             }
             if (ref.children != null && ref.children.isNotEmpty()) {
+                chapterList.lastOrNull()?.isVolume = true
                 parseMenu(chapterList, ref.children, level + 1)
             }
         }

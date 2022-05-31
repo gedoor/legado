@@ -50,7 +50,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
                         }
                         mContent = contentProcessor!!.getContent(
                             book, chapter, chapterContent,
-                            chineseConvert = false,
+                            chineseConvert = true,
                             reSegment = false,
                             useReplace = false
                         ).joinToString("")
