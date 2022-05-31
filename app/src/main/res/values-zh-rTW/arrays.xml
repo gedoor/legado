@@ -3,7 +3,7 @@
     <string-array name="book_type">
         <item>文字</item>
         <item>音訊</item>
-        <item>图片</item>
+        <item>圖片</item>
         <item>文件</item>
     </string-array>
 
