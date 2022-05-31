@@ -85,7 +85,7 @@ class ContentProcessor private constructor(
         try {
             val name = Pattern.quote(book.name)
             val title = Pattern.quote(chapter.title)
-            val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)+".toRegex()
+            val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*".toRegex()
             mContent = mContent.replace(titleRegex, "")
         } catch (e: Exception) {
             AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
