@@ -141,7 +141,8 @@ class EpubFile(var book: Book) {
                      */
                     if (!nextUrl.isNullOrBlank() && res.href == nextUrl!!.substringBeforeLast("#")) break
                 } else if (isChapter) {
-                    if (nextUrl.isNullOrBlank() || res.href == nextUrl.substringBeforeLast("#")) {
+                    // fix 最后一章存在多个html时 内容缺失
+                    if (!nextUrl.isNullOrBlank() && res.href == nextUrl.substringBeforeLast("#")) {
                         break
                     }
                     elements.add(getBody(res, startFragmentId, endFragmentId))
