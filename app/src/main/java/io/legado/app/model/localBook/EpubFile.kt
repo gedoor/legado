@@ -121,14 +121,11 @@ class EpubFile(var book: Book) {
     }
 
     private fun getContent(chapter: BookChapter): String? {
-        val nextUrl = chapter.getVariable("nextUrl")
-        val startFragmentId = chapter.startFragmentId
-        val endFragmentId = chapter.endFragmentId
-        /*当前章节resource href 和下一章href相同时 应该视为二级目录 返回空白*/
-        //fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
-        if (chapter.isVolume) return ""
         /*获取当前章节文本*/
         epubBook?.let { epubBook ->
+            val nextUrl = chapter.getVariable("nextUrl")
+            val startFragmentId = chapter.startFragmentId
+            val endFragmentId = chapter.endFragmentId
             val elements = Elements()
             var isChapter = false
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
@@ -137,6 +134,8 @@ class EpubFile(var book: Book) {
                 if (chapter.url.substringBeforeLast("#") == res.href) {
                     elements.add(getBody(res, startFragmentId, endFragmentId))
                     isChapter = true
+                   //fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
+                   if (chapter.isVolume) break
                 } else if (isChapter) {
                     if (nextUrl.isNullOrBlank() || res.href == nextUrl.substringBeforeLast("#")) {
                         break
