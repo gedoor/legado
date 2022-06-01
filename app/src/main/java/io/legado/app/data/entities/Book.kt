@@ -202,7 +202,8 @@ data class Book(
         if (useReplaceRule != null) {
             return useReplaceRule
         }
-        if (type == BookType.image) {
+        //图片类书源 epub本地 默认关闭净化
+        if (type == BookType.image || isEpub()) {
             return false
         }
         return AppConfig.replaceEnableDefault
