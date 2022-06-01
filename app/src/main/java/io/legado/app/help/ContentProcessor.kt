@@ -153,8 +153,8 @@ class ContentProcessor private constructor(
                 } catch (e: CancellationException) {
                     return mContent
                 } catch (e: Exception) {
-                    AppLog.put("${item.name}替换出错\n替换内容\n${mContent}", e)
-                    appCtx.toastOnUi("${item.name}替换出错")
+                    AppLog.put("替换净化: 规则 ${item.name}替换出错\n替换内容\n${mContent}", e)
+                    appCtx.toastOnUi("替换净化: 规则 ${item.name}替换出错")
                 }
             }
         }
