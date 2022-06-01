@@ -13,8 +13,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
-import io.legado.app.utils.BitmapUtils
-import io.legado.app.utils.FileUtils
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -113,6 +112,11 @@ object ImageProvider {
         width: Int,
         height: Int? = null
     ): Bitmap {
+        //src为空白时 可能被净化替换掉了 或者规则失效
+        if (book.getUseReplaceRule() && src.isBlank()) {
+           book.setUseReplaceRule(false)
+           appCtx.toastOnUi(R.string.error_image_url_empty)
+        }
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) return errorBitmap
         //epub文件提供图片链接是相对链接，同时阅读多个epub文件，缓存命中错误
@@ -122,7 +126,7 @@ object ImageProvider {
         @Suppress("BlockingMethodInNonBlockingContext")
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
-                ?: throw NoStackTraceException("解析图片失败")
+                ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
             bitmapLruCache.put(vFile.absolutePath, bitmap)
             bitmap
         }.onFailure {

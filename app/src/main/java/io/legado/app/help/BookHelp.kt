@@ -144,7 +144,9 @@ object BookHelp {
 
     fun getImageSuffix(src: String): String {
         var suffix = src.substringAfterLast(".").substringBefore(",")
-        if (suffix.length > 5) {
+        //检查截取的后缀字符是否合法 [a-zA-Z0-9]
+        val fileSuffixRegex = Regex("^[a-z0-9]+$", RegexOption.IGNORE_CASE)
+        if (suffix.length > 5 || !suffix.matches(fileSuffixRegex)) {
             suffix = "jpg"
         }
         return suffix

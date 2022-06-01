@@ -33,7 +33,7 @@ class EpubFile(var book: Book) {
             if (eFile == null || eFile?.book?.bookUrl != book.bookUrl) {
                 eFile = EpubFile(book)
                 //对于Epub文件默认不启用替换
-                book.setUseReplaceRule(false)
+                //io.legado.app.data.entities.Book getUseReplaceRule
                 return eFile!!
             }
             eFile?.book = book
