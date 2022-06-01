@@ -394,9 +394,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     fun refreshImage(src: String) {
         execute {
-            ImageProvider.bitmapLruCache.remove(src)
             ReadBook.book?.let { book ->
-                BookHelp.getImage(book, src).delete()
+                val vFile = BookHelp.getImage(book, src)
+                ImageProvider.bitmapLruCache.remove(vFile.absolutePath)
+                vFile.delete()
             }
         }.onFinally {
             ReadBook.loadContent(false)

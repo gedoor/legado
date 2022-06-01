@@ -28,26 +28,27 @@ object ImageProvider {
     }
 
     /**
-     *缓存bitmap LruCache实现
+     * 缓存bitmap LruCache实现
+     * filePath bitmap
      */
     private const val M = 1024 * 1024
     val cacheSize get() = AppConfig.bitmapCacheSize * M
     val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
 
-        override fun sizeOf(key: String, bitmap: Bitmap): Int {
+        override fun sizeOf(filePath: String, bitmap: Bitmap): Int {
             return bitmap.byteCount
         }
 
         override fun entryRemoved(
             evicted: Boolean,
-            key: String,
+            filePath: String,
             oldBitmap: Bitmap,
             newBitmap: Bitmap?
         ) {
             //错误图片不能释放,占位用,防止一直重复获取图片
             if (oldBitmap != errorBitmap) {
                 oldBitmap.recycle()
-                putDebug("ImageProvider: trigger bitmap recycle. URI: $key")
+                putDebug("ImageProvider: trigger bitmap recycle. URI: $filePath")
                 putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
             }
         }
@@ -112,19 +113,21 @@ object ImageProvider {
         width: Int,
         height: Int? = null
     ): Bitmap {
-        val cacheBitmap = bitmapLruCache.get(src)
-        if (cacheBitmap != null) return cacheBitmap
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) return errorBitmap
+        //epub文件提供图片链接是相对链接，同时阅读多个epub文件，缓存命中错误
+        //bitmapLruCache的key同一改成缓存文件的路径
+        val cacheBitmap = bitmapLruCache.get(vFile.absolutePath)
+        if (cacheBitmap != null) return cacheBitmap
         @Suppress("BlockingMethodInNonBlockingContext")
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
                 ?: throw NoStackTraceException("解析图片失败")
-            bitmapLruCache.put(src, bitmap)
+            bitmapLruCache.put(vFile.absolutePath, bitmap)
             bitmap
         }.onFailure {
             //错误图片占位,防止重复获取
-            bitmapLruCache.put(src, errorBitmap)
+            bitmapLruCache.put(vFile.absolutePath, errorBitmap)
             putDebug(
                 "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
                 it
