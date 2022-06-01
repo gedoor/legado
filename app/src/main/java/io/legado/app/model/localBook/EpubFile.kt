@@ -121,6 +121,14 @@ class EpubFile(var book: Book) {
     }
 
     private fun getContent(chapter: BookChapter): String? {
+         /**
+          * <image width="1038" height="670" xlink:href="cover.jpeg"/>
+          * <img width="1038" height="670" src="cover.jpeg"/>
+          * titlepage.xhtml
+          */
+        if (chapter.url == "titlepage.xhtml") {
+            return "<img src=\"cover.jpeg\" />"
+        }
         /*获取当前章节文本*/
         epubBook?.let { epubBook ->
             val nextUrl = chapter.getVariable("nextUrl")
@@ -188,6 +196,7 @@ class EpubFile(var book: Book) {
     }
 
     private fun getImage(href: String): InputStream? {
+        if (href == "cover.jpg") return epubBook?.coverImage?.inputStream
         val abHref = href.replace("../", "")
         return epubBook?.resources?.getByHref(abHref)?.inputStream
     }
