@@ -12,6 +12,7 @@ import io.legado.app.help.http.CookieStore
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
 import java.net.URL
@@ -712,14 +713,16 @@ class AnalyzeRule(
         val book = book as? Book
         if (bookSource == null || book == null) return
         runBlocking {
-            WebBook.preciseSearchAwait(this, bookSource, book.name, book.author)
-                .getOrThrow().let {
-                    book.bookUrl = it.bookUrl
-                    it.variableMap.forEach { entry ->
-                        book.putVariable(entry.key, entry.value)
+            withTimeout(1800000) {
+                WebBook.preciseSearchAwait(this, bookSource, book.name, book.author)
+                    .getOrThrow().let {
+                        book.bookUrl = it.bookUrl
+                        it.variableMap.forEach { entry ->
+                            book.putVariable(entry.key, entry.value)
+                        }
                     }
-                }
-            WebBook.getBookInfoAwait(this, bookSource, book, false)
+                WebBook.getBookInfoAwait(this, bookSource, book, false)
+            }
         }
     }
 
@@ -731,7 +734,9 @@ class AnalyzeRule(
         val book = book as? Book
         if (bookSource == null || book == null) return
         runBlocking {
-            WebBook.getBookInfoAwait(this, bookSource, book)
+            withTimeout(1800000) {
+                WebBook.getBookInfoAwait(this, bookSource, book)
+            }
         }
     }
 
