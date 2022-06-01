@@ -114,8 +114,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             return
         }
         waitUpTocBooks.remove(bookUrl)
-        onUpTocBooks.add(bookUrl)
-        postEvent(EventBus.UP_BOOKSHELF, bookUrl)
+        upTocAdd(bookUrl)
         execute(context = upTocPool) {
             val preUpdateJs = source.ruleToc?.preUpdateJs
             if (!preUpdateJs.isNullOrBlank()) {
@@ -128,7 +127,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (book.bookUrl == bookUrl) {
                 appDb.bookDao.update(book)
             } else {
-                onUpTocBooks.add(book.bookUrl)
+                upTocAdd(book.bookUrl)
                 appDb.bookDao.insert(book)
             }
             appDb.bookChapterDao.delByBook(book.bookUrl)
@@ -146,9 +145,16 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     @Synchronized
+    private fun upTocAdd(bookUrl: String) {
+        onUpTocBooks.add(bookUrl)
+        postEvent(EventBus.UP_BOOKSHELF, bookUrl)
+    }
+
+    @Synchronized
     private fun upTocCancel(bookUrl: String) {
         onUpTocBooks.remove(bookUrl)
         waitUpTocBooks.add(bookUrl)
+        postEvent(EventBus.UP_BOOKSHELF, bookUrl)
     }
 
     @Synchronized
