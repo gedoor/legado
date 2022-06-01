@@ -993,4 +993,6 @@
     <string name="bitmap_cache_size">图片绘制缓存</string>
     <string name="export_pics_file">TXT导出图片</string>
     <!-- string end -->
+    <string name="error_decode_bitmap">图片解码失败</string>
+    <string name="error_image_url_empty">图片链接为空，检查替换净化规则</string>
 </resources>

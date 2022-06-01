@@ -993,4 +993,6 @@
     <string name="bitmap_cache_size">bitmap cache size</string>
     <string name="export_pics_file">Export Picture Files</string>
     <!-- string end -->
+    <string name="error_decode_bitmap">Fail to decode bitmap</string>
+    <string name="error_image_url_empty">Image url is empty, check replacement rules</string>
 </resources>
