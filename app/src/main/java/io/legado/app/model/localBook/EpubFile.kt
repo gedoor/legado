@@ -196,7 +196,7 @@ class EpubFile(var book: Book) {
     }
 
     private fun getImage(href: String): InputStream? {
-        if (href == "cover.jpg") return epubBook?.coverImage?.inputStream
+        if (href == "cover.jpeg") return epubBook?.coverImage?.inputStream
         val abHref = href.replace("../", "")
         return epubBook?.resources?.getByHref(abHref)?.inputStream
     }
