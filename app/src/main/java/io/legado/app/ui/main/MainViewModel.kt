@@ -113,9 +113,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             waitUpTocBooks.remove(book.bookUrl)
             return
         }
-        waitUpTocBooks.remove(book.bookUrl)
-        onUpTocBooks.add(book.bookUrl)
-        postEvent(EventBus.UP_BOOKSHELF, book.bookUrl)
+        waitUpTocBooks.remove(bookUrl)
+        onUpTocBooks.add(bookUrl)
+        postEvent(EventBus.UP_BOOKSHELF, bookUrl)
         execute(context = upTocPool) {
             val preUpdateJs = source.ruleToc?.preUpdateJs
             if (!preUpdateJs.isNullOrBlank()) {
@@ -125,15 +125,22 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 WebBook.getBookInfoAwait(this, source, book)
             }
             val toc = WebBook.getChapterListAwait(this, source, book).getOrThrow()
-            appDb.bookDao.update(book)
+            if (book.bookUrl == bookUrl) {
+                appDb.bookDao.update(book)
+            } else {
+                onUpTocBooks.add(book.bookUrl)
+                appDb.bookDao.insert(book)
+            }
             appDb.bookChapterDao.delByBook(book.bookUrl)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             addDownload(source, book)
         }.onError(upTocPool) {
             AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
         }.onCancel(upTocPool) {
+            upTocCancel(bookUrl)
             upTocCancel(book.bookUrl)
         }.onFinally(upTocPool) {
+            upTocFinally(bookUrl)
             upTocFinally(book.bookUrl)
         }
     }
