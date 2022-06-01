@@ -12,6 +12,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
 import io.legado.app.help.LauncherIconHelp
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.utils.*
@@ -55,6 +56,7 @@ object Restore {
         }
         restoreDatabase()
         restoreConfig()
+        LocalConfig.lastBackup = System.currentTimeMillis()
     }
 
     suspend fun restoreDatabase(path: String = Backup.backupPath) {
