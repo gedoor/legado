@@ -122,11 +122,10 @@ class EpubFile(var book: Book) {
 
     private fun getContent(chapter: BookChapter): String? {
          /**
-          * <image width="1038" height="670" xlink:href="cover.jpeg"/>
-          * <img width="1038" height="670" src="cover.jpeg"/>
-          * titlepage.xhtml
+          * <image width="1038" height="670" xlink:href="..."/>
+          * ...titlepage.xhtml
           */
-        if (chapter.url == "titlepage.xhtml") {
+        if (chapter.url.contains("titlepage.xhtml")) {
             return "<img src=\"cover.jpeg\" />"
         }
         /*获取当前章节文本*/
