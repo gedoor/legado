@@ -391,7 +391,7 @@
     <string name="source_group">源分组（sourceGroup）</string>
     <string name="diy_source_group">自定义源分组</string>
     <string name="diy_edit_source_group">输入自定义源分组名称</string>
-    <string name="source_concurrent_rate">并发率（concurrentRate）</string>
+    <string name="concurrent_rate">并发率（concurrentRate）</string>
     <string name="sort_url">分类 URL（sortUrl）</string>
     <string name="login_url">登录 URL(loginUrl)</string>
     <string name="login_ui">登录 UI（loginUi）</string>
@@ -997,4 +997,5 @@
     <!-- string end -->
     <string name="error_decode_bitmap">图片解码失败</string>
     <string name="error_image_url_empty">图片链接为空，检查替换净化规则</string>
+    <string name="variable_comment">变量说明(variableComment)</string>
 </resources>
