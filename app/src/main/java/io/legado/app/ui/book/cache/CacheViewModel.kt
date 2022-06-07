@@ -49,7 +49,11 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val bindings = SimpleBindings()
         bindings["name"] = book.name
         bindings["author"] = book.getRealAuthor()
-        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+        return kotlin.runCatching {
+            AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+        }.onFailure {
+            context.toastOnUi("书名规则错误\n${it.localizedMessage}")
+        }.getOrDefault("${book.name} 作者：${book.getRealAuthor()}")
     }
 
     fun export(path: String, book: Book) {

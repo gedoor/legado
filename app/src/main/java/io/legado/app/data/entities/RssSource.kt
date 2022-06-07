@@ -15,22 +15,35 @@ import splitties.init.appCtx
 data class RssSource(
     @PrimaryKey
     var sourceUrl: String = "",
+    // 名称
     var sourceName: String = "",
+    // 图标
     var sourceIcon: String = "",
+    // 分组
     var sourceGroup: String? = null,
+    // 注释
     var sourceComment: String? = null,
+    // 是否启用
     var enabled: Boolean = true,
+    // 自定义变量说明
+    var variableComment: String? = null,
     @ColumnInfo(defaultValue = "0")
     override var enabledCookieJar: Boolean? = false,
-    override var concurrentRate: String? = null,    //并发率
-    override var header: String? = null,            // 请求头
-    override var loginUrl: String? = null,          // 登录地址
-    override var loginUi: String? = null,               //登录UI
-    var loginCheckJs: String? = null,               //登录检测js
+    //并发率
+    override var concurrentRate: String? = null,
+    // 请求头
+    override var header: String? = null,
+    // 登录地址
+    override var loginUrl: String? = null,
+    //登录UI
+    override var loginUi: String? = null,
+    //登录检测js
+    var loginCheckJs: String? = null,
     var sortUrl: String? = null,
     var singleUrl: Boolean = false,
     /*列表规则*/
-    var articleStyle: Int = 0,                      //列表样式,0,1,2
+    //列表样式,0,1,2
+    var articleStyle: Int = 0,
     var ruleArticles: String? = null,
     var ruleNextPage: String? = null,
     var ruleTitle: String? = null,
@@ -128,6 +141,14 @@ data class RssSource(
             if (isEmpty()) {
                 add(Pair("", sourceUrl))
             }
+        }
+    }
+
+    fun getDisplayVariableComment(otherComment: String): String {
+        return if (variableComment.isNullOrBlank()) {
+            otherComment
+        } else {
+            "${variableComment}\n$otherComment"
         }
     }
 

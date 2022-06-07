@@ -247,7 +247,11 @@ class BookInfoActivity :
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
             }
             chapterList.isNullOrEmpty() -> {
-                binding.tvToc.text = if (viewModel.isImportBookOnLine) getString(R.string.click_read_button_load) else getString(R.string.toc_s, getString(R.string.error_load_toc))
+                binding.tvToc.text =
+                    if (viewModel.isImportBookOnLine) getString(R.string.click_read_button_load) else getString(
+                        R.string.toc_s,
+                        getString(R.string.error_load_toc)
+                    )
             }
             else -> {
                 viewModel.bookData.value?.let {
@@ -358,9 +362,14 @@ class BookInfoActivity :
 
     private fun setSourceVariable() {
         launch {
-            val variable = withContext(IO) { viewModel.bookSource?.getVariable() }
+            val source = viewModel.bookSource
+            if (source == null) {
+                toastOnUi("书源不存在")
+                return@launch
+            }
+            val variable = withContext(IO) { source.getVariable() }
             alert(R.string.set_source_variable) {
-                setMessage("源变量可在js中通过source.getVariable()获取")
+                setMessage(source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取"))
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                     editView.hint = "source variable"
                     editView.setText(variable)
@@ -379,9 +388,14 @@ class BookInfoActivity :
 
     private fun setBookVariable() {
         launch {
+            val source = viewModel.bookSource
+            if (source == null) {
+                toastOnUi("书源不存在")
+                return@launch
+            }
             val variable = withContext(IO) { viewModel.bookData.value?.getVariable("custom") }
             alert(R.string.set_source_variable) {
-                setMessage("""书籍变量可在js中通过book.getVariable("custom")获取""")
+                setMessage(source.getDisplayVariableComment("""书籍变量可在js中通过book.getVariable("custom")获取"""))
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                     editView.hint = "book variable"
                     editView.setText(variable)

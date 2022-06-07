@@ -315,7 +315,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             return true
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             url?.let {
                 return shouldOverrideUrlLoading(Uri.parse(it))

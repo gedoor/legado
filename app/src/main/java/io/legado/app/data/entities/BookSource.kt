@@ -54,6 +54,8 @@ data class BookSource(
     var loginCheckJs: String? = null,
     // 注释
     var bookSourceComment: String? = null,
+    // 自定义变量说明
+    var variableComment: String? = null,
     // 最后更新时间，用于排序
     var lastUpdateTime: Long = 0,
     // 响应时间，用于排序
@@ -209,6 +211,14 @@ data class BookSource(
         return bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.filter {
             "失效" in it
         }?.joinToString() ?: ""
+    }
+
+    fun getDisplayVariableComment(otherComment: String): String {
+        return if (variableComment.isNullOrBlank()) {
+            otherComment
+        } else {
+            "${variableComment}\n$otherComment"
+        }
     }
 
     fun equal(source: BookSource) =
