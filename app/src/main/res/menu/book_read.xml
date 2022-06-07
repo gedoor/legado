@@ -62,6 +62,7 @@
     <item
         android:id="@+id/menu_get_progress"
         android:title="@string/get_book_progress"
+        android:visible="false"
         app:showAsAction="never" />
 
     <item

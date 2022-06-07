@@ -249,7 +249,11 @@ class ReadBookActivity : BaseReadBookActivity(),
                     }
                 }
             }
-            menu.findItem(R.id.menu_get_progress)?.isVisible = AppWebDav.isOk
+            launch {
+                menu.findItem(R.id.menu_get_progress)?.isVisible = withContext(IO) {
+                    AppWebDav.isOk
+                }
+            }
         }
     }
 
@@ -1059,7 +1063,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private fun startBackupJob() {
         backupJob?.cancel()
         backupJob = launch {
-            delay(120000)
+            delay(300000)
             withContext(IO) {
                 ReadBook.book?.let {
                     AppWebDav.uploadBookProgress(it)
