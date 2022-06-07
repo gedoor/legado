@@ -19,6 +19,7 @@ import io.legado.app.utils.readBytes
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
+import java.net.URLDecoder
 
 object RemoteBookWebDav : RemoteBookManager() {
     private val remoteBookUrl get() = "${rootWebDavUrl}${remoteBookFolder}"
@@ -48,6 +49,9 @@ object RemoteBookWebDav : RemoteBookManager() {
         }
     }
 
+    /**
+     * 获取远程书籍列表
+     */
     @Throws(Exception::class)
     override suspend fun getRemoteBookList(): MutableList<RemoteBook> {
         val remoteBooks = mutableListOf<RemoteBook>()
@@ -61,9 +65,10 @@ object RemoteBookWebDav : RemoteBookManager() {
             remoteWebDavFileList = remoteWebDavFileList!!.reversed()
             //转化远程文件信息到本地对象
             remoteWebDavFileList!!.forEach { webDavFile ->
-                val webDavFileName = webDavFile.displayName
-                val webDavUrlName = "${remoteBookUrl}${File.separator}${webDavFile.displayName}"
-
+                var webDavFileName = webDavFile.displayName
+                var webDavUrlName = "${remoteBookUrl}${File.separator}${webDavFile.displayName}"
+                webDavFileName = URLDecoder.decode(webDavFileName,"utf-8")
+                webDavUrlName = URLDecoder.decode(webDavUrlName,"utf-8")
                 // 转码
                 //val trueFileName = String(webDavFileName.toByteArray(Charset.forName("GBK")), Charset.forName("UTF-8"))
                 //val trueUrlName = String(webDavUrlName.toByteArray(Charset.forName("GBK")), Charset.forName("UTF-8"))
@@ -86,6 +91,9 @@ object RemoteBookWebDav : RemoteBookManager() {
         return remoteBooks
     }
 
+    /**
+     * 下载指定的远程书籍到本地
+     */
     override suspend fun getRemoteBook(remoteBook: RemoteBook): Uri? {
         return kotlin.runCatching {
             AppWebDav.authorization?.let {
@@ -98,7 +106,7 @@ object RemoteBookWebDav : RemoteBookManager() {
                 }
             }
         }.onFailure {
-            it.printStackTrace()
+            throw it
         }.getOrNull()
     }
 
@@ -122,7 +130,7 @@ object RemoteBookWebDav : RemoteBookManager() {
                 }
             }
         }.onFailure {
-            return false
+            throw it
         }
         return true
     }

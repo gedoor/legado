@@ -10,6 +10,7 @@ import io.legado.app.base.VMBaseActivity
 
 
 import io.legado.app.databinding.ActivityRemoteBookBinding
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.toastOnUi
 
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -50,9 +51,13 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 
     @SuppressLint("NotifyDataSetChanged")
     override fun addToBookshelf(remoteBook: RemoteBook) {
-        viewModel.addToBookshelf(remoteBook){
-            toastOnUi(getString(R.string.download_book_fail))
+        val waitDialog = WaitDialog(this)
+        waitDialog.show()
+        viewModel.addToBookshelf(remoteBook, success = {
+            toastOnUi(getString(R.string.download_book_success))
             adapter.notifyDataSetChanged()
+        }){
+            waitDialog.dismiss()
         }
     }
 }
