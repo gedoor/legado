@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.multidex.MultiDexApplication
 import com.github.liuyueyi.quick.transfer.ChineseUtils
+import com.github.liuyueyi.quick.transfer.constants.TransType
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
@@ -52,8 +53,8 @@ class App : MultiDexApplication() {
             BookHelp.clearInvalidCache()
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> ChineseUtils.t2s("初始化")
-                2 -> ChineseUtils.s2t("初始化")
+                1 -> ChineseUtils.preLoad(true, TransType.TAIWAN_TO_SIMPLE)
+                2 -> ChineseUtils.preLoad(true, TransType.SIMPLE_TO_TAIWAN)
             }
             //同步阅读记录
             if (AppWebDav.syncBookProgress) {
