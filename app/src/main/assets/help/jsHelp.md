@@ -33,23 +33,40 @@ java.getString(ruleStr: String?, mContent: Any? = null, isUrl: Boolean = false)
 java.getStringList(ruleStr: String?, mContent: Any? = null, isUrl: Boolean = false)
 ```
 * 设置解析内容
+
 ```
 java.setContent(content: Any?, baseUrl: String? = null):
 ```
+
 * 获取Element/Element列表
+
 > 如果要改变解析源代码，请先使用`java.setContent`
+
 ```
 java.getElement(ruleStr: String)
 java.getElements(ruleStr: String)
 ```
 
+* 重新搜索书籍/重新获取目录url
+
+> 可以在刷新目录之前使用,有些书源书籍地址和目录url会变
+
+```
+java.reGetBook()
+java.refreshTocUrl()
+```
+
 ### [js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt) 部分函数
+
 * 变量存取
+
 ```
 java.get(key)
 java.put(key, value)
 ```
+
 * 网络请求
+
 ```
 java.ajax(urlStr): String
 java.ajaxAll(urlList: Array<String>): Array<StrResponse?>
