@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.view.get
+import com.github.liuyueyi.quick.transfer.ChineseUtils
+import com.github.liuyueyi.quick.transfer.constants.TransType
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
@@ -101,6 +103,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
 
     private fun initViewEvent() = binding.run {
         chineseConverter.onChanged {
+            ChineseUtils.unLoad(*TransType.values())
             postEvent(EventBus.UP_CONFIG, true)
         }
         textFontWeightConverter.onChanged {
