@@ -53,8 +53,8 @@ class App : MultiDexApplication() {
             BookHelp.clearInvalidCache()
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> ChineseUtils.preLoad(true, TransType.TAIWAN_TO_SIMPLE)
-                2 -> ChineseUtils.preLoad(true, TransType.SIMPLE_TO_TAIWAN)
+                1 -> ChineseUtils.preLoad(true, TransType.TRADITIONAL_TO_SIMPLE)
+                2 -> ChineseUtils.preLoad(true, TransType.SIMPLE_TO_TRADITIONAL)
             }
             //同步阅读记录
             if (AppWebDav.syncBookProgress) {
