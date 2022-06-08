@@ -27,6 +27,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
     override val binding by viewBinding(ActivityRemoteBookBinding::inflate)
     override val viewModel by viewModels<RemoteBookViewModel>()
     private val adapter by lazy { RemoteBookAdapter(this, this) }
+    private val waitDialog by lazy { WaitDialog(this) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -51,7 +52,6 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
 
     @SuppressLint("NotifyDataSetChanged")
     override fun addToBookshelf(remoteBook: RemoteBook) {
-        val waitDialog = WaitDialog(this)
         waitDialog.show()
         viewModel.addToBookshelf(remoteBook, success = {
             toastOnUi(getString(R.string.download_book_success))
