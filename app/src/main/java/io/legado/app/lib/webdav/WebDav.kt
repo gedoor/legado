@@ -278,6 +278,25 @@ open class WebDav(urlStr: String, val authorization: Authorization) {
         return byteStream ?: throw WebDavException("WebDav下载出错\nNull Exception")
     }
 
+    /**
+     * 移除文件/文件夹
+     */
+    suspend fun delete(): Boolean {
+        val url = httpUrl ?: return false
+        //防止报错
+        return kotlin.runCatching {
+            okHttpClient.newCallResponse {
+                url(url)
+                method("DELETE", null)
+                addHeader(authorization.name, authorization.data)
+            }.let {
+                checkResult(it)
+            }
+        }.onFailure {
+            AppLog.put("WebDav删除失败\n${it.localizedMessage}")
+        }.isSuccess
+    }
+
     private fun checkResult(response: Response) {
         if (!response.isSuccessful) {
             throw WebDavException("${url}\n${response.code}:${response.message}")
