@@ -121,7 +121,7 @@ class Coroutine<T>(
                 if (null == it.context) {
                     it.block.invoke(scope)
                 } else {
-                    withContext(scope.coroutineContext.plus(it.context)) {
+                    withContext(scope.coroutineContext + it.context) {
                         it.block.invoke(this)
                     }
                 }
@@ -137,7 +137,7 @@ class Coroutine<T>(
         context: CoroutineContext,
         block: suspend CoroutineScope.() -> T
     ): Job {
-        return scope.plus(Dispatchers.Main).launch {
+        return (scope + Dispatchers.Main).launch {
             try {
                 start?.let { dispatchVoidCallback(this, it) }
                 ensureActive()
@@ -166,7 +166,7 @@ class Coroutine<T>(
         if (null == callback.context) {
             callback.block.invoke(scope)
         } else {
-            withContext(scope.coroutineContext.plus(callback.context)) {
+            withContext(scope.coroutineContext + callback.context) {
                 callback.block.invoke(this)
             }
         }
@@ -181,7 +181,7 @@ class Coroutine<T>(
         if (null == callback.context) {
             callback.block.invoke(scope, value)
         } else {
-            withContext(scope.coroutineContext.plus(callback.context)) {
+            withContext(scope.coroutineContext + callback.context) {
                 callback.block.invoke(this, value)
             }
         }
@@ -193,7 +193,7 @@ class Coroutine<T>(
         timeMillis: Long,
         noinline block: suspend CoroutineScope.() -> T
     ): T {
-        return withContext(scope.coroutineContext.plus(context)) {
+        return withContext(scope.coroutineContext + context) {
             if (timeMillis > 0L) withTimeout(timeMillis) {
                 block()
             } else {
