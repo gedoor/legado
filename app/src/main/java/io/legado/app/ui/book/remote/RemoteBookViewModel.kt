@@ -5,6 +5,7 @@ import android.net.Uri
 import io.legado.app.base.BaseViewModel
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -69,12 +70,16 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
     /**
      * 添加书籍到本地书架
      */
-    fun addToBookshelf(remoteBook: RemoteBook, finally: () -> Unit) {
+    fun addToBookshelf(remoteBook: RemoteBook, success: () -> Unit, finally: () -> Unit) {
         execute {
             val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
             downloadBookPath?.let {
                 LocalBook.importFile(it)
             }
+        }.onSuccess {
+            success.invoke()
+        }.onError {
+            context.toastOnUi(it.localizedMessage)
         }.onFinally {
             finally.invoke()
         }

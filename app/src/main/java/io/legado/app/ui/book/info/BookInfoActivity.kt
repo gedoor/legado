@@ -40,6 +40,7 @@ import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.dialog.PhotoDialog
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -206,11 +207,20 @@ class BookInfoActivity :
             R.id.menu_upload -> {
                 launch {
                     val uri = Uri.parse(viewModel.bookData.value?.bookUrl.toString())
-                    if (RemoteBookWebDav.upload(uri))
-                        toastOnUi(getString(R.string.upload_book_success))
-                    else
-                        toastOnUi(getString(R.string.upload_book_fail))
-
+                    val waitDialog = WaitDialog(this@BookInfoActivity)
+                    waitDialog.setText("上传中.....")
+                    waitDialog.show()
+                    try {
+                        val isUpload = RemoteBookWebDav.upload(uri)
+                        if (isUpload)
+                            toastOnUi(getString(R.string.upload_book_success))
+                        else
+                            toastOnUi(getString(R.string.upload_book_fail))
+                    }catch (e : Exception){
+                        toastOnUi(e.localizedMessage)
+                    }finally {
+                        waitDialog.dismiss()
+                    }
                 }
             }
         }
