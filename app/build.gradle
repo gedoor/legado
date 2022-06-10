@@ -143,6 +143,7 @@ dependencies {
     implementation('androidx.multidex:multidex:2.0.1')
     //kotlin
     //noinspection GradleDependency
+    //noinspection DifferentStdlibGradleVersion
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     //Kotlin反射
     //noinspection GradleDependency
