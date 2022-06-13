@@ -221,7 +221,7 @@ dependencies {
     implementation(fileTree(dir: 'lib', include: ['rhino-*.jar']))
 
     //网络
-    implementation('com.squareup.okhttp3:okhttp:4.9.3')
+    implementation('com.squareup.okhttp3:okhttp:4.10.0')
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
