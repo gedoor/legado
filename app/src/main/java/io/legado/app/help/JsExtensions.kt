@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
+import cn.hutool.crypto.SecureUtil
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
 import io.legado.app.constant.AppConst
@@ -612,7 +613,7 @@ interface JsExtensions {
     ): ByteArray? {
         return try {
             EncoderUtils.decryptAES(
-                data = str.encodeToByteArray(),
+                data = SecureUtil.decode(str),
                 key = key.encodeToByteArray(),
                 transformation,
                 iv.encodeToByteArray()
@@ -656,7 +657,7 @@ interface JsExtensions {
         iv: String
     ): String? {
         return EncoderUtils.decryptAES(
-            data.encodeToByteArray(),
+            SecureUtil.decode(data),
             Base64.decode(key, Base64.NO_WRAP),
             "AES/${mode}/${padding}",
             Base64.decode(iv, Base64.NO_WRAP)
@@ -807,7 +808,7 @@ interface JsExtensions {
         data: String, key: String, transformation: String, iv: String
     ): String? {
         return EncoderUtils.decryptDES(
-            data.encodeToByteArray(),
+            SecureUtil.decode(data),
             key.encodeToByteArray(),
             transformation,
             iv.encodeToByteArray()
@@ -818,7 +819,7 @@ interface JsExtensions {
        data: String, key: String, transformation: String, iv: String
     ): String? {
         return EncoderUtils.decryptBase64DES(
-            data.encodeToByteArray(),
+            SecureUtil.decode(data),
             key.encodeToByteArray(),
             transformation,
             iv.encodeToByteArray()
@@ -866,7 +867,7 @@ interface JsExtensions {
         iv: String
     ): String? {
         return EncoderUtils.decryptDESede(
-            data.encodeToByteArray(),
+            SecureUtil.decode(data),
             key.encodeToByteArray(),
             "DESede/${mode}/${padding}",
             iv.encodeToByteArray()
@@ -891,7 +892,7 @@ interface JsExtensions {
         iv: String
     ): String? {
         return EncoderUtils.decryptDESede(
-            data.encodeToByteArray(),
+            SecureUtil.decode(data),
             Base64.decode(key, Base64.NO_WRAP),
             "DESede/${mode}/${padding}",
             Base64.decode(iv, Base64.NO_WRAP)
