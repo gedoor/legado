@@ -24,7 +24,10 @@ import io.legado.app.help.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import me.ag2s.epublib.domain.*
 import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.util.ResourceUtil
@@ -40,6 +43,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     val upAdapterLiveData = MutableLiveData<String>()
     val exportProgress = ConcurrentHashMap<String, Int>()
     val exportMsg = ConcurrentHashMap<String, String>()
+    private val mutex = Mutex()
+
+    @Volatile
+    private var exportNumber = 0
 
     private fun getExportFileName(book: Book): String {
         val jsStr = AppConfig.bookExportFileName
@@ -62,6 +69,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         exportMsg.remove(book.bookUrl)
         upAdapterLiveData.postValue(book.bookUrl)
         execute {
+            mutex.withLock {
+                while (exportNumber > 0) {
+                    delay(1000)
+                }
+                exportNumber++
+            }
             if (path.isContentScheme()) {
                 val uri = Uri.parse(path)
                 val doc = DocumentFile.fromTreeUri(context, uri)
@@ -79,6 +92,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
             upAdapterLiveData.postValue(book.bookUrl)
+        }.onFinally {
+            exportNumber--
         }
     }
 
@@ -202,6 +217,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         exportMsg.remove(book.bookUrl)
         upAdapterLiveData.postValue(book.bookUrl)
         execute {
+            mutex.withLock {
+                while (exportNumber > 0) {
+                    delay(1000)
+                }
+                exportNumber++
+            }
             if (path.isContentScheme()) {
                 val uri = Uri.parse(path)
                 val doc = DocumentFile.fromTreeUri(context, uri)
@@ -219,6 +240,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
             upAdapterLiveData.postValue(book.bookUrl)
+        }.onFinally {
+            exportNumber--
         }
     }
 
