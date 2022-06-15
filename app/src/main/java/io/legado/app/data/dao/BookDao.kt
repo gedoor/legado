@@ -88,6 +88,9 @@ interface BookDao {
     @Query("select 1 from books where bookUrl = :bookUrl")
     fun has(bookUrl: String): Boolean?
 
+    @Query("select 1 from books where bookUrl like '%' || :fileName")
+    fun hasFile(fileName: String): Boolean?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg book: Book)
 

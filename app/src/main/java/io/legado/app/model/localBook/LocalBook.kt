@@ -108,9 +108,7 @@ object LocalBook {
         fileName: String,
         source: BaseSource? = null,
     ): Book {
-        return saveBookFile(str, fileName, source).let {
-            importFile(it)
-        }
+        return importFile(saveBookFile(str, fileName, source))
     }
 
     /**
@@ -275,20 +273,7 @@ object LocalBook {
     fun isOnBookShelf(
         fileName: String
     ): Boolean {
-        val defaultBookTreeUri = AppConfig.defaultBookTreeUri
-        if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
-        val treeUri = Uri.parse(defaultBookTreeUri)
-        val bookUrl = if (treeUri.isContentScheme()) {
-            val treeDoc = DocumentFile.fromTreeUri(appCtx, treeUri)
-            val doc = treeDoc!!.findFile(fileName) ?: return false
-            doc.uri.toString()
-        } else {
-            val treeFile = File(treeUri.path!!)
-            val file = treeFile.getFile(fileName)
-            if (!file.exists()) return false
-            file.absolutePath
-        }
-        return appDb.bookDao.getBook(bookUrl) != null
+        return appDb.bookDao.hasFile(fileName) == true
     }
 
     //文件类书源 合并在线书籍信息 在线 > 本地
