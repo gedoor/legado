@@ -34,7 +34,7 @@ object AppWebDav {
     const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
     private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
     private val bookProgressUrl get() = "${rootWebDavUrl}bookProgress/"
-    private val exportsWebDavUrl get() = "$rootWebDavUrl${EncoderUtils.escape("exports")}/"
+    private val exportsWebDavUrl get() = "${rootWebDavUrl}books/"
     val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
 
     var authorization: Authorization? = null
