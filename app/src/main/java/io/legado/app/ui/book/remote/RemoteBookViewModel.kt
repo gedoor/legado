@@ -54,6 +54,8 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
             dataCallback?.clear()
             val bookList = RemoteBookWebDav.getRemoteBookList()
             dataCallback?.setItems(bookList)
+        }.onError {
+            context.toastOnUi("获取webDav书籍出错\n${it.localizedMessage}")
         }
     }
 

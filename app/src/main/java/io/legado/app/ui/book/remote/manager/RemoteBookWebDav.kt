@@ -3,17 +3,14 @@ package io.legado.app.ui.book.remote.manager
 
 import android.net.Uri
 import io.legado.app.constant.AppPattern.bookFileRegex
-import io.legado.app.constant.PreferKey
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
-import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavFile
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.remote.RemoteBook
 import io.legado.app.ui.book.remote.RemoteBookManager
 import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.readBytes
 import kotlinx.coroutines.runBlocking
@@ -22,26 +19,13 @@ import java.io.File
 import java.net.URLDecoder
 
 object RemoteBookWebDav : RemoteBookManager() {
-    private val remoteBookUrl get() = "${rootWebDavUrl}${remoteBookFolder}"
+    private val remoteBookUrl get() = "${AppWebDav.rootWebDavUrl}${remoteBookFolder}"
 
     init {
         runBlocking {
             initRemoteContext()
         }
     }
-
-    private val rootWebDavUrl: String
-        get() {
-            val configUrl = appCtx.getPrefString(PreferKey.webDavUrl)?.trim()
-            var url = if (configUrl.isNullOrEmpty()) AppWebDav.defaultWebDavUrl else configUrl
-            if (!url.endsWith("/")) url = "${url}/"
-            AppConfig.webDavDir?.trim()?.let {
-                if (it.isNotEmpty()) {
-                    url = "${url}${it}/"
-                }
-            }
-            return url
-        }
 
     override suspend fun initRemoteContext() {
         AppWebDav.authorization?.let {
