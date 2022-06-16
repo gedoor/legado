@@ -40,6 +40,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookVi
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
+
     private fun initData() {
         binding.refreshProgressBar.isAutoLoading = true
         launch {
