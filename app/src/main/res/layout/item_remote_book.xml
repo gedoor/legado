@@ -29,17 +29,18 @@
         android:textColor="@color/primaryText"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/iv_cover"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ll_info" />
 
     <LinearLayout
         android:id="@+id/ll_info"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content"
         android:gravity="top"
         android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name">
+        app:layout_constraintTop_toBottomOf="@+id/tv_name"
+        app:layout_constraintBottom_toTopOf="@+id/tv_content_type">
 
         <TextView
             android:id="@+id/tv_size"
@@ -77,7 +78,6 @@
         android:id="@+id/tv_content_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginRight="15dp"
         android:maxWidth="50dp"
         android:maxLines="1"
@@ -86,8 +86,20 @@
         android:text="TXT"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
         app:layout_constraintTop_toBottomOf="@id/ll_info"
+        app:layout_constraintBottom_toTopOf="@id/tv_in_bookshelf"
         app:radius="2dp"
         tools:ignore="HardcodedText,RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/tv_in_bookshelf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_content_type"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
  * @author qianfanguojin
  * @time 2022/05/12
  */
-class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding,RemoteBookViewModel>(),
+class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding, RemoteBookViewModel>(),
     RemoteBookAdapter.CallBack {
     override val binding by viewBinding(ActivityRemoteBookBinding::inflate)
     override val viewModel by viewModels<RemoteBookViewModel>()
