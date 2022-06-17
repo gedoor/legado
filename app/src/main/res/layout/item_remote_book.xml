@@ -19,7 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnusedAttribute" />
 
-
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
