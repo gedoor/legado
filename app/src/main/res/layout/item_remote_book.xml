@@ -51,6 +51,7 @@
             android:lines="1"
             android:textColor="@color/tv_text_summary"
             android:textSize="13sp"
+            tools:ignore="TextContrastCheck"
             tools:text="128kb" />
 
         <TextView
@@ -60,7 +61,8 @@
             android:lines="1"
             android:text="@string/separator"
             android:textColor="@color/tv_text_summary"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            tools:ignore="TextContrastCheck" />
 
         <TextView
             android:id="@+id/tv_date"
@@ -70,6 +72,7 @@
             android:lines="1"
             android:textColor="@color/tv_text_summary"
             android:textSize="13sp"
+            tools:ignore="TextContrastCheck"
             tools:text="2022-12-7" />
 
     </LinearLayout>
