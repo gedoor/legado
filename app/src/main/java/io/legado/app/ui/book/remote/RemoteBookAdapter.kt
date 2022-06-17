@@ -38,7 +38,6 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
             tvContentType.text = item.contentType
             tvSize.text = ConvertUtils.formatFileSize(item.size)
             tvDate.text = LocalDateTimeUtil.format(LocalDateTimeUtil.of(item.lastModify), "yyyy-MM-dd")
-
         }
     }
 
