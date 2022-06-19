@@ -41,21 +41,15 @@ object RemoteBookWebDav : RemoteBookManager() {
         val remoteBooks = mutableListOf<RemoteBook>()
         AppWebDav.authorization?.let {
             //读取文件列表
-            var remoteWebDavFileList: List<WebDavFile>? = null
-            kotlin.runCatching {
-                remoteWebDavFileList = WebDav(remoteBookUrl, it).listFiles()
-            }
-            //逆序文件排序
-            remoteWebDavFileList = remoteWebDavFileList!!.reversed()
+            val remoteWebDavFileList: List<WebDavFile> = WebDav(remoteBookUrl, it).listFiles()
             //转化远程文件信息到本地对象
-            remoteWebDavFileList!!.forEach { webDavFile ->
+            remoteWebDavFileList.forEach { webDavFile ->
                 var webDavFileName = webDavFile.displayName
                 var webDavUrlName = "${remoteBookUrl}${File.separator}${webDavFile.displayName}"
-                webDavFileName = URLDecoder.decode(webDavFileName,"utf-8")
-                webDavUrlName = URLDecoder.decode(webDavUrlName,"utf-8")
-                // 转码
-                //val trueFileName = String(webDavFileName.toByteArray(Charset.forName("GBK")), Charset.forName("UTF-8"))
-                //val trueUrlName = String(webDavUrlName.toByteArray(Charset.forName("GBK")), Charset.forName("UTF-8"))
+                webDavFileName = URLDecoder.decode(webDavFileName, "utf-8")
+                webDavUrlName = URLDecoder.decode(webDavUrlName, "utf-8")
+
+                webDavFile.isDir
 
                 //分割后缀
                 val fileExtension = webDavFileName.substringAfterLast(".")
