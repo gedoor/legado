@@ -2,6 +2,7 @@ package io.legado.app.ui.book.remote
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import cn.hutool.core.date.LocalDateTimeUtil
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
@@ -37,7 +38,11 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
             tvName.text = item.filename.substringBeforeLast(".")
             tvContentType.text = item.contentType
             tvSize.text = ConvertUtils.formatFileSize(item.size)
-            tvDate.text = LocalDateTimeUtil.format(LocalDateTimeUtil.of(item.lastModify), "yyyy-MM-dd")
+            tvDate.text =
+                LocalDateTimeUtil.format(LocalDateTimeUtil.of(item.lastModify), "yyyy-MM-dd")
+            llInfo.isGone = item.isDir
+            tvContentType.isGone = item.isDir
+            btnDownload.isGone = item.isDir
         }
     }
 
@@ -45,7 +50,11 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
 
         binding.btnDownload.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
-                    callBack.addToBookshelf(it)
+                    if (it.isDir) {
+
+                    } else {
+                        callBack.addToBookshelf(it)
+                    }
                 }
         }
 

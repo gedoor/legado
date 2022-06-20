@@ -49,20 +49,27 @@ object RemoteBookWebDav : RemoteBookManager() {
                 webDavFileName = URLDecoder.decode(webDavFileName, "utf-8")
                 webDavUrlName = URLDecoder.decode(webDavUrlName, "utf-8")
 
-                webDavFile.isDir
-
-                //分割后缀
-                val fileExtension = webDavFileName.substringAfterLast(".")
-
-                //扩展名符合阅读的格式则认为是书籍
-                if (bookFileRegex.matches(webDavFileName)) {
-                    val isOnBookShelf = LocalBook.isOnBookShelf(webDavFileName)
+                if (webDavFile.isDir) {
                     remoteBooks.add(
                         RemoteBook(
                             webDavFileName, webDavUrlName, webDavFile.size,
-                            fileExtension, webDavFile.lastModify, isOnBookShelf
+                            "folder", webDavFile.lastModify, false
                         )
                     )
+                } else {
+                    //分割后缀
+                    val fileExtension = webDavFileName.substringAfterLast(".")
+
+                    //扩展名符合阅读的格式则认为是书籍
+                    if (bookFileRegex.matches(webDavFileName)) {
+                        val isOnBookShelf = LocalBook.isOnBookShelf(webDavFileName)
+                        remoteBooks.add(
+                            RemoteBook(
+                                webDavFileName, webDavUrlName, webDavFile.size,
+                                fileExtension, webDavFile.lastModify, isOnBookShelf
+                            )
+                        )
+                    }
                 }
             }
         } ?: throw NoStackTraceException("webDav没有配置")
