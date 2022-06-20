@@ -74,7 +74,6 @@ open class WebDav(urlStr: String, val authorization: Authorization) {
 
     /**
      * 列出当前路径下的文件
-     *
      * @return 文件列表
      */
     @Throws(WebDavException::class)
@@ -118,6 +117,9 @@ open class WebDav(urlStr: String, val authorization: Authorization) {
         }.body?.text()
     }
 
+    /**
+     * 解析webDav返回的xml
+     */
     private fun parseBody(s: String): List<WebDavFile> {
         val list = ArrayList<WebDavFile>()
         val document = Jsoup.parse(s)
@@ -299,6 +301,9 @@ open class WebDav(urlStr: String, val authorization: Authorization) {
         }.isSuccess
     }
 
+    /**
+     * 检测返回结果是否正确
+     */
     private fun checkResult(response: Response) {
         if (!response.isSuccessful) {
             throw WebDavException("${url}\n${response.code}:${response.message}")
