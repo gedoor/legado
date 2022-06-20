@@ -67,6 +67,10 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding, RemoteBookV
         return super.onCompatOptionsItemSelected(item)
     }
 
+    override fun openDir(url: String) {
+
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun addToBookshelf(remoteBook: RemoteBook) {
         waitDialog.show()

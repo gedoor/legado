@@ -51,7 +51,7 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
         binding.btnDownload.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     if (it.isDir) {
-
+                        callBack.openDir(it.path)
                     } else {
                         callBack.addToBookshelf(it)
                     }
@@ -61,6 +61,7 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
+        fun openDir(url: String)
         fun addToBookshelf(remoteBook: RemoteBook)
     }
 }
