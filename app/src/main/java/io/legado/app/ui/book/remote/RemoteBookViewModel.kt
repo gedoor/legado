@@ -13,7 +13,10 @@ import kotlinx.coroutines.flow.flowOn
 import java.util.*
 
 class RemoteBookViewModel(application: Application): BaseViewModel(application){
-    private var dataCallback : DataCallback? = null
+
+    val dirList = arrayListOf<RemoteBook>()
+
+    var dataCallback: DataCallback? = null
 
     val dataFlow = callbackFlow<List<RemoteBook>> {
 
@@ -49,10 +52,10 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
         }
     }
 
-    fun loadRemoteBookList() {
+    fun loadRemoteBookList(path: String) {
         execute {
             dataCallback?.clear()
-            val bookList = RemoteBookWebDav.getRemoteBookList()
+            val bookList = RemoteBookWebDav.getRemoteBookList(path)
             dataCallback?.setItems(bookList)
         }.onError {
             context.toastOnUi("获取webDav书籍出错\n${it.localizedMessage}")

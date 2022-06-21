@@ -19,7 +19,7 @@ import java.io.File
 import java.net.URLDecoder
 
 object RemoteBookWebDav : RemoteBookManager() {
-    private val remoteBookUrl get() = "${AppWebDav.rootWebDavUrl}${remoteBookFolder}"
+    val rootBookUrl get() = "${AppWebDav.rootWebDavUrl}${remoteBookFolder}"
 
     init {
         runBlocking {
@@ -29,7 +29,7 @@ object RemoteBookWebDav : RemoteBookManager() {
 
     override suspend fun initRemoteContext() {
         AppWebDav.authorization?.let {
-            WebDav(remoteBookUrl, it).makeAsDir()
+            WebDav(rootBookUrl, it).makeAsDir()
         }
     }
 
@@ -37,11 +37,11 @@ object RemoteBookWebDav : RemoteBookManager() {
      * 获取远程书籍列表
      */
     @Throws(Exception::class)
-    override suspend fun getRemoteBookList(): MutableList<RemoteBook> {
+    override suspend fun getRemoteBookList(path: String): MutableList<RemoteBook> {
         val remoteBooks = mutableListOf<RemoteBook>()
         AppWebDav.authorization?.let {
             //读取文件列表
-            val remoteWebDavFileList: List<WebDavFile> = WebDav(remoteBookUrl, it).listFiles()
+            val remoteWebDavFileList: List<WebDavFile> = WebDav(path, it).listFiles()
             //转化远程文件信息到本地对象
             remoteWebDavFileList.forEach { webDavFile ->
                 var webDavFileName = webDavFile.displayName
@@ -93,7 +93,7 @@ object RemoteBookWebDav : RemoteBookManager() {
         if (!NetworkUtils.isAvailable()) return false
 
         val localBookName = localBookUri.path?.substringAfterLast(File.separator)
-        val putUrl = "${remoteBookUrl}${File.separator}${localBookName}"
+        val putUrl = "${rootBookUrl}${File.separator}${localBookName}"
         AppWebDav.authorization?.let {
             if (localBookUri.isContentScheme()) {
                 WebDav(putUrl, it).upload(

@@ -12,6 +12,7 @@ import io.legado.app.base.VMBaseActivity
 
 
 import io.legado.app.databinding.ActivityRemoteBookBinding
+import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.toastOnUi
 
@@ -50,7 +51,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding, RemoteBookV
                 adapter.setItems(remoteBooks)
             }
         }
-        viewModel.loadRemoteBookList()
+        viewModel.loadRemoteBookList(RemoteBookWebDav.rootBookUrl)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -61,14 +62,19 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding, RemoteBookV
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_refresh -> {
-                viewModel.loadRemoteBookList()
+                viewModel.loadRemoteBookList(
+                    viewModel.dirList.lastOrNull()?.path ?: RemoteBookWebDav.rootBookUrl
+                )
             }
         }
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun openDir(url: String) {
-
+    override fun openDir(remoteBook: RemoteBook) {
+        viewModel.dirList.add(remoteBook)
+        binding.titleBar.title = remoteBook.filename
+        viewModel.dataCallback?.clear()
+        viewModel.loadRemoteBookList(remoteBook.path)
     }
 
     @SuppressLint("NotifyDataSetChanged")
