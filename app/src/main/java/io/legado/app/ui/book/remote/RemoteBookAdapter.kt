@@ -14,8 +14,8 @@ import io.legado.app.utils.ConvertUtils
  * 适配器
  * @author qianfanguojin
  */
-class RemoteBookAdapter (context: Context, val callBack: CallBack) :
-    RecyclerAdapter<RemoteBook, ItemRemoteBookBinding>(context){
+class RemoteBookAdapter(context: Context, val callBack: CallBack) :
+    RecyclerAdapter<RemoteBook, ItemRemoteBookBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemRemoteBookBinding {
         return ItemRemoteBookBinding.inflate(inflater, parent, false)
@@ -47,17 +47,18 @@ class RemoteBookAdapter (context: Context, val callBack: CallBack) :
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemRemoteBookBinding) {
-
-        binding.btnDownload.setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
-                    if (it.isDir) {
-                        callBack.openDir(it)
-                    } else {
-                        callBack.addToBookshelf(it)
-                    }
+        binding.root.setOnClickListener {
+            getItem(holder.layoutPosition)?.let {
+                if (it.isDir) {
+                    callBack.openDir(it)
                 }
+            }
         }
-
+        binding.btnDownload.setOnClickListener {
+            getItem(holder.layoutPosition)?.let {
+                callBack.addToBookshelf(it)
+            }
+        }
     }
 
     interface CallBack {

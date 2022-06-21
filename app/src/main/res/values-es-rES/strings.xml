@@ -996,4 +996,5 @@
     <string name="error_decode_bitmap">Fail to decode bitmap</string>
     <string name="error_image_url_empty">Image url is empty, check replacement rules</string>
     <string name="variable_comment">变量说明(variableComment)</string>
+    <string name="remote_book">远程书籍</string>
 </resources>

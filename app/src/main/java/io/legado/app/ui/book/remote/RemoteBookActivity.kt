@@ -70,6 +70,23 @@ class RemoteBookActivity : VMBaseActivity<ActivityRemoteBookBinding, RemoteBookV
         return super.onCompatOptionsItemSelected(item)
     }
 
+    override fun finish() {
+        if (viewModel.dirList.isEmpty()) {
+            super.finish()
+        } else {
+            viewModel.dirList.removeLastOrNull()
+            val remoteBook = viewModel.dirList.lastOrNull()
+            viewModel.dataCallback?.clear()
+            if (remoteBook != null) {
+                binding.titleBar.title = remoteBook.filename
+                viewModel.loadRemoteBookList(remoteBook.path)
+            } else {
+                binding.titleBar.setTitle(R.string.remote_book)
+                viewModel.loadRemoteBookList(RemoteBookWebDav.rootBookUrl)
+            }
+        }
+    }
+
     override fun openDir(remoteBook: RemoteBook) {
         viewModel.dirList.add(remoteBook)
         binding.titleBar.title = remoteBook.filename
