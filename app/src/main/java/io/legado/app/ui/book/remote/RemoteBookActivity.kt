@@ -10,9 +10,11 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.WaitDialog
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -72,9 +74,8 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_refresh -> {
-                upPath()
-            }
+            R.id.menu_refresh -> upPath()
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
     }

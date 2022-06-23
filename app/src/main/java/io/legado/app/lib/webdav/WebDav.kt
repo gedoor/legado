@@ -19,6 +19,7 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
+import java.net.URLDecoder
 import java.net.URLEncoder
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -125,7 +126,7 @@ open class WebDav(val path: String, val authorization: Authorization) {
         httpUrl?.let { urlStr ->
             val baseUrl = NetworkUtils.getBaseUrl(urlStr)
             for (element in elements) {
-                val href = element.getElementsByTag("d:href")[0].text()
+                val href = URLDecoder.decode(element.getElementsByTag("d:href")[0].text(), "UTF-8")
                 if (!href.endsWith("/")) {
                     val fileName = href.substring(href.lastIndexOf("/") + 1)
                     val webDavFile: WebDav

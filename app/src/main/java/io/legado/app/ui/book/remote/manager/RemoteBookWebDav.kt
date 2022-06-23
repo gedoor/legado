@@ -16,7 +16,6 @@ import io.legado.app.utils.readBytes
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
-import java.net.URLDecoder
 
 object RemoteBookWebDav : RemoteBookManager() {
     val rootBookUrl get() = "${AppWebDav.rootWebDavUrl}${remoteBookFolder}"
@@ -44,26 +43,23 @@ object RemoteBookWebDav : RemoteBookManager() {
             val remoteWebDavFileList: List<WebDavFile> = WebDav(path, it).listFiles()
             //转化远程文件信息到本地对象
             remoteWebDavFileList.forEach { webDavFile ->
-                var webDavFileName = webDavFile.displayName
-                webDavFileName = URLDecoder.decode(webDavFileName, "utf-8")
-
                 if (webDavFile.isDir) {
                     remoteBooks.add(
                         RemoteBook(
-                            webDavFileName, webDavFile.path, webDavFile.size,
+                            webDavFile.displayName, webDavFile.path, webDavFile.size,
                             "folder", webDavFile.lastModify, false
                         )
                     )
                 } else {
                     //分割后缀
-                    val fileExtension = webDavFileName.substringAfterLast(".")
+                    val fileExtension = webDavFile.displayName.substringAfterLast(".")
 
                     //扩展名符合阅读的格式则认为是书籍
-                    if (bookFileRegex.matches(webDavFileName)) {
-                        val isOnBookShelf = LocalBook.isOnBookShelf(webDavFileName)
+                    if (bookFileRegex.matches(webDavFile.displayName)) {
+                        val isOnBookShelf = LocalBook.isOnBookShelf(webDavFile.displayName)
                         remoteBooks.add(
                             RemoteBook(
-                                webDavFileName, webDavFile.path, webDavFile.size,
+                                webDavFile.displayName, webDavFile.path, webDavFile.size,
                                 fileExtension, webDavFile.lastModify, isOnBookShelf
                             )
                         )
