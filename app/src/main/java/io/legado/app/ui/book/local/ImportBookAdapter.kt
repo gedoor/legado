@@ -126,6 +126,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                 }
             }
         }
+        notifyItemRangeChanged(0, itemCount, true)
         callBack.upCountView()
     }
 

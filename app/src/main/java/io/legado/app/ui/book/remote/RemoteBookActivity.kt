@@ -91,6 +91,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
     override fun onClickSelectBarMainAction() {
         waitDialog.show()
         viewModel.addToBookshelf(adapter.selected) {
+            adapter.selected.clear()
             adapter.notifyDataSetChanged()
             waitDialog.dismiss()
         }
