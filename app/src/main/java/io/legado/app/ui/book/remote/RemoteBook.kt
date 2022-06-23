@@ -6,7 +6,7 @@ data class RemoteBook(
     val size: Long,
     val contentType: String,
     val lastModify: Long,
-    var isOnBookShelf: Boolean
+    var isOnBookShelf: Boolean = false
 ) {
 
     val isDir by lazy {

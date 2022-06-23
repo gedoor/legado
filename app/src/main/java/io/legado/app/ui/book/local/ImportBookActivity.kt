@@ -206,6 +206,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     @Synchronized
     private fun upPath() {
+        binding.tvGoBack.isEnabled = viewModel.subDocs.isNotEmpty()
         viewModel.rootDoc?.let {
             scanDocJob?.cancel()
             upDocs(it)

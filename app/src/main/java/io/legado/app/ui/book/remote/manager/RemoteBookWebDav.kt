@@ -47,7 +47,7 @@ object RemoteBookWebDav : RemoteBookManager() {
                     remoteBooks.add(
                         RemoteBook(
                             webDavFile.displayName, webDavFile.path, webDavFile.size,
-                            "folder", webDavFile.lastModify, false
+                            "folder", webDavFile.lastModify
                         )
                     )
                 } else {

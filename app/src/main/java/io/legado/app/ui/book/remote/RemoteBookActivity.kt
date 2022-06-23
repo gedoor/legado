@@ -98,6 +98,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
     }
 
     private fun upPath() {
+        binding.tvGoBack.isEnabled = viewModel.dirList.isNotEmpty()
         var path = "books" + File.separator
         viewModel.dirList.forEach {
             path = path + it.filename + File.separator
