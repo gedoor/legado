@@ -9,8 +9,7 @@
         android:id="@+id/titleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/book_local" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--path-->
     <LinearLayout

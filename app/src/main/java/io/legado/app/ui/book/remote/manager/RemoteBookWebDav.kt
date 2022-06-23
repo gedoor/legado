@@ -108,7 +108,10 @@ object RemoteBookWebDav : RemoteBookManager() {
     }
 
     override suspend fun delete(remoteBookUrl: String): Boolean {
-        TODO("Not yet implemented")
+        AppWebDav.authorization?.let {
+            return WebDav(remoteBookUrl, it).delete()
+        }
+        return false
     }
 
 }

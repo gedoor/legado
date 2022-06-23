@@ -1,8 +1,8 @@
 package io.legado.app.ui.book.remote
 
 import android.app.Application
-import android.net.Uri
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.utils.toastOnUi
@@ -62,33 +62,23 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
         }
     }
 
-    fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
+    fun addToBookshelf(remoteBooks: HashSet<RemoteBook>, finally: () -> Unit) {
         execute {
-            uriList.forEach {
-                LocalBook.importFile(Uri.parse(it))
+            remoteBooks.forEach { remoteBook ->
+                val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
+                downloadBookPath?.let {
+                    LocalBook.importFile(it)
+                    remoteBook.isOnBookShelf = true
+                }
             }
+        }.onError {
+            AppLog.put("导入出错\n${it.localizedMessage}", it)
+            context.toastOnUi("导入出错\n${it.localizedMessage}")
         }.onFinally {
             finally.invoke()
         }
     }
 
-    /**
-     * 添加书籍到本地书架
-     */
-    fun addToBookshelf(remoteBook: RemoteBook, success: () -> Unit, finally: () -> Unit) {
-        execute {
-            val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
-            downloadBookPath?.let {
-                LocalBook.importFile(it)
-            }
-        }.onSuccess {
-            success.invoke()
-        }.onError {
-            context.toastOnUi(it.localizedMessage)
-        }.onFinally {
-            finally.invoke()
-        }
-    }
     interface DataCallback {
 
         fun setItems(remoteFiles: List<RemoteBook>)

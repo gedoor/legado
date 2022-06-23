@@ -21,6 +21,8 @@ import java.io.File
 import java.util.*
 
 class ImportBookViewModel(application: Application) : BaseViewModel(application) {
+    var rootDoc: FileDoc? = null
+    val subDocs = arrayListOf<FileDoc>()
     var sort = context.getPrefInt(PreferKey.localBookImportSort)
     var dataCallback: DataCallback? = null
     var dataFlowStart: (() -> Unit)? = null
