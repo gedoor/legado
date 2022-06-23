@@ -62,8 +62,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
 
     private fun initEvent() {
         binding.tvGoBack.setOnClickListener {
-            viewModel.dirList.removeLastOrNull()
-            upPath()
+           goBackDir()
         }
     }
 
@@ -95,6 +94,21 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
             adapter.notifyDataSetChanged()
             waitDialog.dismiss()
         }
+    }
+
+    override fun onBackPressed() {
+        if (!goBackDir()) {
+            super.onBackPressed()
+        }
+    }
+
+    private fun goBackDir(): Boolean {
+        if (viewModel.dirList.isEmpty()) {
+            return false
+        }
+        viewModel.dirList.removeLastOrNull()
+        upPath()
+        return true
     }
 
     private fun upPath() {
