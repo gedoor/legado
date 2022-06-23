@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import splitties.init.appCtx
+import kotlin.math.min
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -437,7 +438,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 delay(1000)
                 download(i)
             }
-            val minChapterIndex = durChapterIndex - 5
+            val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
             for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
                 delay(1000)
                 download(i)

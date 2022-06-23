@@ -5,7 +5,7 @@ import android.net.Uri
 abstract class RemoteBookManager {
     protected val remoteBookFolder : String = "books"
     abstract suspend fun initRemoteContext()
-    abstract suspend fun getRemoteBookList(): MutableList<RemoteBook>
+    abstract suspend fun getRemoteBookList(path: String): MutableList<RemoteBook>
     abstract suspend fun upload(localBookUri: Uri): Boolean
     abstract suspend fun delete(remoteBookUrl: String): Boolean
 

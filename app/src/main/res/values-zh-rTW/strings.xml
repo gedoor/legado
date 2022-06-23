@@ -998,4 +998,5 @@
     <string name="error_decode_bitmap">图片解码失败</string>
     <string name="error_image_url_empty">图片链接为空，检查替换净化规则</string>
     <string name="variable_comment">变量说明(variableComment)</string>
+    <string name="remote_book">远程书籍</string>
 </resources>
