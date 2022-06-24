@@ -122,7 +122,13 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
         adapter.selected.clear()
         viewModel.loadRemoteBookList(
             viewModel.dirList.lastOrNull()?.path ?: RemoteBookWebDav.rootBookUrl
-        )
+        ) {
+            if (it) {
+                waitDialog.show()
+            } else {
+                waitDialog.dismiss()
+            }
+        }
     }
 
     override fun openDir(remoteBook: RemoteBook) {
