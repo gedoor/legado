@@ -235,7 +235,7 @@ dependencies {
     implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
 
     //二维码
-    implementation('com.github.jenly1314:zxing-lite:2.2.0')
+    implementation('com.github.jenly1314:zxing-lite:2.2.1')
 
     //颜色选择
     implementation('com.jaredrummler:colorpicker:1.1.0')
