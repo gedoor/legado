@@ -115,6 +115,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
 
     private fun initView() {
         binding.layTop.setBackgroundColor(backgroundColor)
+        binding.tvEmptyMsg.setText(R.string.empty_msg_import_book)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
         binding.selectActionBar.setMainActionText(R.string.add_to_shelf)
