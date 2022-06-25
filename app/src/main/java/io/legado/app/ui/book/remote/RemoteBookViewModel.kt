@@ -52,7 +52,7 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
         }
     }
 
-    fun loadRemoteBookList(path: String) {
+    fun loadRemoteBookList(path: String, loadCallback: (loading: Boolean) -> Unit) {
         execute {
             dataCallback?.clear()
             val bookList = RemoteBookWebDav.getRemoteBookList(path)
@@ -60,6 +60,10 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
         }.onError {
             AppLog.put("获取webDav书籍出错\n${it.localizedMessage}", it)
             context.toastOnUi("获取webDav书籍出错\n${it.localizedMessage}")
+        }.onStart {
+            loadCallback.invoke(true)
+        }.onFinally {
+            loadCallback.invoke(false)
         }
     }
 

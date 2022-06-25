@@ -78,7 +78,7 @@
             android:layout_gravity="center"
             android:layout_margin="16dp"
             android:gravity="center"
-            android:text="@string/empty_msg_import_book"
+            android:text="@string/empty"
             android:visibility="gone"
             tools:text="TextView" />
 
