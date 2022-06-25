@@ -230,8 +230,7 @@ object BookList {
             try {
                 analyzeRule.getString(ruleCoverUrl).let {
                     if (it.isNotEmpty()) {
-                        searchBook.coverUrl =
-                            NetworkUtils.getAbsoluteURL(baseUrl, it)
+                        searchBook.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
                     }
                 }
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}", log)
