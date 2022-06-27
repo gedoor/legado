@@ -59,7 +59,6 @@ interface BaseSource : JsExtensions {
      * 解析header规则
      */
     fun getHeaderMap(hasLoginHeader: Boolean = false) = HashMap<String, String>().apply {
-        this[AppConst.UA_NAME] = AppConfig.userAgent
         header?.let {
             GSON.fromJsonObject<Map<String, String>>(
                 when {
@@ -72,6 +71,9 @@ interface BaseSource : JsExtensions {
             ).getOrNull()?.let { map ->
                 putAll(map)
             }
+        }
+        if (!has(AppConst.UA_NAME, true)) {
+            put(AppConst.UA_NAME, AppConfig.userAgent)
         }
         if (hasLoginHeader) {
             getLoginHeaderMap()?.let {
