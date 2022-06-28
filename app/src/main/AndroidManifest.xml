@@ -147,6 +147,7 @@
         <!-- 主界面 -->
         <activity
             android:name=".ui.main.MainActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTask" />
         <!-- 阅读界面 -->

@@ -59,10 +59,12 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
     private var booksFlowJob: Job? = null
+    private var savedInstanceState: Bundle? = null
     private var position = 0
     private var groupId = -1L
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        this.savedInstanceState = savedInstanceState
         arguments?.let {
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
@@ -126,8 +128,22 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             }.conflate().collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 booksAdapter.setItems(list)
+                recoverPositionState()
                 delay(100)
             }
+        }
+    }
+
+    private fun recoverPositionState() {
+        // 恢复书架位置状态
+        if (savedInstanceState?.getBoolean("needRecoverState") == true) {
+            val layoutManager = binding.rvBookshelf.layoutManager
+            if (layoutManager is LinearLayoutManager) {
+                val leavePosition = savedInstanceState!!.getInt("leavePosition")
+                val leaveOffset = savedInstanceState!!.getInt("leaveOffset")
+                layoutManager.scrollToPositionWithOffset(leavePosition, leaveOffset)
+            }
+            savedInstanceState!!.putBoolean("needRecoverState", false)
         }
     }
 
@@ -145,6 +161,28 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     fun getBooksCount(): Int {
         return booksAdapter.itemCount
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // 保存书架位置状态
+        val layoutManager = binding.rvBookshelf.layoutManager
+        if (layoutManager is LinearLayoutManager) {
+            val itemPosition = layoutManager.findFirstVisibleItemPosition()
+            val currentView = layoutManager.findViewByPosition(itemPosition)
+            val viewOffset = currentView?.top
+            if (viewOffset != null) {
+                outState.putInt("leavePosition", itemPosition)
+                outState.putInt("leaveOffset", viewOffset)
+                outState.putBoolean("needRecoverState", true)
+            } else if (savedInstanceState != null) {
+                val leavePosition = savedInstanceState!!.getInt("leavePosition")
+                val leaveOffset = savedInstanceState!!.getInt("leaveOffset")
+                outState.putInt("leavePosition", leavePosition)
+                outState.putInt("leaveOffset", leaveOffset)
+                outState.putBoolean("needRecoverState", true)
+            }
+        }
     }
 
     override fun open(book: Book) {
