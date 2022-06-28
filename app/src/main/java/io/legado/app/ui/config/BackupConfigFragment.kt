@@ -247,7 +247,12 @@ class BackupConfigFragment : PreferenceFragment(),
                         appCtx.toastOnUi(R.string.backup_success)
                     }.onError {
                         AppLog.put("备份出错\n${it.localizedMessage}", it)
-                        appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
+                        appCtx.toastOnUi(
+                            appCtx.getString(
+                                R.string.backup_fail,
+                                it.localizedMessage
+                            )
+                        )
                     }
                 } else {
                     backupDir.launch()
@@ -270,7 +275,7 @@ class BackupConfigFragment : PreferenceFragment(),
                     appCtx.toastOnUi(R.string.backup_success)
                 }.onError {
                     AppLog.put("备份出错\n${it.localizedMessage}", it)
-                    appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
+                    appCtx.toastOnUi(appCtx.getString(R.string.backup_fail, it.localizedMessage))
                 }
             }
             .request()
