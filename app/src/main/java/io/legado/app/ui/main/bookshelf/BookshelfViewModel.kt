@@ -50,7 +50,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     )
                     WebBook.getBookInfo(this, bookSource, book)
                         .onSuccess(IO) {
-                            it.order = appDb.bookDao.maxOrder + 1
+                            it.order = appDb.bookDao.minOrder - 1
                             it.save()
                             successCount++
                         }.onError {

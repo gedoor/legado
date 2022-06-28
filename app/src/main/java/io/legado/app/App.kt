@@ -3,6 +3,7 @@ package io.legado.app
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
 import androidx.multidex.MultiDexApplication
@@ -28,8 +29,11 @@ import java.util.concurrent.TimeUnit
 
 class App : MultiDexApplication() {
 
+    private lateinit var oldConfig: Configuration
+
     override fun onCreate() {
         super.onCreate()
+        oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so
         CronetLoader.preDownload()
@@ -69,10 +73,11 @@ class App : MultiDexApplication() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        when (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES,
-            Configuration.UI_MODE_NIGHT_NO -> applyDayNight(this)
+        val diff = newConfig.diff(oldConfig)
+        if ((diff and ActivityInfo.CONFIG_UI_MODE) != 0) {
+            applyDayNight(this)
         }
+        oldConfig = Configuration(newConfig)
     }
 
     /**
