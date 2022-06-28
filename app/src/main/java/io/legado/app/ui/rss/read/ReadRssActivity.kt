@@ -188,6 +188,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
         viewModel.urlLiveData.observe(this) {
             upJavaScriptEnable()
+            binding.webView.settings.userAgentString = it.getUserAgent()
             binding.webView.loadUrl(it.url, it.headerMap)
         }
     }

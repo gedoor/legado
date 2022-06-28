@@ -554,7 +554,7 @@ class AnalyzeUrl(
     }
 
     fun getUserAgent(): String {
-        return headerMap[UA_NAME] ?: AppConfig.userAgent
+        return headerMap.get(UA_NAME, true) ?: AppConfig.userAgent
     }
 
     fun isPost(): Boolean {

@@ -9,7 +9,7 @@ fun HashMap<String, *>.has(key: String, ignoreCase: Boolean = false): Boolean {
     return false
 }
 
-fun HashMap<String, *>.get(key: String, ignoreCase: Boolean = false): Any? {
+fun <T> HashMap<String, T>.get(key: String, ignoreCase: Boolean = false): T? {
     for (item in this) {
         if (key.equals(item.key, ignoreCase)) {
             return item.value
