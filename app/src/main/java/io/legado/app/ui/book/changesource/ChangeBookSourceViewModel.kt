@@ -222,21 +222,21 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private fun getDbSearchBooks(): List<SearchBook> {
         return if (screenKey.isEmpty()) {
             if (AppConfig.changeSourceCheckAuthor) {
-                appDb.searchBookDao.getChangeSourceSearch(
+                appDb.searchBookDao.changeSourceByGroup(
                     name, author, AppConfig.searchGroup
                 )
             } else {
-                appDb.searchBookDao.getChangeSourceSearch(
+                appDb.searchBookDao.changeSourceByGroup(
                     name, "", AppConfig.searchGroup
                 )
             }
         } else {
             if (AppConfig.changeSourceCheckAuthor) {
-                appDb.searchBookDao.getChangeSourceSearch(
+                appDb.searchBookDao.changeSourceSearch(
                     name, author, screenKey, AppConfig.searchGroup
                 )
             } else {
-                appDb.searchBookDao.getChangeSourceSearch(
+                appDb.searchBookDao.changeSourceSearch(
                     name, "", screenKey, AppConfig.searchGroup
                 )
             }
