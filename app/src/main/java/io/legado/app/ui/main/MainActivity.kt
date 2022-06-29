@@ -88,7 +88,8 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         upVersion()
         privacyPolicy()
         //自动更新书籍
-        if (AppConfig.autoRefreshBook) {
+        val isAutoRefreshedBook = savedInstanceState?.getBoolean("isAutoRefreshedBook") ?: false
+        if (AppConfig.autoRefreshBook && !isAutoRefreshedBook) {
             binding.viewPagerMain.postDelayed(1000) {
                 viewModel.upAllBookToc()
             }
@@ -208,6 +209,13 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             }
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (AppConfig.autoRefreshBook) {
+            outState.putBoolean("isAutoRefreshedBook", true)
+        }
     }
 
     override fun onDestroy() {
