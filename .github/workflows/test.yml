@@ -97,7 +97,7 @@ jobs:
 
   lanzou:
     needs: [ prepare, build ]
-    if: ${{ needs.prepare.outputs.lanzou }}
+    if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.lanzou == 'yes' }}
     runs-on: ubuntu-latest
     env:
       # 登录蓝奏云后在控制台运行document.cookie
@@ -122,7 +122,7 @@ jobs:
   test_Branch:
     needs: [ prepare, build ]
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'gedoor' }}
+    if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -144,7 +144,7 @@ jobs:
 
   telegram:
     needs: [ prepare, build ]
-    if: ${{ needs.prepare.outputs.telegram }}
+    if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
     runs-on: ubuntu-latest
     env:
       CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
