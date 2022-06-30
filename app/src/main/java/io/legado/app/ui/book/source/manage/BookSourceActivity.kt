@@ -118,8 +118,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        groupMenu = menu.findItem(R.id.menu_group)?.subMenu
         groupMenu?.findItem(R.id.action_sort)?.subMenu
             ?.setGroupCheckable(R.id.menu_group_sort, true, true)
         upGroupMenu()

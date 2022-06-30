@@ -222,7 +222,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         this.menu = menu
         upMenu()
         return super.onPrepareOptionsMenu(menu)

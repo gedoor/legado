@@ -414,7 +414,7 @@ object TintHelper {
     fun createTintedDrawable(drawable: Drawable?, @ColorInt color: Int): Drawable? {
         var drawable1: Drawable? = drawable ?: return null
         drawable1 = DrawableCompat.wrap(drawable1!!.mutate())
-        DrawableCompat.setTintMode(drawable1!!, PorterDuff.Mode.SRC_IN)
+        DrawableCompat.setTintMode(drawable1, PorterDuff.Mode.SRC_IN)
         DrawableCompat.setTint(drawable1, color)
         return drawable1
     }
@@ -424,7 +424,7 @@ object TintHelper {
     fun createTintedDrawable(drawable: Drawable?, sl: ColorStateList): Drawable? {
         var drawable1: Drawable? = drawable ?: return null
         drawable1 = DrawableCompat.wrap(drawable1!!.mutate())
-        DrawableCompat.setTintList(drawable1!!, sl)
+        DrawableCompat.setTintList(drawable1, sl)
         return drawable1
     }
 

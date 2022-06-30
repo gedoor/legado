@@ -172,7 +172,7 @@ class EpubFile(var book: Book) {
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
             body.getElementById(endFragmentId)?.run {
-                nextElementSiblings()?.remove()
+                nextElementSiblings().remove()
                 remove()
             }
         }

@@ -78,7 +78,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         observeLiveBus()
     }
 
-    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
         findViewById<TitleBar>(R.id.title_bar)
             ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)

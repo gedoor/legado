@@ -78,9 +78,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        starMenuItem = menu?.findItem(R.id.menu_rss_star)
-        ttsMenuItem = menu?.findItem(R.id.menu_aloud)
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        starMenuItem = menu.findItem(R.id.menu_rss_star)
+        ttsMenuItem = menu.findItem(R.id.menu_aloud)
         upStarMenu()
         return super.onPrepareOptionsMenu(menu)
     }

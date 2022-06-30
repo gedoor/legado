@@ -118,8 +118,8 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        groupMenu = menu?.findItem(R.id.menu_group)?.subMenu
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        groupMenu = menu.findItem(R.id.menu_group)?.subMenu
         upGroupMenu()
         return super.onPrepareOptionsMenu(menu)
     }
