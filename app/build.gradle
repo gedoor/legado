@@ -149,7 +149,7 @@ dependencies {
     //noinspection GradleDependency
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
     //协程
-    def coroutines_version = '1.6.1-native-mt'
+    def coroutines_version = '1.6.3-native-mt'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
