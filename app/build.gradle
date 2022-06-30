@@ -173,7 +173,7 @@ dependencies {
     implementation('com.google.code.gson:gson:2.9.0')
 
     //lifecycle
-    def lifecycle_version = '2.4.1'
+    def lifecycle_version = '2.5.0'
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
 
     //compose
