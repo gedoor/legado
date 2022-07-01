@@ -67,6 +67,9 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import java.util.*
+import kotlin.concurrent.timerTask
+
 
 class ReadBookActivity : BaseReadBookActivity(),
     View.OnTouchListener,
@@ -404,6 +407,32 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     /**
+     * 鼠标滚轮事件
+     */
+    override fun onGenericMotionEvent(event: MotionEvent): Boolean {
+        if (0 != (event.source and InputDevice.SOURCE_CLASS_POINTER)) {
+            if (event.action == MotionEvent.ACTION_SCROLL) {
+                val axisValue = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
+                LogUtils.d("onGenericMotionEvent", "axisValue = $axisValue")
+                // 获得垂直坐标上的滚动方向
+                if (axisValue < 0.0f) { // 滚轮向下滚
+                    debounce {
+                        LogUtils.d("onGenericMotionEvent", "down")
+                        mouseWheelPage(PageDirection.NEXT)
+                    }
+                } else { // 滚轮向上滚
+                    debounce {
+                        LogUtils.d("onGenericMotionEvent", "up")
+                        mouseWheelPage(PageDirection.PREV)
+                    }
+                }
+                return true
+            }
+        }
+        return super.onGenericMotionEvent(event)
+    }
+
+    /**
      * 按键事件
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -633,6 +662,34 @@ class ReadBookActivity : BaseReadBookActivity(),
         textActionMenu.dismiss()
         readView.curPage.cancelSelect()
         readView.isTextSelected = false
+    }
+
+    /**
+     * 防抖函数
+     */
+    private var timer: Timer? = null
+    private fun debounce(doThing: () -> Unit) {
+        timer?.cancel()
+        timer = Timer().apply {
+            schedule(timerTask {
+                doThing.invoke()
+                timer = null
+            }, 200)
+        }
+    }
+
+    /**
+     * 鼠标滚轮翻页
+     */
+    private fun mouseWheelPage(direction: PageDirection): Boolean {
+        if (!binding.readMenu.isVisible) {
+            if (getPrefBoolean("mouseWheelPage", true)) {
+                binding.readView.pageDelegate?.isCancel = false
+                binding.readView.pageDelegate?.keyTurnPage(direction)
+                return true
+            }
+        }
+        return false
     }
 
     /**
