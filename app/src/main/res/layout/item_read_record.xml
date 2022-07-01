@@ -12,7 +12,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="6dp"
-        android:textIsSelectable="true"
         android:textColor="@color/primaryText"
         android:singleLine="true"
         app:layout_constraintLeft_toLeftOf="parent"
