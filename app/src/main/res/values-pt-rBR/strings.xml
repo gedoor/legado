@@ -196,6 +196,7 @@
     <string name="img_cover">Capa</string>
     <string name="book">Livro</string>
     <string name="volume_key_page">Botões de volume para virar páginas</string>
+    <string name="mouse_wheel_page">Rolagem do mouse para virar páginas</string>
     <string name="click_turn_page">Toque a tela para virar página</string>
     <string name="page_anim">Virar animação</string>
     <string name="book_page_anim">Virar animação (livro)</string>

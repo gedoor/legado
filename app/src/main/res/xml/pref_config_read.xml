@@ -71,6 +71,13 @@
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
+        android:title="@string/mouse_wheel_page"
+        android:key="mouseWheelPage"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="true"
         android:title="@string/volume_key_page"
         android:key="volumeKeyPage"
         app:iconSpaceReserved="false"
