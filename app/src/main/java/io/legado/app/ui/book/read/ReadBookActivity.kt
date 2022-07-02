@@ -681,7 +681,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (!binding.readMenu.isVisible) {
             if (getPrefBoolean("volumeKeyPage", true)) {
                 if (getPrefBoolean("volumeKeyPageOnPlay")
-                    || BaseReadAloudService.pause
+                    || !BaseReadAloudService.isPlay()
                 ) {
                     binding.readView.pageDelegate?.isCancel = false
                     binding.readView.pageDelegate?.keyTurnPage(direction)
