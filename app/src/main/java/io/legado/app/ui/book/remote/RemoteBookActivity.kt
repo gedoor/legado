@@ -3,6 +3,7 @@ package io.legado.app.ui.book.remote
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.SubMenu
 import androidx.activity.viewModels
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +13,11 @@ import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
+import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -32,7 +35,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
     override val viewModel by viewModels<RemoteBookViewModel>()
     private val adapter by lazy { RemoteBookAdapter(this, this) }
     private val waitDialog by lazy { WaitDialog(this) }
-
+    private var groupMenu: SubMenu? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setTitle(R.string.remote_book)
         initView()
@@ -75,10 +78,33 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
         when (item.itemId) {
             R.id.menu_refresh -> upPath()
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
+            R.id.menu_sort_auto -> {
+                item.isChecked = true
+                toastOnUi("menu_sort_auto")
+                //sortCheck(BookSourceActivity.Sort.Weight)
+                //upBookSource(searchView.query?.toString())
+            }
+            R.id.menu_sort_name -> {
+                item.isChecked = true
+                toastOnUi("menu_sort_name")
+                //sortCheck(BookSourceActivity.Sort.Name)
+                //upBookSource(searchView.query?.toString())
+            }
+            R.id.menu_sort_time -> {
+                item.isChecked = true
+                toastOnUi("menu_sort_time")
+                //sortCheck(BookSourceActivity.Sort.Update)
+                //upBookSource(searchView.query?.toString())
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        groupMenu = menu.findItem(R.id.menu_sort)?.subMenu
+        groupMenu?.setGroupCheckable(R.id.menu_group_sort, true, true)
+        return super.onPrepareOptionsMenu(menu)
+    }
     override fun revertSelection() {
         adapter.revertSelection()
     }

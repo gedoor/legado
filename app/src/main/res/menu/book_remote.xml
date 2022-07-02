@@ -9,11 +9,43 @@
         android:icon="@drawable/ic_refresh_black_24dp"
         android:title="@string/refresh"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_sort"
+        android:icon="@drawable/ic_baseline_sort_24"
+        android:title="排序"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
+        <menu>
+            <group
+                android:id="@+id/menu_group_sort"
+                android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/menu_sort_auto"
+                    android:checkable="true"
+                    android:title="@string/sort_auto" />
+
+                <item
+                    android:id="@+id/menu_sort_name"
+                    android:checkable="true"
+                    android:title="@string/sort_by_name" />
+
+                <item
+                    android:id="@+id/menu_sort_time"
+                    android:checkable="true"
+                    android:title="@string/sort_by_lastUpdateTime" />
+
+
+            </group>
+
+        </menu>
+
+    </item>
 
     <item
         android:id="@+id/menu_log"
-        android:title="@string/log"
         android:icon="@drawable/ic_cfg_about"
+        android:title="@string/log"
         app:showAsAction="never" />
 
 </menu>
