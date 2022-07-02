@@ -44,10 +44,15 @@ class AudioPlayService : BaseService(),
     Player.Listener {
 
     companion object {
+        @JvmStatic
         var isRun = false
             private set
+
+        @JvmStatic
         var pause = true
             private set
+
+        @JvmStatic
         var timeMinute: Int = 0
             private set
         var url: String = ""
