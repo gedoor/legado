@@ -67,8 +67,6 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import java.util.*
-import kotlin.concurrent.timerTask
 
 
 class ReadBookActivity : BaseReadBookActivity(),
@@ -154,6 +152,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     override val pageFactory: TextPageFactory get() = binding.readView.pageFactory
     override val headerHeight: Int get() = binding.readView.curPage.headerHeight
     private val menuLayoutIsVisible get() = bottomDialog > 0 || binding.readMenu.isVisible
+    private val nextPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.NEXT) } }
+    private val prevPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.PREV) } }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -414,17 +414,13 @@ class ReadBookActivity : BaseReadBookActivity(),
             if (event.action == MotionEvent.ACTION_SCROLL) {
                 val axisValue = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
                 LogUtils.d("onGenericMotionEvent", "axisValue = $axisValue")
+                mainHandler.removeCallbacks(nextPageRunnable)
+                mainHandler.removeCallbacks(prevPageRunnable)
                 // 获得垂直坐标上的滚动方向
                 if (axisValue < 0.0f) { // 滚轮向下滚
-                    debounce {
-                        LogUtils.d("onGenericMotionEvent", "down")
-                        mouseWheelPage(PageDirection.NEXT)
-                    }
+                    mainHandler.postDelayed(nextPageRunnable, 200)
                 } else { // 滚轮向上滚
-                    debounce {
-                        LogUtils.d("onGenericMotionEvent", "up")
-                        mouseWheelPage(PageDirection.PREV)
-                    }
+                    mainHandler.postDelayed(prevPageRunnable, 200)
                 }
                 return true
             }
@@ -662,20 +658,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         textActionMenu.dismiss()
         readView.curPage.cancelSelect()
         readView.isTextSelected = false
-    }
-
-    /**
-     * 防抖函数
-     */
-    private var timer: Timer? = null
-    private fun debounce(doThing: () -> Unit) {
-        timer?.cancel()
-        timer = Timer().apply {
-            schedule(timerTask {
-                doThing.invoke()
-                timer = null
-            }, 200)
-        }
     }
 
     /**
