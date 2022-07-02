@@ -140,9 +140,9 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
                 searchKey.isNullOrEmpty() -> appDb.rssSourceDao.flowEnabled()
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.rssSourceDao.flowEnabledByGroup("%$key%")
+                    appDb.rssSourceDao.flowEnabledByGroup(key)
                 }
-                else -> appDb.rssSourceDao.flowEnabled("%$searchKey%")
+                else -> appDb.rssSourceDao.flowEnabled(searchKey)
             }.catch {
                 AppLog.put("订阅界面更新数据出错", it)
             }.collect {

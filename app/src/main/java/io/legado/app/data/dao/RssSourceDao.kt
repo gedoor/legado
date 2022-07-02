@@ -22,10 +22,23 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources order by customOrder")
     fun flowAll(): Flow<List<RssSource>>
 
-    @Query("SELECT * FROM rssSources where sourceName like :key or sourceUrl like :key or sourceGroup like :key order by customOrder")
+    @Query(
+        """SELECT * FROM rssSources
+        where sourceName like '%' || :key || '%' 
+        or sourceUrl like '%' || :key || '%' 
+        or sourceGroup like '%' || :key || '%'
+        order by customOrder"""
+    )
     fun flowSearch(key: String): Flow<List<RssSource>>
 
-    @Query("SELECT * FROM rssSources where sourceGroup like :key order by customOrder")
+    @Query(
+        """SELECT * FROM rssSources 
+        where (sourceGroup = :key
+        or sourceGroup like :key || ',%' 
+        or sourceGroup like  '%,' || :key
+        or sourceGroup like  '%,' || :key || ',%')
+        order by customOrder"""
+    )
     fun flowGroupSearch(key: String): Flow<List<RssSource>>
 
     @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
@@ -34,12 +47,21 @@ interface RssSourceDao {
     @Query(
         """SELECT * FROM rssSources 
         where enabled = 1 
-        and (sourceName like :searchKey or sourceGroup like :searchKey or sourceUrl like :searchKey) 
+        and (sourceName like '%' || :searchKey || '%' 
+            or sourceGroup like '%' || :searchKey || '%' 
+            or sourceUrl like '%' || :searchKey || '%') 
         order by customOrder"""
     )
     fun flowEnabled(searchKey: String): Flow<List<RssSource>>
 
-    @Query("SELECT * FROM rssSources where enabled = 1 and sourceGroup like :searchKey order by customOrder")
+    @Query(
+        """SELECT * FROM rssSources 
+        where enabled = 1 and (sourceGroup = :searchKey
+        or sourceGroup like :searchKey || ',%' 
+        or sourceGroup like  '%,' || :searchKey
+        or sourceGroup like  '%,' || :searchKey || ',%') 
+        order by customOrder"""
+    )
     fun flowEnabledByGroup(searchKey: String): Flow<List<RssSource>>
 
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")

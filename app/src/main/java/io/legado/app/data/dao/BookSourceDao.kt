@@ -31,7 +31,14 @@ interface BookSourceDao {
     )
     fun flowSearchEnabled(searchKey: String): Flow<List<BookSource>>
 
-    @Query("select * from book_sources where bookSourceGroup like '%' || :searchKey || '%' order by customOrder asc")
+    @Query(
+        """select * from book_sources 
+        where bookSourceGroup = :searchKey
+        or bookSourceGroup like :searchKey || ',%' 
+        or bookSourceGroup like  '%,' || :searchKey
+        or bookSourceGroup like  '%,' || :searchKey || ',%' 
+        order by customOrder asc"""
+    )
     fun flowGroupSearch(searchKey: String): Flow<List<BookSource>>
 
     @Query("select * from book_sources where enabled = 1 order by customOrder asc")
@@ -50,7 +57,8 @@ interface BookSourceDao {
         """select * from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
-        and (bookSourceGroup like '%' || :key || '%' or bookSourceName like '%' || :key || '%') 
+        and (bookSourceGroup like '%' || :key || '%' 
+            or bookSourceName like '%' || :key || '%') 
         order by customOrder asc"""
     )
     fun flowExplore(key: String): Flow<List<BookSource>>
@@ -59,7 +67,10 @@ interface BookSourceDao {
         """select * from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
-        and (bookSourceGroup like '%' || :key || '%') 
+        and (bookSourceGroup = :key
+            or bookSourceGroup like :key || ',%' 
+            or bookSourceGroup like  '%,' || :key
+            or bookSourceGroup like  '%,' || :key || ',%') 
         order by customOrder asc"""
     )
     fun flowGroupExplore(key: String): Flow<List<BookSource>>

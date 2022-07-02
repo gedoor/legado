@@ -242,10 +242,10 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
-                    appDb.rssSourceDao.flowGroupSearch("%$key%")
+                    appDb.rssSourceDao.flowGroupSearch(key)
                 }
                 else -> {
-                    appDb.rssSourceDao.flowSearch("%$searchKey%")
+                    appDb.rssSourceDao.flowSearch(searchKey)
                 }
             }.catch {
                 AppLog.put("订阅源管理界面更新数据出错", it)
