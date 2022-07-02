@@ -216,7 +216,7 @@ object CacheBook {
             }
             val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, chapterIndex) ?: let {
                 waitDownloadSet.remove(chapterIndex)
-                return false
+                return@download false
             }
             if (BookHelp.hasContent(book, chapter)) {
                 waitDownloadSet.remove(chapterIndex)
