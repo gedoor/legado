@@ -25,6 +25,12 @@
         <item>E-Ink(墨水屏)</item>
     </string-array>
 
+    <string-array name="double_page_title">
+        <item>全局单页</item>
+        <item>全局双页</item>
+        <item>横屏双页/竖屏单页</item>
+    </string-array>
+
     <string-array name="NavBarColors">
         <item>自动</item>
         <item>黑色</item>

@@ -41,12 +41,15 @@
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
-    <io.legado.app.lib.prefs.SwitchPreference
-        android:defaultValue="true"
-        android:title="@string/double_page_horizontal"
+    <io.legado.app.lib.prefs.NameListPreference
         android:key="doublePageHorizontal"
+        android:defaultValue="0"
+        android:title="@string/double_page_horizontal"
+        android:entries="@array/double_page_title"
+        android:entryValues="@array/double_page_value"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
+
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"

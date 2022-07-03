@@ -61,6 +61,12 @@
 		<item>@string/screen_sensor</item>
 	</string-array>
 
+	<string-array name="double_page_title">
+		<item>全局单页</item>
+		<item>全局双页</item>
+		<item>横屏双页 竖屏单页</item>
+	</string-array>
+
 	<string-array name="icon_names" tools:ignore="Typos">
 		<item>iconMain</item>
 		<item>icon1</item>
