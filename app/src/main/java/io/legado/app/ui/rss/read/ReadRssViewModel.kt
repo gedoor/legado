@@ -240,6 +240,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application),
             callBack?.upTtsMenu(false)
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onError(s: String) {
 
         }

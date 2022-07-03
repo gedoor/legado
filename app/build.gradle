@@ -110,7 +110,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.1.1'
+        kotlinCompilerExtensionVersion "$compose_compiler_version"
     }
 
     sourceSets {
@@ -180,31 +180,32 @@ dependencies {
     // Integration with activities
     implementation 'androidx.activity:activity-compose:1.5.0'
     // Compose Material Design
-    implementation 'androidx.compose.material:material:1.1.1'
+    implementation "androidx.compose.material:material:$compose_version"
     // Animations
-    implementation 'androidx.compose.animation:animation:1.1.1'
+    implementation "androidx.compose.animation:animation:$compose_version"
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.1.1'
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
 
     //media
     implementation("androidx.media:media:1.6.0")
-    def exoplayer_version = '2.18.0'
+
+
     implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
     implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
 
     //Splitties
-    def splitties_version = '3.0.0'
+
     implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
     implementation("com.louiscad.splitties:splitties-systemservices:$splitties_version")
     implementation("com.louiscad.splitties:splitties-views:$splitties_version")
 
     //room
-    def room_version = '2.4.2'
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
+    //ksp("androidx.room:room-compiler:$room_version")
     testImplementation("androidx.room:room-testing:$room_version")
 
     //liveEventBus
