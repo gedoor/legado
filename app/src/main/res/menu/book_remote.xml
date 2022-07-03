@@ -12,7 +12,7 @@
     <item
         android:id="@+id/menu_sort"
         android:icon="@drawable/ic_baseline_sort_24"
-        android:title="排序"
+        android:title="@string/sort"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction">
         <menu>
@@ -21,9 +21,10 @@
                 android:checkableBehavior="single">
 
                 <item
-                    android:id="@+id/menu_sort_auto"
+                    android:id="@+id/menu_sort_default"
                     android:checkable="true"
-                    android:title="@string/sort_auto" />
+                    android:checked="true"
+                    android:title="@string/sort_default" />
 
                 <item
                     android:id="@+id/menu_sort_name"

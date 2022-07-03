@@ -347,6 +347,7 @@
     <string name="swap_sort">Orden ascendente/descendente</string>
     <string name="sort">Ordenar</string>
     <string name="sort_auto">Ordenar automáticamente</string>
+    <string name="sort_default">Ordenar por defecto</string>
     <string name="sort_manual">Ordenar manualmente</string>
     <string name="sort_by_name">Ordenar por nombre</string>
     <string name="go_to_top">Ir al principio</string>
