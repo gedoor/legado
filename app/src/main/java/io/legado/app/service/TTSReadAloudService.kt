@@ -168,6 +168,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             }
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onError(s: String) {
             //nothing
         }
