@@ -68,7 +68,9 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 
-
+/**
+ * 阅读界面
+ */
 class ReadBookActivity : BaseReadBookActivity(),
     View.OnTouchListener,
     ReadView.CallBack,

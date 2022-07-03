@@ -33,6 +33,9 @@ import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 
+/**
+ * 阅读界面数据处理
+ */
 class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     val permissionDenialLiveData = MutableLiveData<Int>()
     var isInitFinish = false
