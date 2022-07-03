@@ -42,11 +42,11 @@ abstract class BaseReadAloudService : BaseService(),
             private set
 
         @JvmStatic
-        var timeMinute: Int = 0
+        var pause = true
             private set
 
         @JvmStatic
-        var pause = true
+        var timeMinute: Int = 0
             private set
 
         fun isPlay(): Boolean {

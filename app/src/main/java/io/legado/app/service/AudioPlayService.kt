@@ -55,6 +55,7 @@ class AudioPlayService : BaseService(),
         @JvmStatic
         var timeMinute: Int = 0
             private set
+
         var url: String = ""
             private set
     }
