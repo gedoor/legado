@@ -685,27 +685,6 @@ class AnalyzeRule(
     }
 
     /**
-     * 更新BookUrl,如果搜索结果有tocUrl也会更新,有些书源bookUrl定期更新,可以在js内调用更新
-     */
-    fun refreshBookUrl() {
-        runBlocking {
-            val bookSource = source as? BookSource
-            val book = book as? Book
-            if (bookSource == null || book == null) return@runBlocking
-            val books = WebBook.searchBookAwait(this, bookSource, book.name)
-            books.forEach {
-                if (it.name == book.name && it.author == book.author) {
-                    book.bookUrl = it.bookUrl
-                    if (it.tocUrl.isNotBlank()) {
-                        book.tocUrl = it.tocUrl
-                    }
-                    return@runBlocking
-                }
-            }
-        }
-    }
-
-    /**
      * 重新获取book
      */
     fun reGetBook() {
@@ -722,6 +701,20 @@ class AnalyzeRule(
                         }
                     }
                 WebBook.getBookInfoAwait(this, bookSource, book, false)
+            }
+        }
+    }
+
+    /**
+     * 刷新详情页
+     */
+    fun refreshBook() {
+        val bookSource = source as? BookSource
+        val book = book as? Book
+        if (bookSource == null || book == null) return
+        runBlocking {
+            withTimeout(1800000) {
+                WebBook.getBookInfoAwait(this, bookSource, book)
             }
         }
     }
