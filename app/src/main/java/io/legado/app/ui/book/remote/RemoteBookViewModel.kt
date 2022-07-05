@@ -10,10 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import java.util.*
 
-class RemoteBookViewModel(application: Application): BaseViewModel(application){
-
+class RemoteBookViewModel(application: Application) : BaseViewModel(application) {
+    var sortKey = Sort.Default
+    var sortAscending = false
     val dirList = arrayListOf<RemoteBook>()
 
     var dataCallback: DataCallback? = null
@@ -43,6 +45,14 @@ class RemoteBookViewModel(application: Application): BaseViewModel(application){
 
         awaitClose {
             dataCallback = null
+        }
+    }.map { list ->
+        if (sortAscending) when (sortKey) {
+            Sort.Name -> list.sortedWith(compareBy({ !it.isDir }, { it.filename }))
+            else -> list.sortedWith(compareBy({ !it.isDir }, { it.lastModify }))
+        } else when (sortKey) {
+            Sort.Name -> list.sortedWith(compareBy({ it.isDir }, { it.filename })).reversed()
+            else -> list.sortedWith(compareBy({ it.isDir }, { it.lastModify })).reversed()
         }
     }.flowOn(Dispatchers.IO)
 

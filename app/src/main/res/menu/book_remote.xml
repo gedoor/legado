@@ -21,12 +21,6 @@
                 android:checkableBehavior="single">
 
                 <item
-                    android:id="@+id/menu_sort_default"
-                    android:checkable="true"
-                    android:checked="true"
-                    android:title="@string/sort_default" />
-
-                <item
                     android:id="@+id/menu_sort_name"
                     android:checkable="true"
                     android:title="@string/sort_by_name" />
@@ -35,7 +29,6 @@
                     android:id="@+id/menu_sort_time"
                     android:checkable="true"
                     android:title="@string/sort_by_lastUpdateTime" />
-
 
             </group>
 
