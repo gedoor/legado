@@ -42,7 +42,7 @@
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.NameListPreference
-        android:key="doublePageHorizontal"
+        android:key="doubleHorizontalPage"
         android:defaultValue="0"
         android:title="@string/double_page_horizontal"
         android:entries="@array/double_page_title"
