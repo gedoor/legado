@@ -171,7 +171,13 @@ open class WebDav(val path: String, val authorization: Authorization) {
      * 文件是否存在
      */
     suspend fun exists(): Boolean {
-        return getWebDavFile() != null
+        return kotlin.runCatching {
+            return okHttpClient.newCallResponse {
+                url(url)
+                addHeader(authorization.name, authorization.data)
+                head()
+            }.code == 200
+        }.getOrDefault(false)
     }
 
     /**
