@@ -350,6 +350,7 @@
     <string name="swap_sort">倒序-順序</string>
     <string name="sort">排序</string>
     <string name="sort_auto">智慧排序</string>
+    <string name="sort_default">默認排序</string>
     <string name="sort_manual">手動排序</string>
     <string name="sort_by_name">名稱排序</string>
     <string name="go_to_top">滾動到頂部</string>
