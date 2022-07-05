@@ -3,120 +3,119 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <io.legado.app.lib.prefs.NameListPreference
-        android:key="screenOrientation"
         android:defaultValue="0"
-        android:title="@string/screen_direction"
         android:entries="@array/screen_direction_title"
         android:entryValues="@array/screen_direction_value"
+        android:key="screenOrientation"
+        android:title="@string/screen_direction"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.NameListPreference
-        android:key="keep_light"
         android:defaultValue="0"
-        android:entryValues="@array/screen_time_out_value"
         android:entries="@array/screen_time_out"
+        android:entryValues="@array/screen_time_out_value"
+        android:key="keep_light"
         android:title="@string/keep_light"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:title="@string/pt_hide_status_bar"
         android:key="hideStatusBar"
+        android:title="@string/pt_hide_status_bar"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/read_body_to_lh"
         android:key="readBodyToLh"
+        android:title="@string/read_body_to_lh"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:title="@string/pt_hide_navigation_bar"
         android:key="hideNavigationBar"
+        android:title="@string/pt_hide_navigation_bar"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.NameListPreference
-        android:key="doubleHorizontalPage"
         android:defaultValue="0"
-        android:title="@string/double_page_horizontal"
         android:entries="@array/double_page_title"
         android:entryValues="@array/double_page_value"
+        android:key="doubleHorizontalPage"
+        android:title="@string/double_page_horizontal"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
-
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:title="@string/use_zh_layout"
         android:key="useZhLayout"
+        android:title="@string/use_zh_layout"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/text_full_justify"
         android:key="textFullJustify"
+        android:title="@string/text_full_justify"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/text_bottom_justify"
         android:key="textBottomJustify"
+        android:title="@string/text_bottom_justify"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/mouse_wheel_page"
         android:key="mouseWheelPage"
+        android:title="@string/mouse_wheel_page"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/volume_key_page"
         android:key="volumeKeyPage"
+        android:title="@string/volume_key_page"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:title="@string/volume_key_page_on_play"
         android:key="volumeKeyPageOnPlay"
+        android:title="@string/volume_key_page_on_play"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/auto_change_source"
         android:key="autoChangeSource"
+        android:title="@string/auto_change_source"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/selectText"
         android:key="selectText"
+        android:title="@string/selectText"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
-        android:title="@string/show_brightness_view"
         android:key="showBrightnessView"
+        android:title="@string/show_brightness_view"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.Preference
-        android:title="@string/click_regional_config"
         android:key="clickRegionalConfig"
+        android:title="@string/click_regional_config"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
