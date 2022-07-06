@@ -202,25 +202,25 @@ object CacheBook {
          * 从待下载列表内取第一条下载
          */
         @Synchronized
-        fun download(scope: CoroutineScope, context: CoroutineContext): Boolean {
+        fun download(scope: CoroutineScope, context: CoroutineContext) {
             val chapterIndex = waitDownloadSet.firstOrNull()
             if (chapterIndex == null) {
                 if (onDownloadSet.isEmpty()) {
                     cacheBookMap.remove(book.bookUrl)
                 }
-                return false
+                return
             }
             if (onDownloadSet.contains(chapterIndex)) {
                 waitDownloadSet.remove(chapterIndex)
-                return download(scope, context)
+                return
             }
             val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, chapterIndex) ?: let {
                 waitDownloadSet.remove(chapterIndex)
-                return download(scope, context)
+                return
             }
             if (BookHelp.hasContent(book, chapter)) {
                 waitDownloadSet.remove(chapterIndex)
-                return download(scope, context)
+                return
             }
             waitDownloadSet.remove(chapterIndex)
             onDownloadSet.add(chapterIndex)
@@ -243,7 +243,6 @@ object CacheBook {
             }.onFinally {
                 onFinally()
             }
-            return true
         }
 
         @Synchronized

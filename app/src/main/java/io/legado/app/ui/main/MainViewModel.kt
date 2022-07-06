@@ -195,10 +195,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     return@launch
                 }
                 CacheBook.cacheBookMap.forEach {
-                    while (CacheBook.onDownloadCount > threadCount) {
-                        delay(100)
+                    val cacheBookModel = it.value
+                    while (cacheBookModel.waitCount > 0) {
+                        if (CacheBook.onDownloadCount < threadCount) {
+                            cacheBookModel.download(this, upTocPool)
+                        } else {
+                            delay(100)
+                        }
                     }
-                    it.value.download(this, upTocPool)
                 }
             }
         }
