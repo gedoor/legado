@@ -2,6 +2,7 @@ package io.legado.app.ui.widget.recycler
 
 import androidx.recyclerview.widget.RecyclerView
 
+@Suppress("unused")
 internal class HeaderAdapterDataObserver(
     private var adapterDataObserver: RecyclerView.AdapterDataObserver,
     private var headerCount: Int

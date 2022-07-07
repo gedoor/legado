@@ -17,6 +17,7 @@
 * 修复一些bug
 * webDav书籍排序
 * 更新一些库
+* web端支持自定义字体 by qianfanguojin
 
 **2022/06/23**
 

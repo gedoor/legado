@@ -14,37 +14,37 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
-    private val searchModel = SearchModel(viewModelScope)
+    private val searchModel = SearchModel(viewModelScope, object : SearchModel.CallBack {
+        override fun onSearchStart() {
+            isSearchLiveData.postValue(true)
+        }
+
+        override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
+            searchFlowCallBack?.invoke(searchBooks)
+        }
+
+        override fun onSearchFinish(isEmpty: Boolean) {
+            isSearchLiveData.postValue(false)
+            searchFinishCallback?.invoke(isEmpty)
+        }
+
+        override fun onSearchCancel() {
+            isSearchLiveData.postValue(false)
+        }
+    })
     var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchKey: String = ""
     private var searchID = 0L
-
+    private var searchFlowCallBack: ((searchBooks: ArrayList<SearchBook>) -> Unit)? = null
     val searchDataFlow = callbackFlow {
 
-        val callback = object : SearchModel.CallBack {
-            override fun onSearchStart() {
-                isSearchLiveData.postValue(true)
-            }
-
-            override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
-                trySend(ArrayList(searchBooks))
-            }
-
-            override fun onSearchFinish(isEmpty: Boolean) {
-                isSearchLiveData.postValue(false)
-                searchFinishCallback?.invoke(isEmpty)
-            }
-
-            override fun onSearchCancel() {
-                isSearchLiveData.postValue(false)
-            }
+        searchFlowCallBack = {
+            trySend(ArrayList(it))
         }
 
-        searchModel.registerCallback(callback)
-
         awaitClose {
-            searchModel.unRegisterCallback()
+            searchFlowCallBack = null
         }
     }.flowOn(IO)
 
