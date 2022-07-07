@@ -86,12 +86,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llHistory.setBackgroundColor(backgroundColor)
+        viewModel.searchFinishCallback = searchFinishCallback
         initRecyclerView()
         initSearchView()
         initOtherView()
         initData()
         receiptIntent(intent)
-        viewModel.searchFinishCallback = searchFinishCallback
     }
 
     override fun onNewIntent(data: Intent?) {
@@ -219,6 +219,13 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initData() {
+        viewModel.isSearchLiveData.observe(this) {
+            if (it) {
+                startSearch()
+            } else {
+                searchFinally()
+            }
+        }
         lifecycleScope.launchWhenStarted {
             viewModel.searchDataFlow.conflate().collect {
                 adapter.setItems(it)
@@ -232,13 +239,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                 }
                 upGroupMenu()
-            }
-        }
-        viewModel.isSearchLiveData.observe(this) {
-            if (it) {
-                startSearch()
-            } else {
-                searchFinally()
             }
         }
     }
