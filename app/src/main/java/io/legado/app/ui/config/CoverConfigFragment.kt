@@ -44,7 +44,6 @@ class CoverConfigFragment : PreferenceFragment(),
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.cover_config)
         listView.setEdgeEffectColor(primaryColor)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
