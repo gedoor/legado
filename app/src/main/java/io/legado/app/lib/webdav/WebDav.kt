@@ -137,6 +137,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
                         val contentType = element
                             .getElementsByTag("d:getcontenttype")
                             .firstOrNull()?.text().orEmpty()
+                        val resourceType = element
+                            .getElementsByTag("d:resourcetype")
+                            .firstOrNull()?.html()?.trim().orEmpty()
                         val size = kotlin.runCatching {
                             element.getElementsByTag("d:getcontentlength")
                                 .firstOrNull()?.text()?.toLong() ?: 0
@@ -155,6 +158,7 @@ open class WebDav(val path: String, val authorization: Authorization) {
                             urlName = urlName,
                             size = size,
                             contentType = contentType,
+                            resourceType = resourceType,
                             lastModify = lastModify
                         )
                         list.add(webDavFile)
@@ -171,11 +175,14 @@ open class WebDav(val path: String, val authorization: Authorization) {
      * 文件是否存在
      */
     suspend fun exists(): Boolean {
+        val url = httpUrl ?: return false
+        //当使用自建的WebDav服务时，在末尾有否 ”/“ 会影响请求的成功与否
+        //使用坚果云的WebDav则不会，这里做一个简单的替换来解决这个问题
+        val testUrl = url.removeSuffix("/") + "/"
         return kotlin.runCatching {
             return okHttpClient.newCallResponse {
-                url(url)
+                url(testUrl)
                 addHeader(authorization.name, authorization.data)
-                head()
             }.code == 200
         }.getOrDefault(false)
     }
