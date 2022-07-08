@@ -2,7 +2,6 @@ package io.legado.app.ui.book.info
 
 import android.app.Application
 import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
