@@ -155,6 +155,8 @@ class EpubFile(var book: Book) {
                     elements.add(getBody(res, startFragmentId, endFragmentId))
                 }
             }
+            //title标签中的内容不需要显示在正文中，去除
+            elements.select("title").remove()
             var html = elements.outerHtml()
             val tag = Book.rubyTag
             if (book.getDelTag(tag)) {
