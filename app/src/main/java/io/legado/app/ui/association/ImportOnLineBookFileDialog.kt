@@ -24,7 +24,7 @@ import io.legado.app.utils.visible
 /**
  * 导入在线书籍文件弹出窗口
  */
-class ImportOnLineBookFileDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) {
+class ImportOnLineBookFileDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
 
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)

@@ -377,7 +377,7 @@ class BookSourceEditActivity :
         }
         infoEntities.forEach {
             when (it.key) {
-                "init" -> bookInfoRule.init = it.value ?: ""
+                "init" -> bookInfoRule.init = it.value
                 "name" -> bookInfoRule.name = viewModel.ruleComplete(it.value, bookInfoRule.init)
                 "author" -> bookInfoRule.author =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
