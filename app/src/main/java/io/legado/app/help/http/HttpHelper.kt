@@ -32,7 +32,10 @@ val cookieJar by lazy {
                     cookieBuilder.append(it.name).append("=").append(it.value).append(";")
                 }
             }
-            cookieBuilder.deleteCharAt(cookieBuilder.lastIndexOf(";"))
+            val index = cookieBuilder.lastIndexOf(";")
+            if (index > -1) {
+                cookieBuilder.deleteCharAt(index)
+            }
             val domain = NetworkUtils.getSubDomain(url.toString())
             CacheManager.putMemory("${domain}_cookieJar", cookieBuilder.toString())
         }
