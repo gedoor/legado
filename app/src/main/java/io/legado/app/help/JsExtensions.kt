@@ -232,33 +232,45 @@ interface JsExtensions {
      * js实现重定向拦截,网络访问get
      */
     fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
-        return Jsoup.connect(urlStr)
+        val response = Jsoup.connect(urlStr)
             .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
             .ignoreContentType(true)
             .followRedirects(false)
             .headers(headers)
             .method(Connection.Method.GET)
             .execute()
+        val cookies = response.cookies()
+        CookieStore.mapToCookie(cookies)?.let {
+            val domain = NetworkUtils.getSubDomain(urlStr)
+            CacheManager.putMemory("${domain}_cookieJar", it)
+        }
+        return response
     }
 
     /**
      * js实现重定向拦截,网络访问head,不返回Response Body更省流量
      */
     fun head(urlStr: String, headers: Map<String, String>): Connection.Response {
-        return Jsoup.connect(urlStr)
+        val response = Jsoup.connect(urlStr)
             .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
             .ignoreContentType(true)
             .followRedirects(false)
             .headers(headers)
             .method(Connection.Method.HEAD)
             .execute()
+        val cookies = response.cookies()
+        CookieStore.mapToCookie(cookies)?.let {
+            val domain = NetworkUtils.getSubDomain(urlStr)
+            CacheManager.putMemory("${domain}_cookieJar", it)
+        }
+        return response
     }
 
     /**
      * 网络访问post
      */
     fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
-        return Jsoup.connect(urlStr)
+        val response = Jsoup.connect(urlStr)
             .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
             .ignoreContentType(true)
             .followRedirects(false)
@@ -266,6 +278,12 @@ interface JsExtensions {
             .headers(headers)
             .method(Connection.Method.POST)
             .execute()
+        val cookies = response.cookies()
+        CookieStore.mapToCookie(cookies)?.let {
+            val domain = NetworkUtils.getSubDomain(urlStr)
+            CacheManager.putMemory("${domain}_cookieJar", it)
+        }
+        return response
     }
 
     /**

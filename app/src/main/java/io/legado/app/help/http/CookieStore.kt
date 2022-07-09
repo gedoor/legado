@@ -82,7 +82,7 @@ object CookieStore : CookieManager {
     }
 
     override fun mapToCookie(cookieMap: Map<String, String>?): String? {
-        if (cookieMap == null || cookieMap.isEmpty()) {
+        if (cookieMap.isNullOrEmpty()) {
             return null
         }
         val builder = StringBuilder()
