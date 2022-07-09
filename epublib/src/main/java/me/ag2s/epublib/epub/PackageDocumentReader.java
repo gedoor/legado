@@ -73,6 +73,60 @@ public class PackageDocumentReader extends PackageDocumentBase {
     }
 
     /**
+     *
+     * 修复一些非标准epub格式由于 opf 文件内容不全而读取不到图片的问题
+     * @author qianfanguojin
+     * @return ，修复图片路径后的一个Element列表
+     */
+    private static ArrayList<Element> ensureImageInfo(Resources resources,
+                                                 Element manifestElement){
+        ArrayList<Element> fixedElements = new ArrayList<>();
+        //加入当前所有的 item 标签
+        NodeList originItemElements = manifestElement
+                .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.item);
+        for (int i = 0; i < originItemElements.getLength(); i++) {
+            fixedElements.add((Element) originItemElements.item(i));
+        }
+
+        //如果有图片资源未定义在 originItemElements ，则加入该图片信息得到 fixedElements 中
+        for (Resource resource : resources.getAll()) {
+            MediaType currentMediaType = resource.getMediaType();
+            if ( currentMediaType == MediaTypes.JPG || currentMediaType == MediaTypes.PNG){
+                String imageHref = resource.getHref();
+                //确保该图片信息 resource 在原 originItemElements 列表中没有出现过
+                boolean flag = false;
+                int i;
+                for (i = 0; i < originItemElements.getLength(); i++){
+                    Element itemElement = (Element) originItemElements.item(i);
+                    String href = DOMUtil
+                            .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
+                    try {
+                        href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
+                    } catch (UnsupportedEncodingException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                    if (href.equals(imageHref)){
+                        break;
+                    }
+                }
+                if (i == originItemElements.getLength()){
+                    flag = true;
+                }
+                if (flag){
+                    //由于暂时无法实例化一个Element，则选择克隆一个已存在的节点来修改以达到新增 Element 的效果，作为临时解决方案
+                    Element tempElement = (Element) manifestElement.getElementsByTagNameNS(NAMESPACE_OPF,OPFTags.item).item(0).cloneNode(true);
+                    tempElement.setAttribute("id",imageHref.replace("/",""));
+                    tempElement.setAttribute("href",imageHref);
+                    tempElement.setAttribute("media-type", currentMediaType.getName());
+                    fixedElements.add(tempElement);
+                }
+            }
+
+
+        }
+        return fixedElements;
+    }
+    /**
      * Reads the manifest containing the resource ids, hrefs and mediatypes.
      *
      * @param packageDocument e
@@ -96,10 +150,9 @@ public class PackageDocumentReader extends PackageDocumentBase {
                     "Package document does not contain element " + OPFTags.manifest);
             return result;
         }
-        NodeList itemElements = manifestElement
-                .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.item);
-        for (int i = 0; i < itemElements.getLength(); i++) {
-            Element itemElement = (Element) itemElements.item(i);
+        List<Element> ensuredElements = ensureImageInfo(resources,manifestElement);
+        for (Element itemElement : ensuredElements) {
+//            Element itemElement = ;
             String id = DOMUtil
                     .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.id);
             String href = DOMUtil
