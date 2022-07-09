@@ -151,8 +151,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
                                         .toInstant(ZoneOffset.of("+8")).toEpochMilli()
                                 }
                         }.getOrNull() ?: 0
+                        val fullURL = NetworkUtils.getAbsoluteURL(baseUrl, href)
                         webDavFile = WebDavFile(
-                            "$baseUrl$href",
+                            fullURL,
                             authorization,
                             displayName = fileName,
                             urlName = urlName,
