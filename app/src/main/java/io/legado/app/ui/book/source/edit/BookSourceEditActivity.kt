@@ -330,7 +330,7 @@ class BookSourceEditActivity :
             when (it.key) {
                 "searchUrl" -> source.searchUrl = it.value
                 "checkKeyWord" -> searchRule.checkKeyWord = it.value
-                "bookList" -> searchRule.bookList = it.value ?: ""
+                "bookList" -> searchRule.bookList = it.value
                 "name" -> searchRule.name =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
                 "author" -> searchRule.author =
@@ -354,7 +354,7 @@ class BookSourceEditActivity :
         findEntities.forEach {
             when (it.key) {
                 "exploreUrl" -> source.exploreUrl = it.value
-                "bookList" -> exploreRule.bookList = it.value ?: ""
+                "bookList" -> exploreRule.bookList = it.value
                 "name" -> exploreRule.name =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
                 "author" -> exploreRule.author =
