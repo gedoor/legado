@@ -29,10 +29,7 @@ val cookieJar by lazy {
             val cookieBuilder = StringBuilder()
             cookies.forEach {
                 if (it.value != "") {
-                    cookieBuilder.append(it.name)
-                        .append("=")
-                        .append(it.value)
-                        .append(";")
+                    cookieBuilder.append(it.name).append("=").append(it.value).append(";")
                 }
             }
             cookieBuilder.deleteCharAt(cookieBuilder.lastIndexOf(";"))
