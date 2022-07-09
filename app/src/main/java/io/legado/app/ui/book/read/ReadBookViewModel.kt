@@ -21,6 +21,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
+import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
@@ -144,6 +145,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
         } else {
             ReadBook.bookSource?.let {
+                val preUpdateJs = it.ruleToc?.preUpdateJs
+                if (!preUpdateJs.isNullOrBlank()) {
+                    AnalyzeRule(book, it).evalJS(preUpdateJs)
+                }
                 WebBook.getChapterList(viewModelScope, it, book)
                     .onSuccess(IO) { cList ->
                         appDb.bookChapterDao.insert(*cList.toTypedArray())
