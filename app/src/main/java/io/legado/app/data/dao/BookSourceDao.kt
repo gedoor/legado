@@ -53,6 +53,9 @@ interface BookSourceDao {
     @Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
     fun flowLogin(): Flow<List<BookSource>>
 
+    @Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = '' or bookSourceGroup like '%未分组%'")
+    fun flowNoGroup(): Flow<List<BookSource>>
+
     @Query(
         """select * from book_sources 
         where enabledExplore = 1 

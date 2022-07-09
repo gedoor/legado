@@ -181,6 +181,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_group_login -> {
                 searchView.setQuery(getString(R.string.need_login), true)
             }
+            R.id.menu_group_null -> {
+                searchView.setQuery(getString(R.string.no_group), true)
+            }
             R.id.menu_help -> showHelp()
         }
         if (item.groupId == R.id.source_group) {
@@ -228,6 +231,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
                 searchKey == getString(R.string.need_login) -> {
                     appDb.bookSourceDao.flowLogin()
+                }
+                searchKey == getString(R.string.no_group) -> {
+                    appDb.bookSourceDao.flowNoGroup()
                 }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
@@ -296,10 +302,15 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun initLiveDataGroup() {
         launch {
+            val noGroupName = getString(R.string.no_group)
             appDb.bookSourceDao.flowGroup().conflate().collect {
                 groups.clear()
-                it.forEach { group ->
-                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
+                it.forEach { groupStr ->
+                    groupStr.splitNotBlank(AppPattern.splitGroupRegex).forEach { group ->
+                        if (group != noGroupName) {
+                            groups.add(group)
+                        }
+                    }
                 }
                 upGroupMenu()
             }

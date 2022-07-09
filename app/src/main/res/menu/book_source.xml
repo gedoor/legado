@@ -79,6 +79,10 @@
                 android:id="@+id/menu_group_login"
                 android:title="@string/need_login" />
 
+            <item
+                android:id="@+id/menu_group_null"
+                android:title="@string/no_group" />
+
             <group android:id="@+id/source_group">
 
             </group>
