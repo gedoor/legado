@@ -321,7 +321,7 @@ class BookSourceEditActivity :
                 "loginCheckJs" -> source.loginCheckJs = it.value
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value
-                "bookSourceComment" -> source.bookSourceComment = it.value ?: ""
+                "bookSourceComment" -> source.bookSourceComment = it.value
                 "concurrentRate" -> source.concurrentRate = it.value
                 "variableComment" -> source.variableComment = it.value
             }
