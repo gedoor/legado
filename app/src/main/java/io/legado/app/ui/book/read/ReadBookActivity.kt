@@ -128,8 +128,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
     private var menu: Menu? = null
-    private var changeSourceMenu: PopupMenu? = null
-    private var refreshMenu: PopupMenu? = null
     private var autoPageJob: Job? = null
     private var backupJob: Job? = null
     private var keepScreenJon: Job? = null
@@ -211,7 +209,6 @@ class ReadBookActivity : BaseReadBookActivity(),
                 inflate(R.menu.book_read_change_source)
                 this.menu.applyOpenTint(this@ReadBookActivity)
                 setOnMenuItemClickListener(this@ReadBookActivity)
-                changeSourceMenu = this
             }.show()
         }
         menu.iconItemOnLongClick(R.id.menu_refresh) {
@@ -219,7 +216,6 @@ class ReadBookActivity : BaseReadBookActivity(),
                 inflate(R.menu.book_read_refresh)
                 this.menu.applyOpenTint(this@ReadBookActivity)
                 setOnMenuItemClickListener(this@ReadBookActivity)
-                refreshMenu = this
             }.show()
         }
         return super.onCompatCreateOptionsMenu(menu)
