@@ -114,9 +114,10 @@ class ThemeConfigFragment : PreferenceFragment(),
             R.id.menu_theme_mode -> {
                 AppConfig.isNightTheme = !AppConfig.isNightTheme
                 ThemeConfig.applyDayNight(requireContext())
+                return true
             }
         }
-        return true
+        return false
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {

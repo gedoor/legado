@@ -139,9 +139,12 @@ class BackupConfigFragment : PreferenceFragment(),
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.menu_help -> showHelp()
+            R.id.menu_help -> {
+                showHelp()
+                return true
+            }
         }
-        return true
+        return false
     }
 
     private fun showHelp() {
