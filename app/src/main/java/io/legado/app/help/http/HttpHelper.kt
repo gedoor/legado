@@ -27,12 +27,10 @@ val cookieJar by lazy {
             if (cookies.isEmpty()) return
             //临时保存 书源启用cookie选项再添加到数据库
             val cookieBuilder = StringBuilder()
-            cookies.forEach {
-                if (it.value != "") {
-                    cookieBuilder.append(it.name).append("=").append(it.value).append(";")
-                }
+            cookies.forEachIndexed { index, cookie ->
+                if (index > 0) cookieBuilder.append("; ")
+                cookieBuilder.append(cookie.name).append('=').append(cookie.value)
             }
-            cookieBuilder.deleteCharAt(cookieBuilder.lastIndexOf(";"))
             val domain = NetworkUtils.getSubDomain(url.toString())
             CacheManager.putMemory("${domain}_cookieJar", cookieBuilder.toString())
         }
