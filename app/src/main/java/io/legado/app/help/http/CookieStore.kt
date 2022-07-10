@@ -86,16 +86,11 @@ object CookieStore : CookieManager {
             return null
         }
         val builder = StringBuilder()
-        for (key in cookieMap.keys) {
-            val value = cookieMap[key]
-            if (value?.isNotBlank() == true) {
-                builder.append(key)
-                    .append("=")
-                    .append(value)
-                    .append(";")
-            }
+        cookieMap.keys.forEachIndexed { index, key ->
+            if (index > 0) builder.append("; ")
+            builder.append(key).append("=").append(cookieMap[key])
         }
-        return builder.deleteCharAt(builder.lastIndexOf(";")).toString()
+        return builder.toString()
     }
 
     fun clear() {
