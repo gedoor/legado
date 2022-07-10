@@ -33,6 +33,8 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 阅读界面数据处理
@@ -145,20 +147,24 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
         } else {
             ReadBook.bookSource?.let {
-                val preUpdateJs = it.ruleToc?.preUpdateJs
-                if (!preUpdateJs.isNullOrBlank()) {
-                    AnalyzeRule(book, it).evalJS(preUpdateJs)
-                }
-                WebBook.getChapterList(viewModelScope, it, book)
-                    .onSuccess(IO) { cList ->
-                        appDb.bookChapterDao.insert(*cList.toTypedArray())
-                        appDb.bookDao.update(book)
-                        ReadBook.chapterSize = cList.size
-                        ReadBook.upMsg(null)
-                        ReadBook.loadContent(resetPageOffset = true)
-                    }.onError {
-                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                viewModelScope.launch {
+                    withContext(IO) {
+                        val preUpdateJs = it.ruleToc?.preUpdateJs
+                        if (!preUpdateJs.isNullOrBlank()) {
+                            AnalyzeRule(book, it).evalJS(preUpdateJs)
+                        }
                     }
+                    WebBook.getChapterList(viewModelScope, it, book)
+                        .onSuccess(IO) { cList ->
+                            appDb.bookChapterDao.insert(*cList.toTypedArray())
+                            appDb.bookDao.update(book)
+                            ReadBook.chapterSize = cList.size
+                            ReadBook.upMsg(null)
+                            ReadBook.loadContent(resetPageOffset = true)
+                        }.onError {
+                            ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                        }
+                }
             }
         }
     }
