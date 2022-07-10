@@ -27,22 +27,24 @@ object NetworkUtils {
         if (Build.VERSION.SDK_INT < 23) {
             val mWiFiNetworkInfo = connectivityManager.activeNetworkInfo
             if (mWiFiNetworkInfo != null) {
-                //移动数据
-                return if (mWiFiNetworkInfo.type == ConnectivityManager.TYPE_WIFI) {
-                    //WIFI
-                    true
-                } else mWiFiNetworkInfo.type == ConnectivityManager.TYPE_MOBILE
+                // WIFI
+                return mWiFiNetworkInfo.type == ConnectivityManager.TYPE_WIFI ||
+                        // 移动数据
+                        mWiFiNetworkInfo.type == ConnectivityManager.TYPE_MOBILE ||
+                        // 以太网
+                        mWiFiNetworkInfo.type == ConnectivityManager.TYPE_ETHERNET
             }
         } else {
             val network = connectivityManager.activeNetwork
             if (network != null) {
                 val nc = connectivityManager.getNetworkCapabilities(network)
                 if (nc != null) {
-                    //移动数据
-                    return if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        //WIFI
-                        true
-                    } else nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    // WIFI
+                    return nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                            // 移动数据
+                            nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                            // 以太网
+                            nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
                 }
             }
         }
