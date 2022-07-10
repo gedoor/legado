@@ -126,8 +126,11 @@ open class WebDav(val path: String, val authorization: Authorization) {
         httpUrl?.let { urlStr ->
             val baseUrl = NetworkUtils.getBaseUrl(urlStr)
             for (element in elements) {
-                val href = URLDecoder.decode(element.getElementsByTag("d:href")[0].text(), "UTF-8")
-                if (!href.endsWith("/")) {
+                //依然是优化支持 caddy 自建的 WebDav ，其目录后缀都为“/”, 所以删除“/”的判定，不然无法获取该目录项
+                var href = URLDecoder.decode(element.getElementsByTag("d:href")[0].text(), "UTF-8")
+                if (href.endsWith("/")) {
+                    href = href.removeSuffix("/")
+                }
                     val fileName = href.substring(href.lastIndexOf("/") + 1)
                     val webDavFile: WebDav
                     try {
@@ -167,7 +170,6 @@ open class WebDav(val path: String, val authorization: Authorization) {
                         e.printOnDebug()
                     }
                 }
-            }
         }
         return list
     }
@@ -184,7 +186,8 @@ open class WebDav(val path: String, val authorization: Authorization) {
             return okHttpClient.newCallResponse {
                 url(testUrl)
                 addHeader(authorization.name, authorization.data)
-            }.code == 200
+            //某些自建的WebDav服务，请求数据时返回码不一定为 200，如 caddy 为207，所以改为在200-300区间
+            }.isSuccessful
         }.getOrDefault(false)
     }
 
