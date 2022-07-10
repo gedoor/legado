@@ -48,10 +48,10 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         it.uri?.let { uri ->
             if (uri.isContentScheme()) {
                 AppConfig.importBookPath = uri.toString()
-                initRootDoc()
+                initRootDoc(true)
             } else {
                 AppConfig.importBookPath = uri.path
-                initRootDoc()
+                initRootDoc(true)
             }
         }
     }
@@ -146,10 +146,10 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         }
     }
 
-    private fun initRootDoc() {
+    private fun initRootDoc(changedFolder: Boolean = false) {
         val lastPath = AppConfig.importBookPath
         when {
-            viewModel.rootDoc != null -> upPath()
+            viewModel.rootDoc != null && !changedFolder -> upPath()
             lastPath.isNullOrEmpty() -> {
                 binding.tvEmptyMsg.visible()
                 selectFolder.launch()

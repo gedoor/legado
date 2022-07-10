@@ -102,7 +102,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val filename = "${getExportFileName(book)}.txt"
         DocumentUtils.delete(doc, filename)
         val bookDoc = DocumentUtils.createFileIfNotExist(doc, filename)
-            ?: throw NoStackTraceException("创建文档失败")
+            ?: throw NoStackTraceException("创建文档失败，请尝试重新设置导出文件夹")
         val stringBuilder = StringBuilder()
         context.contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
             getAllContents(scope, book) { text, srcList ->
