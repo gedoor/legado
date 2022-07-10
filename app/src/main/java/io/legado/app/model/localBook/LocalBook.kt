@@ -142,7 +142,8 @@ object LocalBook {
                     "covers",
                     "${MD5Utils.md5Encode16(bookUrl)}.jpg"
                 ),
-                latestChapterTime = updateTime
+                latestChapterTime = updateTime,
+                order = appDb.bookDao.minOrder - 1
             )
             if (book.isEpub()) EpubFile.upBookInfo(book)
             if (book.isUmd()) UmdFile.upBookInfo(book)
