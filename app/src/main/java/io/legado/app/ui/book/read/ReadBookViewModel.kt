@@ -147,12 +147,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
         } else {
             ReadBook.bookSource?.let {
-                viewModelScope.launch {
-                    withContext(IO) {
-                        val preUpdateJs = it.ruleToc?.preUpdateJs
-                        if (!preUpdateJs.isNullOrBlank()) {
-                            AnalyzeRule(book, it).evalJS(preUpdateJs)
-                        }
+                viewModelScope.launch(IO) {
+                    val preUpdateJs = it.ruleToc?.preUpdateJs
+                    if (!preUpdateJs.isNullOrBlank()) {
+                        AnalyzeRule(book, it).evalJS(preUpdateJs)
                     }
                     WebBook.getChapterList(viewModelScope, it, book)
                         .onSuccess(IO) { cList ->
