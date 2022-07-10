@@ -18,6 +18,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
+import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
@@ -153,6 +154,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 chapterListData.postValue(emptyList())
             } else {
                 bookSource?.let { bookSource ->
+                    val preUpdateJs = bookSource.ruleToc?.preUpdateJs
+                    if (!preUpdateJs.isNullOrBlank()) {
+                        AnalyzeRule(book, bookSource).evalJS(preUpdateJs)
+                    }
                     WebBook.getChapterList(this, bookSource, book)
                         .onSuccess(IO) {
                             if (inBookshelf) {

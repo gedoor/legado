@@ -21,6 +21,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
+import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
@@ -32,6 +33,8 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 阅读界面数据处理
@@ -144,16 +147,22 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
         } else {
             ReadBook.bookSource?.let {
-                WebBook.getChapterList(viewModelScope, it, book)
-                    .onSuccess(IO) { cList ->
-                        appDb.bookChapterDao.insert(*cList.toTypedArray())
-                        appDb.bookDao.update(book)
-                        ReadBook.chapterSize = cList.size
-                        ReadBook.upMsg(null)
-                        ReadBook.loadContent(resetPageOffset = true)
-                    }.onError {
-                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                viewModelScope.launch(IO) {
+                    val preUpdateJs = it.ruleToc?.preUpdateJs
+                    if (!preUpdateJs.isNullOrBlank()) {
+                        AnalyzeRule(book, it).evalJS(preUpdateJs)
                     }
+                    WebBook.getChapterList(viewModelScope, it, book)
+                        .onSuccess(IO) { cList ->
+                            appDb.bookChapterDao.insert(*cList.toTypedArray())
+                            appDb.bookDao.update(book)
+                            ReadBook.chapterSize = cList.size
+                            ReadBook.upMsg(null)
+                            ReadBook.loadContent(resetPageOffset = true)
+                        }.onError {
+                            ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                        }
+                }
             }
         }
     }
