@@ -87,7 +87,7 @@ object CookieStore : CookieManager {
         }
         val builder = StringBuilder()
         cookieMap.keys.forEachIndexed { index, key ->
-            if (index > 0) builder.append("; ")
+            if (index > 0) builder.append(";")
             builder.append(key).append("=").append(cookieMap[key])
         }
         return builder.toString()

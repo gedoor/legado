@@ -28,7 +28,7 @@ val cookieJar by lazy {
             //临时保存 书源启用cookie选项再添加到数据库
             val cookieBuilder = StringBuilder()
             cookies.forEachIndexed { index, cookie ->
-                if (index > 0) cookieBuilder.append("; ")
+                if (index > 0) cookieBuilder.append(";")
                 cookieBuilder.append(cookie.name).append('=').append(cookie.value)
             }
             val domain = NetworkUtils.getSubDomain(url.toString())
