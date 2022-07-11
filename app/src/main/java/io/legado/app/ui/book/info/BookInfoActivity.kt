@@ -216,9 +216,9 @@ class BookInfoActivity :
                             toastOnUi(getString(R.string.upload_book_success))
                         else
                             toastOnUi(getString(R.string.upload_book_fail))
-                    }catch (e : Exception){
+                    } catch (e: Exception) {
                         toastOnUi(e.localizedMessage)
-                    }finally {
+                    } finally {
                         waitDialog.dismiss()
                     }
                 }
@@ -271,6 +271,8 @@ class BookInfoActivity :
                     } else {
                         binding.tvToc.text = getString(R.string.toc_s, chapterList.last().title)
                     }
+                    binding.tvLasted.text =
+                        getString(R.string.lasted_show, chapterList.last().title)
                 }
             }
         }
