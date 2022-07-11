@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:background="@drawable/bg_item_focused_on_tv">
 
     <io.legado.app.ui.widget.image.FilletImageView
         android:id="@+id/iv_icon"
