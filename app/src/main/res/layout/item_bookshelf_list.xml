@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
+    android:background="@drawable/bg_item_focused_on_tv"
     tools:ignore="UnusedAttribute">
 
     <io.legado.app.ui.widget.image.CoverImageView

@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusable="true"
+    android:background="@drawable/bg_item_focused_on_tv">
 
     <LinearLayout
         android:id="@+id/ll_title"
