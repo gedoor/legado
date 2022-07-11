@@ -107,7 +107,9 @@ object ReadBook : CoroutineScope by MainScope() {
 
     fun uploadProgress() {
         book?.let {
-            AppWebDav.uploadBookProgress(it)
+            Coroutine.async {
+                AppWebDav.uploadBookProgress(it)
+            }
         }
     }
 
