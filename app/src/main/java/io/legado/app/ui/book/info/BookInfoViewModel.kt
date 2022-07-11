@@ -154,6 +154,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 chapterListData.postValue(emptyList())
             } else {
                 bookSource?.let { bookSource ->
+                    val oldBook = book.copy()
                     val preUpdateJs = bookSource.ruleToc?.preUpdateJs
                     if (!preUpdateJs.isNullOrBlank()) {
                         AnalyzeRule(book, bookSource).evalJS(preUpdateJs)
@@ -161,8 +162,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     WebBook.getChapterList(this, bookSource, book)
                         .onSuccess(IO) {
                             if (inBookshelf) {
-                                appDb.bookDao.update(book)
-                                appDb.bookChapterDao.delByBook(book.bookUrl)
+                                if (oldBook.bookUrl == book.bookUrl) {
+                                    appDb.bookDao.update(book)
+                                } else {
+                                    appDb.bookDao.insert(book)
+                                    BookHelp.updateCacheFolder(oldBook, book)
+                                }
+                                appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                                 appDb.bookChapterDao.insert(*it.toTypedArray())
                             }
                             chapterListData.postValue(it)

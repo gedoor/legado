@@ -148,14 +148,21 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         } else {
             ReadBook.bookSource?.let {
                 viewModelScope.launch(IO) {
+                    val oldBook = book.copy()
                     val preUpdateJs = it.ruleToc?.preUpdateJs
                     if (!preUpdateJs.isNullOrBlank()) {
                         AnalyzeRule(book, it).evalJS(preUpdateJs)
                     }
                     WebBook.getChapterList(viewModelScope, it, book)
                         .onSuccess(IO) { cList ->
+                            if (oldBook.bookUrl == book.bookUrl) {
+                                appDb.bookDao.update(book)
+                            } else {
+                                appDb.bookDao.insert(book)
+                                BookHelp.updateCacheFolder(oldBook, book)
+                            }
+                            appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                             appDb.bookChapterDao.insert(*cList.toTypedArray())
-                            appDb.bookDao.update(book)
                             ReadBook.chapterSize = cList.size
                             ReadBook.upMsg(null)
                             ReadBook.loadContent(resetPageOffset = true)

@@ -39,6 +39,12 @@ object BookHelp {
         FileUtils.delete(filePath)
     }
 
+    fun updateCacheFolder(oldBook: Book, newBook: Book) {
+        val oldFolderPath = FileUtils.getPath(downloadDir, cacheFolderName, oldBook.getFolderName())
+        val newFolderPath = FileUtils.getPath(downloadDir, cacheFolderName, newBook.getFolderName())
+        FileUtils.move(oldFolderPath, newFolderPath)
+    }
+
     /**
      * 清除已删除书的缓存
      */
