@@ -58,6 +58,17 @@ open class WebDav(val path: String, val authorization: Authorization) {
                 .replace("%2F".toRegex(), "/")
         }.getOrNull()
     }
+    private val webDavClient by lazy {
+        val clientBuilder = okHttpClient.newBuilder()
+        clientBuilder.addNetworkInterceptor { chain ->
+            val request = chain.request()
+                .newBuilder()
+                .addHeader(authorization.name, authorization.data)
+                .build()
+            chain.proceed(request)
+        }
+        clientBuilder.build()
+    }
     val host: String? get() = url.host
 
     /**
@@ -103,9 +114,8 @@ open class WebDav(val path: String, val authorization: Authorization) {
             String.format(DIR, requestProps.toString() + "\n")
         }
         val url = httpUrl ?: return null
-        return okHttpClient.newCallResponse {
+        return webDavClient.newCallResponse {
             url(url)
-            addHeader(authorization.name, authorization.data)
             addHeader("Depth", depth.toString())
             // 添加RequestBody对象，可以只返回的属性。如果设为null，则会返回全部属性
             // 注意：尽量手动指定需要返回的属性。若返回全部属性，可能后由于Prop.java里没有该属性名，而崩溃。
@@ -131,45 +141,45 @@ open class WebDav(val path: String, val authorization: Authorization) {
                 if (href.endsWith("/")) {
                     href = href.removeSuffix("/")
                 }
-                    val fileName = href.substring(href.lastIndexOf("/") + 1)
-                    val webDavFile: WebDav
-                    try {
-                        val urlName = href.ifEmpty {
-                            url.file.replace("/", "")
-                        }
-                        val contentType = element
-                            .getElementsByTag("d:getcontenttype")
-                            .firstOrNull()?.text().orEmpty()
-                        val resourceType = element
-                            .getElementsByTag("d:resourcetype")
-                            .firstOrNull()?.html()?.trim().orEmpty()
-                        val size = kotlin.runCatching {
-                            element.getElementsByTag("d:getcontentlength")
-                                .firstOrNull()?.text()?.toLong() ?: 0
-                        }.getOrDefault(0)
-                        val lastModify: Long = kotlin.runCatching {
-                            element.getElementsByTag("d:getlastmodified")
-                                .firstOrNull()?.text()?.let {
-                                    LocalDateTime.parse(it, dateTimeFormatter)
-                                        .toInstant(ZoneOffset.of("+8")).toEpochMilli()
-                                }
-                        }.getOrNull() ?: 0
-                        val fullURL = NetworkUtils.getAbsoluteURL(baseUrl, href)
-                        webDavFile = WebDavFile(
-                            fullURL,
-                            authorization,
-                            displayName = fileName,
-                            urlName = urlName,
-                            size = size,
-                            contentType = contentType,
-                            resourceType = resourceType,
-                            lastModify = lastModify
-                        )
-                        list.add(webDavFile)
-                    } catch (e: MalformedURLException) {
-                        e.printOnDebug()
+                val fileName = href.substring(href.lastIndexOf("/") + 1)
+                val webDavFile: WebDav
+                try {
+                    val urlName = href.ifEmpty {
+                        url.file.replace("/", "")
                     }
+                    val contentType = element
+                        .getElementsByTag("d:getcontenttype")
+                        .firstOrNull()?.text().orEmpty()
+                    val resourceType = element
+                        .getElementsByTag("d:resourcetype")
+                        .firstOrNull()?.html()?.trim().orEmpty()
+                    val size = kotlin.runCatching {
+                        element.getElementsByTag("d:getcontentlength")
+                            .firstOrNull()?.text()?.toLong() ?: 0
+                    }.getOrDefault(0)
+                    val lastModify: Long = kotlin.runCatching {
+                        element.getElementsByTag("d:getlastmodified")
+                            .firstOrNull()?.text()?.let {
+                                LocalDateTime.parse(it, dateTimeFormatter)
+                                    .toInstant(ZoneOffset.of("+8")).toEpochMilli()
+                            }
+                    }.getOrNull() ?: 0
+                    val fullURL = NetworkUtils.getAbsoluteURL(baseUrl, href)
+                    webDavFile = WebDavFile(
+                        fullURL,
+                        authorization,
+                        displayName = fileName,
+                        urlName = urlName,
+                        size = size,
+                        contentType = contentType,
+                        resourceType = resourceType,
+                        lastModify = lastModify
+                    )
+                    list.add(webDavFile)
+                } catch (e: MalformedURLException) {
+                    e.printOnDebug()
                 }
+            }
         }
         return list
     }
@@ -183,10 +193,10 @@ open class WebDav(val path: String, val authorization: Authorization) {
         //使用坚果云的WebDav则不会，这里做一个简单的替换来解决这个问题
         val testUrl = url.removeSuffix("/") + "/"
         return kotlin.runCatching {
-            return okHttpClient.newCallResponse {
+            return webDavClient.newCallResponse {
                 url(testUrl)
-                addHeader(authorization.name, authorization.data)
-            //某些自建的WebDav服务，请求数据时返回码不一定为 200，如 caddy 为207，所以改为在200-300区间
+                head()
+                //某些自建的WebDav服务，请求数据时返回码不一定为 200，如 caddy 为207，所以改为在200-300区间
             }.isSuccessful
         }.getOrDefault(false)
     }
@@ -200,10 +210,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
         //防止报错
         return kotlin.runCatching {
             if (!exists()) {
-                okHttpClient.newCallResponse {
+                webDavClient.newCallResponse {
                     url(url)
                     method("MKCOL", null)
-                    addHeader(authorization.name, authorization.data)
                 }.let {
                     checkResult(it)
                 }
@@ -256,10 +265,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
             // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
             val fileBody = file.asRequestBody(contentType.toMediaType())
             val url = httpUrl ?: throw WebDavException("url不能为空")
-            okHttpClient.newCallResponse {
+            webDavClient.newCallResponse {
                 url(url)
                 put(fileBody)
-                addHeader(authorization.name, authorization.data)
             }.let {
                 checkResult(it)
             }
@@ -274,10 +282,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
         kotlin.runCatching {
             val fileBody = byteArray.toRequestBody(contentType.toMediaType())
             val url = httpUrl ?: throw NoStackTraceException("url不能为空")
-            okHttpClient.newCallResponse {
+            webDavClient.newCallResponse {
                 url(url)
                 put(fileBody)
-                addHeader(authorization.name, authorization.data)
             }.let {
                 checkResult(it)
             }
@@ -289,9 +296,8 @@ open class WebDav(val path: String, val authorization: Authorization) {
     @Throws(WebDavException::class)
     private suspend fun downloadInputStream(): InputStream {
         val url = httpUrl ?: throw WebDavException("WebDav下载出错\nurl为空")
-        val byteStream = okHttpClient.newCallResponse {
+        val byteStream = webDavClient.newCallResponse {
             url(url)
-            addHeader(authorization.name, authorization.data)
         }.apply {
             checkResult(this)
         }.body?.byteStream()
@@ -305,10 +311,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
         val url = httpUrl ?: return false
         //防止报错
         return kotlin.runCatching {
-            okHttpClient.newCallResponse {
+            webDavClient.newCallResponse {
                 url(url)
                 method("DELETE", null)
-                addHeader(authorization.name, authorization.data)
             }.let {
                 checkResult(it)
             }
