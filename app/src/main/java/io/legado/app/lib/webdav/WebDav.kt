@@ -8,6 +8,7 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.printOnDebug
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -68,15 +69,18 @@ open class WebDav(val path: String, val authorization: Authorization) {
         }.getOrNull()
     }
     private val webDavClient by lazy {
-        val clientBuilder = okHttpClient.newBuilder()
-        clientBuilder.addNetworkInterceptor { chain ->
+        val authInterceptor = Interceptor { chain ->
             val request = chain.request()
                 .newBuilder()
-                .addHeader(authorization.name, authorization.data)
+                .header(authorization.name, authorization.data)
                 .build()
             chain.proceed(request)
         }
-        clientBuilder.build()
+        okHttpClient.newBuilder().run {
+            interceptors().add(0, authInterceptor)
+            addNetworkInterceptor(authInterceptor)
+            build()
+        }
     }
     val host: String? get() = url.host
 
