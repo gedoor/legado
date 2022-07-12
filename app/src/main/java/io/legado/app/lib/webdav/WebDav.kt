@@ -46,6 +46,15 @@ open class WebDav(val path: String, val authorization: Authorization) {
                     %s
                 </a:prop>
             </a:propfind>"""
+
+        @Language("xml")
+        private const val EXISTS =
+            """<?xml version="1.0"?>
+            <propfind xmlns="DAV:">
+               <prop>
+                  <resourcetype />
+               </prop>
+            </propfind>"""
     }
 
     private val url: URL = URL(path)
@@ -189,14 +198,12 @@ open class WebDav(val path: String, val authorization: Authorization) {
      */
     suspend fun exists(): Boolean {
         val url = httpUrl ?: return false
-        //当使用自建的WebDav服务时，在末尾有否 ”/“ 会影响请求的成功与否
-        //使用坚果云的WebDav则不会，这里做一个简单的替换来解决这个问题
-        val testUrl = url.removeSuffix("/") + "/"
         return kotlin.runCatching {
             return webDavClient.newCallResponse {
-                url(testUrl)
-                head()
-                //某些自建的WebDav服务，请求数据时返回码不一定为 200，如 caddy 为207，所以改为在200-300区间
+                url(url)
+                addHeader("Depth", "0")
+                val requestBody = EXISTS.toRequestBody("application/xml".toMediaType())
+                method("PROPFIND", requestBody)
             }.isSuccessful
         }.getOrDefault(false)
     }
