@@ -35,13 +35,13 @@ class HistoryKeyAdapter(activity: SearchActivity, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
         holder.itemView.apply {
             setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
                     callBack.searchHistory(it.word)
                 }
             }
             onLongClick {
                 explosionField.explode(this, true)
-                getItem(holder.layoutPosition)?.let {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
                     callBack.deleteHistory(it)
                 }
             }
