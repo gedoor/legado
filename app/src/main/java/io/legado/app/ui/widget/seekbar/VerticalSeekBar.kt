@@ -69,7 +69,7 @@ class VerticalSeekBar @JvmOverloads constructor(context: Context, attrs: Attribu
         }
     }
 
-    override fun setThumb(thumb: Drawable) {
+    override fun setThumb(thumb: Drawable?) {
         mThumb = thumb
         super.setThumb(thumb)
     }
