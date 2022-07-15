@@ -34,7 +34,6 @@ import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * 阅读界面数据处理
@@ -43,6 +42,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     val permissionDenialLiveData = MutableLiveData<Int>()
     var isInitFinish = false
     var searchContentQuery = ""
+    var searchResultList: List<SearchResult>? = null
+    var searchResultIndex: Int = 0
     private var changeSourceCoroutine: Coroutine<*>? = null
 
     /**
@@ -360,53 +361,54 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         // calculate search result's pageIndex
         val pages = textChapter.pages
         val content = textChapter.getContent()
+        val queryLength = searchContentQuery.length
 
         var count = 0
         var index = content.indexOf(searchContentQuery)
         while (count != searchResult.resultCountWithinChapter) {
-            index = content.indexOf(searchContentQuery, index + 1)
+            index = content.indexOf(searchContentQuery, index + queryLength)
             count += 1
         }
         val contentPosition = index
         var pageIndex = 0
         var length = pages[pageIndex].text.length
-        while (length < contentPosition) {
+        while (length < contentPosition && pageIndex + 1 < pages.size) {
             pageIndex += 1
-            if (pageIndex > pages.size) {
-                pageIndex = pages.size
-                break
-            }
             length += pages[pageIndex].text.length
         }
 
         // calculate search result's lineIndex
         val currentPage = pages[pageIndex]
+        val curTextLines = currentPage.textLines
         var lineIndex = 0
-        length = length - currentPage.text.length + currentPage.textLines[lineIndex].text.length
-        while (length < contentPosition) {
+        var curLine = curTextLines[lineIndex]
+        length = length - currentPage.text.length + curLine.text.length
+        if (curLine.isParagraphEnd) length++
+        while (length < contentPosition && lineIndex + 1 < curTextLines.size) {
             lineIndex += 1
-            if (lineIndex > currentPage.textLines.size) {
-                lineIndex = currentPage.textLines.size
-                break
-            }
-            length += currentPage.textLines[lineIndex].text.length
+            curLine = curTextLines[lineIndex]
+            length += curLine.text.length
+            if (curLine.isParagraphEnd) length++
         }
 
         // charIndex
         val currentLine = currentPage.textLines[lineIndex]
-        length -= currentLine.text.length
+        var curLineLength = currentLine.text.length
+        if (currentLine.isParagraphEnd) curLineLength++
+        length -= curLineLength
+
         val charIndex = contentPosition - length
         var addLine = 0
         var charIndex2 = 0
         // change line
-        if ((charIndex + searchContentQuery.length) > currentLine.text.length) {
+        if ((charIndex + queryLength) > curLineLength) {
             addLine = 1
-            charIndex2 = charIndex + searchContentQuery.length - currentLine.text.length - 1
+            charIndex2 = charIndex + queryLength - curLineLength - 1
         }
         // changePage
         if ((lineIndex + addLine + 1) > currentPage.textLines.size) {
             addLine = -1
-            charIndex2 = charIndex + searchContentQuery.length - currentLine.text.length - 1
+            charIndex2 = charIndex + queryLength - curLineLength - 1
         }
         return arrayOf(pageIndex, lineIndex, charIndex, addLine, charIndex2)
     }

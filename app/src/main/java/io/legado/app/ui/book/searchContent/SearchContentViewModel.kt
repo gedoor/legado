@@ -97,7 +97,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
             while (index >= 0) {
                 scope.ensureActive()
                 position.add(index)
-                index = mContent.indexOf(pattern, index + 1)
+                index = mContent.indexOf(pattern, index + pattern.length)
             }
         }
         return position
