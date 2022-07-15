@@ -39,13 +39,13 @@ class SearchContentAdapter(context: Context, val callback: Callback) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemSearchListBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                if (it.query.isNotBlank()) callback.openSearchResult(it)
+                if (it.query.isNotBlank()) callback.openSearchResult(it, holder.layoutPosition)
             }
         }
     }
 
     interface Callback {
-        fun openSearchResult(searchResult: SearchResult)
+        fun openSearchResult(searchResult: SearchResult, index: Int)
         fun durChapterIndex(): Int
     }
 }

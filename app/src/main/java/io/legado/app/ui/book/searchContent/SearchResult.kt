@@ -22,10 +22,13 @@ data class SearchResult(
             val leftString = resultText.substring(0, queryIndexInSurrounding)
             val rightString =
                 resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
-            val html = leftString.colorTextForHtml(textColor) +
-                    query.colorTextForHtml(accentColor) +
-                    rightString.colorTextForHtml(textColor) +
-                    chapterTitle.colorTextForHtml(accentColor)
+            val html = buildString {
+                append(chapterTitle.colorTextForHtml(accentColor))
+                append("<br>")
+                append(leftString.colorTextForHtml(textColor))
+                append(query.colorTextForHtml(accentColor))
+                append(rightString.colorTextForHtml(textColor))
+            }
             HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
             HtmlCompat.fromHtml(

@@ -397,12 +397,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         upSelectedEnd(x, y + headerHeight)
     }
 
-    fun cancelSelect() {
+    fun cancelSelect(fromSearchExit: Boolean = false) {
         val last = if (callBack.isScroll) 2 else 0
         for (relativePos in 0..last) {
             relativePage(relativePos).textLines.forEach { textLine ->
                 textLine.textChars.forEach {
                     it.selected = false
+                    if (fromSearchExit) it.isSearchResult = false
                 }
             }
         }

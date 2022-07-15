@@ -148,22 +148,34 @@ class SearchMenu @JvmOverloads constructor(
 
         fabLeft.setOnClickListener {
             updateSearchResultIndex(currentSearchResultIndex - 1)
-            callBack.navigateToSearch(searchResultList[currentSearchResultIndex])
+            callBack.navigateToSearch(
+                searchResultList[currentSearchResultIndex],
+                currentSearchResultIndex
+            )
         }
 
         ivSearchContentUp.setOnClickListener {
             updateSearchResultIndex(currentSearchResultIndex - 1)
-            callBack.navigateToSearch(searchResultList[currentSearchResultIndex])
+            callBack.navigateToSearch(
+                searchResultList[currentSearchResultIndex],
+                currentSearchResultIndex
+            )
         }
 
         ivSearchContentDown.setOnClickListener {
             updateSearchResultIndex(currentSearchResultIndex + 1)
-            callBack.navigateToSearch(searchResultList[currentSearchResultIndex])
+            callBack.navigateToSearch(
+                searchResultList[currentSearchResultIndex],
+                currentSearchResultIndex
+            )
         }
 
         fabRight.setOnClickListener {
             updateSearchResultIndex(currentSearchResultIndex + 1)
-            callBack.navigateToSearch(searchResultList[currentSearchResultIndex])
+            callBack.navigateToSearch(
+                searchResultList[currentSearchResultIndex],
+                currentSearchResultIndex
+            )
         }
     }
 
@@ -225,7 +237,7 @@ class SearchMenu @JvmOverloads constructor(
         fun upSystemUiVisibility()
         fun exitSearchMenu()
         fun showMenuBar()
-        fun navigateToSearch(searchResult: SearchResult)
+        fun navigateToSearch(searchResult: SearchResult, index: Int)
     }
 
 }

@@ -113,13 +113,15 @@ class ReadBookActivity : BaseReadBookActivity(),
             it ?: return@registerForActivityResult
             it.data?.let { data ->
                 val key = data.getLongExtra("key", System.currentTimeMillis())
+                val index = data.getIntExtra("index", 0)
                 val searchResult = IntentData.get<SearchResult>("searchResult$key")
                 val searchResultList = IntentData.get<List<SearchResult>>("searchResultList$key")
                 if (searchResult != null && searchResultList != null) {
                     viewModel.searchContentQuery = searchResult.query
                     binding.searchMenu.upSearchResultList(searchResultList)
                     isShowingSearchResult = true
-                    binding.searchMenu.updateSearchResultIndex(searchResultList.indexOf(searchResult))
+                    viewModel.searchResultIndex = index
+                    binding.searchMenu.updateSearchResultIndex(index)
                     binding.searchMenu.selectedSearchResult?.let { currentResult ->
                         skipToSearch(currentResult)
                         showActionMenu()
@@ -888,6 +890,12 @@ class ReadBookActivity : BaseReadBookActivity(),
             searchContentActivity.launch(Intent(this, SearchContentActivity::class.java).apply {
                 putExtra("bookUrl", it.bookUrl)
                 putExtra("searchWord", searchWord ?: viewModel.searchContentQuery)
+                putExtra("searchResultIndex", viewModel.searchResultIndex)
+                viewModel.searchResultList?.first()?.let {
+                    if (it.query == viewModel.searchContentQuery) {
+                        IntentData.put("searchResultList", viewModel.searchResultList)
+                    }
+                }
             })
         }
     }
@@ -930,6 +938,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             isShowingSearchResult = false
             binding.searchMenu.invalidate()
             binding.searchMenu.invisible()
+            binding.readView.isTextSelected = false
+            binding.readView.curPage.cancelSelect(true)
         }
     }
 
@@ -1052,7 +1062,8 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    override fun navigateToSearch(searchResult: SearchResult) {
+    override fun navigateToSearch(searchResult: SearchResult, index: Int) {
+        viewModel.searchResultIndex = index
         skipToSearch(searchResult)
     }
 
@@ -1062,22 +1073,23 @@ class ReadBookActivity : BaseReadBookActivity(),
         fun jumpToPosition() {
             ReadBook.curTextChapter?.let {
                 binding.searchMenu.updateSearchInfo()
-                val positions = viewModel.searchResultPositions(it, searchResult)
-                ReadBook.skipToPage(positions[0]) {
+                val (pageIndex, lineIndex, charIndex, addLine, charIndex2) =
+                    viewModel.searchResultPositions(it, searchResult)
+                ReadBook.skipToPage(pageIndex) {
                     launch {
                         isSelectingSearchResult = true
-                        binding.readView.curPage.selectStartMoveIndex(0, positions[1], positions[2])
-                        when (positions[3]) {
+                        binding.readView.curPage.selectStartMoveIndex(0, lineIndex, charIndex)
+                        when (addLine) {
                             0 -> binding.readView.curPage.selectEndMoveIndex(
                                 0,
-                                positions[1],
-                                positions[2] + viewModel.searchContentQuery.length - 1
+                                lineIndex,
+                                charIndex + viewModel.searchContentQuery.length - 1
                             )
                             1 -> binding.readView.curPage.selectEndMoveIndex(
-                                0, positions[1] + 1, positions[4]
+                                0, lineIndex + 1, charIndex2
                             )
                             //consider change page, jump to scroll position
-                            -1 -> binding.readView.curPage.selectEndMoveIndex(1, 0, positions[4])
+                            -1 -> binding.readView.curPage.selectEndMoveIndex(1, 0, charIndex2)
                         }
                         binding.readView.isTextSelected = true
                         isSelectingSearchResult = false
@@ -1195,6 +1207,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         observeEvent<String>(PreferKey.showBrightnessView) {
             readMenu.upBrightnessState()
+        }
+        observeEvent<List<SearchResult>>(EventBus.SEARCH_RESULT) {
+            viewModel.searchResultList = it
         }
     }
 
