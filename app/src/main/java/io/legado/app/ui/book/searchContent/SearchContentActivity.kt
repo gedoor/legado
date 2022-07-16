@@ -20,10 +20,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.observeEvent
-import io.legado.app.utils.postEvent
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -80,9 +77,8 @@ class SearchContentActivity :
         searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                if (viewModel.lastQuery != query) {
-                    startContentSearch(query)
-                }
+                startContentSearch(query)
+                searchView.clearFocus()
                 return false
             }
 
@@ -106,6 +102,9 @@ class SearchContentActivity :
             if (adapter.itemCount > 0) {
                 mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
             }
+        }
+        binding.fbStop.setOnClickListener {
+            searchJob?.cancel()
         }
     }
 
@@ -158,6 +157,7 @@ class SearchContentActivity :
                     }.forEach { bookChapter ->
                         ensureActive()
                         binding.refreshProgressBar.isAutoLoading = true
+                        binding.fbStop.visible()
                         val searchResults = withContext(IO) {
                             if (isLocalBook || viewModel.cacheChapterNames.contains(bookChapter.getFileName())) {
                                 viewModel.searchChapter(this, query, bookChapter)
@@ -181,8 +181,12 @@ class SearchContentActivity :
                         adapter.addItem(noSearchResult)
                     }
                 }.onFailure {
+                    binding.fbStop.invisible()
                     binding.refreshProgressBar.isAutoLoading = false
                     AppLog.put("全文搜索出错\n${it.localizedMessage}", it)
+                }.onSuccess {
+                    binding.fbStop.invisible()
+                    binding.refreshProgressBar.isAutoLoading = false
                 }
             }
         }
