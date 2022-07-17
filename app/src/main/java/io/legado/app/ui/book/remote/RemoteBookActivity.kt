@@ -151,7 +151,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
         viewModel.dataCallback?.clear()
         adapter.selected.clear()
         viewModel.loadRemoteBookList(
-            viewModel.dirList.lastOrNull()?.path ?: RemoteBookWebDav.rootBookUrl
+            viewModel.dirList.lastOrNull()?.path
         ) {
             if (it) {
                 waitDialog.show()

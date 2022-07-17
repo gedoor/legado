@@ -70,10 +70,13 @@ open class WebDav(val path: String, val authorization: Authorization) {
     }
     private val webDavClient by lazy {
         val authInterceptor = Interceptor { chain ->
-            val request = chain.request()
-                .newBuilder()
-                .header(authorization.name, authorization.data)
-                .build()
+            var request = chain.request()
+            if (request.url.host == host) {
+                request = request
+                    .newBuilder()
+                    .header(authorization.name, authorization.data)
+                    .build()
+            }
             chain.proceed(request)
         }
         okHttpClient.newBuilder().run {
