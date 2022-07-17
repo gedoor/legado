@@ -286,7 +286,7 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     fun restore() {
-        Coroutine.async(context = Main) {
+        Coroutine.async {
             AppWebDav.showRestoreDialog(requireContext())
         }.onError {
             alert {
