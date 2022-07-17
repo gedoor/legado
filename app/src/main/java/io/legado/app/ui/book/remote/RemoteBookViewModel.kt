@@ -77,8 +77,8 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     fun loadRemoteBookList(path: String?, loadCallback: (loading: Boolean) -> Unit) {
         execute {
             dataCallback?.clear()
-            val path = path ?: RemoteBookWebDav.rootBookUrl
-            val bookList = RemoteBookWebDav.getRemoteBookList(path)
+            val url = path ?: RemoteBookWebDav.rootBookUrl
+            val bookList = RemoteBookWebDav.getRemoteBookList(url)
             dataCallback?.setItems(bookList)
         }.onError {
             AppLog.put("获取webDav书籍出错\n${it.localizedMessage}", it)
