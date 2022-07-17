@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.CookieManager
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.activityViewModels
@@ -57,6 +58,10 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView(source: BaseSource) {
         binding.webView.settings.apply {
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            domStorageEnabled = true
+            useWideViewPort = true
+            loadWithOverviewMode = true
             builtInZoomControls = true
             javaScriptEnabled = true
             source.getHeaderMap()[AppConst.UA_NAME]?.let {
