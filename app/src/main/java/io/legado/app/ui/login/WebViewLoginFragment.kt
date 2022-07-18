@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.CookieManager
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.fragment.app.activityViewModels
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
@@ -86,6 +83,16 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
                     activity?.finish()
                 }
                 super.onPageFinished(view, url)
+            }
+        }
+        binding.webView.webChromeClient = object : WebChromeClient() {
+            override fun onJsAlert(
+                view: WebView?,
+                url: String?,
+                message: String?,
+                result: JsResult?
+            ): Boolean {
+                return super.onJsAlert(view, url, message, result)
             }
         }
         source.loginUrl?.let {
