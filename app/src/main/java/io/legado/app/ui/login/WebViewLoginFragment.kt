@@ -14,6 +14,8 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.FragmentWebViewLoginBinding
 import io.legado.app.help.http.CookieStore
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.utils.gone
 import io.legado.app.utils.snackbar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -54,6 +56,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView(source: BaseSource) {
+        binding.progressBar.fontColor = accentColor
         binding.webView.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
@@ -86,14 +89,13 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
             }
         }
         binding.webView.webChromeClient = object : WebChromeClient() {
-            override fun onJsAlert(
-                view: WebView?,
-                url: String?,
-                message: String?,
-                result: JsResult?
-            ): Boolean {
-                return super.onJsAlert(view, url, message, result)
+
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                super.onProgressChanged(view, newProgress)
+                binding.progressBar.setDurProgress(newProgress)
+                binding.progressBar.gone(newProgress == 100)
             }
+
         }
         source.loginUrl?.let {
             binding.webView.loadUrl(it, source.getHeaderMap(true))

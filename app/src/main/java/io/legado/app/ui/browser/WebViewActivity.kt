@@ -21,6 +21,7 @@ import io.legado.app.help.SourceVerificationHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.lib.dialogs.SelectItem
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.document.HandleFileContract
@@ -81,6 +82,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
     private fun initWebView(url: String, headerMap: HashMap<String, String>) {
+        binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
@@ -190,6 +192,12 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     inner class CustomWebChromeClient : WebChromeClient() {
+
+        override fun onProgressChanged(view: WebView?, newProgress: Int) {
+            super.onProgressChanged(view, newProgress)
+            binding.progressBar.setDurProgress(newProgress)
+            binding.progressBar.gone(newProgress == 100)
+        }
 
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR

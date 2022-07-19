@@ -36,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
     BookAdapter.CallBack,
@@ -65,21 +66,29 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
-    private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
-        if (it) {
-            val searchGroup = AppConfig.searchGroup
-            if (searchGroup.isNotEmpty()) {
-                launch {
-                    alert("搜索结果为空") {
-                        setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
-                        noButton()
-                        yesButton {
-                            AppConfig.searchGroup = ""
-                            viewModel.searchKey = ""
-                            viewModel.search(searchView.query.toString())
-                        }
+    private val searchFinishCallback: (isEmpty: Boolean) -> Unit = searchFinish@{ isEmpty ->
+        val searchGroup = AppConfig.searchGroup
+        if (!isEmpty || searchGroup.isEmpty()) return@searchFinish
+        launch {
+            alert("搜索结果为空") {
+                val precisionSearch = appCtx.getPrefBoolean(PreferKey.precisionSearch)
+                if (precisionSearch) {
+                    setMessage("${searchGroup}分组搜索结果为空，是否关闭精准搜索？")
+                    yesButton {
+                        appCtx.putPrefBoolean(PreferKey.precisionSearch, false)
+                        precisionSearchMenuItem?.isChecked = false
+                        viewModel.searchKey = ""
+                        viewModel.search(searchView.query.toString())
+                    }
+                } else {
+                    setMessage("${searchGroup}分组搜索结果为空，是否切换到全部分组？")
+                    yesButton {
+                        AppConfig.searchGroup = ""
+                        viewModel.searchKey = ""
+                        viewModel.search(searchView.query.toString())
                     }
                 }
+                noButton()
             }
         }
     }
@@ -359,10 +368,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     /**
      * 显示书籍详情
      */
-    override fun showBookInfo(name: String, author: String) {
+    override fun showBookInfo(name: String, author: String, bookUrl: String) {
         startActivity<BookInfoActivity> {
             putExtra("name", name)
             putExtra("author", author)
+            putExtra("bookUrl", bookUrl)
         }
     }
 
@@ -370,7 +380,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 显示书籍详情
      */
     override fun showBookInfo(book: Book) {
-        showBookInfo(book.name, book.author)
+        showBookInfo(book.name, book.author, book.bookUrl)
     }
 
     /**
