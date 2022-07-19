@@ -117,6 +117,7 @@ object ReadBook : CoroutineScope by MainScope() {
         Coroutine.async {
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
+            readRecord.lastRead = System.currentTimeMillis()
             if (AppConfig.enableReadRecord) {
                 appDb.readRecordDao.insert(readRecord)
             }
