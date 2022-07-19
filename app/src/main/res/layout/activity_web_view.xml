@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,14 +15,24 @@
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:fitStatusBar="false" />
+            app:fitStatusBar="false"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <io.legado.app.ui.rss.read.VisibleWebView
             android:id="@+id/web_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/title_bar"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    </LinearLayout>
+        <io.legado.app.ui.widget.anima.RefreshProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:max_progress="100"
+            app:layout_constraintTop_toTopOf="@id/web_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/custom_web_view"
