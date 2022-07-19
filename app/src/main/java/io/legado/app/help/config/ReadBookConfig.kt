@@ -88,14 +88,14 @@ object ReadBookConfig {
     }
 
     fun upBg(width: Int, height: Int) {
-        val tmp = bg
-        bg = durConfig.curBgDrawable(width, height).apply {
-            if (this is BitmapDrawable) {
-                bgMeanColor = bitmap.getMeanColor()
-            } else if (this is ColorDrawable) {
-                bgMeanColor = color
-            }
+        val drawable = durConfig.curBgDrawable(width, height)
+        if (drawable is BitmapDrawable && drawable.bitmap != null) {
+            bgMeanColor = drawable.bitmap.getMeanColor()
+        } else if (drawable is ColorDrawable) {
+            bgMeanColor = drawable.color
         }
+        val tmp = bg
+        bg = drawable
         (tmp as? BitmapDrawable)?.bitmap?.recycle()
     }
 
