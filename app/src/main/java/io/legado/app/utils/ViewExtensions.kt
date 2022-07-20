@@ -133,6 +133,7 @@ fun View.screenshot(): Bitmap? {
         c.translate(-scrollX.toFloat(), -scrollY.toFloat())
         this.draw(c)
         c.setBitmap(null)
+        screenshot.prepareToDraw()
         screenshot
     } else {
         null
