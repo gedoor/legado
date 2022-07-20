@@ -160,7 +160,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        callBack.screenOffTimerStart()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val insets =
                 this.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.mandatorySystemGestures())
@@ -174,6 +173,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                callBack.screenOffTimerStart()
                 if (isTextSelected) {
                     curPage.cancelSelect()
                     isTextSelected = false
@@ -205,6 +205,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 }
             }
             MotionEvent.ACTION_UP -> {
+                callBack.screenOffTimerStart()
                 removeCallbacks(longPressRunnable)
                 if (!pressDown) return true
                 pressDown = false
