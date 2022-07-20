@@ -130,6 +130,8 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                 tvReadingTime.text = formatDuring(item.readTime)
                 if (item.lastRead > 0) {
                     tvLastReadTime.text = dateFormat.format(item.lastRead)
+                } else {
+                    tvLastReadTime.text = ""
                 }
             }
         }
