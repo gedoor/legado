@@ -1002,4 +1002,8 @@
     <string name="error_image_url_empty">Image url is empty, check replacement rules</string>
     <string name="variable_comment">变量说明(variableComment)</string>
     <string name="remote_book">远程书籍</string>
+    <string name="reading_time_sort">阅读时长排序</string>
+    <string name="last_read_time_sort">阅读时间排序</string>
+    <string name="reading_time_tag">阅读时长:</string>
+    <string name="last_read_time_tag">最后阅读时间:</string>
 </resources>

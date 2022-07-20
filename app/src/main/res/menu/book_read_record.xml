@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/menu_sort_name"
-        android:title="@string/sort_by_name"
-        app:showAsAction="never" />
+        android:id="@+id/menu_sort"
+        android:icon="@drawable/ic_baseline_sort_24"
+        android:title="@string/sort"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
 
-    <item
-        android:id="@+id/menu_sort_time"
-        android:title="@string/sort_by_time"
-        app:showAsAction="never" />
+        <menu>
+            <group
+                android:id="@+id/menu_group_sort"
+                android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/menu_sort_name"
+                    android:title="@string/sort_by_name" />
+
+                <item
+                    android:id="@+id/menu_sort_read_long"
+                    android:title="@string/reading_time_sort"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menu_sort_read_time"
+                    android:title="@string/last_read_time_sort"
+                    app:showAsAction="never" />
+
+            </group>
+
+        </menu>
+
+    </item>
 
     <item
         android:id="@+id/menu_enable_record"
-        android:title="@string/enable_record"
         android:checkable="true"
+        android:title="@string/enable_record"
         app:showAsAction="never" />
 
 </menu>

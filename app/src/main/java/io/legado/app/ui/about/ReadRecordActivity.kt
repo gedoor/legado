@@ -1,6 +1,7 @@
 package io.legado.app.ui.about
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -18,6 +19,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.utils.cnCompare
+import io.legado.app.utils.gone
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -50,10 +52,17 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         when (item.itemId) {
             R.id.menu_sort_name -> {
                 sortMode = 0
+                item.isChecked = true
                 initData()
             }
-            R.id.menu_sort_time -> {
+            R.id.menu_sort_read_long -> {
                 sortMode = 1
+                item.isChecked = true
+                initData()
+            }
+            R.id.menu_sort_read_time -> {
+                sortMode = 2
+                item.isChecked = true
                 initData()
             }
             R.id.menu_enable_record -> {
@@ -65,6 +74,9 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     private fun initView() = binding.run {
         readRecord.tvBookName.setText(R.string.all_read_time)
+        readRecord.tvLastReadTimeTag.gone()
+        readRecord.tvLastReadTimeTag.gone()
+        readRecord.tvLastReadTime.gone()
         recyclerView.adapter = adapter
         readRecord.tvRemove.setOnClickListener {
             alert(R.string.delete, R.string.sure_del) {
@@ -82,11 +94,12 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
             val allTime = withContext(IO) {
                 appDb.readRecordDao.allTime
             }
-            binding.readRecord.tvReadTime.text = formatDuring(allTime)
+            binding.readRecord.tvReadingTime.text = formatDuring(allTime)
             val readRecords = withContext(IO) {
                 appDb.readRecordDao.allShow.let { records ->
                     when (sortMode) {
-                        1 -> records.sortedBy { it.readTime }
+                        1 -> records.sortedByDescending { it.readTime }
+                        2 -> records.sortedByDescending { it.lastRead }
                         else -> records.sortedWith { o1, o2 ->
                             o1.bookName.cnCompare(o2.bookName)
                         }
@@ -100,6 +113,8 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     inner class RecordAdapter(context: Context) :
         RecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
 
+        private val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+
         override fun getViewBinding(parent: ViewGroup): ItemReadRecordBinding {
             return ItemReadRecordBinding.inflate(inflater, parent, false)
         }
@@ -112,7 +127,8 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         ) {
             binding.apply {
                 tvBookName.text = item.bookName
-                tvReadTime.text = formatDuring(item.readTime)
+                tvReadingTime.text = formatDuring(item.readTime)
+                tvLastReadTime.text = dateFormat.format(item.lastRead)
             }
         }
 
