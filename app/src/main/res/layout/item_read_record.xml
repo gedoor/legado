@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
 
@@ -73,6 +74,7 @@
         android:padding="6dp"
         android:text="@string/clear"
         android:textColor="@color/primaryText"
+        android:background="?attr/selectableItemBackground"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

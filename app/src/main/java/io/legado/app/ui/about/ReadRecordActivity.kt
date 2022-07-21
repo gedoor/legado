@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
@@ -16,10 +17,11 @@ import io.legado.app.databinding.ActivityReadRecordBinding
 import io.legado.app.databinding.ItemReadRecordBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
-import io.legado.app.utils.gone
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -30,11 +32,15 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     private val adapter by lazy { RecordAdapter(this) }
     private var sortMode = 0
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
 
     override val binding by viewBinding(ActivityReadRecordBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
+        initAllTime()
         initData()
     }
 
@@ -72,13 +78,10 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun initView() = binding.run {
-        readRecord.tvBookName.setText(R.string.all_read_time)
-        readRecord.tvLastReadTimeTag.gone()
-        readRecord.tvLastReadTimeTag.gone()
-        readRecord.tvLastReadTime.gone()
-        recyclerView.adapter = adapter
-        readRecord.tvRemove.setOnClickListener {
+    private fun initView() {
+        initSearchView()
+        binding.tvBookName.setText(R.string.all_read_time)
+        binding.tvRemove.setOnClickListener {
             alert(R.string.delete, R.string.sure_del) {
                 yesButton {
                     appDb.readRecordDao.clear()
@@ -87,16 +90,41 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                 noButton()
             }
         }
+        binding.recyclerView.adapter = adapter
     }
 
-    private fun initData() {
+    private fun initSearchView() {
+        searchView.applyTint(primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = getString(R.string.search)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchView.clearFocus()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                initData(newText)
+                return false
+            }
+        })
+    }
+
+    private fun initAllTime() {
         launch {
             val allTime = withContext(IO) {
                 appDb.readRecordDao.allTime
             }
-            binding.readRecord.tvReadingTime.text = formatDuring(allTime)
+            binding.tvReadingTime.text = formatDuring(allTime)
+        }
+    }
+
+    private fun initData(searchKey: String? = null) {
+        launch {
             val readRecords = withContext(IO) {
-                appDb.readRecordDao.allShow.let { records ->
+                appDb.readRecordDao.search(searchKey ?: "").let { records ->
                     when (sortMode) {
                         1 -> records.sortedByDescending { it.readTime }
                         2 -> records.sortedByDescending { it.lastRead }

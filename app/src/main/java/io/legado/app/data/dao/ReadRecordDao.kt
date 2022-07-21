@@ -10,11 +10,27 @@ interface ReadRecordDao {
     @get:Query("select * from readRecord")
     val all: List<ReadRecord>
 
-    @get:Query("select bookName, sum(readTime) as readTime, max(lastRead) as lastRead from readRecord group by bookName order by bookName collate localized")
+    @get:Query(
+        """
+        select bookName, sum(readTime) as readTime, max(lastRead) as lastRead 
+        from readRecord 
+        group by bookName 
+        order by bookName collate localized"""
+    )
     val allShow: List<ReadRecordShow>
 
     @get:Query("select sum(readTime) from readRecord")
     val allTime: Long
+
+    @Query(
+        """
+        select bookName, sum(readTime) as readTime, max(lastRead) as lastRead 
+        from readRecord 
+        where bookName like '%' || :searchKey || '%'
+        group by bookName 
+        order by bookName collate localized"""
+    )
+    fun search(searchKey: String): List<ReadRecordShow>
 
     @Query("select sum(readTime) from readRecord where bookName = :bookName")
     fun getReadTime(bookName: String): Long?
