@@ -26,7 +26,7 @@ data class TextPage(
 
     val lineSize get() = textLines.size
     val charSize get() = text.length
-    var isMsgOrTitlePage: Boolean = false
+    var isMsgPage: Boolean = false
 
     fun getLine(index: Int): TextLine {
         return textLines.getOrElse(index) {
@@ -79,8 +79,8 @@ data class TextPage(
 
     @Suppress("DEPRECATION")
     fun format(): TextPage {
-        if (textLines.isEmpty()) isMsgOrTitlePage = true
-        if (isMsgOrTitlePage && ChapterProvider.viewWidth > 0) {
+        if (textLines.isEmpty()) isMsgPage = true
+        if (isMsgPage && ChapterProvider.viewWidth > 0) {
             textLines.clear()
             val visibleWidth = ChapterProvider.visibleRight - ChapterProvider.paddingLeft
             val layout = StaticLayout(
