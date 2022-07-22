@@ -49,8 +49,6 @@ class PageView(context: Context) : FrameLayout(context) {
 
     init {
         if (!isInEditMode) {
-            //设置背景防止切换背景时文字重叠
-            setBackgroundColor(context.getCompatColor(R.color.background))
             upStyle()
         }
         binding.contentTextView.upView = {
@@ -202,7 +200,11 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun upBg() {
-        binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
+        if (ReadBookConfig.bgAlpha < 100) {
+            binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
+        } else {
+            binding.vwRoot.background = null
+        }
         binding.vwBg.background = ReadBookConfig.bg
         upBgAlpha()
     }

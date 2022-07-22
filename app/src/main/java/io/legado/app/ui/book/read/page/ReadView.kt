@@ -26,6 +26,7 @@ import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
+import io.legado.app.utils.invisible
 import io.legado.app.utils.screenshot
 import java.text.BreakIterator
 import java.util.*
@@ -97,6 +98,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
         addView(nextPage)
         addView(curPage)
         addView(prevPage)
+        nextPage.invisible()
+        prevPage.invisible()
         if (!isInEditMode) {
             upBg()
             setWillNotDraw(false)
