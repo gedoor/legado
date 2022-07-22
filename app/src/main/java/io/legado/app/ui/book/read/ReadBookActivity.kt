@@ -164,6 +164,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.cursorRight.setColorFilter(accentColor)
         binding.cursorLeft.setOnTouchListener(this)
         binding.cursorRight.setOnTouchListener(this)
+        window.setBackgroundDrawable(null)
         upScreenTimeOut()
         ReadBook.callBack = this
     }

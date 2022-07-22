@@ -5,6 +5,7 @@ import android.graphics.Matrix
 import android.graphics.drawable.GradientDrawable
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
+import io.legado.app.utils.screenshot
 
 class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
     private val bitmapMatrix = Matrix()
@@ -30,15 +31,43 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
 
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         if (mDirection == PageDirection.PREV) {
-            bitmapMatrix.setTranslate(distanceX, 0.toFloat())
-            curBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
-            prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
-            addShadow(distanceX.toInt(), canvas)
+            if (offsetX <= viewWidth) {
+                bitmapMatrix.setTranslate(distanceX, 0.toFloat())
+                prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
+                addShadow(distanceX.toInt(), canvas)
+            } else {
+                prevBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
+            }
         } else if (mDirection == PageDirection.NEXT) {
             bitmapMatrix.setTranslate(distanceX - viewWidth, 0.toFloat())
-            nextBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
+            nextBitmap?.let {
+                canvas.apply {
+                    save()
+                    val width = it.width.toFloat()
+                    val height = it.height.toFloat()
+                    clipRect(width + offsetX, 0f, width, height)
+                    drawBitmap(it, 0f, 0f, null)
+                    restore()
+                }
+            }
             curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
             addShadow(distanceX.toInt(), canvas)
+        }
+    }
+
+    override fun setBitmap() {
+        when (mDirection) {
+            PageDirection.PREV -> {
+                prevBitmap?.recycle()
+                prevBitmap = prevPage.screenshot()
+            }
+            PageDirection.NEXT -> {
+                nextBitmap?.recycle()
+                nextBitmap = nextPage.screenshot()
+                curBitmap?.recycle()
+                curBitmap = curPage.screenshot()
+            }
+            else -> Unit
         }
     }
 

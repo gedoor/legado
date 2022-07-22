@@ -17,7 +17,7 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
         setBitmap()
     }
 
-    private fun setBitmap() {
+    open fun setBitmap() {
         when (mDirection) {
             PageDirection.PREV -> {
                 prevBitmap?.recycle()
