@@ -15,7 +15,9 @@ class PopupAction(private val context: Context) :
 
     val binding = PopupActionBinding.inflate(context.layoutInflater)
     val adapter by lazy {
-        Adapter(context)
+        Adapter(context).apply {
+            setHasStableIds(true)
+        }
     }
     var onActionClick: ((action: String) -> Unit)? = null
 
@@ -35,6 +37,10 @@ class PopupAction(private val context: Context) :
 
     inner class Adapter(context: Context) :
         RecyclerAdapter<SelectItem<String>, ItemTextBinding>(context) {
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
 
         override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
             return ItemTextBinding.inflate(inflater, parent, false)

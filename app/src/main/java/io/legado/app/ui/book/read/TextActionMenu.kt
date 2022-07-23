@@ -31,7 +31,9 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
     TextToSpeech.OnInitListener {
 
     private val binding = PopupActionMenuBinding.inflate(LayoutInflater.from(context))
-    private val adapter = Adapter(context)
+    private val adapter = Adapter(context).apply {
+        setHasStableIds(true)
+    }
     private val menuItems: List<MenuItemImpl>
     private val visibleMenuItems = arrayListOf<MenuItemImpl>()
     private val moreMenuItems = arrayListOf<MenuItemImpl>()
@@ -156,6 +158,10 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
 
     inner class Adapter(context: Context) :
         RecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
 
         override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
             return ItemTextBinding.inflate(inflater, parent, false)
