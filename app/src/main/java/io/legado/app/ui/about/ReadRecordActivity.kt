@@ -16,13 +16,12 @@ import io.legado.app.data.entities.ReadRecordShow
 import io.legado.app.databinding.ActivityReadRecordBinding
 import io.legado.app.databinding.ItemReadRecordBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.cnCompare
-import io.legado.app.utils.startActivity
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -31,7 +30,10 @@ import kotlinx.coroutines.withContext
 class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     private val adapter by lazy { RecordAdapter(this) }
-    private var sortMode = 0
+    private var sortMode = LocalConfig.getInt("readRecordSort")
+        set(value) {
+            LocalConfig.putInt("readRecordSort", value)
+        }
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
@@ -51,6 +53,11 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_enable_record)?.isChecked = AppConfig.enableReadRecord
+        when (sortMode) {
+            1 -> menu.findItem(R.id.menu_sort_read_long)?.isChecked = true
+            2 -> menu.findItem(R.id.menu_sort_read_time)?.isChecked = true
+            else -> menu.findItem(R.id.menu_sort_name)?.isChecked = true
+        }
         return super.onMenuOpened(featureId, menu)
     }
 
