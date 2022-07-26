@@ -135,6 +135,8 @@ object CacheBook {
         private val onDownloadSet = linkedSetOf<Int>()
         private val successDownloadSet = linkedSetOf<Int>()
         private val errorDownloadMap = hashMapOf<Int, Int>()
+        private var isStopped = false
+        private var waitingRetry = false
 
         val waitCount get() = waitDownloadSet.size
         val onDownloadCount get() = onDownloadSet.size
@@ -147,12 +149,19 @@ object CacheBook {
         }
 
         @Synchronized
+        fun isStop(): Boolean {
+            return isStopped || (!isRun() && !waitingRetry)
+        }
+
+        @Synchronized
         fun stop() {
             waitDownloadSet.clear()
+            isStopped = true
         }
 
         @Synchronized
         fun addDownload(start: Int, end: Int) {
+            isStopped = false
             for (i in start..end) {
                 if (!onDownloadSet.contains(i)) {
                     waitDownloadSet.add(i)
@@ -168,13 +177,18 @@ object CacheBook {
         }
 
         @Synchronized
-        private fun onError(index: Int, error: Throwable, chapterTitle: String) {
+        private fun onPreError(index: Int, error: Throwable) {
+            waitingRetry = true
             if (error !is ConcurrentException) {
                 errorDownloadMap[index] = (errorDownloadMap[index] ?: 0) + 1
             }
             onDownloadSet.remove(index)
+        }
+
+        @Synchronized
+        private fun onPostError(index: Int, error: Throwable, chapterTitle: String) {
             //重试3次
-            if ((errorDownloadMap[index] ?: 0) < 3) {
+            if ((errorDownloadMap[index] ?: 0) < 3 && !isStopped) {
                 waitDownloadSet.add(index)
             } else {
                 AppLog.put(
@@ -182,12 +196,19 @@ object CacheBook {
                     error
                 )
             }
+            waitingRetry = false
+        }
+
+        @Synchronized
+        private fun onError(index: Int, error: Throwable, chapterTitle: String) {
+            onPreError(index, error)
+            onPostError(index, error, chapterTitle)
         }
 
         @Synchronized
         private fun onCancel(index: Int) {
             onDownloadSet.remove(index)
-            waitDownloadSet.add(index)
+            if (!isStopped) waitDownloadSet.add(index)
         }
 
         @Synchronized
@@ -234,9 +255,10 @@ object CacheBook {
                 onSuccess(chapterIndex)
                 downloadFinish(chapter, content)
             }.onError {
+                onPreError(chapterIndex, it)
                 //出现错误等待一秒后重新加入待下载列表
                 delay(1000)
-                onError(chapterIndex, it, chapter.title)
+                onPostError(chapterIndex, it, chapter.title)
                 downloadFinish(chapter, "获取正文失败\n${it.localizedMessage}")
             }.onCancel {
                 onCancel(chapterIndex)

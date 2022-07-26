@@ -147,6 +147,7 @@ class Coroutine<T>(
             } catch (e: Throwable) {
                 e.printOnDebug()
                 if (e is CancellationException && e !is TimeoutCancellationException) {
+                    this@Coroutine.cancel()
                     return@launch
                 }
                 val consume: Boolean = errorReturn?.value?.let { value ->

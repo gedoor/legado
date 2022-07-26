@@ -237,6 +237,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
             adapter.cacheChapters[it.bookUrl]?.add(it.url)
         }
+        postEventDelay(EventBus.UP_DOWNLOAD, "", 100)
     }
 
     override fun export(position: Int) {
