@@ -146,7 +146,9 @@ class Coroutine<T>(
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
                 e.printOnDebug()
-                if (e is ActivelyCancelException) this@Coroutine.cancel()
+                if (e is CancellationException && e !is ActivelyCancelException) {
+                    this@Coroutine.cancel()
+                }
                 if (e is CancellationException && e !is TimeoutCancellationException) {
                     return@launch
                 }
