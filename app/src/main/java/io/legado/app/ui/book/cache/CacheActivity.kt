@@ -232,12 +232,15 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
                 menu?.applyTint(this)
             }
-            adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
+            adapter.getItems().forEachIndexed { index, book ->
+                if (book.bookUrl == it) {
+                    adapter.notifyItemChanged(index, true)
+                }
+            }
         }
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
             adapter.cacheChapters[it.bookUrl]?.add(it.url)
         }
-        postEventDelay(EventBus.UP_DOWNLOAD, "", 100)
     }
 
     override fun export(position: Int) {

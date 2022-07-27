@@ -143,6 +143,10 @@ object CacheBook {
         val successCount get() = successDownloadSet.size
         val errorCount get() = errorDownloadMap.size
 
+        init {
+            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
+        }
+
         @Synchronized
         fun isRun(): Boolean {
             return waitDownloadSet.size > 0 || onDownloadSet.size > 0
@@ -214,9 +218,9 @@ object CacheBook {
         @Synchronized
         private fun onFinally() {
             if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
-                postEvent(EventBus.UP_DOWNLOAD, "")
                 cacheBookMap.remove(book.bookUrl)
             }
+            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
         }
 
         /**
@@ -224,6 +228,7 @@ object CacheBook {
          */
         @Synchronized
         fun download(scope: CoroutineScope, context: CoroutineContext) {
+            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
             val chapterIndex = waitDownloadSet.firstOrNull()
             if (chapterIndex == null) {
                 if (onDownloadSet.isEmpty()) {
@@ -276,6 +281,7 @@ object CacheBook {
             if (onDownloadSet.contains(chapter.index)) {
                 return
             }
+            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
             onDownloadSet.add(chapter.index)
             waitDownloadSet.remove(chapter.index)
             WebBook.getContent(scope, bookSource, book, chapter)
@@ -288,9 +294,7 @@ object CacheBook {
                 }.onCancel {
                     onCancel(chapter.index)
                 }.onFinally {
-                    if (waitDownloadSet.isEmpty() && onDownloadSet.isEmpty()) {
-                        postEvent(EventBus.UP_DOWNLOAD, "")
-                    }
+                    postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
                 }
         }
 

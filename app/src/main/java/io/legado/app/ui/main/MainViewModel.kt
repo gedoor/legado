@@ -186,12 +186,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private fun cacheBook() {
         cacheBookJob?.cancel()
         cacheBookJob = viewModelScope.launch(upTocPool) {
-            launch {
-                while (isActive) {
-                    postEvent(EventBus.UP_DOWNLOAD, "")
-                    delay(1000)
-                }
-            }
             while (isActive) {
                 if (CacheBookService.isRun || !CacheBook.isRun) {
                     cacheBookJob?.cancel()
