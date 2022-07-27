@@ -85,7 +85,6 @@ class CacheBookService : BaseService() {
         execute {
             val cacheBook = CacheBook.getOrCreate(bookUrl) ?: return@execute
             cacheBook.addDownload(start, end)
-            postEvent(EventBus.UP_DOWNLOAD, "")
             upNotification(CacheBook.downloadSummary)
             if (downloadJob == null) {
                 download()

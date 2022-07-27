@@ -161,6 +161,7 @@ object CacheBook {
         fun stop() {
             waitDownloadSet.clear()
             isStopped = true
+            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
         }
 
         @Synchronized
@@ -171,6 +172,7 @@ object CacheBook {
                     waitDownloadSet.add(i)
                 }
             }
+            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
         }
 
         @Synchronized
