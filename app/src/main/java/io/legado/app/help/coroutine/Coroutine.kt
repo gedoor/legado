@@ -40,6 +40,8 @@ class Coroutine<T>(
     private var timeMillis: Long? = null
     private var errorReturn: Result<T>? = null
 
+    private var isCancelCalled = false
+
     val isCancelled: Boolean
         get() = job.isCancelled
 
@@ -115,6 +117,7 @@ class Coroutine<T>(
 
     //取消当前任务
     fun cancel(cause: CancellationException? = null) {
+        isCancelCalled = true
         job.cancel(cause)
         cancel?.let {
             MainScope().launch {
@@ -146,6 +149,7 @@ class Coroutine<T>(
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
                 e.printOnDebug()
+                if (e is CancellationException && !isCancelCalled) this@Coroutine.cancel()
                 if (e is CancellationException && e !is TimeoutCancellationException) {
                     return@launch
                 }

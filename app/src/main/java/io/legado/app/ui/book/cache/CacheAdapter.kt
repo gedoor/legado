@@ -67,7 +67,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
             ivDownload.setOnClickListener {
                 getItem(holder.layoutPosition)?.let { book ->
                     CacheBook.cacheBookMap[book.bookUrl]?.let {
-                        if (it.isRun()) {
+                        if (!it.isStop()) {
                             CacheBook.remove(context, book.bookUrl)
                         } else {
                             CacheBook.start(context, book, 0, book.totalChapterNum)
@@ -89,7 +89,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
         } else {
             iv.visible()
             CacheBook.cacheBookMap[book.bookUrl]?.let {
-                if (it.isRun()) {
+                if (!it.isStop()) {
                     iv.setImageResource(R.drawable.ic_stop_black_24dp)
                 } else {
                     iv.setImageResource(R.drawable.ic_play_24dp)
