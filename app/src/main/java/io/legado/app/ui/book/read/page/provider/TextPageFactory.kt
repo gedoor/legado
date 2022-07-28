@@ -122,7 +122,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                             ?: TextPage(title = nc.title).format()
                     }
                     return@with nc.getPage(1)?.removePageAloudSpan()
-                        ?: TextPage(title = nc.title).format()
+                        ?: TextPage(text = "继续滑动以加载下一章…").format()
                 }
 
             }

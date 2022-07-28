@@ -30,7 +30,8 @@ import kotlinx.coroutines.withContext
 class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     private val adapter by lazy { RecordAdapter(this) }
-    private var sortMode = LocalConfig.getInt("readRecordSort")
+    private var sortMode
+        get() = LocalConfig.getInt("readRecordSort")
         set(value) {
             LocalConfig.putInt("readRecordSort", value)
         }
