@@ -4,13 +4,14 @@ import android.app.Application
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
-import io.legado.app.utils.readText
 import java.io.File
+import java.io.InputStream
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val importBookLiveData = MutableLiveData<Uri>()
@@ -23,28 +24,34 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
         execute {
             lateinit var fileName: String
             lateinit var content: String
+            lateinit var fileStream: InputStream
             //如果是普通的url，需要根据返回的内容判断是什么
             if (uri.scheme == "file" || uri.scheme == "content") {
                 if (uri.scheme == "file") {
                     val file = File(uri.path.toString())
-                    content = file.readText()
+                    fileStream = file.inputStream()
                     fileName = file.name
                 } else {
                     val file = DocumentFile.fromSingleUri(context, uri)
-                    content = file?.readText(context) ?: throw NoStackTraceException("文件不存在")
+                    if (file?.exists() != true) throw NoStackTraceException("文件不存在")
+                    fileStream = context.contentResolver.openInputStream(uri)!!
                     fileName = file.name ?: ""
                 }
-                when {
-                    content.isJson() -> {
+                kotlin.runCatching {
+                    content = fileStream.reader(Charsets.UTF_8).use { it.readText() }
+                    if (content.isJson()) {
                         importJson(content)
+                        return@execute
                     }
-                    fileName.matches(bookFileRegex) -> {
-                        importBookLiveData.postValue(uri)
-                    }
-                    else -> {
-                        notSupportedLiveData.postValue(Pair(uri, fileName))
-                    }
+                }.onFailure {
+                    it.printOnDebug()
+                    AppLog.put("尝试导入为JSON文件失败\n${it.localizedMessage}", it)
                 }
+                if (fileName.matches(bookFileRegex)) {
+                    importBookLiveData.postValue(uri)
+                    return@execute
+                }
+                notSupportedLiveData.postValue(Pair(uri, fileName))
             } else {
                 onLineImportLive.postValue(uri)
             }
