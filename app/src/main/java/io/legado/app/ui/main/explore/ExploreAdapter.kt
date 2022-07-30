@@ -77,7 +77,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
     }
 
     private fun upKindList(flexbox: FlexboxLayout, sourceUrl: String, kinds: List<ExploreKind>) {
-        if (!kinds.isNullOrEmpty()) kotlin.runCatching {
+        if (kinds.isNotEmpty()) kotlin.runCatching {
             recyclerFlexbox(flexbox)
             flexbox.visible()
             kinds.forEach { kind ->
@@ -168,7 +168,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                     putExtra("key", source.bookSourceUrl)
                 }
                 R.id.menu_refresh -> Coroutine.async(callBack.scope) {
-                    ACache.get(context, "explore").remove(source.bookSourceUrl)
+                    ACache.get("explore").remove(source.bookSourceUrl)
                 }.onSuccess {
                     callBack.refreshData()
                 }

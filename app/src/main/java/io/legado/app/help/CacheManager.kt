@@ -5,7 +5,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cache
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.ACache
-import splitties.init.appCtx
 
 @Suppress("unused")
 object CacheManager {
@@ -22,7 +21,7 @@ object CacheManager {
             if (saveTime == 0) 0 else System.currentTimeMillis() + saveTime * 1000
         when (value) {
             is QueryTTF -> queryTTFMap[key] = Pair(deadline, value)
-            is ByteArray -> ACache.get(appCtx).put(key, value, saveTime)
+            is ByteArray -> ACache.get().put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
                 putMemory(key, value.toString())
@@ -73,7 +72,7 @@ object CacheManager {
     }
 
     fun getByteArray(key: String): ByteArray? {
-        return ACache.get(appCtx).getAsBinary(key)
+        return ACache.get().getAsBinary(key)
     }
 
     fun getQueryTTF(key: String): QueryTTF? {
@@ -87,16 +86,16 @@ object CacheManager {
     }
 
     fun putFile(key: String, value: String, saveTime: Int = 0) {
-        ACache.get(appCtx).put(key, value, saveTime)
+        ACache.get().put(key, value, saveTime)
     }
 
     fun getFile(key: String): String? {
-        return ACache.get(appCtx).getAsString(key)
+        return ACache.get().getAsString(key)
     }
 
     fun delete(key: String) {
         appDb.cacheDao.delete(key)
         deleteMemory(key)
-        ACache.get(appCtx).remove(key)
+        ACache.get().remove(key)
     }
 }

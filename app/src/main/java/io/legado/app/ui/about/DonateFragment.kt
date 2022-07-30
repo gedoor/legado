@@ -53,7 +53,7 @@ class DonateFragment : PreferenceFragmentCompat() {
         } catch (e: Exception) {
             e.printOnDebug()
         } finally {
-            ACache.get(requireContext(), cacheDir = false)
+            ACache.get(cacheDir = false)
                 .put("proTime", System.currentTimeMillis())
         }
     }

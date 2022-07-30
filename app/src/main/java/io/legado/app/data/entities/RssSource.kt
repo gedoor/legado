@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey
 import com.jayway.jsonpath.DocumentContext
 import io.legado.app.utils.*
 import kotlinx.parcelize.Parcelize
-import splitties.init.appCtx
 
 @Parcelize
 @Entity(tableName = "rssSources", indices = [(Index(value = ["sourceUrl"], unique = false))])
@@ -121,7 +120,7 @@ data class RssSource(
             if (sortUrl?.startsWith("<js>", false) == true
                 || sortUrl?.startsWith("@js:", false) == true
             ) {
-                val aCache = ACache.get(appCtx, "rssSortUrl")
+                val aCache = ACache.get("rssSortUrl")
                 a = aCache.getAsString(sourceUrl) ?: ""
                 if (a.isBlank()) {
                     val jsStr = if (sortUrl!!.startsWith("@")) {

@@ -163,7 +163,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
     }
 
     private fun importAlert() {
-        val aCache = ACache.get(requireContext(), cacheDir = false)
+        val aCache = ACache.get(cacheDir = false)
         val cacheUrls: MutableList<String> = aCache
             .getAsString(ttsUrlKey)
             ?.splitNotBlank(",")

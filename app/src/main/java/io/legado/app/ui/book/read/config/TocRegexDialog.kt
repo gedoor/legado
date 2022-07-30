@@ -127,7 +127,7 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
 
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
-        val aCache = ACache.get(requireContext(), cacheDir = false)
+        val aCache = ACache.get(cacheDir = false)
         val defaultUrl = "https://gitee.com/fisher52/YueDuJson/raw/master/myTxtChapterRule.json"
         val cacheUrls: MutableList<String> = aCache
             .getAsString(importTocRuleKey)

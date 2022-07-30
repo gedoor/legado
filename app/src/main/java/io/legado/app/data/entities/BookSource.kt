@@ -10,7 +10,6 @@ import io.legado.app.help.SourceAnalyzer
 import io.legado.app.utils.*
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import splitties.init.appCtx
 import java.io.InputStream
 
 @Suppress("unused")
@@ -98,7 +97,7 @@ data class BookSource(
                 if (exploreUrl.startsWith("<js>", false)
                     || exploreUrl.startsWith("@js:", false)
                 ) {
-                    val aCache = ACache.get(appCtx, "explore")
+                    val aCache = ACache.get("explore")
                     ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
                     if (ruleStr.isBlank()) {
                         val jsStr = if (exploreUrl.startsWith("@")) {

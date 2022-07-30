@@ -1,7 +1,6 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package io.legado.app.utils
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -11,7 +10,6 @@ import android.graphics.drawable.Drawable
 import org.json.JSONArray
 import org.json.JSONObject
 import splitties.init.appCtx
-
 import java.io.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -34,13 +32,13 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
 
         @JvmOverloads
         fun get(
-            ctx: Context,
             cacheName: String = "ACache",
             maxSize: Long = MAX_SIZE.toLong(),
             maxCount: Int = MAX_COUNT,
             cacheDir: Boolean = true
         ): ACache {
-            val f = if (cacheDir) File(ctx.cacheDir, cacheName) else File(ctx.filesDir, cacheName)
+            val f =
+                if (cacheDir) File(appCtx.cacheDir, cacheName) else File(appCtx.filesDir, cacheName)
             return get(f, maxSize, maxCount)
         }
 

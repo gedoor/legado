@@ -3,25 +3,27 @@ package io.legado.app.help
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.jsonPath
-import io.legado.app.utils.readString
+import io.legado.app.utils.ACache
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
 import splitties.init.appCtx
 import java.io.File
 
+@Suppress("MemberVisibilityCanBePrivate")
 object DirectLinkUpload {
 
-    private const val uploadUrlKey = "directLinkUploadUrl"
-    private const val downloadUrlRuleKey = "directLinkDownloadUrlRule"
-    private const val summaryKey = "directSummary"
+    const val ruleFileName = "directLinkUploadRule.json"
 
     @Throws(NoStackTraceException::class)
     suspend fun upLoad(fileName: String, file: Any, contentType: String): String {
-        val url = getUploadUrl()
-        if (url.isNullOrBlank()) {
+        val rule = defaultRule ?: getConfigRule()
+        rule ?: throw NoStackTraceException("直链上传规则未配置")
+        val url = rule.uploadUrl
+        if (url.isBlank()) {
             throw NoStackTraceException("上传url未配置")
         }
-        val downloadUrlRule = getDownloadUrlRule()
-        if (downloadUrlRule.isNullOrBlank()) {
+        val downloadUrlRule = rule.downloadUrlRule
+        if (downloadUrlRule.isBlank()) {
             throw NoStackTraceException("下载地址规则未配置")
         }
         val analyzeUrl = AnalyzeUrl(url)
@@ -34,49 +36,36 @@ object DirectLinkUpload {
         return downloadUrl
     }
 
-    private val ruleDoc by lazy {
+    private val defaultRule: Rule? by lazy {
         val json = String(
             appCtx.assets.open("defaultData${File.separator}directLinkUpload.json")
                 .readBytes()
         )
-        jsonPath.parse(json)
+        GSON.fromJsonObject<Rule>(json).getOrNull()
     }
 
-    fun getUploadUrl(): String? {
-        return CacheManager.get(uploadUrlKey)
-            ?: ruleDoc.readString("$.UploadUrl")
+    fun getConfigRule(): Rule? {
+        val json = ACache.get(cacheDir = false).getAsString(ruleFileName)
+        return GSON.fromJsonObject<Rule>(json).getOrNull()
     }
 
-    fun putUploadUrl(url: String) {
-        CacheManager.put(uploadUrlKey, url)
+    fun putConfigRule(uploadUrl: String, downloadUrlRule: String, summary: String?) {
+        val rule = Rule(uploadUrl, downloadUrlRule, summary)
+        ACache.get(cacheDir = false).put(ruleFileName, GSON.toJson(rule))
     }
 
-    fun getDownloadUrlRule(): String? {
-        return CacheManager.get(downloadUrlRuleKey)
-            ?: ruleDoc.readString("$.DownloadUrlRule")
-    }
-
-    fun putDownloadUrlRule(rule: String) {
-        CacheManager.put(downloadUrlRuleKey, rule)
+    fun delConfigRule() {
+        ACache.get(cacheDir = false).remove(ruleFileName)
     }
 
     fun getSummary(): String? {
-        return CacheManager.get(summaryKey)
-            ?: ruleDoc.readString("summary")
+        return getConfigRule()?.summary
     }
 
-    fun putSummary(summary: String?) {
-        if (summary != null) {
-            CacheManager.put(summaryKey, summary)
-        } else {
-            CacheManager.delete(summaryKey)
-        }
-    }
-
-    fun delete() {
-        CacheManager.delete(uploadUrlKey)
-        CacheManager.delete(downloadUrlRuleKey)
-        CacheManager.delete(summaryKey)
-    }
+    data class Rule(
+        var uploadUrl: String,
+        var downloadUrlRule: String,
+        var summary: String?
+    )
 
 }

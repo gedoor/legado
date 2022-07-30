@@ -11,6 +11,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
+import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
@@ -118,6 +119,16 @@ object Restore {
 
     suspend fun restoreConfig(path: String = Backup.backupPath) {
         withContext(IO) {
+            try {
+                val file =
+                    FileUtils.createFileIfNotExist("$path${File.separator}${DirectLinkUpload.ruleFileName}")
+                if (file.exists()) {
+                    val json = file.readText()
+                    ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
+                }
+            } catch (e: Exception) {
+                AppLog.put("直链上传出错\n${e.localizedMessage}", e)
+            }
             try {
                 val file =
                     FileUtils.createFileIfNotExist("$path${File.separator}${ThemeConfig.configFileName}")
