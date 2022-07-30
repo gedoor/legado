@@ -45,8 +45,7 @@ object DirectLinkUpload {
     }
 
     fun getRule(): Rule? {
-        val json = ACache.get(cacheDir = false).getAsString(ruleFileName)
-        return GSON.fromJsonObject<Rule>(json).getOrNull() ?: defaultRule
+        return getConfig() ?: defaultRule
     }
 
     fun getConfig(): Rule? {
