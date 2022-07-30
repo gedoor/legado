@@ -103,7 +103,16 @@ class FileAssociationActivity :
             }
         }
         intent.data?.let { data ->
-            viewModel.dispatchIndent(data)
+            if (!data.isContentScheme()) {
+                PermissionsCompat.Builder(this)
+                    .addPermissions(*Permissions.Group.STORAGE)
+                    .rationale(R.string.tip_perm_request_storage)
+                    .onGranted {
+                        viewModel.dispatchIndent(data)
+                    }.request()
+            } else {
+                viewModel.dispatchIndent(data)
+            }
         }
     }
 
@@ -119,12 +128,7 @@ class FileAssociationActivity :
                 importBook(Uri.parse(treeUriStr), uri)
             }
         } else {
-            PermissionsCompat.Builder(this)
-                .addPermissions(*Permissions.Group.STORAGE)
-                .rationale(R.string.tip_perm_request_storage)
-                .onGranted {
-                    viewModel.importBook(uri)
-                }.request()
+            viewModel.importBook(uri)
         }
     }
 
