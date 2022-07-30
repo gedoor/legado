@@ -94,7 +94,7 @@ object Backup {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
                     .writeText(it)
             }
-            DirectLinkUpload.getConfigRule()?.let {
+            DirectLinkUpload.getConfig()?.let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + DirectLinkUpload.ruleFileName)
                     .writeText(GSON.toJson(it))
             }

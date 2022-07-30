@@ -16,7 +16,7 @@ object DirectLinkUpload {
 
     @Throws(NoStackTraceException::class)
     suspend fun upLoad(fileName: String, file: Any, contentType: String): String {
-        val rule = defaultRule ?: getConfigRule()
+        val rule = getRule()
         rule ?: throw NoStackTraceException("直链上传规则未配置")
         val url = rule.uploadUrl
         if (url.isBlank()) {
@@ -44,22 +44,27 @@ object DirectLinkUpload {
         GSON.fromJsonObject<Rule>(json).getOrNull()
     }
 
-    fun getConfigRule(): Rule? {
+    fun getRule(): Rule? {
+        val json = ACache.get(cacheDir = false).getAsString(ruleFileName)
+        return GSON.fromJsonObject<Rule>(json).getOrNull() ?: defaultRule
+    }
+
+    fun getConfig(): Rule? {
         val json = ACache.get(cacheDir = false).getAsString(ruleFileName)
         return GSON.fromJsonObject<Rule>(json).getOrNull()
     }
 
-    fun putConfigRule(uploadUrl: String, downloadUrlRule: String, summary: String?) {
+    fun putConfig(uploadUrl: String, downloadUrlRule: String, summary: String?) {
         val rule = Rule(uploadUrl, downloadUrlRule, summary)
         ACache.get(cacheDir = false).put(ruleFileName, GSON.toJson(rule))
     }
 
-    fun delConfigRule() {
+    fun delConfig() {
         ACache.get(cacheDir = false).remove(ruleFileName)
     }
 
     fun getSummary(): String? {
-        return getConfigRule()?.summary
+        return getRule()?.summary
     }
 
     data class Rule(

@@ -24,7 +24,7 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        DirectLinkUpload.getConfigRule()?.let {
+        DirectLinkUpload.getRule()?.let {
             binding.editUploadUrl.setText(it.uploadUrl)
             binding.editDownloadUrlRule.setText(it.downloadUrlRule)
             binding.editSummary.setText(it.summary)
@@ -33,7 +33,7 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
             dismiss()
         }
         binding.tvFooterLeft.onClick {
-            DirectLinkUpload.delConfigRule()
+            DirectLinkUpload.delConfig()
             dismiss()
         }
         binding.tvOk.onClick {
@@ -48,7 +48,7 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
                 toastOnUi("下载Url规则不能为空")
                 return@onClick
             }
-            DirectLinkUpload.putConfigRule(uploadUrl, downloadUrlRule, summary)
+            DirectLinkUpload.putConfig(uploadUrl, downloadUrlRule, summary)
             dismiss()
         }
     }
