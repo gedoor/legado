@@ -1,5 +1,7 @@
 package io.legado.app.help
 
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
@@ -15,8 +17,11 @@ import kotlinx.coroutines.Dispatchers.IO
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.regex.Pattern
+import java.util.zip.ZipFile
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -156,6 +161,26 @@ object BookHelp {
             suffix = "jpg"
         }
         return suffix
+    }
+
+    @Throws(IOException::class)
+    fun getEpubFile(book: Book): ZipFile {
+        val uri = Uri.parse(book.bookUrl)
+        if (uri.isContentScheme()) {
+            val path = FileUtils.getPath(downloadDir, cacheFolderName, book.originName)
+            val file = File(path)
+            val doc = DocumentFile.fromSingleUri(appCtx, uri)
+                ?: throw IOException("文件不存在")
+            if (!file.exists() || doc.lastModified() > book.latestChapterTime) {
+                LocalBook.getBookInputStream(book).use { inputStream ->
+                    FileOutputStream(file).use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+            }
+            return ZipFile(file)
+        }
+        return ZipFile(uri.path)
     }
 
     fun getChapterFiles(book: Book): List<String> {
