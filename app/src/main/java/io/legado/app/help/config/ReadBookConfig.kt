@@ -560,6 +560,9 @@ object ReadBookConfig {
         }
 
         fun curBgDrawable(width: Int, height: Int): Drawable {
+            if (width == 0 || height == 0) {
+                return ColorDrawable(appCtx.getCompatColor(R.color.background))
+            }
             var bgDrawable: Drawable? = null
             val resources = appCtx.resources
             try {
