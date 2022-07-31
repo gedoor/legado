@@ -100,7 +100,9 @@ class EpubFile(var book: Book) {
         }
     }
 
-    /*重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误*/
+    /**
+     * 重写epub文件解析代码，直接读出压缩包文件生成Resources给epublib，这样的好处是可以逐一修改某些文件的格式错误
+     */
     private fun readEpub(): EpubBook? {
         try {
             val uri = Uri.parse(book.bookUrl)
@@ -118,10 +120,10 @@ class EpubFile(var book: Book) {
     }
 
     private fun getContent(chapter: BookChapter): String? {
-         /**
-          * <image width="1038" height="670" xlink:href="..."/>
-          * ...titlepage.xhtml
-          */
+        /**
+         * <image width="1038" height="670" xlink:href="..."/>
+         * ...titlepage.xhtml
+         */
         if (chapter.url.contains("titlepage.xhtml")) {
             return "<img src=\"cover.jpeg\" />"
         }
@@ -138,10 +140,10 @@ class EpubFile(var book: Book) {
                 if (chapter.url.substringBeforeLast("#") == res.href) {
                     elements.add(getBody(res, startFragmentId, endFragmentId))
                     isChapter = true
-                   /**
-                    * fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
-                    * content src text/000001.html（当前章节）
--                   * content src text/000001.html#toc_id_x (下一章节）
+                    /**
+                     * fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
+                     * content src text/000001.html（当前章节）
+                    -                   * content src text/000001.html#toc_id_x (下一章节）
                      */
                     if (res.href == nextUrl?.substringBeforeLast("#")) break
                 } else if (isChapter) {
