@@ -110,10 +110,7 @@ class EpubFile(var book: Book) {
             } else {
                 //低版本的使用懒加载
                 EpubReader().readEpubLazy(ZipFile(uri.path), "utf-8")
-
             }
-
-
         } catch (e: Exception) {
             e.printOnDebug()
         }
