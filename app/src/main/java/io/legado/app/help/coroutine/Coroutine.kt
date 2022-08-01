@@ -151,9 +151,6 @@ class Coroutine<T>(
                 if (e is CancellationException && !isActive && e !is ActivelyCancelException) {
                     this@Coroutine.cancel()
                 }
-                if (e is CancellationException && e !is TimeoutCancellationException) {
-                    return@launch
-                }
                 val consume: Boolean = errorReturn?.value?.let { value ->
                     success?.let { dispatchCallback(this, value, it) }
                     true
