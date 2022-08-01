@@ -190,15 +190,6 @@ class CheckSourceService : BaseService() {
             }.onSuccess(searchCoroutine) {
                 source.removeGroup("校验超时")
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
-            }.onCancel(IO) {
-                source.addGroup("校验超时")
-                source.bookSourceComment =
-                    "Error: 校验超时" + if (source.bookSourceComment.isNullOrBlank())
-                        "" else "\n\n${source.bookSourceComment}"
-                Debug.updateFinalMessage(source.bookSourceUrl, "校验失败: 校验超时")
-                source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
-                appDb.bookSourceDao.update(source)
-                onNext(source.bookSourceUrl, source.bookSourceName)
             }.onFinally(IO) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
