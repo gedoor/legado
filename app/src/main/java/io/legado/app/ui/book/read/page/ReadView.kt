@@ -296,6 +296,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         kotlin.runCatching {
             curPage.longPress(startX, startY) { relativePos, lineIndex, charIndex ->
                 isTextSelected = true
+                pressOnTextSelected = true
                 initialTextPos.upData(relativePos, lineIndex, charIndex)
                 val startPos = TextPos(relativePos, lineIndex, charIndex)
                 val endPos = TextPos(relativePos, lineIndex, charIndex)
