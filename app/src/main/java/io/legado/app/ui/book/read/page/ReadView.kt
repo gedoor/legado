@@ -370,7 +370,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     private fun onSingleTapUp() {
         when {
-            isTextSelected -> isTextSelected = false
+            isTextSelected -> Unit
             mcRect.contains(startX, startY) -> if (!isAbortAnim) {
                 click(AppConfig.clickActionMC)
             }
