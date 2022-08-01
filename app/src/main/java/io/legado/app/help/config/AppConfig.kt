@@ -321,6 +321,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefString("searchGroup", value)
         }
 
+    var pageTouchSlop: Int
+        get() = appCtx.getPrefInt(PreferKey.pageTouchSlop, 0)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.pageTouchSlop, value)
+        }
+
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {

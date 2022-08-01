@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.core.view.postDelayed
 import androidx.fragment.app.activityViewModels
 import androidx.preference.ListPreference
@@ -42,6 +43,7 @@ class OtherConfigFragment : PreferenceFragment(),
             AppConfig.defaultBookTreeUri = treeUri.toString()
         }
     }
+    private val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
@@ -58,6 +60,7 @@ class OtherConfigFragment : PreferenceFragment(),
         }
         upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
         upPreferenceSummary(PreferKey.bitmapCacheSize, AppConfig.bitmapCacheSize.toString())
+        upPreferenceSummary(PreferKey.pageTouchSlop, slopSquare.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -117,6 +120,16 @@ class OtherConfigFragment : PreferenceFragment(),
                         ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
                     }
             }
+            PreferKey.pageTouchSlop -> {
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.page_touch_slop_dialog_title))
+                    .setMaxValue(9999)
+                    .setMinValue(0)
+                    .setValue(AppConfig.pageTouchSlop)
+                    .show {
+                        AppConfig.pageTouchSlop = it
+                    }
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -168,6 +181,7 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
             PreferKey.bitmapCacheSize -> preference.summary = getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.pageTouchSlop -> preference.summary = getString(R.string.page_touch_slop_summary, value)
             else -> if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.

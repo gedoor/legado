@@ -1005,4 +1005,7 @@
     <string name="last_read_time_sort">阅读时间排序</string>
     <string name="reading_time_tag">阅读时长:</string>
     <string name="last_read_time_tag">最后阅读时间:</string>
+    <string name="page_touch_slop_title">滑动翻页阈值</string>
+    <string name="page_touch_slop_dialog_title">滑动翻页阈值（0 = 系统默认值）</string>
+    <string name="page_touch_slop_summary">滑动多长距离才会触发滑动翻页（系统默认值 %s px）</string>
 </resources>
