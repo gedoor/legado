@@ -148,7 +148,7 @@ class Coroutine<T>(
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
                 e.printOnDebug()
-                if (e is CancellationException && !isActive && e !is ActivelyCancelException) {
+                if (e is CancellationException && e !is ActivelyCancelException && isCancelled) {
                     this@Coroutine.cancel()
                 }
                 val consume: Boolean = errorReturn?.value?.let { value ->
@@ -159,9 +159,7 @@ class Coroutine<T>(
                     error?.let { dispatchCallback(this, e, it) }
                 }
             } finally {
-                withContext(NonCancellable) {
-                    finally?.let { dispatchVoidCallback(this, it) }
-                }
+                finally?.let { dispatchVoidCallback(this, it) }
             }
         }
     }
