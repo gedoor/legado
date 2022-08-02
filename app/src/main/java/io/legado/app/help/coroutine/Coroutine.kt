@@ -159,7 +159,9 @@ class Coroutine<T>(
                     error?.let { dispatchCallback(this, e, it) }
                 }
             } finally {
-                finally?.let { dispatchVoidCallback(this, it) }
+                withContext(NonCancellable) {
+                    finally?.let { dispatchVoidCallback(this, it) }
+                }
             }
         }
     }
