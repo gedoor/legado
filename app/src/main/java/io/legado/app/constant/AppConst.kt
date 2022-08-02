@@ -50,15 +50,17 @@ object AppConst {
     const val notificationIdDownload = -1122395
     const val notificationIdCheckSource = -1122395
 
+    const val imagePathKey = "imagePath"
+
     val menuViewNames = arrayOf(
         "com.android.internal.view.menu.ListMenuItemView",
         "androidx.appcompat.view.menu.ListMenuItemView"
     )
 
     @SuppressLint("PrivateResource")
-    val sysElevation =
-        appCtx.resources.getDimension(com.google.android.material.R.dimen.design_appbar_elevation)
-            .toInt()
+    val sysElevation = appCtx.resources
+        .getDimension(com.google.android.material.R.dimen.design_appbar_elevation)
+        .toInt()
 
     val androidId: String by lazy {
         Settings.System.getString(appCtx.contentResolver, Settings.Secure.ANDROID_ID) ?: "null"

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,10 +15,7 @@ import androidx.core.view.size
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import io.legado.app.constant.BookType
-import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
-import io.legado.app.constant.Status
+import io.legado.app.constant.*
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -58,6 +56,7 @@ import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.dict.DictDialog
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
@@ -129,6 +128,12 @@ class ReadBookActivity : BaseReadBookActivity(),
                 }
             }
         }
+    private val selectImageDir = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            ACache.get().put(AppConst.imagePathKey, uri.toString())
+            viewModel.saveImage(it.value, uri)
+        }
+    }
     private var menu: Menu? = null
     private var autoPageJob: Job? = null
     private var backupJob: Job? = null
@@ -1001,13 +1006,26 @@ class ReadBookActivity : BaseReadBookActivity(),
         popupAction.setItems(
             listOf(
                 SelectItem(getString(R.string.show), "show"),
-                SelectItem(getString(R.string.refresh), "refresh")
+                SelectItem(getString(R.string.refresh), "refresh"),
+                SelectItem(getString(R.string.action_save), "save"),
+                SelectItem(getString(R.string.select_folder), "selectFolder")
             )
         )
         popupAction.onActionClick = {
             when (it) {
                 "show" -> showDialogFragment(PhotoDialog(src))
                 "refresh" -> viewModel.refreshImage(src)
+                "save" -> {
+                    val path = ACache.get().getAsString(AppConst.imagePathKey)
+                    if (path.isNullOrEmpty()) {
+                        selectImageDir.launch {
+                            value = src
+                        }
+                    } else {
+                        viewModel.saveImage(src, Uri.parse(path))
+                    }
+                }
+                "selectFolder" -> selectImageDir.launch()
             }
             popupAction.dismiss()
         }

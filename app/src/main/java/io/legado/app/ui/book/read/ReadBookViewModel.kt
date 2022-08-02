@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read
 
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
@@ -423,6 +424,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }.onFinally {
             ReadBook.loadContent(false)
         }
+    }
+
+    fun saveImage(src: String?, uri: Uri) {
+
     }
 
     /**
