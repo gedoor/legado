@@ -45,6 +45,7 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
                 cbSource.text = item.name
                 swtEnabled.isChecked = item.enable
                 cbSource.isChecked = selected.contains(item)
+                titleExample.text = item.example
             } else {
                 bundle.keySet().map {
                     when (it) {

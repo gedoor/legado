@@ -34,4 +34,17 @@
 
     </io.legado.app.ui.widget.text.TextInputLayout>
 
+    <io.legado.app.ui.widget.text.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/example">
+
+        <io.legado.app.lib.theme.view.ThemeEditText
+            android:id="@+id/tv_rule_example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+    </io.legado.app.ui.widget.text.TextInputLayout>
+
 </LinearLayout>

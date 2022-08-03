@@ -11,6 +11,7 @@ data class TxtTocRule(
     var id: Long = System.currentTimeMillis(),
     var name: String = "",
     var rule: String = "",
+    var example: String? = null,
     var serialNumber: Int = -1,
     var enable: Boolean = true
 ) {
@@ -25,6 +26,7 @@ data class TxtTocRule(
             return id == other.id
                     && name == other.name
                     && rule == other.rule
+                    && example == other.example
                     && serialNumber == other.serialNumber
                     && enable == other.enable
         }

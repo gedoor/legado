@@ -97,12 +97,14 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
             alertBinding.apply {
                 tvRuleName.setText(source.name)
                 tvRuleRegex.setText(source.rule)
+                tvRuleExample.setText(source.example)
             }
             customView { alertBinding.root }
             okButton {
                 alertBinding.apply {
                     source.name = tvRuleName.text.toString()
                     source.rule = tvRuleRegex.text.toString()
+                    source.example = tvRuleExample.text.toString()
                     viewModel.save(source)
                 }
             }
@@ -157,7 +159,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
         val aCache = ACache.get(cacheDir = false)
-        val defaultUrl = "https://gitee.com/fisher52/YueDuJson/raw/master/myTxtChapterRule.json"
+        val defaultUrl = "https://raw.githubusercontent.com/52fisher/YueDuJson/master/myTxtChapterRule.json"
         val cacheUrls: MutableList<String> = aCache
             .getAsString(importTocRuleKey)
             ?.splitNotBlank(",")
