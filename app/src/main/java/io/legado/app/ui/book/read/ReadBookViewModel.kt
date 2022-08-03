@@ -450,6 +450,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
         }.onError {
+            AppLog.put("保存图片出错\n${it.localizedMessage}", it)
             context.toastOnUi("保存图片出错\n${it.localizedMessage}")
         }
     }
