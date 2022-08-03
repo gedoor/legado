@@ -31,7 +31,7 @@ object DocumentUtils {
         vararg subDirs: String
     ): DocumentFile? {
         val parent: DocumentFile? = createFolderIfNotExist(root, *subDirs)
-        return parent?.createFile(mimeType, fileName)
+        return parent?.findFile(fileName) ?: parent?.createFile(mimeType, fileName)
     }
 
     fun createFolderIfNotExist(root: DocumentFile, vararg subDirs: String): DocumentFile? {
