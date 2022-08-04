@@ -32,15 +32,16 @@ class HandleFileContract :
                 intent.putExtra("fileKey", IntentData.put(fileData.second))
                 intent.putExtra("contentType", fileData.third)
             }
+            intent.putExtra("value", it.value)
         }
         return intent
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): Result {
         if (resultCode == RESULT_OK) {
-            return Result(intent?.data, requestCode)
+            return Result(intent?.data, requestCode, intent?.getStringExtra("value"))
         }
-        return Result(null, requestCode)
+        return Result(null, requestCode, intent?.getStringExtra("value"))
     }
 
     companion object {
@@ -57,12 +58,14 @@ class HandleFileContract :
         var allowExtensions: Array<String> = arrayOf(),
         var otherActions: ArrayList<SelectItem<Int>>? = null,
         var fileData: Triple<String, Any, String>? = null,
-        var requestCode: Int = 0
+        var requestCode: Int = 0,
+        var value: String? = null
     )
 
     data class Result(
         val uri: Uri?,
-        val requestCode: Int
+        val requestCode: Int,
+        val value: String?
     )
 
 }

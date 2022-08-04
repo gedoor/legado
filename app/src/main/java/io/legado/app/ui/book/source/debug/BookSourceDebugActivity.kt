@@ -109,6 +109,35 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
                 searchView.setQuery(binding.textFx.text, true)
             }
         }
+        binding.textInfo.onClick {
+            if (!searchView.query.isNullOrBlank()) {
+                searchView.setQuery(searchView.query, true)
+            }
+        }
+        binding.textToc.onClick {
+            val query = searchView.query
+            if (query.isNullOrBlank() || query.length <= 2) {
+                searchView.setQuery("++", false)
+            } else {
+                if (!query.startsWith("++")) {
+                    searchView.setQuery("++$query", true)
+                } else {
+                    searchView.setQuery(query, true)
+                }
+            }
+        }
+        binding.textContent.onClick {
+            val query = searchView.query
+            if (query.isNullOrBlank() || query.length <= 2) {
+                searchView.setQuery("--", false)
+            } else {
+                if (!query.startsWith("--")) {
+                    searchView.setQuery("--$query", true)
+                } else {
+                    searchView.setQuery(query, true)
+                }
+            }
+        }
     }
 
     /**

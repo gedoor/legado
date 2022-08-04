@@ -132,6 +132,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/text_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
@@ -156,6 +157,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/text_toc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
@@ -180,6 +182,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/text_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"

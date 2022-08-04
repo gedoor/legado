@@ -223,6 +223,7 @@ class HandleFileActivity :
                 }
             }
         } else {
+            data.putExtra("value", intent.getStringExtra("value"))
             setResult(RESULT_OK, data)
             finish()
         }
