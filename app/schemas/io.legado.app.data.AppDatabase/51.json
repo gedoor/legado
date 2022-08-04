@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 51,
-    "identityHash": "0221c385ed7393f47afe9579d3106541",
+    "identityHash": "028c189be828501449b61b32ab47a36f",
     "entities": [
       {
         "tableName": "books",
@@ -1357,7 +1357,7 @@
       },
       {
         "tableName": "txtTocRules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `rule` TEXT NOT NULL, `example` TEXT, `serialNumber` INTEGER NOT NULL, `enable` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `rule` TEXT NOT NULL, `serialNumber` INTEGER NOT NULL, `enable` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -1376,12 +1376,6 @@
             "columnName": "rule",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "example",
-            "columnName": "example",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "serialNumber",
@@ -1674,7 +1668,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0221c385ed7393f47afe9579d3106541')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '028c189be828501449b61b32ab47a36f')"
     ]
   }
 }

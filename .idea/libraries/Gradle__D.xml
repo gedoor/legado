@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: D">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/lib/rhino-1.7.13-1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

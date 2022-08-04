@@ -1085,7 +1085,7 @@
       },
       {
         "tableName": "txtTocRules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `rule` TEXT NOT NULL,`example` TEXT DEFAULT NULL, `serialNumber` INTEGER NOT NULL, `enable` INTEGER NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `rule` TEXT NOT NULL, `serialNumber` INTEGER NOT NULL, `enable` INTEGER NOT NULL, PRIMARY KEY(`name`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -1098,12 +1098,6 @@
             "columnName": "rule",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "example",
-            "columnName": "example",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "serialNumber",
