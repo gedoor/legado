@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Gradle: io.noties.markwon:html:4.6.2@aar">
+    <CLASSES>
+      <root url="file://E:/.gradle/caches/transforms-3/f30c361c4b67a4bb3e9cf70888c0b13a/transformed/jetified-html-4.6.2/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/3bbda6fd873ea67dbbf43e1d7ec366b8/transformed/jetified-html-4.6.2/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/0e67afe4e896d4cd6ca479f9a439b561/transformed/jetified-html-4.6.2/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/63ec2c58ed008676ef4e345e9707a4c7/transformed/jetified-html-4.6.2/res" />
+      <root url="jar://E:/.gradle/caches/transforms-3/63ec2c58ed008676ef4e345e9707a4c7/transformed/jetified-html-4.6.2/jars/classes.jar!/" />
+      <root url="file://E:/.gradle/caches/transforms-3/63ec2c58ed008676ef4e345e9707a4c7/transformed/jetified-html-4.6.2/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/io.noties.markwon/html/4.6.2/46f8a5e66028fc710f27bce563021bcfdac0acc8/html-4.6.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/io.noties.markwon/html/4.6.2/2a45b90984c236ed2903d3a81d5f84ecc08243c5/html-4.6.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

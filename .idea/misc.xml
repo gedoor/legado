@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/web/legado/app/src/main/res/layout/activity_main.xml" value="0.152" />
+        <entry key="..\:/web/legado/app/src/main/res/layout/activity_txt_toc_rule.xml" value="0.264" />
+        <entry key="..\:/web/legado/app/src/main/res/layout/activity_web_view.xml" value="0.12132725430597771" />
+        <entry key="..\:/web/legado/app/src/main/res/layout/dialog_toc_regex_edit.xml" value="0.2" />
+        <entry key="..\:/web/legado/app/src/main/res/layout/fragment_my_config.xml" value="0.12132725430597771" />
+        <entry key="..\:/web/legado/app/src/main/res/layout/item_txt_toc_rule.xml" value="0.264" />
+        <entry key="..\:/web/legado/app/src/main/res/menu/txt_toc_rule_item.xml" value="0.2" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

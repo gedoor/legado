@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Gradle: io.noties.markwon:ext-tables:4.6.2@aar">
+    <ANNOTATIONS>
+      <root url="jar://E:/.gradle/caches/transforms-3/5440e3d532613aa4303401b265ac5ef4/transformed/jetified-ext-tables-4.6.2/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://E:/.gradle/caches/transforms-3/5440e3d532613aa4303401b265ac5ef4/transformed/jetified-ext-tables-4.6.2/res" />
+      <root url="jar://E:/.gradle/caches/transforms-3/5440e3d532613aa4303401b265ac5ef4/transformed/jetified-ext-tables-4.6.2/jars/classes.jar!/" />
+      <root url="file://E:/.gradle/caches/transforms-3/5440e3d532613aa4303401b265ac5ef4/transformed/jetified-ext-tables-4.6.2/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/io.noties.markwon/ext-tables/4.6.2/829970bae739b40c6f8c6ef16ac23c6e2d4565d9/ext-tables-4.6.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/io.noties.markwon/ext-tables/4.6.2/96e2b79f8c36c1c9ad91e611708e89319956d790/ext-tables-4.6.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

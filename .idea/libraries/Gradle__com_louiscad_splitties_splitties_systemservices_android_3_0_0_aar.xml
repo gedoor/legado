@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Gradle: com.louiscad.splitties:splitties-systemservices-android:3.0.0@aar">
+    <CLASSES>
+      <root url="file://E:/.gradle/caches/transforms-3/16031731ba3db7eb7affe91ac2e6ce1a/transformed/jetified-splitties-systemservices-debug/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/76c76dfd1d8ea44a394ab7849aa064a4/transformed/jetified-splitties-systemservices-debug/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/630b7bfe42b9e0e682f0dedcfb866f05/transformed/jetified-splitties-systemservices-debug/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/362a30d06447714f98173d60cc6ab772/transformed/jetified-splitties-systemservices-debug/AndroidManifest.xml" />
+      <root url="jar://E:/.gradle/caches/transforms-3/362a30d06447714f98173d60cc6ab772/transformed/jetified-splitties-systemservices-debug/jars/classes.jar!/" />
+      <root url="file://E:/.gradle/caches/transforms-3/362a30d06447714f98173d60cc6ab772/transformed/jetified-splitties-systemservices-debug/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/com.louiscad.splitties/splitties-systemservices-android/3.0.0/4d95d1303dd6bec051ab239f39d8189e966634a8/splitties-systemservices-android-3.0.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/com.louiscad.splitties/splitties-systemservices-android/3.0.0/e10ddad19f566bbe81e48efe4e3b2b27b5d5e85f/splitties-systemservices-android-3.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

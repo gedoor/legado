@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legado.iml" filepath="$PROJECT_DIR$/.idea/modules/legado.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/legado.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/legado.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/legado.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/legado.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/legado.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/legado.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/legado.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/legado.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.iml" filepath="$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.main.iml" filepath="$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/epublib/legado.epublib.unitTest.iml" />
+    </modules>
+  </component>
+</project>

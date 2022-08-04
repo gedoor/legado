@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: cn.wanghaomiao:JsoupXpath:2.5.1">
+    <CLASSES>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/cn.wanghaomiao/JsoupXpath/2.5.1/9d2a276ee5756903a792816489907e92fa6a0e2e/JsoupXpath-2.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/cn.wanghaomiao/JsoupXpath/2.5.1/460c0991e72694bda4fd46388fdfa663d54ca8e9/JsoupXpath-2.5.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/cn.wanghaomiao/JsoupXpath/2.5.1/34edbff8ef2adf1e6208aae9636d5c8031c5c4ae/JsoupXpath-2.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

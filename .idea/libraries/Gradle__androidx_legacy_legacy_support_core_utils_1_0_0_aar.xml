@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.legacy:legacy-support-core-utils:1.0.0@aar">
+    <CLASSES>
+      <root url="file://E:/.gradle/caches/transforms-3/8c0c16de6f765301f5ac9c884d1cbbdb/transformed/legacy-support-core-utils-1.0.0/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/27c072a9abfba90c15a0e92c6a082b8f/transformed/legacy-support-core-utils-1.0.0/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/61573ebe5afe2d2f56ce174553bbdd7b/transformed/legacy-support-core-utils-1.0.0/res" />
+      <root url="file://E:/.gradle/caches/transforms-3/46484e8b581d277d53bbbd3256657f9c/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml" />
+      <root url="file://E:/.gradle/caches/transforms-3/46484e8b581d277d53bbbd3256657f9c/transformed/legacy-support-core-utils-1.0.0/res" />
+      <root url="jar://E:/.gradle/caches/transforms-3/46484e8b581d277d53bbbd3256657f9c/transformed/legacy-support-core-utils-1.0.0/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/androidx.legacy/legacy-support-core-utils/1.0.0/46c37f178088153618cfb0afef08ec96c48f93cb/legacy-support-core-utils-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

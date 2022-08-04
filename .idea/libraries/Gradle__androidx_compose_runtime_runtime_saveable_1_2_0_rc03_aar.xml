@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.compose.runtime:runtime-saveable:1.2.0-rc03@aar">
+    <CLASSES>
+      <root url="file://E:/.gradle/caches/transforms-3/2d295dc3022cf0af470ba3349e77147e/transformed/jetified-runtime-saveable-1.2.0-rc03/AndroidManifest.xml" />
+      <root url="file://E:/.gradle/caches/transforms-3/2d295dc3022cf0af470ba3349e77147e/transformed/jetified-runtime-saveable-1.2.0-rc03/res" />
+      <root url="jar://E:/.gradle/caches/transforms-3/2d295dc3022cf0af470ba3349e77147e/transformed/jetified-runtime-saveable-1.2.0-rc03/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://E:/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-saveable/1.2.0-rc03/dfdc3070b43a1cb2939cc13498dd40988a8d3d93/runtime-saveable-1.2.0-rc03-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
