@@ -43,7 +43,7 @@ object LocalConfig :
         get() = !isLastVersion(5, "httpTtsVersion")
 
     val needUpTxtTocRule: Boolean
-        get() = !isLastVersion(1, "txtTocRuleVersion")
+        get() = !isLastVersion(2, "txtTocRuleVersion")
 
     val needUpRssSources: Boolean
         get() = !isLastVersion(4, "rssSourceVersion")
