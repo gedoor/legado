@@ -660,6 +660,7 @@
     <string name="import_default_rule">Import default rules</string>
     <string name="name">Name</string>
     <string name="regex">Regex</string>
+    <string name="example">Example</string>
     <string name="more_menu">More menu</string>
     <string name="reduce">Minus</string>
     <string name="plus">Plus</string>

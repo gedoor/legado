@@ -973,7 +973,7 @@
     <string name="sys_tts_config">系统tts设置</string>
     <string name="sys_tts_config_summary">打开系统tts设置界面</string>
     <string name="cannot_timed_non_playback">非播放状态无法定时</string>
-    <string name="all_bookmark">所有书签</string>
+    <string name="all_bookmark">すべてのブックマーク</string>
     <string name="change_source_batch">批量换源</string>
     <string name="book_type_different">书籍类型不一样</string>
     <string name="soure_change_source">是否确认换源</string>
@@ -1009,4 +1009,5 @@
     <string name="page_touch_slop_title">滑动翻页阈值</string>
     <string name="page_touch_slop_dialog_title">滑动翻页阈值（0 = 系统默认值）</string>
     <string name="page_touch_slop_summary">滑动多长距离才会触发滑动翻页（系统默认值 %s px）</string>
+    <string name="example">例</string>
 </resources>

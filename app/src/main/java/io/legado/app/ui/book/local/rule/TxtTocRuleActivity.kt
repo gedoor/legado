@@ -97,12 +97,14 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
             alertBinding.apply {
                 tvRuleName.setText(source.name)
                 tvRuleRegex.setText(source.rule)
+                tvRuleExample.setText(source.example)
             }
             customView { alertBinding.root }
             okButton {
                 alertBinding.apply {
                     source.name = tvRuleName.text.toString()
                     source.rule = tvRuleRegex.text.toString()
+                    source.example = tvRuleExample.text.toString()
                     viewModel.save(source)
                 }
             }
