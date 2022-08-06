@@ -12,6 +12,7 @@ import kotlin.coroutines.CoroutineContext
 class Coroutine<T>(
     val scope: CoroutineScope,
     context: CoroutineContext = Dispatchers.IO,
+    val startOption: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> T
 ) {
 
@@ -22,9 +23,10 @@ class Coroutine<T>(
         fun <T> async(
             scope: CoroutineScope = DEFAULT,
             context: CoroutineContext = Dispatchers.IO,
+            start: CoroutineStart = CoroutineStart.DEFAULT,
             block: suspend CoroutineScope.() -> T
         ): Coroutine<T> {
-            return Coroutine(scope, context, block)
+            return Coroutine(scope, context, start, block)
         }
 
     }
@@ -135,11 +137,15 @@ class Coroutine<T>(
         return job.invokeOnCompletion(handler)
     }
 
+    fun start() {
+        job.start()
+    }
+
     private fun executeInternal(
         context: CoroutineContext,
         block: suspend CoroutineScope.() -> T
     ): Job {
-        return (scope + Dispatchers.Main).launch {
+        return (scope + Dispatchers.Main).launch(start = startOption) {
             try {
                 start?.let { dispatchVoidCallback(this, it) }
                 ensureActive()
