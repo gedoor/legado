@@ -531,7 +531,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     /**
      * 保持亮屏
      */
-    fun keepScreenOn(on: Boolean) {
+    private fun keepScreenOn(on: Boolean) {
         val isScreenOn = (window.attributes.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
         if (on == isScreenOn) return
         if (on) {
