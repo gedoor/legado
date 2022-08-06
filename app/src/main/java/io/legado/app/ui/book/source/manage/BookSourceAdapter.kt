@@ -24,6 +24,7 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
+import java.util.*
 
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
@@ -31,6 +32,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<BookSource>()
+    private val selectedPosition = linkedSetOf<Int>()
 
     val selection: List<BookSource>
         get() {
@@ -141,8 +143,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     if (view.isPressed) {
                         if (checked) {
                             selected.add(it)
+                            selectedPosition.add(holder.layoutPosition)
                         } else {
                             selected.remove(it)
+                            selectedPosition.remove(holder.layoutPosition)
                         }
                         callBack.upCountView()
                     }
@@ -215,22 +219,39 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
     }
 
     fun selectAll() {
-        getItems().forEach {
+        getItems().forEachIndexed { index, it ->
             selected.add(it)
+            selectedPosition.add(index)
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
     }
 
     fun revertSelection() {
-        getItems().forEach {
+        getItems().forEachIndexed { index, it ->
             if (selected.contains(it)) {
                 selected.remove(it)
+                selectedPosition.remove(index)
             } else {
                 selected.add(it)
+                selectedPosition.add(index)
             }
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun checkSelectedInterval() {
+        val minPosition = Collections.min(selectedPosition)
+        val maxPosition = Collections.max(selectedPosition)
+        val itemCount = maxPosition - minPosition + 1
+        for (i in minPosition..maxPosition) {
+            getItem(i)?.let {
+                selected.add(it)
+                selectedPosition.add(i)
+            }
+        }
+        notifyItemRangeChanged(minPosition, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
     }
 
@@ -275,8 +296,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 getItem(position)?.let {
                     if (isSelected) {
                         selected.add(it)
+                        selectedPosition.add(position)
                     } else {
                         selected.remove(it)
+                        selectedPosition.remove(position)
                     }
                     notifyItemChanged(position, bundleOf(Pair("selected", null)))
                     callBack.upCountView()
