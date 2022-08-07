@@ -69,6 +69,7 @@ class CheckSourceService : BaseService() {
             IntentAction.start -> intent.getStringArrayListExtra("selectIds")?.let {
                 check(it)
             }
+            IntentAction.resume -> upNotification()
             else -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
