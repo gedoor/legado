@@ -69,8 +69,7 @@ public class EpubReader {
      */
     public EpubBook readEpubLazy(@NonNull ZipFile zipFile, @NonNull String encoding)
             throws IOException {
-        return readEpubLazy(zipFile, encoding,
-                Arrays.asList(MediaTypes.mediaTypes));
+        return readEpubLazy(zipFile, encoding, Arrays.asList(MediaTypes.mediaTypes));
     }
 
     public EpubBook readEpub(@NonNull ZipInputStream in, @NonNull String encoding) throws IOException {
@@ -107,8 +106,7 @@ public class EpubReader {
         }
         handleMimeType(result, resources);
         String packageResourceHref = getPackageResourceHref(resources);
-        Resource packageResource = processPackageResource(packageResourceHref,
-                result, resources);
+        Resource packageResource = processPackageResource(packageResourceHref, result, resources);
         result.setOpfResource(packageResource);
         Resource ncxResource = processNcxResource(packageResource, result);
         result.setNcxResource(ncxResource);

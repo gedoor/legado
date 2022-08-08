@@ -46,9 +46,11 @@ public class ResourcesLoader {
      * @return Resources
      * @throws IOException IOException
      */
-    public static Resources loadResources(ZipFile zipFile,
-                                          String defaultHtmlEncoding,
-                                          List<MediaType> lazyLoadedTypes) throws IOException {
+    public static Resources loadResources(
+            ZipFile zipFile,
+            String defaultHtmlEncoding,
+            List<MediaType> lazyLoadedTypes
+    ) throws IOException {
 
         LazyResourceProvider resourceProvider =
                 new EpubResourceProvider(zipFile.getName());
