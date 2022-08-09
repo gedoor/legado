@@ -24,10 +24,8 @@ import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
 import org.mozilla.javascript.WrappedException
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -71,6 +69,7 @@ class CheckSourceService : BaseService() {
             IntentAction.start -> intent.getStringArrayListExtra("selectIds")?.let {
                 check(it)
             }
+            IntentAction.resume -> upNotification()
             else -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -122,7 +121,7 @@ class CheckSourceService : BaseService() {
      *校验书源
      */
     private fun check(source: BookSource) {
-        execute(context = searchCoroutine) {
+        execute(context = searchCoroutine, start = CoroutineStart.LAZY) {
             Debug.startChecking(source)
             var searchWord = CheckSource.keyword
             source.ruleSearch?.checkKeyWord?.let {
@@ -162,7 +161,7 @@ class CheckSourceService : BaseService() {
                     }
                 }
                 if (url.isNullOrBlank()) {
-                   source.addGroup("发现规则为空")
+                    source.addGroup("发现规则为空")
                 } else {
                     source.removeGroup("发现规则为空")
                     val exploreBooks = WebBook.exploreBookAwait(this, source, url)
@@ -194,7 +193,7 @@ class CheckSourceService : BaseService() {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
                 appDb.bookSourceDao.update(source)
                 onNext(source.bookSourceUrl, source.bookSourceName)
-            }
+            }.start()
     }
 
     /**

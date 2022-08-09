@@ -24,6 +24,7 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
+import java.util.*
 
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
@@ -231,6 +232,25 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             }
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun checkSelectedInterval() {
+        val selectedPosition = linkedSetOf<Int>()
+        getItems().forEachIndexed { index, it ->
+            if (selected.contains(it)) {
+                selectedPosition.add(index)
+            }
+        }
+        val minPosition = Collections.min(selectedPosition)
+        val maxPosition = Collections.max(selectedPosition)
+        val itemCount = maxPosition - minPosition + 1
+        for (i in minPosition..maxPosition) {
+            getItem(i)?.let {
+                selected.add(it)
+            }
+        }
+        notifyItemRangeChanged(minPosition, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
     }
 

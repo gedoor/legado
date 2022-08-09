@@ -38,6 +38,12 @@ object CheckSource {
         }
     }
 
+    fun resume(context: Context) {
+        context.startService<CheckSourceService> {
+            action = IntentAction.resume
+        }
+    }
+
     fun putConfig() {
         CacheManager.put("checkSourceTimeout", timeout)
         CacheManager.put("checkSearch", checkSearch)

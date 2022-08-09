@@ -10,13 +10,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
 
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/cb_source"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="1"
             android:singleLine="true"
             android:textColor="@color/primaryText"

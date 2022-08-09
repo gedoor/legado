@@ -1,5 +1,6 @@
 package io.legado.app.receiver
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -34,6 +35,7 @@ class NetworkChangedListener(private val context: Context) {
         return@lazy null
     }
 
+    @SuppressLint("MissingPermission")
     fun register() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             networkCallback?.let {

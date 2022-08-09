@@ -1,10 +1,10 @@
 package io.legado.app.ui.book.source.manage
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.hardware.display.DisplayManager
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.SubMenu
+import android.view.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
@@ -28,6 +28,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
+import io.legado.app.service.CheckSourceService
 import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.book.local.rule.TxtTocRuleActivity
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -69,6 +70,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var sort = Sort.Default
     private var sortAscending = true
     private var snackBar: Snackbar? = null
+    private val displayManager by lazy {
+        getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    }
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         showDialogFragment(ImportBookSourceDialog(it))
@@ -108,6 +112,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         upBookSource()
         initLiveDataGroup()
         initSelectActionBar()
+        resumeCheckSource()
         if (!LocalConfig.bookSourcesHelpVersionIsLast) {
             showHelp()
         }
@@ -363,6 +368,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
                 share(it)
             }
+            R.id.menu_check_selected_interval -> adapter.checkSelectedInterval()
         }
         return true
     }
@@ -376,6 +382,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
             customView { alertBinding.root }
             okButton {
+                keepScreenOn(true)
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
                         CheckSource.keyword = it
@@ -394,6 +401,15 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setOnClickListener {
             showDialogFragment<CheckSourceConfig>()
         }
+    }
+
+    private fun resumeCheckSource() {
+        if (!Debug.isChecking) {
+            return
+        }
+        keepScreenOn(true)
+        CheckSource.resume(this)
+        checkMessageRefreshJob(0, 0).start()
     }
 
     @SuppressLint("InflateParams")
@@ -493,6 +509,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
+            keepScreenOn(false)
             snackBar?.dismiss()
             snackBar = null
             groups.map { group ->
@@ -512,15 +529,46 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     delay(300L)
                 }
             }.collect {
-                adapter.notifyItemRangeChanged(
-                    firstItem,
-                    lastItem + 1,
-                    bundleOf(Pair("checkSourceMessage", null))
-                )
+                if (isScreenOn()) {
+                    if (lastItem == 0) {
+                        adapter.notifyItemRangeChanged(
+                            0,
+                            adapter.itemCount,
+                            bundleOf(Pair("checkSourceMessage", null))
+                        )
+                    } else {
+                        adapter.notifyItemRangeChanged(
+                            firstItem,
+                            lastItem + 1,
+                            bundleOf(Pair("checkSourceMessage", null))
+                        )
+                    }
+                }
                 if (!it) {
                     this.cancel()
                 }
             }
+        }
+    }
+
+    /**
+     * 保持亮屏
+     */
+    private fun keepScreenOn(on: Boolean) {
+        val isScreenOn =
+            (window.attributes.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
+        if (on == isScreenOn) return
+        if (on) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
+    private fun isScreenOn(): Boolean {
+        return displayManager.displays.any {
+            it ?: return@any false
+            it.state != Display.STATE_OFF
         }
     }
 

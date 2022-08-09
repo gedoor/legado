@@ -58,4 +58,9 @@
         android:title="@string/check_select_source"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_check_selected_interval"
+        android:title="@string/check_selected_interval"
+        app:showAsAction="never" />
+
 </menu>
