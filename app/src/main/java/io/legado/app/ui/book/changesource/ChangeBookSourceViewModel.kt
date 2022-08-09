@@ -275,8 +275,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         book: Book,
         onError: (msg: String) -> Unit,
         onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
-    ) {
-        execute {
+    ): Coroutine<Pair<List<BookChapter>, BookSource>> {
+        return execute {
             val toc = tocMap[book.bookUrl]
             if (toc != null) {
                 val source = appDb.bookSourceDao.getBookSource(book.origin)

@@ -298,13 +298,16 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         waitDialog.setText(R.string.load_toc)
         waitDialog.show()
         val book = searchBook.toBook()
-        viewModel.getToc(book, {
+        val coroutine = viewModel.getToc(book, {
             waitDialog.dismiss()
             toastOnUi(it)
         }) { toc, source ->
             waitDialog.dismiss()
             callBack?.changeTo(source, book, toc)
             onSuccess?.invoke()
+        }
+        waitDialog.setOnCancelListener {
+            coroutine.cancel()
         }
     }
 
