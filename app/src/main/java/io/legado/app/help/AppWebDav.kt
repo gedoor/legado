@@ -18,14 +18,14 @@ import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.lib.webdav.WebDavFile
 import io.legado.app.utils.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.coroutineContext
 
 /**
  * webDav初始化会访问网络,不要放到主线程
@@ -102,6 +102,7 @@ object AppWebDav {
     suspend fun showRestoreDialog(context: Context) {
         val names = withContext(IO) { getBackupNames() }
         if (names.isNotEmpty()) {
+            coroutineContext.ensureActive()
             withContext(Main) {
                 context.selector(
                     title = context.getString(R.string.select_restore_file),
