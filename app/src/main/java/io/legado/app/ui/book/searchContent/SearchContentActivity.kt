@@ -160,7 +160,7 @@ class SearchContentActivity :
                         binding.fbStop.visible()
                         val searchResults = withContext(IO) {
                             if (isLocalBook || viewModel.cacheChapterNames.contains(bookChapter.getFileName())) {
-                                viewModel.searchChapter(this, query, bookChapter)
+                                viewModel.searchChapter(query, bookChapter)
                             } else {
                                 null
                             }

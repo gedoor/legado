@@ -700,7 +700,7 @@ class AnalyzeRule(
                             book.putVariable(entry.key, entry.value)
                         }
                     }
-                WebBook.getBookInfoAwait(this, bookSource, book, false)
+                WebBook.getBookInfoAwait(bookSource, book, false)
             }
         }
     }
@@ -714,7 +714,7 @@ class AnalyzeRule(
         if (bookSource == null || book == null) return
         runBlocking {
             withTimeout(1800000) {
-                WebBook.getBookInfoAwait(this, bookSource, book)
+                WebBook.getBookInfoAwait(bookSource, book)
             }
         }
     }
@@ -728,7 +728,7 @@ class AnalyzeRule(
         if (bookSource == null || book == null) return
         runBlocking {
             withTimeout(1800000) {
-                WebBook.getBookInfoAwait(this, bookSource, book)
+                WebBook.getBookInfoAwait(bookSource, book)
             }
         }
     }

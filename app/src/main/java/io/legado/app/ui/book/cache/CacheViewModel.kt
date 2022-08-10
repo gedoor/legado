@@ -23,7 +23,6 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
@@ -37,6 +36,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.coroutineContext
 
 
 class CacheViewModel(application: Application) : BaseViewModel(application) {
@@ -79,9 +79,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 val uri = Uri.parse(path)
                 val doc = DocumentFile.fromTreeUri(context, uri)
                     ?: throw NoStackTraceException("获取导出文档失败")
-                export(this, doc, book)
+                export(doc, book)
             } else {
-                export(this, FileUtils.createFolderIfNotExist(path), book)
+                export(FileUtils.createFolderIfNotExist(path), book)
             }
         }.onError {
             exportProgress.remove(book.bookUrl)
@@ -98,14 +98,14 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    private suspend fun export(scope: CoroutineScope, doc: DocumentFile, book: Book) {
+    private suspend fun export(doc: DocumentFile, book: Book) {
         val filename = "${getExportFileName(book)}.txt"
         DocumentUtils.delete(doc, filename)
         val bookDoc = DocumentUtils.createFileIfNotExist(doc, filename)
             ?: throw NoStackTraceException("创建文档失败，请尝试重新设置导出文件夹")
         val stringBuilder = StringBuilder()
         context.contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
-            getAllContents(scope, book) { text, srcList ->
+            getAllContents(book) { text, srcList ->
                 bookOs.write(text.toByteArray(Charset.forName(AppConfig.exportCharset)))
                 stringBuilder.append(text)
                 srcList?.forEach {
@@ -128,12 +128,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun export(scope: CoroutineScope, file: File, book: Book) {
+    private suspend fun export(file: File, book: Book) {
         val filename = "${getExportFileName(book)}.txt"
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         val stringBuilder = StringBuilder()
-        getAllContents(scope, book) { text, srcList ->
+        getAllContents(book) { text, srcList ->
             bookFile.appendText(text, Charset.forName(AppConfig.exportCharset))
             stringBuilder.append(text)
             srcList?.forEach {
@@ -157,7 +157,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private suspend fun getAllContents(
-        scope: CoroutineScope,
         book: Book,
         append: (text: String, srcList: ArrayList<Triple<String, Int, String>>?) -> Unit
     ) {
@@ -173,7 +172,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }"
         append(qy, null)
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
-            scope.ensureActive()
+            coroutineContext.ensureActive()
             upAdapterLiveData.postValue(book.bookUrl)
             exportProgress[book.bookUrl] = index
             BookHelp.getContent(book, chapter).let { content ->
@@ -227,9 +226,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 val uri = Uri.parse(path)
                 val doc = DocumentFile.fromTreeUri(context, uri)
                     ?: throw NoStackTraceException("获取导出文档失败")
-                exportEpub(this, doc, book)
+                exportEpub(doc, book)
             } else {
-                exportEpub(this, FileUtils.createFolderIfNotExist(path), book)
+                exportEpub(FileUtils.createFolderIfNotExist(path), book)
             }
         }.onError {
             exportProgress.remove(book.bookUrl)
@@ -246,7 +245,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    private suspend fun exportEpub(scope: CoroutineScope, doc: DocumentFile, book: Book) {
+    private suspend fun exportEpub(doc: DocumentFile, book: Book) {
         val filename = "${getExportFileName(book)}.epub"
         DocumentUtils.delete(doc, filename)
         val epubBook = EpubBook()
@@ -259,7 +258,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val contentModel = setAssets(doc, book, epubBook)
 
         //设置正文
-        setEpubContent(scope, contentModel, book, epubBook)
+        setEpubContent(contentModel, book, epubBook)
         DocumentUtils.createFileIfNotExist(doc, filename)?.let { bookDoc ->
             context.contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
                 EpubWriter().write(epubBook, bookOs)
@@ -269,7 +268,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
 
-    private suspend fun exportEpub(scope: CoroutineScope, file: File, book: Book) {
+    private suspend fun exportEpub(file: File, book: Book) {
         val filename = "${getExportFileName(book)}.epub"
         val epubBook = EpubBook()
         epubBook.version = "2.0"
@@ -283,7 +282,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         //设置正文
-        setEpubContent(scope, contentModel, book, epubBook)
+        setEpubContent(contentModel, book, epubBook)
         @Suppress("BlockingMethodInNonBlockingContext")
         EpubWriter().write(epubBook, FileOutputStream(bookFile))
     }
@@ -438,7 +437,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private suspend fun setEpubContent(
-        scope: CoroutineScope,
         contentModel: String,
         book: Book,
         epubBook: EpubBook
@@ -447,7 +445,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val useReplace = AppConfig.exportUseReplace && book.getUseReplaceRule()
         val contentProcessor = ContentProcessor.get(book.name, book.origin)
         appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
-            scope.ensureActive()
+            coroutineContext.ensureActive()
             upAdapterLiveData.postValue(book.bookUrl)
             exportProgress[book.bookUrl] = index
             BookHelp.getContent(book, chapter).let { content ->

@@ -110,9 +110,9 @@ object BookController {
                     ?: return returnData.setErrorMsg("未找到对应书源,请换源")
                 val toc = runBlocking {
                     if (book.tocUrl.isBlank()) {
-                        WebBook.getBookInfoAwait(this, bookSource, book)
+                        WebBook.getBookInfoAwait(bookSource, book)
                     }
-                    WebBook.getChapterListAwait(this, bookSource, book).getOrThrow()
+                    WebBook.getChapterListAwait(bookSource, book).getOrThrow()
                 }
                 appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())

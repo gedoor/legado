@@ -21,7 +21,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -155,7 +154,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         }
         val source = bookSourceList[searchIndex]
         val task = Coroutine.async(scope = viewModelScope, context = searchPool!!) {
-            val resultBooks = WebBook.searchBookAwait(this, source, name)
+            val resultBooks = WebBook.searchBookAwait(source, name)
             resultBooks.forEach { searchBook ->
                 if (searchBook.name == name) {
                     if ((AppConfig.changeSourceCheckAuthor && searchBook.author.contains(author))
@@ -163,7 +162,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                     ) {
                         if (searchBook.latestChapterTitle.isNullOrEmpty()) {
                             if (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) {
-                                loadBookInfo(this, source, searchBook.toBook())
+                                loadBookInfo(source, searchBook.toBook())
                             } else {
                                 searchCallback?.searchSuccess(searchBook)
                             }
@@ -183,10 +182,10 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         tasks.add(task)
     }
 
-    private suspend fun loadBookInfo(scope: CoroutineScope, source: BookSource, book: Book) {
-        WebBook.getBookInfoAwait(scope, source, book)
+    private suspend fun loadBookInfo(source: BookSource, book: Book) {
+        WebBook.getBookInfoAwait(source, book)
         if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
-            loadBookToc(scope, source, book)
+            loadBookToc(source, book)
         } else {
             //从详情页里获取最新章节
             val searchBook = book.toSearchBook()
@@ -194,8 +193,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         }
     }
 
-    private suspend fun loadBookToc(scope: CoroutineScope, source: BookSource, book: Book) {
-        val chapters = WebBook.getChapterListAwait(scope, source, book).getOrThrow()
+    private suspend fun loadBookToc(source: BookSource, book: Book) {
+        val chapters = WebBook.getChapterListAwait(source, book).getOrThrow()
         tocMap[book.bookUrl] = chapters
         book.latestChapterTitle = chapters.last().title
         val searchBook: SearchBook = book.toSearchBook()
@@ -298,9 +297,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 val source = appDb.bookSourceDao.getBookSource(book.origin)
                     ?: throw NoStackTraceException("书源不存在")
                 if (book.tocUrl.isEmpty()) {
-                    WebBook.getBookInfoAwait(this, source, book)
+                    WebBook.getBookInfoAwait(source, book)
                 }
-                val toc = WebBook.getChapterListAwait(this, source, book).getOrThrow()
+                val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
                 Pair(toc, source)
             }
         }

@@ -14,12 +14,12 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import kotlin.coroutines.coroutineContext
 
 /**
  * 获取正文
@@ -28,7 +28,6 @@ object BookContent {
 
     @Throws(Exception::class)
     suspend fun analyzeContent(
-        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
@@ -55,7 +54,7 @@ object BookContent {
         val analyzeRule = AnalyzeRule(book, bookSource).setContent(body, baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.nextChapterUrl = mNextChapterUrl
-        scope.ensureActive()
+        coroutineContext.ensureActive()
         var contentData = analyzeContent(
             book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
         )
@@ -68,7 +67,7 @@ object BookContent {
                     == NetworkUtils.getAbsoluteURL(redirectUrl, mNextChapterUrl)
                 ) break
                 nextUrlList.add(nextUrl)
-                scope.ensureActive()
+                coroutineContext.ensureActive()
                 val res = AnalyzeUrl(
                     mUrl = nextUrl,
                     source = bookSource,
@@ -106,7 +105,7 @@ object BookContent {
                     }
                 }
                 asyncArray.forEach { coroutine ->
-                    scope.ensureActive()
+                    coroutineContext.ensureActive()
                     content.append("\n").append(coroutine.await())
                 }
             }
@@ -124,7 +123,7 @@ object BookContent {
             throw ContentEmptyException("内容为空")
         }
         if (needSave) {
-            BookHelp.saveContent(scope, bookSource, book, bookChapter, contentStr)
+            BookHelp.saveContent(bookSource, book, bookChapter, contentStr)
         }
         return contentStr
     }

@@ -68,14 +68,13 @@ object BookHelp {
     }
 
     suspend fun saveContent(
-        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
         content: String
     ) {
         saveText(book, bookChapter, content)
-        saveImages(scope, bookSource, book, bookChapter, content)
+        saveImages(bookSource, book, bookChapter, content)
         postEvent(EventBus.SAVE_CONTENT, bookChapter)
     }
 
@@ -95,7 +94,6 @@ object BookHelp {
     }
 
     private suspend fun saveImages(
-        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
@@ -107,8 +105,10 @@ object BookHelp {
             if (matcher.find()) {
                 matcher.group(1)?.let { src ->
                     val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                    awaitList.add(scope.async {
-                        saveImage(bookSource, book, mSrc)
+                    awaitList.add(coroutineScope {
+                        async {
+                            saveImage(bookSource, book, mSrc)
+                        }
                     })
                 }
             }

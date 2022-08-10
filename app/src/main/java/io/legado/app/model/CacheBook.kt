@@ -179,7 +179,7 @@ object CacheBook {
             val chapterCount = appDb.bookChapterDao.getChapterCount(book.bookUrl)
             if (chapterCount == 0) {
                 runBlocking {
-                    WebBook.getChapterListAwait(this, bookSource, book)
+                    WebBook.getChapterListAwait(bookSource, book)
                         .onFailure {
                             AppLog.put("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}", it)
                             appCtx.toastOnUi("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}")

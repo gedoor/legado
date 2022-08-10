@@ -29,12 +29,11 @@ object WebBook {
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<ArrayList<SearchBook>> {
         return Coroutine.async(scope, context) {
-            searchBookAwait(scope, bookSource, key, page)
+            searchBookAwait(bookSource, key, page)
         }
     }
 
     suspend fun searchBookAwait(
-        scope: CoroutineScope,
         bookSource: BookSource,
         key: String,
         page: Int? = 1,
@@ -58,7 +57,6 @@ object WebBook {
                 }
             }
             return BookList.analyzeBookList(
-                scope = scope,
                 bookSource = bookSource,
                 ruleData = ruleData,
                 analyzeUrl = analyzeUrl,
@@ -81,12 +79,11 @@ object WebBook {
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<List<SearchBook>> {
         return Coroutine.async(scope, context) {
-            exploreBookAwait(scope, bookSource, url, page)
+            exploreBookAwait(bookSource, url, page)
         }
     }
 
     suspend fun exploreBookAwait(
-        scope: CoroutineScope,
         bookSource: BookSource,
         url: String,
         page: Int? = 1,
@@ -108,7 +105,6 @@ object WebBook {
             }
         }
         return BookList.analyzeBookList(
-            scope = scope,
             bookSource = bookSource,
             ruleData = ruleData,
             analyzeUrl = analyzeUrl,
@@ -129,12 +125,11 @@ object WebBook {
         canReName: Boolean = true,
     ): Coroutine<Book> {
         return Coroutine.async(scope, context) {
-            getBookInfoAwait(scope, bookSource, book, canReName)
+            getBookInfoAwait(bookSource, book, canReName)
         }
     }
 
     suspend fun getBookInfoAwait(
-        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
         canReName: Boolean = true,
@@ -142,7 +137,6 @@ object WebBook {
         book.type = bookSource.bookSourceType
         if (!book.infoHtml.isNullOrEmpty()) {
             BookInfo.analyzeBookInfo(
-                scope = scope,
                 bookSource = bookSource,
                 book = book,
                 baseUrl = book.bookUrl,
@@ -166,7 +160,6 @@ object WebBook {
                 }
             }
             BookInfo.analyzeBookInfo(
-                scope = scope,
                 bookSource = bookSource,
                 book = book,
                 baseUrl = book.bookUrl,
@@ -188,12 +181,11 @@ object WebBook {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<List<BookChapter>> {
         return Coroutine.async(scope, context) {
-            getChapterListAwait(scope, bookSource, book).getOrThrow()
+            getChapterListAwait(bookSource, book).getOrThrow()
         }
     }
 
     suspend fun getChapterListAwait(
-        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
     ): Result<List<BookChapter>> {
@@ -201,7 +193,6 @@ object WebBook {
         return kotlin.runCatching {
             if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
                 BookChapterList.analyzeChapterList(
-                    scope = scope,
                     bookSource = bookSource,
                     book = book,
                     baseUrl = book.tocUrl,
@@ -224,7 +215,6 @@ object WebBook {
                     }
                 }
                 BookChapterList.analyzeChapterList(
-                    scope = scope,
                     bookSource = bookSource,
                     book = book,
                     baseUrl = book.tocUrl,
@@ -270,7 +260,6 @@ object WebBook {
         }
         return if (bookChapter.url == book.bookUrl && !book.tocHtml.isNullOrEmpty()) {
             BookContent.analyzeContent(
-                scope = scope,
                 bookSource = bookSource,
                 book = book,
                 bookChapter = bookChapter,
@@ -300,7 +289,6 @@ object WebBook {
                 }
             }
             BookContent.analyzeContent(
-                scope = scope,
                 bookSource = bookSource,
                 book = book,
                 bookChapter = bookChapter,
@@ -342,13 +330,13 @@ object WebBook {
     ): Result<Book> {
         return kotlin.runCatching {
             scope.isActive
-            searchBookAwait(scope, bookSource, name).firstOrNull {
+            searchBookAwait(bookSource, name).firstOrNull {
                 it.name == name && it.author == author
             }?.let { searchBook ->
                 scope.isActive
                 var book = searchBook.toBook()
                 if (book.tocUrl.isBlank()) {
-                    book = getBookInfoAwait(scope, bookSource, book)
+                    book = getBookInfoAwait(bookSource, book)
                 }
                 return@runCatching book
             }

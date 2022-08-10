@@ -13,12 +13,12 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.isTrue
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import kotlin.coroutines.coroutineContext
 
 /**
  * 获取目录
@@ -26,7 +26,6 @@ import splitties.init.appCtx
 object BookChapterList {
 
     suspend fun analyzeChapterList(
-        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
         baseUrl: String,
@@ -52,7 +51,7 @@ object BookChapterList {
         }
         var chapterData =
             analyzeChapterList(
-                scope, book, baseUrl, redirectUrl, body,
+                book, baseUrl, redirectUrl, body,
                 tocRule, listRule, bookSource, log = true
             )
         chapterList.addAll(chapterData.first)
@@ -69,7 +68,7 @@ object BookChapterList {
                         headerMapF = bookSource.getHeaderMap()
                     ).getStrResponseAwait().body?.let { nextBody ->
                         chapterData = analyzeChapterList(
-                            scope, book, nextUrl, nextUrl,
+                            book, nextUrl, nextUrl,
                             nextBody, tocRule, listRule, bookSource
                         )
                         nextUrl = chapterData.second.firstOrNull() ?: ""
@@ -92,7 +91,7 @@ object BookChapterList {
                             )
                             val res = analyzeUrl.getStrResponseAwait()
                             analyzeChapterList(
-                                this, book, urlStr, res.url,
+                                book, urlStr, res.url,
                                 res.body!!, tocRule, listRule, bookSource, false
                             ).first
                         }
@@ -110,14 +109,14 @@ object BookChapterList {
         if (!reverse) {
             chapterList.reverse()
         }
-        scope.ensureActive()
+        coroutineContext.ensureActive()
         val lh = LinkedHashSet(chapterList)
         val list = ArrayList(lh)
         if (!book.getReverseToc()) {
             list.reverse()
         }
         Debug.log(book.origin, "◇目录总数:${list.size}")
-        scope.ensureActive()
+        coroutineContext.ensureActive()
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
         }
@@ -131,12 +130,11 @@ object BookChapterList {
         }
         book.lastCheckTime = System.currentTimeMillis()
         book.totalChapterNum = list.size
-        scope.ensureActive()
+        coroutineContext.ensureActive()
         return list
     }
 
-    private fun analyzeChapterList(
-        scope: CoroutineScope,
+    private suspend fun analyzeChapterList(
         book: Book,
         baseUrl: String,
         redirectUrl: String,
@@ -173,7 +171,7 @@ object BookChapterList {
                 log
             )
         }
-        scope.ensureActive()
+        coroutineContext.ensureActive()
         if (elements.isNotEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "┌解析目录列表", log)
             val nameRule = analyzeRule.splitSourceRule(tocRule.chapterName)
@@ -183,7 +181,7 @@ object BookChapterList {
             val upTimeRule = analyzeRule.splitSourceRule(tocRule.updateTime)
             val isVolumeRule = analyzeRule.splitSourceRule(tocRule.isVolume)
             elements.forEachIndexed { index, item ->
-                scope.ensureActive()
+                coroutineContext.ensureActive()
                 analyzeRule.setContent(item)
                 val bookChapter = BookChapter(bookUrl = book.bookUrl, baseUrl = redirectUrl)
                 analyzeRule.chapter = bookChapter

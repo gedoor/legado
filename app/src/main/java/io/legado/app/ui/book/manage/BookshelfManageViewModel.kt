@@ -51,7 +51,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                     .onFailure {
                         context.toastOnUi("获取书籍出错\n${it.localizedMessage}")
                     }.getOrNull()?.let { newBook ->
-                        WebBook.getChapterListAwait(this, source, newBook)
+                        WebBook.getChapterListAwait(source, newBook)
                             .onFailure {
                                 context.toastOnUi("获取目录出错\n${it.localizedMessage}")
                             }.getOrNull()?.let { toc ->

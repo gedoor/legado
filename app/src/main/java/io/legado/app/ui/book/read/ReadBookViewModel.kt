@@ -245,9 +245,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             sources.forEach { source ->
                 WebBook.preciseSearchAwait(this, source, name, author).getOrNull()?.let { book ->
                     if (book.tocUrl.isEmpty()) {
-                        WebBook.getBookInfoAwait(this, source, book)
+                        WebBook.getBookInfoAwait(source, book)
                     }
-                    val toc = WebBook.getChapterListAwait(this, source, book).getOrThrow()
+                    val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
                     changeTo(source, book, toc)
                     return@execute
                 }
