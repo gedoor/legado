@@ -98,17 +98,15 @@ object BookHelp {
         book: Book,
         bookChapter: BookChapter,
         content: String
-    ) {
+    ) = coroutineScope {
         val awaitList = arrayListOf<Deferred<Unit>>()
         content.split("\n").forEach {
             val matcher = AppPattern.imgPattern.matcher(it)
             if (matcher.find()) {
                 matcher.group(1)?.let { src ->
                     val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                    awaitList.add(coroutineScope {
-                        async {
-                            saveImage(bookSource, book, mSrc)
-                        }
+                    awaitList.add(async {
+                        saveImage(bookSource, book, mSrc)
                     })
                 }
             }
