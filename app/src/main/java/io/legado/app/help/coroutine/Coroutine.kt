@@ -149,7 +149,7 @@ class Coroutine<T>(
             try {
                 start?.let { dispatchVoidCallback(this, it) }
                 ensureActive()
-                val value = executeBlock(scope, context, timeMillis ?: 0L, block)
+                val value = executeBlock(this, context, timeMillis ?: 0L, block)
                 ensureActive()
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
