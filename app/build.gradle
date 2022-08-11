@@ -140,6 +140,42 @@ gatherDependencies {
     androidVariantName = 'appRelease'
 }
 
+// -------------------- BEGIN EXAMPLE GRADLE TASK FOR GATHERING DEPENDENCIES
+tasks.register('gatherDeps_fromAndroidVariant', Copy) {
+  def variantName = 'appRelease'
+  def outputDirectory = rootProject.buildDir.getAbsolutePath() + '/gatheredDependencies'
+  def availableVariants = android.applicationVariants.findAll()
+  def variant = availableVariants.find { it.name == variantName }
+  if (variant == null) {
+    throw new GradleException("Variant with name `$variantName` not found. Available variants: ${availableVariants.collect{ it.name }}")
+  }
+  def filesFromVariant = variant.getCompileClasspath(null).files
+  filesFromVariant.each { file ->
+    duplicatesStrategy = 'include'
+    from file
+    into outputDirectory
+  }
+}
+
+tasks.register('gatherDeps_fromAndroidApis', Copy) {
+  def outputDirectory = rootProject.buildDir.getAbsolutePath() + '/gatheredDependencies'
+  def configurationName = 'androidApis'
+  def availableConfigurations = project.configurations.findAll()
+  def androidApisConfiguration = availableConfigurations.find { it.name == configurationName }
+  if (androidApisConfiguration == null) {
+    throw new GradleException("Configuration with name `$configurationName` not found. Available configurations: ${availableConfigurations.collect { it.name }}")
+  }
+  duplicatesStrategy = 'include'
+  from androidApisConfiguration
+  into outputDirectory
+}
+
+tasks.register('gatherDeps', Copy) {
+  dependsOn('gatherDeps_fromAndroidVariant')
+  dependsOn('gatherDeps_fromAndroidApis')
+}
+// -------------------- END EXAMPLE GRADLE TASK FOR GATHERING DEPENDENCIES
+
 dependencies {
     //noinspection GradleDependency
     coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.1.6')
