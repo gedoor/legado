@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-kapt'
     id "de.timfreiheit.resourceplaceholders"
     //id "com.google.gms.google-services"
+    id 'io.shiftleft.gather-dependencies'
 }
 apply from: 'download.gradle'
 
@@ -133,6 +134,10 @@ kapt {
     arguments {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
+}
+
+gatherDependencies {
+    androidVariantName = 'appRelease'
 }
 
 dependencies {
