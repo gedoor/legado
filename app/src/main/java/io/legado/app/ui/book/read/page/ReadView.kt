@@ -446,6 +446,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
         curPage.cancelSelect()
     }
 
+    /**
+     * 翻页动画完成后事件
+     * @param direction 翻页翻页反向
+     */
     fun fillPage(direction: PageDirection): Boolean {
         return when (direction) {
             PageDirection.PREV -> {
@@ -458,6 +462,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    /**
+     * 更新翻页动画
+     */
     fun upPageAnim() {
         isScroll = ReadBook.pageAnim() == 3
         ChapterProvider.upLayout()
@@ -480,6 +487,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    /**
+     * 更新阅读内容
+     * @param relativePosition 相对位置 -1 上一页 0 当前页 1 下一页
+     * @param resetPageOffset 滚动阅读是是否重置位置
+     */
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
         curPage.setContentDescription(pageFactory.curPage.text)
         if (isScroll && !callBack.isAutoPage) {
@@ -499,6 +511,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         callBack.screenOffTimerStart()
     }
 
+    /**
+     * 更新样式
+     */
     fun upStyle() {
         ChapterProvider.upStyle()
         curPage.upStyle()
@@ -506,6 +521,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         nextPage.upStyle()
     }
 
+    /**
+     * 更新背景
+     */
     fun upBg() {
         ReadBookConfig.upBg(width, height)
         curPage.upBg()
@@ -513,18 +531,27 @@ class ReadView(context: Context, attrs: AttributeSet) :
         nextPage.upBg()
     }
 
+    /**
+     * 更新背景透明度
+     */
     fun upBgAlpha() {
         curPage.upBgAlpha()
         prevPage.upBgAlpha()
         nextPage.upBgAlpha()
     }
 
+    /**
+     * 更新时间信息
+     */
     fun upTime() {
         curPage.upTime()
         prevPage.upTime()
         nextPage.upTime()
     }
 
+    /**
+     * 更新电量信息
+     */
     fun upBattery(battery: Int) {
         curPage.upBattery(battery)
         prevPage.upBattery(battery)
@@ -542,6 +569,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         //TODO 未完成
     }
 
+    /**
+     * @return 选择的文本
+     */
     fun getSelectText(): String {
         return curPage.selectedText
     }
