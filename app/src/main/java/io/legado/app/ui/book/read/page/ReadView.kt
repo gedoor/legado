@@ -531,6 +531,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
         nextPage.upBattery(battery)
     }
 
+    fun getSelectText(): String {
+        return curPage.selectedText
+    }
+
     override val currentChapter: TextChapter?
         get() {
             return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
