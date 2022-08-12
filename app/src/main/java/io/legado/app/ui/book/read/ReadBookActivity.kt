@@ -17,17 +17,13 @@ import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.*
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookProgress
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.*
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.AppWebDav
-import io.legado.app.help.BookHelp
-import io.legado.app.help.IntentData
+import io.legado.app.help.*
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.http.CookieStore
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -969,14 +965,18 @@ class ReadBookActivity : BaseReadBookActivity(),
                 throw NoStackTraceException("no pay action")
             }
             JsUtils.evalJs(payAction) {
+                it["java"] = source
+                it["source"] = source
                 it["book"] = book
                 it["chapter"] = chapter
             }
         }.onSuccess {
-            startActivity<WebViewActivity> {
-                putExtra("title", getString(R.string.chapter_pay))
-                putExtra("url", it)
-                IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+            if (it.isNotBlank()) {
+                startActivity<WebViewActivity> {
+                    putExtra("title", getString(R.string.chapter_pay))
+                    putExtra("url", it)
+                    IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+                }
             }
         }.onError {
             toastOnUi(it.localizedMessage)
