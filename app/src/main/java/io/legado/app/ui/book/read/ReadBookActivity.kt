@@ -972,14 +972,18 @@ class ReadBookActivity : BaseReadBookActivity(),
                 throw NoStackTraceException("no pay action")
             }
             JsUtils.evalJs(payAction) {
+                it["java"] = source
+                it["source"] = source
                 it["book"] = book
                 it["chapter"] = chapter
             }
         }.onSuccess {
-            startActivity<WebViewActivity> {
-                putExtra("title", getString(R.string.chapter_pay))
-                putExtra("url", it)
-                IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+            if (it.isNotBlank()) {
+                startActivity<WebViewActivity> {
+                    putExtra("title", getString(R.string.chapter_pay))
+                    putExtra("url", it)
+                    IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+                }
             }
         }.onError {
             toastOnUi(it.localizedMessage)
