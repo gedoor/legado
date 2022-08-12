@@ -72,18 +72,16 @@ class AnalyzeUrl(
     private val enabledCookieJar = source?.enabledCookieJar ?: false
 
     init {
-        if (!mUrl.isDataUrl()) {
-            val urlMatcher = paramPattern.matcher(baseUrl)
-            if (urlMatcher.find()) baseUrl = baseUrl.substring(0, urlMatcher.start())
-            (headerMapF ?: source?.getHeaderMap(true))?.let {
-                headerMap.putAll(it)
-                if (it.containsKey("proxy")) {
-                    proxy = it["proxy"]
-                    headerMap.remove("proxy")
-                }
+        val urlMatcher = paramPattern.matcher(baseUrl)
+        if (urlMatcher.find()) baseUrl = baseUrl.substring(0, urlMatcher.start())
+        (headerMapF ?: source?.getHeaderMap(true))?.let {
+            headerMap.putAll(it)
+            if (it.containsKey("proxy")) {
+                proxy = it["proxy"]
+                headerMap.remove("proxy")
             }
-            initUrl()
         }
+        initUrl()
     }
 
     /**
