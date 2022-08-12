@@ -131,10 +131,18 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
-    fun moveToNextPage() {
-        durChapterPos = curTextChapter?.getNextPageLength(durChapterPos) ?: durChapterPos
-        callBack?.upContent()
-        saveRead()
+    fun moveToNextPage(): Boolean {
+        var hasNextPage = false
+        curTextChapter?.let {
+            val nextPagePos = it.getNextPageLength(durChapterPos)
+            if (nextPagePos >= 0) {
+                hasNextPage = true
+                durChapterPos = nextPagePos
+                callBack?.upContent()
+                saveRead()
+            }
+        }
+        return hasNextPage
     }
 
     fun moveToNextChapter(upContent: Boolean): Boolean {

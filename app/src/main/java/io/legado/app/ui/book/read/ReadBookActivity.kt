@@ -616,9 +616,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun onMenuItemSelected(itemId: Int): Boolean {
         when (itemId) {
-            R.id.menu_aloud -> {
-                ReadBook.readAloud()
-            }
+            R.id.menu_aloud -> binding.readView.aloudStartSelect()
             R.id.menu_bookmark -> binding.readView.curPage.let {
                 val bookmark = it.createBookmark()
                 if (bookmark == null) {

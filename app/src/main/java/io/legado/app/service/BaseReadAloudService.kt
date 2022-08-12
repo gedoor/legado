@@ -100,13 +100,11 @@ abstract class BaseReadAloudService : BaseService(),
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            IntentAction.play -> {
-                textChapter = ReadBook.curTextChapter
-                pageIndex = intent.getIntExtra("pageIndex", ReadBook.durPageIndex)
-                newReadAloud(
-                    intent.getBooleanExtra("play", true)
-                )
-            }
+            IntentAction.play -> newReadAloud(
+                intent.getBooleanExtra("play", true),
+                intent.getIntExtra("pageIndex", ReadBook.durPageIndex),
+                intent.getIntExtra("startPos", 0)
+            )
             IntentAction.pause -> pauseReadAloud(true)
             IntentAction.resume -> resumeReadAloud()
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
@@ -119,11 +117,11 @@ abstract class BaseReadAloudService : BaseService(),
         return super.onStartCommand(intent, flags, startId)
     }
 
-    @CallSuper
-    open fun newReadAloud(play: Boolean) {
+    private fun newReadAloud(play: Boolean, pageIndex: Int, startPos: Int) {
+        textChapter = ReadBook.curTextChapter
         textChapter?.let { textChapter ->
             nowSpeak = 0
-            readAloudNumber = textChapter.getReadLength(pageIndex)
+            readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
             contentList.clear()
             if (getPrefBoolean(PreferKey.readAloudByPage)) {
                 for (index in pageIndex..textChapter.lastIndex) {

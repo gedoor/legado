@@ -531,6 +531,17 @@ class ReadView(context: Context, attrs: AttributeSet) :
         nextPage.upBattery(battery)
     }
 
+    /**
+     * 从选择位置开始朗读
+     */
+    fun aloudStartSelect() {
+        val selectStartPos = curPage.selectStartPos
+        if (selectStartPos.relativePagePos > 0) {
+            ReadBook.moveToNextPage()
+        }
+        //TODO 未完成
+    }
+
     fun getSelectText(): String {
         return curPage.selectedText
     }

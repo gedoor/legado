@@ -14,7 +14,6 @@ import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextPage
-import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.activity
@@ -313,8 +312,7 @@ class PageView(context: Context) : FrameLayout(context) {
 
     val textPage get() = binding.contentTextView.textPage
 
-    val selectStart: TextPos get() = binding.contentTextView.selectStart
-
     val selectedText: String get() = binding.contentTextView.getSelectedText()
 
+    val selectStartPos get() = binding.contentTextView.selectStart
 }
