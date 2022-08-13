@@ -22,7 +22,7 @@ jobs:
           echo "PR_BODY=Changes in the [Git log](https://chromium.googlesource.com/chromium/src/+log/$current_cronet_version..$lastest_cronet_version)" >> $GITHUB_ENV
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         continue-on-error: true
         with:
           token: ${{ secrets.ACTIONS_TOKEN }}
