@@ -47,7 +47,7 @@ jobs:
       VERSION: ${{ needs.prepare.outputs.version }}
       VERSIONL: ${{ needs.prepare.outputs.versionL }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: actions/cache@v2
@@ -106,7 +106,7 @@ jobs:
       # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
       LANZOU_FOLDER_ID: '2670621'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v2
         with:
           path: apk/
@@ -124,7 +124,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v2
         with:
           path: apk/
@@ -150,7 +150,7 @@ jobs:
       CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v2
         with:
           path: apk/
