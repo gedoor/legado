@@ -22,10 +22,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.requestInputMethod
-import io.legado.app.utils.setLayout
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
 
@@ -62,7 +59,11 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                 }
-                adapter.setItems(groups.toList())
+                adapter.setItems(
+                    groups.sortedWith { o1, o2 ->
+                        o1.cnCompare(o2)
+                    }
+                )
             }
         }
     }
