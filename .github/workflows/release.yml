@@ -42,11 +42,11 @@ jobs:
       VERSION: ${{ needs.prepare.outputs.version }}
       play: ${{ needs.prepare.outputs.play }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 1
           
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -81,7 +81,7 @@ jobs:
           cp -rf ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk ${{ github.workspace }}/apk/
           
       - name: Upload App To Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: legado_${{ env.product }}
           path: ${{ github.workspace }}/apk/*.apk
