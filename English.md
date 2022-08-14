@@ -1,9 +1,6 @@
 # [English](English.md) [中文](README.md)
 
 [![icon_android](https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/icon_android.png)](https://play.google.com/store/apps/details?id=io.legado.play.release)
-<a href="https://data.newrank.cn/m/s.html?s=NykyOzI9MS5LNQ%3D%3D" target="_blank">
-    <img src="https://img.shields.io/badge/-微信关注“开源阅读”公众号-orange.svg" alt="#" align="right">
-</a>
 
 <div align="center">
 <img width="125" height="125" src="https://github.com/gedoor/legado/raw/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="legado"/>  
@@ -49,11 +46,13 @@ You can customize the book source, set your own rules, and capture web page data
 
 
 <a href="#readme">
-    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+    <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
 </a>
 
 # Download [![](https://img.shields.io/badge/-Download-F5F5F5.svg)](#Download-)
+
 #### Android
+
 * [Releases](https://github.com/gedoor/legado/releases/latest)
 * [Google play - $1.99](https://play.google.com/store/apps/details?id=io.legado.play.release)
 * [Coolapk](https://www.coolapk.com/apk/io.legado.app.release)
@@ -63,51 +62,61 @@ You can customize the book source, set your own rules, and capture web page data
 
 
 #### IOS
+
 * Stopped(No release) - [Github](https://github.com/gedoor/YueDuFlutter)
 
 <a href="#readme">
-    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+    <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
 </a>
 
 # Community [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#Community-)
 
 #### Telegram
-[![Telegram-group](https://img.shields.io/badge/Telegram-%E7%BE%A4%E7%BB%84-blue)](https://t.me/yueduguanfang) [![Telegram-channel](https://img.shields.io/badge/Telegram-%E9%A2%91%E9%81%93-blue)](https://t.me/legado_channels)
+
+[![Telegram-group](https://img.shields.io/badge/Telegram-group-blue)](https://t.me/yueduguanfang) [![Telegram-channel](https://img.shields.io/badge/Telegram-channel-blue)](https://t.me/legado_channels)
 
 #### Discord
+
 [![Discord](https://img.shields.io/discord/560731361414086666?color=%235865f2&label=Discord)](https://discord.gg/VtUfRyzRXn)
 
 #### Other
+
 https://www.yuque.com/legado/wiki/community
 
 <a href="#readme">
-    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+    <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
 </a>
 
 # API [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-)
+
 * Legado 3.0 The API is provided in 2 ways: `Web way` and `Content Provider way`. You can call it yourself as needed in [here](api.md). 
 * One-click import by url recall reading, url format: legado://import/{path}?src={url}
 * Path Type: bookSource,rssSource,replaceRule,textTocRule,httpTTS,theme,readConfig
 * path type explanation: Book source, subscription source, replacement rules, local txt novel directory rules, online reading engine, theme, reading layout
 
 <a href="#readme">
-    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+    <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
 </a>
 
 # Other [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#Other-)
+
 ##### Disclaimers
+
 https://gedoor.github.io/about.html
+
 ##### Legado 3.0
+
 * [eBook sources rules](https://alanskycn.gitee.io/teachme)
 * [Update Log](/app/src/main/assets/updateLog.md)
 * [Help Documentation](/app/src/main/assets/help/appHelp.md)
 * [web](https://github.com/gedoor/legado_web_bookshelf)
 
 <a href="#readme">
-    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+    <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
 </a>
 
 # Grateful [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-)
+
 > * org.jsoup:jsoup
 > * cn.wanghaomiao:JsoupXpath
 > * com.jayway.jsonpath:json-path
@@ -123,14 +132,16 @@ https://gedoor.github.io/about.html
 > * io.noties.markwon:image-glide
 > * com.hankcs:hanlp
 > * com.positiondev.epublib:epublib-core
+
 <a href="#readme">
-    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+    <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
 </a>
 
 # Interface [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#Interface-)
+
 <img src="https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B1.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B2.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B3.jpg" width="270">
 <img src="https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B4.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B5.jpg" width="270"><img src="https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/%E9%98%85%E8%AF%BB%E7%AE%80%E4%BB%8B6.jpg" width="270">
 
 <a href="#readme">
-    <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
+    <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
 </a>
