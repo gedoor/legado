@@ -123,19 +123,13 @@ abstract class BaseReadAloudService : BaseService(),
             nowSpeak = 0
             readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
             contentList.clear()
-            if (getPrefBoolean(PreferKey.readAloudByPage)) {
-                for (index in pageIndex..textChapter.lastIndex) {
-                    textChapter.getPage(index)?.text?.split("\n")?.let {
-                        contentList.addAll(it)
+            val readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
+            textChapter.getNeedReadAloud(pageIndex, readAloudByPage, startPos)
+                .split("\n").forEach { text ->
+                    if (text.isNotEmpty()) {
+                        contentList.add(text)
                     }
                 }
-            } else {
-                textChapter.getUnRead(pageIndex).split("\n").forEach {
-                    if (it.isNotEmpty()) {
-                        contentList.add(it)
-                    }
-                }
-            }
             if (play) play()
         }
     }

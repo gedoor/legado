@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.entities
 
 import kotlin.math.min
 
+@Suppress("unused")
 data class TextChapter(
     val position: Int,
     val title: String,
@@ -81,6 +82,26 @@ data class TextChapter(
         val stringBuilder = StringBuilder()
         pages.forEach {
             stringBuilder.append(it.text)
+        }
+        return stringBuilder.toString()
+    }
+
+    /**
+     * @return 需要朗读的文本列表
+     * @param pageIndex 起始页
+     * @param pageSplit 是否分页
+     * @param startPos 从当前页什么地方开始朗读
+     */
+    fun getNeedReadAloud(pageIndex: Int, pageSplit: Boolean, startPos: Int): String {
+        //todo 未完成
+        val stringBuilder = StringBuilder()
+        if (pages.isNotEmpty()) {
+            for (index in pageIndex..pages.lastIndex) {
+                stringBuilder.append(pages[index].text)
+                if (pageSplit && !stringBuilder.endsWith("\n")) {
+                    stringBuilder.append("\n")
+                }
+            }
         }
         return stringBuilder.toString()
     }
