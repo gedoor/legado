@@ -118,6 +118,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private fun newReadAloud(play: Boolean, pageIndex: Int, startPos: Int) {
+        this.pageIndex = pageIndex
         textChapter = ReadBook.curTextChapter
         textChapter?.let { textChapter ->
             nowSpeak = 0
