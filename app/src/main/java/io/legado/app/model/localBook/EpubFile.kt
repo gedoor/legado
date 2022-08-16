@@ -257,6 +257,9 @@ class EpubFile(var book: Book) {
             } else {
                 parseFirstPage(chapterList, refs)
                 parseMenu(chapterList, refs, 0)
+                val lh = LinkedHashSet(chapterList)
+                chapterList.clear()
+                chapterList.addAll(lh)
                 for (i in chapterList.indices) {
                     chapterList[i].index = i
                 }
