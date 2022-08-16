@@ -79,6 +79,7 @@ object LocalBook {
             throw TocEmptyException(appCtx.getString(R.string.chapter_list_empty))
         }
         val lh = LinkedHashSet(chapters)
+        lh.forEachIndexed { index, bookChapter -> bookChapter.index = index }
         return ArrayList(lh)
     }
 
