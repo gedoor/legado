@@ -39,13 +39,14 @@ object ReadAloud {
     fun play(
         context: Context,
         play: Boolean = true,
-        pageIndex: Int = ReadBook.durPageIndex
+        pageIndex: Int = ReadBook.durPageIndex,
+        startPos: Int = 0
     ) {
         val intent = Intent(context, aloudClass)
         intent.action = IntentAction.play
         intent.putExtra("play", play)
         intent.putExtra("pageIndex", pageIndex)
-
+        intent.putExtra("startPos", startPos)
         context.startService(intent)
     }
 
