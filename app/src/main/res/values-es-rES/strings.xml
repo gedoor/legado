@@ -1008,4 +1008,6 @@
     <string name="page_touch_slop_summary">滑动多长距离才会触发滑动翻页（系统默认值 %s px）</string>
     <string name="example">Ejemplo</string>
     <string name="check_selected_interval">选中所选区间</string>
+    <string name="show_add_to_shelf_alert_title">返回时提示放入书架</string>
+    <string name="show_add_to_shelf_alert_summary">阅读未放入书架的书籍在返回时提示放入书架</string>
 </resources>

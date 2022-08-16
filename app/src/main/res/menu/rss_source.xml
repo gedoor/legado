@@ -16,6 +16,22 @@
                 android:id="@+id/menu_group_manage"
                 android:title="@string/group_manage" />
 
+            <item
+                android:id="@+id/menu_enabled_group"
+                android:title="@string/enabled" />
+
+            <item
+                android:id="@+id/menu_disabled_group"
+                android:title="@string/disabled" />
+
+            <item
+                android:id="@+id/menu_group_login"
+                android:title="@string/need_login" />
+
+            <item
+                android:id="@+id/menu_group_null"
+                android:title="@string/no_group" />
+
             <group android:id="@+id/source_group">
 
             </group>

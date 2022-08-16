@@ -65,7 +65,11 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
                 }
-                adapter.setItems(groups.toList())
+                adapter.setItems(
+                    groups.sortedWith { o1, o2 ->
+                        o1.cnCompare(o2)
+                    }
+                )
             }
         }
     }

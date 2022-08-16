@@ -123,7 +123,7 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     private fun initGroupData() {
         groupsFlowJob?.cancel()
         groupsFlowJob = launch {
-            appDb.rssSourceDao.flowGroup().conflate().collect {
+            appDb.rssSourceDao.flowGroupEnabled().conflate().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -180,5 +180,9 @@ class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     override fun del(rssSource: RssSource) {
         viewModel.del(rssSource)
+    }
+
+    override fun disable(rssSource: RssSource) {
+        viewModel.disable(rssSource)
     }
 }
