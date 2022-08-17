@@ -189,8 +189,6 @@ dependencies {
 
     //media
     implementation("androidx.media:media:1.6.0")
-
-
     implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
     implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
 
