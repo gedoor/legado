@@ -169,12 +169,14 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             alertBinding.apply {
                 tvRuleName.setText(tocRule.name)
                 tvRuleRegex.setText(tocRule.rule)
+                tvRuleExample.setText(tocRule.example)
             }
             customView { alertBinding.root }
             okButton {
                 alertBinding.apply {
                     tocRule.name = tvRuleName.text.toString()
                     tocRule.rule = tvRuleRegex.text.toString()
+                    tocRule.example = tvRuleExample.text.toString()
                     viewModel.saveRule(tocRule)
                 }
             }
@@ -200,6 +202,7 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 if (payloads.isEmpty()) {
                     root.setBackgroundColor(context.backgroundColor)
                     rbRegexName.text = item.name
+                    titleExample.text = item.example
                     rbRegexName.isChecked = item.name == selectedName
                     swtEnabled.isChecked = item.enable
                 } else {
