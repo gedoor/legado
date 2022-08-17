@@ -3,6 +3,7 @@ package io.legado.app.ui.config
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
@@ -114,6 +115,14 @@ class BackupConfigFragment : PreferenceFragment(),
             it.setOnBindEditTextListener { editText ->
                 editText.inputType =
                     InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+            }
+        }
+        findPreference<EditTextPreference>(PreferKey.webDavDir)?.let {
+            it.setOnBindEditTextListener { editText ->
+                editText.text = AppConfig.webDavDir?.toEditable()
+            }
+            it.setOnPreferenceChangeListener { _, newValue ->
+                (newValue as String).isNotBlank()
             }
         }
         upPreferenceSummary(PreferKey.webDavUrl, getPrefString(PreferKey.webDavUrl))

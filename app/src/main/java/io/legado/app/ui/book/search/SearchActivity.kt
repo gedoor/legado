@@ -66,6 +66,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var groups = linkedSetOf<String>()
+    private var isManualStopSearch = false
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = searchFinish@{ isEmpty ->
         val searchGroup = AppConfig.searchGroup
         if (!isEmpty || searchGroup.isEmpty()) return@searchFinish
@@ -155,6 +156,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.clearFocus()
                 query?.let {
+                    isManualStopSearch = false
                     viewModel.saveSearchKey(query)
                     viewModel.searchKey = ""
                     viewModel.search(it)
@@ -221,6 +223,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 .setPressedColor(ColorUtils.darkenColor(accentColor))
                 .create()
         binding.fbStop.setOnClickListener {
+            isManualStopSearch = true
             viewModel.stop()
             binding.refreshProgressBar.isAutoLoading = false
         }
@@ -266,6 +269,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 滚动到底部事件
      */
     private fun scrollToBottom() {
+        if (isManualStopSearch) {
+            return
+        }
         if (viewModel.isSearchLiveData.value == false
             && viewModel.searchKey.isNotEmpty()
             && loadMoreView.hasMore

@@ -63,6 +63,7 @@ class RssAdapter(context: Context, val callBack: CallBack) :
                 R.id.menu_top -> callBack.toTop(rssSource)
                 R.id.menu_edit -> callBack.edit(rssSource)
                 R.id.menu_del -> callBack.del(rssSource)
+                R.id.menu_disable -> callBack.disable(rssSource)
             }
             true
         }
@@ -74,5 +75,6 @@ class RssAdapter(context: Context, val callBack: CallBack) :
         fun toTop(rssSource: RssSource)
         fun edit(rssSource: RssSource)
         fun del(rssSource: RssSource)
+        fun disable(rssSource: RssSource)
     }
 }

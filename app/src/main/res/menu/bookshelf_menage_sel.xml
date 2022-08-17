@@ -21,4 +21,8 @@
         android:id="@+id/menu_change_source"
         android:title="@string/change_source_batch" />
 
+    <item
+        android:id="@+id/menu_check_selected_interval"
+        android:title="@string/check_selected_interval" />
+
 </menu>

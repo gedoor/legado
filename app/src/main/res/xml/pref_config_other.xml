@@ -112,6 +112,12 @@
             android:summary="@string/auto_clear_expired_summary"
             android:title="@string/auto_clear_expired" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="showAddToShelfAlert"
+            android:summary="@string/show_add_to_shelf_alert_summary"
+            android:title="@string/show_add_to_shelf_alert_title" />
+
         <io.legado.app.lib.prefs.Preference
             android:key="webPort"
             android:title="@string/web_port_title"

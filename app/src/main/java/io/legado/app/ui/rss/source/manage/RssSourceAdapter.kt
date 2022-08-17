@@ -17,6 +17,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
+import java.util.*
 
 
 class RssSourceAdapter(context: Context, val callBack: CallBack) :
@@ -148,6 +149,25 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
             }
         }
         notifyItemRangeChanged(0, itemCount, bundleOf(Pair("selected", null)))
+        callBack.upCountView()
+    }
+
+    fun checkSelectedInterval() {
+        val selectedPosition = linkedSetOf<Int>()
+        getItems().forEachIndexed { index, it ->
+            if (selected.contains(it)) {
+                selectedPosition.add(index)
+            }
+        }
+        val minPosition = Collections.min(selectedPosition)
+        val maxPosition = Collections.max(selectedPosition)
+        val itemCount = maxPosition - minPosition + 1
+        for (i in minPosition..maxPosition) {
+            getItem(i)?.let {
+                selected.add(it)
+            }
+        }
+        notifyItemRangeChanged(minPosition, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
     }
 
