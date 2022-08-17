@@ -258,7 +258,7 @@ dependencies {
     //implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
     //implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
 
-    // LeakCanary
+    //LeakCanary, 内存泄露检测
     //debugImplementation('com.squareup.leakcanary:leakcanary-android:2.7')
 
     //com.github.AmrDeveloper:CodeView代码编辑已集成到应用内
