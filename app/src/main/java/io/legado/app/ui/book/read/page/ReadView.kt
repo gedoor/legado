@@ -248,6 +248,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         return true
     }
 
+    /**
+     * 更新状态栏
+     */
     fun upStatusBar() {
         curPage.upStatusBar()
         prevPage.upStatusBar()
@@ -397,6 +400,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    /**
+     * 点击
+     */
     private fun click(action: Int) {
         when (action) {
             0 -> callBack.showActionMenu()
@@ -436,6 +442,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    /**
+     * 销毁事件
+     */
     fun onDestroy() {
         pageDelegate?.onDestroy()
         curPage.cancelSelect()
