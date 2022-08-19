@@ -506,6 +506,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         callBack.screenOffTimerStart()
     }
 
+    /**
+     * 更新滑动距离
+     */
     fun upPageSlopSquare() {
         val pageTouchSlop = AppConfig.pageTouchSlop
         this.pageSlopSquare = if (pageTouchSlop == 0) slopSquare else pageTouchSlop
