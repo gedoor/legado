@@ -566,12 +566,14 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     fun aloudStartSelect() {
         val selectStartPos = curPage.selectStartPos
+        var pagePos = selectStartPos.relativePagePos
         val line = selectStartPos.lineIndex
         val column = selectStartPos.charIndex
-        if (selectStartPos.relativePagePos > 0) {
+        while (pagePos > 0) {
             if (!ReadBook.moveToNextPage()) {
                 ReadBook.moveToNextChapter(false)
             }
+            pagePos--
         }
         val startPos = curPage.textPage.getPosByLineColumn(line, column)
         ReadAloud.play(context, startPos = startPos)
