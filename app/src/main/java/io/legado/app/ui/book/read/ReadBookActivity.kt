@@ -1196,6 +1196,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
+            readView.upPageSlopSquare()
             readView.upBg()
             readView.upStyle()
             readView.upBgAlpha()

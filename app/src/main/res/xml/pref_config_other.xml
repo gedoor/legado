@@ -134,12 +134,6 @@
             android:title="@string/threads_num_title"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.prefs.Preference
-            android:key="pageTouchSlop"
-            android:summary="@string/page_touch_slop_summary"
-            android:title="@string/page_touch_slop_title"
-            app:iconSpaceReserved="false" />
-
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
             android:key="process_text"

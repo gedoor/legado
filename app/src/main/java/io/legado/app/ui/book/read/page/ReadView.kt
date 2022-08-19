@@ -82,13 +82,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private val initialTextPos = TextPos(0, 0, 0)
 
     val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
-    val pageSlopSquare by lazy {
-        if (AppConfig.pageTouchSlop == 0) {
-            slopSquare
-        } else {
-            AppConfig.pageTouchSlop
-        }
-    }
+    private var pageSlopSquare: Int = slopSquare
     private val tlRect = RectF()
     private val tcRect = RectF()
     private val trRect = RectF()
@@ -112,6 +106,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
             upBg()
             setWillNotDraw(false)
             upPageAnim()
+            upPageSlopSquare()
         }
     }
 
@@ -509,6 +504,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
             }
         }
         callBack.screenOffTimerStart()
+    }
+
+    fun upPageSlopSquare() {
+        val pageTouchSlop = AppConfig.pageTouchSlop
+        this.pageSlopSquare = if (pageTouchSlop == 0) slopSquare else pageTouchSlop
     }
 
     /**
