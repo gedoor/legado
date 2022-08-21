@@ -49,6 +49,8 @@ data class BookSource(
     override var loginUrl: String? = null,
     // 登录UI
     override var loginUi: String? = null,
+    // 启用段评
+    var enabledReview: Boolean? = false,
     // 登录检测js
     var loginCheckJs: String? = null,
     // 注释
@@ -74,7 +76,9 @@ data class BookSource(
     // 目录页规则
     var ruleToc: TocRule? = null,
     // 正文页规则
-    var ruleContent: ContentRule? = null
+    var ruleContent: ContentRule? = null,
+    // 段评规则
+    var ruleReview: ReviewRule? = null
 ) : Parcelable, BaseSource {
 
     override fun getTag(): String {
@@ -167,6 +171,13 @@ data class BookSource(
         ruleContent?.let { return it }
         val rule = ContentRule()
         ruleContent = rule
+        return rule
+    }
+
+    fun getReviewRule(): ReviewRule {
+        ruleReview?.let { return it }
+        val rule = ReviewRule()
+        ruleReview = rule
         return rule
     }
 
@@ -302,6 +313,14 @@ data class BookSource(
         @TypeConverter
         fun stringToContentRule(json: String?) =
             GSON.fromJsonObject<ContentRule>(json).getOrNull()
+
+        @TypeConverter
+        fun stringToReviewRule(json: String?) =
+            GSON.fromJsonObject<ReviewRule>(json).getOrNull()
+
+        @TypeConverter
+        fun reviewRuleToString(reviewRule: ReviewRule?): String =
+            GSON.toJson(reviewRule)
 
     }
 }

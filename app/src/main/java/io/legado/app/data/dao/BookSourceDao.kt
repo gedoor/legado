@@ -50,6 +50,9 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
     fun flowExplore(): Flow<List<BookSource>>
 
+//    @Query("select * from book_sources where enabledReview = 1 order by customOrder asc")
+//    fun flowReview(): Flow<List<BookSource>>
+
     @Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
     fun flowLogin(): Flow<List<BookSource>>
 

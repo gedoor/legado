@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 52,
-    "identityHash": "0221c385ed7393f47afe9579d3106541",
+    "identityHash": "c55dac79aa9cc3dcdb72e91da4282005",
     "entities": [
       {
         "tableName": "books",
@@ -208,10 +208,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "bookUrl"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -263,17 +263,17 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "groupId"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "book_sources",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookSourceUrl` TEXT NOT NULL, `bookSourceName` TEXT NOT NULL, `bookSourceGroup` TEXT, `bookSourceType` INTEGER NOT NULL, `bookUrlPattern` TEXT, `customOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `enabledExplore` INTEGER NOT NULL, `enabledCookieJar` INTEGER DEFAULT 0, `concurrentRate` TEXT, `header` TEXT, `loginUrl` TEXT, `loginUi` TEXT, `loginCheckJs` TEXT, `bookSourceComment` TEXT, `variableComment` TEXT, `lastUpdateTime` INTEGER NOT NULL, `respondTime` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `exploreUrl` TEXT, `ruleExplore` TEXT, `searchUrl` TEXT, `ruleSearch` TEXT, `ruleBookInfo` TEXT, `ruleToc` TEXT, `ruleContent` TEXT, PRIMARY KEY(`bookSourceUrl`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookSourceUrl` TEXT NOT NULL, `bookSourceName` TEXT NOT NULL, `bookSourceGroup` TEXT, `bookSourceType` INTEGER NOT NULL, `bookUrlPattern` TEXT, `customOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `enabledExplore` INTEGER NOT NULL, `enabledCookieJar` INTEGER DEFAULT 0, `concurrentRate` TEXT, `header` TEXT, `loginUrl` TEXT, `loginUi` TEXT, `enabledReview` INTEGER, `loginCheckJs` TEXT, `bookSourceComment` TEXT, `variableComment` TEXT, `lastUpdateTime` INTEGER NOT NULL, `respondTime` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `exploreUrl` TEXT, `ruleExplore` TEXT, `searchUrl` TEXT, `ruleSearch` TEXT, `ruleBookInfo` TEXT, `ruleToc` TEXT, `ruleContent` TEXT, `ruleReview` TEXT, PRIMARY KEY(`bookSourceUrl`))",
         "fields": [
           {
             "fieldPath": "bookSourceUrl",
@@ -355,6 +355,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "enabledReview",
+            "columnName": "enabledReview",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
             "fieldPath": "loginCheckJs",
             "columnName": "loginCheckJs",
             "affinity": "TEXT",
@@ -431,13 +437,19 @@
             "columnName": "ruleContent",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "ruleReview",
+            "columnName": "ruleReview",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "bookSourceUrl"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -548,11 +560,11 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "url",
             "bookUrl"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -676,10 +688,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
           "columnNames": [
             "id"
-          ]
+          ],
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -790,10 +802,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "bookUrl"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -853,10 +865,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "word"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -889,10 +901,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "url"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -1082,10 +1094,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "sourceUrl"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -1154,10 +1166,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "time"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -1245,11 +1257,11 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "origin",
             "link"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1272,10 +1284,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "record"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1346,11 +1358,11 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "origin",
             "link"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1397,10 +1409,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "id"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1437,11 +1449,11 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "deviceId",
             "bookName"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1521,10 +1533,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "id"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1553,10 +1565,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "key"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -1619,10 +1631,10 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "id"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1661,11 +1673,11 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
           "columnNames": [
             "type",
             "key"
-          ]
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -1674,7 +1686,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0221c385ed7393f47afe9579d3106541')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c55dac79aa9cc3dcdb72e91da4282005')"
     ]
   }
 }
