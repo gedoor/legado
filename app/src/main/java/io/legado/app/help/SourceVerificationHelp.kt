@@ -59,6 +59,7 @@ object SourceVerificationHelp {
             putExtra("title", title)
             putExtra("url", url)
             putExtra("sourceOrigin", source.getKey())
+            putExtra("sourceName", source.getTag())
             putExtra("sourceVerificationEnable", saveResult)
             IntentData.put(url, source.getHeaderMap(true))
         }

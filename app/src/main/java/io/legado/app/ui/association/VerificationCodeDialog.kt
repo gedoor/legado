@@ -56,7 +56,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         binding.run {
             toolBar.setBackgroundColor(primaryColor)
             arguments?.let { arguments ->
-                tvTag.text = arguments.getString("sourceName")
+                toolBar.subtitle = arguments.getString("sourceName")
                 val sourceOrigin = arguments.getString("sourceOrigin")
                 arguments.getString("imageUrl")?.let { imageUrl ->
                     ImageLoader.load(requireContext(), imageUrl).apply {

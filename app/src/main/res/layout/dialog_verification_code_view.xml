@@ -17,13 +17,6 @@
         app:title="@string/input_verification_code"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
-    <TextView
-        android:id="@+id/tv_tag"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@color/secondaryText"
-        android:visibility="gone" />
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/verification_code_image_view"
         android:layout_width="match_parent"
