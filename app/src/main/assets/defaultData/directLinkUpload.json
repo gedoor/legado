@@ -1,5 +1,5 @@
 {
   "uploadUrl": "http://sy.mgz6.cc/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
-  "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'http://shuyuan.mgz6.cc/shuyuan/' + result",
+  "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.mgz6.cc/shuyuan/' + result",
   "summary": "有效期2天"
 }
