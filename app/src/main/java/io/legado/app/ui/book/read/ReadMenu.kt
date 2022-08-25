@@ -247,16 +247,22 @@ class ReadMenu @JvmOverloads constructor(
 
         //搜索
         fabSearch.setOnClickListener {
-            runMenuOut {
+            if(AppConfig.isEInkMode)
                 callBack.openSearchActivity(null)
-            }
+            else
+                runMenuOut {
+                    callBack.openSearchActivity(null)
+                }
         }
 
         //自动翻页
         fabAutoPage.setOnClickListener {
-            runMenuOut {
+            if(AppConfig.isEInkMode)
                 callBack.autoPage()
-            }
+            else
+                runMenuOut {
+                    callBack.autoPage()
+                }
         }
 
         //替换
@@ -276,32 +282,47 @@ class ReadMenu @JvmOverloads constructor(
 
         //目录
         llCatalog.setOnClickListener {
-            runMenuOut {
+            if(AppConfig.isEInkMode)
                 callBack.openChapterList()
-            }
+            else
+                runMenuOut {
+                    callBack.openChapterList()
+                }
         }
 
         //朗读
         llReadAloud.setOnClickListener {
-            runMenuOut {
+            if(AppConfig.isEInkMode)
                 callBack.onClickReadAloud()
-            }
+            else
+                runMenuOut {
+                    callBack.onClickReadAloud()
+                }
         }
         llReadAloud.onLongClick {
-            runMenuOut { callBack.showReadAloudDialog() }
+            if(AppConfig.isEInkMode)
+                callBack.showReadAloudDialog()
+            else
+                runMenuOut { callBack.showReadAloudDialog() }
         }
         //界面
         llFont.setOnClickListener {
-            runMenuOut {
+            if(AppConfig.isEInkMode)
                 callBack.showReadStyle()
-            }
+            else
+                runMenuOut {
+                    callBack.showReadStyle()
+                }
         }
 
         //设置
         llSetting.setOnClickListener {
-            runMenuOut {
+            if(AppConfig.isEInkMode)
                 callBack.showMoreSetting()
-            }
+            else
+                runMenuOut {
+                    callBack.showMoreSetting()
+                }
         }
     }
 
