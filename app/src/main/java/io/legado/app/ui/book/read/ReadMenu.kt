@@ -43,10 +43,18 @@ class ReadMenu @JvmOverloads constructor(
     var cnaShowMenu: Boolean = false
     private val callBack: CallBack get() = activity as CallBack
     private val binding = ViewReadMenuBinding.inflate(LayoutInflater.from(context), this, true)
-    private lateinit var menuTopIn: Animation
-    private lateinit var menuTopOut: Animation
-    private lateinit var menuBottomIn: Animation
-    private lateinit var menuBottomOut: Animation
+    private val menuTopIn: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_top_in)
+    }
+    private val menuTopOut: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_top_out)
+    }
+    private val menuBottomIn: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_bottom_in)
+    }
+    private val menuBottomOut: Animation by lazy {
+        loadAnimation(context, R.anim.anim_readbook_bottom_out)
+    }
     private val bgColor: Int = context.bottomBackground
     private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
     private val bottomBackgroundList: ColorStateList = Selector.colorBuild()
@@ -70,6 +78,58 @@ class ReadMenu @JvmOverloads constructor(
                 true
             }
         }
+    }
+    private val menuInListener = object : Animation.AnimationListener {
+        override fun onAnimationStart(animation: Animation) {
+            binding.tvSourceAction.isGone = ReadBook.isLocalBook
+            binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+            binding.tvPay.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+                    || ReadBook.curTextChapter?.isVip != true
+                    || ReadBook.curTextChapter?.isPay == true
+            callBack.upSystemUiVisibility()
+            binding.llBrightness.visible(showBrightnessView)
+        }
+
+        @SuppressLint("RtlHardcoded")
+        override fun onAnimationEnd(animation: Animation) {
+            val navigationBarHeight =
+                if (ReadBookConfig.hideNavigationBar) {
+                    activity?.navigationBarHeight ?: 0
+                } else {
+                    0
+                }
+            binding.run {
+                vwMenuBg.setOnClickListener { runMenuOut() }
+                root.padding = 0
+                when (activity?.navigationBarGravity) {
+                    Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
+                    Gravity.LEFT -> root.leftPadding = navigationBarHeight
+                    Gravity.RIGHT -> root.rightPadding = navigationBarHeight
+                }
+            }
+            callBack.upSystemUiVisibility()
+            if (!LocalConfig.readMenuHelpVersionIsLast) {
+                callBack.showReadMenuHelp()
+            }
+        }
+
+        override fun onAnimationRepeat(animation: Animation) = Unit
+    }
+    private val menuOutListener = object : Animation.AnimationListener {
+        override fun onAnimationStart(animation: Animation) {
+            binding.vwMenuBg.setOnClickListener(null)
+        }
+
+        override fun onAnimationEnd(animation: Animation) {
+            this@ReadMenu.invisible()
+            binding.titleBar.invisible()
+            binding.bottomMenu.invisible()
+            cnaShowMenu = false
+            onMenuOutEnd?.invoke()
+            callBack.upSystemUiVisibility()
+        }
+
+        override fun onAnimationRepeat(animation: Animation) = Unit
     }
 
     init {
@@ -141,19 +201,29 @@ class ReadMenu @JvmOverloads constructor(
         activity?.window?.attributes = params
     }
 
-    fun runMenuIn() {
+    fun runMenuIn(anim: Boolean = AppConfig.isEInkMode) {
         this.visible()
         binding.titleBar.visible()
         binding.bottomMenu.visible()
-        binding.titleBar.startAnimation(menuTopIn)
-        binding.bottomMenu.startAnimation(menuBottomIn)
+        if (anim) {
+            binding.titleBar.startAnimation(menuTopIn)
+            binding.bottomMenu.startAnimation(menuBottomIn)
+        } else {
+            menuInListener.onAnimationStart(menuBottomIn)
+            menuInListener.onAnimationEnd(menuBottomIn)
+        }
     }
 
-    fun runMenuOut(onMenuOutEnd: (() -> Unit)? = null) {
+    fun runMenuOut(anim: Boolean = AppConfig.isEInkMode, onMenuOutEnd: (() -> Unit)? = null) {
         this.onMenuOutEnd = onMenuOutEnd
         if (this.isVisible) {
-            binding.titleBar.startAnimation(menuTopOut)
-            binding.bottomMenu.startAnimation(menuBottomOut)
+            if (anim) {
+                binding.titleBar.startAnimation(menuTopOut)
+                binding.bottomMenu.startAnimation(menuBottomOut)
+            } else {
+                menuOutListener.onAnimationStart(menuBottomOut)
+                menuOutListener.onAnimationEnd(menuBottomOut)
+            }
         }
     }
 
@@ -247,22 +317,16 @@ class ReadMenu @JvmOverloads constructor(
 
         //搜索
         fabSearch.setOnClickListener {
-            if(AppConfig.isEInkMode)
+            runMenuOut {
                 callBack.openSearchActivity(null)
-            else
-                runMenuOut {
-                    callBack.openSearchActivity(null)
-                }
+            }
         }
 
         //自动翻页
         fabAutoPage.setOnClickListener {
-            if(AppConfig.isEInkMode)
+            runMenuOut {
                 callBack.autoPage()
-            else
-                runMenuOut {
-                    callBack.autoPage()
-                }
+            }
         }
 
         //替换
@@ -282,111 +346,40 @@ class ReadMenu @JvmOverloads constructor(
 
         //目录
         llCatalog.setOnClickListener {
-            if(AppConfig.isEInkMode)
+            runMenuOut {
                 callBack.openChapterList()
-            else
-                runMenuOut {
-                    callBack.openChapterList()
-                }
+            }
         }
 
         //朗读
         llReadAloud.setOnClickListener {
-            if(AppConfig.isEInkMode)
+            runMenuOut {
                 callBack.onClickReadAloud()
-            else
-                runMenuOut {
-                    callBack.onClickReadAloud()
-                }
+            }
         }
         llReadAloud.onLongClick {
-            if(AppConfig.isEInkMode)
+            runMenuOut {
                 callBack.showReadAloudDialog()
-            else
-                runMenuOut { callBack.showReadAloudDialog() }
+            }
         }
         //界面
         llFont.setOnClickListener {
-            if(AppConfig.isEInkMode)
+            runMenuOut {
                 callBack.showReadStyle()
-            else
-                runMenuOut {
-                    callBack.showReadStyle()
-                }
+            }
         }
 
         //设置
         llSetting.setOnClickListener {
-            if(AppConfig.isEInkMode)
+            runMenuOut {
                 callBack.showMoreSetting()
-            else
-                runMenuOut {
-                    callBack.showMoreSetting()
-                }
+            }
         }
     }
 
     private fun initAnimation() {
-        //显示菜单
-        menuTopIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_in)
-        menuBottomIn = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
-        menuTopIn.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                binding.tvSourceAction.isGone = ReadBook.isLocalBook
-                binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
-                binding.tvPay.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
-                        || ReadBook.curTextChapter?.isVip != true
-                        || ReadBook.curTextChapter?.isPay == true
-                callBack.upSystemUiVisibility()
-                binding.llBrightness.visible(showBrightnessView)
-            }
-
-            @SuppressLint("RtlHardcoded")
-            override fun onAnimationEnd(animation: Animation) {
-                val navigationBarHeight =
-                    if (ReadBookConfig.hideNavigationBar) {
-                        activity?.navigationBarHeight ?: 0
-                    } else {
-                        0
-                    }
-                binding.run {
-                    vwMenuBg.setOnClickListener { runMenuOut() }
-                    root.padding = 0
-                    when (activity?.navigationBarGravity) {
-                        Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
-                        Gravity.LEFT -> root.leftPadding = navigationBarHeight
-                        Gravity.RIGHT -> root.rightPadding = navigationBarHeight
-                    }
-                }
-                callBack.upSystemUiVisibility()
-                if (!LocalConfig.readMenuHelpVersionIsLast) {
-                    callBack.showReadMenuHelp()
-                }
-            }
-
-            override fun onAnimationRepeat(animation: Animation) = Unit
-        })
-
-        //隐藏菜单
-        menuTopOut = AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_top_out)
-        menuBottomOut =
-            AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_out)
-        menuTopOut.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                binding.vwMenuBg.setOnClickListener(null)
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                this@ReadMenu.invisible()
-                binding.titleBar.invisible()
-                binding.bottomMenu.invisible()
-                cnaShowMenu = false
-                onMenuOutEnd?.invoke()
-                callBack.upSystemUiVisibility()
-            }
-
-            override fun onAnimationRepeat(animation: Animation) = Unit
-        })
+        menuTopIn.setAnimationListener(menuInListener)
+        menuTopOut.setAnimationListener(menuOutListener)
     }
 
     fun upBookView() {
