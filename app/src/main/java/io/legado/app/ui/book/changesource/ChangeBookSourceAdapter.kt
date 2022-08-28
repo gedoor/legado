@@ -1,16 +1,19 @@
 package io.legado.app.ui.book.changesource
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import splitties.views.onLongClick
@@ -68,10 +71,55 @@ class ChangeBookSourceAdapter(
                     }
                 }
             }
+            val score = callBack.getBookScore(item)
+            if (score > 0) {
+                binding.ivBad.gone()
+                binding.ivGood.visible()
+                binding.ivGood.drawable.setTint(Color.parseColor("#D50000"))
+            } else if (score < 0) {
+                binding.ivGood.gone()
+                binding.ivBad.visible()
+                binding.ivBad.drawable.setTint(Color.parseColor("#2962FF"))
+            } else {
+                binding.ivGood.visible()
+                binding.ivBad.visible()
+                binding.ivGood.drawable.setTint(Color.parseColor("#FF8A80"))
+                binding.ivBad.drawable.setTint(Color.parseColor("#82B1FF"))
+            }
         }
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
+        binding.ivGood.setOnClickListener {
+            if (binding.ivBad.isVisible) {
+                binding.ivGood.drawable.setTint(Color.parseColor("#D50000"))
+                binding.ivBad.gone()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, 1)
+                }
+            } else {
+                binding.ivGood.drawable.setTint(Color.parseColor("#FF8A80"))
+                binding.ivBad.visible()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, 0)
+                }
+            }
+        }
+        binding.ivBad.setOnClickListener {
+            if (binding.ivGood.isVisible) {
+                binding.ivBad.drawable.setTint(Color.parseColor("#2962FF"))
+                binding.ivGood.gone()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, -1)
+                }
+            } else {
+                binding.ivBad.drawable.setTint(Color.parseColor("#82B1FF"))
+                binding.ivGood.visible()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, 0)
+                }
+            }
+        }
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 if (it.bookUrl != callBack.bookUrl) {
@@ -120,5 +168,7 @@ class ChangeBookSourceAdapter(
         fun editSource(searchBook: SearchBook)
         fun disableSource(searchBook: SearchBook)
         fun deleteSource(searchBook: SearchBook)
+        fun setBookScore(searchBook: SearchBook, score: Int)
+        fun getBookScore(searchBook: SearchBook): Int
     }
 }

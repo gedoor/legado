@@ -5,6 +5,7 @@ import android.text.TextUtils
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.config.SourceConfig
 import io.legado.app.utils.*
 import java.io.File
 import java.io.FileOutputStream
@@ -38,7 +39,12 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun del(vararg sources: BookSource) {
-        execute { appDb.bookSourceDao.delete(*sources) }
+        execute {
+            appDb.bookSourceDao.delete(*sources)
+            sources.forEach {
+                SourceConfig.removeSource(it.bookSourceUrl)
+            }
+        }
     }
 
     fun update(vararg bookSource: BookSource) {
