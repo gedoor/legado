@@ -341,7 +341,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         historyFlowJob?.cancel()
         historyFlowJob = launch {
             when {
-                key.isNullOrBlank() -> appDb.searchKeywordDao.flowByUsage()
+                key.isNullOrBlank() -> appDb.searchKeywordDao.flowByTime()
                 else -> appDb.searchKeywordDao.flowSearch(key)
             }.conflate().collect {
                 historyKeyAdapter.setItems(it)
