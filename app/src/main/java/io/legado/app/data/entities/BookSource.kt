@@ -37,7 +37,9 @@ data class BookSource(
     // 是否启用
     var enabled: Boolean = true,
     // 启用发现
-    var enabledExplore: Boolean = true,
+    var enabledExplore: Boolean = false,
+    // 启用段评
+    var enabledReview: Boolean? = false,
     // 启用okhttp CookieJAr 自动保存每次请求的cookie
     @ColumnInfo(defaultValue = "0")
     override var enabledCookieJar: Boolean? = false,
@@ -49,8 +51,6 @@ data class BookSource(
     override var loginUrl: String? = null,
     // 登录UI
     override var loginUi: String? = null,
-    // 启用段评
-    var enabledReview: Boolean? = false,
     // 登录检测js
     var loginCheckJs: String? = null,
     // 注释
