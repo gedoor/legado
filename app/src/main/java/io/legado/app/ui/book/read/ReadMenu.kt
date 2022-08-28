@@ -201,7 +201,7 @@ class ReadMenu @JvmOverloads constructor(
         activity?.window?.attributes = params
     }
 
-    fun runMenuIn(anim: Boolean = AppConfig.isEInkMode) {
+    fun runMenuIn(anim: Boolean = !AppConfig.isEInkMode) {
         this.visible()
         binding.titleBar.visible()
         binding.bottomMenu.visible()
@@ -214,7 +214,7 @@ class ReadMenu @JvmOverloads constructor(
         }
     }
 
-    fun runMenuOut(anim: Boolean = AppConfig.isEInkMode, onMenuOutEnd: (() -> Unit)? = null) {
+    fun runMenuOut(anim: Boolean = !AppConfig.isEInkMode, onMenuOutEnd: (() -> Unit)? = null) {
         this.onMenuOutEnd = onMenuOutEnd
         if (this.isVisible) {
             if (anim) {
