@@ -15,6 +15,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ExploreKind
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemFindBookBinding
+import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.login.SourceLoginActivity
@@ -174,6 +175,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 }
                 R.id.menu_del -> Coroutine.async(callBack.scope) {
                     appDb.bookSourceDao.delete(source)
+                    SourceConfig.removeSource(source.bookSourceUrl)
                 }
             }
             true
