@@ -9,7 +9,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_good"
-        android:layout_width="40dp"
+        android:layout_width="30dp"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         android:padding="5dp"
@@ -17,11 +17,11 @@
         app:layout_constraintBottom_toTopOf="@+id/iv_bad"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/md_red_50" />
+        app:tint="@color/md_red_A200" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_bad"
-        android:layout_width="40dp"
+        android:layout_width="30dp"
         android:layout_height="0dp"
         android:layout_marginBottom="5dp"
         android:padding="5dp"
@@ -30,13 +30,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_good"
-        app:tint="@color/md_blue_50" />
+        app:tint="@color/md_blue_A200" />
 
     <TextView
         android:id="@+id/tv_origin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="10dp"
         android:singleLine="true"
         android:textColor="@color/primaryText"
@@ -59,7 +59,7 @@
         android:id="@+id/tv_last"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginBottom="10dp"
         android:singleLine="true"
         android:textColor="@color/secondaryText"

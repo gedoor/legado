@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
@@ -13,9 +14,8 @@ import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
-import io.legado.app.utils.gone
-import io.legado.app.utils.invisible
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
+import splitties.init.appCtx
 import splitties.views.onLongClick
 
 
@@ -75,16 +75,18 @@ class ChangeBookSourceAdapter(
             if (score > 0) {
                 binding.ivBad.gone()
                 binding.ivGood.visible()
-                binding.ivGood.drawable.setTint(Color.parseColor("#D50000"))
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_A200))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
             } else if (score < 0) {
                 binding.ivGood.gone()
                 binding.ivBad.visible()
-                binding.ivBad.drawable.setTint(Color.parseColor("#2962FF"))
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_A200))
             } else {
                 binding.ivGood.visible()
                 binding.ivBad.visible()
-                binding.ivGood.drawable.setTint(Color.parseColor("#FF8A80"))
-                binding.ivBad.drawable.setTint(Color.parseColor("#82B1FF"))
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
             }
         }
     }
@@ -92,13 +94,13 @@ class ChangeBookSourceAdapter(
     override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
         binding.ivGood.setOnClickListener {
             if (binding.ivBad.isVisible) {
-                binding.ivGood.drawable.setTint(Color.parseColor("#D50000"))
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_A200))
                 binding.ivBad.gone()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, 1)
                 }
             } else {
-                binding.ivGood.drawable.setTint(Color.parseColor("#FF8A80"))
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
                 binding.ivBad.visible()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, 0)
@@ -107,13 +109,13 @@ class ChangeBookSourceAdapter(
         }
         binding.ivBad.setOnClickListener {
             if (binding.ivGood.isVisible) {
-                binding.ivBad.drawable.setTint(Color.parseColor("#2962FF"))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_A200))
                 binding.ivGood.gone()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, -1)
                 }
             } else {
-                binding.ivBad.drawable.setTint(Color.parseColor("#82B1FF"))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
                 binding.ivGood.visible()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, 0)
