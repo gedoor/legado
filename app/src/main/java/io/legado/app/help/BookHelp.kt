@@ -165,7 +165,7 @@ object BookHelp {
     fun getEpubFile(book: Book): ZipFile {
         val uri = Uri.parse(book.bookUrl)
         if (uri.isContentScheme()) {
-            val path = FileUtils.getPath(downloadDir, cacheFolderName, book.originName)
+            val path = FileUtils.getPath(downloadDir, cacheFolderName, book.getFolderName(), book.originName)
             val file = File(path)
             val doc = DocumentFile.fromSingleUri(appCtx, uri)
                 ?: throw IOException("文件不存在")
