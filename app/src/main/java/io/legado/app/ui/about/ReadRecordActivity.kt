@@ -1,7 +1,7 @@
 package io.legado.app.ui.about
 
+import java.text.SimpleDateFormat
 import android.content.Context
-import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
