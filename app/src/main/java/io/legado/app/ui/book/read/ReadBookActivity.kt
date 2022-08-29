@@ -36,6 +36,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
+import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
@@ -962,31 +963,34 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun payAction() {
-        Coroutine.async(this) {
-            val book = ReadBook.book ?: throw NoStackTraceException("no book")
-            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
-                ?: throw NoStackTraceException("no chapter")
-            val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
-            val payAction = source.getContentRule().payAction
-            if (payAction.isNullOrEmpty()) {
-                throw NoStackTraceException("no pay action")
-            }
-            JsUtils.evalJs(payAction) {
-                it["java"] = source
-                it["source"] = source
-                it["book"] = book
-                it["chapter"] = chapter
-            }
-        }.onSuccess {
-            if (it.isNotBlank()) {
-                startActivity<WebViewActivity> {
-                    putExtra("title", getString(R.string.chapter_pay))
-                    putExtra("url", it)
-                    IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+        val book = ReadBook.book ?: throw NoStackTraceException("no book")
+        val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+            ?: throw NoStackTraceException("no chapter")
+        val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
+        val payAction = source.getContentRule().payAction
+        if (payAction.isNullOrEmpty()) {
+            throw NoStackTraceException("no pay action")
+        }
+        alert(R.string.pay_chapter) {
+            setMessage(chapter.title)
+            yesButton {
+                Coroutine.async {
+                    val analyzeRule = AnalyzeRule(book, source).setBaseUrl(chapter.url)
+                    analyzeRule.chapter = chapter
+                    analyzeRule.evalJS(payAction).toString()
+                }.onSuccess {
+                    if (it.isNotBlank()) {
+                        startActivity<WebViewActivity> {
+                            putExtra("title", getString(R.string.chapter_pay))
+                            putExtra("url", it)
+                            IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+                        }
+                    }
+                }.onError {
+                    toastOnUi(it.localizedMessage)
                 }
             }
-        }.onError {
-            toastOnUi(it.localizedMessage)
+            noButton()
         }
     }
 

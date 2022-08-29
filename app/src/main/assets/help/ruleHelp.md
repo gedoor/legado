@@ -152,5 +152,4 @@ let options = {
 ```
 
 * 购买操作
-> 返回购买链接，可直接填写链接或者JavaScript  
-> 可用变量 book chapter java(不支持AnalyzeRule函数) source
+> 返回购买链接（自动打开浏览器），可直接填写链接或者JavaScript
