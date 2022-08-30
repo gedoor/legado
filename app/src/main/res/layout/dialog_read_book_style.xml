@@ -3,32 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/root_view"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/background"
-    android:padding="10dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
+        android:paddingHorizontal="16dp">
 
         <io.legado.app.ui.book.read.config.TextFontWeightConverter
             android:id="@+id/text_font_weight_converter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
             android:gravity="center"
+            android:paddingLeft="6dp"
+            android:paddingTop="4dp"
+            android:paddingRight="6dp"
+            android:paddingBottom="4dp"
             android:textSize="14sp"
             app:isBottomBackground="true"
             app:radius="3dp" />
@@ -42,12 +38,12 @@
             android:id="@+id/tv_text_font"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:paddingLeft="6dp"
-            android:paddingRight="6dp"
             android:paddingTop="4dp"
+            android:paddingRight="6dp"
             android:paddingBottom="4dp"
             android:text="@string/text_font"
-            android:gravity="center"
             android:textSize="14sp"
             app:isBottomBackground="true"
             app:radius="3dp" />
@@ -61,12 +57,12 @@
             android:id="@+id/tv_text_indent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:paddingLeft="6dp"
-            android:paddingRight="6dp"
             android:paddingTop="4dp"
+            android:paddingRight="6dp"
             android:paddingBottom="4dp"
             android:text="@string/text_indent"
-            android:gravity="center"
             android:textSize="14sp"
             app:isBottomBackground="true"
             app:radius="3dp" />
@@ -80,11 +76,11 @@
             android:id="@+id/chinese_converter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
             android:gravity="center"
+            android:paddingLeft="6dp"
+            android:paddingTop="4dp"
+            android:paddingRight="6dp"
+            android:paddingBottom="4dp"
             android:textSize="14sp"
             app:isBottomBackground="true"
             app:radius="3dp" />
@@ -98,12 +94,12 @@
             android:id="@+id/tv_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:paddingLeft="6dp"
-            android:paddingRight="6dp"
             android:paddingTop="4dp"
+            android:paddingRight="6dp"
             android:paddingBottom="4dp"
             android:text="@string/padding"
-            android:gravity="center"
             android:textSize="14sp"
             app:isBottomBackground="true"
             app:radius="3dp" />
@@ -117,20 +113,15 @@
             android:id="@+id/tv_tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:paddingLeft="6dp"
-            android:paddingRight="6dp"
             android:paddingTop="4dp"
+            android:paddingRight="6dp"
             android:paddingBottom="4dp"
             android:text="@string/information"
-            android:gravity="center"
             android:textSize="14sp"
             app:isBottomBackground="true"
             app:radius="3dp" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
 
     </LinearLayout>
 
@@ -138,9 +129,8 @@
         android:id="@+id/dsb_text_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
         app:isBottomBackground="true"
         app:max="45"
         app:title="@string/text_size" />
@@ -149,8 +139,7 @@
         android:id="@+id/dsb_text_letter_spacing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:layout_marginHorizontal="16dp"
         app:isBottomBackground="true"
         app:max="100"
         app:title="@string/text_letter_spacing" />
@@ -159,8 +148,7 @@
         android:id="@+id/dsb_line_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:layout_marginHorizontal="16dp"
         app:isBottomBackground="true"
         app:max="20"
         app:title="@string/line_size" />
@@ -169,8 +157,7 @@
         android:id="@+id/dsb_paragraph_spacing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:layout_marginHorizontal="16dp"
         app:isBottomBackground="true"
         app:max="20"
         app:title="@string/paragraph_size" />
@@ -179,36 +166,37 @@
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
         android:background="@color/btn_bg_press" />
 
     <TextView
         android:id="@+id/tv_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:paddingStart="6dp"
-        android:paddingEnd="6dp"
-        android:text="@string/page_anim" />
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="4dp"
+        android:alpha="0.75"
+        android:text="@string/page_anim"
+        android:textSize="12sp" />
 
     <RadioGroup
         android:id="@+id/rg_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_marginHorizontal="11dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <io.legado.app.lib.theme.view.ThemeRadioNoButton
             android:id="@+id/rb_anim0"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:padding="5dp"
             android:button="@null"
             android:gravity="center"
+            android:padding="5dp"
             android:singleLine="true"
             android:text="@string/page_anim_cover"
             app:isBottomBackground="true" />
@@ -217,11 +205,11 @@
             android:id="@+id/rb_anim1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:padding="5dp"
             android:button="@null"
             android:gravity="center"
+            android:padding="5dp"
             android:singleLine="true"
             android:text="@string/page_anim_slide"
             app:isBottomBackground="true" />
@@ -230,11 +218,11 @@
             android:id="@+id/rb_simulation_anim"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:padding="5dp"
             android:button="@null"
             android:gravity="center"
+            android:padding="5dp"
             android:singleLine="true"
             android:text="@string/page_anim_simulation"
             app:isBottomBackground="true" />
@@ -243,11 +231,11 @@
             android:id="@+id/rb_scroll_anim"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:padding="5dp"
             android:button="@null"
             android:gravity="center"
+            android:padding="5dp"
             android:singleLine="true"
             android:text="@string/page_anim_scroll"
             app:isBottomBackground="true" />
@@ -256,11 +244,11 @@
             android:id="@+id/rb_no_anim"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:padding="5dp"
             android:button="@null"
             android:gravity="center"
+            android:padding="5dp"
             android:singleLine="true"
             android:text="@string/page_anim_none"
             app:isBottomBackground="true" />
@@ -271,24 +259,25 @@
         android:id="@+id/vw_bg_fg1"
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
         android:background="@color/btn_bg_press" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tv_bg_ts"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="@string/text_bg_style" />
+            android:alpha="0.75"
+            android:text="@string/text_bg_style"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_share_layout"
@@ -300,8 +289,8 @@
             android:id="@+id/cb_share_layout"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginLeft="6dp" />
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="16dp" />
 
     </LinearLayout>
 
@@ -309,7 +298,11 @@
         android:id="@+id/rv_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
         android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tool:listitem="@layout/item_read_style" />
 
