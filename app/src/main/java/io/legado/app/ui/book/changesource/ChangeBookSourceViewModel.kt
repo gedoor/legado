@@ -83,27 +83,23 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             searchCallback = null
         }
     }.map {
-        searchBooks.sortedWith(object : Comparator<SearchBook> {
-            override fun compare(o1: SearchBook, o2: SearchBook): Int {
-                val o1bs = SourceConfig.getBookScore(o1.origin, o1.name, o1.author)
-                val o2bs = SourceConfig.getBookScore(o2.origin, o2.name, o2.author)
-                if (o1bs - o2bs > 0) {
-                    return -1
-                } else if (o1bs - o2bs < 0) {
-                    return 1
-                } else {
+        searchBooks.sortedWith { o1, o2 ->
+            val o1bs = SourceConfig.getBookScore(o1.origin, o1.name, o1.author)
+            val o2bs = SourceConfig.getBookScore(o2.origin, o2.name, o2.author)
+            when {
+                o1bs - o2bs > 0 -> -1
+                o1bs - o2bs < 0 -> 1
+                else -> {
                     val o1ss = SourceConfig.getSourceScore(o1.origin)
                     val o2ss = SourceConfig.getSourceScore(o2.origin)
-                    if (o1ss - o2ss > 0) {
-                        return -1
-                    } else if (o1ss - o2ss < 0) {
-                        return 1
-                    } else {
-                        return o1.originOrder - o2.originOrder
+                    when {
+                        o1ss - o2ss > 0 -> -1
+                        o1ss - o2ss < 0 -> 1
+                        else -> o1.originOrder - o2.originOrder
                     }
                 }
             }
-        })
+        }
     }.flowOn(IO)
 
     @Volatile

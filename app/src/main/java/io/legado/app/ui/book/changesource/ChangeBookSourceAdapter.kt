@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.changesource
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,10 @@ import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
-import io.legado.app.utils.*
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.gone
+import io.legado.app.utils.invisible
+import io.legado.app.utils.visible
 import splitties.init.appCtx
 import splitties.views.onLongClick
 
