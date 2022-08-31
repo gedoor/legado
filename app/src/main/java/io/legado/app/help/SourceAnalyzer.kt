@@ -165,6 +165,7 @@ object SourceAnalyzer {
                 }
                 source.loginCheckJs = sourceAny.loginCheckJs
                 source.bookSourceComment = sourceAny.bookSourceComment
+                source.variableComment = sourceAny.variableComment
                 source.lastUpdateTime = sourceAny.lastUpdateTime
                 source.respondTime = sourceAny.respondTime
                 source.weight = sourceAny.weight
@@ -220,13 +221,14 @@ object SourceAnalyzer {
         var customOrder: Int = 0,                       // 手动排序编号
         var enabled: Boolean = true,                    // 是否启用
         var enabledExplore: Boolean = true,             // 启用发现
-        var enabledCookieJar: Boolean = false,             // 启用CookieJar
+        var enabledCookieJar: Boolean = false,          // 启用CookieJar
         var concurrentRate: String? = null,             // 并发率
         var header: String? = null,                     // 请求头
         var loginUrl: Any? = null,                      // 登录规则
         var loginUi: Any? = null,                       // 登录UI
-        var loginCheckJs: String? = null,               //登录检测js
-        var bookSourceComment: String? = "",            //书源注释
+        var loginCheckJs: String? = null,               // 登录检测js
+        var bookSourceComment: String? = "",            // 书源注释
+        var variableComment: String? = null,            // 变量说明
         var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
         var respondTime: Long = 180000L,                // 响应时间，用于排序
         var weight: Int = 0,                            // 智能排序的权重
