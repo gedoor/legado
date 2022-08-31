@@ -219,7 +219,6 @@ class CheckSourceService : BaseService() {
                     //校验正文
                     if (CheckSource.checkContent) {
                         WebBook.getContentAwait(
-                            this,
                             bookSource = source,
                             book = mBook,
                             bookChapter = toc.first(),

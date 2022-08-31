@@ -238,12 +238,11 @@ object WebBook {
         context: CoroutineContext = Dispatchers.IO
     ): Coroutine<String> {
         return Coroutine.async(scope, context) {
-            getContentAwait(scope, bookSource, book, bookChapter, nextChapterUrl, needSave)
+            getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
         }
     }
 
     suspend fun getContentAwait(
-        scope: CoroutineScope,
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,

@@ -216,7 +216,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 toc.first()
             }
             WebBook.getContentAwait(
-                this,
                 bookSource = source,
                 book = book,
                 bookChapter = toc[book.durChapterIndex],

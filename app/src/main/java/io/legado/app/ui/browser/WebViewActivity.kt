@@ -125,12 +125,14 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private fun upWebViewTheme() {
         if (AppConfig.isNightTheme) {
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
+                @Suppress("DEPRECATION")
                 WebSettingsCompat.setForceDarkStrategy(
                     binding.webView.settings,
                     WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
                 )
             }
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                @Suppress("DEPRECATION")
                 WebSettingsCompat.setForceDark(
                     binding.webView.settings,
                     WebSettingsCompat.FORCE_DARK_ON

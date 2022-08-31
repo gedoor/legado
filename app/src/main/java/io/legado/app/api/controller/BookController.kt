@@ -180,7 +180,7 @@ object BookController {
             ?: return returnData.setErrorMsg("未找到书源")
         try {
             content = runBlocking {
-                WebBook.getContentAwait(this, bookSource, book, chapter).let {
+                WebBook.getContentAwait(bookSource, book, chapter).let {
                     val contentProcessor = ContentProcessor.get(book.name, book.origin)
                     contentProcessor.getContent(book, chapter, it, includeTitle = false)
                         .joinToString("\n")
