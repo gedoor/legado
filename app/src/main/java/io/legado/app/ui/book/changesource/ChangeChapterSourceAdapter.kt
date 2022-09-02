@@ -5,14 +5,19 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
+import splitties.init.appCtx
 import splitties.views.onLongClick
 
 
@@ -68,10 +73,57 @@ class ChangeChapterSourceAdapter(
                     }
                 }
             }
+            val score = callBack.getBookScore(item)
+            if (score > 0) {
+                binding.ivBad.gone()
+                binding.ivGood.visible()
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_A200))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
+            } else if (score < 0) {
+                binding.ivGood.gone()
+                binding.ivBad.visible()
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_A200))
+            } else {
+                binding.ivGood.visible()
+                binding.ivBad.visible()
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
+            }
         }
     }
 
     override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
+        binding.ivGood.setOnClickListener {
+            if (binding.ivBad.isVisible) {
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_A200))
+                binding.ivBad.gone()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, 1)
+                }
+            } else {
+                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
+                binding.ivBad.visible()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, 0)
+                }
+            }
+        }
+        binding.ivBad.setOnClickListener {
+            if (binding.ivGood.isVisible) {
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_A200))
+                binding.ivGood.gone()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, -1)
+                }
+            } else {
+                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
+                binding.ivGood.visible()
+                getItem(holder.layoutPosition)?.let {
+                    callBack.setBookScore(it, 0)
+                }
+            }
+        }
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callBack.openToc(it)
@@ -118,5 +170,7 @@ class ChangeChapterSourceAdapter(
         fun editSource(searchBook: SearchBook)
         fun disableSource(searchBook: SearchBook)
         fun deleteSource(searchBook: SearchBook)
+        fun setBookScore(searchBook: SearchBook, score: Int)
+        fun getBookScore(searchBook: SearchBook): Int
     }
 }

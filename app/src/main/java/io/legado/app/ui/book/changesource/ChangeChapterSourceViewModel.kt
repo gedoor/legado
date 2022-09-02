@@ -35,7 +35,7 @@ class ChangeChapterSourceViewModel(application: Application) :
         execute {
             val bookSource = appDb.bookSourceDao.getBookSource(book.origin)
                 ?: throw NoStackTraceException("书源不存在")
-            WebBook.getContentAwait(this, bookSource, book, chapter, nextChapterUrl, false)
+            WebBook.getContentAwait(bookSource, book, chapter, nextChapterUrl, false)
         }.onSuccess {
             success.invoke(it)
         }.onError {

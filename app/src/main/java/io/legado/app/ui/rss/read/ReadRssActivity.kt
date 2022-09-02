@@ -141,7 +141,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                             SelectItem(getString(R.string.action_save), "save"),
                             SelectItem(getString(R.string.select_folder), "selectFolder")
                         )
-                    ) { _, charSequence, i ->
+                    ) { _, charSequence, _ ->
                         when (charSequence.value) {
                             "save" -> saveImage(webPic)
                             "selectFolder" -> selectSaveFolder(null)
@@ -219,12 +219,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     private fun upWebViewTheme() {
         if (AppConfig.isNightTheme) {
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
+                @Suppress("DEPRECATION")
                 WebSettingsCompat.setForceDarkStrategy(
                     binding.webView.settings,
                     WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
                 )
             }
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                @Suppress("DEPRECATION")
                 WebSettingsCompat.setForceDark(
                     binding.webView.settings,
                     WebSettingsCompat.FORCE_DARK_ON

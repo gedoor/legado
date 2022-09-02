@@ -1023,4 +1023,6 @@
     <string name="post_review_url">发送回复URL（postReviewUrl）</string>
     <string name="post_quote_url">发送回复段评URL（postQuoteUrl）</string>
     <string name="delete_review_url">删除段评URL（deleteUrl）</string>
+    <string name="tag_explore_enabled">标志:发现已启用</string>
+    <string name="tag_explore_disabled">标志:发现已禁用</string>
 </resources>

@@ -166,6 +166,7 @@ object SourceAnalyzer {
                 }
                 source.loginCheckJs = sourceAny.loginCheckJs
                 source.bookSourceComment = sourceAny.bookSourceComment
+                source.variableComment = sourceAny.variableComment
                 source.lastUpdateTime = sourceAny.lastUpdateTime
                 source.respondTime = sourceAny.respondTime
                 source.weight = sourceAny.weight
@@ -236,6 +237,7 @@ object SourceAnalyzer {
         var loginUi: Any? = null,                       // 登录UI
         var loginCheckJs: String? = null,               // 登录检测js
         var bookSourceComment: String? = "",            // 书源注释
+        var variableComment: String? = null,            // 变量说明
         var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
         var respondTime: Long = 180000L,                // 响应时间，用于排序
         var weight: Int = 0,                            // 智能排序的权重
