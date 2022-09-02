@@ -37,9 +37,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
                             loadChapterList(book)
                         }
                     }
-                    saveRead(book)
                 }
             }
+            saveRead()
         }
     }
 
