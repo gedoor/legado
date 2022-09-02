@@ -105,7 +105,7 @@ object AudioPlay {
                 book.durChapterIndex = index
                 book.durChapterPos = 0
                 durChapter = null
-                saveRead(book)
+                saveRead()
                 play(context)
             }
         }
@@ -120,7 +120,7 @@ object AudioPlay {
                 book.durChapterIndex = book.durChapterIndex - 1
                 book.durChapterPos = 0
                 durChapter = null
-                saveRead(book)
+                saveRead()
                 play(context)
             }
         }
@@ -134,15 +134,9 @@ object AudioPlay {
             book.durChapterIndex = book.durChapterIndex + 1
             book.durChapterPos = 0
             durChapter = null
-            saveRead(book)
+            saveRead()
             play(context)
         }
-    }
-
-    fun addTimer() {
-        val intent = Intent(appCtx, AudioPlayService::class.java)
-        intent.action = IntentAction.addTimer
-        appCtx.startService(intent)
     }
 
     fun setTimer(minute: Int) {
@@ -152,16 +146,18 @@ object AudioPlay {
         appCtx.startService(intent)
     }
 
-    fun saveRead(book: Book) {
-        book.lastCheckCount = 0
-        book.durChapterTime = System.currentTimeMillis()
-        Coroutine.async {
-            appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
-                book.durChapterTitle = it.getDisplayTitle(
-                    ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-                )
+    fun saveRead() {
+        book?.let { book ->
+            book.lastCheckCount = 0
+            book.durChapterTime = System.currentTimeMillis()
+            Coroutine.async {
+                appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
+                    book.durChapterTitle = it.getDisplayTitle(
+                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+                    )
+                }
+                book.save()
             }
-            book.save()
         }
     }
 
