@@ -28,7 +28,6 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
-import io.legado.app.service.CheckSourceService
 import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.book.local.rule.TxtTocRuleActivity
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -589,7 +588,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun del(bookSource: BookSource) {
-        viewModel.del(bookSource)
+        alert(R.string.delete_source) {
+            setMessage(getString(R.string.sure_del) + "\n" + bookSource.bookSourceName)
+            noButton()
+            yesButton {
+                viewModel.del(bookSource)
+            }
+        }
     }
 
     override fun update(vararg bookSource: BookSource) {
