@@ -976,7 +976,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     Coroutine.async {
                         val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
                         val payAction = source.getContentRule().payAction
-                        if (payAction.isNullOrEmpty()) {
+                        if (payAction.isNullOrBlank()) {
                             throw NoStackTraceException("no pay action")
                         }
                         val analyzeRule = AnalyzeRule(book, source)
@@ -984,9 +984,9 @@ class ReadBookActivity : BaseReadBookActivity(),
                         analyzeRule.chapter = chapter
                         analyzeRule.evalJS(payAction).toString()
                     }.onSuccess {
-                        if (it.isNotBlank()) {
+                        if (it.isAbsUrl()) {
                             startActivity<WebViewActivity> {
-                                putExtra("title", R.string.chapter_pay)
+                                putExtra("title", getString(R.string.chapter_pay))
                                 putExtra("url", it)
                                 IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
                             }
