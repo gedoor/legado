@@ -199,6 +199,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 alertSync?.invoke(progress)
             } else {
                 ReadBook.setProgress(progress)
+                context.toastOnUi("自动同步阅读进度成功")
             }
         }
 

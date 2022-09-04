@@ -23,6 +23,8 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.net.URLEncoder
 import java.util.regex.Pattern
 
@@ -494,6 +496,52 @@ class AnalyzeUrl(
     fun getByteArray(): ByteArray {
         return runBlocking {
             getByteArrayAwait()
+        }
+    }
+
+    /**
+     * 访问网站,返回InputStream
+     */
+    suspend fun getInputStreamAwait(): InputStream {
+        val concurrentRecord = fetchStart()
+
+        @Suppress("RegExpRedundantEscape")
+        val dataUriFindResult = dataUriRegex.find(urlNoQuery)
+        @Suppress("BlockingMethodInNonBlockingContext")
+        if (dataUriFindResult != null) {
+            val dataUriBase64 = dataUriFindResult.groupValues[1]
+            val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
+            fetchEnd(concurrentRecord)
+            return ByteArrayInputStream(byteArray)
+        } else {
+            setCookie(source?.getKey())
+            val inputStream = getProxyClient(proxy).newCallResponseBody(retry) {
+                addHeaders(headerMap)
+                when (method) {
+                    RequestMethod.POST -> {
+                        url(urlNoQuery)
+                        val contentType = headerMap["Content-Type"]
+                        val body = body
+                        if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
+                            postForm(fieldMap, true)
+                        } else if (!contentType.isNullOrBlank()) {
+                            val requestBody = body.toRequestBody(contentType.toMediaType())
+                            post(requestBody)
+                        } else {
+                            postJson(body)
+                        }
+                    }
+                    else -> get(urlNoQuery, fieldMap, true)
+                }
+            }.byteStream()
+            fetchEnd(concurrentRecord)
+            return inputStream
+        }
+    }
+
+    fun getInputStream(): InputStream {
+        return runBlocking {
+            getInputStreamAwait()
         }
     }
 

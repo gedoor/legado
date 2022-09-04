@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.AppConfig
@@ -44,6 +45,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     val selectEnd = TextPos(0, 0, 0)
     var textPage: TextPage = TextPage()
         private set
+    private var drawVisibleImageOnly = false
+    private var cacheIncreased = false
+    private val increaseSize = 8 * 1024 * 1024
+    private val maxCacheSize = 256 * 1024 * 1024
 
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
@@ -86,6 +91,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         super.onDraw(canvas)
         canvas.clipRect(visibleRect)
         drawPage(canvas)
+        drawVisibleImageOnly = false
+        cacheIncreased = false
     }
 
     /**
@@ -173,12 +180,40 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     ) {
 
         val book = ReadBook.book ?: return
+        val isVisible = when {
+            lineTop > 0 -> lineTop < height
+            lineTop < 0 -> lineBottom > 0
+            else -> true
+        }
+        if (drawVisibleImageOnly && !isVisible) {
+            return
+        }
+        if (drawVisibleImageOnly &&
+            isVisible &&
+            !cacheIncreased &&
+            ImageProvider.isTriggerRecycled() &&
+            !ImageProvider.isImageAlive(book, textChar.charData)
+        ) {
+            val newSize = ImageProvider.bitmapLruCache.maxSize() + increaseSize
+            if (newSize < maxCacheSize) {
+                ImageProvider.bitmapLruCache.resize(newSize)
+                AppLog.put("图片缓存不够大，自动扩增至${(newSize / 1024 / 1024)}MB。")
+                cacheIncreased = true
+            }
+            return
+        }
         val bitmap = ImageProvider.getImage(
             book,
             textChar.charData,
             (textChar.end - textChar.start).toInt(),
             (lineBottom - lineTop).toInt()
-        )
+        ) {
+            if (!drawVisibleImageOnly && isVisible) {
+                drawVisibleImageOnly = true
+                invalidate()
+            }
+        } ?: return
+
         val rectF = if (textLine.isImage) {
             RectF(textChar.start, lineTop, textChar.end, lineBottom)
         } else {

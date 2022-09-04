@@ -7,9 +7,11 @@ import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.RssSourceController
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.externalFiles
 import io.legado.app.web.utils.AssetsWeb
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import splitties.init.appCtx
+import java.io.*
 
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
@@ -91,7 +93,26 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     byteArray.size.toLong()
                 )
             } else {
-                newFixedLengthResponse(Gson().toJson(returnData))
+                try {
+                    newFixedLengthResponse(Gson().toJson(returnData))
+                } catch (e: OutOfMemoryError) {
+                    val path = FileUtils.getPath(
+                        appCtx.externalFiles,
+                        "book_cache",
+                        "bookSources.json"
+                    )
+                    val file = FileUtils.createFileIfNotExist(path)
+                    BufferedWriter(FileWriter(file)).use {
+                        Gson().toJson(returnData, it)
+                    }
+                    val fis = FileInputStream(file)
+                    newFixedLengthResponse(
+                        Response.Status.OK,
+                        "application/json",
+                        fis,
+                        fis.available().toLong()
+                    )
+                }
             }
             response.addHeader("Access-Control-Allow-Methods", "GET, POST")
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
