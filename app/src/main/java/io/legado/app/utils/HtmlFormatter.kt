@@ -14,7 +14,7 @@ object HtmlFormatter {
     private val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
     private val otherHtmlRegex = "</?[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
     private val formatImagePattern = Pattern.compile(
-        "<img[^>]*src *= *\"([^\"{]*\\{(?:[^{}]|\\{[^}]+\\})+\\})\"[^>]*>|<img[^>]*data-[^=]*= *\"([^\"]*)\"[^>]*>|<img[^>]*src *= *\"([^\"]*)\"[^>]*>",
+        "<img[^>]*src *= *\"([^\"{>]*\\{(?:[^{}]|\\{[^}>]+\\})+\\})\"[^>]*>|<img[^>]*data-[^=>]*= *\"([^\">]*)\"[^>]*>|<img[^>]*src *= *\"([^\">]*)\"[^>]*>",
         Pattern.CASE_INSENSITIVE
     )
 

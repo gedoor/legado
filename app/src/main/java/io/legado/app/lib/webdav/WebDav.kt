@@ -232,7 +232,7 @@ open class WebDav(val path: String, val authorization: Authorization) {
                 }
             }
         }.onFailure {
-            AppLog.put("WebDav创建目录失败\n${it.localizedMessage}")
+            AppLog.put("WebDav创建目录失败\n${it.localizedMessage}", it)
         }.isSuccess
     }
 
@@ -286,6 +286,7 @@ open class WebDav(val path: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
+            AppLog.put("WebDav上传失败\n${it.localizedMessage}", it)
             throw WebDavException("WebDav上传失败\n${it.localizedMessage}")
         }
     }
@@ -303,12 +304,13 @@ open class WebDav(val path: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
+            AppLog.put("WebDav上传失败\n${it.localizedMessage}", it)
             throw WebDavException("WebDav上传失败\n${it.localizedMessage}")
         }
     }
 
     @Throws(WebDavException::class)
-    private suspend fun downloadInputStream(): InputStream {
+    suspend fun downloadInputStream(): InputStream {
         val url = httpUrl ?: throw WebDavException("WebDav下载出错\nurl为空")
         val byteStream = webDavClient.newCallResponse {
             url(url)
@@ -332,7 +334,7 @@ open class WebDav(val path: String, val authorization: Authorization) {
                 checkResult(it)
             }
         }.onFailure {
-            AppLog.put("WebDav删除失败\n${it.localizedMessage}")
+            AppLog.put("WebDav删除失败\n${it.localizedMessage}", it)
         }.isSuccess
     }
 

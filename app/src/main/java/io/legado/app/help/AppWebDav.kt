@@ -17,6 +17,7 @@ import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.lib.webdav.WebDavFile
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -109,10 +110,19 @@ object AppWebDav {
                     items = names
                 ) { _, index ->
                     if (index in 0 until names.size) {
-                        Coroutine.async {
+                        val waitDialog = WaitDialog(context)
+                        waitDialog.setText("恢复中…")
+                        waitDialog.show()
+                        val task = Coroutine.async {
                             restoreWebDav(names[index])
                         }.onError {
+                            AppLog.put("WebDav恢复出错\n${it.localizedMessage}", it)
                             appCtx.toastOnUi("WebDav恢复出错\n${it.localizedMessage}")
+                        }.onFinally(Main) {
+                            waitDialog.dismiss()
+                        }
+                        waitDialog.setOnCancelListener {
+                            task.cancel()
                         }
                     }
                 }
@@ -186,7 +196,7 @@ object AppWebDav {
             }
         } catch (e: Exception) {
             val msg = "WebDav导出\n${e.localizedMessage}"
-            AppLog.put(msg)
+            AppLog.put(msg, e)
             appCtx.toastOnUi(msg)
         }
     }
@@ -201,7 +211,7 @@ object AppWebDav {
             val url = getProgressUrl(book.name, book.author)
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
         }.onError {
-            AppLog.put("上传进度失败\n${it.localizedMessage}")
+            AppLog.put("上传进度失败\n${it.localizedMessage}", it)
         }
     }
 
@@ -214,7 +224,7 @@ object AppWebDav {
             val url = getProgressUrl(bookProgress.name, bookProgress.author)
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
         }.onError {
-            AppLog.put("上传进度失败\n${it.localizedMessage}")
+            AppLog.put("上传进度失败\n${it.localizedMessage}", it)
         }
     }
 
