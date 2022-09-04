@@ -261,8 +261,6 @@ class EpubFile(var book: Book) {
                 }
             }
         }
-        book.latestChapterTitle = chapterList.lastOrNull()?.title
-        book.totalChapterNum = chapterList.size
         return chapterList
     }
 
