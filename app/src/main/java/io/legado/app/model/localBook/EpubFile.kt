@@ -1,6 +1,7 @@
 package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.text.TextUtils
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -84,13 +85,11 @@ class EpubFile(var book: Book) {
                 if (!File(book.coverUrl!!).exists()) {
                     /*部分书籍DRM处理后，封面获取异常，待优化*/
                     it.coverImage?.inputStream?.use { input ->
-                        BitmapUtils.decodeBitmap(input)?.let { cover ->
-                            val out =
-                                FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
-                            cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
-                            out.flush()
-                            out.close()
-                        }
+                        val cover = BitmapFactory.decodeStream(input)
+                        val out = FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
+                        cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                        out.flush()
+                        out.close()
                     }
                 }
             }
