@@ -19,6 +19,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.net.URLDecoder
 import java.nio.charset.Charset
 
 class EpubFile(var book: Book) {
@@ -116,7 +117,9 @@ class EpubFile(var book: Book) {
          * <image width="1038" height="670" xlink:href="..."/>
          * ...titlepage.xhtml
          */
-        if (chapter.url.contains("titlepage.xhtml")) {
+        if (chapter.url.contains("titlepage.xhtml") ||
+            chapter.url.contains("cover.xhtml")
+        ) {
             return "<img src=\"cover.jpeg\" />"
         }
         /*获取当前章节文本*/
@@ -189,7 +192,7 @@ class EpubFile(var book: Book) {
 
     private fun getImage(href: String): InputStream? {
         if (href == "cover.jpeg") return epubBook?.coverImage?.inputStream
-        val abHref = href.replace("../", "")
+        val abHref = URLDecoder.decode(href.replace("../", ""), "UTF-8")
         return epubBook?.resources?.getByHref(abHref)?.inputStream
     }
 

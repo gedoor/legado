@@ -314,6 +314,14 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         }
     }
 
+    override fun setBookScore(searchBook: SearchBook, score: Int) {
+        viewModel.setBookScore(searchBook, score)
+    }
+
+    override fun getBookScore(searchBook: SearchBook): Int {
+        return viewModel.getBookScore(searchBook)
+    }
+
     override fun clickChapter(bookChapter: BookChapter, nextChapterUrl: String?) {
         searchBook?.let {
             binding.loadingToc.show()

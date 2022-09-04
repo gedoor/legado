@@ -3,45 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:padding="16dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <io.legado.app.lib.theme.view.ThemeRadioButton
-        android:id="@+id/rb_regex_name"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
+        <io.legado.app.lib.theme.view.ThemeRadioButton
+            android:id="@+id/rb_regex_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1" />
+
+        <io.legado.app.lib.theme.view.ThemeSwitch
+            android:id="@+id/swt_enabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_edit"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/edit"
+            android:padding="6dp"
+            android:tooltipText="@string/edit"
+            android:src="@drawable/ic_edit"
+            android:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete"
+            android:tooltipText="@string/delete"
+            android:padding="6dp"
+            android:src="@drawable/ic_clear_all"
+            android:tint="@color/primaryText"
+            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/title_example"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:maxLines="1" />
-
-    <io.legado.app.lib.theme.view.ThemeSwitch
-        android:id="@+id/swt_enabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_edit"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/edit"
-        android:padding="6dp"
-        android:tooltipText="@string/edit"
-        android:src="@drawable/ic_edit"
-        android:tint="@color/primaryText"
-        tools:ignore="UnusedAttribute" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_delete"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/more_menu"
-        android:tooltipText="@string/more_menu"
-        android:padding="6dp"
-        android:src="@drawable/ic_clear_all"
-        android:tint="@color/primaryText"
-        tools:ignore="UnusedAttribute" />
+        android:textSize="12sp" />
 
 </LinearLayout>

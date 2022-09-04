@@ -25,6 +25,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentData
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -35,6 +36,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
+import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
@@ -182,6 +184,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         upSystemUiVisibility()
+        binding.readMenu.upBrightnessState()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -960,31 +963,41 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun payAction() {
-        Coroutine.async(this) {
-            val book = ReadBook.book ?: throw NoStackTraceException("no book")
+        ReadBook.book?.let { book ->
+            if (book.isLocalBook()) return
             val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
-                ?: throw NoStackTraceException("no chapter")
-            val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
-            val payAction = source.getContentRule().payAction
-            if (payAction.isNullOrEmpty()) {
-                throw NoStackTraceException("no pay action")
+            if (chapter == null) {
+                toastOnUi("no chapter")
+                return
             }
-            JsUtils.evalJs(payAction) {
-                it["java"] = source
-                it["source"] = source
-                it["book"] = book
-                it["chapter"] = chapter
-            }
-        }.onSuccess {
-            if (it.isNotBlank()) {
-                startActivity<WebViewActivity> {
-                    putExtra("title", getString(R.string.chapter_pay))
-                    putExtra("url", it)
-                    IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+            alert(R.string.chapter_pay) {
+                setMessage(chapter.title)
+                yesButton {
+                    Coroutine.async {
+                        val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
+                        val payAction = source.getContentRule().payAction
+                        if (payAction.isNullOrEmpty()) {
+                            throw NoStackTraceException("no pay action")
+                        }
+                        val analyzeRule = AnalyzeRule(book, source)
+                        analyzeRule.setBaseUrl(chapter.url)
+                        analyzeRule.chapter = chapter
+                        analyzeRule.evalJS(payAction).toString()
+                    }.onSuccess {
+                        if (it.isNotBlank()) {
+                            startActivity<WebViewActivity> {
+                                putExtra("title", R.string.chapter_pay)
+                                putExtra("url", it)
+                                IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+                            }
+                        }
+                    }.onError {
+                        AppLog.putDebug(it.localizedMessage)
+                        toastOnUi(it.localizedMessage)
+                    }
                 }
+                noButton()
             }
-        }.onError {
-            toastOnUi(it.localizedMessage)
         }
     }
 
@@ -1147,13 +1160,17 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun finish() {
         ReadBook.book?.let {
             if (!ReadBook.inBookshelf) {
-                alert(title = getString(R.string.add_to_shelf)) {
-                    setMessage(getString(R.string.check_add_bookshelf, it.name))
-                    okButton {
-                        ReadBook.inBookshelf = true
-                        setResult(Activity.RESULT_OK)
+                if (!AppConfig.showAddToShelfAlert) {
+                    viewModel.removeFromBookshelf { super.finish() }
+                } else {
+                    alert(title = getString(R.string.add_to_shelf)) {
+                        setMessage(getString(R.string.check_add_bookshelf, it.name))
+                        okButton {
+                            ReadBook.inBookshelf = true
+                            setResult(Activity.RESULT_OK)
+                        }
+                        noButton { viewModel.removeFromBookshelf { super.finish() } }
                     }
-                    noButton { viewModel.removeFromBookshelf { super.finish() } }
                 }
             } else {
                 super.finish()
@@ -1190,6 +1207,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
             upSystemUiVisibility()
+            readView.upPageSlopSquare()
             readView.upBg()
             readView.upStyle()
             readView.upBgAlpha()

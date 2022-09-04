@@ -44,6 +44,15 @@ interface RssSourceDao {
     @Query("SELECT * FROM rssSources where enabled = 1 order by customOrder")
     fun flowEnabled(): Flow<List<RssSource>>
 
+    @Query("SELECT * FROM rssSources where enabled = 0 order by customOrder")
+    fun flowDisabled(): Flow<List<RssSource>>
+
+    @Query("select * from rssSources where loginUrl is not null and loginUrl != ''")
+    fun flowLogin(): Flow<List<RssSource>>
+
+    @Query("select * from rssSources where sourceGroup is null or sourceGroup = '' or sourceGroup like '%未分组%'")
+    fun flowNoGroup(): Flow<List<RssSource>>
+
     @Query(
         """SELECT * FROM rssSources 
         where enabled = 1 
@@ -66,6 +75,9 @@ interface RssSourceDao {
 
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
     fun flowGroup(): Flow<List<String>>
+
+    @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> '' and enabled = 1")
+    fun flowGroupEnabled(): Flow<List<String>>
 
     @get:Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
     val allGroup: List<String>

@@ -33,10 +33,8 @@ class SearchMenu @JvmOverloads constructor(
     private val callBack: CallBack get() = activity as CallBack
     private val binding = ViewSearchMenuBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private val menuBottomIn: Animation =
-        AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_in)
-    private val menuBottomOut: Animation =
-        AnimationUtilsSupport.loadAnimation(context, R.anim.anim_readbook_bottom_out)
+    private val menuBottomIn: Animation = loadAnimation(context, R.anim.anim_readbook_bottom_in)
+    private val menuBottomOut: Animation = loadAnimation(context, R.anim.anim_readbook_bottom_out)
     private val bgColor: Int = context.bottomBackground
     private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
     private val bottomBackgroundList: ColorStateList =

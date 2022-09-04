@@ -65,6 +65,7 @@
         android:padding="6dp"
         android:src="@drawable/ic_more_vert"
         android:tint="@color/primaryText"
+        android:contentDescription="@string/more_menu"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

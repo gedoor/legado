@@ -111,6 +111,7 @@ object BookContent {
             }
         }
         var contentStr = content.toString()
+        //全文替换
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
             contentStr = analyzeRule.getString(replaceRegex, contentStr)

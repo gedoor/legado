@@ -192,6 +192,7 @@ class BookshelfManageActivity :
                 viewModel.upCanUpdate(adapter.selection, false)
             R.id.menu_add_to_group -> selectGroup(addToGroupRequestCode, 0)
             R.id.menu_change_source -> showDialogFragment<SourcePickerDialog>()
+            R.id.menu_check_selected_interval -> adapter.checkSelectedInterval()
         }
         return false
     }

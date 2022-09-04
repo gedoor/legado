@@ -1,56 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/selectableItemBackground"
-    android:paddingLeft="10dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
     tools:ignore="RtlHardcoded,RtlSymmetry">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_good"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_praise"
+        app:layout_constraintBottom_toTopOf="@+id/iv_bad"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/md_red_A200" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_bad"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="5dp"
+        android:padding="5dp"
+        android:rotationX="180"
+        android:src="@drawable/ic_praise"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_good"
+        app:tint="@color/md_blue_A200" />
 
     <TextView
         android:id="@+id/tv_origin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
         android:singleLine="true"
         android:textColor="@color/primaryText"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/tv_author" />
+        app:layout_constraintRight_toLeftOf="@+id/tv_author"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxWidth="160dp"
         android:singleLine="true"
         android:textColor="@color/secondaryText"
-        android:maxWidth="160dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_last"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="10dp"
         android:singleLine="true"
         android:textColor="@color/secondaryText"
-        app:layout_constraintTop_toBottomOf="@+id/tv_origin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
+        app:layout_constraintTop_toBottomOf="@+id/tv_origin" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_checked"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:padding="8dp"
         android:src="@drawable/ic_check"
         android:visibility="invisible"
-        app:tint="@color/primaryText"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:tint="@color/primaryText"
+        tools:visibility="visible" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

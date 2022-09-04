@@ -45,6 +45,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.title = intent.getStringExtra("title") ?: getString(R.string.loading)
+        binding.titleBar.subtitle = intent.getStringExtra("sourceName")
         viewModel.initData(intent) {
             val url = viewModel.baseUrl
             val headerMap = viewModel.headerMap
@@ -124,12 +125,14 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private fun upWebViewTheme() {
         if (AppConfig.isNightTheme) {
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
+                @Suppress("DEPRECATION")
                 WebSettingsCompat.setForceDarkStrategy(
                     binding.webView.settings,
                     WebSettingsCompat.DARK_STRATEGY_PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING
                 )
             }
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                @Suppress("DEPRECATION")
                 WebSettingsCompat.setForceDark(
                     binding.webView.settings,
                     WebSettingsCompat.FORCE_DARK_ON

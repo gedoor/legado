@@ -126,7 +126,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                     content = null
                     BookHelp.delContent(book, chapter)
                     if (!book.isLocalBook()) ReadBook.bookSource?.let { bookSource ->
-                        WebBook.getContentAwait(this, bookSource, book, chapter)
+                        WebBook.getContentAwait(bookSource, book, chapter)
                     }
                 }
                 return@execute content ?: let {

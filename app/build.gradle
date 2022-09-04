@@ -164,7 +164,7 @@ dependencies {
     implementation('androidx.constraintlayout:constraintlayout:2.1.4')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
     implementation('androidx.viewpager2:viewpager2:1.0.0')
-    implementation('androidx.webkit:webkit:1.4.0')
+    implementation('androidx.webkit:webkit:1.5.0')
 
     //google
     implementation('com.google.android.material:material:1.6.1')
@@ -189,8 +189,6 @@ dependencies {
 
     //media
     implementation("androidx.media:media:1.6.0")
-
-
     implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
     implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
 
@@ -209,7 +207,7 @@ dependencies {
     implementation('io.github.jeremyliao:live-event-bus-x:1.8.0')
 
     //规则相关
-    implementation('org.jsoup:jsoup:1.15.2')
+    implementation('org.jsoup:jsoup:1.15.3')
     implementation('com.jayway.jsonpath:json-path:2.7.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.1')
     implementation(project(path: ':epublib'))
@@ -260,7 +258,7 @@ dependencies {
     //implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
     //implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
 
-    // LeakCanary
+    //LeakCanary, 内存泄露检测
     //debugImplementation('com.squareup.leakcanary:leakcanary-android:2.7')
 
     //com.github.AmrDeveloper:CodeView代码编辑已集成到应用内

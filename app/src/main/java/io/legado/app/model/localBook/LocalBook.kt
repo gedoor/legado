@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import com.script.SimpleBindings
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
@@ -16,6 +17,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
+import org.jsoup.nodes.Entities
 import splitties.init.appCtx
 import java.io.*
 import java.util.regex.Pattern
@@ -77,11 +79,12 @@ object LocalBook {
             throw TocEmptyException(appCtx.getString(R.string.chapter_list_empty))
         }
         val lh = LinkedHashSet(chapters)
+        lh.forEachIndexed { index, bookChapter -> bookChapter.index = index }
         return ArrayList(lh)
     }
 
     fun getContent(book: Book, chapter: BookChapter): String? {
-        return try {
+        val content = try {
             when {
                 book.isEpub() -> {
                     EpubFile.getContent(book, chapter)
@@ -95,8 +98,15 @@ object LocalBook {
             }
         } catch (e: Exception) {
             e.printOnDebug()
-            e.localizedMessage
-        }
+            AppLog.put("获取本地书籍内容失败\n${e.localizedMessage}", e)
+            "获取本地书籍内容失败\n${e.localizedMessage}"
+        }?.replace("&lt;img", "&lt; img", true)
+        content ?: return null
+        return kotlin.runCatching {
+            Entities.unescape(content)
+        }.onFailure {
+            AppLog.put("HTML实体解码失败\n${it.localizedMessage}", it)
+        }.getOrElse { content }
     }
 
     /**

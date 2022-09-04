@@ -133,4 +133,11 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
+    fun disable(rssSource: RssSource) {
+        execute {
+            rssSource.enabled = false
+            appDb.rssSourceDao.update(rssSource)
+        }
+    }
+
 }

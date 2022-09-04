@@ -294,6 +294,14 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         }
     }
 
+    override fun setBookScore(searchBook: SearchBook, score: Int) {
+        viewModel.setBookScore(searchBook,score)
+    }
+
+    override fun getBookScore(searchBook: SearchBook): Int {
+        return viewModel.getBookScore(searchBook)
+    }
+
     private fun changeSource(searchBook: SearchBook, onSuccess: (() -> Unit)? = null) {
         waitDialog.setText(R.string.load_toc)
         waitDialog.show()

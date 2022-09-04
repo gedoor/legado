@@ -446,7 +446,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 return book.createBookMark().apply {
                     chapterIndex = page.chapterIndex
                     chapterPos = chapter.getReadLength(page.index) +
-                            page.getSelectStartLength(selectStart.lineIndex, selectStart.charIndex)
+                            page.getPosByLineColumn(selectStart.lineIndex, selectStart.charIndex)
                     chapterName = chapter.title
                     bookText = getSelectedText()
                 }

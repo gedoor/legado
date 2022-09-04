@@ -7,7 +7,7 @@
     <string name="source_rule_url">https://alanskycn.gitee.io/teachme/</string>
     <string name="this_github_url">https://github.com/gedoor/legado</string>
     <string name="contributors_url">https://github.com/gedoor/legado/graphs/contributors</string>
-    <string name="home_page_url">https://gedoor.github.io/MyBookshelf/</string>
+    <string name="home_page_url">https://gedoor.github.io</string>
     <string name="license_url">https://github.com/gedoor/legado/blob/master/LICENSE</string>
     <string name="latest_release_url">https://github.com/gedoor/legado/releases/latest</string>
     <string name="latest_release_api">https://api.github.com/repos/gedoor/legado/releases/latest</string>

@@ -6,12 +6,15 @@ import io.legado.app.constant.AppPattern.dataUriRegex
 import android.icu.text.Collator
 import android.icu.util.ULocale
 import android.net.Uri
+import android.text.Editable
 import java.io.File
 import java.util.*
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
 fun String?.isContentScheme(): Boolean = this?.startsWith("content://") == true
+
+fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
 fun String.parseToUri(): Uri {
     return if (isContentScheme()) {

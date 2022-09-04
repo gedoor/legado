@@ -207,10 +207,12 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             source.enabledExplore -> {
                 iv.setColorFilter(Color.GREEN)
                 iv.visible()
+                iv.contentDescription = context.getString(R.string.tag_explore_enabled)
             }
             else -> {
                 iv.setColorFilter(Color.RED)
                 iv.visible()
+                iv.contentDescription = context.getString(R.string.tag_explore_disabled)
             }
         }
     }

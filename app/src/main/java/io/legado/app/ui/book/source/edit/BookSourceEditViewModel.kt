@@ -7,6 +7,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.RuleComplete
+import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
@@ -40,6 +41,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             oldSourceUrl?.let {
                 if (oldSourceUrl != source.bookSourceUrl) {
                     appDb.bookSourceDao.delete(it)
+                    SourceConfig.removeSource(it)
                 }
             }
             oldSourceUrl = source.bookSourceUrl

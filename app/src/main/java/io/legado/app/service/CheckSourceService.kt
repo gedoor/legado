@@ -136,7 +136,7 @@ class CheckSourceService : BaseService() {
             source.bookSourceComment = source.bookSourceComment
                 ?.split("\n\n")
                 ?.filterNot {
-                    it.startsWith("Error: ")
+                    it.startsWith("// Error: ")
                 }?.joinToString("\n")
             //校验搜索书籍
             if (CheckSource.checkSearch) {
@@ -186,7 +186,7 @@ class CheckSourceService : BaseService() {
                     !is NoStackTraceException -> source.addGroup("网站失效")
                 }
                 source.bookSourceComment =
-                    "Error: ${it.localizedMessage}" + if (source.bookSourceComment.isNullOrBlank())
+                    "// Error: ${it.localizedMessage}" + if (source.bookSourceComment.isNullOrBlank())
                         "" else "\n\n${source.bookSourceComment}"
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
             }.onSuccess(searchCoroutine) {
@@ -219,7 +219,6 @@ class CheckSourceService : BaseService() {
                     //校验正文
                     if (CheckSource.checkContent) {
                         WebBook.getContentAwait(
-                            this,
                             bookSource = source,
                             book = mBook,
                             bookChapter = toc.first(),

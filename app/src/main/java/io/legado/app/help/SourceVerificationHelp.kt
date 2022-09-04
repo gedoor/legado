@@ -27,6 +27,7 @@ object SourceVerificationHelp {
                 appCtx.startActivity<VerificationCodeActivity> {
                     putExtra("imageUrl", url)
                     putExtra("sourceOrigin", source.getKey())
+                    putExtra("sourceName", source.getTag())
                 }
             } else {
                 startBrowser(source, url, title, true)
@@ -58,6 +59,7 @@ object SourceVerificationHelp {
             putExtra("title", title)
             putExtra("url", url)
             putExtra("sourceOrigin", source.getKey())
+            putExtra("sourceName", source.getTag())
             putExtra("sourceVerificationEnable", saveResult)
             IntentData.put(url, source.getHeaderMap(true))
         }
