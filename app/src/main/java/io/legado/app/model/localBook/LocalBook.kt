@@ -78,9 +78,12 @@ object LocalBook {
         if (chapters.isEmpty()) {
             throw TocEmptyException(appCtx.getString(R.string.chapter_list_empty))
         }
-        val lh = LinkedHashSet(chapters)
-        lh.forEachIndexed { index, bookChapter -> bookChapter.index = index }
-        return ArrayList(lh)
+        val list = ArrayList(LinkedHashSet(chapters))
+        list.forEachIndexed { index, bookChapter -> bookChapter.index = index }
+        book.latestChapterTitle = list.last().title
+        book.totalChapterNum = list.size
+        book.save()
+        return list
     }
 
     fun getContent(book: Book, chapter: BookChapter): String? {

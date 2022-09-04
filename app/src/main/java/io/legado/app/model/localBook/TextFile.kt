@@ -77,9 +77,6 @@ class TextFile(private val book: Book) {
             bookChapter.bookUrl = book.bookUrl
             bookChapter.url = MD5Utils.md5Encode16(book.originName + index + bookChapter.title)
         }
-        book.latestChapterTitle = toc.last().title
-        book.totalChapterNum = toc.size
-        book.save()
         return toc
     }
 
