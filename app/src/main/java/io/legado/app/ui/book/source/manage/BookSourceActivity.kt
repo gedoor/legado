@@ -335,7 +335,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun onClickSelectBarMainAction() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.del(*adapter.selection.toTypedArray()) }
+            yesButton { viewModel.del(*adapter.selection.toTypedArray()) }
             noButton()
         }
     }
@@ -588,7 +588,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun del(bookSource: BookSource) {
-        alert(R.string.delete_source) {
+        alert(R.string.draw) {
             setMessage(getString(R.string.sure_del) + "\n" + bookSource.bookSourceName)
             noButton()
             yesButton {

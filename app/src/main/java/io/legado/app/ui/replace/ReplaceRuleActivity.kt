@@ -162,7 +162,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     override fun onClickSelectBarMainAction() {
-        delSourceDialog()
+        alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
+            yesButton { viewModel.delSelection(adapter.selection) }
+            noButton()
+        }
     }
 
     private fun initSelectActionView() {
@@ -170,13 +173,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         binding.selectActionBar.inflateMenu(R.menu.replace_rule_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
         binding.selectActionBar.setCallBack(this)
-    }
-
-    private fun delSourceDialog() {
-        alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.delSelection(adapter.selection) }
-            noButton()
-        }
     }
 
     private fun observeReplaceRuleData(searchKey: String? = null) {
@@ -329,8 +325,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     override fun delete(rule: ReplaceRule) {
-        setResult(RESULT_OK)
-        viewModel.delete(rule)
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n" + rule.name)
+            noButton()
+            yesButton {
+                setResult(RESULT_OK)
+                viewModel.delete(rule)
+            }
+        }
     }
 
     override fun edit(rule: ReplaceRule) {
