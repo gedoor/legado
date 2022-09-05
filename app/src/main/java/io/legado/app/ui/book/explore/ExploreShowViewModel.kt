@@ -9,8 +9,8 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.msg
 import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.stackTraceStr
 
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -46,7 +46,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                     page++
                 }.onError {
                     it.printOnDebug()
-                    errorLiveData.postValue(it.msg)
+                    errorLiveData.postValue(it.stackTraceStr)
                 }
         }
     }

@@ -667,7 +667,7 @@ class AnalyzeRule(
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
                 it.printOnDebug()
             }.getOrElse {
-                it.msg
+                it.stackTraceStr
             }
         }
     }

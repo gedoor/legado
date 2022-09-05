@@ -254,11 +254,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     return@execute
                 }
             }
-            throw NoStackTraceException("自动换源失败")
+            throw NoStackTraceException("没有搜索到 ${name}(${author})")
         }.onStart {
             ReadBook.upMsg(context.getString(R.string.source_auto_changing))
         }.onError {
-            context.toastOnUi(it.msg)
+            AppLog.put("自动换源失败\n${it.localizedMessage}", it)
+            context.toastOnUi("自动换源失败\n${it.localizedMessage}")
         }.onFinally {
             ReadBook.upMsg(null)
         }

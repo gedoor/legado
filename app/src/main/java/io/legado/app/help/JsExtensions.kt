@@ -56,9 +56,8 @@ interface JsExtensions {
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 AppLog.put("ajax(${urlStr}) error\n${it.localizedMessage}", it)
-                it.printOnDebug()
             }.getOrElse {
-                it.msg
+                it.stackTraceStr
             }
         }
     }
@@ -91,10 +90,9 @@ interface JsExtensions {
             kotlin.runCatching {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
-                log("connect(${urlStr}) error\n${it.stackTraceToString()}")
-                it.printOnDebug()
+                AppLog.put("connect(${urlStr}) error\n${it.localizedMessage}", it)
             }.getOrElse {
-                StrResponse(analyzeUrl.url, it.localizedMessage)
+                StrResponse(analyzeUrl.url, it.stackTraceStr)
             }
         }
     }
@@ -106,10 +104,9 @@ interface JsExtensions {
             kotlin.runCatching {
                 analyzeUrl.getStrResponseAwait()
             }.onFailure {
-                log("ajax($urlStr,$header) error\n${it.stackTraceToString()}")
-                it.printOnDebug()
+                AppLog.put("ajax($urlStr,$header) error\n${it.localizedMessage}", it)
             }.getOrElse {
-                StrResponse(analyzeUrl.url, it.localizedMessage)
+                StrResponse(analyzeUrl.url, it.stackTraceStr)
             }
         }
     }
