@@ -31,6 +31,7 @@ object BookHelp {
     private val downloadDir: File = appCtx.externalFiles
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
+    private const val cacheEpubFolderName = "epub"
     private val downloadImages = CopyOnWriteArraySet<String>()
 
     fun clearCache() {
@@ -55,15 +56,24 @@ object BookHelp {
      */
     suspend fun clearInvalidCache() {
         withContext(IO) {
-            val bookFolderNames = appDb.bookDao.all.map {
-                it.getFolderName()
+            val bookFolderNames = ArrayList<String>()
+            val originNames = ArrayList<String>()
+            appDb.bookDao.all.forEach {
+                bookFolderNames.add(it.getFolderName())
+                if (it.isEpub()) originNames.add(it.originName)
             }
-            val file = downloadDir.getFile(cacheFolderName)
-            file.listFiles()?.forEach { bookFile ->
-                if (!bookFolderNames.contains(bookFile.name)) {
-                    FileUtils.delete(bookFile.absolutePath)
+            downloadDir.getFile(cacheFolderName)
+                .listFiles()?.forEach { bookFile ->
+                    if (!bookFolderNames.contains(bookFile.name)) {
+                        FileUtils.delete(bookFile.absolutePath)
+                    }
                 }
-            }
+            downloadDir.getFile(cacheEpubFolderName)
+                .listFiles()?.forEach { epubFile ->
+                    if (!originNames.contains(epubFile.name)) {
+                        FileUtils.delete(epubFile.absolutePath)
+                    }
+                }
         }
     }
 
@@ -165,7 +175,8 @@ object BookHelp {
     fun getEpubFile(book: Book): ZipFile {
         val uri = Uri.parse(book.bookUrl)
         if (uri.isContentScheme()) {
-            val path = FileUtils.getPath(downloadDir, cacheFolderName, book.getFolderName(), book.originName)
+            FileUtils.createFolderIfNotExist(downloadDir, cacheEpubFolderName)
+            val path = FileUtils.getPath(downloadDir, cacheEpubFolderName, book.originName)
             val file = File(path)
             val doc = DocumentFile.fromSingleUri(appCtx, uri)
                 ?: throw IOException("文件不存在")

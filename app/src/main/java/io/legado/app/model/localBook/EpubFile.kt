@@ -1,7 +1,9 @@
 package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.text.TextUtils
+import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.BookHelp
@@ -85,17 +87,16 @@ class EpubFile(var book: Book) {
                 if (!File(book.coverUrl!!).exists()) {
                     /*部分书籍DRM处理后，封面获取异常，待优化*/
                     it.coverImage?.inputStream?.use { input ->
-                        BitmapUtils.decodeBitmap(input)?.let { cover ->
-                            val out =
-                                FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
-                            cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
-                            out.flush()
-                            out.close()
-                        }
+                        val cover = BitmapFactory.decodeStream(input)
+                        val out = FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!))
+                        cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                        out.flush()
+                        out.close()
                     }
                 }
             }
         } catch (e: Exception) {
+            AppLog.put("加载书籍封面失败\n${e.localizedMessage}", e)
             e.printOnDebug()
         }
     }
@@ -109,6 +110,7 @@ class EpubFile(var book: Book) {
             val zipFile = BookHelp.getEpubFile(book)
             EpubReader().readEpubLazy(zipFile, "utf-8")
         }.onFailure {
+            AppLog.put("读取Epub文件失败\n${it.localizedMessage}", it)
             it.printOnDebug()
         }.getOrNull()
     }
@@ -262,8 +264,6 @@ class EpubFile(var book: Book) {
                 }
             }
         }
-        book.latestChapterTitle = chapterList.lastOrNull()?.title
-        book.totalChapterNum = chapterList.size
         return chapterList
     }
 

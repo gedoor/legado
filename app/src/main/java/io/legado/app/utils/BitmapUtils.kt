@@ -10,7 +10,6 @@ import android.graphics.Color
 import com.google.android.renderscript.Toolkit
 import java.io.FileInputStream
 import java.io.IOException
-import java.io.InputStream
 import kotlin.math.*
 
 
@@ -79,23 +78,6 @@ object BitmapUtils {
             opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
             opts.inJustDecodeBounds = false
             BitmapFactory.decodeFileDescriptor(fis.fd, null, opts)
-        }
-    }
-
-    /** 从path中获取Bitmap图片
-     * @param path 图片路径
-     * @return
-     */
-    @Throws(IOException::class)
-    fun decodeBitmap(inputStream: InputStream): Bitmap? {
-        return inputStream.use {
-            val opts = BitmapFactory.Options()
-            opts.inJustDecodeBounds = true
-
-            BitmapFactory.decodeStream(inputStream, null, opts)
-            opts.inSampleSize = computeSampleSize(opts, -1, 128 * 128)
-            opts.inJustDecodeBounds = false
-            BitmapFactory.decodeStream(inputStream, null, opts)
         }
     }
 

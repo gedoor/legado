@@ -112,8 +112,6 @@ class UmdFile(var book: Book) {
             DebugLog.d(javaClass.name, chapter.url)
             chapterList.add(chapter)
         }
-        book.latestChapterTitle = chapterList.lastOrNull()?.title
-        book.totalChapterNum = chapterList.size
         return chapterList
     }
 

@@ -189,7 +189,7 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
             dx = if (mCornerX > 0 && mDirection == PageDirection.NEXT) {
                 -(viewWidth + touchX)
             } else {
-                (viewWidth - touchX + viewWidth)
+                viewWidth - touchX
             }
             dy = if (mCornerY > 0) {
                 (viewHeight - touchY)

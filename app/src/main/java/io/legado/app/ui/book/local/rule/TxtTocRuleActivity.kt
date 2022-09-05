@@ -88,7 +88,13 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     }
 
     override fun del(source: TxtTocRule) {
-        viewModel.del(source)
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n" + source.name)
+            noButton()
+            yesButton {
+                viewModel.del(source)
+            }
+        }
     }
 
     override fun edit(source: TxtTocRule) {
@@ -151,7 +157,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
 
     private fun delSourceDialog() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.del(*adapter.selection.toTypedArray()) }
+            yesButton { viewModel.del(*adapter.selection.toTypedArray()) }
             noButton()
         }
     }

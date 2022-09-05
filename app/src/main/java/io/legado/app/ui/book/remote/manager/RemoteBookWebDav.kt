@@ -76,8 +76,8 @@ object RemoteBookWebDav : RemoteBookManager() {
     override suspend fun getRemoteBook(remoteBook: RemoteBook): Uri? {
         return AppWebDav.authorization?.let {
             val webdav = WebDav(remoteBook.path, it)
-            webdav.download().let { bytes ->
-                LocalBook.saveBookFile(bytes, remoteBook.filename)
+            webdav.downloadInputStream().let { inputStream ->
+                LocalBook.saveBookFile(inputStream, remoteBook.filename)
             }
         }
     }

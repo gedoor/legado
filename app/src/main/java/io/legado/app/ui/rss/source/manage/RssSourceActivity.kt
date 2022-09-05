@@ -329,7 +329,13 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     }
 
     override fun del(source: RssSource) {
-        viewModel.del(source)
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n" + source.sourceName)
+            noButton()
+            yesButton {
+                viewModel.del(source)
+            }
+        }
     }
 
     override fun edit(source: RssSource) {

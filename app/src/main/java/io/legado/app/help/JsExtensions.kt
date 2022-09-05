@@ -55,7 +55,7 @@ interface JsExtensions {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
-                log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
+                AppLog.put("ajax(${urlStr}) error\n${it.localizedMessage}", it)
                 it.printOnDebug()
             }.getOrElse {
                 it.msg
@@ -1008,6 +1008,7 @@ interface JsExtensions {
      * @param key 密钥
      * @return 16进制字符串
      */
+    @Suppress("FunctionName")
     fun HMacHex(
         data: String,
         algorithm: String,
@@ -1024,6 +1025,7 @@ interface JsExtensions {
      * @param key 密钥
      * @return Base64字符串
      */
+    @Suppress("FunctionName")
     fun HMacBase64(
         data: String,
         algorithm: String,

@@ -78,9 +78,12 @@ object LocalBook {
         if (chapters.isEmpty()) {
             throw TocEmptyException(appCtx.getString(R.string.chapter_list_empty))
         }
-        val lh = LinkedHashSet(chapters)
-        lh.forEachIndexed { index, bookChapter -> bookChapter.index = index }
-        return ArrayList(lh)
+        val list = ArrayList(LinkedHashSet(chapters))
+        list.forEachIndexed { index, bookChapter -> bookChapter.index = index }
+        book.latestChapterTitle = list.last().title
+        book.totalChapterNum = list.size
+        book.save()
+        return list
     }
 
     fun getContent(book: Book, chapter: BookChapter): String? {
@@ -232,8 +235,8 @@ object LocalBook {
         AppConfig.defaultBookTreeUri
             ?: throw NoStackTraceException("没有设置书籍保存位置!")
         val bytes = when {
-            str.isAbsUrl() -> AnalyzeUrl(str, source = source).getByteArray()
-            str.isDataUrl() -> Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT)
+            str.isAbsUrl() -> AnalyzeUrl(str, source = source).getInputStream()
+            str.isDataUrl() -> ByteArrayInputStream(Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT))
             else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
         }
         return saveBookFile(bytes, fileName)
@@ -254,7 +257,7 @@ object LocalBook {
     }
 
     fun saveBookFile(
-        bytes: ByteArray,
+        inputStream: InputStream,
         fileName: String
     ): Uri {
         val defaultBookTreeUri = AppConfig.defaultBookTreeUri
@@ -268,14 +271,14 @@ object LocalBook {
                     ?: throw SecurityException("Permission Denial")
             }
             appCtx.contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
-                oStream.write(bytes)
+                inputStream.copyTo(oStream)
             }
             doc.uri
         } else {
             val treeFile = File(treeUri.path!!)
             val file = treeFile.getFile(fileName)
             FileOutputStream(file).use { oStream ->
-                oStream.write(bytes)
+                inputStream.copyTo(oStream)
             }
             Uri.fromFile(file)
         }
