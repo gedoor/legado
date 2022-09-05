@@ -1008,6 +1008,7 @@ interface JsExtensions {
      * @param key 密钥
      * @return 16进制字符串
      */
+    @Suppress("FunctionName")
     fun HMacHex(
         data: String,
         algorithm: String,
@@ -1024,6 +1025,7 @@ interface JsExtensions {
      * @param key 密钥
      * @return Base64字符串
      */
+    @Suppress("FunctionName")
     fun HMacBase64(
         data: String,
         algorithm: String,
