@@ -191,6 +191,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 throw NoStackTraceException("进度同步未启用")
             }
+        }.onError {
+            AppLog.put("拉取阅读进度失败", it)
         }.onSuccess { progress ->
             if (progress.durChapterIndex < book.durChapterIndex ||
                 (progress.durChapterIndex == book.durChapterIndex
@@ -199,7 +201,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 alertSync?.invoke(progress)
             } else {
                 ReadBook.setProgress(progress)
-                context.toastOnUi("自动同步阅读进度成功")
+                AppLog.put("自动同步阅读进度成功")
             }
         }
 

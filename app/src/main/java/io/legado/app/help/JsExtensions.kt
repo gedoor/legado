@@ -55,7 +55,7 @@ interface JsExtensions {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
-                log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
+                AppLog.put("ajax(${urlStr}) error\n${it.localizedMessage}", it)
                 it.printOnDebug()
             }.getOrElse {
                 it.msg
