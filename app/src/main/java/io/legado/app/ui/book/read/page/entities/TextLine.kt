@@ -8,6 +8,7 @@ import io.legado.app.utils.textHeight
 data class TextLine(
     var text: String = "",
     val textChars: ArrayList<TextChar> = arrayListOf(),
+    val reviewCount: Int = 0,
     var lineTop: Float = 0f,
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,

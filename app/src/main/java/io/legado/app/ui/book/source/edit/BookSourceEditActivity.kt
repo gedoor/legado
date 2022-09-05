@@ -299,7 +299,7 @@ class BookSourceEditActivity :
         reviewEntities.clear()
         reviewEntities.apply {
             add(EditEntity("reviewUrl", rr?.reviewUrl, R.string.rule_review_url))
-            add(EditEntity("avatarRule", rr?.reviewUrl, R.string.rule_avatar))
+            add(EditEntity("avatarRule", rr?.avatarRule, R.string.rule_avatar))
             add(EditEntity("contentRule", rr?.contentRule, R.string.rule_review_content))
             add(EditEntity("postTimeRule", rr?.postTimeRule, R.string.rule_post_time))
             add(EditEntity("reviewQuoteUrl", rr?.reviewQuoteUrl, R.string.rule_review_quote))

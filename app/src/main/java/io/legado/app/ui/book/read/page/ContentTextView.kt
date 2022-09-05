@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
@@ -150,6 +152,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             ChapterProvider.contentPaint
         }
         val textColor = if (textLine.isReadAloud) context.accentColor else ReadBookConfig.textColor
+        val linePaint = Paint()
+        linePaint.strokeWidth = textPaint.textSize / 21
+        linePaint.color = textColor
+        val reviewCountPaint = TextPaint()
+        reviewCountPaint.textSize = textPaint.textSize * 0.6F
+        reviewCountPaint.color = textColor
         textLine.textChars.forEach {
             if (it.isImage) {
                 drawImage(canvas, textPage, textLine, it, lineTop, lineBottom)
@@ -158,7 +166,74 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (it.isSearchResult) {
                     textPaint.color = context.accentColor
                 }
-                canvas.drawText(it.charData, it.start, lineBase, textPaint)
+                if (it.charData == "\uD83D\uDCAC" && it.isLineEnd) {
+                    if (textLine.reviewCount <= 0) return@forEach
+                    canvas.drawLine(
+                        it.start,
+                        lineBase - textPaint.textSize * 2 / 5,
+                        it.start + textPaint.textSize / 6,
+                        lineBase - textPaint.textSize / 4,
+                        linePaint
+                    )
+                    canvas.drawLine(
+                        it.start,
+                        lineBase - textPaint.textSize * 0.38F,
+                        it.start + textPaint.textSize / 6,
+                        lineBase - textPaint.textSize * 0.55F,
+                        linePaint
+                    )
+                    canvas.drawLine(
+                        it.start + textPaint.textSize / 6,
+                        lineBase - textPaint.textSize / 4,
+                        it.start + textPaint.textSize / 6,
+                        lineBase,
+                        linePaint
+                    )
+                    canvas.drawLine(
+                        it.start + textPaint.textSize / 6,
+                        lineBase - textPaint.textSize * 0.55F,
+                        it.start + textPaint.textSize / 6,
+                        lineBase - textPaint.textSize * 0.8F,
+                        linePaint
+                    )
+                    canvas.drawLine(
+                        it.start + textPaint.textSize / 6,
+                        lineBase,
+                        it.start + textPaint.textSize * 1.6F,
+                        lineBase,
+                        linePaint
+                    )
+                    canvas.drawLine(
+                        it.start + textPaint.textSize / 6,
+                        lineBase - textPaint.textSize * 0.8F,
+                        it.start + textPaint.textSize * 1.6F,
+                        lineBase - textPaint.textSize * 0.8F,
+                        linePaint
+                    )
+                    canvas.drawLine(
+                        it.start + textPaint.textSize * 1.6F,
+                        lineBase - textPaint.textSize * 0.8F,
+                        it.start + textPaint.textSize * 1.6F,
+                        lineBase,
+                        linePaint
+                    )
+                    if (textLine.reviewCount < 100) canvas.drawText(
+                        textLine.reviewCount.toString(),
+                        it.start + textPaint.textSize * 0.87F -
+                                StaticLayout.getDesiredWidth(
+                                    textLine.reviewCount.toString(),
+                                    reviewCountPaint
+                                ) / 2,
+                        lineBase - textPaint.textSize / 6,
+                        reviewCountPaint
+                    )
+                    else canvas.drawText(
+                        "99+",
+                        it.start + textPaint.textSize * 0.35F,
+                        lineBase - textPaint.textSize / 6,
+                        reviewCountPaint
+                    )
+                } else canvas.drawText(it.charData, it.start, lineBase, textPaint)
             }
             if (it.selected) {
                 canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
@@ -276,6 +351,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 callBack.onImageLongPress(x, y, textChar.charData)
             } else {
                 if (!selectAble) return@touch
+                if (textChar.charData == "\uD83D\uDCAC" && textChar.isLineEnd) return@touch
                 textChar.selected = true
                 invalidate()
                 select(relativePos, lineIndex, charIndex)
@@ -292,6 +368,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
     ) {
         touch(x, y) { _, relativePos, _, lineIndex, _, charIndex, textChar ->
+            if (textChar.charData == "\uD83D\uDCAC" && textChar.isLineEnd) return@touch
             textChar.selected = true
             invalidate()
             select(relativePos, lineIndex, charIndex)
@@ -415,6 +492,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 textPos.lineIndex = lineIndex
                 for ((charIndex, textChar) in textLine.textChars.withIndex()) {
                     textPos.charIndex = charIndex
+                    if (textChar.charData == "\uD83D\uDCAC" && textChar.isLineEnd) continue
                     textChar.selected =
                         textPos.compare(selectStart) >= 0 && textPos.compare(selectEnd) <= 0
                     textChar.isSearchResult = textChar.selected && callBack.isSelectingSearchResult
