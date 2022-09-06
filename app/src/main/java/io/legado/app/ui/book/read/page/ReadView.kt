@@ -222,7 +222,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 pressDown = false
                 if (!isPageMove) {
                     if (!longPressed && !pressOnTextSelected) {
-                        onSingleTapUp()
+                        if (!curPage.onClick(startX, startY)) {
+                            onSingleTapUp()
+                        }
                         return true
                     }
                 }
