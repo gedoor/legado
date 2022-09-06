@@ -433,13 +433,15 @@ interface JsExtensions {
     }
 
     /**
-     * js实现文件夹内所有文件读取
+     * js实现文件夹内所有文本文件读取
+     * @param path 文件夹相对路径
+     * @return 所有文件字符串换行连接
      */
-    fun getTxtInFolder(unzipPath: String): String {
-        if (unzipPath.isEmpty()) return ""
-        val unzipFolder = getFile(unzipPath)
+    fun getTxtInFolder(path: String): String {
+        if (path.isEmpty()) return ""
+        val folder = getFile(path)
         val contents = StringBuilder()
-        unzipFolder.listFiles().let {
+        folder.listFiles().let {
             if (it != null) {
                 for (f in it) {
                     val charsetName = EncodingDetect.getEncode(f)
@@ -449,7 +451,7 @@ interface JsExtensions {
                 contents.deleteCharAt(contents.length - 1)
             }
         }
-        FileUtils.delete(unzipFolder.absolutePath)
+        FileUtils.delete(folder.absolutePath)
         return contents.toString()
     }
 
