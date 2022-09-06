@@ -372,7 +372,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         when {
             curPage.pressReviewButton(startX, startY) -> {
                 context.toastOnUi("Button Pressed!")
-                ReadBook.upMsg(null)
             }
             isTextSelected -> Unit
             mcRect.contains(startX, startY) -> if (!isAbortAnim) {

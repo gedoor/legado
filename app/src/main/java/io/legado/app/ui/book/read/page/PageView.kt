@@ -269,7 +269,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun pressReviewButton(x: Float, y: Float): Boolean {
-        return binding.contentTextView.pressReviewButton(x, y)
+        return binding.contentTextView.pressReviewButton(x, y - headerHeight)
     }
 
     fun longPress(

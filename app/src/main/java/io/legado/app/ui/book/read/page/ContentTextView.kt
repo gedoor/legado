@@ -102,6 +102,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 绘制页面
      */
     private fun drawPage(canvas: Canvas) {
+        reviewButtonArea.clear()
         var relativeOffset = relativeOffset(0)
         textPage.textLines.forEach { textLine ->
             draw(canvas, textPage, textLine, relativeOffset)
@@ -111,7 +112,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (!pageFactory.hasNext()) return
         val textPage1 = relativePage(1)
         relativeOffset = relativeOffset(1)
-        reviewButtonArea.clear()
         textPage1.textLines.forEach { textLine ->
             draw(canvas, textPage1, textLine, relativeOffset)
         }
@@ -172,8 +172,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (textLine.reviewCount <= 0) return@forEach
                     reviewButtonArea.add(
                         floatArrayOf(
-                            it.start, lineBase, it.start + textPaint.textSize * 1.6F,
-                            lineBase - textPaint.textSize * 0.8F,
+                            it.start - textPaint.textSize * 0.4F,
+                            lineBase + textPaint.textSize * 0.2F,
+                            it.start + textPaint.textSize * 2F,
+                            lineBase - textPaint.textSize * 1F,
                         )
                     )
                     canvas.drawLine(
@@ -351,7 +353,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     fun pressReviewButton(x: Float, y: Float): Boolean {
         reviewButtonArea.forEach {
-            if (x in it[0]..it[2] && y + textPage.height in it[3]..it[1]) return true
+            if (x in it[0]..it[2] && y in it[3]..it[1]) {
+                return true
+            }
         }
         return false
     }
