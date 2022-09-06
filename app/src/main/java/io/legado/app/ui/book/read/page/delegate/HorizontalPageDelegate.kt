@@ -119,7 +119,11 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
         abortAnim()
         if (!hasNext()) return
         setDirection(PageDirection.NEXT)
-        readView.setStartPoint(viewWidth.toFloat(), 1f, false)
+        val y = when {
+            viewHeight / 2 < startY -> viewHeight.toFloat() * 0.9f
+            else -> 1f
+        }
+        readView.setStartPoint(viewWidth.toFloat() * 0.9f, y, false)
         onAnimStart(animationSpeed)
     }
 
