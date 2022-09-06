@@ -27,6 +27,7 @@ import splitties.init.appCtx
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -125,7 +126,7 @@ interface JsExtensions {
                 html = html,
                 javaScript = js,
                 headerMap = getSource()?.getHeaderMap(true),
-                tag =  getSource()?.getKey()
+                tag = getSource()?.getKey()
             ).getStrResponse().body
         }
     }
@@ -143,15 +144,18 @@ interface JsExtensions {
      * 使用内置浏览器打开链接，并等待网页结果
      */
     fun startBrowserAwait(url: String, title: String): StrResponse {
-        return StrResponse(url, SourceVerificationHelp.getVerificationResult(getSource(), url, title, true))
+        return StrResponse(
+            url,
+            SourceVerificationHelp.getVerificationResult(getSource(), url, title, true)
+        )
     }
 
     /**
      * 打开图片验证码对话框，等待返回验证结果
      */
-     fun getVerificationCode(imageUrl: String): String {
-         return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false)
-     }
+    fun getVerificationCode(imageUrl: String): String {
+        return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false)
+    }
 
     /**
      * 可从网络，本地文件(阅读私有缓存目录和书籍保存位置支持相对路径)导入JavaScript脚本
@@ -204,6 +208,29 @@ interface JsExtensions {
     }
 
     /**
+     * 下载文件
+     * @param url 下载地址:可带参数type,文件后缀,不带默认zip
+     * @return 下载的文件相对路径
+     */
+    fun downloadFile(url: String): String {
+        val analyzeUrl = AnalyzeUrl(url, source = getSource())
+        val type = analyzeUrl.type ?: "zip"
+        val path = FileUtils.getPath(
+            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            "${MD5Utils.md5Encode16(url)}.${type}"
+        )
+        FileUtils.delete(path)
+        analyzeUrl.getInputStream().use { iStream ->
+            val file = FileUtils.createFileIfNotExist(path)
+            FileOutputStream(file).use { oStream ->
+                iStream.copyTo(oStream)
+            }
+        }
+        return path.substring(FileUtils.getCachePath().length)
+    }
+
+
+    /**
      * 实现16进制字符串转文件
      * @param content 需要转成文件的16进制字符串
      * @param url 通过url里的参数来判断文件类型
@@ -211,18 +238,18 @@ interface JsExtensions {
      */
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url, source = getSource()).type ?: return ""
-        val zipPath = FileUtils.getPath(
+        val path = FileUtils.getPath(
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"
         )
-        FileUtils.delete(zipPath)
-        val zipFile = FileUtils.createFileIfNotExist(zipPath)
+        FileUtils.delete(path)
+        val file = FileUtils.createFileIfNotExist(path)
         StringUtils.hexStringToByte(content).let {
             if (it.isNotEmpty()) {
-                zipFile.writeBytes(it)
+                file.writeBytes(it)
             }
         }
-        return zipPath.substring(FileUtils.getCachePath().length)
+        return path.substring(FileUtils.getCachePath().length)
     }
 
     /**
@@ -835,7 +862,7 @@ interface JsExtensions {
     }
 
     fun desBase64DecodeToString(
-       data: String, key: String, transformation: String, iv: String
+        data: String, key: String, transformation: String, iv: String
     ): String? {
         return EncoderUtils.decryptBase64DES(
             data.encodeToByteArray(),
@@ -1030,7 +1057,10 @@ interface JsExtensions {
         algorithm: String,
         key: String
     ): String {
-        return Base64.encodeToString(HMac(algorithm, key.toByteArray()).digest(data), Base64.NO_WRAP)
+        return Base64.encodeToString(
+            HMac(algorithm, key.toByteArray()).digest(data),
+            Base64.NO_WRAP
+        )
     }
 
     fun md5Encode(str: String): String {
