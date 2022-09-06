@@ -14,7 +14,7 @@ data class ReviewRule(
     // 这些功能将在以上功能完成以后实现
     var voteUpUrl: String? = null,          // 点赞URL
     var voteDownUrl: String? = null,        // 点踩URL
-    var postReviewUrl: String? = null,            // 发送回复URL
+    var postReviewUrl: String? = null,      // 发送回复URL
     var postQuoteUrl: String? = null,       // 发送回复段评URL
     var deleteUrl: String? = null,          // 删除段评URL
 ): Parcelable

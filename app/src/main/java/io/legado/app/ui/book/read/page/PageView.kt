@@ -268,6 +268,10 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.selectAble = selectAble
     }
 
+    fun pressReviewButton(x: Float, y: Float): Boolean {
+        return binding.contentTextView.pressReviewButton(x, y)
+    }
+
     fun longPress(
         x: Float, y: Float,
         select: (relativePagePos: Int, lineIndex: Int, charIndex: Int) -> Unit,

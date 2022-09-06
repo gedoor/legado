@@ -51,6 +51,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var cacheIncreased = false
     private val increaseSize = 8 * 1024 * 1024
     private val maxCacheSize = 256 * 1024 * 1024
+    private val reviewButtonArea: ArrayList<FloatArray> = arrayListOf()
 
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
@@ -110,6 +111,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (!pageFactory.hasNext()) return
         val textPage1 = relativePage(1)
         relativeOffset = relativeOffset(1)
+        reviewButtonArea.clear()
         textPage1.textLines.forEach { textLine ->
             draw(canvas, textPage1, textLine, relativeOffset)
         }
@@ -168,6 +170,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
                 if (it.charData == "\uD83D\uDCAC" && it.isLineEnd) {
                     if (textLine.reviewCount <= 0) return@forEach
+                    reviewButtonArea.add(
+                        floatArrayOf(
+                            it.start, lineBase, it.start + textPaint.textSize * 1.6F,
+                            lineBase - textPaint.textSize * 0.8F,
+                        )
+                    )
                     canvas.drawLine(
                         it.start,
                         lineBase - textPaint.textSize * 2 / 5,
@@ -336,6 +344,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     fun resetPageOffset() {
         pageOffset = 0
+    }
+
+    /**
+     * 点击评论按钮
+     */
+    fun pressReviewButton(x: Float, y: Float): Boolean {
+        reviewButtonArea.forEach {
+            if (x in it[0]..it[2] && y + textPage.height in it[3]..it[1]) return true
+        }
+        return false
     }
 
     /**

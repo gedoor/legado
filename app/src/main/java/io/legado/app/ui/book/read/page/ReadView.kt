@@ -28,6 +28,7 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.invisible
 import io.legado.app.utils.screenshot
+import io.legado.app.utils.toastOnUi
 import java.text.BreakIterator
 import java.util.*
 import kotlin.math.abs
@@ -369,6 +370,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     private fun onSingleTapUp() {
         when {
+            curPage.pressReviewButton(startX, startY) -> {
+                context.toastOnUi("Button Pressed!")
+                ReadBook.upMsg(null)
+            }
             isTextSelected -> Unit
             mcRect.contains(startX, startY) -> if (!isAbortAnim) {
                 click(AppConfig.clickActionMC)
