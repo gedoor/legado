@@ -313,7 +313,7 @@ class PageView(context: Context) : FrameLayout(context) {
      * @return true:已处理, false:未处理
      */
     fun onClick(x: Float, y: Float): Boolean {
-        return false
+        return binding.contentTextView.click(x, y - headerHeight)
     }
 
     /**

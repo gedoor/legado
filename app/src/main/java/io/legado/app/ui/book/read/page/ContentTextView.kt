@@ -284,6 +284,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     /**
+     * 单击
+     * @return true:已处理, false:未处理
+     */
+    fun click(x: Float, y: Float): Boolean {
+        return false
+    }
+
+    /**
      * 选择文字
      */
     fun selectText(
