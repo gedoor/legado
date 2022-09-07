@@ -27,7 +27,7 @@ import io.legado.app.utils.toastOnUi
 import kotlin.math.min
 
 /**
- * 阅读内容界面
+ * 阅读内容视图
  */
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble, true)
