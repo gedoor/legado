@@ -119,7 +119,7 @@ object ChapterProvider {
                     book,
                     absStartX,
                     durY,
-                    text + "\ud83d\udcac",
+                    if (AppConfig.enableReview) text + "\ud83d\udcac" else text,
                     textPages,
                     stringBuilder,
                     titlePaint,
@@ -180,7 +180,7 @@ object ChapterProvider {
                             book,
                             absStartX,
                             durY,
-                            text + "\ud83d\udcac",
+                            if (AppConfig.enableReview) text + "\ud83d\udcac" else text,
                             textPages,
                             stringBuilder,
                             contentPaint

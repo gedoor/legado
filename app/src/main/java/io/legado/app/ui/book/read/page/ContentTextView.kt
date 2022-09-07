@@ -16,10 +16,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.page.entities.TextColumn
-import io.legado.app.ui.book.read.page.entities.TextLine
-import io.legado.app.ui.book.read.page.entities.TextPage
-import io.legado.app.ui.book.read.page.entities.TextPos
+import io.legado.app.ui.book.read.page.entities.*
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
@@ -30,7 +27,7 @@ import io.legado.app.utils.toastOnUi
 import kotlin.math.min
 
 /**
- * 阅读内容视图
+ * 阅读内容界面
  */
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     var selectAble = context.getPrefBoolean(PreferKey.textSelectAble, true)
@@ -67,18 +64,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         callBack = activity as CallBack
     }
 
-    /**
-     * 设置内容
-     */
     fun setContent(textPage: TextPage) {
         this.textPage = textPage
         imagePaint.isAntiAlias = AppConfig.useAntiAlias
         invalidate()
     }
 
-    /**
-     * 更新绘制区域
-     */
     fun upVisibleRect() {
         visibleRect.set(
             ChapterProvider.paddingLeft.toFloat(),
