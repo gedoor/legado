@@ -64,12 +64,18 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         callBack = activity as CallBack
     }
 
+    /**
+     * 设置内容
+     */
     fun setContent(textPage: TextPage) {
         this.textPage = textPage
         imagePaint.isAntiAlias = AppConfig.useAntiAlias
         invalidate()
     }
 
+    /**
+     * 更新绘制区域
+     */
     fun upVisibleRect() {
         visibleRect.set(
             ChapterProvider.paddingLeft.toFloat(),
