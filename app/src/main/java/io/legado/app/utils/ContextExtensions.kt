@@ -325,7 +325,7 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
     try {
         startActivity(intent)
     } catch (e: Exception) {
-        toastOnUi(e.msg)
+        toastOnUi(e.stackTraceStr)
     }
 }
 

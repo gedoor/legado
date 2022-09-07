@@ -8,7 +8,7 @@ import io.legado.app.model.ReadAloud
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.getFile
 import io.legado.app.utils.longToastOnUi
-import io.legado.app.utils.msg
+import io.legado.app.utils.stackTraceStr
 import splitties.init.appCtx
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -48,7 +48,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         if (ex == null) return
         //保存日志文件
         saveCrashInfo2File(ex)
-        context.longToastOnUi(ex.msg)
+        context.longToastOnUi(ex.stackTraceStr)
         Thread.sleep(3000)
     }
 

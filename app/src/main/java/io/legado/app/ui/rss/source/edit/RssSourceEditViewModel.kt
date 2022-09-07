@@ -8,8 +8,8 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.help.RuleComplete
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.getClipText
-import io.legado.app.utils.msg
 import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.stackTraceStr
 
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +74,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
                 finally.invoke(it)
             }
         }.onError {
-            context.toastOnUi(it.msg)
+            context.toastOnUi(it.stackTraceStr)
         }
     }
 

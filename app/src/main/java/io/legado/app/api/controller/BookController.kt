@@ -188,7 +188,7 @@ object BookController {
             }
             returnData.setData(content)
         } catch (e: Exception) {
-            returnData.setErrorMsg(e.msg)
+            returnData.setErrorMsg(e.stackTraceStr)
         }
         return returnData
     }

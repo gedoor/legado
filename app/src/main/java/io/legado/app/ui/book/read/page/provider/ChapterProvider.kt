@@ -14,7 +14,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.TextColumn
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
@@ -264,7 +264,7 @@ object ChapterProvider {
                 Pair(0f, width.toFloat())
             }
             textLine.textChars.add(
-                TextChar(charData = src, start = x + start, end = x + end, isImage = true)
+                TextColumn(charData = src, start = x + start, end = x + end, style = 1)
             )
             textPages.last().textLines.add(textLine)
         }
@@ -409,14 +409,13 @@ object ChapterProvider {
         }
         val bodyIndent = ReadBookConfig.paragraphIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
-        for ((index, char) in bodyIndent.toStringArray().withIndex()) {
+        for (char in bodyIndent.toStringArray()) {
             val x1 = x + icw
             textLine.textChars.add(
-                TextChar(
+                TextColumn(
                     charData = char,
                     start = absStartX + x,
-                    end = absStartX + x1,
-                    isLineEnd = bodyIndent.length - 1 == index
+                    end = absStartX + x1
                 )
             )
             x = x1
@@ -452,7 +451,7 @@ object ChapterProvider {
         words.forEachIndexed { index, char ->
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
-            addCharToLine(book, absStartX, textLine, char, x, x1, srcList)
+            addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
             x = x1
         }
         exceed(absStartX, textLine, words)
@@ -471,10 +470,10 @@ object ChapterProvider {
         srcList: LinkedList<String>?
     ) {
         var x = startX
-        words.forEach { char ->
+        words.forEachIndexed { index, char ->
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = x + cw
-            addCharToLine(book, absStartX, textLine, char, x, x1, srcList)
+            addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
             x = x1
         }
         exceed(absStartX, textLine, words)
@@ -490,26 +489,27 @@ object ChapterProvider {
         char: String,
         xStart: Float,
         xEnd: Float,
+        isLineEnd: Boolean,
         srcList: LinkedList<String>?
     ) {
         if (srcList != null && char == srcReplaceChar) {
             val src = srcList.removeFirst()
             ImageProvider.cacheImage(book, src, ReadBook.bookSource)
             textLine.textChars.add(
-                TextChar(
+                TextColumn(
                     charData = src,
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    isImage = true
+                    style = 1
                 )
             )
         } else {
             textLine.textChars.add(
-                TextChar(
+                TextColumn(
                     charData = char,
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    isLineEnd = true
+                    style = if (isLineEnd && char == "\uD83D\uDCAC") 2 else 0
                 )
             )
         }

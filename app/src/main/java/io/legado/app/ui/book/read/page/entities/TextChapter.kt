@@ -2,6 +2,9 @@ package io.legado.app.ui.book.read.page.entities
 
 import kotlin.math.min
 
+/**
+ * 章节信息
+ */
 @Suppress("unused")
 data class TextChapter(
     val position: Int,

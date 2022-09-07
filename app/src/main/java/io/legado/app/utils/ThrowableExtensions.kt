@@ -2,7 +2,7 @@ package io.legado.app.utils
 
 import java.io.IOException
 
-val Throwable.msg: String
+val Throwable.stackTraceStr: String
     get() {
         val stackTrace = stackTraceToString()
         val lMsg = this.localizedMessage ?: "noErrorMsg"

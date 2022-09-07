@@ -322,7 +322,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 importConfig(it)
             }
         }.onError {
-            longToast(it.msg)
+            longToast(it.stackTraceStr)
         }
     }
 

@@ -9,8 +9,8 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.utils.msg
 import io.legado.app.utils.replace
+import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
 import splitties.init.appCtx
@@ -149,7 +149,7 @@ class ContentProcessor private constructor(
                 } catch (e: RegexTimeoutException) {
                     item.isEnabled = false
                     appDb.replaceRuleDao.update(item)
-                    return item.name + e.msg
+                    return item.name + e.stackTraceStr
                 } catch (e: CancellationException) {
                     return mContent
                 } catch (e: Exception) {

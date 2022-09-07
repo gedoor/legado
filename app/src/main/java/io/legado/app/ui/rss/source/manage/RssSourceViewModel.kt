@@ -83,7 +83,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         }.onSuccess {
             success.invoke(it)
         }.onError {
-            context.toastOnUi(it.msg)
+            context.toastOnUi(it.stackTraceStr)
         }
     }
 
