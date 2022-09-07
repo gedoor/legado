@@ -14,7 +14,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.TextColumn
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
@@ -160,7 +160,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
         val textColor = if (textLine.isReadAloud) context.accentColor else ReadBookConfig.textColor
         textLine.textChars.forEach {
-            if (it.isImage) {
+            if (it.style == 1) {
                 drawImage(canvas, textPage, textLine, it, lineTop, lineBottom)
             } else {
                 textPaint.color = textColor
@@ -183,7 +183,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         canvas: Canvas,
         textPage: TextPage,
         textLine: TextLine,
-        textChar: TextChar,
+        textChar: TextColumn,
         lineTop: Float,
         lineBottom: Float
     ) {
@@ -284,7 +284,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         select: (textPos: TextPos) -> Unit,
     ) {
         touch(x, y) { _, textPos, _, _, textChar ->
-            if (textChar.isImage) {
+            if (textChar.style == 1) {
                 callBack.onImageLongPress(x, y, textChar.charData)
             } else {
                 if (!selectAble) return@touch
@@ -367,7 +367,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             textPos: TextPos,
             textPage: TextPage,
             textLine: TextLine,
-            textChar: TextChar
+            textColumn: TextColumn
         ) -> Unit
     ) {
         if (!visibleRect.contains(x, y)) return

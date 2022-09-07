@@ -14,7 +14,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.entities.TextChar
+import io.legado.app.ui.book.read.page.entities.TextColumn
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.utils.*
@@ -252,7 +252,7 @@ object ChapterProvider {
                 Pair(0f, width.toFloat())
             }
             textLine.textChars.add(
-                TextChar(charData = src, start = x + start, end = x + end, isImage = true)
+                TextColumn(charData = src, start = x + start, end = x + end, style = 1)
             )
             textPages.last().textLines.add(textLine)
         }
@@ -401,7 +401,7 @@ object ChapterProvider {
         bodyIndent.toStringArray().forEach { char ->
             val x1 = x + icw
             textLine.textChars.add(
-                TextChar(charData = char, start = absStartX + x, end = absStartX + x1)
+                TextColumn(charData = char, start = absStartX + x, end = absStartX + x1)
             )
             x = x1
         }
@@ -480,16 +480,16 @@ object ChapterProvider {
             val src = srcList.removeFirst()
             ImageProvider.cacheImage(book, src, ReadBook.bookSource)
             textLine.textChars.add(
-                TextChar(
+                TextColumn(
                     charData = src,
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    isImage = true
+                    style = 1
                 )
             )
         } else {
             textLine.textChars.add(
-                TextChar(
+                TextColumn(
                     charData = char,
                     start = absStartX + xStart,
                     end = absStartX + xEnd
