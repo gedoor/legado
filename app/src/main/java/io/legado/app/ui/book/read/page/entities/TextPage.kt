@@ -11,6 +11,9 @@ import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
 
+/**
+ * 页面信息
+ */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextPage(
     var index: Int = 0,

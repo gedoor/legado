@@ -281,16 +281,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun longPress(
         x: Float,
         y: Float,
-        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
+        select: (textPos: TextPos) -> Unit,
     ) {
-        touch(x, y) { _, relativePos, _, lineIndex, _, charIndex, textChar ->
+        touch(x, y) { _, textPos, _, _, textChar ->
             if (textChar.isImage) {
                 callBack.onImageLongPress(x, y, textChar.charData)
             } else {
                 if (!selectAble) return@touch
                 textChar.selected = true
                 invalidate()
-                select(relativePos, lineIndex, charIndex)
+                select(textPos)
             }
         }
     }
@@ -300,7 +300,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * @return true:已处理, false:未处理
      */
     fun click(x: Float, y: Float): Boolean {
-        touch(x, y) { _, relativePos, textPage, lineIndex, textLine, charIndex, textChar ->
+        touch(x, y) { _, textPos, textPage, textLine, textChar ->
 
         }
         return false
@@ -312,12 +312,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun selectText(
         x: Float,
         y: Float,
-        select: (relativePage: Int, lineIndex: Int, charIndex: Int) -> Unit,
+        select: (textPos: TextPos) -> Unit,
     ) {
-        touch(x, y) { _, relativePos, _, lineIndex, _, charIndex, textChar ->
+        touch(x, y) { _, textPos, _, _, textChar ->
             textChar.selected = true
             invalidate()
-            select(relativePos, lineIndex, charIndex)
+            select(textPos)
         }
     }
 
@@ -325,11 +325,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 开始选择符移动
      */
     fun selectStartMove(x: Float, y: Float) {
-        touch(x, y) { relativeOffset, relativePos, _, lineIndex, textLine, charIndex, textChar ->
-            val pos = TextPos(relativePos, lineIndex, charIndex)
-            if (selectStart.compare(pos) != 0) {
-                if (pos.compare(selectEnd) <= 0) {
-                    selectStart.upData(pos = pos)
+        touch(x, y) { relativeOffset, textPos, _, textLine, textChar ->
+            if (selectStart.compare(textPos) != 0) {
+                if (textPos.compare(selectEnd) <= 0) {
+                    selectStart.upData(pos = textPos)
                     upSelectedStart(
                         textChar.start,
                         textLine.lineBottom + relativeOffset,
@@ -345,11 +344,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 结束选择符移动
      */
     fun selectEndMove(x: Float, y: Float) {
-        touch(x, y) { relativeOffset, relativePos, _, lineIndex, textLine, charIndex, textChar ->
-            val pos = TextPos(relativePos, lineIndex, charIndex)
-            if (pos.compare(selectEnd) != 0) {
-                if (pos.compare(selectStart) >= 0) {
-                    selectEnd.upData(pos)
+        touch(x, y) { relativeOffset, textPos, _, textLine, textChar ->
+            if (textPos.compare(selectEnd) != 0) {
+                if (textPos.compare(selectStart) >= 0) {
+                    selectEnd.upData(textPos)
                     upSelectedEnd(textChar.end, textLine.lineBottom + relativeOffset)
                     upSelectChars()
                 }
@@ -366,11 +364,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         y: Float,
         touched: (
             relativeOffset: Float,
-            relativePos: Int,
+            textPos: TextPos,
             textPage: TextPage,
-            lineIndex: Int,
             textLine: TextLine,
-            charIndex: Int,
             textChar: TextChar
         ) -> Unit
     ) {
@@ -390,9 +386,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         if (textChar.isTouch(x)) {
                             touched.invoke(
                                 relativeOffset,
-                                relativePos, textPage,
-                                lineIndex, textLine,
-                                charIndex, textChar
+                                TextPos(relativePos, lineIndex, charIndex),
+                                textPage, textLine, textChar
                             )
                             return
                         }

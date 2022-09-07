@@ -14,6 +14,7 @@ import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.activity
@@ -321,7 +322,7 @@ class PageView(context: Context) : FrameLayout(context) {
      */
     fun longPress(
         x: Float, y: Float,
-        select: (relativePagePos: Int, lineIndex: Int, charIndex: Int) -> Unit,
+        select: (textPos: TextPos) -> Unit,
     ) {
         return binding.contentTextView.longPress(x, y - headerHeight, select)
     }
@@ -331,7 +332,7 @@ class PageView(context: Context) : FrameLayout(context) {
      */
     fun selectText(
         x: Float, y: Float,
-        select: (relativePagePos: Int, lineIndex: Int, charIndex: Int) -> Unit,
+        select: (textPos: TextPos) -> Unit,
     ) {
         return binding.contentTextView.selectText(x, y - headerHeight, select)
     }

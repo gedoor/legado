@@ -4,6 +4,9 @@ import android.text.TextPaint
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.textHeight
 
+/**
+ * 行信息
+ */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextLine(
     var text: String = "",

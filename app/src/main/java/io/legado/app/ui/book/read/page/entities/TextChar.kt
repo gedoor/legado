@@ -1,5 +1,8 @@
 package io.legado.app.ui.book.read.page.entities
 
+/**
+ * 字符信息
+ */
 data class TextChar(
     val charData: String,
     var start: Float,
