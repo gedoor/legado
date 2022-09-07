@@ -32,7 +32,9 @@ import java.text.BreakIterator
 import java.util.*
 import kotlin.math.abs
 
-
+/**
+ * 阅读视图
+ */
 class ReadView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
     DataSource {

@@ -24,7 +24,7 @@ import splitties.views.backgroundColor
 import java.util.*
 
 /**
- * 阅读界面
+ * 页面视图
  */
 class PageView(context: Context) : FrameLayout(context) {
 
