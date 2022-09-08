@@ -65,10 +65,17 @@ fun Menu.applyOpenTint(context: Context) {
 fun Menu.iconItemOnLongClick(id: Int, function: (view: View) -> Unit) {
     findItem(id)?.let { item ->
         item.setActionView(R.layout.view_action_button)
-        item.actionView.contentDescription = item.title
-        item.actionView.findViewById<ImageButton>(R.id.item).setImageDrawable(item.icon)
-        item.actionView.setOnLongClickListener { function.invoke(item.actionView); true }
-        item.actionView.setOnClickListener { performIdentifierAction(id, 0) }
+        item.actionView?.run {
+            contentDescription = item.title
+            findViewById<ImageButton>(R.id.item).setImageDrawable(item.icon)
+            setOnLongClickListener {
+                function.invoke(this)
+                true
+            }
+            setOnClickListener {
+                performIdentifierAction(id, 0)
+            }
+        }
     }
 }
 
