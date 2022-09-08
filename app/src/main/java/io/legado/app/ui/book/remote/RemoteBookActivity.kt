@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.remote
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,7 +13,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.about.AppLogDialog
-import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.showDialogFragment
@@ -117,6 +117,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
         adapter.selectAll(selectAll)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onClickSelectBarMainAction() {
         waitDialog.show()
         viewModel.addToBookshelf(adapter.selected) {
@@ -126,8 +127,10 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (!goBackDir()) {
+            @Suppress("DEPRECATION")
             super.onBackPressed()
         }
     }

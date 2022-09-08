@@ -186,6 +186,7 @@ val Context.sysScreenOffTime: Int
     }
 
 val Context.statusBarHeight: Int
+    @SuppressLint("DiscouragedApi")
     get() {
         if (Build.BOARD == "windows") {
             return 0
@@ -195,6 +196,7 @@ val Context.statusBarHeight: Int
     }
 
 val Context.navigationBarHeight: Int
+    @SuppressLint("DiscouragedApi")
     get() {
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
@@ -342,6 +344,7 @@ val Context.isPad: Boolean
         return (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE
     }
 
+@Suppress("DEPRECATION")
 val Context.channel: String
     get() {
         try {

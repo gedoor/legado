@@ -68,6 +68,7 @@ object AppConst {
 
     val appInfo: AppInfo by lazy {
         val appInfo = AppInfo()
+        @Suppress("DEPRECATION")
         appCtx.packageManager.getPackageInfo(appCtx.packageName, PackageManager.GET_ACTIVITIES)
             ?.let {
                 appInfo.versionName = it.versionName

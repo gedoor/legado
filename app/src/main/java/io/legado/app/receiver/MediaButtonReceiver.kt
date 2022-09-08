@@ -36,6 +36,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
         fun handleIntent(context: Context, intent: Intent): Boolean {
             val intentAction = intent.action
             if (Intent.ACTION_MEDIA_BUTTON == intentAction) {
+                @Suppress("DEPRECATION")
                 val keyEvent = intent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)
                     ?: return false
                 val keycode: Int = keyEvent.keyCode

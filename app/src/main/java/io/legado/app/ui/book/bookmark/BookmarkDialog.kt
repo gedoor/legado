@@ -38,6 +38,8 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
             dismiss()
             return
         }
+
+        @Suppress("DEPRECATION")
         val bookmark = arguments.getParcelable<Bookmark>("bookmark")
         bookmark ?: let {
             dismiss()

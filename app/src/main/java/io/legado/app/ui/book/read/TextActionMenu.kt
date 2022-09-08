@@ -222,6 +222,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun getSupportedActivities(): List<ResolveInfo> {
+        @Suppress("DEPRECATION")
         return context.packageManager
             .queryIntentActivities(createProcessTextIntent(), 0)
     }

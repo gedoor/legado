@@ -279,8 +279,10 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (!goBackDir()) {
+            @Suppress("DEPRECATION")
             super.onBackPressed()
         }
     }
