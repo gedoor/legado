@@ -11,6 +11,9 @@ import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
 
+/**
+ * 页面信息
+ */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextPage(
     var index: Int = 0,
@@ -111,7 +114,12 @@ data class TextPage(
                     val cw = StaticLayout.getDesiredWidth(char, ChapterProvider.contentPaint)
                     val x1 = x + cw
                     textLine.textChars.add(
-                        TextChar(char, start = x, end = x1)
+                        TextColumn(
+                            char,
+                            start = x,
+                            end = x1,
+                            style = if (textLine.text.length - 1 == index && char == "\uD83D\uDCAC") 2 else 0
+                        )
                     )
                     x = x1
                 }

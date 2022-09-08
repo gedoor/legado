@@ -14,6 +14,7 @@ import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.activity
@@ -24,7 +25,7 @@ import splitties.views.backgroundColor
 import java.util.*
 
 /**
- * 阅读界面
+ * 页面视图
  */
 class PageView(context: Context) : FrameLayout(context) {
 
@@ -104,6 +105,9 @@ class PageView(context: Context) : FrameLayout(context) {
         isGone = ReadBookConfig.hideStatusBar || readBookActivity?.isInMultiWindow == true
     }
 
+    /**
+     * 更新阅读信息
+     */
     private fun upTipStyle() = binding.run {
         tvHeaderLeft.tag = null
         tvHeaderMiddle.tag = null
@@ -189,6 +193,10 @@ class PageView(context: Context) : FrameLayout(context) {
         }
     }
 
+    /**
+     * 获取信息视图
+     * @param tip 信息类型
+     */
     private fun getTipView(tip: Int): BatteryView? = binding.run {
         return when (tip) {
             ReadTipConfig.tipHeaderLeft -> tvHeaderLeft
@@ -201,6 +209,9 @@ class PageView(context: Context) : FrameLayout(context) {
         }
     }
 
+    /**
+     * 更新背景
+     */
     fun upBg() {
         if (ReadBookConfig.bgAlpha < 100) {
             binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
@@ -211,15 +222,24 @@ class PageView(context: Context) : FrameLayout(context) {
         upBgAlpha()
     }
 
+    /**
+     * 更新背景透明度
+     */
     fun upBgAlpha() {
         binding.vwBg.alpha = ReadBookConfig.bgAlpha / 100f
     }
 
+    /**
+     * 更新时间信息
+     */
     fun upTime() {
         tvTime?.text = timeFormat.format(Date(System.currentTimeMillis()))
         upTimeBattery()
     }
 
+    /**
+     * 更新电池信息
+     */
     @SuppressLint("SetTextI18n")
     fun upBattery(battery: Int) {
         this.battery = battery
@@ -228,6 +248,9 @@ class PageView(context: Context) : FrameLayout(context) {
         upTimeBattery()
     }
 
+    /**
+     * 更新电池信息
+     */
     @SuppressLint("SetTextI18n")
     private fun upTimeBattery() {
         val time = timeFormat.format(Date(System.currentTimeMillis()))
@@ -235,6 +258,9 @@ class PageView(context: Context) : FrameLayout(context) {
         tvTimeBatteryP?.text = "$time $battery%"
     }
 
+    /**
+     * 设置内容
+     */
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
         setProgress(textPage)
         if (resetPageOffset) {
@@ -243,14 +269,23 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.setContent(textPage)
     }
 
+    /**
+     * 设置无障碍文本
+     */
     fun setContentDescription(content: String) {
         binding.contentTextView.contentDescription = content
     }
 
+    /**
+     * 重置滚动位置
+     */
     fun resetPageOffset() {
         binding.contentTextView.resetPageOffset()
     }
 
+    /**
+     * 设置进度
+     */
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
         tvBookName?.text = ReadBook.book?.name
@@ -260,24 +295,44 @@ class PageView(context: Context) : FrameLayout(context) {
         tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
     }
 
+    /**
+     * 滚动事件
+     */
     fun scroll(offset: Int) {
         binding.contentTextView.scroll(offset)
     }
 
+    /**
+     * 更新是否开启选择功能
+     */
     fun upSelectAble(selectAble: Boolean) {
         binding.contentTextView.selectAble = selectAble
     }
 
+    /**
+     * 优先处理页面内单击
+     * @return true:已处理, false:未处理
+     */
+    fun onClick(x: Float, y: Float): Boolean {
+        return binding.contentTextView.click(x, y - headerHeight)
+    }
+
+    /**
+     * 长按事件
+     */
     fun longPress(
         x: Float, y: Float,
-        select: (relativePagePos: Int, lineIndex: Int, charIndex: Int) -> Unit,
+        select: (textPos: TextPos) -> Unit,
     ) {
         return binding.contentTextView.longPress(x, y - headerHeight, select)
     }
 
+    /**
+     * 选择文本
+     */
     fun selectText(
         x: Float, y: Float,
-        select: (relativePagePos: Int, lineIndex: Int, charIndex: Int) -> Unit,
+        select: (textPos: TextPos) -> Unit,
     ) {
         return binding.contentTextView.selectText(x, y - headerHeight, select)
     }

@@ -28,11 +28,14 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.invisible
 import io.legado.app.utils.screenshot
+import io.legado.app.utils.toastOnUi
 import java.text.BreakIterator
 import java.util.*
 import kotlin.math.abs
 
-
+/**
+ * 阅读视图
+ */
 class ReadView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
     DataSource {
@@ -222,7 +225,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 pressDown = false
                 if (!isPageMove) {
                     if (!longPressed && !pressOnTextSelected) {
-                        onSingleTapUp()
+                        if (!curPage.onClick(startX, startY)) {
+                            onSingleTapUp()
+                        }
                         return true
                     }
                 }
@@ -292,18 +297,18 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     private fun onLongPress() {
         kotlin.runCatching {
-            curPage.longPress(startX, startY) { relativePos, lineIndex, charIndex ->
+            curPage.longPress(startX, startY) { textPos: TextPos ->
                 isTextSelected = true
                 pressOnTextSelected = true
-                initialTextPos.upData(relativePos, lineIndex, charIndex)
-                val startPos = TextPos(relativePos, lineIndex, charIndex)
-                val endPos = TextPos(relativePos, lineIndex, charIndex)
-                val page = curPage.relativePage(relativePos)
+                initialTextPos.upData(textPos)
+                val startPos = textPos.copy()
+                val endPos = textPos.copy()
+                val page = curPage.relativePage(textPos.relativePagePos)
                 val stringBuilder = StringBuilder()
-                var cIndex = charIndex
-                var lineStart = lineIndex
-                var lineEnd = lineIndex
-                for (index in lineIndex - 1 downTo 0) {
+                var cIndex = textPos.charIndex
+                var lineStart = textPos.lineIndex
+                var lineEnd = textPos.lineIndex
+                for (index in textPos.lineIndex - 1 downTo 0) {
                     val textLine = page.getLine(index)
                     if (textLine.isParagraphEnd) {
                         break
@@ -313,7 +318,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                         cIndex += textLine.charSize
                     }
                 }
-                for (index in lineIndex until page.lineSize) {
+                for (index in textPos.lineIndex until page.lineSize) {
                     val textLine = page.getLine(index)
                     stringBuilder.append(textLine.text)
                     lineEnd += 1
@@ -419,11 +424,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
      * 选择文本
      */
     private fun selectText(x: Float, y: Float) {
-        curPage.selectText(x, y) { relativePagePos, lineIndex, charIndex ->
-            val compare = initialTextPos.compare(relativePagePos, lineIndex, charIndex)
+        curPage.selectText(x, y) { textPos ->
+            val compare = initialTextPos.compare(textPos)
             when {
                 compare >= 0 -> {
-                    curPage.selectStartMoveIndex(relativePagePos, lineIndex, charIndex)
+                    curPage.selectStartMoveIndex(
+                        textPos.relativePagePos,
+                        textPos.lineIndex,
+                        textPos.charIndex
+                    )
                     curPage.selectEndMoveIndex(
                         initialTextPos.relativePagePos,
                         initialTextPos.lineIndex,
@@ -436,7 +445,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
                         initialTextPos.lineIndex,
                         initialTextPos.charIndex
                     )
-                    curPage.selectEndMoveIndex(relativePagePos, lineIndex, charIndex)
+                    curPage.selectEndMoveIndex(
+                        textPos.relativePagePos,
+                        textPos.lineIndex,
+                        textPos.charIndex
+                    )
                 }
             }
         }

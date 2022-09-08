@@ -4,10 +4,14 @@ import android.text.TextPaint
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.textHeight
 
+/**
+ * 行信息
+ */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextLine(
     var text: String = "",
-    val textChars: ArrayList<TextChar> = arrayListOf(),
+    val textChars: ArrayList<TextColumn> = arrayListOf(),
+    val reviewCount: Int = 0,
     var lineTop: Float = 0f,
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
@@ -27,13 +31,13 @@ data class TextLine(
         lineBase = lineBottom - textPaint.fontMetrics.descent
     }
 
-    fun getTextChar(index: Int): TextChar {
+    fun getTextChar(index: Int): TextColumn {
         return textChars.getOrElse(index) {
             textChars.last()
         }
     }
 
-    fun getTextCharReverseAt(index: Int): TextChar {
+    fun getTextCharReverseAt(index: Int): TextColumn {
         return textChars[textChars.lastIndex - index]
     }
 

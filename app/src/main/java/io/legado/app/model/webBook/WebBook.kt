@@ -301,6 +301,13 @@ object WebBook {
     }
 
     /**
+     * 获取段评
+     */
+    fun getReview() {
+        // TODO
+    }
+
+    /**
      * 精准搜索
      */
     fun preciseSearch(

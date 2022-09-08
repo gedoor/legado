@@ -1,5 +1,8 @@
 package io.legado.app.ui.book.read.page.entities
 
+/**
+ * 位置信息
+ */
 data class TextPos(
     var relativePagePos: Int,
     var lineIndex: Int,
