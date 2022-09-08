@@ -3,7 +3,6 @@
 buildscript {
     ext{
         kotlin_version = '1.7.10'
-        ksp_version = "1.7.10-1.0.6"
         compose_version = '1.2.1'
         compose_compiler_version = '1.3.0'
         agp_version= '7.2.2'
@@ -17,7 +16,6 @@ plugins {
     id 'com.android.application' version "$agp_version" apply false
     id 'com.android.library' version "$agp_version" apply false
     id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
-    id 'com.google.devtools.ksp' version "$ksp_version" apply false
     id "de.timfreiheit.resourceplaceholders" version "0.4" apply false
     id "de.undercouch.download" version "5.1.0" apply false
     id "com.google.gms.google-services" version "4.3.10" apply false
