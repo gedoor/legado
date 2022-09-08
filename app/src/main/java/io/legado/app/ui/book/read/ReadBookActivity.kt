@@ -255,6 +255,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     else -> when (item.itemId) {
                         R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
                         R.id.menu_re_segment -> item.isChecked = book.getReSegment()
+                        R.id.menu_enable_review -> item.isChecked = AppConfig.enableReview
                         R.id.menu_reverse_content -> item.isVisible = onLine
                     }
                 }
@@ -353,6 +354,11 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_re_segment -> ReadBook.book?.let {
                 it.setReSegment(!it.getReSegment())
                 menu?.findItem(R.id.menu_re_segment)?.isChecked = it.getReSegment()
+                ReadBook.loadContent(false)
+            }
+            R.id.menu_enable_review -> {
+                AppConfig.enableReview = !AppConfig.enableReview
+                menu?.findItem(R.id.menu_enable_review)?.isChecked = AppConfig.enableReview
                 ReadBook.loadContent(false)
             }
             R.id.menu_page_anim -> showPageAnimConfig {

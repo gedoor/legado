@@ -151,6 +151,7 @@ object SourceAnalyzer {
                 source.enabled = sourceAny.enabled
                 source.enabledExplore = sourceAny.enabledExplore
                 source.enabledCookieJar = sourceAny.enabledCookieJar
+                source.enabledReview = sourceAny.enabledReview
                 source.concurrentRate = sourceAny.concurrentRate
                 source.header = sourceAny.header
                 source.loginUrl = when (sourceAny.loginUrl) {
@@ -206,6 +207,13 @@ object SourceAnalyzer {
                     GSON.fromJsonObject<ContentRule>(GSON.toJson(sourceAny.ruleContent))
                         .getOrNull()
                 }
+                source.ruleReview = if (sourceAny.ruleReview is String) {
+                    GSON.fromJsonObject<ReviewRule>(sourceAny.ruleReview.toString())
+                        .getOrNull()
+                } else {
+                    GSON.fromJsonObject<ReviewRule>(GSON.toJson(sourceAny.ruleReview))
+                        .getOrNull()
+                }
             }
             source
         }
@@ -221,6 +229,7 @@ object SourceAnalyzer {
         var customOrder: Int = 0,                       // 手动排序编号
         var enabled: Boolean = true,                    // 是否启用
         var enabledExplore: Boolean = true,             // 启用发现
+        var enabledReview: Boolean = false,             // 启用段评
         var enabledCookieJar: Boolean = false,          // 启用CookieJar
         var concurrentRate: String? = null,             // 并发率
         var header: String? = null,                     // 请求头
@@ -238,7 +247,8 @@ object SourceAnalyzer {
         var ruleSearch: Any? = null,                    // 搜索规则
         var ruleBookInfo: Any? = null,                  // 书籍信息页规则
         var ruleToc: Any? = null,                       // 目录页规则
-        var ruleContent: Any? = null                    // 正文页规则
+        var ruleContent: Any? = null,                   // 正文页规则
+        var ruleReview: Any? = null                     // 段评规则
     )
 
     // default规则适配

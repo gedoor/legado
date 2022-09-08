@@ -116,7 +116,13 @@ object ChapterProvider {
         if (ReadBookConfig.titleMode != 2) {
             displayTitle.splitNotBlank("\n").forEach { text ->
                 setTypeText(
-                    book, absStartX, durY, text, textPages, stringBuilder, titlePaint,
+                    book,
+                    absStartX,
+                    durY,
+                    if (AppConfig.enableReview) text + "\ud83d\udcac" else text,
+                    textPages,
+                    stringBuilder,
+                    titlePaint,
                     isTitle = true,
                     isTitleWithNoContent = contents.isEmpty(),
                     isVolumeTitle = bookChapter.isVolume
@@ -171,7 +177,13 @@ object ChapterProvider {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
                         setTypeText(
-                            book, absStartX, durY, text, textPages, stringBuilder, contentPaint
+                            book,
+                            absStartX,
+                            durY,
+                            if (AppConfig.enableReview) text + "\ud83d\udcac" else text,
+                            textPages,
+                            stringBuilder,
+                            contentPaint
                         ).let {
                             absStartX = it.first
                             durY = it.second
@@ -276,9 +288,8 @@ object ChapterProvider {
         srcList: LinkedList<String>? = null
     ): Pair<Int, Float> {
         var absStartX = x
-        val layout = if (ReadBookConfig.useZhLayout) {
-            ZhLayout(text, textPaint, visibleWidth)
-        } else StaticLayout(
+        val layout = if (ReadBookConfig.useZhLayout) ZhLayout(text, textPaint, visibleWidth)
+        else StaticLayout(
             text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
         )
         var durY = when {
@@ -398,10 +409,14 @@ object ChapterProvider {
         }
         val bodyIndent = ReadBookConfig.paragraphIndent
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
-        bodyIndent.toStringArray().forEach { char ->
+        for (char in bodyIndent.toStringArray()) {
             val x1 = x + icw
             textLine.textChars.add(
-                TextColumn(charData = char, start = absStartX + x, end = absStartX + x1)
+                TextColumn(
+                    charData = char,
+                    start = absStartX + x,
+                    end = absStartX + x1
+                )
             )
             x = x1
         }
@@ -436,7 +451,7 @@ object ChapterProvider {
         words.forEachIndexed { index, char ->
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
-            addCharToLine(book, absStartX, textLine, char, x, x1, srcList)
+            addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
             x = x1
         }
         exceed(absStartX, textLine, words)
@@ -455,10 +470,10 @@ object ChapterProvider {
         srcList: LinkedList<String>?
     ) {
         var x = startX
-        words.forEach { char ->
+        words.forEachIndexed { index, char ->
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = x + cw
-            addCharToLine(book, absStartX, textLine, char, x, x1, srcList)
+            addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
             x = x1
         }
         exceed(absStartX, textLine, words)
@@ -474,6 +489,7 @@ object ChapterProvider {
         char: String,
         xStart: Float,
         xEnd: Float,
+        isLineEnd: Boolean,
         srcList: LinkedList<String>?
     ) {
         if (srcList != null && char == srcReplaceChar) {
@@ -492,7 +508,8 @@ object ChapterProvider {
                 TextColumn(
                     charData = char,
                     start = absStartX + xStart,
-                    end = absStartX + xEnd
+                    end = absStartX + xEnd,
+                    style = if (isLineEnd && char == "\uD83D\uDCAC") 2 else 0
                 )
             )
         }
@@ -612,12 +629,12 @@ object ChapterProvider {
      * 更新绘制尺寸
      */
     fun upLayout() {
-        when(AppConfig.doublePageHorizontal){
+        when (AppConfig.doublePageHorizontal) {
             "0" -> doublePage = false
             "1" -> doublePage = true
             "2" -> {
                 doublePage = (viewWidth > viewHeight)
-                    && ReadBook.pageAnim() != 3
+                        && ReadBook.pageAnim() != 3
             }
         }
 

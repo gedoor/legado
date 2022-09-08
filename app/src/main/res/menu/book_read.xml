@@ -85,6 +85,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_enable_review"
+        android:title="@string/review"
+        android:checkable="true"
+        android:checked="false"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_image_style"
         android:title="@string/image_style"
         app:showAsAction="never" />

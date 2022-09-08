@@ -41,10 +41,11 @@ class BookSourceEditActivity :
     private val adapter by lazy { BookSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val searchEntities: ArrayList<EditEntity> = ArrayList()
-    private val findEntities: ArrayList<EditEntity> = ArrayList()
+    private val exploreEntities: ArrayList<EditEntity> = ArrayList()
     private val infoEntities: ArrayList<EditEntity> = ArrayList()
     private val tocEntities: ArrayList<EditEntity> = ArrayList()
     private val contentEntities: ArrayList<EditEntity> = ArrayList()
+    private val reviewEntities: ArrayList<EditEntity> = ArrayList()
     private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         viewModel.importSource(it) { source ->
@@ -180,10 +181,11 @@ class BookSourceEditActivity :
     private fun setEditEntities(tabPosition: Int?) {
         when (tabPosition) {
             1 -> adapter.editEntities = searchEntities
-            2 -> adapter.editEntities = findEntities
+            2 -> adapter.editEntities = exploreEntities
             3 -> adapter.editEntities = infoEntities
             4 -> adapter.editEntities = tocEntities
             5 -> adapter.editEntities = contentEntities
+            6 -> adapter.editEntities = reviewEntities
             else -> adapter.editEntities = sourceEntities
         }
         binding.recyclerView.scrollToPosition(0)
@@ -192,8 +194,9 @@ class BookSourceEditActivity :
     private fun upSourceView(source: BookSource? = viewModel.bookSource) {
         source?.let {
             binding.cbIsEnable.isChecked = it.enabled
-            binding.cbIsEnableFind.isChecked = it.enabledExplore
+            binding.cbIsEnableExplore.isChecked = it.enabledExplore
             binding.cbIsEnableCookie.isChecked = it.enabledCookieJar ?: false
+            binding.cbIsEnableReview.isChecked = it.enabledReview ?: false
             binding.spType.setSelection(
                 when (it.bookSourceType) {
                     BookType.file -> 3
@@ -203,7 +206,7 @@ class BookSourceEditActivity :
                 }
             )
         }
-        //基本信息
+        // 基本信息
         sourceEntities.clear()
         sourceEntities.apply {
             add(EditEntity("bookSourceUrl", source?.bookSourceUrl, R.string.source_url))
@@ -218,7 +221,7 @@ class BookSourceEditActivity :
             add(EditEntity("variableComment", source?.variableComment, R.string.variable_comment))
             add(EditEntity("concurrentRate", source?.concurrentRate, R.string.concurrent_rate))
         }
-        //搜索
+        // 搜索
         val sr = source?.getSearchRule()
         searchEntities.clear()
         searchEntities.apply {
@@ -234,10 +237,10 @@ class BookSourceEditActivity :
             add(EditEntity("coverUrl", sr?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("bookUrl", sr?.bookUrl, R.string.r_book_url))
         }
-        //发现
+        // 发现
         val er = source?.getExploreRule()
-        findEntities.clear()
-        findEntities.apply {
+        exploreEntities.clear()
+        exploreEntities.apply {
             add(EditEntity("exploreUrl", source?.exploreUrl, R.string.r_find_url))
             add(EditEntity("bookList", er?.bookList, R.string.r_book_list))
             add(EditEntity("name", er?.name, R.string.r_book_name))
@@ -249,7 +252,7 @@ class BookSourceEditActivity :
             add(EditEntity("coverUrl", er?.coverUrl, R.string.rule_cover_url))
             add(EditEntity("bookUrl", er?.bookUrl, R.string.r_book_url))
         }
-        //详情页
+        // 详情页
         val ir = source?.getBookInfoRule()
         infoEntities.clear()
         infoEntities.apply {
@@ -265,7 +268,7 @@ class BookSourceEditActivity :
             add(EditEntity("canReName", ir?.canReName, R.string.rule_can_re_name))
             add(EditEntity("downloadUrls", ir?.downloadUrls, R.string.download_url_rule))
         }
-        //目录页
+        // 目录页
         val tr = source?.getTocRule()
         tocEntities.clear()
         tocEntities.apply {
@@ -279,7 +282,7 @@ class BookSourceEditActivity :
             add(EditEntity("isPay", tr?.isPay, R.string.rule_is_pay))
             add(EditEntity("nextTocUrl", tr?.nextTocUrl, R.string.rule_next_toc_url))
         }
-        //正文页
+        // 正文页
         val cr = source?.getContentRule()
         contentEntities.clear()
         contentEntities.apply {
@@ -291,6 +294,21 @@ class BookSourceEditActivity :
             add(EditEntity("imageStyle", cr?.imageStyle, R.string.rule_image_style))
             add(EditEntity("payAction", cr?.payAction, R.string.rule_pay_action))
         }
+        // 段评
+        val rr = source?.getReviewRule()
+        reviewEntities.clear()
+        reviewEntities.apply {
+            add(EditEntity("reviewUrl", rr?.reviewUrl, R.string.rule_review_url))
+            add(EditEntity("avatarRule", rr?.avatarRule, R.string.rule_avatar))
+            add(EditEntity("contentRule", rr?.contentRule, R.string.rule_review_content))
+            add(EditEntity("postTimeRule", rr?.postTimeRule, R.string.rule_post_time))
+            add(EditEntity("reviewQuoteUrl", rr?.reviewQuoteUrl, R.string.rule_review_quote))
+            add(EditEntity("voteUpUrl", rr?.voteUpUrl, R.string.review_vote_up))
+            add(EditEntity("voteDownUrl", rr?.voteDownUrl, R.string.review_vote_down))
+            add(EditEntity("postReviewUrl", rr?.postReviewUrl, R.string.post_review_url))
+            add(EditEntity("postQuoteUrl", rr?.postQuoteUrl, R.string.post_quote_url))
+            add(EditEntity("deleteUrl", rr?.deleteUrl, R.string.delete_review_url))
+        }
         binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
     }
@@ -298,8 +316,9 @@ class BookSourceEditActivity :
     private fun getSource(): BookSource {
         val source = viewModel.bookSource?.copy() ?: BookSource()
         source.enabled = binding.cbIsEnable.isChecked
-        source.enabledExplore = binding.cbIsEnableFind.isChecked
+        source.enabledExplore = binding.cbIsEnableExplore.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
+        source.enabledReview = binding.cbIsEnableReview.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
             3 -> BookType.file
             2 -> BookType.image
@@ -311,6 +330,7 @@ class BookSourceEditActivity :
         val bookInfoRule = BookInfoRule()
         val tocRule = TocRule()
         val contentRule = ContentRule()
+        val reviewRule = ReviewRule()
         sourceEntities.forEach {
             when (it.key) {
                 "bookSourceUrl" -> source.bookSourceUrl = it.value ?: ""
@@ -351,7 +371,7 @@ class BookSourceEditActivity :
                     viewModel.ruleComplete(it.value, searchRule.bookList, 2)
             }
         }
-        findEntities.forEach {
+        exploreEntities.forEach {
             when (it.key) {
                 "exploreUrl" -> source.exploreUrl = it.value
                 "bookList" -> exploreRule.bookList = it.value
@@ -429,11 +449,30 @@ class BookSourceEditActivity :
                 "payAction" -> contentRule.payAction = it.value
             }
         }
+        reviewEntities.forEach {
+            when (it.key) {
+                "reviewUrl" -> reviewRule.reviewUrl = it.value
+                "avatarRule" -> reviewRule.avatarRule =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl, 3)
+                "contentRule" -> reviewRule.contentRule =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl)
+                "postTimeRule" -> reviewRule.postTimeRule =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl)
+                "reviewQuoteUrl" -> reviewRule.reviewQuoteUrl =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl, 2)
+                "voteUpUrl" -> reviewRule.voteUpUrl = it.value
+                "voteDownUrl" -> reviewRule.voteDownUrl = it.value
+                "postReviewUrl" -> reviewRule.postReviewUrl = it.value
+                "postQuoteUrl" -> reviewRule.postQuoteUrl = it.value
+                "deleteUrl" -> reviewRule.deleteUrl =it.value
+            }
+        }
         source.ruleSearch = searchRule
         source.ruleExplore = exploreRule
         source.ruleBookInfo = bookInfoRule
         source.ruleToc = tocRule
         source.ruleContent = contentRule
+        source.ruleReview = reviewRule
         return source
     }
 

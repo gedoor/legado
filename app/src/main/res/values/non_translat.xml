@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="pk_bookshelf_px">bookshelf_px</string>
-    <string name="legado_gzh">开源阅读</string>
-    <string name="email">kunfei.ge@gmail.com</string>
+    <string name="pk_bookshelf_px" translatable="false">bookshelf_px</string>
+    <string name="legado_gzh" translatable="false">开源阅读</string>
+    <string name="email" translatable="false">kunfei.ge@gmail.com</string>
 
-    <string name="source_rule_url">https://alanskycn.gitee.io/teachme/</string>
-    <string name="this_github_url">https://github.com/gedoor/legado</string>
-    <string name="contributors_url">https://github.com/gedoor/legado/graphs/contributors</string>
-    <string name="home_page_url">https://gedoor.github.io</string>
-    <string name="license_url">https://github.com/gedoor/legado/blob/master/LICENSE</string>
-    <string name="latest_release_url">https://github.com/gedoor/legado/releases/latest</string>
-    <string name="latest_release_api">https://api.github.com/repos/gedoor/legado/releases/latest</string>
-    <string name="tg_url">https://t.me/legado_channels</string>
-    <string name="discord_url">https://discord.gg/qDE52P5xGW</string>
+    <string name="source_rule_url" translatable="false">https://alanskycn.gitee.io/teachme/</string>
+    <string name="this_github_url" translatable="false">https://github.com/gedoor/legado</string>
+    <string name="contributors_url" translatable="false">https://github.com/gedoor/legado/graphs/contributors</string>
+    <string name="home_page_url" translatable="false">https://gedoor.github.io</string>
+    <string name="license_url" translatable="false">https://github.com/gedoor/legado/blob/master/LICENSE</string>
+    <string name="latest_release_url" translatable="false">https://github.com/gedoor/legado/releases/latest</string>
+    <string name="latest_release_api" translatable="false">https://api.github.com/repos/gedoor/legado/releases/latest</string>
+    <string name="tg_url" translatable="false">https://t.me/legado_channels</string>
+    <string name="discord_url" translatable="false">https://discord.gg/qDE52P5xGW</string>
 
-    <string name="http_ip">http://%1$s:%2$d</string>
-    <string name="git_hub">GitHub</string>
-    <string name="diy_edit_source_group_title">【%s】</string>
-    <string name="vip_title">🔒%s</string>
-    <string name="payed_title">🔓%s</string>
+    <string name="http_ip" translatable="false">http://%1$s:%2$d</string>
+    <string name="git_hub" translatable="false">GitHub</string>
+    <string name="diy_edit_source_group_title" translatable="false">【%s】</string>
+    <string name="vip_title" translatable="false">🔒%s</string>
+    <string name="payed_title" translatable="false">🔓%s</string>
 
-    <string name="separator">丨</string>
+    <string name="separator" translatable="false">丨</string>
 
 </resources>

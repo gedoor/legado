@@ -154,6 +154,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val autoRefreshBook: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.autoRefresh)
 
+    var enableReview: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.enableReview, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableReview, value)
+        }
+
     var threadCount: Int
         get() = appCtx.getPrefInt(PreferKey.threadCount, 16)
         set(value) {
