@@ -160,7 +160,7 @@ class ReadMenu @JvmOverloads constructor(
         val bgColor = this@ReadMenu.bgColor
         val textColor = this@ReadMenu.textColor
         val bottomBackgroundList = this@ReadMenu.bottomBackgroundList
-        val lightTextColor = ColorUtils.lightenColor(textColor)
+        val lightTextColor = ColorUtils.withAlpha(ColorUtils.lightenColor(textColor),0.75f)
         titleBar.setTextColor(textColor)
         titleBar.setBackgroundColor(bgColor)
         titleBar.setColorFilter(textColor)
