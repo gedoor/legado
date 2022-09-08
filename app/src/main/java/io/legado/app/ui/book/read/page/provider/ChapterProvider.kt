@@ -263,7 +263,7 @@ object ChapterProvider {
             } else {
                 Pair(0f, width.toFloat())
             }
-            textLine.textChars.add(
+            textLine.textColumns.add(
                 TextColumn(charData = src, start = x + start, end = x + end, style = 1)
             )
             textPages.last().textLines.add(textLine)
@@ -411,7 +411,7 @@ object ChapterProvider {
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         for (char in bodyIndent.toStringArray()) {
             val x1 = x + icw
-            textLine.textChars.add(
+            textLine.textColumns.add(
                 TextColumn(
                     charData = char,
                     start = absStartX + x,
@@ -495,7 +495,7 @@ object ChapterProvider {
         if (srcList != null && char == srcReplaceChar) {
             val src = srcList.removeFirst()
             ImageProvider.cacheImage(book, src, ReadBook.bookSource)
-            textLine.textChars.add(
+            textLine.textColumns.add(
                 TextColumn(
                     charData = src,
                     start = absStartX + xStart,
@@ -504,7 +504,7 @@ object ChapterProvider {
                 )
             )
         } else {
-            textLine.textChars.add(
+            textLine.textColumns.add(
                 TextColumn(
                     charData = char,
                     start = absStartX + xStart,
@@ -520,11 +520,11 @@ object ChapterProvider {
      */
     private fun exceed(absStartX: Int, textLine: TextLine, words: Array<String>) {
         val visibleEnd = absStartX + visibleWidth
-        val endX = textLine.textChars.lastOrNull()?.end ?: return
+        val endX = textLine.textColumns.lastOrNull()?.end ?: return
         if (endX > visibleEnd) {
             val cc = (endX - visibleEnd) / words.size
             for (i in 0..words.lastIndex) {
-                textLine.getTextCharReverseAt(i).let {
+                textLine.getTextColumnReverseAt(i).let {
                     val py = cc * (words.size - i)
                     it.start = it.start - py
                     it.end = it.end - py

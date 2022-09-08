@@ -10,7 +10,7 @@ import io.legado.app.utils.textHeight
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextLine(
     var text: String = "",
-    val textChars: ArrayList<TextColumn> = arrayListOf(),
+    val textColumns: ArrayList<TextColumn> = arrayListOf(),
     val reviewCount: Int = 0,
     var lineTop: Float = 0f,
     var lineBase: Float = 0f,
@@ -21,9 +21,9 @@ data class TextLine(
     var isImage: Boolean = false
 ) {
 
-    val charSize: Int get() = textChars.size
-    val lineStart: Float get() = textChars.firstOrNull()?.start ?: 0f
-    val lineEnd: Float get() = textChars.lastOrNull()?.end ?: 0f
+    val charSize: Int get() = textColumns.size
+    val lineStart: Float get() = textColumns.firstOrNull()?.start ?: 0f
+    val lineEnd: Float get() = textColumns.lastOrNull()?.end ?: 0f
 
     fun upTopBottom(durY: Float, textPaint: TextPaint) {
         lineTop = ChapterProvider.paddingTop + durY
@@ -31,18 +31,18 @@ data class TextLine(
         lineBase = lineBottom - textPaint.fontMetrics.descent
     }
 
-    fun getTextChar(index: Int): TextColumn {
-        return textChars.getOrElse(index) {
-            textChars.last()
+    fun getTextColumn(index: Int): TextColumn {
+        return textColumns.getOrElse(index) {
+            textColumns.last()
         }
     }
 
-    fun getTextCharReverseAt(index: Int): TextColumn {
-        return textChars[textChars.lastIndex - index]
+    fun getTextColumnReverseAt(index: Int): TextColumn {
+        return textColumns[textColumns.lastIndex - index]
     }
 
-    fun getTextCharsCount(): Int {
-        return textChars.size
+    fun getTextColumnsCount(): Int {
+        return textColumns.size
     }
 
     fun isTouch(x: Float, y: Float, relativeOffset: Float): Boolean {
