@@ -22,6 +22,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/title_bar_addition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
