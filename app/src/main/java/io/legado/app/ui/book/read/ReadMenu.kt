@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.Gravity
@@ -14,8 +15,7 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
+import androidx.core.view.*
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
@@ -55,12 +55,24 @@ class ReadMenu @JvmOverloads constructor(
     private val menuBottomOut: Animation by lazy {
         loadAnimation(context, R.anim.anim_readbook_bottom_out)
     }
-    private val bgColor: Int = context.bottomBackground
-    private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
-    private val bottomBackgroundList: ColorStateList = Selector.colorBuild()
-        .setDefaultColor(bgColor)
-        .setPressedColor(ColorUtils.darkenColor(bgColor))
-        .create()
+    private val bgColor: Int
+        get() = if(AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0){
+            Color.parseColor(ReadBookConfig.durConfig.curBgStr())
+        }else{
+            context.bottomBackground
+        }
+    private val textColor: Int
+        get() = if(AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0){
+            ReadBookConfig.durConfig.curTextColor()
+        }else{
+            context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
+        }
+
+    private val bottomBackgroundList: ColorStateList
+        get() = Selector.colorBuild()
+            .setDefaultColor(bgColor)
+            .setPressedColor(ColorUtils.darkenColor(bgColor))
+            .create()
     private var onMenuOutEnd: (() -> Unit)? = null
     private val showBrightnessView
         get() = context.getPrefBoolean(
@@ -145,6 +157,15 @@ class ReadMenu @JvmOverloads constructor(
             fabNightTheme.setImageResource(R.drawable.ic_brightness)
         }
         initAnimation()
+        val bgColor = this@ReadMenu.bgColor
+        val textColor = this@ReadMenu.textColor
+        val bottomBackgroundList = this@ReadMenu.bottomBackgroundList
+        val lightTextColor = ColorUtils.withAlpha(ColorUtils.lightenColor(textColor),0.75f)
+        titleBar.setTextColor(textColor)
+        titleBar.setBackgroundColor(bgColor)
+        titleBar.setColorFilter(textColor)
+        tvChapterName.setTextColor(lightTextColor)
+        tvChapterUrl.setTextColor(lightTextColor)
         val brightnessBackground = GradientDrawable()
         brightnessBackground.cornerRadius = 5F.dpToPx()
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
@@ -173,6 +194,19 @@ class ReadMenu @JvmOverloads constructor(
         seekBrightness.post {
             seekBrightness.progress = AppConfig.readBrightness
         }
+        if(AppConfig.showReadTitleBarAddition){
+            titleBarAddition.visible()
+        }else{
+            titleBarAddition.gone()
+        }
+    }
+
+    fun reset(){
+        initView()
+    }
+
+    fun refreshMenuColorFilter(){
+        binding.titleBar.setColorFilter(textColor)
     }
 
     fun upBrightnessState() {

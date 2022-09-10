@@ -229,6 +229,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 setOnMenuItemClickListener(this@ReadBookActivity)
             }.show()
         }
+        binding.readMenu.refreshMenuColorFilter()
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -1222,6 +1223,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             } else {
                 readView.upContent(resetPageOffset = false)
             }
+            binding.readMenu.reset()
         }
         observeEvent<Int>(EventBus.ALOUD_STATE) {
             if (it == Status.STOP || it == Status.PAUSE) {
@@ -1258,6 +1260,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         observeEvent<List<SearchResult>>(EventBus.SEARCH_RESULT) {
             viewModel.searchResultList = it
+        }
+        observeEvent<Boolean>(PreferKey.updateReadActionBar){
+            binding.readMenu.reset()
         }
     }
 

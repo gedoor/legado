@@ -3,12 +3,16 @@ package io.legado.app.ui.widget
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.View
+import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
 import io.legado.app.lib.theme.elevation
@@ -190,6 +194,21 @@ class TitleBar @JvmOverloads constructor(
 
     fun setSubTitleTextAppearance(@StyleRes resId: Int) {
         toolbar.setSubtitleTextAppearance(context, resId)
+    }
+
+    fun setTextColor(@ColorInt color: Int){
+        setTitleTextColor(color)
+        setSubTitleTextColor(color)
+    }
+
+    fun setColorFilter(@ColorInt color: Int){
+        val colorFilter = PorterDuffColorFilter(color,PorterDuff.Mode.SRC_ATOP)
+        toolbar.children.firstOrNull { it is ImageView }?.background?.colorFilter = colorFilter
+        toolbar.navigationIcon?.colorFilter = colorFilter
+        toolbar.overflowIcon?.colorFilter = colorFilter
+        toolbar.menu.children.forEach{
+            it.icon?.colorFilter = colorFilter
+        }
     }
 
     fun transparent() {

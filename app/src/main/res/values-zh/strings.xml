@@ -1025,4 +1025,6 @@
     <string name="delete_review_url">删除段评URL（deleteUrl）</string>
     <string name="tag_explore_enabled">标志:发现已启用</string>
     <string name="tag_explore_disabled">标志:发现已禁用</string>
+    <string name="show_read_title_addition">展示顶部工具栏附加区域</string>
+    <string name="read_bar_style_follow_page">工具栏样式跟随页面</string>
 </resources>
