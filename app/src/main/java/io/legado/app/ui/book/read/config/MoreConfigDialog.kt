@@ -135,7 +135,7 @@ class MoreConfigDialog : DialogFragment() {
                 }
                 PreferKey.showReadTitleAddition,
                 PreferKey.readBarStyleFollowPage -> {
-                    postEvent(PreferKey.updateReadActionBar,true)
+                    postEvent(EventBus.updateReadActionBar, true)
                 }
             }
         }

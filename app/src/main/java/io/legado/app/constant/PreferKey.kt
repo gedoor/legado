@@ -127,5 +127,5 @@ object PreferKey {
     const val bgImageNBlurring = "backgroundImageNightBlurring"
     const val showReadTitleAddition = "showReadTitleAddition"
     const val readBarStyleFollowPage = "readBarStyleFollowPage"
-    const val updateReadActionBar = "updateReadActionBar"
+
 }

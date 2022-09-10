@@ -29,4 +29,5 @@ object EventBus {
     const val SOURCE_CHANGED = "sourceChanged"
     const val SEARCH_RESULT = "searchResult"
     const val BOOK_URL_CHANGED = "bookUrlChanged"
+    const val updateReadActionBar = "updateReadActionBar"
 }
