@@ -9,6 +9,4 @@ data class TextColumn(
     val charData: String,
     var selected: Boolean = false,
     var isSearchResult: Boolean = false
-) : BaseColumn {
-
-}
+) : BaseColumn
