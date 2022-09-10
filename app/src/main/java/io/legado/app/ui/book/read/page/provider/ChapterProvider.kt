@@ -13,10 +13,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.entities.TextColumn
-import io.legado.app.ui.book.read.page.entities.TextLine
-import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.*
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.util.*
@@ -268,7 +265,7 @@ object ChapterProvider {
                 Pair(0f, width.toFloat())
             }
             textLine.addColumn(
-                TextColumn(charData = src, start = x + start, end = x + end, style = 1)
+                ImageColumn(start = x + start, end = x + end, src = src)
             )
             textPages.last().addLine(textLine)
         }
@@ -501,20 +498,27 @@ object ChapterProvider {
             ImageProvider.cacheImage(book, src, ReadBook.bookSource)
             textLine.addColumn(
                 TextColumn(
-                    charData = src,
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    style = 1
+                    charData = src
                 )
             )
         } else {
-            textLine.addColumn(
-                TextColumn(
-                    charData = char,
+            val column = if (isLineEnd && char == reviewChar) {
+                ReviewColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    style = if (isLineEnd && char == reviewChar) 2 else 0
+                    count = 1
                 )
+            } else {
+                TextColumn(
+                    start = absStartX + xStart,
+                    end = absStartX + xEnd,
+                    charData = char
+                )
+            }
+            textLine.addColumn(
+                column
             )
         }
     }

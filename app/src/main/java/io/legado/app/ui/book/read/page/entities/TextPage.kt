@@ -119,11 +119,7 @@ data class TextPage(
                     val cw = StaticLayout.getDesiredWidth(char, ChapterProvider.contentPaint)
                     val x1 = x + cw
                     textLine.addColumn(
-                        TextColumn(
-                            char,
-                            start = x,
-                            end = x1
-                        )
+                        TextColumn(start = x, end = x1, char)
                     )
                     x = x1
                 }

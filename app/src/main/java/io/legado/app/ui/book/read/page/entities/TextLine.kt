@@ -10,8 +10,7 @@ import io.legado.app.utils.textHeight
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextLine(
     var text: String = "",
-    private val textColumns: ArrayList<TextColumn> = arrayListOf(),
-    val reviewCount: Int = 0,
+    private val textColumns: ArrayList<BaseColumn> = arrayListOf(),
     var lineTop: Float = 0f,
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
@@ -21,22 +20,22 @@ data class TextLine(
     var isImage: Boolean = false
 ) {
 
-    val columns: List<TextColumn> get() = textColumns
+    val columns: List<BaseColumn> get() = textColumns
     val charSize: Int get() = textColumns.size
     val lineStart: Float get() = textColumns.firstOrNull()?.start ?: 0f
     val lineEnd: Float get() = textColumns.lastOrNull()?.end ?: 0f
 
-    fun addColumn(column: TextColumn) {
+    fun addColumn(column: BaseColumn) {
         textColumns.add(column)
     }
 
-    fun getColumn(index: Int): TextColumn {
+    fun getColumn(index: Int): BaseColumn {
         return textColumns.getOrElse(index) {
             textColumns.last()
         }
     }
 
-    fun getColumnReverseAt(index: Int): TextColumn {
+    fun getColumnReverseAt(index: Int): BaseColumn {
         return textColumns[textColumns.lastIndex - index]
     }
 
