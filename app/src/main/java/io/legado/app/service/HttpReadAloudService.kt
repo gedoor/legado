@@ -77,6 +77,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 }
             }.onFailure {
                 toastOnUi("朗读出错:${it.localizedMessage}")
+                AppLog.put("朗读出错:${it.localizedMessage}", it)
             }
         }
     }
@@ -115,7 +116,12 @@ class HttpReadAloudService : BaseReadAloudService(),
                             playAudio(file)
                         }
                     } else if (speakText.isEmpty()) {
+                        AppLog.put("阅读段落内容为空，使用无声音频代替。")
                         createSilentSound(fileName)
+                        if (index == nowSpeak) {
+                            val file = getSpeakFileAsMd5(fileName)
+                            playAudio(file)
+                        }
                         return@forEachIndexed
                     } else {
                         runCatching {
@@ -138,7 +144,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                             }?.let { ct ->
                                 response.headers["Content-Type"]?.let { contentType ->
                                     if (!contentType.matches(ct.toRegex())) {
-                                        throw NoStackTraceException(response.body!!.string())
+                                        throw NoStackTraceException("TTS服务器返回错误：" + response.body!!.string())
                                     }
                                 }
                             }
@@ -182,9 +188,16 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     AppLog.put(msg, it)
                                     it.printOnDebug()
                                     if (downloadErrorNo > 5) {
+                                        AppLog.put("TTS服务器连续5次错误，已暂停阅读。")
+                                        toastOnUi("TTS服务器连续5次错误，已暂停阅读。")
                                         pauseReadAloud(true)
                                     } else {
+                                        AppLog.put("TTS下载音频出错，使用无声音频代替。")
                                         createSilentSound(fileName)
+                                        if (index == nowSpeak) {
+                                            val file = getSpeakFileAsMd5(fileName)
+                                            playAudio(file)
+                                        }
                                     }
                                 }
                             }
@@ -194,7 +207,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             }.onStart {
                 downloadTaskIsActive = true
             }.onError {
-                AppLog.put("朗读下载出错\n${it.localizedMessage}")
+                AppLog.put("朗读下载出错\n${it.localizedMessage}", it)
             }.onFinally {
                 downloadTaskIsActive = false
             }
@@ -245,8 +258,10 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun removeCacheFile() {
         val titleMd5 = MD5Utils.md5Encode16(textChapter?.title ?: "")
         FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
-            if (!it.name.startsWith(titleMd5)
-                && System.currentTimeMillis() - it.lastModified() > 600000
+            val isSilentSound = it.length() == 2160L
+            if ((!it.name.startsWith(titleMd5)
+                        && System.currentTimeMillis() - it.lastModified() > 600000)
+                || isSilentSound
             ) {
                 FileUtils.delete(it.absolutePath)
             }
@@ -334,6 +349,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         playErrorNo++
         if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})")
+            AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
             ReadAloud.pause(this)
         } else {
             playNext()
