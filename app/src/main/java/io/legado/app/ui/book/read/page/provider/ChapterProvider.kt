@@ -27,6 +27,7 @@ import java.util.*
 @Suppress("DEPRECATION")
 object ChapterProvider {
     private const val srcReplaceChar = "▩"
+    private const val reviewChar = "\uD83D\uDCAC"
 
     @JvmStatic
     var viewWidth = 0
@@ -119,7 +120,7 @@ object ChapterProvider {
                     book,
                     absStartX,
                     durY,
-                    if (AppConfig.enableReview) text + "\ud83d\udcac" else text,
+                    if (AppConfig.enableReview) text + reviewChar else text,
                     textPages,
                     stringBuilder,
                     titlePaint,
@@ -180,7 +181,7 @@ object ChapterProvider {
                             book,
                             absStartX,
                             durY,
-                            if (AppConfig.enableReview) text + "\ud83d\udcac" else text,
+                            if (AppConfig.enableReview) text + reviewChar else text,
                             textPages,
                             stringBuilder,
                             contentPaint
@@ -509,7 +510,7 @@ object ChapterProvider {
                     charData = char,
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    style = if (isLineEnd && char == "\uD83D\uDCAC") 2 else 0
+                    style = if (isLineEnd && char == reviewChar) 2 else 0
                 )
             )
         }
