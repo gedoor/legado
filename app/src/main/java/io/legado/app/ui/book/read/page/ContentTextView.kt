@@ -16,7 +16,10 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.page.entities.*
+import io.legado.app.ui.book.read.page.entities.TextColumn
+import io.legado.app.ui.book.read.page.entities.TextLine
+import io.legado.app.ui.book.read.page.entities.TextPage
+import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
@@ -105,7 +108,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     private fun drawPage(canvas: Canvas) {
         var relativeOffset = relativeOffset(0)
-        textPage.textLines.forEach { textLine ->
+        textPage.lines.forEach { textLine ->
             draw(canvas, textPage, textLine, relativeOffset)
         }
         if (!callBack.isScroll) return
@@ -113,14 +116,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (!pageFactory.hasNext()) return
         val textPage1 = relativePage(1)
         relativeOffset = relativeOffset(1)
-        textPage1.textLines.forEach { textLine ->
+        textPage1.lines.forEach { textLine ->
             draw(canvas, textPage1, textLine, relativeOffset)
         }
         if (!pageFactory.hasNextPlus()) return
         relativeOffset = relativeOffset(2)
         if (relativeOffset < ChapterProvider.visibleHeight) {
             val textPage2 = relativePage(2)
-            textPage2.textLines.forEach { textLine ->
+            textPage2.lines.forEach { textLine ->
                 draw(canvas, textPage2, textLine, relativeOffset)
             }
         }
@@ -164,7 +167,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val reviewCountPaint = TextPaint()
         reviewCountPaint.textSize = textPaint.textSize * 0.6F
         reviewCountPaint.color = textColor
-        textLine.textColumns.forEach {
+        textLine.columns.forEach {
             when (it.style) {
                 0 -> {
                     textPaint.color = textColor
@@ -460,9 +463,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
             val textPage = relativePage(relativePos)
-            for ((lineIndex, textLine) in textPage.textLines.withIndex()) {
+            for ((lineIndex, textLine) in textPage.lines.withIndex()) {
                 if (textLine.isTouch(x, y, relativeOffset)) {
-                    for ((charIndex, textColumn) in textLine.textColumns.withIndex()) {
+                    for ((charIndex, textColumn) in textLine.columns.withIndex()) {
                         if (textColumn.isTouch(x)) {
                             touched.invoke(
                                 relativeOffset,
@@ -486,7 +489,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         selectStart.lineIndex = lineIndex
         selectStart.charIndex = charIndex
         val textLine = relativePage(relativePagePos).getLine(lineIndex)
-        val textColumn = textLine.getTextColumn(charIndex)
+        val textColumn = textLine.getColumn(charIndex)
         upSelectedStart(
             textColumn.start,
             textLine.lineBottom + relativeOffset(relativePagePos),
@@ -503,7 +506,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         selectEnd.lineIndex = lineIndex
         selectEnd.charIndex = charIndex
         val textLine = relativePage(relativePage).getLine(lineIndex)
-        val textColumn = textLine.getTextColumn(charIndex)
+        val textColumn = textLine.getColumn(charIndex)
         upSelectedEnd(textColumn.end, textLine.lineBottom + relativeOffset(relativePage))
         upSelectChars()
     }
@@ -513,14 +516,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textPos = TextPos(0, 0, 0)
         for (relativePos in 0..last) {
             textPos.relativePagePos = relativePos
-            for ((lineIndex, textLine) in relativePage(relativePos).textLines.withIndex()) {
+            for ((lineIndex, textLine) in relativePage(relativePos).lines.withIndex()) {
                 textPos.lineIndex = lineIndex
-                for ((charIndex, textColumn) in textLine.textColumns.withIndex()) {
+                for ((charIndex, textColumn) in textLine.columns.withIndex()) {
                     textPos.charIndex = charIndex
                     if (textColumn.style == 2) continue
                     textColumn.selected =
                         textPos.compare(selectStart) >= 0 && textPos.compare(selectEnd) <= 0
-                    textColumn.isSearchResult = textColumn.selected && callBack.isSelectingSearchResult
+                    textColumn.isSearchResult =
+                        textColumn.selected && callBack.isSelectingSearchResult
                 }
             }
         }
@@ -538,8 +542,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun cancelSelect(fromSearchExit: Boolean = false) {
         val last = if (callBack.isScroll) 2 else 0
         for (relativePos in 0..last) {
-            relativePage(relativePos).textLines.forEach { textLine ->
-                textLine.textColumns.forEach {
+            relativePage(relativePos).lines.forEach { textLine ->
+                textLine.columns.forEach {
                     it.selected = false
                     if (fromSearchExit) it.isSearchResult = false
                 }
@@ -555,9 +559,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for (relativePos in selectStart.relativePagePos..selectEnd.relativePagePos) {
             val textPage = relativePage(relativePos)
             textPos.relativePagePos = relativePos
-            textPage.textLines.forEachIndexed { lineIndex, textLine ->
+            textPage.lines.forEachIndexed { lineIndex, textLine ->
                 textPos.lineIndex = lineIndex
-                textLine.textColumns.forEachIndexed { charIndex, textColumn ->
+                textLine.columns.forEachIndexed { charIndex, textColumn ->
                     textPos.charIndex = charIndex
                     val compareStart = textPos.compare(selectStart)
                     val compareEnd = textPos.compare(selectEnd)

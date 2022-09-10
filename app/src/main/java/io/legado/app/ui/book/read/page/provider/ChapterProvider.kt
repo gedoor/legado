@@ -26,7 +26,10 @@ import java.util.*
  */
 @Suppress("DEPRECATION")
 object ChapterProvider {
+    //用于图片字的替换
     private const val srcReplaceChar = "▩"
+
+    //用于评论按钮的替换
     private const val reviewChar = "\uD83D\uDCAC"
 
     @JvmStatic
@@ -264,10 +267,10 @@ object ChapterProvider {
             } else {
                 Pair(0f, width.toFloat())
             }
-            textLine.textColumns.add(
+            textLine.addColumn(
                 TextColumn(charData = src, start = x + start, end = x + end, style = 1)
             )
-            textPages.last().textLines.add(textLine)
+            textPages.last().addLine(textLine)
         }
         return durY + paragraphSpacing / 10f
     }
@@ -306,7 +309,7 @@ object ChapterProvider {
                     if (fistLine.lineTop < textLayoutHeight + titleTopSpacing) {
                         textLayoutHeight = fistLine.lineTop - titleTopSpacing
                     }
-                    textPage.textLines.forEach {
+                    textPage.lines.forEach {
                         it.lineTop = it.lineTop - textLayoutHeight
                         it.lineBase = it.lineBase - textLayoutHeight
                         it.lineBottom = it.lineBottom - textLayoutHeight
@@ -314,7 +317,7 @@ object ChapterProvider {
                     y - textLayoutHeight
                 }
             }
-            isTitle && textPages.size == 1 && textPages.last().textLines.isEmpty() ->
+            isTitle && textPages.size == 1 && textPages.last().lines.isEmpty() ->
                 y + titleTopSpacing
             else -> y
         }
@@ -382,7 +385,7 @@ object ChapterProvider {
             if (textLine.isParagraphEnd) {
                 stringBuilder.append("\n")
             }
-            textPages.last().textLines.add(textLine)
+            textPages.last().addLine(textLine)
             textLine.upTopBottom(durY, textPaint)
             durY += textPaint.textHeight * lineSpacingExtra
             textPages.last().height = durY
@@ -412,7 +415,7 @@ object ChapterProvider {
         val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         for (char in bodyIndent.toStringArray()) {
             val x1 = x + icw
-            textLine.textColumns.add(
+            textLine.addColumn(
                 TextColumn(
                     charData = char,
                     start = absStartX + x,
@@ -496,7 +499,7 @@ object ChapterProvider {
         if (srcList != null && char == srcReplaceChar) {
             val src = srcList.removeFirst()
             ImageProvider.cacheImage(book, src, ReadBook.bookSource)
-            textLine.textColumns.add(
+            textLine.addColumn(
                 TextColumn(
                     charData = src,
                     start = absStartX + xStart,
@@ -505,7 +508,7 @@ object ChapterProvider {
                 )
             )
         } else {
-            textLine.textColumns.add(
+            textLine.addColumn(
                 TextColumn(
                     charData = char,
                     start = absStartX + xStart,
@@ -521,11 +524,11 @@ object ChapterProvider {
      */
     private fun exceed(absStartX: Int, textLine: TextLine, words: Array<String>) {
         val visibleEnd = absStartX + visibleWidth
-        val endX = textLine.textColumns.lastOrNull()?.end ?: return
+        val endX = textLine.columns.lastOrNull()?.end ?: return
         if (endX > visibleEnd) {
             val cc = (endX - visibleEnd) / words.size
             for (i in 0..words.lastIndex) {
-                textLine.getTextColumnReverseAt(i).let {
+                textLine.getColumnReverseAt(i).let {
                     val py = cc * (words.size - i)
                     it.start = it.start - py
                     it.end = it.end - py

@@ -19,7 +19,7 @@ data class TextPage(
     var index: Int = 0,
     var text: String = appCtx.getString(R.string.data_loading),
     var title: String = "",
-    val textLines: ArrayList<TextLine> = arrayListOf(),
+    private val textLines: ArrayList<TextLine> = arrayListOf(),
     var pageSize: Int = 0,
     var chapterSize: Int = 0,
     var chapterIndex: Int = 0,
@@ -27,9 +27,14 @@ data class TextPage(
     var leftLineSize: Int = 0
 ) {
 
-    val lineSize get() = textLines.size
-    val charSize get() = text.length
+    val lines: List<TextLine> get() = textLines
+    val lineSize: Int get() = textLines.size
+    val charSize: Int get() = text.length
     var isMsgPage: Boolean = false
+
+    fun addLine(line: TextLine) {
+        textLines.add(line)
+    }
 
     fun getLine(index: Int): TextLine {
         return textLines.getOrElse(index) {
@@ -84,7 +89,7 @@ data class TextPage(
     }
 
     /**
-     * 计算文字位置
+     * 计算文字位置,只用作单页面内容
      */
     @Suppress("DEPRECATION")
     fun format(): TextPage {
@@ -113,12 +118,11 @@ data class TextPage(
                     val char = textLine.text[i].toString()
                     val cw = StaticLayout.getDesiredWidth(char, ChapterProvider.contentPaint)
                     val x1 = x + cw
-                    textLine.textColumns.add(
+                    textLine.addColumn(
                         TextColumn(
                             char,
                             start = x,
-                            end = x1,
-                            style = if (textLine.text.length - 1 == index && char == "\uD83D\uDCAC") 2 else 0
+                            end = x1
                         )
                     )
                     x = x1
