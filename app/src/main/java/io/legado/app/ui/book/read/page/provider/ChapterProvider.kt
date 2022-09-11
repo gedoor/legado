@@ -498,34 +498,32 @@ object ChapterProvider {
         isLineEnd: Boolean,
         srcList: LinkedList<String>?
     ) {
-        if (srcList != null && char == srcReplaceChar) {
-            val src = srcList.removeFirst()
-            ImageProvider.cacheImage(book, src, ReadBook.bookSource)
-            textLine.addColumn(
+        val column = when {
+            srcList != null && char == srcReplaceChar -> {
+                val src = srcList.removeFirst()
+                ImageProvider.cacheImage(book, src, ReadBook.bookSource)
                 TextColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
                     charData = src
                 )
-            )
-        } else {
-            val column = if (isLineEnd && char == reviewChar) {
+            }
+            isLineEnd && char == reviewChar -> {
                 ReviewColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    count = 1
+                    count = 2
                 )
-            } else {
+            }
+            else -> {
                 TextColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
                     charData = char
                 )
             }
-            textLine.addColumn(
-                column
-            )
         }
+        textLine.addColumn(column)
     }
 
     /**
