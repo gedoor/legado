@@ -116,7 +116,9 @@ class HttpReadAloudService : BaseReadAloudService(),
                             playAudio(file)
                         }
                     } else if (speakText.isEmpty()) {
-                        AppLog.put("阅读段落内容为空，使用无声音频代替。")
+                        AppLog.put(
+                            "阅读段落内容为空，使用无声音频代替。\n朗读文本：$content"
+                        )
                         createSilentSound(fileName)
                         if (index == nowSpeak) {
                             val file = getSpeakFileAsMd5(fileName)
@@ -192,7 +194,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                         toastOnUi("TTS服务器连续5次错误，已暂停阅读。")
                                         pauseReadAloud(true)
                                     } else {
-                                        AppLog.put("TTS下载音频出错，使用无声音频代替。")
+                                        AppLog.put("TTS下载音频出错，使用无声音频代替。\n朗读文本：$content")
                                         createSilentSound(fileName)
                                         if (index == nowSpeak) {
                                             val file = getSpeakFileAsMd5(fileName)
