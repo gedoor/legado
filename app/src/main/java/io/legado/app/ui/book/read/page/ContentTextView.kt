@@ -417,7 +417,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun selectStartMoveIndex(relativePagePos: Int, lineIndex: Int, charIndex: Int) {
         selectStart.relativePagePos = relativePagePos
         selectStart.lineIndex = lineIndex
-        selectStart.charIndex = charIndex
+        selectStart.columnIndex = charIndex
         val textLine = relativePage(relativePagePos).getLine(lineIndex)
         val textColumn = textLine.getColumn(charIndex)
         upSelectedStart(
@@ -434,7 +434,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun selectEndMoveIndex(relativePage: Int, lineIndex: Int, charIndex: Int) {
         selectEnd.relativePagePos = relativePage
         selectEnd.lineIndex = lineIndex
-        selectEnd.charIndex = charIndex
+        selectEnd.columnIndex = charIndex
         val textLine = relativePage(relativePage).getLine(lineIndex)
         val textColumn = textLine.getColumn(charIndex)
         upSelectedEnd(textColumn.end, textLine.lineBottom + relativeOffset(relativePage))
@@ -449,7 +449,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             for ((lineIndex, textLine) in relativePage(relativePos).lines.withIndex()) {
                 textPos.lineIndex = lineIndex
                 for ((charIndex, column) in textLine.columns.withIndex()) {
-                    textPos.charIndex = charIndex
+                    textPos.columnIndex = charIndex
                     if (column is TextColumn) {
                         column.selected =
                             textPos.compare(selectStart) >= 0 && textPos.compare(selectEnd) <= 0
@@ -495,7 +495,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             textPage.lines.forEachIndexed { lineIndex, textLine ->
                 textPos.lineIndex = lineIndex
                 textLine.columns.forEachIndexed { charIndex, column ->
-                    textPos.charIndex = charIndex
+                    textPos.columnIndex = charIndex
                     val compareStart = textPos.compare(selectStart)
                     val compareEnd = textPos.compare(selectEnd)
                     if (compareStart >= 0 && compareEnd <= 0) {
@@ -523,7 +523,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 return book.createBookMark().apply {
                     chapterIndex = page.chapterIndex
                     chapterPos = chapter.getReadLength(page.index) +
-                            page.getPosByLineColumn(selectStart.lineIndex, selectStart.charIndex)
+                            page.getPosByLineColumn(selectStart.lineIndex, selectStart.columnIndex)
                     chapterName = chapter.title
                     bookText = getSelectedText()
                 }

@@ -6,19 +6,19 @@ package io.legado.app.ui.book.read.page.entities
 data class TextPos(
     var relativePagePos: Int,
     var lineIndex: Int,
-    var charIndex: Int
+    var columnIndex: Int
 ) {
 
     fun upData(relativePos: Int, lineIndex: Int, charIndex: Int) {
         this.relativePagePos = relativePos
         this.lineIndex = lineIndex
-        this.charIndex = charIndex
+        this.columnIndex = charIndex
     }
 
     fun upData(pos: TextPos) {
         relativePagePos = pos.relativePagePos
         lineIndex = pos.lineIndex
-        charIndex = pos.charIndex
+        columnIndex = pos.columnIndex
     }
 
     fun compare(pos: TextPos): Int {
@@ -27,8 +27,8 @@ data class TextPos(
             relativePagePos > pos.relativePagePos -> 3
             lineIndex < pos.lineIndex -> -2
             lineIndex > pos.lineIndex -> 2
-            charIndex < pos.charIndex -> -1
-            charIndex > pos.charIndex -> 1
+            columnIndex < pos.columnIndex -> -1
+            columnIndex > pos.columnIndex -> 1
             else -> 0
         }
     }
@@ -39,8 +39,8 @@ data class TextPos(
             this.relativePagePos > relativePos -> 3
             this.lineIndex < lineIndex -> -2
             this.lineIndex > lineIndex -> 2
-            this.charIndex < charIndex -> -1
-            this.charIndex > charIndex -> 1
+            this.columnIndex < charIndex -> -1
+            this.columnIndex > charIndex -> 1
             else -> 0
         }
     }

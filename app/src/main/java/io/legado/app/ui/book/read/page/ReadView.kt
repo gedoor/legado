@@ -28,7 +28,6 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.invisible
 import io.legado.app.utils.screenshot
-import io.legado.app.utils.toastOnUi
 import java.text.BreakIterator
 import java.util.*
 import kotlin.math.abs
@@ -305,7 +304,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 val endPos = textPos.copy()
                 val page = curPage.relativePage(textPos.relativePagePos)
                 val stringBuilder = StringBuilder()
-                var cIndex = textPos.charIndex
+                var cIndex = textPos.columnIndex
                 var lineStart = textPos.lineIndex
                 var lineEnd = textPos.lineIndex
                 for (index in textPos.lineIndex - 1 downTo 0) {
@@ -345,10 +344,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
                         for (j in 0 until textLine.charSize) {
                             if (ci == start) {
                                 startPos.lineIndex = index
-                                startPos.charIndex = j
+                                startPos.columnIndex = j
                             } else if (ci == end - 1) {
                                 endPos.lineIndex = index
-                                endPos.charIndex = j
+                                endPos.columnIndex = j
                                 return@run
                             }
                             ci++
@@ -358,12 +357,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 curPage.selectStartMoveIndex(
                     startPos.relativePagePos,
                     startPos.lineIndex,
-                    startPos.charIndex
+                    startPos.columnIndex
                 )
                 curPage.selectEndMoveIndex(
                     endPos.relativePagePos,
                     endPos.lineIndex,
-                    endPos.charIndex
+                    endPos.columnIndex
                 )
             }
         }
@@ -431,24 +430,24 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     curPage.selectStartMoveIndex(
                         textPos.relativePagePos,
                         textPos.lineIndex,
-                        textPos.charIndex
+                        textPos.columnIndex
                     )
                     curPage.selectEndMoveIndex(
                         initialTextPos.relativePagePos,
                         initialTextPos.lineIndex,
-                        initialTextPos.charIndex
+                        initialTextPos.columnIndex
                     )
                 }
                 else -> {
                     curPage.selectStartMoveIndex(
                         initialTextPos.relativePagePos,
                         initialTextPos.lineIndex,
-                        initialTextPos.charIndex
+                        initialTextPos.columnIndex
                     )
                     curPage.selectEndMoveIndex(
                         textPos.relativePagePos,
                         textPos.lineIndex,
-                        textPos.charIndex
+                        textPos.columnIndex
                     )
                 }
             }
@@ -590,7 +589,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         val selectStartPos = curPage.selectStartPos
         var pagePos = selectStartPos.relativePagePos
         val line = selectStartPos.lineIndex
-        val column = selectStartPos.charIndex
+        val column = selectStartPos.columnIndex
         while (pagePos > 0) {
             if (!ReadBook.moveToNextPage()) {
                 ReadBook.moveToNextChapter(false)
