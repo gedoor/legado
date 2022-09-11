@@ -1,5 +1,8 @@
 package io.legado.app.ui.book.read.page.entities
 
+/**
+ * 图片列
+ */
 data class ImageColumn(
     override var start: Float,
     override var end: Float,

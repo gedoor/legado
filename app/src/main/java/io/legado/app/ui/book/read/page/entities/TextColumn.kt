@@ -1,7 +1,7 @@
 package io.legado.app.ui.book.read.page.entities
 
 /**
- * 字符信息
+ * 文字列
  */
 data class TextColumn(
     override var start: Float,
