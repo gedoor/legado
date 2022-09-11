@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.read.page.entities
+package io.legado.app.ui.book.read.page.entities.column
 
 import android.graphics.Canvas
 import android.graphics.Paint

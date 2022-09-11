@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.read.page.entities
+package io.legado.app.ui.book.read.page.entities.column
 
 /**
  * 列基类
