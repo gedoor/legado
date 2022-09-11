@@ -26,7 +26,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-
+/**
+ * 恢复
+ */
 object Restore {
 
     suspend fun restore(context: Context, path: String) {
@@ -165,7 +167,7 @@ object Restore {
                     AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
                 }
             }
-            Preferences.getSharedPreferences(appCtx, path, "config")?.all?.let { map ->
+            appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
                 val edit = appCtx.defaultSharedPreferences.edit()
                 map.forEach { (key, value) ->
                     if (BackupConfig.keyIsNotIgnore(key)) {

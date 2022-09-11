@@ -7,6 +7,9 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import splitties.init.appCtx
 
+/**
+ * 备份配置
+ */
 object BackupConfig {
 
     private val ignoreConfigPath = FileUtils.getPath(appCtx.filesDir, "restoreIgnore.json")
