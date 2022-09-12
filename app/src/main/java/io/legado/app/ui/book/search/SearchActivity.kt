@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -245,11 +244,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             }
         }
         launch {
-            appDb.bookSourceDao.flowGroupEnabled().conflate().collect {
+            appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
                 groups.clear()
-                it.map { group ->
-                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-                }
+                groups.addAll(it)
                 upGroupMenu()
             }
         }

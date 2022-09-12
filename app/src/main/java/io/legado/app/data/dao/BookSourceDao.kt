@@ -89,7 +89,7 @@ interface BookSourceDao {
     fun flowGroupsUnProcessed(): Flow<List<String>>
 
     @Query("select distinct bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
-    fun flowGroupEnabled(): Flow<List<String>>
+    fun flowEnabledGroupsUnProcessed(): Flow<List<String>>
 
     @Query(
         """select distinct bookSourceGroup from book_sources 
@@ -183,6 +183,12 @@ interface BookSourceDao {
 
     fun flowExploreGroup(): Flow<List<String>> {
         return flowExploreGroupUnProcessed().map { list ->
+            dealGroups(list)
+        }
+    }
+
+    fun flowEnabledGroups(): Flow<List<String>> {
+        return flowEnabledGroupsUnProcessed().map { list ->
             dealGroups(list)
         }
     }

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -210,11 +209,9 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
         }
         launch {
-            appDb.bookSourceDao.flowGroupEnabled().conflate().collect {
+            appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
                 groups.clear()
-                it.map { group ->
-                    groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
-                }
+                groups.addAll(it)
                 upGroupMenu()
             }
         }
