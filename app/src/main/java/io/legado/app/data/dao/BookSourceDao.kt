@@ -98,7 +98,7 @@ interface BookSourceDao {
         and trim(bookSourceGroup) <> ''
         order by customOrder"""
     )
-    fun flowExploreGroupUnProcessed(): Flow<List<String>>
+    fun flowExploreGroupsUnProcessed(): Flow<List<String>>
 
     @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")
     fun getByGroup(group: String): List<BookSource>
@@ -181,8 +181,8 @@ interface BookSourceDao {
         }
     }
 
-    fun flowExploreGroup(): Flow<List<String>> {
-        return flowExploreGroupUnProcessed().map { list ->
+    fun flowExploreGroups(): Flow<List<String>> {
+        return flowExploreGroupsUnProcessed().map { list ->
             dealGroups(list)
         }
     }

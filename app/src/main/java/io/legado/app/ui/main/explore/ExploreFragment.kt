@@ -106,7 +106,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun initGroupData() {
         launch {
-            appDb.bookSourceDao.flowExploreGroup().conflate().collect {
+            appDb.bookSourceDao.flowExploreGroups().conflate().collect {
                 groups.clear()
                 groups.addAll(it)
                 upGroupsMenu()
