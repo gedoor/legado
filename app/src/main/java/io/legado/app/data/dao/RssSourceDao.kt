@@ -1,8 +1,12 @@
 package io.legado.app.data.dao
 
 import androidx.room.*
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.RssSource
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Dao
 interface RssSourceDao {
@@ -74,13 +78,13 @@ interface RssSourceDao {
     fun flowEnabledByGroup(searchKey: String): Flow<List<RssSource>>
 
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
-    fun flowGroup(): Flow<List<String>>
+    fun flowGroupsUnProcessed(): Flow<List<String>>
 
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> '' and enabled = 1")
     fun flowGroupEnabled(): Flow<List<String>>
 
-    @get:Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
-    val allGroup: List<String>
+    @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
+    fun getAllGroupsUnProcessed(): List<String>
 
     @get:Query("select min(customOrder) from rssSources")
     val minOrder: Int
@@ -108,4 +112,27 @@ interface RssSourceDao {
 
     @Query("select 1 from rssSources where sourceUrl = :key")
     fun has(key: String): Boolean?
+
+    fun dealGroups(list: List<String>): List<String> {
+        val groups = linkedSetOf<String>()
+        list.forEach {
+            it.splitNotBlank(AppPattern.splitGroupRegex).forEach { group ->
+                groups.add(group)
+            }
+        }
+        return groups.sortedWith { o1, o2 ->
+            o1.cnCompare(o2)
+        }
+    }
+
+    val allGroups: List<String>
+        get() {
+            return dealGroups(getAllGroupsUnProcessed())
+        }
+
+    fun flowGroups(): Flow<List<String>> {
+        return flowGroupsUnProcessed().map { list ->
+            dealGroups(list)
+        }
+    }
 }
