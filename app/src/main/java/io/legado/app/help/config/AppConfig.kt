@@ -155,7 +155,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         get() = appCtx.getPrefBoolean(PreferKey.autoRefresh)
 
     var enableReview: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.enableReview, false)
+        get() = appCtx.getPrefBoolean(PreferKey.enableReview, false) && BuildConfig.DEBUG
         set(value) {
             appCtx.putPrefBoolean(PreferKey.enableReview, value)
         }

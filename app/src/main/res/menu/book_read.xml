@@ -72,23 +72,24 @@
 
     <item
         android:id="@+id/menu_enable_replace"
-        android:title="@string/replace_rule_title"
         android:checkable="true"
         android:checked="true"
+        android:title="@string/replace_rule_title"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_re_segment"
-        android:title="@string/re_segment"
         android:checkable="true"
         android:checked="false"
+        android:title="@string/re_segment"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_enable_review"
-        android:title="@string/review"
         android:checkable="true"
         android:checked="false"
+        android:title="@string/review"
+        android:visible="false"
         app:showAsAction="never" />
 
     <item
