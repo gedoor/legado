@@ -131,8 +131,8 @@ interface BookSourceDao {
     @get:Query("select * from book_sources where enabled = 1 and bookSourceType = 0 order by customOrder")
     val allTextEnabled: List<BookSource>
 
-    @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
-    fun getAllGroupsUnProcessed(): List<String>
+    @get:Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
+    val allGroupsUnProcessed: List<String>
 
     @Query("select * from book_sources where bookSourceUrl = :key")
     fun getBookSource(key: String): BookSource?
@@ -158,7 +158,7 @@ interface BookSourceDao {
     @get:Query("select max(customOrder) from book_sources")
     val maxOrder: Int
 
-    fun dealGroups(list: List<String>): List<String> {
+    private fun dealGroups(list: List<String>): List<String> {
         val groups = linkedSetOf<String>()
         list.forEach {
             it.splitNotBlank(AppPattern.splitGroupRegex).forEach { group ->
@@ -172,7 +172,7 @@ interface BookSourceDao {
 
     val allGroups: List<String>
         get() {
-            return dealGroups(getAllGroupsUnProcessed())
+            return dealGroups(allGroupsUnProcessed)
         }
 
     fun flowGroups(): Flow<List<String>> {

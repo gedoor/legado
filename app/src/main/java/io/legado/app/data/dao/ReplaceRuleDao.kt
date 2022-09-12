@@ -1,8 +1,12 @@
 package io.legado.app.data.dao
 
 import androidx.room.*
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 
 @Dao
@@ -18,7 +22,7 @@ interface ReplaceRuleDao {
     fun flowGroupSearch(key: String): Flow<List<ReplaceRule>>
 
     @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
-    fun flowGroup(): Flow<List<String>>
+    fun flowGroupsUnProcessed(): Flow<List<String>>
 
     @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
     val minOrder: Int
@@ -30,7 +34,7 @@ interface ReplaceRuleDao {
     val all: List<ReplaceRule>
 
     @get:Query("select distinct `group` from replace_rules where trim(`group`) <> ''")
-    val allGroup: List<String>
+    val allGroupsUnProcessed: List<String>
 
     @get:Query("SELECT * FROM replace_rules WHERE isEnabled = 1 ORDER BY sortOrder ASC")
     val allEnabled: List<ReplaceRule>
@@ -75,4 +79,27 @@ interface ReplaceRuleDao {
 
     @Delete
     fun delete(vararg replaceRules: ReplaceRule)
+
+    private fun dealGroups(list: List<String>): List<String> {
+        val groups = linkedSetOf<String>()
+        list.forEach {
+            it.splitNotBlank(AppPattern.splitGroupRegex).forEach { group ->
+                groups.add(group)
+            }
+        }
+        return groups.sortedWith { o1, o2 ->
+            o1.cnCompare(o2)
+        }
+    }
+
+    val allGroups: List<String>
+        get() {
+            return dealGroups(allGroupsUnProcessed)
+        }
+
+    fun flowGroups(): Flow<List<String>> {
+        return flowGroupsUnProcessed().map { list ->
+            dealGroups(list)
+        }
+    }
 }

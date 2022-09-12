@@ -83,8 +83,8 @@ interface RssSourceDao {
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> '' and enabled = 1")
     fun flowGroupEnabled(): Flow<List<String>>
 
-    @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
-    fun getAllGroupsUnProcessed(): List<String>
+    @get:Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
+    val allGroupsUnProcessed: List<String>
 
     @get:Query("select min(customOrder) from rssSources")
     val minOrder: Int
@@ -113,7 +113,7 @@ interface RssSourceDao {
     @Query("select 1 from rssSources where sourceUrl = :key")
     fun has(key: String): Boolean?
 
-    fun dealGroups(list: List<String>): List<String> {
+    private fun dealGroups(list: List<String>): List<String> {
         val groups = linkedSetOf<String>()
         list.forEach {
             it.splitNotBlank(AppPattern.splitGroupRegex).forEach { group ->
@@ -127,7 +127,7 @@ interface RssSourceDao {
 
     val allGroups: List<String>
         get() {
-            return dealGroups(getAllGroupsUnProcessed())
+            return dealGroups(allGroupsUnProcessed)
         }
 
     fun flowGroups(): Flow<List<String>> {
