@@ -15,7 +15,6 @@ import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -306,16 +305,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun initLiveDataGroup() {
         launch {
-            val noGroupName = getString(R.string.no_group)
-            appDb.bookSourceDao.flowGroup().conflate().collect {
+            appDb.bookSourceDao.flowGroups().conflate().collect {
                 groups.clear()
-                it.forEach { groupStr ->
-                    groupStr.splitNotBlank(AppPattern.splitGroupRegex).forEach { group ->
-                        if (group != noGroupName) {
-                            groups.add(group)
-                        }
-                    }
-                }
+                groups.addAll(it)
                 upGroupMenu()
             }
         }
@@ -453,9 +445,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun upGroupMenu() = groupMenu?.let { menu ->
         menu.removeGroup(R.id.source_group)
-        groups.sortedWith { o1, o2 ->
-            o1.cnCompare(o2)
-        }.map {
+        groups.forEach {
             menu.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
         }
     }

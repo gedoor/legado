@@ -12,12 +12,14 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -30,6 +32,9 @@ import io.legado.app.ui.widget.dialog.UrlOptionDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BookSourceEditActivity :
     VMBaseActivity<ActivityBookSourceEditBinding, BookSourceEditViewModel>(false),
@@ -484,21 +489,38 @@ class BookSourceEditActivity :
         return true
     }
 
+    private fun alertGroups() {
+        launch {
+            val groups = withContext(IO) {
+                appDb.bookSourceDao.allGroups
+            }
+            selector(groups) { _, s, _ ->
+                sendText(s)
+            }
+        }
+    }
+
     override fun helpActions(): List<SelectItem<String>> {
-        return arrayListOf(
+        val helpActions = arrayListOf(
             SelectItem("插入URL参数", "urlOption"),
             SelectItem("书源教程", "ruleHelp"),
             SelectItem("js教程", "jsHelp"),
             SelectItem("正则教程", "regexHelp"),
             SelectItem("选择文件", "selectFile"),
         )
+        val view = window.decorView.findFocus()
+        if (view is EditText && view.getTag(R.id.tag) == "bookSourceGroup") {
+            helpActions.add(
+                SelectItem("插入分组", "addGroup")
+            )
+        }
+        return helpActions
     }
 
     override fun onHelpActionSelect(action: String) {
         when (action) {
-            "urlOption" -> UrlOptionDialog(this) {
-                sendText(it)
-            }.show()
+            "addGroup" -> alertGroups()
+            "urlOption" -> UrlOptionDialog(this) { sendText(it) }.show()
             "ruleHelp" -> showHelp("ruleHelp")
             "jsHelp" -> showHelp("jsHelp")
             "regexHelp" -> showHelp("regexHelp")
