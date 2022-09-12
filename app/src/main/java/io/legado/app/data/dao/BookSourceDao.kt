@@ -86,7 +86,7 @@ interface BookSourceDao {
     fun flowGroupExplore(key: String): Flow<List<BookSource>>
 
     @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
-    fun flowGroupsUnDeal(): Flow<List<String>>
+    fun flowGroupsUnProcessed(): Flow<List<String>>
 
     @Query("select distinct bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
     fun flowGroupEnabled(): Flow<List<String>>
@@ -132,7 +132,7 @@ interface BookSourceDao {
     val allTextEnabled: List<BookSource>
 
     @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
-    fun getAllGroupsUnDeal(): List<String>
+    fun getAllGroupsUnProcessed(): List<String>
 
     @Query("select * from book_sources where bookSourceUrl = :key")
     fun getBookSource(key: String): BookSource?
@@ -172,11 +172,11 @@ interface BookSourceDao {
 
     val allGroups: List<String>
         get() {
-            return dealGroups(getAllGroupsUnDeal())
+            return dealGroups(getAllGroupsUnProcessed())
         }
 
     fun flowGroups(): Flow<List<String>> {
-        return flowGroupsUnDeal().map { list ->
+        return flowGroupsUnProcessed().map { list ->
             dealGroups(list)
         }
     }

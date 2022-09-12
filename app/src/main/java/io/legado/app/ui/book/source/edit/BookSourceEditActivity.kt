@@ -506,13 +506,21 @@ class BookSourceEditActivity :
             SelectItem("书源教程", "ruleHelp"),
             SelectItem("js教程", "jsHelp"),
             SelectItem("正则教程", "regexHelp"),
-            SelectItem("选择文件", "selectFile"),
         )
         val view = window.decorView.findFocus()
-        if (view is EditText && view.getTag(R.id.tag) == "bookSourceGroup") {
-            helpActions.add(
-                SelectItem("插入分组", "addGroup")
-            )
+        if (view is EditText) {
+            when (view.getTag(R.id.tag)) {
+                "bookSourceGroup" -> {
+                    helpActions.add(
+                        SelectItem("插入分组", "addGroup")
+                    )
+                }
+                else -> {
+                    helpActions.add(
+                        SelectItem("选择文件", "selectFile")
+                    )
+                }
+            }
         }
         return helpActions
     }
