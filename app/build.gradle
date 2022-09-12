@@ -18,7 +18,7 @@ def gitCommits = Integer.parseInt('git rev-list HEAD --count'.execute().text.tri
 
 android {
     compileSdkVersion 33
-    buildToolsVersion "32.0.0"
+    buildToolsVersion "33.0.0"
     namespace 'io.legado.app'
     kotlinOptions {
         jvmTarget = "11"
