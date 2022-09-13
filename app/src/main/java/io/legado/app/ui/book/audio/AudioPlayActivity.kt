@@ -21,6 +21,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityAudioPlayBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.BookCover
@@ -226,13 +227,17 @@ class AudioPlayActivity :
     override fun finish() {
         AudioPlay.book?.let {
             if (!AudioPlay.inBookshelf) {
-                alert(title = getString(R.string.add_to_shelf)) {
-                    setMessage(getString(R.string.check_add_bookshelf, it.name))
-                    okButton {
-                        AudioPlay.inBookshelf = true
-                        setResult(Activity.RESULT_OK)
+                if (!AppConfig.showAddToShelfAlert) {
+                    viewModel.removeFromBookshelf { super.finish() }
+                } else {
+                    alert(title = getString(R.string.add_to_shelf)) {
+                        setMessage(getString(R.string.check_add_bookshelf, it.name))
+                        okButton {
+                            AudioPlay.inBookshelf = true
+                            setResult(Activity.RESULT_OK)
+                        }
+                        noButton { viewModel.removeFromBookshelf { super.finish() } }
                     }
-                    noButton { viewModel.removeFromBookshelf { super.finish() } }
                 }
             } else {
                 super.finish()
