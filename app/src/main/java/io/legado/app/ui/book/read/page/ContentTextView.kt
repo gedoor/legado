@@ -461,12 +461,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         invalidate()
     }
 
-    private fun upSelectedStart(x: Float, y: Float, top: Float) = callBack.apply {
-        upSelectedStart(x, y + headerHeight, top + headerHeight)
+    private fun upSelectedStart(x: Float, y: Float, top: Float) {
+        callBack.run {
+            upSelectedStart(x, y + headerHeight, top + headerHeight)
+        }
     }
 
-    private fun upSelectedEnd(x: Float, y: Float) = callBack.apply {
-        upSelectedEnd(x, y + headerHeight)
+    private fun upSelectedEnd(x: Float, y: Float) {
+        callBack.run {
+            upSelectedEnd(x, y + headerHeight)
+        }
     }
 
     fun cancelSelect(fromSearchExit: Boolean = false) {
