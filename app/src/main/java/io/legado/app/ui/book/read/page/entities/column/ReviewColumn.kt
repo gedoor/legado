@@ -25,6 +25,7 @@ data class ReviewColumn(
 
     fun drawToCanvas(canvas: Canvas, baseLine: Float, height: Float) {
         if (count == 0) return
+        path.reset()
         path.moveTo(start, baseLine - height / 2)
         path.lineTo(start + height / 6, baseLine - height)
         path.lineTo(end, baseLine - height)
