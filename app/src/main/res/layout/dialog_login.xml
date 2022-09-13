@@ -19,17 +19,22 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/flexbox"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:padding="3dp"
-        android:layout_marginTop="8dp"
-        app:dividerDrawable="@drawable/shape_space_divider"
-        app:flexDirection="row"
-        app:flexWrap="wrap"
-        app:showDivider="middle" />
+        android:layout_height="wrap_content">
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/flexbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="3dp"
+            android:layout_marginTop="8dp"
+            app:dividerDrawable="@drawable/shape_space_divider"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:showDivider="middle" />
+
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
