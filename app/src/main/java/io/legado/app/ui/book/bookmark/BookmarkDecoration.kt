@@ -25,6 +25,7 @@ class BookmarkDecoration(val adapter: BookmarkAdapter) : RecyclerView.ItemDecora
     private val textPaint = TextPaint().apply {
         textSize = 16f.spToPx()
         color = appCtx.accentColor
+        isAntiAlias = true
     }
     private val textRect = Rect()
 
