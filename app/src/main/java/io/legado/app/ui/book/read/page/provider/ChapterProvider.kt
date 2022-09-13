@@ -33,7 +33,7 @@ object ChapterProvider {
     private const val srcReplaceChar = "▩"
 
     //用于评论按钮的替换
-    private const val reviewChar = "◀"
+    private const val reviewChar = "▨"
 
     @JvmStatic
     var viewWidth = 0
