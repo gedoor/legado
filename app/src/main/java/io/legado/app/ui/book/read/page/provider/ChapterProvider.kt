@@ -101,6 +101,7 @@ object ChapterProvider {
     @JvmStatic
     var reviewPaint: TextPaint = TextPaint()
 
+    @JvmStatic
     var doublePage = false
         private set
 
