@@ -2,8 +2,8 @@ package io.legado.app.ui.book.read.page.entities.column
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.text.StaticLayout
-import android.text.TextPaint
+import android.graphics.Path
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
 /**
  * 评论按钮列
@@ -11,74 +11,33 @@ import android.text.TextPaint
 data class ReviewColumn(
     override var start: Float,
     override var end: Float,
-    var count: Int = 0
+    val count: Int = 0
 ) : BaseColumn {
 
-    fun getCountText(): String {
+    val countText by lazy {
         if (count > 99) {
-            return "99+"
+            return@lazy "99+"
         }
-        return count.toString()
+        return@lazy count.toString()
     }
 
-    fun drawToCanvas(canvas: Canvas, paint: Paint, countPaint: TextPaint, y: Float) {
+    val path by lazy { Path() }
+
+    fun drawToCanvas(canvas: Canvas, baseLine: Float, height: Float) {
         if (count == 0) return
-        canvas.drawLine(
-            start,
-            y - paint.textSize * 2 / 5,
-            start + paint.textSize / 6,
-            y - paint.textSize / 4,
-            paint
-        )
-        canvas.drawLine(
-            start,
-            y - paint.textSize * 0.38F,
-            start + paint.textSize / 6,
-            y - paint.textSize * 0.55F,
-            paint
-        )
-        canvas.drawLine(
-            start + paint.textSize / 6,
-            y - paint.textSize / 4,
-            start + paint.textSize / 6,
-            y,
-            paint
-        )
-        canvas.drawLine(
-            start + paint.textSize / 6,
-            y - paint.textSize * 0.55F,
-            start + paint.textSize / 6,
-            y - paint.textSize * 0.8F,
-            paint
-        )
-        canvas.drawLine(
-            start + paint.textSize / 6,
-            y,
-            start + paint.textSize * 1.6F,
-            y,
-            paint
-        )
-        canvas.drawLine(
-            start + paint.textSize / 6,
-            y - paint.textSize * 0.8F,
-            start + paint.textSize * 1.6F,
-            y - paint.textSize * 0.8F,
-            paint
-        )
-        canvas.drawLine(
-            start + paint.textSize * 1.6F,
-            y - paint.textSize * 0.8F,
-            start + paint.textSize * 1.6F,
-            y,
-            paint
-        )
-        val text = getCountText()
-        val textWidth = StaticLayout.getDesiredWidth(getCountText(), countPaint)
+        path.moveTo(start, baseLine - height / 2)
+        path.lineTo(start + height / 6, baseLine - height)
+        path.lineTo(end, baseLine - height)
+        path.lineTo(end, baseLine)
+        path.lineTo(start + height / 6, baseLine)
+        path.close()
+        ChapterProvider.reviewPaint.style = Paint.Style.STROKE
+        canvas.drawPath(path, ChapterProvider.reviewPaint)
         canvas.drawText(
-            text,
-            start + paint.textSize * 0.87F - textWidth / 2,
-            y - paint.textSize / 6,
-            countPaint
+            countText,
+            (start + end) / 2,
+            baseLine - height / 6,
+            ChapterProvider.reviewPaint
         )
     }
 
