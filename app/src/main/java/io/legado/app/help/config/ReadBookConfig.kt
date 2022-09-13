@@ -210,6 +210,7 @@ object ReadBookConfig {
             config.paragraphSpacing = value
         }
 
+    //标题位置 0:居左 1:居中 2:隐藏
     var titleMode: Int
         get() = config.titleMode
         set(value) {

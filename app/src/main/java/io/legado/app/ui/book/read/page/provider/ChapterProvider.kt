@@ -124,11 +124,10 @@ object ChapterProvider {
         var durY = 0f
         textPages.add(TextPage())
         if (ReadBookConfig.titleMode != 2) {
+            //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
                 setTypeText(
-                    book,
-                    absStartX,
-                    durY,
+                    book, absStartX, durY,
                     if (AppConfig.enableReview) text + reviewChar else text,
                     textPages,
                     stringBuilder,
@@ -145,6 +144,7 @@ object ChapterProvider {
         }
         contents.forEach { content ->
             if (book.getImageStyle().equals(Book.imgStyleText, true)) {
+                //图片样式为文字嵌入类型
                 var text = content.replace(srcReplaceChar, "▣")
                 val srcList = LinkedList<String>()
                 val sb = StringBuffer()
@@ -187,9 +187,7 @@ object ChapterProvider {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
                         setTypeText(
-                            book,
-                            absStartX,
-                            durY,
+                            book, absStartX, durY,
                             if (AppConfig.enableReview) text + reviewChar else text,
                             textPages,
                             stringBuilder,
