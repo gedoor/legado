@@ -33,6 +33,7 @@ data class ReviewColumn(
         path.close()
         ChapterProvider.reviewPaint.style = Paint.Style.STROKE
         canvas.drawPath(path, ChapterProvider.reviewPaint)
+        ChapterProvider.reviewPaint.style = Paint.Style.FILL
         canvas.drawText(
             countText,
             (start + end) / 2,

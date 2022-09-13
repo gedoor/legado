@@ -516,7 +516,7 @@ object ChapterProvider {
                 ReviewColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    count = 2
+                    count = 100
                 )
             }
             else -> {
