@@ -4,12 +4,24 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 import java.io.*
+import java.util.zip.GZIPOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
 @Suppress("unused", "BlockingMethodInNonBlockingContext", "MemberVisibilityCanBePrivate")
 object ZipUtils {
+
+    fun zipString(text: String): ByteArray {
+        val byteOut = ByteArrayOutputStream()
+        val zip = GZIPOutputStream(byteOut)
+        zip.use {
+            it.write(text.toByteArray())
+        }
+        return byteOut.use {
+            it.toByteArray()
+        }
+    }
 
     /**
      * Zip the files.
