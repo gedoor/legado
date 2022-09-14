@@ -3,7 +3,6 @@ package io.legado.app.ui.config
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
@@ -32,12 +31,14 @@ import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
-import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import kotlin.collections.set
 
@@ -156,6 +157,7 @@ class BackupConfigFragment : PreferenceFragment(),
                 showHelp()
                 return true
             }
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return false
     }
