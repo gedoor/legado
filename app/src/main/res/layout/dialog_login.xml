@@ -22,6 +22,7 @@
             android:background="@color/background_menu"
             android:elevation="5dp"
             android:theme="?attr/actionBarStyle"
+            app:title="@string/login"
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
             app:popupTheme="@style/AppTheme.PopupOverlay"
