@@ -24,6 +24,11 @@ fun String.parseToUri(): Uri {
     }
 }
 
+fun String?.isUri(): Boolean {
+    this ?: return false
+    return this.startsWith("file://", true) || isContentScheme()
+}
+
 fun String?.isAbsUrl() =
     this?.let {
         it.startsWith("http://", true) || it.startsWith("https://", true)

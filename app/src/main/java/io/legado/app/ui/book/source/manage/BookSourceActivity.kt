@@ -21,6 +21,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.DirectLinkUpload
+import io.legado.app.help.IntentData
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
@@ -77,11 +78,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
     private val importDoc = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            try {
-                showDialogFragment(ImportBookSourceDialog(uri.readText(this)))
-            } catch (e: Exception) {
-                toastOnUi("readTextError:${e.localizedMessage}")
-            }
+            showDialogFragment(ImportBookSourceDialog(uri.toString()))
         }
     }
     private val exportDir = registerForActivityResult(HandleFileContract()) {
