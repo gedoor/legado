@@ -55,15 +55,14 @@ java.getElements(ruleStr: String)
 java.reGetBook()
 java.refreshTocUrl()
 ```
-
-### [js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt) 部分函数
-
 * 变量存取
 
 ```
 java.get(key)
 java.put(key, value)
 ```
+
+### [js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt) 部分函数
 
 * 网络请求
 
