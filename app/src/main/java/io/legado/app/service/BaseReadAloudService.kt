@@ -60,18 +60,18 @@ abstract class BaseReadAloudService : BaseService(),
     private val mediaSessionCompat: MediaSessionCompat by lazy {
         MediaSessionCompat(this, "readAloud")
     }
-    private var audioFocusLossTransient = false
     internal val contentList = arrayListOf<String>()
     internal var nowSpeak: Int = 0
     internal var readAloudNumber: Int = 0
     internal var textChapter: TextChapter? = null
     internal var pageIndex = 0
+    private var needResumeOnAudioFocusGain = false
     private var dsJob: Job? = null
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
-                pauseReadAloud(true)
+                pauseReadAloud()
             }
         }
     }
@@ -105,7 +105,7 @@ abstract class BaseReadAloudService : BaseService(),
                 intent.getIntExtra("pageIndex", ReadBook.durPageIndex),
                 intent.getIntExtra("startPos", 0)
             )
-            IntentAction.pause -> pauseReadAloud(true)
+            IntentAction.pause -> pauseReadAloud()
             IntentAction.resume -> resumeReadAloud()
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
             IntentAction.prevParagraph -> prevP()
@@ -138,6 +138,7 @@ abstract class BaseReadAloudService : BaseService(),
     open fun play() {
         isRun = true
         pause = false
+        needResumeOnAudioFocusGain = false
         upNotification()
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
@@ -145,8 +146,8 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun playStop()
 
     @CallSuper
-    open fun pauseReadAloud(pause: Boolean) {
-        BaseReadAloudService.pause = pause
+    open fun pauseReadAloud() {
+        pause = true
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
@@ -278,9 +279,7 @@ abstract class BaseReadAloudService : BaseService(),
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
-
-                audioFocusLossTransient = false
-                if (!pause) {
+                if (needResumeOnAudioFocusGain) {
                     AppLog.put("音频焦点获得,继续朗读")
                     resumeReadAloud()
                 } else {
@@ -289,14 +288,14 @@ abstract class BaseReadAloudService : BaseService(),
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 AppLog.put("音频焦点丢失,暂停朗读")
-                if (audioFocusLossTransient) {
-                    pauseReadAloud(true)
-                }
+                pauseReadAloud()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 AppLog.put("音频焦点暂时丢失并会很快再次获得,暂停朗读")
-                audioFocusLossTransient = true
-                if (!pause) pauseReadAloud(false)
+                if (!pause) {
+                    needResumeOnAudioFocusGain = true
+                    pauseReadAloud()
+                }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），

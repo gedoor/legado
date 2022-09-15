@@ -171,7 +171,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     toastOnUi("js错误\n${it.localizedMessage}")
                                     it.printOnDebug()
                                     cancel()
-                                    pauseReadAloud(true)
+                                    pauseReadAloud()
                                 }
                                 is SocketTimeoutException, is ConnectException -> {
                                     downloadErrorNo++
@@ -179,7 +179,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                         val msg = "tts超时或连接错误超过5次\n${it.localizedMessage}"
                                         AppLog.put(msg, it)
                                         toastOnUi(msg)
-                                        pauseReadAloud(true)
+                                        pauseReadAloud()
                                     } else {
                                         downloadAudio()
                                     }
@@ -192,7 +192,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                                     if (downloadErrorNo > 5) {
                                         AppLog.put("TTS服务器连续5次错误，已暂停阅读。")
                                         toastOnUi("TTS服务器连续5次错误，已暂停阅读。")
-                                        pauseReadAloud(true)
+                                        pauseReadAloud()
                                     } else {
                                         AppLog.put("TTS下载音频出错，使用无声音频代替。\n朗读文本：$content")
                                         createSilentSound(fileName)
@@ -271,8 +271,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
 
-    override fun pauseReadAloud(pause: Boolean) {
-        super.pauseReadAloud(pause)
+    override fun pauseReadAloud() {
+        super.pauseReadAloud()
         kotlin.runCatching {
             playIndexJob?.cancel()
             exoPlayer.pause()
