@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
@@ -153,4 +154,25 @@ fun Uri.writeBytes(
         return true
     }
     return false
+}
+
+fun Uri.inputStream(context: Context): InputStream? {
+    val uri = this
+    try {
+        if (isContentScheme()) {
+            val doc = DocumentFile.fromSingleUri(context, uri)
+            doc ?: throw NoStackTraceException("未获取到文件")
+            return context.contentResolver.openInputStream(uri)!!
+        } else {
+            RealPathUtil.getPath(context, uri)?.let { path ->
+                val file = File(path)
+                return FileInputStream(file)
+            }
+        }
+    } catch (e: Exception) {
+        e.printOnDebug()
+        context.toastOnUi("读取inputStream失败：${e.localizedMessage}")
+        AppLog.put("读取inputStream失败：${e.localizedMessage}", e)
+    }
+    return null
 }
