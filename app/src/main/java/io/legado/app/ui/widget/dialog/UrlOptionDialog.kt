@@ -24,9 +24,8 @@ class UrlOptionDialog(context: Context, private val success: (String) -> Unit) :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.root.setOnClickListener {
-            dismiss()
-        }
+        binding.root.setOnClickListener { dismiss() }
+        binding.vwBg.setOnClickListener(null)
         binding.editMethod.setFilterValues("POST", "GET")
         binding.editCharset.setFilterValues(AppConst.charsets)
         binding.tvOk.setOnClickListener {

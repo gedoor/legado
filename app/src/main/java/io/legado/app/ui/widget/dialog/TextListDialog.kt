@@ -14,6 +14,7 @@ import io.legado.app.databinding.ItemLogBinding
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
+@Suppress("unused")
 class TextListDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) {
 
     constructor(title: String, values: ArrayList<String>) : this() {

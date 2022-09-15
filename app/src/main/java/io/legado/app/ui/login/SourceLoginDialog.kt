@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import splitties.views.onClick
 
 
-class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
+class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
 
     private val binding by viewBinding(DialogLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
@@ -34,12 +34,9 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login) {
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        view.setBackgroundResource(R.color.transparent)
-        view.setOnClickListener { dismiss() }
         val source = viewModel.source ?: return
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.title = getString(R.string.login_source, source.getTag())

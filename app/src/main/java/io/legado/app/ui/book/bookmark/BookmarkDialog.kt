@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
+class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
 
     constructor(bookmark: Bookmark, editPos: Int = -1) : this() {
         arguments = Bundle().apply {
@@ -30,12 +30,9 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        view.setBackgroundResource(R.color.transparent)
-        view.setOnClickListener { dismiss() }
         binding.toolBar.setBackgroundColor(primaryColor)
         val arguments = arguments ?: let {
             dismiss()

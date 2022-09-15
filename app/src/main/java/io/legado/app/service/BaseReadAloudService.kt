@@ -292,6 +292,7 @@ abstract class BaseReadAloudService : BaseService(),
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
+                AppLog.put("短暂丢失焦点,不做处理")
             }
         }
     }

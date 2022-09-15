@@ -21,7 +21,7 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit),
+class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, true),
     Toolbar.OnMenuItemClickListener {
 
     constructor(id: Long) : this() {
@@ -36,12 +36,9 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit),
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        view.setBackgroundResource(R.color.transparent)
-        view.setOnClickListener { dismiss() }
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.tvUrl.run {
             addLegadoPattern()
