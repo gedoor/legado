@@ -1025,4 +1025,5 @@
     <string name="tag_explore_disabled">标志:发现已禁用</string>
     <string name="show_read_title_addition">show read title addition area</string>
     <string name="read_bar_style_follow_page">read bar style follow page</string>
+    <string name="rule_image_decode">Decode Image(imageDecode)</string>
 </resources>
