@@ -29,10 +29,13 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        view.setBackgroundResource(R.color.transparent)
+        view.setOnClickListener { dismiss() }
         binding.toolBar.setBackgroundColor(primaryColor)
         val arguments = arguments ?: let {
             dismiss()

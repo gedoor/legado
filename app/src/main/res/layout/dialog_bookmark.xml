@@ -1,110 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tool_bar"
+    <LinearLayout
+        android:id="@+id/vw_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:title="@string/bookmark"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        android:layout_gravity="center"
+        android:background="@drawable/shape_card_view"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
-    <TextView
-        android:id="@+id/tv_chapter_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:textColor="@color/primaryText" />
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:theme="?attr/actionBarStyle"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/bookmark"
+            app:titleTextAppearance="@style/ToolbarTitle" />
 
-            <io.legado.app.ui.widget.text.TextInputLayout
+        <TextView
+            android:id="@+id/tv_chapter_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="@color/primaryText" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="3dp">
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <io.legado.app.lib.theme.view.ThemeEditText
-                    android:id="@+id/edit_book_text"
+                <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/content"
-                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                    android:paddingTop="3dp">
 
-            </io.legado.app.ui.widget.text.TextInputLayout>
+                    <io.legado.app.lib.theme.view.ThemeEditText
+                        android:id="@+id/edit_book_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/content"
+                        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-            <io.legado.app.ui.widget.text.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="3dp">
+                </io.legado.app.ui.widget.text.TextInputLayout>
 
-                <io.legado.app.lib.theme.view.ThemeEditText
-                    android:id="@+id/edit_content"
+                <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/note_content"
-                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                    android:paddingTop="3dp">
 
-            </io.legado.app.ui.widget.text.TextInputLayout>
+                    <io.legado.app.lib.theme.view.ThemeEditText
+                        android:id="@+id/edit_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/note_content"
+                        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-        </LinearLayout>
+                </io.legado.app.ui.widget.text.TextInputLayout>
 
-    </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
 
-    <com.google.android.flexbox.FlexboxLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        app:flexWrap="wrap"
-        app:justifyContent="space_between">
+        </androidx.core.widget.NestedScrollView>
 
-        <io.legado.app.ui.widget.text.AccentTextView
-            android:id="@+id/tv_footer_left"
-            android:layout_width="wrap_content"
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="@string/delete"
-            android:visibility="invisible"
-            tools:ignore="RtlHardcoded" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            app:flexWrap="wrap"
+            app:justifyContent="space_between">
 
             <io.legado.app.ui.widget.text.AccentTextView
-                android:id="@+id/tv_cancel"
+                android:id="@+id/tv_footer_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
-                android:text="@string/cancel"
+                android:text="@string/delete"
+                android:visibility="invisible"
                 tools:ignore="RtlHardcoded" />
 
-            <io.legado.app.ui.widget.text.AccentTextView
-                android:id="@+id/tv_ok"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:text="@string/ok"
-                tools:ignore="RtlHardcoded" />
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <io.legado.app.ui.widget.text.AccentTextView
+                    android:id="@+id/tv_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="@string/cancel"
+                    tools:ignore="RtlHardcoded" />
 
-    </com.google.android.flexbox.FlexboxLayout>
-</LinearLayout>
+                <io.legado.app.ui.widget.text.AccentTextView
+                    android:id="@+id/tv_ok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="@string/ok"
+                    tools:ignore="RtlHardcoded" />
+
+            </LinearLayout>
+
+        </com.google.android.flexbox.FlexboxLayout>
+    </LinearLayout>
+</FrameLayout>
