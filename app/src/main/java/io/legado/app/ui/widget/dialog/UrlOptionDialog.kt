@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.DialogUrlOptionEditBinding
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -17,11 +18,15 @@ class UrlOptionDialog(context: Context, private val success: (String) -> Unit) :
     override fun onStart() {
         super.onStart()
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
+        window?.setBackgroundDrawableResource(R.color.transparent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        binding.root.setOnClickListener {
+            dismiss()
+        }
         binding.editMethod.setFilterValues("POST", "GET")
         binding.editCharset.setFilterValues(AppConst.charsets)
         binding.tvOk.setOnClickListener {
