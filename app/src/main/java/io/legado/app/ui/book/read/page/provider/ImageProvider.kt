@@ -131,7 +131,7 @@ object ImageProvider {
         //bitmapLruCache的key同一改成缓存文件的路径
         val cacheBitmap = bitmapLruCache.get(vFile.absolutePath)
         if (cacheBitmap != null) return cacheBitmap
-        if (height != null && ReadBook.pageAnim() == PageAnim.scrollPageAnim) {
+        if (height != null && AppConfig.asyncLoadImage && ReadBook.pageAnim() == PageAnim.scrollPageAnim) {
             Coroutine.async {
                 kotlin.runCatching {
                     val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
