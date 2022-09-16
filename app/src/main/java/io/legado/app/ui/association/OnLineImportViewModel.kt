@@ -8,7 +8,7 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.externalFiles
+import io.legado.app.utils.externalCache
 import okhttp3.MediaType.Companion.toMediaType
 import splitties.init.appCtx
 
@@ -78,8 +78,8 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
                 else -> {
                     val inputStream = rs.byteStream()
                     val file = FileUtils.createFileIfNotExist(
-                        appCtx.externalFiles,
-                        "book_cache",
+                        appCtx.externalCache,
+                        "download",
                         "scheme_import_cache.json"
                     )
                     file.outputStream().use { out ->
