@@ -1028,4 +1028,5 @@
     <string name="rule_image_decode">图片解密（imageDecode）</string>
     <string name="like_source">赞</string>
     <string name="not_like_source">踩</string>
+    <string name="async_load_image">异步加载图片</string>
 </resources>
