@@ -123,7 +123,11 @@ abstract class BaseReadBookActivity :
         if (toolBarHide) {
             setLightStatusBar(ReadBookConfig.durConfig.curStatusIconDark())
         } else {
-            val statusBarColor = ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
+            val statusBarColor = if (AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0) {
+                ReadBookConfig.bgMeanColor
+            } else {
+                ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
+            }
             setLightStatusBar(ColorUtils.isColorLight(statusBarColor))
         }
     }
