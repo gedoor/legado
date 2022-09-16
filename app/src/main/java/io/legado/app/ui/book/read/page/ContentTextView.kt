@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.R
@@ -51,7 +52,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var drawVisibleImageOnly = false
     private var cacheIncreased = false
     private val increaseSize = 8 * 1024 * 1024
-    private val maxCacheSize = 256 * 1024 * 1024
+    private val maxCacheSize = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+        min(128 * 1024 * 1024, Runtime.getRuntime().maxMemory())
+    } else {
+        256 * 1024 * 1024
+    }
 
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
@@ -203,7 +208,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             return
         }
         if (drawVisibleImageOnly &&
-            isVisible &&
             !cacheIncreased &&
             ImageProvider.isTriggerRecycled() &&
             !ImageProvider.isImageAlive(book, column.src)

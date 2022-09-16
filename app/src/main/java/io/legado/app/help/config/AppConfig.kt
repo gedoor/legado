@@ -320,6 +320,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val showAddToShelfAlert get() = appCtx.getPrefBoolean(PreferKey.showAddToShelfAlert, true)
 
+    val asyncLoadImage get() = appCtx.getPrefBoolean(PreferKey.asyncLoadImage, false)
+
     val doublePageHorizontal: String?
         get() = appCtx.getPrefString(PreferKey.doublePageHorizontal)
 
