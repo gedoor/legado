@@ -140,7 +140,7 @@ object BookHelp {
             //某些图片被加密，需要进一步解密
             bookSource?.getContentRule()?.imageDecode?.let {
                 kotlin.runCatching {
-                    bookSource?.evalJS(it) {
+                    bookSource.evalJS(it) {
                         put("book", book)
                         put("result", bytes)
                         put("src", src)
