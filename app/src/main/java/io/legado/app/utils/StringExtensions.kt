@@ -2,11 +2,11 @@
 
 package io.legado.app.utils
 
-import io.legado.app.constant.AppPattern.dataUriRegex
 import android.icu.text.Collator
 import android.icu.util.ULocale
 import android.net.Uri
 import android.text.Editable
+import io.legado.app.constant.AppPattern.dataUriRegex
 import java.io.File
 import java.util.*
 

@@ -7,8 +7,8 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.RequestBuilder
 import io.legado.app.utils.isAbsUrl
-import io.legado.app.utils.isDataUrl
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.isDataUrl
 import java.io.File
 
 @Suppress("unused")

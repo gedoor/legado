@@ -1,10 +1,10 @@
 package io.legado.app.utils
 
 import android.util.Base64
+import cn.hutool.crypto.symmetric.SymmetricCrypto
 import java.security.spec.AlgorithmParameterSpec
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import cn.hutool.crypto.symmetric.SymmetricCrypto
 
 /**
  * transformations https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en
