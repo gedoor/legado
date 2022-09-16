@@ -18,6 +18,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.FragmentExploreBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
@@ -181,6 +182,16 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     override fun toTop(source: BookSource) {
         viewModel.topSource(source)
+    }
+
+    override fun deleteSource(source: BookSource) {
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n" + source.bookSourceName)
+            noButton()
+            yesButton {
+                viewModel.deleteSource(source)
+            }
+        }
     }
 
     fun compressExplore() {

@@ -1016,8 +1016,8 @@
     <string name="rule_review_content">段评内容（contentRule）</string>
     <string name="rule_review_quote">段评回复URL（reviewQuoteUrl）</string>
     <string name="rule_post_time">段评发布时间（postTimeRule）</string>
-    <string name="review_vote_down">点踩URL（voteUpUrl）</string>
-    <string name="review_vote_up">点赞URL（voteDownUrl）</string>
+    <string name="review_vote_down">点踩URL（voteDownUrl）</string>
+    <string name="review_vote_up">点赞URL（voteUpUrl）</string>
     <string name="post_review_url">发送回复URL（postReviewUrl）</string>
     <string name="post_quote_url">发送回复段评URL（postQuoteUrl）</string>
     <string name="delete_review_url">删除段评URL（deleteUrl）</string>
