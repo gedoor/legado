@@ -10,12 +10,10 @@ import com.google.android.flexbox.FlexboxLayout
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ExploreKind
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemFindBookBinding
-import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.login.SourceLoginActivity
@@ -173,10 +171,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 }.onSuccess {
                     callBack.refreshData()
                 }
-                R.id.menu_del -> Coroutine.async(callBack.scope) {
-                    appDb.bookSourceDao.delete(source)
-                    SourceConfig.removeSource(source.bookSourceUrl)
-                }
+                R.id.menu_del -> callBack.deleteSource(source)
             }
             true
         }
@@ -191,5 +186,6 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
         fun openExplore(sourceUrl: String, title: String, exploreUrl: String?)
         fun editSource(sourceUrl: String)
         fun toTop(source: BookSource)
+        fun deleteSource(source: BookSource)
     }
 }

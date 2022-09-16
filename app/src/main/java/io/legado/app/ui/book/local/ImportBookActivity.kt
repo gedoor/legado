@@ -200,7 +200,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
     private fun upSort(sort: Int) {
         viewModel.sort = sort
         putPrefInt(PreferKey.localBookImportSort, sort)
-        if (scanDocJob?.isCancelled == true || scanDocJob?.isCompleted == true) {
+        if (scanDocJob?.isActive != true) {
             viewModel.dataCallback?.setItems(adapter.getItems())
         }
     }

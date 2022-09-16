@@ -1016,8 +1016,8 @@
     <string name="rule_review_content">段评内容（contentRule）</string>
     <string name="rule_post_time">段评发布时间（postTimeRule）</string>
     <string name="rule_review_quote">段评回复URL（reviewQuoteUrl）</string>
-    <string name="review_vote_down">点踩URL（voteUpUrl）</string>
-    <string name="review_vote_up">点赞URL（voteDownUrl）</string>
+    <string name="review_vote_down">点踩URL（voteDownUrl）</string>
+    <string name="review_vote_up">点赞URL（voteUpUrl）</string>
     <string name="post_review_url">发送回复URL（postReviewUrl）</string>
     <string name="post_quote_url">发送回复段评URL（postQuoteUrl）</string>
     <string name="delete_review_url">删除段评URL（deleteUrl）</string>
@@ -1026,4 +1026,6 @@
     <string name="show_read_title_addition">展示顶部工具栏附加区域</string>
     <string name="read_bar_style_follow_page">工具栏样式跟随页面</string>
     <string name="rule_image_decode">图片解密（imageDecode）</string>
+    <string name="like_source">赞</string>
+    <string name="not_like_source">踩</string>
 </resources>

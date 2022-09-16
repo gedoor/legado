@@ -1,6 +1,5 @@
 package io.legado.app.ui.about
 
-import java.text.SimpleDateFormat
 import android.content.Context
 import android.os.Bundle
 import android.view.Menu
@@ -26,6 +25,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 
 class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 

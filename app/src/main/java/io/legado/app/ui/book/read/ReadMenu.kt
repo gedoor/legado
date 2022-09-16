@@ -15,7 +15,8 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.*
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding

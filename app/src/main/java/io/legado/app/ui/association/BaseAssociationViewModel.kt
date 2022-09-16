@@ -21,7 +21,7 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
         }
     }
 
-    fun importJson(json: String) {
+    private fun importJson(json: String) {
         //暂时根据文件内容判断属于什么
         when {
             json.contains("sourceUrl") ->

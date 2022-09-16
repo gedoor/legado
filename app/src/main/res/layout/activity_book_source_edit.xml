@@ -13,64 +13,64 @@
         app:fitStatusBar="false"
         app:title="@string/edit_book_source" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_vertical">
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_is_enable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/is_enable" />
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_is_enable_explore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/discovery" />
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_is_enable_cookie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/auto_save_cookie" />
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_is_enable_review"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/review" />
-
-    </LinearLayout>
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:scrollbars="none">
 
-        <TextView
-            android:height="30dp"
-            android:gravity="center"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/book_type"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="3dp"
-            tools:ignore="RtlHardcoded" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/sp_type"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:entries="@array/book_type"
-            app:theme="@style/Spinner" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/book_type"
+                tools:ignore="RtlHardcoded" />
 
-    </LinearLayout>
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/sp_type"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:entries="@array/book_type"
+                app:theme="@style/Spinner" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/is_enable" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_enable_explore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/discovery" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_enable_cookie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/auto_save_cookie" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_enable_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/review" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
@@ -119,6 +119,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_source_edit" />
 
 </LinearLayout>
