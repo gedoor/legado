@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
+import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
@@ -217,6 +218,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     private fun upWebViewTheme() {
+        AppLog.put("webView夜间模式${AppConfig.isNightTheme}")
         if (AppConfig.isNightTheme) {
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
                 @Suppress("DEPRECATION")
