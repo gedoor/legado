@@ -133,25 +133,20 @@ object ImageProvider {
         if (cacheBitmap != null) return cacheBitmap
         if (height != null && AppConfig.asyncLoadImage && ReadBook.pageAnim() == PageAnim.scrollPageAnim) {
             Coroutine.async {
-                kotlin.runCatching {
-                    val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
-                        ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
-                    withContext(Main) {
-                        bitmapLruCache.put(vFile.absolutePath, bitmap)
-                    }
-                }.onFailure {
-                    //错误图片占位,防止重复获取
-                    withContext(Main) {
-                        bitmapLruCache.put(vFile.absolutePath, errorBitmap)
-                    }
-                    putDebug(
-                        "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
-                        it
-                    )
-                }
+                val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
+                    ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
                 withContext(Main) {
-                    block?.invoke()
+                    bitmapLruCache.put(vFile.absolutePath, bitmap)
                 }
+            }.onError {
+                //错误图片占位,防止重复获取
+                bitmapLruCache.put(vFile.absolutePath, errorBitmap)
+                putDebug(
+                    "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
+                    it
+                )
+            }.onFinally {
+                block?.invoke()
             }
             return null
         }
