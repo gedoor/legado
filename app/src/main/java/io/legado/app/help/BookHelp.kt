@@ -139,6 +139,9 @@ object BookHelp {
             var bytes = analyzeUrl.getByteArrayAwait()
             //某些图片被加密，需要进一步解密
             bookSource?.getContentRule()?.imageDecode?.let {
+                if (it.isBlank()) {
+                    return@let
+                }
                 kotlin.runCatching {
                     bookSource.evalJS(it) {
                         put("book", book)

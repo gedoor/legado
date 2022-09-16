@@ -17,8 +17,9 @@ class VerificationCodeActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         intent.getStringExtra("imageUrl")?.let {
             val sourceOrigin = intent.getStringExtra("sourceOrigin")
+            val sourceName = intent.getStringExtra("sourceName")
             showDialogFragment(
-                VerificationCodeDialog(it, sourceOrigin)
+                VerificationCodeDialog(it, sourceOrigin, sourceName)
             )
         } ?: finish()
     }
