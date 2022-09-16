@@ -7,13 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.IntentData
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.inputStream
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import java.io.File
-import java.io.InputStream
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val importBookLiveData = MutableLiveData<Uri>()
