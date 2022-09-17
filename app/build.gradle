@@ -130,7 +130,7 @@ resourcePlaceholders {
 }
 
 dependencies {
-    //noinspection GradleDependency
+    //noinspection GradleDependency,GradlePackageUpdate
     coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.1.6')
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.4.0')
@@ -246,8 +246,7 @@ dependencies {
     implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.7')
 
     //加解密类库,有些书源使用
-    //noinspection GradleDependency
-    //noinspection GradlePackageUpdate
+    //noinspection GradleDependency,GradlePackageUpdate
     implementation('cn.hutool:hutool-crypto:5.8.1')
 
     //firebase, 崩溃统计和性能统计, 会导致共存版本崩溃
