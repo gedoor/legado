@@ -17,8 +17,8 @@ def version = "3." + releaseTime()
 def gitCommits = Integer.parseInt('git rev-list HEAD --count'.execute().text.trim())
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "32.0.0"
+    compileSdkVersion 33
+    buildToolsVersion "33.0.0"
     namespace 'io.legado.app'
     kotlinOptions {
         jvmTarget = "11"
@@ -41,7 +41,7 @@ android {
     defaultConfig {
         applicationId "io.legado.app"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 10000 + gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -152,7 +152,7 @@ dependencies {
     implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
 
     //androidX
-    implementation('androidx.core:core-ktx:1.8.0')
+    implementation('androidx.core:core-ktx:1.9.0')
     implementation('androidx.appcompat:appcompat:1.5.1')
     implementation('androidx.activity:activity-ktx:1.5.1')
     implementation('androidx.fragment:fragment-ktx:1.5.2')
