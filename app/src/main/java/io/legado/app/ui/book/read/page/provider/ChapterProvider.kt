@@ -505,10 +505,10 @@ object ChapterProvider {
             srcList != null && char == srcReplaceChar -> {
                 val src = srcList.removeFirst()
                 ImageProvider.cacheImage(book, src, ReadBook.bookSource)
-                TextColumn(
+                ImageColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    charData = src
+                    src = src
                 )
             }
             isLineEnd && char == reviewChar -> {
