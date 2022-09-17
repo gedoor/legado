@@ -31,7 +31,8 @@ interface BookDao {
     @Query(
         """
         select * from books 
-        where ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
+        where type != ${BookType.audio} 
+        and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         """
     )
     fun flowNoGroup(): Flow<List<Book>>
