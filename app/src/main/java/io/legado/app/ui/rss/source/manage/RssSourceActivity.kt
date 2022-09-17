@@ -146,6 +146,8 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
         when (item?.itemId) {
             R.id.menu_enable_selection -> viewModel.enableSelection(adapter.selection)
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
+            R.id.menu_add_group -> selectionAddToGroups()
+            R.id.menu_remove_group -> selectionRemoveFromGroups()
             R.id.menu_top_sel -> viewModel.topSource(*adapter.selection.toTypedArray())
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
             R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection) { file ->
@@ -154,6 +156,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                     fileData = Triple("exportRssSource.json", file, "application/json")
                 }
             }
+
             R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
                 share(it)
             }
@@ -210,6 +213,46 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 groups.addAll(it)
                 upGroupMenu()
             }
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun selectionAddToGroups() {
+        alert(titleResource = R.string.add_group) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setHint(R.string.group_name)
+                editView.setFilterValues(groups.toList())
+                editView.dropDownHeight = 180.dpToPx()
+            }
+            customView { alertBinding.root }
+            okButton {
+                alertBinding.editView.text?.toString()?.let {
+                    if (it.isNotEmpty()) {
+                        viewModel.selectionAddToGroups(adapter.selection, it)
+                    }
+                }
+            }
+            cancelButton()
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun selectionRemoveFromGroups() {
+        alert(titleResource = R.string.remove_group) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.setHint(R.string.group_name)
+                editView.setFilterValues(groups.toList())
+                editView.dropDownHeight = 180.dpToPx()
+            }
+            customView { alertBinding.root }
+            okButton {
+                alertBinding.editView.text?.toString()?.let {
+                    if (it.isNotEmpty()) {
+                        viewModel.selectionRemoveFromGroups(adapter.selection, it)
+                    }
+                }
+            }
+            cancelButton()
         }
     }
 

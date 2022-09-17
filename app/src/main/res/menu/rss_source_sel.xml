@@ -5,22 +5,32 @@
     <item
         android:id="@+id/menu_enable_selection"
         android:title="@string/enable_selection"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_disable_selection"
         android:title="@string/disable_selection"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_add_group"
+        android:title="@string/add_group"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_remove_group"
+        android:title="@string/remove_group"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_top_sel"
         android:title="@string/selection_to_top"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_bottom_sel"
         android:title="@string/selection_to_bottom"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_export_selection"

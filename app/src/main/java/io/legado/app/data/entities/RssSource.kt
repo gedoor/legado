@@ -1,11 +1,13 @@
 package io.legado.app.data.entities
 
 import android.os.Parcelable
+import android.text.TextUtils
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.jayway.jsonpath.DocumentContext
+import io.legado.app.constant.AppPattern
 import io.legado.app.utils.*
 import kotlinx.parcelize.Parcelize
 
@@ -112,6 +114,23 @@ data class RssSource(
         } else {
             String.format("%s (%s)", sourceName, sourceGroup)
         }
+    }
+
+    fun addGroup(groups: String): RssSource {
+        sourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
+            it.addAll(groups.splitNotBlank(AppPattern.splitGroupRegex))
+            sourceGroup = TextUtils.join(",", it)
+        }
+        if (sourceGroup.isNullOrBlank()) sourceGroup = groups
+        return this
+    }
+
+    fun removeGroup(groups: String): RssSource {
+        sourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
+            it.removeAll(groups.splitNotBlank(AppPattern.splitGroupRegex).toSet())
+            sourceGroup = TextUtils.join(",", it)
+        }
+        return this
     }
 
     fun sortUrls(): List<Pair<String, String>> = arrayListOf<Pair<String, String>>().apply {
