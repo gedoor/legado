@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.webkit.*
@@ -15,7 +16,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
-import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
@@ -217,8 +217,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
     }
 
+    @SuppressLint("RequiresFeature")
     private fun upWebViewTheme() {
-        AppLog.put("webView夜间模式${AppConfig.isNightTheme}")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            WebSettingsCompat.setAlgorithmicDarkeningAllowed(binding.webView.settings, AppConfig.isNightTheme)
+        }
         if (AppConfig.isNightTheme) {
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
                 @Suppress("DEPRECATION")
