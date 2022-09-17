@@ -150,7 +150,7 @@ class ReadMenu @JvmOverloads constructor(
         bindEvent()
     }
 
-    private fun initView() = binding.run {
+    private fun initView(reset: Boolean = false) = binding.run {
         if (AppConfig.isNightTheme) {
             fabNightTheme.setImageResource(R.drawable.ic_daytime)
         } else {
@@ -164,7 +164,7 @@ class ReadMenu @JvmOverloads constructor(
             titleBar.setColorFilter(textColor)
             tvChapterName.setTextColor(lightTextColor)
             tvChapterUrl.setTextColor(lightTextColor)
-        } else {
+        } else if (reset) {
             val bgColor = context.primaryColor
             val textColor = context.primaryTextColor
             titleBar.setTextColor(textColor)
@@ -210,7 +210,7 @@ class ReadMenu @JvmOverloads constructor(
 
     fun reset() {
         upColorConfig()
-        initView()
+        initView(true)
     }
 
     fun refreshMenuColorFilter() {

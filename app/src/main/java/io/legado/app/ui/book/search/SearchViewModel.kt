@@ -77,6 +77,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         execute {
             appDb.searchKeywordDao.get(key)?.let {
                 it.usage = it.usage + 1
+                it.lastUseTime = System.currentTimeMillis()
                 appDb.searchKeywordDao.update(it)
             } ?: appDb.searchKeywordDao.insert(SearchKeyword(key, 1))
         }
