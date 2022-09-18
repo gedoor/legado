@@ -17,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
 import io.legado.app.help.MediaHelp
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
@@ -230,6 +231,9 @@ abstract class BaseReadAloudService : BaseService(),
      * @return 音频焦点
      */
     fun requestFocus(): Boolean {
+        if (AppConfig.ignoreAudioFocus) {
+            return true
+        }
         val requestFocus = MediaHelp.requestFocus(audioManager, mFocusRequest)
         if (!requestFocus) {
             toastOnUi("未获取到音频焦点")
@@ -277,6 +281,10 @@ abstract class BaseReadAloudService : BaseService(),
      * 音频焦点变化
      */
     override fun onAudioFocusChange(focusChange: Int) {
+        if (AppConfig.ignoreAudioFocus) {
+            AppLog.put("忽略音频焦点处理(TTS)")
+            return
+        }
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 if (needResumeOnAudioFocusGain) {

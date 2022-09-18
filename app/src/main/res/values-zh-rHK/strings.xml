@@ -1029,4 +1029,6 @@
     <string name="like_source">赞</string>
     <string name="not_like_source">踩</string>
     <string name="async_load_image">异步加载图片</string>
+    <string name="ignore_audio_focus_title">忽略音频焦点</string>
+    <string name="ignore_audio_focus_summary">允许与其他应用同时播放音频</string>
 </resources>
