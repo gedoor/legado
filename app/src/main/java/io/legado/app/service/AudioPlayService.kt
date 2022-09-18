@@ -121,6 +121,7 @@ class AudioPlayService : BaseService(),
     override fun onDestroy() {
         super.onDestroy()
         isRun = false
+        abandonFocus()
         exoPlayer.release()
         mediaSessionCompat?.release()
         unregisterReceiver(broadcastReceiver)
@@ -169,6 +170,7 @@ class AudioPlayService : BaseService(),
     private fun pause() {
         try {
             pause = true
+            abandonFocus()
             upPlayProgressJob?.cancel()
             position = exoPlayer.currentPosition.toInt()
             if (exoPlayer.isPlaying) exoPlayer.pause()
@@ -549,6 +551,7 @@ class AudioPlayService : BaseService(),
     }
 
     /**
+     * 请求音频焦点
      * @return 音频焦点
      */
     private fun requestFocus(): Boolean {
@@ -556,6 +559,14 @@ class AudioPlayService : BaseService(),
             return true
         }
         return MediaHelp.requestFocus(audioManager, mFocusRequest)
+    }
+
+    /**
+     * 放弃音频焦点
+     */
+    private fun abandonFocus() {
+        @Suppress("DEPRECATION")
+        audioManager.abandonAudioFocus(this)
     }
 
 }
