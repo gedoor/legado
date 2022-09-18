@@ -24,6 +24,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.MediaHelp
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.AudioPlay
@@ -442,6 +443,10 @@ class AudioPlayService : BaseService(),
      * 音频焦点变化
      */
     override fun onAudioFocusChange(focusChange: Int) {
+        if (AppConfig.ignoreAudioFocus) {
+            AppLog.put("忽略音频焦点处理(有声)")
+            return
+        }
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
@@ -541,6 +546,9 @@ class AudioPlayService : BaseService(),
      * @return 音频焦点
      */
     private fun requestFocus(): Boolean {
+        if (AppConfig.ignoreAudioFocus) {
+            return true
+        }
         return MediaHelp.requestFocus(audioManager, mFocusRequest)
     }
 

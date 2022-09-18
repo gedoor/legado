@@ -322,6 +322,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val asyncLoadImage get() = appCtx.getPrefBoolean(PreferKey.asyncLoadImage, false)
 
+    val ignoreAudioFocus get() = appCtx.getPrefBoolean(PreferKey.ignoreAudioFocus, false)
+
     val doublePageHorizontal: String?
         get() = appCtx.getPrefString(PreferKey.doublePageHorizontal)
 
