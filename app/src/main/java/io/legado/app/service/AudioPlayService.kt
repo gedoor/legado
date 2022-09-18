@@ -76,7 +76,7 @@ class AudioPlayService : BaseService(),
     }
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var audioFocusLossTransient = false
+    private var needResumeOnAudioFocusGain = false
     private var position = AudioPlay.book?.durChapterPos ?: 0
     private var dsJob: Job? = null
     private var upPlayProgressJob: Job? = null
@@ -101,7 +101,8 @@ class AudioPlayService : BaseService(),
                     position = AudioPlay.book?.durChapterPos ?: 0
                     loadContent()
                 }
-                IntentAction.pause -> pause(true)
+
+                IntentAction.pause -> pause()
                 IntentAction.resume -> resume()
                 IntentAction.prev -> AudioPlay.prev(this)
                 IntentAction.next -> AudioPlay.next(this)
@@ -165,9 +166,9 @@ class AudioPlayService : BaseService(),
     /**
      * 暂停播放
      */
-    private fun pause(pause: Boolean) {
+    private fun pause() {
         try {
-            AudioPlayService.pause = pause
+            pause = true
             upPlayProgressJob?.cancel()
             position = exoPlayer.currentPosition.toInt()
             if (exoPlayer.isPlaying) exoPlayer.pause()
@@ -431,7 +432,7 @@ class AudioPlayService : BaseService(),
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
-                    pause(true)
+                    pause()
                 }
             }
         }
@@ -449,23 +450,28 @@ class AudioPlayService : BaseService(),
         }
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
-                // 重新获得焦点,  可做恢复播放，恢复后台音量的操作
-                audioFocusLossTransient = false
-                if (!pause) resume()
-            }
-            AudioManager.AUDIOFOCUS_LOSS -> {
-                // 永久丢失焦点除非重新主动获取，这种情况是被其他播放器抢去了焦点，  为避免与其他播放器混音，可将音乐暂停
-                if (audioFocusLossTransient) {
-                    pause(true)
+                if (needResumeOnAudioFocusGain) {
+                    AppLog.put("音频焦点获得,继续播放")
+                    resume()
+                } else {
+                    AppLog.put("音频焦点获得")
                 }
             }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                AppLog.put("音频焦点丢失,暂停播放")
+                pause()
+            }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                // 暂时丢失焦点，这种情况是被其他应用申请了短暂的焦点，可压低后台音量
-                audioFocusLossTransient = true
-                if (!pause) pause(false)
+                AppLog.put("音频焦点暂时丢失并会很快再次获得,暂停播放")
+                needResumeOnAudioFocusGain = true
+                if (!pause) {
+                    needResumeOnAudioFocusGain = true
+                    pause()
+                }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
+                AppLog.put("音频焦点短暂丢失,不做处理")
             }
         }
     }
