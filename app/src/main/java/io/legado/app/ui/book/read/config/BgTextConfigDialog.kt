@@ -353,7 +353,11 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     private fun setBgFromUri(uri: Uri) {
         readUri(uri) { fileDoc, inputStream ->
             var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, "bg", fileDoc.name)
+            val suffix = fileDoc.name.substringAfterLast(".")
+            val fileName = uri.inputStream(requireContext())!!.use {
+                MD5Utils.md5Encode(it) + ".$suffix"
+            }
+            file = FileUtils.createFileIfNotExist(file, "bg", fileName)
             FileOutputStream(file).use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
