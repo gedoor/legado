@@ -201,6 +201,9 @@ data class TextPage(
         val maxIndex = min(lineIndex, lineSize)
         for (index in 0 until maxIndex) {
             length += textLines[index].charSize
+            if (textLines[index].isParagraphEnd) {
+                length++
+            }
         }
         return length + columnIndex
     }

@@ -121,8 +121,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     /**
      * 暂停朗读
      */
-    override fun pauseReadAloud() {
-        super.pauseReadAloud()
+    override fun pauseReadAloud(abandonFocus: Boolean) {
+        super.pauseReadAloud(abandonFocus)
         textToSpeech?.stop()
     }
 

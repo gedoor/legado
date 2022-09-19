@@ -92,6 +92,7 @@ abstract class BaseReadAloudService : BaseService(),
         super.onDestroy()
         isRun = false
         pause = true
+        abandonFocus()
         unregisterReceiver(broadcastReceiver)
         postEvent(EventBus.ALOUD_STATE, Status.STOP)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
@@ -147,8 +148,11 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun playStop()
 
     @CallSuper
-    open fun pauseReadAloud() {
+    open fun pauseReadAloud(abandonFocus: Boolean = true) {
         pause = true
+        if (abandonFocus) {
+            abandonFocus()
+        }
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
@@ -228,6 +232,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     /**
+     * 请求音频焦点
      * @return 音频焦点
      */
     fun requestFocus(): Boolean {
@@ -239,6 +244,14 @@ abstract class BaseReadAloudService : BaseService(),
             toastOnUi("未获取到音频焦点")
         }
         return requestFocus
+    }
+
+    /**
+     * 放弃音频焦点
+     */
+    private fun abandonFocus() {
+        @Suppress("DEPRECATION")
+        audioManager.abandonAudioFocus(this)
     }
 
     /**
@@ -302,7 +315,7 @@ abstract class BaseReadAloudService : BaseService(),
                 AppLog.put("音频焦点暂时丢失并会很快再次获得,暂停朗读")
                 if (!pause) {
                     needResumeOnAudioFocusGain = true
-                    pauseReadAloud()
+                    pauseReadAloud(false)
                 }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
