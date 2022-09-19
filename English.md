@@ -108,7 +108,8 @@ https://gedoor.github.io/about.html
 * [eBook sources rules](https://alanskycn.gitee.io/teachme)
 * [Update Log](/app/src/main/assets/updateLog.md)
 * [Help Documentation](/app/src/main/assets/help/appHelp.md)
-* [web](https://github.com/gedoor/legado_web_bookshelf)
+* [web bookshelf](https://github.com/gedoor/legado_web_bookshelf)
+* [web source editor](https://github.com/gedoor/legado_web_source_editor)
 
 <a href="#readme">
     <img src="https://img.shields.io/badge/-Top-orange.svg" alt="#" align="right">
