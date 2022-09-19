@@ -149,7 +149,8 @@ data class TextPage(
         removePageAloudSpan()
         var lineStart = 0
         for ((index, textLine) in textLines.withIndex()) {
-            if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + textLine.text.length) {
+            val lineLength = textLine.text.length + if (textLine.isParagraphEnd) 1 else 0
+            if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + lineLength) {
                 for (i in index - 1 downTo 0) {
                     if (textLines[i].isParagraphEnd) {
                         break
@@ -167,7 +168,7 @@ data class TextPage(
                 }
                 break
             }
-            lineStart += textLine.text.length
+            lineStart += lineLength
         }
     }
 
