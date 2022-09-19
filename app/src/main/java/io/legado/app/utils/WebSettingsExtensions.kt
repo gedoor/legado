@@ -13,8 +13,14 @@ import io.legado.app.help.config.AppConfig
 @SuppressLint("RequiresFeature")
 fun WebSettings.setDarkeningAllowed(allow: Boolean) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        WebSettingsCompat.setAlgorithmicDarkeningAllowed(this, allow)
-    } else if (AppConfig.isNightTheme) {
+        kotlin.runCatching {
+            WebSettingsCompat.setAlgorithmicDarkeningAllowed(this, allow)
+            return
+        }.onFailure {
+            it.printOnDebug()
+        }
+    }
+    if (AppConfig.isNightTheme) {
         if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK_STRATEGY)) {
             @Suppress("DEPRECATION")
             WebSettingsCompat.setForceDarkStrategy(
