@@ -155,7 +155,7 @@ class CheckSourceService : BaseService() {
             }
             //校验发现书籍
             if (CheckSource.checkDiscovery) {
-                val exs = source.exploreKinds
+                val exs = source.exploreKinds()
                 var url: String? = null
                 for (ex in exs) {
                     url = ex.url

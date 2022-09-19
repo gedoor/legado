@@ -157,10 +157,6 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         }
     }
 
-    override fun refreshData() {
-        upExploreData(searchView.query?.toString())
-    }
-
     override fun scrollTo(pos: Int) {
         (binding.rvFind.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
     }

@@ -8,6 +8,10 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.SourceAnalyzer
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.io.InputStream
@@ -89,46 +93,66 @@ data class BookSource(
         return bookSourceUrl
     }
 
-    @delegate:Transient
-    @delegate:Ignore
+    @Ignore
     @IgnoredOnParcel
-    val exploreKinds: List<ExploreKind> by lazy {
-        val exploreUrl = exploreUrl ?: return@lazy emptyList()
-        val kinds = arrayListOf<ExploreKind>()
-        var ruleStr = exploreUrl
-        if (ruleStr.isNotBlank()) {
-            kotlin.runCatching {
-                if (exploreUrl.startsWith("<js>", false)
-                    || exploreUrl.startsWith("@js:", false)
-                ) {
-                    val aCache = ACache.get("explore")
-                    ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
-                    if (ruleStr.isBlank()) {
-                        val jsStr = if (exploreUrl.startsWith("@")) {
-                            exploreUrl.substring(4)
-                        } else {
-                            exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
-                        }
-                        ruleStr = evalJS(jsStr).toString().trim()
-                        aCache.put(bookSourceUrl, ruleStr)
-                    }
-                }
-                if (ruleStr.isJsonArray()) {
-                    GSON.fromJsonArray<ExploreKind>(ruleStr).getOrThrow()?.let {
-                        kinds.addAll(it)
-                    }
-                } else {
-                    ruleStr.split("(&&|\n)+".toRegex()).forEach { kindStr ->
-                        val kindCfg = kindStr.split("::")
-                        kinds.add(ExploreKind(kindCfg.first(), kindCfg.getOrNull(1)))
-                    }
-                }
-            }.onFailure {
-                kinds.add(ExploreKind("ERROR:${it.localizedMessage}", it.stackTraceToString()))
-                it.printOnDebug()
-            }
+    private var exploreKinds: List<ExploreKind>? = null
+
+    @Ignore
+    @IgnoredOnParcel
+    private val mutex = Mutex()
+
+    suspend fun exploreKinds(): List<ExploreKind> {
+        exploreKinds?.let { return it }
+        val exploreUrl = exploreUrl
+        if (exploreUrl.isNullOrBlank()) {
+            return emptyList()
         }
-        return@lazy kinds
+        mutex.withLock {
+            exploreKinds?.let { return it }
+            val kinds = arrayListOf<ExploreKind>()
+            var ruleStr: String = exploreUrl
+            withContext(IO) {
+                kotlin.runCatching {
+                    if (exploreUrl.startsWith("<js>", false)
+                        || exploreUrl.startsWith("@js:", false)
+                    ) {
+                        val aCache = ACache.get("explore")
+                        ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
+                        if (ruleStr.isBlank()) {
+                            val jsStr = if (exploreUrl.startsWith("@")) {
+                                exploreUrl.substring(4)
+                            } else {
+                                exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
+                            }
+                            ruleStr = evalJS(jsStr).toString().trim()
+                            aCache.put(bookSourceUrl, ruleStr)
+                        }
+                    }
+                    if (ruleStr.isJsonArray()) {
+                        GSON.fromJsonArray<ExploreKind>(ruleStr).getOrThrow()?.let {
+                            kinds.addAll(it)
+                        }
+                    } else {
+                        ruleStr.split("(&&|\n)+".toRegex()).forEach { kindStr ->
+                            val kindCfg = kindStr.split("::")
+                            kinds.add(ExploreKind(kindCfg.first(), kindCfg.getOrNull(1)))
+                        }
+                    }
+                }.onFailure {
+                    kinds.add(ExploreKind("ERROR:${it.localizedMessage}", it.stackTraceToString()))
+                    it.printOnDebug()
+                }
+            }
+            exploreKinds = kinds
+            return kinds
+        }
+    }
+
+    suspend fun clearExploreKindsCache() {
+        withContext(IO) {
+            ACache.get("explore").remove(bookSourceUrl)
+            exploreKinds = null
+        }
     }
 
     override fun hashCode(): Int {
