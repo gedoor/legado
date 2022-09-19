@@ -18,10 +18,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
-import io.legado.app.ui.book.read.page.entities.column.BaseColumn
-import io.legado.app.ui.book.read.page.entities.column.ImageColumn
-import io.legado.app.ui.book.read.page.entities.column.ReviewColumn
-import io.legado.app.ui.book.read.page.entities.column.TextColumn
+import io.legado.app.ui.book.read.page.entities.column.*
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
@@ -312,9 +309,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun click(x: Float, y: Float): Boolean {
         var handled = false
         touch(x, y) { _, textPos, textPage, textLine, column ->
-            if (column is ReviewColumn) {
-                context.toastOnUi("Button Pressed!")
-                handled = true
+            when (column) {
+                is ButtonColumn -> {
+                    context.toastOnUi("Button Pressed!")
+                    handled = true
+                }
+
+                is ReviewColumn -> {
+                    context.toastOnUi("Button Pressed!")
+                    handled = true
+                }
             }
         }
         return handled
