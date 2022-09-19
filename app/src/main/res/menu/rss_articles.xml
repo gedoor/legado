@@ -8,6 +8,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_refresh_sort"
+        android:title="@string/refresh_sort"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_set_source_variable"
         android:title="@string/set_source_variable"
         app:showAsAction="never" />

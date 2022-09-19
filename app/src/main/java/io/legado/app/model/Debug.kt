@@ -11,6 +11,8 @@ import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -101,11 +103,11 @@ object Debug {
         }
     }
 
-    fun startDebug(scope: CoroutineScope, rssSource: RssSource) {
+    suspend fun startDebug(scope: CoroutineScope, rssSource: RssSource) {
         cancelDebug()
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析")
-        val sort = rssSource.sortUrls().first()
+        val sort = withContext(IO) { rssSource.sortUrls().first() }
         Rss.getArticles(scope, sort.first, sort.second, rssSource, 1)
             .onSuccess {
                 if (it.first.isEmpty()) {

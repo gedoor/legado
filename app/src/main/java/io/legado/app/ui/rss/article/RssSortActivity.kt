@@ -69,6 +69,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 putExtra("type", "rssSource")
                 putExtra("key", viewModel.rssSource?.sourceUrl)
             }
+            R.id.menu_refresh_sort -> viewModel.clearSortCache { upFragments() }
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
                 editSourceResult.launch {
@@ -89,16 +90,18 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     private fun upFragments() {
-        viewModel.rssSource?.sortUrls()?.let {
-            sortList.clear()
-            sortList.addAll(it)
+        launch {
+            viewModel.rssSource?.sortUrls()?.let {
+                sortList.clear()
+                sortList.addAll(it)
+            }
+            if (sortList.size == 1) {
+                binding.tabLayout.gone()
+            } else {
+                binding.tabLayout.visible()
+            }
+            adapter.notifyDataSetChanged()
         }
-        if (sortList.size == 1) {
-            binding.tabLayout.gone()
-        } else {
-            binding.tabLayout.visible()
-        }
-        adapter.notifyDataSetChanged()
     }
 
     private fun setSourceVariable() {

@@ -1034,4 +1034,5 @@
     <string name="async_load_image">异步加载图片</string>
     <string name="ignore_audio_focus_title">忽略音频焦点</string>
     <string name="ignore_audio_focus_summary">允许与其他应用同时播放音频</string>
+    <string name="refresh_sort">刷新分类</string>
 </resources>

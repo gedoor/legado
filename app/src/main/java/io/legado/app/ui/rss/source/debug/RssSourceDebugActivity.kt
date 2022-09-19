@@ -38,7 +38,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
             }
         }
         viewModel.initData(intent.getStringExtra("key")) {
-            startSearch()
+            startDebug()
         }
     }
 
@@ -65,12 +65,11 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
         binding.titleBar.findViewById<SearchView>(R.id.search_view).gone()
     }
 
-    private fun startSearch() {
+    private fun startDebug() {
         adapter.clearItems()
-        viewModel.startDebug({
+        viewModel.rssSource?.let {
             binding.rotateLoading.show()
-        }, {
-            toastOnUi("未获取到源")
-        })
+            viewModel.startDebug(it)
+        } ?: toastOnUi(R.string.error_no_source)
     }
 }

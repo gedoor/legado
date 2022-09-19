@@ -63,4 +63,12 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun clearSortCache(onFinally: () -> Unit) {
+        execute {
+            rssSource?.removeSortCache()
+        }.onFinally {
+            onFinally.invoke()
+        }
+    }
+
 }
