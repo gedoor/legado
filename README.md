@@ -89,7 +89,8 @@ https://gedoor.github.io/about.html
 * [书源规则](https://alanskycn.gitee.io/teachme)
 * [更新日志](/app/src/main/assets/updateLog.md)
 * [帮助文档](/app/src/main/assets/help/appHelp.md)
-* [web端](https://github.com/gedoor/legado_web_bookshelf)
+* [web端书架](https://github.com/gedoor/legado_web_bookshelf)
+* [web端源编辑](https://github.com/gedoor/legado_web_source_editor)
 
 <a href="#readme">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="#" align="right">
