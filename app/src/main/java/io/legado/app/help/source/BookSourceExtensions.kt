@@ -7,9 +7,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
+
+/**
+ * 采用md5作为key可以在分类修改后自动重新计算,不需要手动刷新
+ */
 
 private val mutexMap by lazy { hashMapOf<String, Mutex>() }
-private val exploreKindsMap by lazy { hashMapOf<String, List<ExploreKind>>() }
+private val exploreKindsMap by lazy { ConcurrentHashMap<String, List<ExploreKind>>() }
 private val aCache by lazy { ACache.get("explore") }
 
 private fun BookSource.exploreKindsKey(): String {
