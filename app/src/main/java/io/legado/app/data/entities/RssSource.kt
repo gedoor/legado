@@ -9,8 +9,6 @@ import androidx.room.PrimaryKey
 import com.jayway.jsonpath.DocumentContext
 import io.legado.app.constant.AppPattern
 import io.legado.app.utils.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -133,44 +131,6 @@ data class RssSource(
             sourceGroup = TextUtils.join(",", it)
         }
         return this
-    }
-
-    suspend fun sortUrls(): List<Pair<String, String>> = arrayListOf<Pair<String, String>>().apply {
-        withContext(IO) {
-            kotlin.runCatching {
-                var a = sortUrl
-                if (sortUrl?.startsWith("<js>", false) == true
-                    || sortUrl?.startsWith("@js:", false) == true
-                ) {
-                    val aCache = ACache.get("rssSortUrl")
-                    a = aCache.getAsString(sourceUrl) ?: ""
-                    if (a.isBlank()) {
-                        val jsStr = if (sortUrl!!.startsWith("@")) {
-                            sortUrl!!.substring(4)
-                        } else {
-                            sortUrl!!.substring(4, sortUrl!!.lastIndexOf("<"))
-                        }
-                        a = evalJS(jsStr).toString()
-                        aCache.put(sourceUrl, a)
-                    }
-                }
-                a?.split("(&&|\n)+".toRegex())?.forEach { c ->
-                    val d = c.split("::")
-                    if (d.size > 1)
-                        add(Pair(d[0], d[1]))
-                }
-                if (isEmpty()) {
-                    add(Pair("", sourceUrl))
-                }
-            }
-        }
-    }
-
-    suspend fun removeSortCache() {
-        withContext(IO) {
-            val aCache = ACache.get("rssSortUrl")
-            aCache.remove(sourceUrl)
-        }
     }
 
     fun getDisplayVariableComment(otherComment: String): String {

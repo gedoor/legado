@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.source
 
 import android.os.Handler
 import android.os.Looper
@@ -53,7 +53,7 @@ object SourceHelp {
         val baseUrl = NetworkUtils.getBaseUrl(url)
         baseUrl ?: return false
         if (AppConfig.isGooglePlay) return false
-        try {
+        kotlin.runCatching {
             val host = baseUrl.split("//", ".")
             val base64Url = EncoderUtils.base64Encode("${host[host.lastIndex - 1]}.${host.last()}")
             list18Plus.forEach {
@@ -61,7 +61,6 @@ object SourceHelp {
                     return true
                 }
             }
-        } catch (e: Exception) {
         }
         return false
     }

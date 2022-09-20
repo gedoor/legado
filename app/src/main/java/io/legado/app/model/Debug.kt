@@ -5,14 +5,13 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.*
 import io.legado.app.help.coroutine.CompositeCoroutine
+import io.legado.app.help.source.sortUrls
 import io.legado.app.model.rss.Rss
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -107,7 +106,7 @@ object Debug {
         cancelDebug()
         debugSource = rssSource.sourceUrl
         log(debugSource, "︾开始解析")
-        val sort = withContext(IO) { rssSource.sortUrls().first() }
+        val sort = rssSource.sortUrls().first()
         Rss.getArticles(scope, sort.first, sort.second, rssSource, 1)
             .onSuccess {
                 if (it.first.isEmpty()) {

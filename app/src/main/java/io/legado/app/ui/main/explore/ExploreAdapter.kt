@@ -15,6 +15,8 @@ import io.legado.app.data.entities.rule.ExploreKind
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemFindBookBinding
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.source.clearExploreKindsCache
+import io.legado.app.help.source.exploreKinds
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.dialog.TextDialog

@@ -15,9 +15,9 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityWebViewBinding
-import io.legado.app.help.SourceVerificationHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
+import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.Download

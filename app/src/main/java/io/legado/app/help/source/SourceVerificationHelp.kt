@@ -1,8 +1,10 @@
-package io.legado.app.help
+package io.legado.app.help.source
 
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.CacheManager
+import io.legado.app.help.IntentData
 import io.legado.app.ui.association.VerificationCodeActivity
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.utils.startActivity

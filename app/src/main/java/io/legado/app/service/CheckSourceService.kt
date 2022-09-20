@@ -16,6 +16,7 @@ import io.legado.app.exception.ContentEmptyException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.source.exploreKinds
 import io.legado.app.model.CheckSource
 import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook

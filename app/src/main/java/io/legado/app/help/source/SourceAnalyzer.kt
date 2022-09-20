@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.source
 
 import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath

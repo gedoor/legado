@@ -12,9 +12,9 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogVerificationCodeViewBinding
 import io.legado.app.help.CacheManager
-import io.legado.app.help.SourceVerificationHelp
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
+import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.applyTint
