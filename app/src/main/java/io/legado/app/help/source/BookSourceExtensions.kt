@@ -32,14 +32,14 @@ suspend fun BookSource.exploreKinds(): List<ExploreKind> {
     mutex.withLock {
         exploreKindsMap[exploreKindsKey]?.let { return it }
         val kinds = arrayListOf<ExploreKind>()
-        var ruleStr: String = exploreUrl
         withContext(Dispatchers.IO) {
             kotlin.runCatching {
+                var ruleStr = exploreUrl
                 if (exploreUrl.startsWith("<js>", false)
                     || exploreUrl.startsWith("@js:", false)
                 ) {
-                    ruleStr = aCache.getAsString(bookSourceUrl) ?: ""
-                    if (ruleStr.isBlank()) {
+                    ruleStr = aCache.getAsString(exploreKindsKey)
+                    if (ruleStr.isNullOrBlank()) {
                         val jsStr = if (exploreUrl.startsWith("@")) {
                             exploreUrl.substring(4)
                         } else {
