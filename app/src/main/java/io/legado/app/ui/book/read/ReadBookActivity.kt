@@ -779,7 +779,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         if (book.type != BookType.audio) {
-            viewModel.changeTo(source, book, toc)
+            viewModel.changeTo(book, toc)
         } else {
             ReadAloud.stop(this)
             launch {
