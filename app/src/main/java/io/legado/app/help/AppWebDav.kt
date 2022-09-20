@@ -139,7 +139,6 @@ object AppWebDav {
         authorization?.let {
             val webDav = WebDav(rootWebDavUrl + name, it)
             webDav.downloadTo(zipFilePath, true)
-            @Suppress("BlockingMethodInNonBlockingContext")
             ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
             Restore.restoreDatabase()
             Restore.restoreConfig()
