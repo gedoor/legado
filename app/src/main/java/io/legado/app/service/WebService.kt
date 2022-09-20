@@ -111,6 +111,7 @@ class WebService : BaseService() {
                 stopSelf()
             }
         } else {
+            toastOnUi("web service cant start, no ip address")
             stopSelf()
         }
     }

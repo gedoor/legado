@@ -95,10 +95,12 @@ data class BookSource(
 
     @Ignore
     @IgnoredOnParcel
+    @Transient
     private var exploreKinds: List<ExploreKind>? = null
 
     @Ignore
     @IgnoredOnParcel
+    @Transient
     private val mutex = Mutex()
 
     suspend fun exploreKinds(): List<ExploreKind> {
