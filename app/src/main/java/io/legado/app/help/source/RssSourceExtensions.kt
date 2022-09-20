@@ -8,13 +8,13 @@ import kotlinx.coroutines.withContext
 
 private val aCache by lazy { ACache.get("rssSortUrl") }
 
-private fun RssSource.sortUrlsKey(): String {
+private fun RssSource.getSortUrlsKey(): String {
     return MD5Utils.md5Encode(sourceUrl + sortUrl)
 }
 
 suspend fun RssSource.sortUrls(): List<Pair<String, String>> =
     arrayListOf<Pair<String, String>>().apply {
-        val sortUrlsKey = sortUrlsKey()
+        val sortUrlsKey = getSortUrlsKey()
         withContext(Dispatchers.IO) {
             kotlin.runCatching {
                 var a = sortUrl
@@ -46,6 +46,6 @@ suspend fun RssSource.sortUrls(): List<Pair<String, String>> =
 
 suspend fun RssSource.removeSortCache() {
     withContext(Dispatchers.IO) {
-        aCache.remove(sortUrlsKey())
+        aCache.remove(getSortUrlsKey())
     }
 }

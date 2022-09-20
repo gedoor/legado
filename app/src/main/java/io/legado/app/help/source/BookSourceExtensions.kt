@@ -17,12 +17,12 @@ private val mutexMap by lazy { hashMapOf<String, Mutex>() }
 private val exploreKindsMap by lazy { ConcurrentHashMap<String, List<ExploreKind>>() }
 private val aCache by lazy { ACache.get("explore") }
 
-private fun BookSource.exploreKindsKey(): String {
+private fun BookSource.getExploreKindsKey(): String {
     return MD5Utils.md5Encode(bookSourceUrl + exploreUrl)
 }
 
 suspend fun BookSource.exploreKinds(): List<ExploreKind> {
-    val exploreKindsKey = exploreKindsKey()
+    val exploreKindsKey = getExploreKindsKey()
     exploreKindsMap[exploreKindsKey]?.let { return it }
     val exploreUrl = exploreUrl
     if (exploreUrl.isNullOrBlank()) {
@@ -30,7 +30,7 @@ suspend fun BookSource.exploreKinds(): List<ExploreKind> {
     }
     val mutex = mutexMap[bookSourceUrl] ?: Mutex().apply { mutexMap[bookSourceUrl] = this }
     mutex.withLock {
-        exploreKindsMap[exploreKindsKey()]?.let { return it }
+        exploreKindsMap[exploreKindsKey]?.let { return it }
         val kinds = arrayListOf<ExploreKind>()
         var ruleStr: String = exploreUrl
         withContext(Dispatchers.IO) {
@@ -72,6 +72,6 @@ suspend fun BookSource.exploreKinds(): List<ExploreKind> {
 suspend fun BookSource.clearExploreKindsCache() {
     withContext(Dispatchers.IO) {
         aCache.remove(bookSourceUrl)
-        exploreKindsMap.remove(exploreKindsKey())
+        exploreKindsMap.remove(getExploreKindsKey())
     }
 }
