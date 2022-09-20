@@ -16,6 +16,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
+import splitties.init.appCtx
 
 class AboutFragment : PreferenceFragmentCompat() {
 
@@ -80,14 +81,23 @@ class AboutFragment : PreferenceFragmentCompat() {
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
 
+    /**
+     * 检测更新
+     */
     private fun checkUpdate() {
-        AppUpdate.checkFromGitHub(lifecycleScope) { newVersion, updateBody, url, name ->
-            showDialogFragment(
-                UpdateDialog(newVersion, updateBody, url, name)
-            )
-        }
+        AppUpdate.checkFromGitHub(lifecycleScope)
+            .onSuccess {
+                showDialogFragment(
+                    UpdateDialog(it)
+                )
+            }.onError {
+                appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
+            }
     }
 
+    /**
+     * 显示qq群
+     */
     private fun showQqGroups() {
         alert(titleResource = R.string.join_qq_group) {
             val names = arrayListOf<String>()
@@ -104,6 +114,9 @@ class AboutFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * 加入qq群
+     */
     private fun joinQQGroup(key: String): Boolean {
         val intent = Intent()
         intent.data =
