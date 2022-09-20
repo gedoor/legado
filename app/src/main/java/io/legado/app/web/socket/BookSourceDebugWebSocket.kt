@@ -13,7 +13,9 @@ import splitties.init.appCtx
 
 import java.io.IOException
 
-
+/**
+ * web端书源调试
+ */
 class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     NanoWSD.WebSocket(handshakeRequest),
     CoroutineScope by MainScope(),

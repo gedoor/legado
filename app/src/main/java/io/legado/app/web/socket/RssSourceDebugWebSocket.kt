@@ -13,7 +13,9 @@ import splitties.init.appCtx
 
 import java.io.IOException
 
-
+/**
+ * web端订阅源调试
+ */
 class RssSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     NanoWSD.WebSocket(handshakeRequest),
     CoroutineScope by MainScope(),
