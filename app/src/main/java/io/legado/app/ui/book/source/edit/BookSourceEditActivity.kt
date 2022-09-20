@@ -221,6 +221,7 @@ class BookSourceEditActivity :
             add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
             add(EditEntity("loginUi", source?.loginUi, R.string.login_ui))
             add(EditEntity("loginCheckJs", source?.loginCheckJs, R.string.login_check_js))
+            add(EditEntity("coverDecodeJs", source?.coverDecodeJs, R.string.cover_decode_js))
             add(EditEntity("bookUrlPattern", source?.bookUrlPattern, R.string.book_url_pattern))
             add(EditEntity("header", source?.header, R.string.source_http_header))
             add(EditEntity("variableComment", source?.variableComment, R.string.variable_comment))
@@ -345,6 +346,7 @@ class BookSourceEditActivity :
                 "loginUrl" -> source.loginUrl = it.value
                 "loginUi" -> source.loginUi = it.value
                 "loginCheckJs" -> source.loginCheckJs = it.value
+                "coverDecodeJs" -> source.coverDecodeJs = it.value
                 "bookUrlPattern" -> source.bookUrlPattern = it.value
                 "header" -> source.header = it.value
                 "bookSourceComment" -> source.bookSourceComment = it.value

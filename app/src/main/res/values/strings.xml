@@ -877,7 +877,7 @@
     <string name="anti_alias">Anti-Aliasing</string>
     <string name="pref_anti_alias_summary">Anti-Aliasing when draw picture</string>
     <string name="upload_url">upload url</string>
-    <string name="download_url_rule">下载URL规则</string>
+    <string name="download_url_rule">downloadUrlRule(downloadUrls)</string>
     <string name="export_success">export success</string>
     <string name="path">path</string>
     <string name="direct_link_upload_rule">直链上传规则</string>
@@ -1035,4 +1035,5 @@
     <string name="ignore_audio_focus_title">忽略音频焦点</string>
     <string name="ignore_audio_focus_summary">允许与其他应用同时播放音频</string>
     <string name="refresh_sort">刷新分类</string>
+    <string name="cover_decode_js">Decode Cover Js(coverDecodeJs)</string>
 </resources>

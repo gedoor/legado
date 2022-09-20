@@ -9,10 +9,12 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.addHeaders
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.isWifiConnect
+import io.legado.app.utils.ImageUtils
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
@@ -20,6 +22,7 @@ import okhttp3.ResponseBody
 import splitties.init.appCtx
 import java.io.IOException
 import java.io.InputStream
+import java.io.ByteArrayInputStream
 
 
 class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Options) :
@@ -27,6 +30,7 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
     private var stream: InputStream? = null
     private var responseBody: ResponseBody? = null
     private var callback: DataFetcher.DataCallback<in InputStream>? = null
+    private var source: BaseSource? = null
 
     @Volatile
     private var call: Call? = null
@@ -40,7 +44,7 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
         val requestBuilder: Request.Builder = Request.Builder().url(url.toStringUrl())
         val headerMap = HashMap<String, String>()
         options.get(OkHttpModelLoader.sourceOriginOption)?.let { sourceUrl ->
-            val source = appDb.bookSourceDao.getBookSource(sourceUrl)
+            source = appDb.bookSourceDao.getBookSource(sourceUrl)
                 ?: appDb.rssSourceDao.getByKey(sourceUrl)
             source?.getHeaderMap(true)?.let {
                 headerMap.putAll(it)
@@ -81,9 +85,17 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
     override fun onResponse(call: Call, response: Response) {
         responseBody = response.body
         if (response.isSuccessful) {
-            val contentLength: Long = Preconditions.checkNotNull(responseBody).contentLength()
-            stream = ContentLengthInputStream.obtain(responseBody!!.byteStream(), contentLength)
-            callback?.onDataReady(stream)
+            val decodeResult = ImageUtils.decode(
+                url.toStringUrl(), responseBody!!.byteStream(),
+                isCover = true, source
+            )
+            if (decodeResult == null) {
+                callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
+            } else {
+                val contentLength: Long = if (decodeResult is ByteArrayInputStream) decodeResult.available().toLong() else Preconditions.checkNotNull(responseBody).contentLength()
+                stream = ContentLengthInputStream.obtain(decodeResult, contentLength)
+                callback?.onDataReady(stream)
+            }
         } else {
             callback?.onLoadFailed(HttpException(response.message, response.code))
         }
