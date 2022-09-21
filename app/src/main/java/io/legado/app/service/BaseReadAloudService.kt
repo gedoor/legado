@@ -239,7 +239,7 @@ abstract class BaseReadAloudService : BaseService(),
         if (AppConfig.ignoreAudioFocus) {
             return true
         }
-        val requestFocus = MediaHelp.requestFocus(audioManager, mFocusRequest)
+        val requestFocus = MediaHelp.requestFocus(mFocusRequest)
         if (!requestFocus) {
             toastOnUi("未获取到音频焦点")
         }

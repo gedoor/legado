@@ -8,6 +8,7 @@ import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import io.legado.app.R
+import splitties.systemservices.audioManager
 
 object MediaHelp {
 
@@ -50,13 +51,8 @@ object MediaHelp {
     /**
      * @return 音频焦点
      */
-    fun requestFocus(
-        audioManager: AudioManager,
-        focusRequest: AudioFocusRequestCompat?
-    ): Boolean {
-        val request = focusRequest?.let {
-            AudioManagerCompat.requestAudioFocus(audioManager, focusRequest)
-        } ?: AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    fun requestFocus(focusRequest: AudioFocusRequestCompat): Boolean {
+        val request = AudioManagerCompat.requestAudioFocus(audioManager, focusRequest)
         return request == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 
