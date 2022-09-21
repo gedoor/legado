@@ -145,7 +145,7 @@ class FileAssociationActivity :
                             if (doc == null || fileDoc.lastModified > doc.lastModified()) {
                                 if (doc == null) {
                                     doc = treeDoc.createFile(FileUtils.getMimeType(name), name)
-                                        ?: throw SecurityException("Permission Denial")
+                                        ?: throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
                                 }
                                 contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
                                     inputStream.copyTo(oStream)

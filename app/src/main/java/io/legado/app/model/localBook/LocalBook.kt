@@ -268,7 +268,7 @@ object LocalBook {
             var doc = treeDoc!!.findFile(fileName)
             if (doc == null) {
                 doc = treeDoc.createFile(FileUtils.getMimeType(fileName), fileName)
-                    ?: throw SecurityException("Permission Denial")
+                    ?: throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
             }
             appCtx.contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
                 inputStream.copyTo(oStream)

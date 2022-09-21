@@ -55,15 +55,15 @@ object ImageUtils {
     }
 
 
-   private fun getRuleJs(
-       source: BaseSource?, isCover: Boolean
-   ): String? {
-      return when (source) {
-          is BookSource ->
-             if (isCover) source?.coverDecodeJs else source?.getContentRule()?.imageDecode
-          is RssSource -> source?.coverDecodeJs
-          else -> null
-      }
-   }
+    private fun getRuleJs(
+        source: BaseSource?, isCover: Boolean
+    ): String? {
+        return when (source) {
+            is BookSource ->
+                if (isCover) source.coverDecodeJs else source.getContentRule().imageDecode
+            is RssSource -> source.coverDecodeJs
+            else -> null
+        }
+    }
 
 }
