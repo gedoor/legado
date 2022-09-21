@@ -56,7 +56,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
-        MediaHelp.getFocusRequest(this)
+        MediaHelp.buildAudioFocusRequestCompat(this)
     }
     private val mediaSessionCompat: MediaSessionCompat by lazy {
         MediaSessionCompat(this, "readAloud")

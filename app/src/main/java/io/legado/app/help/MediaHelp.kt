@@ -10,6 +10,7 @@ import androidx.media.AudioManagerCompat
 import io.legado.app.R
 
 object MediaHelp {
+
     const val MEDIA_SESSION_ACTIONS = (PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
             or PlaybackStateCompat.ACTION_REWIND
             or PlaybackStateCompat.ACTION_PLAY
@@ -32,17 +33,19 @@ object MediaHelp {
             or PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE
             or PlaybackStateCompat.ACTION_SET_CAPTIONING_ENABLED)
 
-    fun getFocusRequest(audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener): AudioFocusRequestCompat {
+    fun buildAudioFocusRequestCompat(
+        audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener
+    ): AudioFocusRequestCompat {
         val mPlaybackAttributes = AudioAttributesCompat.Builder()
             .setUsage(AudioAttributesCompat.USAGE_MEDIA)
             .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
             .build()
         return AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
             .setAudioAttributes(mPlaybackAttributes)
-            //.setAcceptsDelayedFocusGain(true)
             .setOnAudioFocusChangeListener(audioFocusChangeListener)
             .build()
     }
+
 
     /**
      * @return 音频焦点

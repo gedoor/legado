@@ -62,7 +62,7 @@ class AudioPlayService : BaseService(),
     }
 
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
-        MediaHelp.getFocusRequest(this)
+        MediaHelp.buildAudioFocusRequestCompat(this)
     }
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayer.Builder(this).setLoadControl(
