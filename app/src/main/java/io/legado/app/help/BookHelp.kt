@@ -136,31 +136,19 @@ object BookHelp {
         downloadImages.add(src)
         val analyzeUrl = AnalyzeUrl(src, source = bookSource)
         try {
-            var bytes = analyzeUrl.getByteArrayAwait()
+            val bytes = analyzeUrl.getByteArrayAwait()
             //某些图片被加密，需要进一步解密
-            bookSource?.getContentRule()?.imageDecode?.let { imageDecode ->
-                if (imageDecode.isBlank()) {
-                    return@let
-                }
-                kotlin.runCatching {
-                    bookSource.evalJS(imageDecode) {
-                        put("book", book)
-                        put("result", bytes)
-                        put("src", src)
-                    } as ByteArray
-                }.onSuccess {
-                    bytes = it
-                }.onFailure {
-                    AppLog.putDebug("${src}解密bytes错误", it)
-                }
+            ImageUtils.decode(
+              src, bytes, isCover = false, bookSource, book
+            )?.let {
+                FileUtils.createFileIfNotExist(
+                    downloadDir,
+                    cacheFolderName,
+                    book.getFolderName(),
+                    cacheImageFolderName,
+                    "${MD5Utils.md5Encode16(src)}.${getImageSuffix(src)}"
+                ).writeBytes(it)
             }
-            FileUtils.createFileIfNotExist(
-                downloadDir,
-                cacheFolderName,
-                book.getFolderName(),
-                cacheImageFolderName,
-                "${MD5Utils.md5Encode16(src)}.${getImageSuffix(src)}"
-            ).writeBytes(bytes)
         } catch (e: Exception) {
             AppLog.putDebug("${src}下载错误", e)
         } finally {

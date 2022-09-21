@@ -872,7 +872,7 @@
     <string name="anti_alias">抗鋸齒</string>
     <string name="pref_anti_alias_summary">繪製圖片時抗鋸齒</string>
     <string name="upload_url">上傳URL</string>
-    <string name="download_url_rule">下載URL規則</string>
+    <string name="download_url_rule">下载URL规则(downloadUrls)</string>
     <string name="sort_by_respondTime">響應時間排序</string>
     <string name="export_success">導出成功</string>
     <string name="path">路徑</string>
@@ -1032,4 +1032,5 @@
     <string name="ignore_audio_focus_title">忽略音频焦点</string>
     <string name="ignore_audio_focus_summary">允许与其他应用同时播放音频</string>
     <string name="refresh_sort">刷新分类</string>
+    <string name="cover_decode_js">封面解密（coverDecodeJs）</string>
 </resources>

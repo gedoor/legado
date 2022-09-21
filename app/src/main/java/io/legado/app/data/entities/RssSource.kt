@@ -40,6 +40,8 @@ data class RssSource(
     override var loginUi: String? = null,
     //登录检测js
     var loginCheckJs: String? = null,
+    //封面解密js
+    var coverDecodeJs: String? = null,
     var sortUrl: String? = null,
     var singleUrl: Boolean = false,
     /*列表规则*/
@@ -58,6 +60,9 @@ data class RssSource(
     var enableJs: Boolean = true,
     var loadWithBaseUrl: Boolean = true,
     /*其它规则*/
+    // 最后更新时间，用于排序
+    @ColumnInfo(defaultValue = "0")
+    var lastUpdateTime: Long = 0,
     var customOrder: Int = 0
 ) : Parcelable, BaseSource {
 
@@ -90,6 +95,7 @@ data class RssSource(
                 && equal(loginUrl, source.loginUrl)
                 && equal(loginUi, source.loginUi)
                 && equal(loginCheckJs, source.loginCheckJs)
+                && equal(coverDecodeJs, source.coverDecodeJs)
                 && equal(sortUrl, source.sortUrl)
                 && singleUrl == source.singleUrl
                 && articleStyle == source.articleStyle
@@ -174,7 +180,9 @@ data class RssSource(
                     enableJs = doc.readBool("$.enableJs") ?: true,
                     loadWithBaseUrl = doc.readBool("$.loadWithBaseUrl") ?: true,
                     enabledCookieJar = doc.readBool("$.enabledCookieJar") ?: false,
-                    customOrder = doc.readInt("$.customOrder") ?: 0
+                    customOrder = doc.readInt("$.customOrder") ?: 0,
+                    lastUpdateTime = doc.readLong("$.lastUpdateTime") ?: 0L,
+                    coverDecodeJs = doc.readString("$.coverDecodeJs")
                 )
             }
         }

@@ -155,5 +155,8 @@ let options = {
 > 可直接填写链接或者JavaScript，如果执行结果是字符串链接将会自动打开浏览器
 
 * 图片解密
-> 适用于图片需要二次解密的情况，直接填写JavaScript，返回解密后的bytes
-> 部分变量说明：java（仅支持[js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt)），result为待解密图片的bytes，src为图片链接
+> 适用于图片需要二次解密的情况，直接填写JavaScript，返回解密后的`ByteArray`  
+> 部分变量说明：java（仅支持[js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt)），result为待解密图片的`ByteArray`，src为图片链接
+
+* 封面解密
+> 同图片解密 其中result为待解密封面的`inputStream`

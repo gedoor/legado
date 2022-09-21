@@ -54,6 +54,8 @@ data class BookSource(
     override var loginUi: String? = null,
     // 登录检测js
     var loginCheckJs: String? = null,
+    // 封面解密js
+    var coverDecodeJs: String? = null,
     // 注释
     var bookSourceComment: String? = null,
     // 自定义变量说明
@@ -206,6 +208,7 @@ data class BookSource(
                 && equal(loginUrl, source.loginUrl)
                 && equal(loginUi, source.loginUi)
                 && equal(loginCheckJs, source.loginCheckJs)
+                && equal(coverDecodeJs, source.coverDecodeJs)
                 && equal(exploreUrl, source.exploreUrl)
                 && equal(searchUrl, source.searchUrl)
                 && getSearchRule() == source.getSearchRule()

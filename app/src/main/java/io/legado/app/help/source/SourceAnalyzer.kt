@@ -83,6 +83,7 @@ object SourceAnalyzer {
                     loginUrl = jsonItem.readString("loginUrl")
                     loginUi = jsonItem.readString("loginUi")
                     loginCheckJs = jsonItem.readString("loginCheckJs")
+                    coverDecodeJs = jsonItem.readString("coverDecodeJs")
                     bookSourceComment = jsonItem.readString("bookSourceComment") ?: ""
                     bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
                     customOrder = jsonItem.readInt("serialNumber") ?: 0
@@ -165,6 +166,7 @@ object SourceAnalyzer {
                     sourceAny.loginUi?.toString()
                 }
                 source.loginCheckJs = sourceAny.loginCheckJs
+                source.coverDecodeJs = sourceAny.coverDecodeJs
                 source.bookSourceComment = sourceAny.bookSourceComment
                 source.variableComment = sourceAny.variableComment
                 source.lastUpdateTime = sourceAny.lastUpdateTime
@@ -236,6 +238,7 @@ object SourceAnalyzer {
         var loginUrl: Any? = null,                      // 登录规则
         var loginUi: Any? = null,                       // 登录UI
         var loginCheckJs: String? = null,               // 登录检测js
+        var coverDecodeJs: String? = null,               // 封面解密js
         var bookSourceComment: String? = "",            // 书源注释
         var variableComment: String? = null,            // 变量说明
         var lastUpdateTime: Long = 0,                   // 最后更新时间，用于排序
