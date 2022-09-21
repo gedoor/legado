@@ -8,7 +8,6 @@ import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.jsonPath
 import io.legado.app.utils.readString
-import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import splitties.init.appCtx
 
@@ -16,10 +15,8 @@ object AppUpdate {
 
     fun checkFromGitHub(
         scope: CoroutineScope,
-        showErrorMsg: Boolean = true,
-        callback: (newVersion: String, updateBody: String, url: String, fileName: String) -> Unit
-    ) {
-        Coroutine.async(scope) {
+    ): Coroutine<UpdateInfo> {
+        return Coroutine.async(scope) {
             val lastReleaseUrl = appCtx.getString(R.string.latest_release_api)
             val body = okHttpClient.newCallStrResponse {
                 url(lastReleaseUrl)
@@ -37,18 +34,18 @@ object AppUpdate {
                     ?: throw NoStackTraceException("获取新版本出错")
                 val fileName = rootDoc.readString("$.assets[0].name")
                     ?: throw NoStackTraceException("获取新版本出错")
-                return@async arrayOf(tagName, updateBody, downloadUrl, fileName)
+                return@async UpdateInfo(tagName, updateBody, downloadUrl, fileName)
             } else {
                 throw NoStackTraceException("已是最新版本")
             }
         }.timeout(10000)
-            .onSuccess {
-                callback.invoke(it[0], it[1], it[2], it[3])
-            }.onError {
-                if (showErrorMsg) {
-                    appCtx.toastOnUi("检测更新\n${it.localizedMessage}")
-                }
-            }
     }
+
+    data class UpdateInfo(
+        val tagName: String,
+        val updateLog: String,
+        val downloadUrl: String,
+        val fileName: String
+    )
 
 }
