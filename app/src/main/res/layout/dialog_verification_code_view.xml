@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         tools:ignore="UnusedAttribute" />
 
     <io.legado.app.ui.widget.text.TextInputLayout
