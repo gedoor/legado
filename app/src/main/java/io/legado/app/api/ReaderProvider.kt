@@ -49,7 +49,12 @@ class ReaderProvider : ContentProvider() {
         }
     }
 
-    override fun onCreate() = false
+    override fun onCreate(): Boolean {
+        context?.let { context ->
+            ShortCuts.buildShortCuts(context)
+        }
+        return false
+    }
 
     override fun delete(
         uri: Uri,

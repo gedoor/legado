@@ -35,11 +35,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!-- 图标1 -->
         <activity
@@ -52,11 +47,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!-- 图标2 -->
         <activity
@@ -69,11 +59,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!-- 图标3 -->
         <activity
@@ -86,11 +71,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!-- 图标4 -->
         <activity
@@ -103,11 +83,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!-- 图标5 -->
         <activity
@@ -120,11 +95,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!-- 图标6 -->
         <activity
@@ -137,11 +107,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!-- 主界面 -->
         <activity
