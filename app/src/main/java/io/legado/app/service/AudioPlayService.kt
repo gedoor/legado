@@ -560,7 +560,7 @@ class AudioPlayService : BaseService(),
         if (AppConfig.ignoreAudioFocus) {
             return true
         }
-        return MediaHelp.requestFocus(audioManager, mFocusRequest)
+        return MediaHelp.requestFocus(mFocusRequest)
     }
 
     /**
