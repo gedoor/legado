@@ -54,7 +54,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
                             2 -> ChineseUtils.s2t(chapter.title)
                             else -> chapter.title
                         }
-                        kotlin.coroutines.coroutineContext.ensureActive()
+                        coroutineContext.ensureActive()
                         mContent = contentProcessor!!.getContent(
                             book, chapter, chapterContent,
                             chineseConvert = true,
@@ -108,9 +108,9 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         query: String
     ): Pair<Int, String> {
         // 左右移动20个字符，构建关键词周边文字，在搜索结果里显示
-        // todo: 判断段落，只在关键词所在段落内分割
-        // todo: 利用标点符号分割完整的句
-        // todo: length和设置结合，自由调整周边文字长度
+        // 判断段落，只在关键词所在段落内分割
+        // 利用标点符号分割完整的句
+        // length和设置结合，自由调整周边文字长度
         val length = 20
         var po1 = queryIndexInContent - length
         var po2 = queryIndexInContent + query.length + length
