@@ -172,7 +172,7 @@ dependencies {
 
     //compose
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.5.1'
+    implementation 'androidx.activity:activity-compose:1.6.0'
     // Compose Material Design
     implementation "androidx.compose.material:material:$compose_version"
     // Animations
