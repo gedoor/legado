@@ -22,9 +22,9 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.coroutine.OrderCoroutine
 import io.legado.app.utils.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.ag2s.epublib.domain.*
@@ -104,10 +104,13 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val bookDoc = DocumentUtils.createFileIfNotExist(doc, filename)
             ?: throw NoStackTraceException("创建文档失败，请尝试重新设置导出文件夹")
         val stringBuilder = StringBuilder()
+        val exportToWebDav = AppConfig.exportToWebDav
         context.contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
             getAllContents(book) { text, srcList ->
                 bookOs.write(text.toByteArray(Charset.forName(AppConfig.exportCharset)))
-                stringBuilder.append(text)
+                if (exportToWebDav) {
+                    stringBuilder.append(text)
+                }
                 srcList?.forEach {
                     val vFile = BookHelp.getImage(book, it.third)
                     if (vFile.exists()) {
@@ -133,9 +136,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         val stringBuilder = StringBuilder()
+        val exportToWebDav = AppConfig.exportToWebDav
         getAllContents(book) { text, srcList ->
             bookFile.appendText(text, Charset.forName(AppConfig.exportCharset))
-            stringBuilder.append(text)
+            if (exportToWebDav) {
+                stringBuilder.append(text)
+            }
             srcList?.forEach {
                 val vFile = BookHelp.getImage(book, it.third)
                 if (vFile.exists()) {
@@ -171,37 +177,61 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             )
         }"
         append(qy, null)
-        appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
-            coroutineContext.ensureActive()
-            upAdapterLiveData.postValue(book.bookUrl)
-            exportProgress[book.bookUrl] = index
-            BookHelp.getContent(book, chapter).let { content ->
-                val content1 = contentProcessor
-                    .getContent(
-                        book,
-                        chapter,
-                        content ?: "null",
-                        includeTitle = !AppConfig.exportNoChapterName,
-                        useReplace = useReplace,
-                        chineseConvert = false,
-                        reSegment = false
-                    ).joinToString("\n")
-                if (AppConfig.exportPictureFile) {
-                    //txt导出图片文件
-                    val srcList = arrayListOf<Triple<String, Int, String>>()
-                    content?.split("\n")?.forEachIndexed { index, text ->
-                        val matcher = AppPattern.imgPattern.matcher(text)
-                        while (matcher.find()) {
-                            matcher.group(1)?.let {
-                                val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
-                                srcList.add(Triple(chapter.title, index, src))
-                            }
+        if (AppConfig.parallelExportBook) {
+            val oc =
+                OrderCoroutine<Pair<String, ArrayList<Triple<String, Int, String>>?>>(AppConfig.threadCount)
+            appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                oc.submit { getExportData(book, chapter, contentProcessor, useReplace) }
+            }
+            oc.collect { index, result ->
+                upAdapterLiveData.postValue(book.bookUrl)
+                exportProgress[book.bookUrl] = index
+                append.invoke(result.first, result.second)
+            }
+        } else {
+            appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
+                coroutineContext.ensureActive()
+                upAdapterLiveData.postValue(book.bookUrl)
+                exportProgress[book.bookUrl] = index
+                val result = getExportData(book, chapter, contentProcessor, useReplace)
+                append.invoke(result.first, result.second)
+            }
+        }
+
+    }
+
+    private suspend fun getExportData(
+        book: Book,
+        chapter: BookChapter,
+        contentProcessor: ContentProcessor,
+        useReplace: Boolean
+    ): Pair<String, ArrayList<Triple<String, Int, String>>?> {
+        BookHelp.getContent(book, chapter).let { content ->
+            val content1 = contentProcessor
+                .getContent(
+                    book,
+                    chapter,
+                    content ?: "null",
+                    includeTitle = !AppConfig.exportNoChapterName,
+                    useReplace = useReplace,
+                    chineseConvert = false,
+                    reSegment = false
+                ).joinToString("\n")
+            if (AppConfig.exportPictureFile) {
+                //txt导出图片文件
+                val srcList = arrayListOf<Triple<String, Int, String>>()
+                content?.split("\n")?.forEachIndexed { index, text ->
+                    val matcher = AppPattern.imgPattern.matcher(text)
+                    while (matcher.find()) {
+                        matcher.group(1)?.let {
+                            val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
+                            srcList.add(Triple(chapter.title, index, src))
                         }
                     }
-                    append.invoke("\n\n$content1", srcList)
-                } else {
-                    append.invoke("\n\n$content1", null)
                 }
+                return Pair("\n\n$content1", srcList)
+            } else {
+                return Pair("\n\n$content1", null)
             }
         }
     }
@@ -422,7 +452,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             .asBitmap()
             .load(book.getDisplayCover())
             .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
                     val stream = ByteArrayOutputStream()
                     resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val byteArray: ByteArray = stream.toByteArray()
@@ -491,8 +524,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             while (matcher.find()) {
                 matcher.group(1)?.let {
                     val src = NetworkUtils.getAbsoluteURL(chapter.url, it)
-                    val originalHref = "${MD5Utils.md5Encode16(src)}.${BookHelp.getImageSuffix(src)}"
-                    val href = "Images/${MD5Utils.md5Encode16(src)}.${BookHelp.getImageSuffix(src)}"
+                    val originalHref =
+                        "${MD5Utils.md5Encode16(src)}.${BookHelp.getImageSuffix(src)}"
+                    val href =
+                        "Images/${MD5Utils.md5Encode16(src)}.${BookHelp.getImageSuffix(src)}"
                     val vFile = BookHelp.getImage(book, src)
                     val fp = FileResourceProvider(vFile.parent)
                     if (vFile.exists()) {

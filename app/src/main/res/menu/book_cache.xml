@@ -50,6 +50,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_parallel_export"
+        android:title="@string/parallel_export_book"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_export_folder"
         android:title="@string/export_folder"
         app:showAsAction="never" />

@@ -113,6 +113,7 @@ object PreferKey {
     const val showAddToShelfAlert = "showAddToShelfAlert"
     const val asyncLoadImage = "asyncLoadImage"
     const val ignoreAudioFocus = "ignoreAudioFocus"
+    const val parallelExportBook = "parallelExportBook"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

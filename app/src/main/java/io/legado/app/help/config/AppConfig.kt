@@ -255,6 +255,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.exportPictureFile, value)
         }
 
+    var parallelExportBook: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.parallelExportBook, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.parallelExportBook, value)
+        }
+
     var changeSourceCheckAuthor: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.changeSourceCheckAuthor)
         set(value) {

@@ -81,33 +81,35 @@ class ContentProcessor private constructor(
         reSegment: Boolean = true
     ): List<String> {
         var mContent = content
-        //去除重复标题
-        try {
-            val name = Pattern.quote(book.name)
-            val title = Pattern.quote(chapter.title)
-            val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*".toRegex()
-            mContent = mContent.replace(titleRegex, "")
-        } catch (e: Exception) {
-            AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
-        }
-        if (reSegment && book.getReSegment()) {
-            //重新分段
-            mContent = ContentHelp.reSegment(mContent, chapter.title)
-        }
-        if (chineseConvert) {
-            //简繁转换
+        if (content != "null") {
+            //去除重复标题
             try {
-                when (AppConfig.chineseConverterType) {
-                    1 -> mContent = ChineseUtils.t2s(mContent)
-                    2 -> mContent = ChineseUtils.s2t(mContent)
-                }
+                val name = Pattern.quote(book.name)
+                val title = Pattern.quote(chapter.title)
+                val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*".toRegex()
+                mContent = mContent.replace(titleRegex, "")
             } catch (e: Exception) {
-                appCtx.toastOnUi("简繁转换出错")
+                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
             }
-        }
-        if (useReplace && book.getUseReplaceRule()) {
-            //替换
-            mContent = replaceContent(mContent)
+            if (reSegment && book.getReSegment()) {
+                //重新分段
+                mContent = ContentHelp.reSegment(mContent, chapter.title)
+            }
+            if (chineseConvert) {
+                //简繁转换
+                try {
+                    when (AppConfig.chineseConverterType) {
+                        1 -> mContent = ChineseUtils.t2s(mContent)
+                        2 -> mContent = ChineseUtils.s2t(mContent)
+                    }
+                } catch (e: Exception) {
+                    appCtx.toastOnUi("简繁转换出错")
+                }
+            }
+            if (useReplace && book.getUseReplaceRule()) {
+                //替换
+                mContent = replaceContent(mContent)
+            }
         }
         if (includeTitle) {
             //重新添加标题
