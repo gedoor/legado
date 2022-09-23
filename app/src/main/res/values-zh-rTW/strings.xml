@@ -1035,7 +1035,7 @@
     <string name="ignore_audio_focus_summary">允许与其他应用同时播放音频</string>
     <string name="refresh_sort">刷新分类</string>
     <string name="cover_decode_js">封面解密（coverDecodeJs）</string>
-    <string name="net_no_group">网络为分组</string>
+    <string name="net_no_group">网络未分组</string>
     <string name="local_no_group">本地未分组</string>
     <string name="parallel_export_book">多线程导出TXT</string>
 </resources>
