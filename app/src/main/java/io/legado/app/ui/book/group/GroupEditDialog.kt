@@ -47,6 +47,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
         @Suppress("DEPRECATION")
         bookGroup = arguments?.getParcelable("group")
         bookGroup?.let {
+            binding.btnDelete.visible(it.groupId > 0)
             binding.tieGroupName.setText(it.groupName)
             binding.ivCover.load(it.cover)
         } ?: let {
