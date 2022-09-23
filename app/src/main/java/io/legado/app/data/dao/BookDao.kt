@@ -38,7 +38,7 @@ interface BookDao {
 
     @Query(
         """
-        select * from books where type != ${BookType.audio} and origin != '${BookType.local}' 
+        select * from books where type != ${BookType.audio} and origin = '${BookType.local}' 
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         """
     )
