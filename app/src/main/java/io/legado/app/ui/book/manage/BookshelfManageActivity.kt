@@ -140,11 +140,12 @@ class BookshelfManageActivity :
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             when (groupId) {
-                AppConst.rootGroupId -> appDb.bookDao.flowNoGroup()
+                AppConst.rootGroupId -> appDb.bookDao.flowNetNoGroup()
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
-                AppConst.bookGroupNoneId -> appDb.bookDao.flowNoGroup()
+                AppConst.bookGroupNetNoneId -> appDb.bookDao.flowNetNoGroup()
+                AppConst.bookGroupLocalNoneId -> appDb.bookDao.flowLocalNoGroup()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { books ->
                 when (getPrefInt(PreferKey.bookshelfSort)) {

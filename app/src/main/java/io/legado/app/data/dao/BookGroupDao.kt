@@ -20,18 +20,27 @@ interface BookGroupDao {
 
     @get:Query(
         """
-        SELECT * FROM book_groups where (groupId >= 0 and show > 0)
+        with const as (SELECT sum(groupId) sumGroupId FROM book_groups where groupId > 0)
+        SELECT book_groups.* FROM book_groups, const where (groupId >= 0 and show > 0)
+        or (groupId = -1 and show > 0)
+        or (groupId = -2 and show > 0 and (select count(bookUrl) from books where origin = '${BookType.local}') > 0)
+        or (groupId = -3 and show > 0 and (select count(bookUrl) from books where type = ${BookType.audio}) > 0)
         or (groupId = -4 and show > 0 
             and (
                 select count(bookUrl) from books 
                 where type != '${BookType.audio}'
                 and origin != '${BookType.local}' 
-                and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
+                and const.sumGroupId & `group` = 0
             ) > 0
         )
-        or (groupId = -3 and show > 0 and (select count(bookUrl) from books where type = ${BookType.audio}) > 0)
-        or (groupId = -2 and show > 0 and (select count(bookUrl) from books where origin = '${BookType.local}') > 0)
-        or (groupId = -1 and show > 0)
+        or (groupId = -5 and show > 0 
+            and (
+                select count(bookUrl) from books 
+                where type != '${BookType.audio}'
+                and origin = '${BookType.local}' 
+                and const.sumGroupId & `group` = 0
+            ) > 0
+        )
         ORDER BY `order`"""
     )
     val show: LiveData<List<BookGroup>>

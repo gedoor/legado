@@ -24,7 +24,8 @@ data class BookGroup(
             AppConst.bookGroupAllId -> "$groupName(${context.getString(R.string.all)})"
             AppConst.bookGroupAudioId -> "$groupName(${context.getString(R.string.audio)})"
             AppConst.bookGroupLocalId -> "$groupName(${context.getString(R.string.local)})"
-            AppConst.bookGroupNoneId -> "$groupName(${context.getString(R.string.no_group)})"
+            AppConst.bookGroupNetNoneId -> "$groupName(${context.getString(R.string.net_no_group)})"
+            AppConst.bookGroupLocalNoneId -> "$groupName(${context.getString(R.string.local_no_group)})"
             else -> groupName
         }
     }
