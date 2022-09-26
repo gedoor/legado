@@ -53,6 +53,9 @@ fun AppCompatActivity.readUri(
     } catch (e: Exception) {
         e.printOnDebug()
         toastOnUi(e.localizedMessage ?: "read uri error")
+        if (e is SecurityException) {
+            throw e
+        }
     }
 }
 
