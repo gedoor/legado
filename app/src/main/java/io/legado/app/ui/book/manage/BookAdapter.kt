@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
+import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
@@ -52,6 +53,11 @@ class BookAdapter(context: Context, val callBack: CallBack) :
             tvAuthor.visibility = if (item.author.isEmpty()) View.GONE else View.VISIBLE
             tvGroupS.text = getGroupName(item.group)
             checkbox.isChecked = selectedBooks.contains(item)
+            if (item.isLocalBook()) {
+                tvOrigin.setText(R.string.local_book)
+            } else {
+                tvOrigin.text = item.originName
+            }
         }
     }
 
