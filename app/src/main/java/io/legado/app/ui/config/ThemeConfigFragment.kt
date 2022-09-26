@@ -304,7 +304,11 @@ class ThemeConfigFragment : PreferenceFragment(),
     private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
         readUri(uri) { fileDoc, inputStream ->
             var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, preferenceKey, fileDoc.name)
+            val suffix = fileDoc.name.substringAfterLast(".")
+            val fileName = uri.inputStream(requireContext())!!.use {
+                MD5Utils.md5Encode(it) + ".$suffix"
+            }
+            file = FileUtils.createFileIfNotExist(file, preferenceKey, fileName)
             FileOutputStream(file).use {
                 inputStream.copyTo(it)
             }

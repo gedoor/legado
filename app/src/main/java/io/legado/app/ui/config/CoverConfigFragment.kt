@@ -140,7 +140,11 @@ class CoverConfigFragment : PreferenceFragment(),
     private fun setCoverFromUri(preferenceKey: String, uri: Uri) {
         readUri(uri) { fileDoc, inputStream ->
             var file = requireContext().externalFiles
-            file = FileUtils.createFileIfNotExist(file, "covers", fileDoc.name)
+            val suffix = fileDoc.name.substringAfterLast(".")
+            val fileName = uri.inputStream(requireContext())!!.use {
+                MD5Utils.md5Encode(it) + ".$suffix"
+            }
+            file = FileUtils.createFileIfNotExist(file, "covers", fileName)
             FileOutputStream(file).use {
                 inputStream.copyTo(it)
             }
