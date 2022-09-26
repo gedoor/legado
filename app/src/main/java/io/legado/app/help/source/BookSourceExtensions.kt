@@ -71,7 +71,8 @@ suspend fun BookSource.exploreKinds(): List<ExploreKind> {
 
 suspend fun BookSource.clearExploreKindsCache() {
     withContext(Dispatchers.IO) {
-        aCache.remove(bookSourceUrl)
+        val exploreKindsKey = getExploreKindsKey()
+        aCache.remove(exploreKindsKey)
         exploreKindsMap.remove(getExploreKindsKey())
     }
 }
