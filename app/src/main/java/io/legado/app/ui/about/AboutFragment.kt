@@ -58,14 +58,14 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             "contributors" -> openUrl(R.string.contributors_url)
-            "update_log" -> show("updateLog.md")
+            "update_log" -> showMdFile("updateLog.md")
             "check_update" -> checkUpdate()
             "mail" -> requireContext().sendMail(getString(R.string.email))
             "sourceRuleSummary" -> openUrl(R.string.source_rule_url)
             "git" -> openUrl(R.string.this_github_url)
             "home_page" -> openUrl(R.string.home_page_url)
             "license" -> openUrl(R.string.license_url)
-            "disclaimer" -> show("disclaimer.md")
+            "disclaimer" -> showMdFile("disclaimer.md")
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "crashLog" -> showCrashLogs()
@@ -81,7 +81,10 @@ class AboutFragment : PreferenceFragmentCompat() {
         requireContext().openUrl(getString(addressID))
     }
 
-    private fun show(FileName: String) {
+    /**
+     * 显示md文件
+     */
+    private fun showMdFile(FileName: String) {
         val mdText = String(requireContext().assets.open(FileName).readBytes())
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
     }
