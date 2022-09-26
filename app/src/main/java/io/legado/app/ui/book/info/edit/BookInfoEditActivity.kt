@@ -118,7 +118,11 @@ class BookInfoEditActivity :
         readUri(uri) { fileDoc, inputStream ->
             inputStream.use {
                 var file = this.externalFiles
-                file = FileUtils.createFileIfNotExist(file, "covers", fileDoc.name)
+                val suffix = fileDoc.name.substringAfterLast(".")
+                val fileName = uri.inputStream(this)!!.use {
+                    MD5Utils.md5Encode(it) + ".$suffix"
+                }
+                file = FileUtils.createFileIfNotExist(file, "covers", fileName)
                 FileOutputStream(file).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
