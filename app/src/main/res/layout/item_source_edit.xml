@@ -9,6 +9,7 @@
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+        android:maxLines="12" />
 
 </io.legado.app.ui.widget.text.TextInputLayout>
