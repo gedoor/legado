@@ -36,7 +36,7 @@ open class ScrollMultiAutoCompleteTextView @JvmOverloads constructor(
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             //如果是新的按下事件，则对mBottomFlag重新初始化
-            mBottomFlag = false
+            mBottomFlag = lineCount <= maxLines
         }
         return super.dispatchTouchEvent(event)
     }
