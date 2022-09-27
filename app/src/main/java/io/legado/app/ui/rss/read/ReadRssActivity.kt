@@ -267,16 +267,15 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun readAloud() {
-        if (viewModel.textToSpeech?.isSpeaking == true) {
-            viewModel.textToSpeech?.stop()
+        if (viewModel.tts?.isSpeaking == true) {
+            viewModel.tts?.stop()
             upTtsMenu(false)
         } else {
             binding.webView.settings.javaScriptEnabled = true
             binding.webView.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
                     .replace("^\"|\"$".toRegex(), "")
-                Jsoup.parse(html).text()
-                viewModel.readAloud(Jsoup.parse(html).textArray())
+                viewModel.readAloud(Jsoup.parse(html).textArray().joinToString("\n"))
             }
         }
     }

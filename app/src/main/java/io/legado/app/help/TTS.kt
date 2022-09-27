@@ -17,9 +17,13 @@ class TTS {
 
     private val clearTtsRunnable = Runnable { clearTts() }
 
+    private var speakStateListener: SpeakStateListener? = null
+
     private var textToSpeech: TextToSpeech? = null
 
     private var text: String? = null
+
+    private var onInit = false
 
     private val initListener by lazy {
         InitListener()
@@ -29,15 +33,38 @@ class TTS {
         TTSUtteranceListener()
     }
 
+    val isSpeaking: Boolean
+        get() {
+            return textToSpeech?.isSpeaking ?: false
+        }
+
+    @Suppress("unused")
+    fun setSpeakStateListener(speakStateListener: SpeakStateListener) {
+        this.speakStateListener = speakStateListener
+    }
+
+    @Suppress("unused")
+    fun removeSpeakStateListener() {
+        speakStateListener = null
+    }
+
     @Synchronized
     fun speak(text: String) {
         handler.removeCallbacks(clearTtsRunnable)
         this.text = text
+        if (onInit) {
+            return
+        }
         if (textToSpeech == null) {
+            onInit = true
             textToSpeech = TextToSpeech(appCtx, initListener)
         } else {
             addTextToSpeakList()
         }
+    }
+
+    fun stop() {
+        textToSpeech?.stop()
     }
 
     @Synchronized
@@ -80,6 +107,7 @@ class TTS {
             } else {
                 appCtx.toastOnUi(R.string.tts_init_failed)
             }
+            onInit = false
         }
 
     }
@@ -92,11 +120,13 @@ class TTS {
         override fun onStart(utteranceId: String?) {
             //开始朗读取消释放资源任务
             handler.removeCallbacks(clearTtsRunnable)
+            speakStateListener?.onStart()
         }
 
         override fun onDone(utteranceId: String?) {
             //一分钟没有朗读释放资源
             handler.postDelayed(clearTtsRunnable, 60000L)
+            speakStateListener?.onDone()
         }
 
         @Deprecated("Deprecated in Java")
@@ -104,5 +134,10 @@ class TTS {
             //Deprecated
         }
 
+    }
+
+    interface SpeakStateListener {
+        fun onStart()
+        fun onDone()
     }
 }
