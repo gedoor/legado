@@ -18,7 +18,12 @@ import io.legado.app.utils.toastOnUi
 
 class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
 
-    val sysEngines: List<TextToSpeech.EngineInfo> = TextToSpeech(context, null).engines
+    val sysEngines: List<TextToSpeech.EngineInfo> by lazy {
+        val tts = TextToSpeech(context, null)
+        val engines = tts.engines
+        tts.shutdown()
+        engines
+    }
 
     fun importDefault() {
         execute {
