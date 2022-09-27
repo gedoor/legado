@@ -85,10 +85,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         } else if (isSameBook) {
             if (ReadBook.curTextChapter != null) {
                 ReadBook.callBack?.upContent(resetPageOffset = false)
-            } else if(ReadBook.durChapterIndex == book.durChapterIndex) {
-                ReadBook.loadContent(resetPageOffset = true)
             } else {
-                ReadBook.durChapterIndex = book.durChapterIndex
                 ReadBook.loadContent(resetPageOffset = true)
             }
         } else {
