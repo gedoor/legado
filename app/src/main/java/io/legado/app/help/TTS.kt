@@ -101,7 +101,7 @@ class TTS {
 
         @Deprecated("Deprecated in Java")
         override fun onError(utteranceId: String?) {
-
+            //Deprecated
         }
 
     }
