@@ -1,6 +1,5 @@
 package io.legado.app.ui.widget.code
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -13,9 +12,8 @@ import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.ReplacementSpan
 import android.util.AttributeSet
-import android.view.MotionEvent
 import androidx.annotation.ColorInt
-import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
+import io.legado.app.ui.widget.text.ScrollMultiAutoCompleteTextView
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -23,7 +21,7 @@ import kotlin.math.roundToInt
 
 @Suppress("unused")
 class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
-    AppCompatMultiAutoCompleteTextView(context, attrs) {
+    ScrollMultiAutoCompleteTextView(context, attrs) {
 
     private var tabWidth = 0
     private var tabWidthInCharacters = 0
@@ -38,12 +36,6 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private val mErrorHashSet: SortedMap<Int, Int> = TreeMap()
     private val mSyntaxPatternMap: MutableMap<Pattern, Int> = HashMap()
     private var mIndentCharacterList = mutableListOf('{', '+', '-', '*', '/', '=')
-
-    //滑动距离的最大边界
-    private var mOffsetHeight = 0
-
-    //是否到顶或者到底的标志
-    private var mBottomFlag = false
 
     private val mUpdateRunnable = Runnable {
         val source = text
@@ -110,46 +102,6 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         addTextChangedListener(mEditorTextWatcher)
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        initOffsetHeight()
-    }
-
-    override fun onTextChanged(
-        text: CharSequence,
-        start: Int,
-        lengthBefore: Int,
-        lengthAfter: Int
-    ) {
-        super.onTextChanged(text, start, lengthBefore, lengthAfter)
-        initOffsetHeight()
-    }
-
-    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            //如果是新的按下事件，则对mBottomFlag重新初始化
-            mBottomFlag = mOffsetHeight <= 0
-        }
-        return super.dispatchTouchEvent(event)
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val result = super.onTouchEvent(event)
-        //如果是需要拦截，则再拦截，这个方法会在onScrollChanged方法之后再调用一次
-        if (!mBottomFlag) parent.requestDisallowInterceptTouchEvent(true)
-        return result
-    }
-
-    override fun onScrollChanged(horiz: Int, vert: Int, oldHoriz: Int, oldVert: Int) {
-        super.onScrollChanged(horiz, vert, oldHoriz, oldVert)
-        if (vert == mOffsetHeight || vert == 0) {
-            //这里触发父布局或祖父布局的滑动事件
-            parent.requestDisallowInterceptTouchEvent(false)
-            mBottomFlag = true
-        }
-    }
-
     override fun showDropDown() {
         val screenPoint = IntArray(2)
         getLocationOnScreen(screenPoint)
@@ -163,28 +115,6 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         val horizontalDistanceInDp = layout.getPrimaryHorizontal(position) / displayDensity
         dropDownHorizontalOffset = horizontalDistanceInDp.toInt()
         super.showDropDown()
-    }
-
-    private fun initOffsetHeight() {
-        val mLayoutHeight: Int
-
-        //获得内容面板
-        val mLayout = layout ?: return
-        //获得内容面板的高度
-        mLayoutHeight = mLayout.height
-        //获取上内边距
-        val paddingTop: Int = totalPaddingTop
-        //获取下内边距
-        val paddingBottom: Int = totalPaddingBottom
-
-        //获得控件的实际高度
-        val mHeight: Int = measuredHeight
-
-        //计算滑动距离的边界
-        mOffsetHeight = mLayoutHeight + paddingTop + paddingBottom - mHeight
-        if (mOffsetHeight <= 0) {
-            scrollTo(0, 0)
-        }
     }
 
     private fun autoIndent(

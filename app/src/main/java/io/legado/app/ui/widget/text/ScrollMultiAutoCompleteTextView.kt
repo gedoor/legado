@@ -4,9 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
-import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
 
-class ScrollTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
+open class ScrollMultiAutoCompleteTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatMultiAutoCompleteTextView(context, attrs) {
+
+
     //滑动距离的最大边界
     private var mOffsetHeight = 0
 
@@ -26,28 +31,6 @@ class ScrollTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView
     ) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter)
         initOffsetHeight()
-    }
-
-    private fun initOffsetHeight() {
-        val mLayoutHeight: Int
-
-        //获得内容面板
-        val mLayout = layout ?: return
-        //获得内容面板的高度
-        mLayoutHeight = mLayout.height
-        //获取上内边距
-        val paddingTop: Int = totalPaddingTop
-        //获取下内边距
-        val paddingBottom: Int = totalPaddingBottom
-
-        //获得控件的实际高度
-        val mHeight: Int = measuredHeight
-
-        //计算滑动距离的边界
-        mOffsetHeight = mLayoutHeight + paddingTop + paddingBottom - mHeight
-        if (mOffsetHeight <= 0) {
-            scrollTo(0, 0)
-        }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -74,4 +57,28 @@ class ScrollTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView
             mBottomFlag = true
         }
     }
+
+
+    private fun initOffsetHeight() {
+        val mLayoutHeight: Int
+
+        //获得内容面板
+        val mLayout = layout ?: return
+        //获得内容面板的高度
+        mLayoutHeight = mLayout.height
+        //获取上内边距
+        val paddingTop: Int = totalPaddingTop
+        //获取下内边距
+        val paddingBottom: Int = totalPaddingBottom
+
+        //获得控件的实际高度
+        val mHeight: Int = measuredHeight
+
+        //计算滑动距离的边界
+        mOffsetHeight = mLayoutHeight + paddingTop + paddingBottom - mHeight
+        if (mOffsetHeight <= 0) {
+            scrollTo(0, 0)
+        }
+    }
+
 }
