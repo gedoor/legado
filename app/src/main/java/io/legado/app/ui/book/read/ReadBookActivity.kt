@@ -141,7 +141,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var autoPageJob: Job? = null
     private var backupJob: Job? = null
     private var keepScreenJon: Job? = null
-    private val tts by lazy { TTS() }
+    private var tts: TTS? = null
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
@@ -633,7 +633,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         when (itemId) {
             R.id.menu_aloud -> when (AppConfig.contentSelectSpeakMod) {
                 1 -> binding.readView.aloudStartSelect()
-                else -> tts.speak(binding.readView.getSelectText())
+                else -> speak(binding.readView.getSelectText())
             }
             R.id.menu_bookmark -> binding.readView.curPage.let {
                 val bookmark = it.createBookmark()
@@ -681,6 +681,13 @@ class ReadBookActivity : BaseReadBookActivity(),
         textActionMenu.dismiss()
         readView.curPage.cancelSelect()
         readView.isTextSelected = false
+    }
+
+    private fun speak(text: String) {
+        if (tts == null) {
+            tts = TTS()
+        }
+        tts?.speak(text)
     }
 
     /**
@@ -1196,7 +1203,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        tts.clearTts()
+        tts?.clearTts()
         textActionMenu.dismiss()
         popupAction.dismiss()
         binding.readView.onDestroy()
