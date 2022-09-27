@@ -4,13 +4,18 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import io.legado.app.R
 import io.legado.app.constant.AppLog
+import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 
 class TTS {
 
+    private val handler by lazy { buildMainHandler() }
+
     private val tag = "legado_tts"
+
+    private val clearTtsRunnable = Runnable { clearTts() }
 
     private var textToSpeech: TextToSpeech? = null
 
@@ -24,20 +29,19 @@ class TTS {
         TTSUtteranceListener()
     }
 
+    @Synchronized
     fun speak(text: String) {
+        handler.removeCallbacks(clearTtsRunnable)
         this.text = text
         if (textToSpeech == null) {
-
+            textToSpeech = TextToSpeech(appCtx, initListener)
         } else {
-
+            addTextToSpeakList()
         }
     }
 
-    private fun initTts() {
-        textToSpeech == TextToSpeech(appCtx, initListener)
-    }
-
-    private fun clearTts() {
+    @Synchronized
+    fun clearTts() {
         textToSpeech?.let { tts ->
             tts.stop()
             tts.shutdown()
@@ -72,6 +76,7 @@ class TTS {
         override fun onInit(status: Int) {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeech?.setOnUtteranceProgressListener(utteranceListener)
+                addTextToSpeakList()
             } else {
                 appCtx.toastOnUi(R.string.tts_init_failed)
             }
@@ -85,15 +90,18 @@ class TTS {
     private inner class TTSUtteranceListener : UtteranceProgressListener() {
 
         override fun onStart(utteranceId: String?) {
-            TODO("Not yet implemented")
+            //开始朗读取消释放资源任务
+            handler.removeCallbacks(clearTtsRunnable)
         }
 
         override fun onDone(utteranceId: String?) {
-            TODO("Not yet implemented")
+            //一分钟没有朗读释放资源
+            handler.postDelayed(clearTtsRunnable, 60000L)
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onError(utteranceId: String?) {
-            TODO("Not yet implemented")
+
         }
 
     }

@@ -431,13 +431,13 @@ class ReadBookActivity : BaseReadBookActivity(),
             if (event.action == MotionEvent.ACTION_SCROLL) {
                 val axisValue = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
                 LogUtils.d("onGenericMotionEvent", "axisValue = $axisValue")
-                mainHandler.removeCallbacks(nextPageRunnable)
-                mainHandler.removeCallbacks(prevPageRunnable)
+                binding.root.removeCallbacks(nextPageRunnable)
+                binding.root.removeCallbacks(prevPageRunnable)
                 // 获得垂直坐标上的滚动方向
                 if (axisValue < 0.0f) { // 滚轮向下滚
-                    mainHandler.postDelayed(nextPageRunnable, 200)
+                    binding.root.postDelayed(nextPageRunnable, 200)
                 } else { // 滚轮向上滚
-                    mainHandler.postDelayed(prevPageRunnable, 200)
+                    binding.root.postDelayed(prevPageRunnable, 200)
                 }
                 return true
             }

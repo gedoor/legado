@@ -9,6 +9,8 @@ import splitties.init.appCtx
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+private val handler by lazy { buildMainHandler() }
+
 /**
  * 带有超时检测的正则替换
  * 超时重启apk,线程不能强制结束,只能重启apk
@@ -24,14 +26,14 @@ suspend fun CharSequence.replace(regex: Regex, replacement: String, timeout: Lon
                 block.resumeWithException(e)
             }
         }
-        mainHandler.postDelayed(timeout) {
+        handler.postDelayed(timeout) {
             if (coroutine.isActive) {
                 val timeoutMsg = "替换超时,3秒后还未结束将重启应用\n替换规则$regex\n替换内容:${this}"
                 val exception = RegexTimeoutException(timeoutMsg)
                 block.cancel(exception)
                 appCtx.longToastOnUi(timeoutMsg)
                 CrashHandler.saveCrashInfo2File(exception)
-                mainHandler.postDelayed(3000) {
+                handler.postDelayed(3000) {
                     if (coroutine.isActive) {
                         appCtx.restart()
                     }
