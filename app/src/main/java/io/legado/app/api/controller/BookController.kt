@@ -13,7 +13,6 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.BookCover
-import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.read.page.provider.ImageProvider
@@ -201,10 +200,6 @@ object BookController {
         GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
             book.save()
             AppWebDav.uploadBookProgress(book)
-            if (ReadBook.book?.bookUrl == book.bookUrl) {
-                ReadBook.book = book
-                ReadBook.durChapterIndex = book.durChapterIndex
-            }
             return returnData.setData("")
         }
         return returnData.setErrorMsg("格式不对")
@@ -225,10 +220,6 @@ object BookController {
                     book.durChapterTime = bookProgress.durChapterTime
                     appDb.bookDao.update(book)
                     AppWebDav.uploadBookProgress(bookProgress)
-                    if (ReadBook.book?.bookUrl == book.bookUrl) {
-                        ReadBook.book = book
-                        ReadBook.durChapterIndex = book.durChapterIndex
-                    }
                     return returnData.setData("")
                 }
             }
