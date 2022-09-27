@@ -36,7 +36,7 @@ open class ScrollMultiAutoCompleteTextView @JvmOverloads constructor(
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             //如果是新的按下事件，则对mBottomFlag重新初始化
-            mBottomFlag = mOffsetHeight <= 0
+            mBottomFlag = false
         }
         return super.dispatchTouchEvent(event)
     }
@@ -45,7 +45,9 @@ open class ScrollMultiAutoCompleteTextView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val result = super.onTouchEvent(event)
         //如果是需要拦截，则再拦截，这个方法会在onScrollChanged方法之后再调用一次
-        if (!mBottomFlag) parent.requestDisallowInterceptTouchEvent(true)
+        if (!mBottomFlag) {
+            parent.requestDisallowInterceptTouchEvent(true)
+        }
         return result
     }
 
