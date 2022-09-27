@@ -25,6 +25,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentData
+import io.legado.app.help.TTS
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
@@ -140,6 +141,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var autoPageJob: Job? = null
     private var backupJob: Job? = null
     private var keepScreenJon: Job? = null
+    private val tts by lazy { TTS() }
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
     }
@@ -629,7 +631,10 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun onMenuItemSelected(itemId: Int): Boolean {
         when (itemId) {
-            R.id.menu_aloud -> binding.readView.aloudStartSelect()
+            R.id.menu_aloud -> when (AppConfig.contentSelectSpeakMod) {
+                1 -> binding.readView.aloudStartSelect()
+                else -> tts.speak(binding.readView.getSelectText())
+            }
             R.id.menu_bookmark -> binding.readView.curPage.let {
                 val bookmark = it.createBookmark()
                 if (bookmark == null) {
@@ -984,7 +989,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                 setMessage(chapter.title)
                 yesButton {
                     Coroutine.async {
-                        val source = ReadBook.bookSource ?: throw NoStackTraceException("no book source")
+                        val source =
+                            ReadBook.bookSource ?: throw NoStackTraceException("no book source")
                         val payAction = source.getContentRule().payAction
                         if (payAction.isNullOrBlank()) {
                             throw NoStackTraceException("no pay action")
@@ -1190,6 +1196,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        tts.clearTts()
         textActionMenu.dismiss()
         popupAction.dismiss()
         binding.readView.onDestroy()

@@ -306,6 +306,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.changeSourceLoadToc, value)
         }
 
+    var contentSelectSpeakMod: Int
+        get() = appCtx.getPrefInt(PreferKey.contentSelectSpeakMod)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.contentSelectSpeakMod, value)
+        }
+
     val importKeepName get() = appCtx.getPrefBoolean(PreferKey.importKeepName)
 
     var preDownloadNum
