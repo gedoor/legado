@@ -189,11 +189,9 @@ class PhotoView @JvmOverloads constructor(
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun setImageResource(resId: Int) {
-        var drawable: Drawable? = null
-        try {
-            drawable = resources.getDrawable(resId, null)
-        } catch (e: Exception) {
-        }
+        val drawable: Drawable? = kotlin.runCatching {
+            resources.getDrawable(resId, null)
+        }.getOrNull()
         setImageDrawable(drawable)
     }
 
