@@ -23,7 +23,6 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
     var searchResultCounts = 0
     val cacheChapterNames = hashSetOf<String>()
     val searchResultList: MutableList<SearchResult> = mutableListOf()
-    var mContent: String = ""
 
     fun initBook(bookUrl: String, success: () -> Unit) {
         this.bookUrl = bookUrl
@@ -45,9 +44,9 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         if (chapter != null) {
             book?.let { book ->
                 val chapterContent = BookHelp.getContent(book, chapter)
+                val mContent: String
                 coroutineContext.ensureActive()
                 if (chapterContent != null) {
-                    //先搜索没有启用净化的正文
                     withContext(Dispatchers.IO) {
                         chapter.title = when (AppConfig.chineseConverterType) {
                             1 -> ChineseUtils.t2s(chapter.title)
@@ -56,13 +55,10 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
                         }
                         coroutineContext.ensureActive()
                         mContent = contentProcessor!!.getContent(
-                            book, chapter, chapterContent,
-                            chineseConvert = true,
-                            reSegment = false,
-                            useReplace = false
+                            book, chapter, chapterContent
                         ).joinToString("")
                     }
-                    val positions = searchPosition(query)
+                    val positions = searchPosition(mContent, query)
                     positions.forEachIndexed { index, position ->
                         coroutineContext.ensureActive()
                         val construct = getResultAndQueryIndex(mContent, position, query)
@@ -84,20 +80,13 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         return searchResultsWithinChapter
     }
 
-    private suspend fun searchPosition(pattern: String): List<Int> {
+    private suspend fun searchPosition(content: String, pattern: String): List<Int> {
         val position: MutableList<Int> = mutableListOf()
-        var index = mContent.indexOf(pattern)
-        if (index >= 0) {
-            //搜索到内容允许净化
-            if (book!!.getUseReplaceRule()) {
-                mContent = contentProcessor!!.replaceContent(mContent)
-                index = mContent.indexOf(pattern)
-            }
-            while (index >= 0) {
-                coroutineContext.ensureActive()
-                position.add(index)
-                index = mContent.indexOf(pattern, index + pattern.length)
-            }
+        var index = content.indexOf(pattern)
+        while (index >= 0) {
+            coroutineContext.ensureActive()
+            position.add(index)
+            index = content.indexOf(pattern, index + pattern.length)
         }
         return position
     }
