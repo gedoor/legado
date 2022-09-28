@@ -211,7 +211,7 @@ dependencies {
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
-    def glideVersion = "4.13.2"
+    def glideVersion = "4.14.0"
     implementation("com.github.bumptech.glide:glide:$glideVersion")
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
 
