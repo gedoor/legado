@@ -16,7 +16,7 @@ def version = "3." + releaseTime()
 def gitCommits = Integer.parseInt('git rev-list HEAD --count'.execute().text.trim())
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
     buildToolsVersion "33.0.0"
     namespace 'io.legado.app'
     kotlinOptions {
@@ -47,6 +47,8 @@ android {
         project.ext.set("archivesBaseName", name + "_" + version)
         multiDexEnabled true
 
+        buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [
@@ -63,7 +65,6 @@ android {
     }
     buildTypes {
         release {
-            buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
             }
@@ -73,7 +74,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
+
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
             }
@@ -82,13 +83,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        android.applicationVariants.all { variant ->
-            variant.outputs.all {
-                def flavor = variant.productFlavors[0].name
-                outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
-            }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            def flavor = variant.productFlavors[0].name
+            outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
         }
     }
+
     flavorDimensions "mode"
     productFlavors {
         app {
@@ -125,6 +128,7 @@ android {
 }
 
 dependencies {
+    compileOnly "com.android.tools.build:gradle:$agp_version"
     //noinspection GradleDependency,GradlePackageUpdate
     coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.2.2')
     testImplementation('junit:junit:4.13.2')

@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion '32.0.0'
+    compileSdk 33
+    //buildToolsVersion '32.0.0'
     namespace 'me.ag2s.epublib'
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 32
+        minSdk 21
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -18,8 +18,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        android {
         }
 
     }
@@ -33,5 +31,6 @@ android {
 }
 
 dependencies {
+    compileOnly "com.android.tools.build:gradle:$agp_version"
     implementation "androidx.annotation:annotation:1.5.0"
 }

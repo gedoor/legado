@@ -12,6 +12,7 @@ import org.chromium.net.CronetEngine.Builder.HTTP_CACHE_DISK
 import org.chromium.net.ExperimentalCronetEngine
 import org.chromium.net.UploadDataProviders
 import org.chromium.net.UrlRequest
+import org.json.JSONObject
 import splitties.init.appCtx
 
 
@@ -29,6 +30,7 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
         enableHttp2(true)  //设置支持http/2
         enablePublicKeyPinningBypassForLocalTrustAnchors(true)
         enableBrotli(true)//Brotli压缩
+        setExperimentalOptions(options)
     }
     try {
         val engine = builder.build()
@@ -38,6 +40,28 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
         AppLog.put("初始化cronetEngine出错", e)
         return@lazy null
     }
+}
+
+val options by lazy {
+    val options = JSONObject()
+
+    //设置域名映射规则
+    //MAP hostname ip,MAP hostname ip
+//    val host = JSONObject()
+//    host.put("host_resolver_rules","")
+//    options.put("HostResolverRules", host)
+
+    //启用DnsHttpsSvcb更容易迁移到http3
+    val dnsSvcb = JSONObject()
+    dnsSvcb.put("enable", true)
+    dnsSvcb.put("enable_insecure", true)
+    dnsSvcb.put("use_alpn", true)
+    options.put("UseDnsHttpsSvcb", dnsSvcb)
+
+    options.put("AsyncDNS", JSONObject("{'enable':true}"))
+
+
+    options.toString()
 }
 
 fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
