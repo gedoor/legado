@@ -227,7 +227,7 @@ dependencies {
     implementation('com.jaredrummler:colorpicker:1.1.0')
 
     //apache
-    implementation('org.apache.commons:commons-text:1.9')
+    implementation('org.apache.commons:commons-text:1.10.0')
 
     //MarkDown
     def markwonVersion = "4.6.2"
