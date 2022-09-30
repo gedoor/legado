@@ -4,7 +4,6 @@ plugins {
 
 android {
     compileSdk 33
-    //buildToolsVersion '32.0.0'
     namespace 'me.ag2s.epublib'
     defaultConfig {
         minSdk 21

@@ -17,7 +17,6 @@ def gitCommits = Integer.parseInt('git rev-list HEAD --count'.execute().text.tri
 
 android {
     compileSdk 33
-    buildToolsVersion "33.0.0"
     namespace 'io.legado.app'
     kotlinOptions {
         jvmTarget = "11"
@@ -92,16 +91,16 @@ android {
         }
     }
 
-    flavorDimensions "mode"
+    flavorDimensions.add("mode")
     productFlavors {
         app {
             dimension "mode"
-            manifestPlaceholders = [APP_CHANNEL_VALUE: "app"]
+            manifestPlaceholders.put("APP_CHANNEL_VALUE", "app")
         }
         google {
             dimension "mode"
             applicationId "io.legado.play"
-            manifestPlaceholders = [APP_CHANNEL_VALUE: "google"]
+            manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
         }
     }
     compileOptions {
