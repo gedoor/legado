@@ -3,6 +3,7 @@ package io.legado.app.ui.widget.text
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
 
@@ -14,12 +15,38 @@ open class NestScrollMultiAutoCompleteTextView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : AppCompatMultiAutoCompleteTextView(context, attrs) {
 
+    //是否到顶或者到底的标志
+    private var disallowIntercept = true
 
     //滑动距离的最大边界
     private var mOffsetHeight = 0
 
-    //是否到顶或者到底的标志
-    private var mBottomFlag = false
+    private val gestureDetector = GestureDetector(context,
+        object : GestureDetector.SimpleOnGestureListener() {
+
+            override fun onDown(e: MotionEvent): Boolean {
+                disallowIntercept = true
+                return super.onDown(e)
+            }
+
+            override fun onScroll(
+                e1: MotionEvent,
+                e2: MotionEvent,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                val y = scrollY + distanceY
+                if (y < 0 || y > mOffsetHeight) {
+                    disallowIntercept = false
+                    //这里触发父布局或祖父布局的滑动事件
+                    parent.requestDisallowInterceptTouchEvent(false)
+                } else {
+                    disallowIntercept = true
+                }
+                return true
+            }
+
+        })
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -37,9 +64,8 @@ open class NestScrollMultiAutoCompleteTextView @JvmOverloads constructor(
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            //如果是新的按下事件，则对mBottomFlag重新初始化
-            mBottomFlag = lineCount <= maxLines
+        if (lineCount > maxLines) {
+            gestureDetector.onTouchEvent(event)
         }
         return super.dispatchTouchEvent(event)
     }
@@ -48,21 +74,11 @@ open class NestScrollMultiAutoCompleteTextView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val result = super.onTouchEvent(event)
         //如果是需要拦截，则再拦截，这个方法会在onScrollChanged方法之后再调用一次
-        if (!mBottomFlag) {
+        if (disallowIntercept && lineCount > maxLines) {
             parent.requestDisallowInterceptTouchEvent(true)
         }
         return result
     }
-
-    override fun onScrollChanged(horiz: Int, vert: Int, oldHoriz: Int, oldVert: Int) {
-        super.onScrollChanged(horiz, vert, oldHoriz, oldVert)
-        if (vert == mOffsetHeight || vert == 0) {
-            //这里触发父布局或祖父布局的滑动事件
-            parent.requestDisallowInterceptTouchEvent(false)
-            mBottomFlag = true
-        }
-    }
-
 
     private fun initOffsetHeight() {
         val mLayoutHeight: Int
