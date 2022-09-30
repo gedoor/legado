@@ -331,7 +331,7 @@
 
                 </LinearLayout>
 
-                <io.legado.app.ui.widget.text.ScrollTextView
+                <io.legado.app.ui.widget.text.NestScrollTextView
                     android:id="@+id/tv_intro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -4,9 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
-import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
 
-class ScrollTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
+/**
+ * 嵌套滚动 MultiAutoCompleteTextView
+ */
+open class NestScrollMultiAutoCompleteTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatMultiAutoCompleteTextView(context, attrs) {
+
+
     //滑动距离的最大边界
     private var mOffsetHeight = 0
 
@@ -27,6 +35,34 @@ class ScrollTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView
         super.onTextChanged(text, start, lengthBefore, lengthAfter)
         initOffsetHeight()
     }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            //如果是新的按下事件，则对mBottomFlag重新初始化
+            mBottomFlag = lineCount <= maxLines
+        }
+        return super.dispatchTouchEvent(event)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val result = super.onTouchEvent(event)
+        //如果是需要拦截，则再拦截，这个方法会在onScrollChanged方法之后再调用一次
+        if (!mBottomFlag) {
+            parent.requestDisallowInterceptTouchEvent(true)
+        }
+        return result
+    }
+
+    override fun onScrollChanged(horiz: Int, vert: Int, oldHoriz: Int, oldVert: Int) {
+        super.onScrollChanged(horiz, vert, oldHoriz, oldVert)
+        if (vert == mOffsetHeight || vert == 0) {
+            //这里触发父布局或祖父布局的滑动事件
+            parent.requestDisallowInterceptTouchEvent(false)
+            mBottomFlag = true
+        }
+    }
+
 
     private fun initOffsetHeight() {
         val mLayoutHeight: Int
@@ -50,28 +86,4 @@ class ScrollTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView
         }
     }
 
-    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            //如果是新的按下事件，则对mBottomFlag重新初始化
-            mBottomFlag = mOffsetHeight <= 0
-        }
-        return super.dispatchTouchEvent(event)
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val result = super.onTouchEvent(event)
-        //如果是需要拦截，则再拦截，这个方法会在onScrollChanged方法之后再调用一次
-        if (!mBottomFlag) parent.requestDisallowInterceptTouchEvent(true)
-        return result
-    }
-
-    override fun onScrollChanged(horiz: Int, vert: Int, oldHoriz: Int, oldVert: Int) {
-        super.onScrollChanged(horiz, vert, oldHoriz, oldVert)
-        if (vert == mOffsetHeight || vert == 0) {
-            //这里触发父布局或祖父布局的滑动事件
-            parent.requestDisallowInterceptTouchEvent(false)
-            mBottomFlag = true
-        }
-    }
 }
