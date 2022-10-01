@@ -32,7 +32,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
-    var isImportBookOnLine: Boolean
+    val isImportBookOnLine: Boolean
       get() = (bookSource?.bookSourceType ?: BookType.local) == BookType.file
 
     fun initData(intent: Intent) {
@@ -306,7 +306,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeToLocalBook(bookUrl: String) {
         appDb.bookDao.getBook(bookUrl)?.let { localBook ->
-            isImportBookOnLine = false
             inBookshelf = true
             LocalBook.mergeBook(localBook, bookData.value).let {
                 bookData.postValue(it)
