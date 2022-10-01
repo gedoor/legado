@@ -149,8 +149,16 @@
 -keep class **.analyzeRule.**{*;}
 # 保持web类
 -keep class **.web.**{*;}
-#数据类
+# 数据类
 -keep class **.data.**{*;}
+# hutool-core hutool-crypto
+-keep class cn.hutool.core.**{*;}
+-keep class cn.hutool.crypto.**{*;}
+# 缓存 Cookie
+-keep class **.help.http.CookieStore{*;}
+-keep class **.help.CacheManager{*;}
+# StrResponse
+-keep class **.help.http.StrResponse{*;}
 
 -dontwarn rx.**
 -dontwarn okio.**
@@ -231,4 +239,9 @@
 }
 
 ## 保证该私有变量不被混淆
--keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory{upstreamDataSourceFactory;}
+-keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
+    private DataSource.Factory upstreamDataSourceFactory;
+}
+
+## web服务传输数据
+-keep class io.legado.app.api.ReturnData{*;}
