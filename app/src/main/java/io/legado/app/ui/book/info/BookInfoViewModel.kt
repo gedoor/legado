@@ -32,7 +32,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
-    var isImportBookOnLine = false
+    var isImportBookOnLine: Boolean
+      get() = (bookSource?.bookSourceType ?: BookType.local) == BookType.file
 
     fun initData(intent: Intent) {
         execute {
@@ -76,7 +77,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             upCoverByRule(book)
             bookSource = if (book.isLocalBook()) null else
                 appDb.bookSourceDao.getBookSource(book.origin)
-            isImportBookOnLine = (bookSource?.bookSourceType ?: BookType.local) == BookType.file
             if (book.tocUrl.isEmpty()) {
                 loadBookInfo(book)
             } else if (isImportBookOnLine) {
