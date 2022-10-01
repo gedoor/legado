@@ -154,6 +154,7 @@
 # hutool-core hutool-crypto
 -keep class cn.hutool.core.**{*;}
 -keep class cn.hutool.crypto.**{*;}
+-dontwarn cn.hutool.**
 # 缓存 Cookie
 -keep class **.help.http.CookieStore{*;}
 -keep class **.help.CacheManager{*;}
@@ -241,7 +242,9 @@
 -keep class org.chromium.net.impl.NativeCronetProvider{*;}
 -keep class com.google.android.gms.net.PlayServicesCronetProvider{*;}
 -keep class com.google.android.gms.net.GmsCoreCronetProvider{*;}
-
+-keep class org.chromium.** {
+    native <methods>;
+}
 ## 保证该私有变量不被混淆
 -keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
     #noinspection ShrinkerUnresolvedReference
