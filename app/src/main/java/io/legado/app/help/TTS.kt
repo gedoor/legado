@@ -98,6 +98,9 @@ class TTS {
         }
     }
 
+    /**
+     * 初始化监听
+     */
     private inner class InitListener : TextToSpeech.OnInitListener {
 
         override fun onInit(status: Int) {
