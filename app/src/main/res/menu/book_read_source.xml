@@ -5,6 +5,16 @@
     tools:ignore="AlwaysShowAction">
 
     <item
+        android:id="@+id/menu_login"
+        android:title="@string/login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_chapter_pay"
+        android:title="@string/chapter_pay"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_edit_source"
         android:title="@string/edit_book_source"
         app:showAsAction="never" />

@@ -15,7 +15,9 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-
+/**
+ * 惯性滚动 TextView
+ */
 @Suppress("unused")
 open class InertiaScrollTextView @JvmOverloads constructor(
     context: Context,

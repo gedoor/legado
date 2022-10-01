@@ -84,6 +84,8 @@ class ReadMenu @JvmOverloads constructor(
             inflate(R.menu.book_read_source)
             setOnMenuItemClickListener {
                 when (it.itemId) {
+                    R.id.menu_login -> callBack.showLogin()
+                    R.id.menu_chapter_pay -> callBack.payAction()
                     R.id.menu_edit_source -> callBack.openSourceEditActivity()
                     R.id.menu_disable_source -> callBack.disableSource()
                 }
@@ -93,11 +95,9 @@ class ReadMenu @JvmOverloads constructor(
     }
     private val menuInListener = object : Animation.AnimationListener {
         override fun onAnimationStart(animation: Animation) {
+            binding.tvSourceAction.text =
+                ReadBook.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
             binding.tvSourceAction.isGone = ReadBook.isLocalBook
-            binding.tvLogin.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
-            binding.tvPay.isGone = ReadBook.bookSource?.loginUrl.isNullOrEmpty()
-                    || ReadBook.curTextChapter?.isVip != true
-                    || ReadBook.curTextChapter?.isPay == true
             callBack.upSystemUiVisibility()
             binding.llBrightness.visible(showBrightnessView)
         }
@@ -335,16 +335,14 @@ class ReadMenu @JvmOverloads constructor(
         tvChapterName.setOnLongClickListener(chapterViewLongClickListener)
         tvChapterUrl.setOnClickListener(chapterViewClickListener)
         tvChapterUrl.setOnLongClickListener(chapterViewLongClickListener)
-        //登录
-        tvLogin.setOnClickListener {
-            callBack.showLogin()
-        }
-        //购买
-        tvPay.setOnClickListener {
-            callBack.payAction()
-        }
         //书源操作
         tvSourceAction.onClick {
+            sourceMenu.menu.findItem(R.id.menu_login).isVisible =
+                !ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+            sourceMenu.menu.findItem(R.id.menu_chapter_pay).isVisible =
+                !ReadBook.bookSource?.loginUrl.isNullOrEmpty()
+                        && ReadBook.curTextChapter?.isVip == true
+                        && ReadBook.curTextChapter?.isPay != true
             sourceMenu.show()
         }
         //亮度跟随
