@@ -28,6 +28,6 @@ object EventBus {
     const val TIP_COLOR = "tipColor"
     const val SOURCE_CHANGED = "sourceChanged"
     const val SEARCH_RESULT = "searchResult"
-    const val BOOK_URL_CHANGED = "bookUrlChanged"
+    const val FILE_SOURCE_DOWNLOAD_DONE = "fileSourceDownloadDone"
     const val updateReadActionBar = "updateReadActionBar"
 }
