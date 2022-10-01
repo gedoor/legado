@@ -66,7 +66,7 @@ class ImportOnLineBookFileViewModel(app: Application) : BaseViewModel(app) {
     fun importOnLineBookFile(url: String, fileName: String, success: () -> Unit) {
         execute {
             LocalBook.importFileOnLine(url, fileName, bookSource).let {
-                postEvent(EventBus.BOOK_URL_CHANGED, it.bookUrl)
+                postEvent(EventBus.FILE_SOURCE_DOWNLOAD_DONE, it.bookUrl)
             }
         }.onSuccess {
            success.invoke()

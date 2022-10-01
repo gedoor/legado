@@ -535,7 +535,7 @@ class BookInfoActivity :
     }
 
     override fun observeLiveBus() {
-        observeEvent<String>(EventBus.BOOK_URL_CHANGED) {
+        observeEvent<String>(EventBus.FILE_SOURCE_DOWNLOAD_DONE) {
             viewModel.changeToLocalBook(it)
         }
     }
