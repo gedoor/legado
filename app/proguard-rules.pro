@@ -242,3 +242,6 @@
 -keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
     private DataSource.Factory upstreamDataSourceFactory;
 }
+
+## web服务传输数据
+-keep class io.legado.app.api.ReturnData{*;}
