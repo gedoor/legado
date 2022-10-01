@@ -13,7 +13,7 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
-    <io.legado.app.ui.widget.text.InertiaScrollTextView
+    <io.legado.app.ui.widget.text.ScrollTextView
         android:id="@+id/text_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

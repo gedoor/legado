@@ -13,7 +13,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.ReplacementSpan
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import io.legado.app.ui.widget.text.NestScrollMultiAutoCompleteTextView
+import io.legado.app.ui.widget.text.ScrollMultiAutoCompleteTextView
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -21,7 +21,7 @@ import kotlin.math.roundToInt
 
 @Suppress("unused")
 class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
-    NestScrollMultiAutoCompleteTextView(context, attrs) {
+    ScrollMultiAutoCompleteTextView(context, attrs) {
 
     private var tabWidth = 0
     private var tabWidthInCharacters = 0
