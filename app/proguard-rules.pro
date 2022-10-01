@@ -237,6 +237,10 @@
     !private *;
     *;
 }
+-keep class org.chromium.net.impl.JavaCronetProvider{*;}
+-keep class org.chromium.net.impl.NativeCronetProvider{*;}
+-keep class com.google.android.gms.net.PlayServicesCronetProvider{*;}
+-keep class com.google.android.gms.net.GmsCoreCronetProvider{*;}
 
 ## 保证该私有变量不被混淆
 -keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
@@ -244,5 +248,5 @@
     private DataSource.Factory upstreamDataSourceFactory;
 }
 
-## web服务传输数据
+## 对外提供api
 -keep class io.legado.app.api.ReturnData{*;}
