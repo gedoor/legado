@@ -238,13 +238,10 @@
     !private *;
     *;
 }
--keep class org.chromium.net.impl.JavaCronetProvider{*;}
--keep class org.chromium.net.impl.NativeCronetProvider{*;}
+-keep class org.chromium.** {*;}
 -keep class com.google.android.gms.net.PlayServicesCronetProvider{*;}
 -keep class com.google.android.gms.net.GmsCoreCronetProvider{*;}
--keep class org.chromium.** {
-    native <methods>;
-}
+
 ## 保证该私有变量不被混淆
 -keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
     #noinspection ShrinkerUnresolvedReference
