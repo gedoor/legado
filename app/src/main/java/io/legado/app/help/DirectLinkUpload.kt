@@ -66,7 +66,7 @@ object DirectLinkUpload {
         return getRule()?.summary
     }
 
-    @keep
+    @Keep
     data class Rule(
         var uploadUrl: String,
         var downloadUrlRule: String,
