@@ -18,7 +18,7 @@ import kotlin.math.min
 
 
 /**
- * 嵌套滚动 TextView
+ * 嵌套惯性滚动 TextView
  */
 class ScrollTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {

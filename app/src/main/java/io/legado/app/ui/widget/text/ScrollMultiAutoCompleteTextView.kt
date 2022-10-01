@@ -17,7 +17,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * 嵌套滚动 MultiAutoCompleteTextView
+ * 嵌套惯性滚动 MultiAutoCompleteTextView
  */
 open class ScrollMultiAutoCompleteTextView @JvmOverloads constructor(
     context: Context,
