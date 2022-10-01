@@ -154,6 +154,7 @@
 # hutool-core hutool-crypto
 -keep class cn.hutool.core.**{*;}
 -keep class cn.hutool.crypto.**{*;}
+-dontwarn cn.hutool.**
 # 缓存 Cookie
 -keep class **.help.http.CookieStore{*;}
 -keep class **.help.CacheManager{*;}
@@ -237,8 +238,7 @@
     !private *;
     *;
 }
--keep class org.chromium.net.impl.JavaCronetProvider{*;}
--keep class org.chromium.net.impl.NativeCronetProvider{*;}
+-keep class org.chromium.** {*;}
 -keep class com.google.android.gms.net.PlayServicesCronetProvider{*;}
 -keep class com.google.android.gms.net.GmsCoreCronetProvider{*;}
 
