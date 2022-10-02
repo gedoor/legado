@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.config
 
 import android.content.DialogInterface
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -55,13 +56,13 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
         root.setBackgroundColor(bg)
         tvReadSpeedTitle.setTextColor(textColor)
         tvReadSpeed.setTextColor(textColor)
-        ivCatalog.setColorFilter(textColor)
+        ivCatalog.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvCatalog.setTextColor(textColor)
-        ivMainMenu.setColorFilter(textColor)
+        ivMainMenu.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvMainMenu.setTextColor(textColor)
-        ivAutoPageStop.setColorFilter(textColor)
+        ivAutoPageStop.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvAutoPageStop.setTextColor(textColor)
-        ivSetting.setColorFilter(textColor)
+        ivSetting.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvSetting.setTextColor(textColor)
         initOnChange()
         initData()

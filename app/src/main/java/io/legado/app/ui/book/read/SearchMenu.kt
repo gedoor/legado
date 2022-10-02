@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -70,19 +71,17 @@ class SearchMenu @JvmOverloads constructor(
         tvCurrentSearchInfo.setTextColor(bottomBackgroundList)
         llBottomBg.setBackgroundColor(bgColor)
         fabLeft.backgroundTintList = bottomBackgroundList
-        fabLeft.setColorFilter(textColor)
+        fabLeft.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         fabRight.backgroundTintList = bottomBackgroundList
-        fabRight.setColorFilter(textColor)
+        fabRight.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvMainMenu.setTextColor(textColor)
         tvSearchResults.setTextColor(textColor)
         tvSearchExit.setTextColor(textColor)
-        //tvSetting.setTextColor(textColor)
-        ivMainMenu.setColorFilter(textColor)
-        ivSearchResults.setColorFilter(textColor)
-        ivSearchExit.setColorFilter(textColor)
-        //ivSetting.setColorFilter(textColor)
-        ivSearchContentUp.setColorFilter(textColor)
-        ivSearchContentDown.setColorFilter(textColor)
+        ivMainMenu.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
+        ivSearchResults.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
+        ivSearchExit.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
+        ivSearchContentUp.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
+        ivSearchContentDown.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvCurrentSearchInfo.setTextColor(textColor)
     }
 

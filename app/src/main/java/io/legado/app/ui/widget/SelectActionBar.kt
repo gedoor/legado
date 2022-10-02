@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget
 
 import android.content.Context
+import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.Menu
@@ -35,7 +36,7 @@ class SelectActionBar @JvmOverloads constructor(
         elevation = context.elevation
         binding.cbSelectedAll.setTextColor(primaryTextColor)
         TintHelper.setTint(binding.cbSelectedAll, context.accentColor, !bgIsLight)
-        binding.ivMenuMore.setColorFilter(disabledColor)
+        binding.ivMenuMore.setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN)
         binding.cbSelectedAll.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
                 callBack?.selectAll(isChecked)
@@ -101,9 +102,9 @@ class SelectActionBar @JvmOverloads constructor(
         btnSelectActionMain.isEnabled = isClickable
         btnSelectActionMain.isClickable = isClickable
         if (isClickable) {
-            ivMenuMore.setColorFilter(primaryTextColor)
+            ivMenuMore.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
         } else {
-            ivMenuMore.setColorFilter(disabledColor)
+            ivMenuMore.setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN)
         }
         ivMenuMore.isEnabled = isClickable
         ivMenuMore.isClickable = isClickable

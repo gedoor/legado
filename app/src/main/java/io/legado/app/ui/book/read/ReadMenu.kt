@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.Gravity
@@ -188,13 +189,13 @@ class ReadMenu @JvmOverloads constructor(
         fabNightTheme.setColorFilter(textColor)
         tvPre.setTextColor(textColor)
         tvNext.setTextColor(textColor)
-        ivCatalog.setColorFilter(textColor)
+        ivCatalog.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvCatalog.setTextColor(textColor)
-        ivReadAloud.setColorFilter(textColor)
+        ivReadAloud.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvReadAloud.setTextColor(textColor)
-        ivFont.setColorFilter(textColor)
+        ivFont.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvFont.setTextColor(textColor)
-        ivSetting.setColorFilter(textColor)
+        ivSetting.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvSetting.setTextColor(textColor)
         vwBg.setOnClickListener(null)
         llBrightness.setOnClickListener(null)

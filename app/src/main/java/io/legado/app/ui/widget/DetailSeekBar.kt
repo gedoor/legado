@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget
 
 import android.content.Context
+import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -47,8 +48,8 @@ class DetailSeekBar @JvmOverloads constructor(
             val isLight = ColorUtils.isColorLight(context.bottomBackground)
             val textColor = context.getPrimaryTextColor(isLight)
             binding.tvSeekTitle.setTextColor(textColor)
-            binding.ivSeekPlus.setColorFilter(textColor)
-            binding.ivSeekReduce.setColorFilter(textColor)
+            binding.ivSeekPlus.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
+            binding.ivSeekReduce.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
             binding.tvSeekValue.setTextColor(textColor)
         }
         binding.ivSeekPlus.setOnClickListener {

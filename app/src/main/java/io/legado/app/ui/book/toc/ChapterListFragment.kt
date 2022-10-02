@@ -3,6 +3,7 @@ package io.legado.app.ui.book.toc
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -44,8 +45,8 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         val btc = requireContext().getPrimaryTextColor(ColorUtils.isColorLight(bbg))
         llChapterBaseInfo.setBackgroundColor(bbg)
         tvCurrentChapterInfo.setTextColor(btc)
-        ivChapterTop.setColorFilter(btc)
-        ivChapterBottom.setColorFilter(btc)
+        ivChapterTop.setColorFilter(btc, PorterDuff.Mode.SRC_IN)
+        ivChapterBottom.setColorFilter(btc, PorterDuff.Mode.SRC_IN)
         initRecyclerView()
         initView()
         viewModel.bookData.observe(this@ChapterListFragment) {

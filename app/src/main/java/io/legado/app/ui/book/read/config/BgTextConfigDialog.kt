@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.config
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
@@ -105,12 +106,12 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         rootView.setBackgroundColor(bg)
         tvNameTitle.setTextColor(primaryTextColor)
         tvName.setTextColor(secondaryTextColor)
-        ivEdit.setColorFilter(secondaryTextColor)
+        ivEdit.setColorFilter(secondaryTextColor, PorterDuff.Mode.SRC_IN)
         tvRestore.setTextColor(primaryTextColor)
         swDarkStatusIcon.setTextColor(primaryTextColor)
-        ivImport.setColorFilter(primaryTextColor)
-        ivExport.setColorFilter(primaryTextColor)
-        ivDelete.setColorFilter(primaryTextColor)
+        ivImport.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
+        ivExport.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
+        ivDelete.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
         tvBgAlpha.setTextColor(primaryTextColor)
         tvBgImage.setTextColor(primaryTextColor)
         recyclerView.adapter = adapter
@@ -119,7 +120,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 tvName.setTextColor(secondaryTextColor)
                 tvName.text = getString(R.string.select_image)
                 ivBg.setImageResource(R.drawable.ic_image)
-                ivBg.setColorFilter(primaryTextColor)
+                ivBg.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
                 root.setOnClickListener {
                     selectBgImage.launch()
                 }
