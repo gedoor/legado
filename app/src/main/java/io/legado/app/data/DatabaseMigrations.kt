@@ -325,7 +325,7 @@ object DatabaseMigrations {
 
 
     @Suppress("ClassName")
-    class Migration_44_45 : AutoMigrationSpec {
+    class Migration_54_55 : AutoMigrationSpec {
 
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             db.execSQL(

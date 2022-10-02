@@ -18,6 +18,9 @@ val Book.isImage: Boolean
 
 val Book.isLocal: Boolean
     get() {
+        if (type == 0) {
+            return origin == BookType.localTag || origin.startsWith(BookType.webDavTag)
+        }
         return type and BookType.local > 0
     }
 

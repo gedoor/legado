@@ -64,8 +64,8 @@ data class Book(
     // 自定义字符集名称(仅适用于本地书籍)
     var charset: String? = null,
     // 类型,详见BookType
-    @ColumnInfo(defaultValue = "1")
-    var type: Int = 0,
+    @ColumnInfo(defaultValue = "0")
+    var type: Int = BookType.text,
     // 自定义分组索引号
     @ColumnInfo(defaultValue = "0")
     var group: Long = 0,
