@@ -3,6 +3,7 @@ package io.legado.app.ui.book.remote.manager
 
 import android.net.Uri
 import io.legado.app.constant.AppPattern.bookFileRegex
+import io.legado.app.data.entities.Book
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.lib.webdav.WebDav
@@ -85,11 +86,10 @@ object RemoteBookWebDav : RemoteBookManager() {
     /**
      * 上传本地导入的书籍到远程
      */
-    override suspend fun upload(localBookUri: Uri): Boolean {
+    override suspend fun upload(book: Book): Boolean {
         if (!NetworkUtils.isAvailable()) return false
-
-        val localBookName = localBookUri.path?.substringAfterLast(File.separator)
-        val putUrl = "${rootBookUrl}${File.separator}${localBookName}"
+        val localBookUri = Uri.parse(book.bookUrl)
+        val putUrl = "${rootBookUrl}${File.separator}${book.originName}"
         AppWebDav.authorization?.let {
             if (localBookUri.isContentScheme()) {
                 WebDav(putUrl, it).upload(
@@ -100,6 +100,8 @@ object RemoteBookWebDav : RemoteBookManager() {
                 WebDav(putUrl, it).upload(localBookUri.path!!)
             }
         }
+        book.remoteUrl = putUrl
+        book.save()
         return true
     }
 
