@@ -32,6 +32,9 @@ data class Book(
     @PrimaryKey
     @ColumnInfo(defaultValue = "")
     override var bookUrl: String = "",
+    //webdav远程文件链接
+    @ColumnInfo(defaultValue = "")
+    var remoteUrl: String = "",
     // 目录页Url (toc=table of Contents)
     @ColumnInfo(defaultValue = "")
     var tocUrl: String = "",
