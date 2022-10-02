@@ -3,6 +3,7 @@ package io.legado.app.ui.book.remote
 import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookType
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.utils.toastOnUi
@@ -96,7 +97,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
                 downloadBookPath?.let {
                     val localBook = LocalBook.importFile(it)
-                    localBook.origin= "webDav::" + remoteBook.path
+                    localBook.origin = BookType.webDav + remoteBook.path
                     localBook.save()
                     remoteBook.isOnBookShelf = true
                 }

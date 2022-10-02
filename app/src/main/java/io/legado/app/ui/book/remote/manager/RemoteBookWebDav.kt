@@ -2,6 +2,7 @@ package io.legado.app.ui.book.remote.manager
 
 import android.net.Uri
 import io.legado.app.constant.AppPattern.bookFileRegex
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
@@ -99,7 +100,7 @@ object RemoteBookWebDav : RemoteBookManager() {
                 WebDav(putUrl, it).upload(localBookUri.path!!)
             }
         }
-        book.origin = "webDav::" + putUrl
+        book.origin = BookType.webDav + putUrl
         book.save()
         return true
     }
