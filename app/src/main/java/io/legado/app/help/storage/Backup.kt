@@ -27,7 +27,9 @@ import java.util.concurrent.TimeUnit
 object Backup {
 
     val backupPath: String by lazy {
-        appCtx.filesDir.getFile("backup").absolutePath
+        val path = appCtx.filesDir.getFile("backup").absolutePath
+        FileUtils.createFolderIfNotExist(path)
+        path
     }
 
     val backupFileNames by lazy {
