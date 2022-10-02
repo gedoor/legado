@@ -10,7 +10,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.charsets
-import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -21,6 +20,7 @@ import io.legado.app.databinding.ActivityCacheBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.isAudio
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
@@ -166,7 +166,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { books ->
                 val booksDownload = books.filter {
-                    it.type == BookType.default || it.type == BookType.image
+                    !it.isAudio
                 }
                 when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> booksDownload.sortedByDescending { it.latestChapterTime }

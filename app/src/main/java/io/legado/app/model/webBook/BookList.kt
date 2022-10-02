@@ -7,6 +7,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.rule.BookListRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.BookHelp
+import io.legado.app.help.getBookType
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -138,7 +139,7 @@ object BookList {
         book.origin = bookSource.bookSourceUrl
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
-        book.type = bookSource.bookSourceType
+        book.type = bookSource.getBookType()
         analyzeRule.ruleData = book
         BookInfo.analyzeBookInfo(
             book,
@@ -173,9 +174,9 @@ object BookList {
         ruleLastChapter: List<AnalyzeRule.SourceRule>
     ): SearchBook? {
         val searchBook = SearchBook(variable = variable)
+        searchBook.type = bookSource.getBookType()
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
-        searchBook.type = bookSource.bookSourceType
         searchBook.originOrder = bookSource.customOrder
         analyzeRule.ruleData = searchBook
         analyzeRule.setContent(item)

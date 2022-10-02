@@ -3,6 +3,7 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
@@ -123,8 +124,9 @@ object ImportOldData {
             book.origin = jsonItem.readString("$.tag") ?: ""
             book.originName = jsonItem.readString("$.bookInfoBean.origin") ?: ""
             book.author = jsonItem.readString("$.bookInfoBean.author") ?: ""
-            book.type =
-                if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") 1 else 0
+            val local = if (book.origin == "loc_book") BookType.local else 0
+            book.type = local or
+                    if (jsonItem.readString("$.bookInfoBean.bookSourceType") == "AUDIO") BookType.audio else BookType.text
             book.tocUrl = jsonItem.readString("$.bookInfoBean.chapterUrl") ?: book.bookUrl
             book.coverUrl = jsonItem.readString("$.bookInfoBean.coverUrl")
             book.customCoverUrl = jsonItem.readString("$.customCoverPath")

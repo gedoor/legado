@@ -11,7 +11,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.BookType
+import io.legado.app.constant.BookSourceType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
@@ -204,9 +204,9 @@ class BookSourceEditActivity :
             binding.cbIsEnableReview.isChecked = it.enabledReview ?: false
             binding.spType.setSelection(
                 when (it.bookSourceType) {
-                    BookType.file -> 3
-                    BookType.image -> 2
-                    BookType.audio -> 1
+                    BookSourceType.file -> 3
+                    BookSourceType.image -> 2
+                    BookSourceType.audio -> 1
                     else -> 0
                 }
             )
@@ -327,10 +327,10 @@ class BookSourceEditActivity :
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
         source.enabledReview = binding.cbIsEnableReview.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
-            3 -> BookType.file
-            2 -> BookType.image
-            1 -> BookType.audio
-            else -> BookType.default
+            3 -> BookSourceType.file
+            2 -> BookSourceType.image
+            1 -> BookSourceType.audio
+            else -> BookSourceType.default
         }
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()

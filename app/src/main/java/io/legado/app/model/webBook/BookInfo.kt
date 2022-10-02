@@ -137,7 +137,7 @@ object BookInfo {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取封面出错", e)
         }
-        if (book.type != BookType.file) {
+        if (book.type and BookType.webFile == 0) {
             coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
             book.tocUrl = analyzeRule.getString(infoRule.tocUrl, isUrl = true)

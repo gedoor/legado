@@ -22,10 +22,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.AppWebDav
-import io.legado.app.help.BookHelp
-import io.legado.app.help.IntentData
-import io.legado.app.help.TTS
+import io.legado.app.help.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
@@ -248,13 +245,13 @@ class ReadBookActivity : BaseReadBookActivity(),
         val menu = menu
         val book = ReadBook.book
         if (menu != null && book != null) {
-            val onLine = !book.isLocalBook()
+            val onLine = !book.isLocal
             for (i in 0 until menu.size) {
                 val item = menu[i]
                 when (item.groupId) {
                     R.id.menu_group_on_line -> item.isVisible = onLine
                     R.id.menu_group_local -> item.isVisible = !onLine
-                    R.id.menu_group_text -> item.isVisible = book.isLocalTxt()
+                    R.id.menu_group_text -> item.isVisible = book.isLocalTxt
                     else -> when (item.itemId) {
                         R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
                         R.id.menu_re_segment -> item.isChecked = book.getReSegment()
@@ -346,7 +343,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
             R.id.menu_edit_content -> showDialogFragment(ContentEditDialog())
             R.id.menu_update_toc -> ReadBook.book?.let {
-                if (it.isEpub()) {
+                if (it.isEpub) {
                     BookHelp.clearCache(it)
                 }
                 loadChapterList(it)
@@ -790,7 +787,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         get() = ReadBook.book
 
     override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
-        if (book.type != BookType.audio) {
+        if (!book.isAudio) {
             viewModel.changeTo(book, toc)
         } else {
             ReadAloud.stop(this)
@@ -986,7 +983,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun payAction() {
         ReadBook.book?.let { book ->
-            if (book.isLocalBook()) return
+            if (book.isLocal) return
             val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
             if (chapter == null) {
                 toastOnUi("no chapter")

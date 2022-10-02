@@ -1,7 +1,6 @@
 package io.legado.app.model
 
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
 import io.legado.app.help.AppWebDav
@@ -10,6 +9,7 @@ import io.legado.app.help.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.isLocal
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
@@ -50,7 +50,7 @@ object ReadBook : CoroutineScope by MainScope() {
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
-        isLocalBook = book.origin == BookType.local
+        isLocalBook = book.isLocal
         clearTextChapter()
         callBack?.upMenuView()
         callBack?.upPageAnim()
@@ -73,7 +73,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun upWebBook(book: Book) {
-        if (book.origin == BookType.local) {
+        if (book.isLocal) {
             bookSource = null
         } else {
             appDb.bookSourceDao.getBookSource(book.origin)?.let {
@@ -290,7 +290,7 @@ object ReadBook : CoroutineScope by MainScope() {
             return
         }
         book?.let { book ->
-            if (book.isLocalBook()) return
+            if (book.isLocal) return
             if (addLoading(index)) {
                 Coroutine.async {
                     appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
@@ -318,7 +318,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (book != null && bookSource != null) {
             CacheBook.getOrCreate(bookSource, book).download(scope, chapter)
         } else if (book != null) {
-            val msg = if (book.isLocalBook()) "无内容" else "没有书源"
+            val msg = if (book.isLocal) "无内容" else "没有书源"
             contentLoadFinish(
                 book, chapter, "加载正文失败\n$msg", resetPageOffset = resetPageOffset
             ) {

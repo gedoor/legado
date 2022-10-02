@@ -4,13 +4,12 @@ import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.BookType
+import io.legado.app.constant.BookSourceType
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.*
 import java.io.InputStream
-
 import java.util.regex.Pattern
 
 @Suppress("RegExpRedundantEscape")
@@ -91,7 +90,7 @@ object SourceAnalyzer {
                     searchUrl = toNewUrl(jsonItem.readString("ruleSearchUrl"))
                     exploreUrl = toNewUrls(jsonItem.readString("ruleFindUrl"))
                     bookSourceType =
-                        if (jsonItem.readString("bookSourceType") == "AUDIO") BookType.audio else BookType.default
+                        if (jsonItem.readString("bookSourceType") == "AUDIO") BookSourceType.audio else BookSourceType.default
                     enabled = jsonItem.readBool("enable") ?: true
                     if (exploreUrl.isNullOrBlank()) {
                         enabledExplore = false
@@ -226,7 +225,7 @@ object SourceAnalyzer {
         var bookSourceName: String = "",                // 名称
         var bookSourceGroup: String? = null,            // 分组
         var bookSourceUrl: String = "",                 // 地址，包括 http/https
-        var bookSourceType: Int = BookType.default,     // 类型，0 文本，1 音频
+        var bookSourceType: Int = BookSourceType.default,     // 类型，0 文本，1 音频
         var bookUrlPattern: String? = null,             // 详情页url正则
         var customOrder: Int = 0,                       // 手动排序编号
         var enabled: Boolean = true,                    // 是否启用

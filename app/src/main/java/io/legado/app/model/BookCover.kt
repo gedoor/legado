@@ -32,9 +32,13 @@ object BookCover {
         private set
     lateinit var defaultDrawable: Drawable
         private set
-    var coverRuleConfig: CoverRuleConfig =
-        GSON.fromJsonObject<CoverRuleConfig>(CacheManager.get(coverRuleConfigKey)).getOrNull()
-            ?: DefaultData.coverRuleConfig
+    val coverRuleConfig: CoverRuleConfig
+        get() {
+            return GSON.fromJsonObject<CoverRuleConfig>(CacheManager.get(coverRuleConfigKey))
+                .getOrNull()
+                ?: DefaultData.coverRuleConfig
+        }
+
 
     init {
         upDefaultCover()
@@ -132,14 +136,12 @@ object BookCover {
     }
 
     fun saveCoverRuleConfig(config: CoverRuleConfig) {
-        coverRuleConfig = config
         val json = GSON.toJson(config)
         CacheManager.put(coverRuleConfigKey, json)
     }
 
     fun delCoverRuleConfig() {
         CacheManager.delete(coverRuleConfigKey)
-        coverRuleConfig = DefaultData.coverRuleConfig
     }
 
     data class CoverRuleConfig(

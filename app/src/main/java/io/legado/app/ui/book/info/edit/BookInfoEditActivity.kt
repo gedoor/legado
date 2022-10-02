@@ -11,6 +11,9 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityBookInfoEditBinding
+import io.legado.app.help.isAudio
+import io.legado.app.help.isImage
+import io.legado.app.help.isLocal
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -72,9 +75,9 @@ class BookInfoEditActivity :
         tieBookName.setText(book.name)
         tieBookAuthor.setText(book.author)
         spType.setSelection(
-            when (book.type) {
-                BookType.image -> 2
-                BookType.audio -> 1
+            when {
+                book.isImage -> 2
+                book.isAudio -> 1
                 else -> 0
             }
         )
@@ -93,10 +96,11 @@ class BookInfoEditActivity :
         viewModel.book?.let { book ->
             book.name = tieBookName.text?.toString() ?: ""
             book.author = tieBookAuthor.text?.toString() ?: ""
+            val local = if (book.isLocal) BookType.local else 0
             book.type = when (spType.selectedItemPosition) {
-                2 -> BookType.image
-                1 -> BookType.audio
-                else -> BookType.default
+                2 -> BookType.image or local
+                1 -> BookType.audio or local
+                else -> BookType.text or local
             }
             val customCoverUrl = tieCoverUrl.text?.toString()
             book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl

@@ -11,8 +11,8 @@ interface BookDao {
 
     @Query(
         """
-        select * from books where type != ${BookType.audio} 
-        and origin != '${BookType.local}' and origin not like '${BookType.webDav}%'
+        select * from books where type & ${BookType.text} > 0
+        and type & ${BookType.local} = 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         and (select show from book_groups where groupId = ${AppConst.bookGroupNetNoneId}) != 1
         """
@@ -22,15 +22,15 @@ interface BookDao {
     @Query("SELECT * FROM books order by durChapterTime desc")
     fun flowAll(): Flow<List<Book>>
 
-    @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
+    @Query("SELECT * FROM books WHERE type & ${BookType.audio} > 0")
     fun flowAudio(): Flow<List<Book>>
 
-    @Query("SELECT * FROM books WHERE origin = '${BookType.local}' or origin like '${BookType.webDav}%'")
+    @Query("SELECT * FROM books WHERE type & ${BookType.local} > 0")
     fun flowLocal(): Flow<List<Book>>
 
     @Query(
         """
-        select * from books where type != ${BookType.audio} and origin != '${BookType.local}' and origin not like '${BookType.webDav}%'
+        select * from books where type & ${BookType.audio} = 0 and type & ${BookType.local} = 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         """
     )
@@ -38,13 +38,13 @@ interface BookDao {
 
     @Query(
         """
-        select * from books where origin = '${BookType.local}' or origin like '${BookType.webDav}%'
+        select * from books where type & ${BookType.local} > 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         """
     )
     fun flowLocalNoGroup(): Flow<List<Book>>
 
-    @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}' or origin like '${BookType.webDav}%'")
+    @Query("SELECT bookUrl FROM books WHERE type & ${BookType.local} > 0")
     fun flowLocalUri(): Flow<List<String>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
@@ -65,13 +65,13 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE name = :name and author = :author")
     fun getBook(name: String, author: String): Book?
 
-    @get:Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups) & `group` = 0")
+    @get:Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups)")
     val noGroupSize: Int
 
-    @get:Query("SELECT * FROM books where origin <> '${BookType.local}' and type = 0")
+    @get:Query("SELECT * FROM books where type & ${BookType.local} = 0")
     val webBooks: List<Book>
 
-    @get:Query("SELECT * FROM books where origin <> '${BookType.local}' and canUpdate = 1")
+    @get:Query("SELECT * FROM books where type & ${BookType.local} = 0 and canUpdate = 1")
     val hasUpdateBooks: List<Book>
 
     @get:Query("SELECT * FROM books")

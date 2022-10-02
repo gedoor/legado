@@ -1,45 +1,24 @@
 package io.legado.app.data
 
+import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.BookSourceType
+import io.legado.app.constant.BookType
 
 object DatabaseMigrations {
 
     val migrations: Array<Migration> by lazy {
         arrayOf(
-            migration_10_11,
-            migration_11_12,
-            migration_12_13,
-            migration_13_14,
-            migration_14_15,
-            migration_15_17,
-            migration_17_18,
-            migration_18_19,
-            migration_19_20,
-            migration_20_21,
-            migration_21_22,
-            migration_22_23,
-            migration_23_24,
-            migration_24_25,
-            migration_25_26,
-            migration_26_27,
-            migration_27_28,
-            migration_28_29,
-            migration_29_30,
-            migration_30_31,
-            migration_31_32,
-            migration_32_33,
-            migration_33_34,
-            migration_34_35,
-            migration_35_36,
-            migration_36_37,
-            migration_37_38,
-            migration_38_39,
-            migration_39_40,
-            migration_40_41,
-            migration_41_42,
-            migration_42_43
+            migration_10_11, migration_11_12, migration_12_13, migration_13_14,
+            migration_14_15, migration_15_17, migration_17_18, migration_18_19,
+            migration_19_20, migration_20_21, migration_21_22, migration_22_23,
+            migration_23_24, migration_24_25, migration_25_26, migration_26_27,
+            migration_27_28, migration_28_29, migration_29_30, migration_30_31,
+            migration_31_32, migration_32_33, migration_33_34, migration_34_35,
+            migration_35_36, migration_36_37, migration_37_38, migration_38_39,
+            migration_39_40, migration_40_41, migration_41_42, migration_42_43,
         )
     }
 
@@ -343,4 +322,44 @@ object DatabaseMigrations {
             database.execSQL("ALTER TABLE `chapters` ADD `isVolume` INTEGER NOT NULL DEFAULT 0")
         }
     }
+
+
+    @Suppress("ClassName")
+    class Migration_44_45 : AutoMigrationSpec {
+
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                update books set type = ${BookType.audio}
+                where type = ${BookSourceType.audio}
+            """.trimIndent()
+            )
+            db.execSQL(
+                """
+                update books set type = ${BookType.image}
+                where type = ${BookSourceType.image}
+            """.trimIndent()
+            )
+            db.execSQL(
+                """
+                update books set type = ${BookType.webFile}
+                where type = ${BookSourceType.file}
+            """.trimIndent()
+            )
+            db.execSQL(
+                """
+                update books set type = ${BookType.text}
+                where type = ${BookSourceType.default}
+            """.trimIndent()
+            )
+            db.execSQL(
+                """
+                update books set type = type | ${BookType.local}
+                where origin = '${BookType.localTag}' or origin like '${BookType.webDavTag}%'
+            """.trimIndent()
+            )
+        }
+
+    }
+
 }

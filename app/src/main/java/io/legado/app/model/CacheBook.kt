@@ -10,6 +10,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.BookHelp
+import io.legado.app.help.isLocal
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
@@ -59,7 +60,7 @@ object CacheBook {
     }
 
     fun start(context: Context, book: Book, start: Int, end: Int) {
-        if (!book.isLocalBook()) {
+        if (!book.isLocal) {
             context.startService<CacheBookService> {
                 action = IntentAction.start
                 putExtra("bookUrl", book.bookUrl)

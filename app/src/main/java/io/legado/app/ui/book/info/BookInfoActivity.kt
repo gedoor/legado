@@ -2,7 +2,6 @@ package io.legado.app.ui.book.info
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,7 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
@@ -22,6 +20,9 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookInfoBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.isAudio
+import io.legado.app.help.isLocal
+import io.legado.app.help.isLocalTxt
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
@@ -132,9 +133,9 @@ class BookInfoActivity :
         menu.findItem(R.id.menu_can_update)?.isVisible =
             viewModel.bookSource != null
         menu.findItem(R.id.menu_split_long_chapter)?.isVisible =
-            viewModel.bookData.value?.isLocalTxt() ?: false
+            viewModel.bookData.value?.isLocalTxt ?: false
         menu.findItem(R.id.menu_upload)?.isVisible =
-            viewModel.bookData.value?.isLocalBook() ?: false
+            viewModel.bookData.value?.isLocal ?: false
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -161,7 +162,7 @@ class BookInfoActivity :
             R.id.menu_refresh -> {
                 upLoading(true)
                 viewModel.bookData.value?.let {
-                    if (it.isLocalBook()) {
+                    if (it.isLocal) {
                         it.tocUrl = ""
                     }
                     viewModel.loadBookInfo(it, false)
@@ -437,7 +438,7 @@ class BookInfoActivity :
     @SuppressLint("InflateParams")
     private fun deleteBook() {
         viewModel.bookData.value?.let {
-            if (it.isLocalBook()) {
+            if (it.isLocal) {
                 alert(
                     titleResource = R.string.sure,
                     messageResource = R.string.sure_del
@@ -490,8 +491,8 @@ class BookInfoActivity :
     }
 
     private fun startReadActivity(book: Book) {
-        when (book.type) {
-            BookType.audio -> readBookResult.launch(
+        when {
+            book.isAudio -> readBookResult.launch(
                 Intent(this, AudioPlayActivity::class.java)
                     .putExtra("bookUrl", book.bookUrl)
                     .putExtra("inBookshelf", viewModel.inBookshelf)

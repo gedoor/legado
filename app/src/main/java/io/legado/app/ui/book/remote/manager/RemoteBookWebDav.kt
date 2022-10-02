@@ -100,7 +100,7 @@ object RemoteBookWebDav : RemoteBookManager() {
                 WebDav(putUrl, it).upload(localBookUri.path!!)
             }
         }
-        book.origin = BookType.webDav + putUrl
+        book.origin = BookType.webDavTag + putUrl
         book.save()
         return true
     }

@@ -15,6 +15,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ActivitySearchContentBinding
 import io.legado.app.help.BookHelp
 import io.legado.app.help.IntentData
+import io.legado.app.help.isLocal
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.primaryTextColor
@@ -193,7 +194,7 @@ class SearchContentActivity :
     }
 
     val isLocalBook: Boolean
-        get() = viewModel.book?.isLocalBook() == true
+        get() = viewModel.book?.isLocal == true
 
     override fun openSearchResult(searchResult: SearchResult, index: Int) {
         postEvent(EventBus.SEARCH_RESULT, viewModel.searchResultList as List<SearchResult>)

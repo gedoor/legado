@@ -6,6 +6,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.getBookType
 import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -134,7 +135,7 @@ object WebBook {
         book: Book,
         canReName: Boolean = true,
     ): Book {
-        book.type = bookSource.bookSourceType
+        book.type = bookSource.getBookType()
         if (!book.infoHtml.isNullOrEmpty()) {
             BookInfo.analyzeBookInfo(
                 bookSource = bookSource,
@@ -189,7 +190,7 @@ object WebBook {
         bookSource: BookSource,
         book: Book,
     ): Result<List<BookChapter>> {
-        book.type = bookSource.bookSourceType
+        book.type = bookSource.getBookType()
         return kotlin.runCatching {
             if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
                 BookChapterList.analyzeChapterList(

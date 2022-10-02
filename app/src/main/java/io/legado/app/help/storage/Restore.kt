@@ -16,6 +16,7 @@ import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.help.upType
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -65,6 +66,9 @@ object Restore {
     suspend fun restoreDatabase(path: String = Backup.backupPath) {
         withContext(IO) {
             fileToListT<Book>(path, "bookshelf.json")?.let {
+                it.forEach { book ->
+                    book.upType()
+                }
                 appDb.bookDao.insert(*it.toTypedArray())
             }
             fileToListT<Bookmark>(path, "bookmark.json")?.let {

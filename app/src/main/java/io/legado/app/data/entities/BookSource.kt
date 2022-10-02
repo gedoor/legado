@@ -4,7 +4,7 @@ import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.BookType
+import io.legado.app.constant.BookSourceType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.help.source.SourceAnalyzer
 import io.legado.app.utils.GSON
@@ -29,7 +29,7 @@ data class BookSource(
     // 分组
     var bookSourceGroup: String? = null,
     // 类型，0 文本，1 音频, 2 图片, 3 文件（指的是类似知轩藏书只提供下载的网站）
-    @BookType.Type
+    @BookSourceType.Type
     var bookSourceType: Int = 0,
     // 详情页url正则
     var bookUrlPattern: String? = null,

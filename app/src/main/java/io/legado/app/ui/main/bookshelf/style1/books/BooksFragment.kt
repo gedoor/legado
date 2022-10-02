@@ -10,11 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
-import io.legado.app.constant.*
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.FragmentBooksBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.isAudio
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.audio.AudioPlayActivity
@@ -187,8 +191,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     }
 
     override fun open(book: Book) {
-        when (book.type) {
-            BookType.audio ->
+        when {
+            book.isAudio ->
                 startActivity<AudioPlayActivity> {
                     putExtra("bookUrl", book.bookUrl)
                 }

@@ -97,7 +97,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
                 downloadBookPath?.let {
                     val localBook = LocalBook.importFile(it)
-                    localBook.origin = BookType.webDav + remoteBook.path
+                    localBook.origin = BookType.webDavTag + remoteBook.path
                     localBook.save()
                     remoteBook.isOnBookShelf = true
                 }

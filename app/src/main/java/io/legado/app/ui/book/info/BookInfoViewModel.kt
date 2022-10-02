@@ -16,6 +16,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.BookHelp
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.isLocal
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
@@ -33,7 +34,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
     val isImportBookOnLine: Boolean
-      get() = (bookSource?.bookSourceType ?: BookType.local) == BookType.file
+        get() = (bookSource?.bookSourceType ?: BookType.local) == BookType.webFile
 
     fun initData(intent: Intent) {
         execute {
@@ -75,7 +76,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             bookData.postValue(book)
             upCoverByRule(book)
-            bookSource = if (book.isLocalBook()) null else
+            bookSource = if (book.isLocal) null else
                 appDb.bookSourceDao.getBookSource(book.origin)
             if (book.tocUrl.isEmpty()) {
                 loadBookInfo(book)
@@ -112,7 +113,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         scope: CoroutineScope = viewModelScope
     ) {
         execute(scope) {
-            if (book.isLocalBook()) {
+            if (book.isLocal) {
                 loadChapter(book, scope)
             } else {
                 bookSource?.let { bookSource ->
@@ -143,7 +144,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         scope: CoroutineScope = viewModelScope
     ) {
         execute(scope) {
-            if (book.isLocalBook()) {
+            if (book.isLocal) {
                 LocalBook.getChapterList(book).let {
                     appDb.bookDao.update(book)
                     appDb.bookChapterDao.delByBook(book.bookUrl)
@@ -277,7 +278,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.let {
                 it.delete()
                 inBookshelf = false
-                if (it.isLocalBook()) {
+                if (it.isLocal) {
                     LocalBook.deleteBook(it, deleteOriginal)
                 }
             }

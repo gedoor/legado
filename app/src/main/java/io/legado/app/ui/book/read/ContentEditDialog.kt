@@ -14,6 +14,7 @@ import io.legado.app.databinding.DialogContentEditBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
+import io.legado.app.help.isLocal
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
@@ -125,7 +126,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                 if (reset) {
                     content = null
                     BookHelp.delContent(book, chapter)
-                    if (!book.isLocalBook()) ReadBook.bookSource?.let { bookSource ->
+                    if (!book.isLocal) ReadBook.bookSource?.let { bookSource ->
                         WebBook.getContentAwait(bookSource, book, chapter)
                     }
                 }

@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ItemBookshelfGridBinding
 import io.legado.app.databinding.ItemBookshelfGridGroupBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.isLocal
 import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
@@ -111,7 +111,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
     }
 
     private fun upRefresh(binding: ItemBookshelfGridBinding, item: Book) {
-        if (item.origin != BookType.local && callBack.isUpdate(item.bookUrl)) {
+        if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
             binding.bvUnread.invisible()
             binding.rlLoading.show()
         } else {

@@ -60,7 +60,7 @@ object BookHelp {
             val originNames = ArrayList<String>()
             appDb.bookDao.all.forEach {
                 bookFolderNames.add(it.getFolderName())
-                if (it.isEpub()) originNames.add(it.originName)
+                if (it.isEpub) originNames.add(it.originName)
             }
             downloadDir.getFile(cacheFolderName)
                 .listFiles()?.forEach { bookFile ->
@@ -198,7 +198,7 @@ object BookHelp {
 
     fun getChapterFiles(book: Book): List<String> {
         val fileNameList = arrayListOf<String>()
-        if (book.isLocalTxt()) {
+        if (book.isLocalTxt) {
             return fileNameList
         }
         FileUtils.createFolderIfNotExist(
@@ -214,7 +214,7 @@ object BookHelp {
      * 检测该章节是否下载
      */
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        return if (book.isLocalTxt()) {
+        return if (book.isLocalTxt) {
             true
         } else {
             downloadDir.exists(
@@ -258,9 +258,9 @@ object BookHelp {
         if (file.exists()) {
             return file.readText()
         }
-        if (book.isLocalBook()) {
+        if (book.isLocal) {
             val string = LocalBook.getContent(book, bookChapter)
-            if (string != null && book.isEpub()) {
+            if (string != null && book.isEpub) {
                 saveText(book, bookChapter, string)
             }
             return string

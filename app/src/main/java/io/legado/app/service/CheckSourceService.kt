@@ -6,7 +6,7 @@ import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.BookType
+import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
@@ -214,7 +214,7 @@ class CheckSourceService : BaseService() {
                 }
                 //校验目录
                 if (CheckSource.checkCategory &&
-                    source.bookSourceType != BookType.file
+                    source.bookSourceType != BookSourceType.file
                 ) {
                     val toc = WebBook.getChapterListAwait(source, mBook).getOrThrow()
                     val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url

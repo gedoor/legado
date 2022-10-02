@@ -14,17 +14,19 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
+import io.legado.app.help.AppWebDav
 import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.AppWebDav
+import io.legado.app.help.isEpub
+import io.legado.app.help.isUmd
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
+import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Entities
 import splitties.init.appCtx
 import java.io.*
 import java.util.regex.Pattern
-import kotlinx.coroutines.runBlocking
 
 /**
  * 书籍文件导入 目录正文解析
@@ -65,10 +67,10 @@ object LocalBook {
     @Throws(Exception::class)
     fun getChapterList(book: Book): ArrayList<BookChapter> {
         val chapters = when {
-            book.isEpub() -> {
+            book.isEpub -> {
                 EpubFile.getChapterList(book)
             }
-            book.isUmd() -> {
+            book.isUmd -> {
                 UmdFile.getChapterList(book)
             }
             else -> {
@@ -89,10 +91,10 @@ object LocalBook {
     fun getContent(book: Book, chapter: BookChapter): String? {
         val content = try {
             when {
-                book.isEpub() -> {
+                book.isEpub -> {
                     EpubFile.getContent(book, chapter)
                 }
-                book.isUmd() -> {
+                book.isUmd -> {
                     UmdFile.getContent(book, chapter)
                 }
                 else -> {
@@ -146,6 +148,7 @@ object LocalBook {
         if (book == null) {
             val nameAuthor = analyzeNameAuthor(fileName)
             book = Book(
+                type = BookType.text and BookType.local,
                 bookUrl = bookUrl,
                 name = nameAuthor.first,
                 author = nameAuthor.second,
@@ -158,8 +161,8 @@ object LocalBook {
                 latestChapterTime = updateTime,
                 order = appDb.bookDao.minOrder - 1
             )
-            if (book.isEpub()) EpubFile.upBookInfo(book)
-            if (book.isUmd()) UmdFile.upBookInfo(book)
+            if (book.isEpub) EpubFile.upBookInfo(book)
+            if (book.isUmd) UmdFile.upBookInfo(book)
             appDb.bookDao.insert(book)
         } else {
             //已有书籍说明是更新,删除原有目录
@@ -304,22 +307,20 @@ object LocalBook {
 
     //下载book.remoteUrl对应的远程文件并更新bookUrl 返回inputStream
     private fun downloadRemoteBook(localBook: Book): InputStream? {
-        if (localBook.origin == BookType.local) return null
         //webDav::${http}
-        val webDavUrl = localBook.origin.split("::").getOrNull(1)
-        webDavUrl ?: return null
+        if (!localBook.origin.startsWith(BookType.webDavTag)) return null
+        val webDavUrl = localBook.origin.substring(8)
+        if (webDavUrl.isBlank()) return null
         try {
             val uri = AppWebDav.authorization?.let {
                 val webdav = WebDav(webDavUrl, it)
                 runBlocking {
-                    webdav.downloadInputStream().let { inputStream ->
-                        saveBookFile(inputStream, localBook.originName)
-                    }
+                    saveBookFile(webdav.downloadInputStream(), localBook.originName)
                 }
             }
             return uri?.let {
                 localBook.bookUrl = if (it.isContentScheme()) it.toString()
-                  else it.path!!
+                else it.path!!
                 localBook.save()
                 it.inputStream(appCtx)
             }

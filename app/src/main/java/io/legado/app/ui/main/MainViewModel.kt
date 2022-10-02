@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -15,6 +14,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.DefaultData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
+import io.legado.app.help.isLocal
 import io.legado.app.model.CacheBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.webBook.WebBook
@@ -59,7 +59,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun upToc(books: List<Book>) {
         execute(context = upTocPool) {
             books.filter {
-                it.origin != BookType.local && it.canUpdate
+                !it.isLocal && it.canUpdate
             }.let {
                 addToWaitUp(it)
             }
@@ -233,6 +233,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (LocalConfig.needUpRssSources) {
                 DefaultData.importDefaultRssSources()
             }
+
         }
     }
 }

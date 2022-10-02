@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Parcelable
 import androidx.room.*
 import io.legado.app.R
+import io.legado.app.constant.BookType
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
@@ -26,7 +27,7 @@ data class SearchBook(
     override var bookUrl: String = "",
     var origin: String = "",                     // 书源规则
     var originName: String = "",
-    var type: Int = 0,                          // @BookType
+    var type: Int = BookType.text,                          // @BookType
     override var name: String = "",
     override var author: String = "",
     override var kind: String? = null,

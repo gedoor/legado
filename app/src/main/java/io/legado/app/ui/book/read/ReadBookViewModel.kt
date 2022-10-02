@@ -20,6 +20,7 @@ import io.legado.app.help.BookHelp
 import io.legado.app.help.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.isLocal
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
@@ -78,7 +79,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 loadChapterList(book)
             }
-        } else if (book.isLocalBook()
+        } else if (book.isLocal
             && LocalBook.getLastModified(book).getOrDefault(0L) > book.latestChapterTime
         ) {
             loadChapterList(book)
@@ -97,7 +98,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!isSameBook || !BaseReadAloudService.isRun) {
             syncBookProgress(book)
         }
-        if (!book.isLocalBook() && ReadBook.bookSource == null) {
+        if (!book.isLocal && ReadBook.bookSource == null) {
             autoChangeSource(book.name, book.author)
             return
         }
@@ -107,7 +108,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      * 加载详情页
      */
     private fun loadBookInfo(book: Book) {
-        if (book.isLocalBook()) {
+        if (book.isLocal) {
             loadChapterList(book)
         } else {
             ReadBook.bookSource?.let { source ->
@@ -125,7 +126,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      * 加载目录
      */
     fun loadChapterList(book: Book) {
-        if (book.isLocalBook()) {
+        if (book.isLocal) {
             execute {
                 LocalBook.getChapterList(book).let {
                     book.latestChapterTime = System.currentTimeMillis()

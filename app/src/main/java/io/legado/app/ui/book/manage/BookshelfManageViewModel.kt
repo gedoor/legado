@@ -7,6 +7,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.isLocal
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.toastOnUi
 
@@ -45,7 +46,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
             batchChangeSourceSize.value = books.size
             books.forEachIndexed { index, book ->
                 batchChangeSourcePosition.value = index + 1
-                if (book.isLocalBook()) return@forEachIndexed
+                if (book.isLocal) return@forEachIndexed
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
                 WebBook.preciseSearchAwait(this, source, book.name, book.author)
                     .onFailure {

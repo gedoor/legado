@@ -240,7 +240,7 @@ object Debug {
             .onSuccess {
                 log(debugSource, "︽详情页解析完成")
                 log(debugSource, showTime = false)
-                if (book.type != BookType.file) {
+                if (book.type and BookType.webFile == 0) {
                     tocDebug(scope, bookSource, book)
                 } else {
                     log(debugSource, "≡文件类书源跳过解析目录", state = 1000)
