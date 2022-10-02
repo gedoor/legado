@@ -148,7 +148,7 @@ object LocalBook {
         if (book == null) {
             val nameAuthor = analyzeNameAuthor(fileName)
             book = Book(
-                type = BookType.text and BookType.local,
+                type = BookType.text or BookType.local,
                 bookUrl = bookUrl,
                 name = nameAuthor.first,
                 author = nameAuthor.second,
