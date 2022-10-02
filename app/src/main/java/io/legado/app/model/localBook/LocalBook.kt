@@ -7,6 +7,7 @@ import com.script.SimpleBindings
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
@@ -15,12 +16,15 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.BookHelp
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.AppWebDav
+import io.legado.app.lib.webdav.WebDav
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import org.jsoup.nodes.Entities
 import splitties.init.appCtx
 import java.io.*
 import java.util.regex.Pattern
+import kotlinx.coroutines.runBlocking
 
 /**
  * 书籍文件导入 目录正文解析
@@ -38,13 +42,9 @@ object LocalBook {
     @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
         val uri = Uri.parse(book.bookUrl)
-        if (uri.isContentScheme()) {
-            return appCtx.contentResolver.openInputStream(uri)!!
-        }
-        val file = File(uri.path!!)
-        if (file.exists()) {
-            return FileInputStream(File(uri.path!!))
-        }
+        //文件不存在 尝试下载webDav文件 book.remoteUrl
+        val inputStream = uri.inputStream(appCtx) ?: downloadRemoteBook(book)
+        if (inputStream != null) return inputStream
         throw FileNotFoundException("${uri.path} 文件不存在")
     }
 
@@ -300,6 +300,34 @@ object LocalBook {
             if (onLineBook.intro.isNullOrBlank()) localBook.intro else onLineBook.intro
         localBook.save()
         return localBook
+    }
+
+    //下载book.remoteUrl对应的远程文件并更新bookUrl 返回inputStream
+    private fun downloadRemoteBook(localBook: Book): InputStream? {
+        if (localBook.origin == BookType.local) return null
+        //webDav::${http}
+        val webDavUrl = localBook.origin.split("::").getOrNull(1)
+        webDavUrl ?: return null
+        try {
+            val uri = AppWebDav.authorization?.let {
+                val webdav = WebDav(webDavUrl, it)
+                runBlocking {
+                    webdav.downloadInputStream().let { inputStream ->
+                        saveBookFile(inputStream, localBook.originName)
+                    }
+                }
+            }
+            return uri?.let {
+                localBook.bookUrl = if (it.isContentScheme()) it.toString()
+                  else it.path!!
+                localBook.save()
+                it.inputStream(appCtx)
+            }
+        } catch (e: Exception) {
+            e.printOnDebug()
+            AppLog.put("自动下载webDav书籍失败", e)
+        }
+        return null
     }
 
 }

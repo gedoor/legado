@@ -207,20 +207,21 @@ class BookInfoActivity :
 
             R.id.menu_upload -> {
                 launch {
-                    val uri = Uri.parse(viewModel.bookData.value?.bookUrl.toString())
-                    val waitDialog = WaitDialog(this@BookInfoActivity)
-                    waitDialog.setText("上传中.....")
-                    waitDialog.show()
-                    try {
-                        val isUpload = RemoteBookWebDav.upload(uri)
-                        if (isUpload)
-                            toastOnUi(getString(R.string.upload_book_success))
-                        else
-                            toastOnUi(getString(R.string.upload_book_fail))
-                    } catch (e: Exception) {
-                        toastOnUi(e.localizedMessage)
-                    } finally {
-                        waitDialog.dismiss()
+                    viewModel.bookData.value?.let {
+                        val waitDialog = WaitDialog(this@BookInfoActivity)
+                        waitDialog.setText("上传中.....")
+                        waitDialog.show()
+                        try {
+                            val isUpload = RemoteBookWebDav.upload(it)
+                            if (isUpload)
+                                toastOnUi(getString(R.string.upload_book_success))
+                            else
+                                toastOnUi(getString(R.string.upload_book_fail))
+                        } catch (e: Exception) {
+                            toastOnUi(e.localizedMessage)
+                        } finally {
+                            waitDialog.dismiss()
+                        }
                     }
                 }
             }

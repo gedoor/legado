@@ -14,6 +14,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.isUri
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -108,7 +109,9 @@ data class Book(
 ) : Parcelable, BaseBook {
 
     fun isLocalBook(): Boolean {
-        return origin == BookType.local
+        //通过判断书籍链接来判断http* file:// content://
+        //origin判断不可靠 http* BookType.local webDav::
+        return origin == BookType.local || bookUrl.isUri()
     }
 
     fun isLocalTxt(): Boolean {
