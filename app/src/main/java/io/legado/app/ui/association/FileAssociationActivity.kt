@@ -121,7 +121,7 @@ class FileAssociationActivity :
             val treeUriStr = AppConfig.defaultBookTreeUri
             if (treeUriStr.isNullOrEmpty()) {
                 localBookTreeSelect.launch {
-                    title = "选择保存书籍的文件夹"
+                    title = getString(R.string.select_book_folder)
                     mode = HandleFileContract.DIR_SYS
                 }
             } else {
