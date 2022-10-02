@@ -12,7 +12,7 @@ interface BookDao {
     @Query(
         """
         select * from books where type != ${BookType.audio} 
-        and origin != '${BookType.local}' 
+        and origin != '${BookType.local}' and origin not like '${BookType.webDav}%'
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         and (select show from book_groups where groupId = ${AppConst.bookGroupNetNoneId}) != 1
         """
@@ -25,12 +25,12 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE type = ${BookType.audio}")
     fun flowAudio(): Flow<List<Book>>
 
-    @Query("SELECT * FROM books WHERE origin = '${BookType.local}'")
+    @Query("SELECT * FROM books WHERE origin = '${BookType.local}' or origin like '${BookType.webDav}%'")
     fun flowLocal(): Flow<List<Book>>
 
     @Query(
         """
-        select * from books where type != ${BookType.audio} and origin != '${BookType.local}' 
+        select * from books where type != ${BookType.audio} and origin != '${BookType.local}' and origin not like '${BookType.webDav}%'
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         """
     )
@@ -38,13 +38,13 @@ interface BookDao {
 
     @Query(
         """
-        select * from books where type != ${BookType.audio} and origin = '${BookType.local}' 
+        select * from books where origin = '${BookType.local}' or origin like '${BookType.webDav}%'
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         """
     )
     fun flowLocalNoGroup(): Flow<List<Book>>
 
-    @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}'")
+    @Query("SELECT bookUrl FROM books WHERE origin = '${BookType.local}' or origin like '${BookType.webDav}%'")
     fun flowLocalUri(): Flow<List<String>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")

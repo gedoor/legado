@@ -9,6 +9,11 @@ object BookType {
     const val file = 3               // 3 只提供下载服务的网站
     const val local = "loc_book"
 
+    /**
+     * 书源已webDav::开头的书籍,可以从webDav更新或重新下载
+     */
+    const val webDav = "webDav::"
+
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(default, audio, image, file)
