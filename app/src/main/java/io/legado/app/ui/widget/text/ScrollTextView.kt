@@ -2,7 +2,6 @@ package io.legado.app.ui.widget.text
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -80,7 +79,6 @@ class ScrollTextView(context: Context, attrs: AttributeSet?) :
         mTouchSlop = vc.scaledTouchSlop
         mMinFlingVelocity = vc.scaledMinimumFlingVelocity
         mMaxFlingVelocity = vc.scaledMaximumFlingVelocity
-        movementMethod = LinkMovementMethod.getInstance()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
