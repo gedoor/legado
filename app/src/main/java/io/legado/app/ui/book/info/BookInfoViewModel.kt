@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.BookType
+import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -34,7 +34,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
     val isImportBookOnLine: Boolean
-        get() = (bookSource?.bookSourceType ?: BookType.local) == BookType.webFile
+        get() = bookSource?.bookSourceType == BookSourceType.file
 
     fun initData(intent: Intent) {
         execute {
