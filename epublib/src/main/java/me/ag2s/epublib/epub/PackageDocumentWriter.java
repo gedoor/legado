@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import me.ag2s.epublib.BuildConfig;
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.EpubBook;
 import me.ag2s.epublib.domain.Guide;
@@ -52,20 +51,18 @@ public class PackageDocumentWriter extends PackageDocumentBase {
             serializer.endDocument();
             serializer.flush();
         } catch (IOException e) {
-            if (BuildConfig.DEBUG) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 
     /**
      * Writes the package's spine.
      *
-     * @param book e
+     * @param book       e
      * @param epubWriter g
      * @param serializer g
-     * @throws IOException g
-     * @throws IllegalStateException g
+     * @throws IOException              g
+     * @throws IllegalStateException    g
      * @throws IllegalArgumentException 1@throws XMLStreamException
      */
     @SuppressWarnings("unused")
@@ -180,8 +177,8 @@ public class PackageDocumentWriter extends PackageDocumentBase {
     /**
      * List all spine references
      *
-     * @throws IOException f
-     * @throws IllegalStateException f
+     * @throws IOException              f
+     * @throws IllegalStateException    f
      * @throws IllegalArgumentException f
      */
     @SuppressWarnings("unused")
