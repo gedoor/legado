@@ -13,22 +13,22 @@ object BookType {
     const val text = 0b1000
 
     /**
-     * 16 音频
+     * 32 音频
      */
     const val audio = 0b100000
 
     /**
-     * 32 图片
+     * 64 图片
      */
     const val image = 0b1000000
 
     /**
-     * 64 只提供下载服务的网站
+     * 128 只提供下载服务的网站
      */
     const val webFile = 0b10000000
 
     /**
-     * 128 本地
+     * 256 本地
      */
     const val local = 0b100000000
 
