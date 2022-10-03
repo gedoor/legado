@@ -220,10 +220,8 @@ class AnalyzeUrl(
         queryStr = fieldsTxt
         val queryS = fieldsTxt.splitNotBlank("&")
         for (query in queryS) {
-            val separator = query.indexOf("=")
-            if (separator == -1) continue
-            val value = query.slice(separator + 1)
-            val key = query.slice(0, separator)
+            val value = query.substringAfter("=")
+            val key = query.substringBefore("=")
             if (charset.isNullOrEmpty()) {
                 if (NetworkUtils.hasUrlEncoded(value)) {
                     fieldMap[key] = value
