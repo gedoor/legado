@@ -70,6 +70,10 @@ jobs:
           sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
+
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+
       - name: Build With Gradle
         run: |
           if [ ${{ env.type }} == 'release' ]; then
