@@ -1,5 +1,5 @@
 package io.legado.app.ui.book.remote
 
-enum class Sort {
+enum class RemoteBookSort {
     Default, Name
 }

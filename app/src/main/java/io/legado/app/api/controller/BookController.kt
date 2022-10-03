@@ -7,8 +7,12 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.*
+import io.legado.app.help.BookHelp
+import io.legado.app.help.CacheManager
+import io.legado.app.help.ContentProcessor
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.help.isLocal
+import io.legado.app.help.webdav.AppWebDav
 import io.legado.app.model.BookCover
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook

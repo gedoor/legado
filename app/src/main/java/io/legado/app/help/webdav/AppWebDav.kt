@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.webdav
 
 import android.content.Context
 import io.legado.app.R

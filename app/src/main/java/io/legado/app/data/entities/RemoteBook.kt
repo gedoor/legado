@@ -1,5 +1,8 @@
-package io.legado.app.ui.book.remote
+package io.legado.app.data.entities
 
+import com.android.tools.r8.Keep
+
+@Keep
 data class RemoteBook(
     val filename: String,
     val path: String,

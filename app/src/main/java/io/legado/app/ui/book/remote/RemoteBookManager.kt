@@ -2,6 +2,7 @@ package io.legado.app.ui.book.remote
 
 import android.net.Uri
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.RemoteBook
 
 abstract class RemoteBookManager {
     protected val remoteBookFolder : String = "books"

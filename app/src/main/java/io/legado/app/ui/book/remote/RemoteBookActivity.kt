@@ -10,6 +10,7 @@ import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.entities.RemoteBook
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.about.AppLogDialog
@@ -50,7 +51,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
         binding.selectActionBar.setCallBack(this)
     }
 
-    private fun sortCheck(sortKey: Sort) {
+    private fun sortCheck(sortKey: RemoteBookSort) {
         if (viewModel.sortKey == sortKey) {
             viewModel.sortAscending = !viewModel.sortAscending
         } else {
@@ -89,12 +90,12 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_sort_name -> {
                 item.isChecked = true
-                sortCheck(Sort.Name)
+                sortCheck(RemoteBookSort.Name)
                 upPath()
             }
             R.id.menu_sort_time -> {
                 item.isChecked = true
-                sortCheck(Sort.Default)
+                sortCheck(RemoteBookSort.Default)
                 upPath()
             }
         }
@@ -104,8 +105,10 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         groupMenu = menu.findItem(R.id.menu_sort)?.subMenu
         groupMenu?.setGroupCheckable(R.id.menu_group_sort, true, true)
-        groupMenu?.findItem(R.id.menu_sort_name)?.isChecked = viewModel.sortKey == Sort.Name
-        groupMenu?.findItem(R.id.menu_sort_time)?.isChecked = viewModel.sortKey == Sort.Default
+        groupMenu?.findItem(R.id.menu_sort_name)?.isChecked =
+            viewModel.sortKey == RemoteBookSort.Name
+        groupMenu?.findItem(R.id.menu_sort_time)?.isChecked =
+            viewModel.sortKey == RemoteBookSort.Default
         return super.onPrepareOptionsMenu(menu)
     }
 

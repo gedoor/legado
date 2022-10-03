@@ -23,6 +23,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.isAudio
 import io.legado.app.help.isLocal
 import io.legado.app.help.isLocalTxt
+import io.legado.app.help.webdav.RemoteBookWebDav
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
@@ -36,7 +37,6 @@ import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.book.remote.manager.RemoteBookWebDav
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult

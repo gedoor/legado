@@ -1,15 +1,14 @@
-package io.legado.app.ui.book.remote.manager
+package io.legado.app.help.webdav
 
 import android.net.Uri
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.RemoteBook
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.AppWebDav
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavFile
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.ui.book.remote.RemoteBook
 import io.legado.app.ui.book.remote.RemoteBookManager
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.isContentScheme
@@ -89,7 +88,7 @@ object RemoteBookWebDav : RemoteBookManager() {
     override suspend fun upload(book: Book): Boolean {
         if (!NetworkUtils.isAvailable()) return false
         val localBookUri = Uri.parse(book.bookUrl)
-        val putUrl = "${rootBookUrl}${File.separator}${book.originName}"
+        val putUrl = "$rootBookUrl${File.separator}${book.originName}"
         AppWebDav.authorization?.let {
             if (localBookUri.isContentScheme()) {
                 WebDav(putUrl, it).upload(
