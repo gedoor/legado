@@ -14,6 +14,9 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+
       - name: Check Cronet Updates
         run: |
           echo "获取cronet最新版本"
