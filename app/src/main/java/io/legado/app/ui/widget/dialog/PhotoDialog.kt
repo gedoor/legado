@@ -7,7 +7,7 @@ import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogPhotoViewBinding
-import io.legado.app.help.BookHelp
+import io.legado.app.help.book.BookHelp
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.model.BookCover

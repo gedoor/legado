@@ -5,8 +5,8 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.RemoteBook
-import io.legado.app.help.webdav.RemoteBookWebDav
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -96,7 +96,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
         execute {
             remoteBooks.forEach { remoteBook ->
                 val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
-                downloadBookPath?.let {
+                downloadBookPath.let {
                     val localBook = LocalBook.importFile(it)
                     localBook.origin = BookType.webDavTag + remoteBook.path
                     localBook.save()

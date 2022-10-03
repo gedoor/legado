@@ -8,7 +8,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ContentRule
 import io.legado.app.exception.ContentEmptyException
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.BookHelp
+import io.legado.app.help.book.BookHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl

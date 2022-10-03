@@ -7,8 +7,8 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
-import io.legado.app.help.ContentProcessor
+import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive

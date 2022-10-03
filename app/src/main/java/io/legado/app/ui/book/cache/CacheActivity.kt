@@ -18,7 +18,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ActivityCacheBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.BookHelp
+import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.isAudio
 import io.legado.app.lib.dialogs.SelectItem

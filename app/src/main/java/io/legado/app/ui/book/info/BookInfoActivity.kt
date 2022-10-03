@@ -23,12 +23,12 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.isAudio
 import io.legado.app.help.isLocal
 import io.legado.app.help.isLocalTxt
-import io.legado.app.help.webdav.RemoteBookWebDav
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
+import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.association.ImportOnLineBookFileDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
@@ -213,11 +213,7 @@ class BookInfoActivity :
                         waitDialog.setText("上传中.....")
                         waitDialog.show()
                         try {
-                            val isUpload = RemoteBookWebDav.upload(it)
-                            if (isUpload)
-                                toastOnUi(getString(R.string.upload_book_success))
-                            else
-                                toastOnUi(getString(R.string.upload_book_fail))
+                            RemoteBookWebDav.upload(it)
                         } catch (e: Exception) {
                             toastOnUi(e.localizedMessage)
                         } finally {

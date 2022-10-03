@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.book
 
 import java.util.regex.Pattern
 import kotlin.math.max
@@ -478,7 +478,7 @@ object ContentHelp {
         val patten = Pattern.compile(
             """
           (?<=["'”“])([^
-          \p{P}]{1,${WORD_MAX_LENGTH}})(?=["'”“])
+          \p{P}]{1,$WORD_MAX_LENGTH})(?=["'”“])
           """.trimIndent()
         )
         //Pattern patten = Pattern.compile("(?<=[\"'”“])([^\n\"'”“]{1,16})(?=[\"'”“])");

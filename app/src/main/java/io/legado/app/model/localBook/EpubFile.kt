@@ -6,7 +6,7 @@ import android.text.TextUtils
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.help.BookHelp
+import io.legado.app.help.book.BookHelp
 import io.legado.app.utils.*
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource

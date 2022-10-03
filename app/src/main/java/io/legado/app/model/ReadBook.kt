@@ -3,13 +3,13 @@ package io.legado.app.model
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
-import io.legado.app.help.BookHelp
-import io.legado.app.help.ContentProcessor
+import io.legado.app.help.AppWebDav
+import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.isLocal
-import io.legado.app.help.webdav.AppWebDav
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter

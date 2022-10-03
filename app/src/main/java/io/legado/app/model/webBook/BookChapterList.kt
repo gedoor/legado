@@ -8,7 +8,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
-import io.legado.app.help.ContentProcessor
+import io.legado.app.help.book.ContentProcessor
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl

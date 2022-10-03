@@ -8,6 +8,8 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.printOnDebug
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -274,16 +276,18 @@ open class WebDav(val path: String, val authorization: Authorization) {
         contentType: String = "application/octet-stream"
     ) {
         kotlin.runCatching {
-            val file = File(localPath)
-            if (!file.exists()) throw WebDavException("文件不存在")
-            // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
-            val fileBody = file.asRequestBody(contentType.toMediaType())
-            val url = httpUrl ?: throw WebDavException("url不能为空")
-            webDavClient.newCallResponse {
-                url(url)
-                put(fileBody)
-            }.let {
-                checkResult(it)
+            withContext(IO) {
+                val file = File(localPath)
+                if (!file.exists()) throw WebDavException("文件不存在")
+                // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
+                val fileBody = file.asRequestBody(contentType.toMediaType())
+                val url = httpUrl ?: throw WebDavException("url不能为空")
+                webDavClient.newCallResponse {
+                    url(url)
+                    put(fileBody)
+                }.let {
+                    checkResult(it)
+                }
             }
         }.onFailure {
             AppLog.put("WebDav上传失败\n${it.localizedMessage}", it)
@@ -295,13 +299,15 @@ open class WebDav(val path: String, val authorization: Authorization) {
     suspend fun upload(byteArray: ByteArray, contentType: String) {
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         kotlin.runCatching {
-            val fileBody = byteArray.toRequestBody(contentType.toMediaType())
-            val url = httpUrl ?: throw NoStackTraceException("url不能为空")
-            webDavClient.newCallResponse {
-                url(url)
-                put(fileBody)
-            }.let {
-                checkResult(it)
+            withContext(IO) {
+                val fileBody = byteArray.toRequestBody(contentType.toMediaType())
+                val url = httpUrl ?: throw NoStackTraceException("url不能为空")
+                webDavClient.newCallResponse {
+                    url(url)
+                    put(fileBody)
+                }.let {
+                    checkResult(it)
+                }
             }
         }.onFailure {
             AppLog.put("WebDav上传失败\n${it.localizedMessage}", it)

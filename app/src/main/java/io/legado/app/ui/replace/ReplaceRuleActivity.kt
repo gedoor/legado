@@ -19,8 +19,8 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.ContentProcessor
 import io.legado.app.help.DirectLinkUpload
+import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor

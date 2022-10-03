@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.book
 
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.AppLog

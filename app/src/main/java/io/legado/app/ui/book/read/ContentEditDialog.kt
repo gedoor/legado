@@ -12,8 +12,8 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.DialogContentEditBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.BookHelp
-import io.legado.app.help.ContentProcessor
+import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.isLocal
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
