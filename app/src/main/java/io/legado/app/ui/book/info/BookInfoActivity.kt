@@ -214,6 +214,9 @@ class BookInfoActivity :
                         waitDialog.show()
                         try {
                             RemoteBookWebDav.upload(it)
+                            //更新书籍最后更新时间,使之比远程书籍的时间新
+                            it.latestChapterTime = System.currentTimeMillis()
+                            viewModel.saveBook(it)
                         } catch (e: Exception) {
                             toastOnUi(e.localizedMessage)
                         } finally {
