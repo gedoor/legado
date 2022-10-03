@@ -14,13 +14,4 @@ object BookSourceType {
     @IntDef(default, audio, image, file)
     annotation class Type
 
-    fun toBookType(sourceType: Int) {
-        when (sourceType) {
-            file -> BookType.text or BookType.webFile
-            image -> BookType.image
-            audio -> BookType.audio
-            else -> BookType.text
-        }
-    }
-
 }

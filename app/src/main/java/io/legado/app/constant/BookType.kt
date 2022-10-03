@@ -33,6 +33,11 @@ object BookType {
     const val local = 0b100000000
 
 
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(text, audio, image, webFile)
+    annotation class Type
+
     /**
      * 本地书籍书源标志
      */
@@ -43,8 +48,4 @@ object BookType {
      */
     const val webDavTag = "webDav::"
 
-    @Target(AnnotationTarget.VALUE_PARAMETER)
-    @Retention(AnnotationRetention.SOURCE)
-    @IntDef(text, audio, image, webFile)
-    annotation class Type
 }
