@@ -62,7 +62,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun refreshData(intent: Intent) {
+    fun upBook(intent: Intent) {
         execute {
             val name = intent.getStringExtra("name") ?: ""
             val author = intent.getStringExtra("author") ?: ""
@@ -105,6 +105,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
         }
+    }
+
+    fun refreshBook(book: Book) {
+        if (book.isLocal) {
+            book.tocUrl = ""
+        }
+        loadBookInfo(book, false)
     }
 
     fun loadBookInfo(

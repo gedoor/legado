@@ -44,6 +44,13 @@ val Book.isOnLineTxt: Boolean
         return !isLocal && type and BookType.text > 0
     }
 
+fun Book.getRemoteUrl(): String? {
+    if (origin.startsWith(BookType.webDavTag)) {
+        return origin.substring(8)
+    }
+    return null
+}
+
 fun Book.upType() {
     if (type < 8) {
         type = when (type) {

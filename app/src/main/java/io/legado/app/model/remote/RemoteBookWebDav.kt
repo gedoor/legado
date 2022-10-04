@@ -4,7 +4,6 @@ import android.net.Uri
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.RemoteBook
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.lib.webdav.WebDav
@@ -40,34 +39,24 @@ object RemoteBookWebDav : RemoteBookManager() {
             val remoteWebDavFileList: List<WebDavFile> = WebDav(path, it).listFiles()
             //转化远程文件信息到本地对象
             remoteWebDavFileList.forEach { webDavFile ->
-                if (webDavFile.isDir) {
-                    remoteBooks.add(
-                        RemoteBook(
-                            webDavFile.displayName, webDavFile.path, webDavFile.size,
-                            "folder", webDavFile.lastModify
-                        )
-                    )
-                } else {
-                    //分割后缀
-                    val fileExtension = webDavFile.displayName.substringAfterLast(".")
-
+                if (webDavFile.isDir || bookFileRegex.matches(webDavFile.displayName)) {
                     //扩展名符合阅读的格式则认为是书籍
-                    if (bookFileRegex.matches(webDavFile.displayName)) {
-                        val isOnBookShelf = LocalBook.isOnBookShelf(webDavFile.displayName)
-                        remoteBooks.add(
-                            RemoteBook(
-                                webDavFile.displayName, webDavFile.path, webDavFile.size,
-                                fileExtension, webDavFile.lastModify, isOnBookShelf
-                            )
-                        )
-                    }
+                    remoteBooks.add(RemoteBook(webDavFile))
                 }
             }
         } ?: throw NoStackTraceException("webDav没有配置")
         return remoteBooks
     }
 
-    override suspend fun getRemoteBook(remoteBook: RemoteBook): Uri {
+    override suspend fun getRemoteBook(path: String): RemoteBook {
+        AppWebDav.authorization?.let {
+            val webDavFile = WebDav(path, it).getWebDavFile()
+                ?: throw NoStackTraceException("远程书籍不存在")
+            return RemoteBook(webDavFile)
+        } ?: throw NoStackTraceException("webDav没有配置")
+    }
+
+    override suspend fun downloadRemoteBook(remoteBook: RemoteBook): Uri {
         return AppWebDav.authorization?.let {
             val webdav = WebDav(remoteBook.path, it)
             webdav.downloadInputStream().let { inputStream ->

@@ -4,8 +4,8 @@ import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
-import io.legado.app.data.entities.RemoteBook
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.remote.RemoteBook
 import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
@@ -95,7 +95,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     fun addToBookshelf(remoteBooks: HashSet<RemoteBook>, finally: () -> Unit) {
         execute {
             remoteBooks.forEach { remoteBook ->
-                val downloadBookPath = RemoteBookWebDav.getRemoteBook(remoteBook)
+                val downloadBookPath = RemoteBookWebDav.downloadRemoteBook(remoteBook)
                 downloadBookPath.let {
                     val localBook = LocalBook.importFile(it)
                     localBook.origin = BookType.webDavTag + remoteBook.path

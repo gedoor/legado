@@ -92,12 +92,11 @@ open class WebDav(val path: String, val authorization: Authorization) {
     /**
      * 获取当前url文件信息
      */
+    @Throws(WebDavException::class)
     suspend fun getWebDavFile(): WebDavFile? {
-        return kotlin.runCatching {
-            propFindResponse(depth = 0)?.let {
-                return parseBody(it).firstOrNull()
-            }
-        }.getOrNull()
+        return propFindResponse(depth = 0)?.let {
+            parseBody(it).firstOrNull()
+        }
     }
 
     /**

@@ -81,7 +81,7 @@ class BookInfoActivity :
     private val readBookResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        viewModel.refreshData(intent)
+        viewModel.upBook(intent)
         if (it.resultCode == RESULT_OK) {
             viewModel.inBookshelf = true
             upTvBookshelf()
@@ -162,10 +162,7 @@ class BookInfoActivity :
             R.id.menu_refresh -> {
                 upLoading(true)
                 viewModel.bookData.value?.let {
-                    if (it.isLocal) {
-                        it.tocUrl = ""
-                    }
-                    viewModel.loadBookInfo(it, false)
+                    viewModel.refreshBook(it)
                 }
             }
             R.id.menu_login -> viewModel.bookSource?.let {

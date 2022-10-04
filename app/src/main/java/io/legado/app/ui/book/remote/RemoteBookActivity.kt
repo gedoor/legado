@@ -10,9 +10,9 @@ import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.data.entities.RemoteBook
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.model.remote.RemoteBook
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.WaitDialog

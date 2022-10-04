@@ -2,7 +2,6 @@ package io.legado.app.model.remote
 
 import android.net.Uri
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.RemoteBook
 
 abstract class RemoteBookManager {
     protected val remoteBookFolder: String = "books"
@@ -16,6 +15,18 @@ abstract class RemoteBookManager {
     abstract suspend fun getRemoteBookList(path: String): MutableList<RemoteBook>
 
     /**
+     * 根据书籍地址获取书籍信息
+     */
+    @Throws(Exception::class)
+    abstract suspend fun getRemoteBook(path: String): RemoteBook
+
+    /**
+     * @return Uri：下载到本地的路径
+     */
+    @Throws(Exception::class)
+    abstract suspend fun downloadRemoteBook(remoteBook: RemoteBook): Uri
+
+    /**
      * 上传书籍
      */
     @Throws(Exception::class)
@@ -27,9 +38,4 @@ abstract class RemoteBookManager {
     @Throws(Exception::class)
     abstract suspend fun delete(remoteBookUrl: String)
 
-    /**
-     * @return Uri：下载到本地的路径
-     */
-    @Throws(Exception::class)
-    abstract suspend fun getRemoteBook(remoteBook: RemoteBook): Uri
 }
