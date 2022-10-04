@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.book
 
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType

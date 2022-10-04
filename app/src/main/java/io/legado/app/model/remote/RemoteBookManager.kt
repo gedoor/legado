@@ -2,9 +2,16 @@ package io.legado.app.model.remote
 
 import android.net.Uri
 import io.legado.app.data.entities.Book
+import kotlinx.coroutines.runBlocking
 
 abstract class RemoteBookManager {
     protected val remoteBookFolder: String = "books"
+
+    init {
+        runBlocking {
+            initRemoteContext()
+        }
+    }
 
     abstract suspend fun initRemoteContext()
 

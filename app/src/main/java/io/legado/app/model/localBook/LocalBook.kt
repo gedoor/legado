@@ -16,9 +16,9 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.isEpub
+import io.legado.app.help.book.isUmd
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.isEpub
-import io.legado.app.help.isUmd
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*

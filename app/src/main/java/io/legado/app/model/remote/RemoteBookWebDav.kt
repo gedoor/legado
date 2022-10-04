@@ -12,18 +12,11 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.readBytes
-import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
 
 object RemoteBookWebDav : RemoteBookManager() {
     val rootBookUrl get() = "${AppWebDav.rootWebDavUrl}${remoteBookFolder}"
-
-    init {
-        runBlocking {
-            initRemoteContext()
-        }
-    }
 
     override suspend fun initRemoteContext() {
         AppWebDav.authorization?.let {
