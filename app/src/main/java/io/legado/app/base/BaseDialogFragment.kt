@@ -1,5 +1,7 @@
 package io.legado.app.base
 
+import android.content.DialogInterface
+import android.content.DialogInterface.OnDismissListener
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.LayoutRes
@@ -18,9 +20,13 @@ import kotlin.coroutines.CoroutineContext
 abstract class BaseDialogFragment(
     @LayoutRes layoutID: Int,
     private val adaptationSoftKeyboard: Boolean = false
-) : DialogFragment(layoutID),
+) : DialogFragment(layoutID), CoroutineScope by MainScope() {
 
-    CoroutineScope by MainScope() {
+    private var onDismissListener: OnDismissListener? = null
+
+    fun setOnDismissListener(onDismissListener: OnDismissListener?) {
+        this.onDismissListener = onDismissListener
+    }
 
     override fun onStart() {
         super.onStart()
@@ -49,6 +55,11 @@ abstract class BaseDialogFragment(
             manager.beginTransaction().remove(this).commit()
             super.show(manager, tag)
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.onDismiss(dialog)
     }
 
     override fun onDestroy() {
