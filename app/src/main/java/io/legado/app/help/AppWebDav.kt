@@ -230,7 +230,7 @@ object AppWebDav {
     }
 
     private fun getProgressUrl(name: String, author: String): String {
-        return bookProgressUrl + name + "_" + author + ".json"
+        return bookProgressUrl + UrlUtil.replaceReservedChar("${name}_${author}") + ".json"
     }
 
     /**
