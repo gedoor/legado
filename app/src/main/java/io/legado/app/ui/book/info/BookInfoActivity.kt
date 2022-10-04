@@ -332,9 +332,10 @@ class BookInfoActivity :
             }
         }
         tvOrigin.setOnClickListener {
-            viewModel.bookData.value?.let {
+            viewModel.bookData.value?.let { book ->
+                if (book.isLocal) return@let
                 startActivity<BookSourceEditActivity> {
-                    putExtra("sourceUrl", it.origin)
+                    putExtra("sourceUrl", book.origin)
                 }
             } ?: toastOnUi("Book is null")
         }

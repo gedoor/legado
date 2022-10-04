@@ -12,13 +12,21 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.readBytes
+import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
 
 object RemoteBookWebDav : RemoteBookManager() {
+
     val rootBookUrl get() = "${AppWebDav.rootWebDavUrl}${remoteBookFolder}"
 
-    override suspend fun initRemoteContext() {
+    init {
+        runBlocking {
+            initRemoteContext()
+        }
+    }
+
+    suspend fun initRemoteContext() {
         AppWebDav.authorization?.let {
             WebDav(rootBookUrl, it).makeAsDir()
         }
@@ -41,10 +49,10 @@ object RemoteBookWebDav : RemoteBookManager() {
         return remoteBooks
     }
 
-    override suspend fun getRemoteBook(path: String): RemoteBook {
+    override suspend fun getRemoteBook(path: String): RemoteBook? {
         AppWebDav.authorization?.let {
             val webDavFile = WebDav(path, it).getWebDavFile()
-                ?: throw NoStackTraceException("远程书籍不存在")
+                ?: return null
             return RemoteBook(webDavFile)
         } ?: throw NoStackTraceException("webDav没有配置")
     }

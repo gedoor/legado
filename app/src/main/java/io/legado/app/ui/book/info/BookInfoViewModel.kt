@@ -15,12 +15,14 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.getRemoteUrl
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -108,10 +110,23 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun refreshBook(book: Book) {
-        if (book.isLocal) {
-            book.tocUrl = ""
+        execute {
+            if (book.isLocal) {
+                book.tocUrl = ""
+                book.getRemoteUrl()?.let {
+                    val remoteBook = RemoteBookWebDav.getRemoteBook(it)
+                    if (remoteBook == null) {
+
+                    } else if (remoteBook.lastModify > book.latestChapterTime) {
+
+                    }
+                }
+            }
+        }.onError {
+            AppLog.put("下载远程书籍<${book.name}>失败", it)
+        }.onFinally {
+            loadBookInfo(book, false)
         }
-        loadBookInfo(book, false)
     }
 
     fun loadBookInfo(

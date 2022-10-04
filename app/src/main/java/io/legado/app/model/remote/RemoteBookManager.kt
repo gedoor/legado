@@ -2,18 +2,9 @@ package io.legado.app.model.remote
 
 import android.net.Uri
 import io.legado.app.data.entities.Book
-import kotlinx.coroutines.runBlocking
 
 abstract class RemoteBookManager {
     protected val remoteBookFolder: String = "books"
-
-    init {
-        runBlocking {
-            initRemoteContext()
-        }
-    }
-
-    abstract suspend fun initRemoteContext()
 
     /**
      * 获取书籍列表
@@ -25,7 +16,7 @@ abstract class RemoteBookManager {
      * 根据书籍地址获取书籍信息
      */
     @Throws(Exception::class)
-    abstract suspend fun getRemoteBook(path: String): RemoteBook
+    abstract suspend fun getRemoteBook(path: String): RemoteBook?
 
     /**
      * @return Uri：下载到本地的路径
