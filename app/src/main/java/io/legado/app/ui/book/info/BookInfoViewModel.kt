@@ -8,6 +8,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookSourceType
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -116,8 +117,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 book.getRemoteUrl()?.let {
                     val remoteBook = RemoteBookWebDav.getRemoteBook(it)
                     if (remoteBook == null) {
-
-                    } else if (remoteBook.lastModify > book.latestChapterTime) {
+                        book.origin = BookType.localTag
+                    } else if (remoteBook.lastModify > book.lastCheckTime) {
+                        val uri = RemoteBookWebDav.downloadRemoteBook(remoteBook)
 
                     }
                 }

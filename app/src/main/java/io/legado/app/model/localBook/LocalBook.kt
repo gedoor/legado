@@ -319,8 +319,7 @@ object LocalBook {
                 }
             }
             return uri?.let {
-                localBook.bookUrl = if (it.isContentScheme()) it.toString()
-                else it.path!!
+                localBook.bookUrl = if (it.isContentScheme()) it.toString() else it.path!!
                 localBook.save()
                 it.inputStream(appCtx)
             }
