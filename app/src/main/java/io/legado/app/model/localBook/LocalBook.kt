@@ -18,6 +18,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isUmd
+import io.legado.app.help.book.getRemoteUrl
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -307,10 +308,8 @@ object LocalBook {
 
     //下载book.remoteUrl对应的远程文件并更新bookUrl 返回inputStream
     private fun downloadRemoteBook(localBook: Book): InputStream? {
-        //webDav::${http}
-        if (!localBook.origin.startsWith(BookType.webDavTag)) return null
-        val webDavUrl = localBook.origin.substring(8)
-        if (webDavUrl.isBlank()) return null
+        val webDavUrl = localBook.getRemoteUrl()
+        if (webDavUrl.isNullOrBlank()) return null
         try {
             val uri = AppWebDav.authorization?.let {
                 val webdav = WebDav(webDavUrl, it)
