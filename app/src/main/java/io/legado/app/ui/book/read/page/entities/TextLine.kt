@@ -56,4 +56,9 @@ data class TextLine(
                 && x >= lineStart
                 && x <= lineEnd
     }
+
+    fun isTouchY(y: Float, relativeOffset: Float): Boolean {
+        return y > lineTop + relativeOffset
+                && y < lineBottom + relativeOffset
+    }
 }

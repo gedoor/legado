@@ -332,7 +332,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         y: Float,
         select: (textPos: TextPos) -> Unit,
     ) {
-        touch(x, y) { _, textPos, _, _, column ->
+        touchRough(x, y) { _, textPos, _, _, column ->
             if (column is TextColumn) {
                 column.selected = true
                 invalidate()
@@ -345,7 +345,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 开始选择符移动
      */
     fun selectStartMove(x: Float, y: Float) {
-        touch(x, y) { relativeOffset, textPos, _, textLine, textColumn ->
+        touchRough(x, y) { relativeOffset, textPos, _, textLine, textColumn ->
             if (selectStart.compare(textPos) != 0) {
                 if (textPos.compare(selectEnd) <= 0) {
                     selectStart.upData(pos = textPos)
@@ -364,7 +364,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 结束选择符移动
      */
     fun selectEndMove(x: Float, y: Float) {
-        touch(x, y) { relativeOffset, textPos, _, textLine, textColumn ->
+        touchRough(x, y) { relativeOffset, textPos, _, textLine, textColumn ->
             if (textPos.compare(selectEnd) != 0) {
                 if (textPos.compare(selectStart) >= 0) {
                     selectEnd.upData(textPos)
@@ -412,6 +412,56 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             return
                         }
                     }
+                    return
+                }
+            }
+        }
+    }
+
+    /**
+     * 触碰位置信息
+     * 文本选择专用
+     * @param touched 回调
+     */
+    private fun touchRough(
+        x: Float,
+        y: Float,
+        touched: (
+            relativeOffset: Float,
+            textPos: TextPos,
+            textPage: TextPage,
+            textLine: TextLine,
+            column: BaseColumn
+        ) -> Unit
+    ) {
+        if (!visibleRect.contains(x, y)) return
+        var relativeOffset: Float
+        for (relativePos in 0..2) {
+            relativeOffset = relativeOffset(relativePos)
+            if (relativePos > 0) {
+                //滚动翻页
+                if (!callBack.isScroll) return
+                if (relativeOffset >= ChapterProvider.visibleHeight) return
+            }
+            val textPage = relativePage(relativePos)
+            for ((lineIndex, textLine) in textPage.lines.withIndex()) {
+                if (textLine.isTouchY(y, relativeOffset)) {
+                    for ((charIndex, textColumn) in textLine.columns.withIndex()) {
+                        if (textColumn.isTouch(x)) {
+                            touched.invoke(
+                                relativeOffset,
+                                TextPos(relativePos, lineIndex, charIndex),
+                                textPage, textLine, textColumn
+                            )
+                            return
+                        }
+                    }
+                    val (charIndex, textColumn) = textLine.columns.withIndex().last()
+                    touched.invoke(
+                        relativeOffset,
+                        TextPos(relativePos, lineIndex, charIndex),
+                        textPage, textLine, textColumn
+                    )
                     return
                 }
             }
