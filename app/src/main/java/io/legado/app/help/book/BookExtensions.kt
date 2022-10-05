@@ -1,9 +1,13 @@
 package io.legado.app.help.book
 
+import android.net.Uri
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.exception.NoStackTraceException
+import io.legado.app.utils.isContentScheme
+import java.io.File
 
 
 val Book.isAudio: Boolean
@@ -43,6 +47,16 @@ val Book.isOnLineTxt: Boolean
     get() {
         return !isLocal && type and BookType.text > 0
     }
+
+fun Book.getLocalUri(): Uri {
+    if (isLocal) {
+        if (bookUrl.isContentScheme()) {
+            return Uri.parse(bookUrl)
+        }
+        return Uri.fromFile(File(bookUrl))
+    }
+    throw NoStackTraceException("不是本地书籍")
+}
 
 fun Book.getRemoteUrl(): String? {
     if (origin.startsWith(BookType.webDavTag)) {

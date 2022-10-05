@@ -15,10 +15,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.AppWebDav
-import io.legado.app.help.book.BookHelp
-import io.legado.app.help.book.getRemoteUrl
-import io.legado.app.help.book.isEpub
-import io.legado.app.help.book.isUmd
+import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -44,11 +41,7 @@ object LocalBook {
 
     @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
-        val uri = if (book.bookUrl.isContentScheme()) {
-            Uri.parse(book.bookUrl)
-        } else {
-            Uri.fromFile(File(book.bookUrl))
-        }
+        val uri = book.getLocalUri()
         //文件不存在 尝试下载webDav文件 book.remoteUrl
         val inputStream = uri.inputStream(appCtx) ?: downloadRemoteBook(book)
         if (inputStream != null) return inputStream
