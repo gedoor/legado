@@ -62,12 +62,14 @@ open class WebDav(val path: String, val authorization: Authorization) {
 
     private val url: URL = URL(path)
     private val httpUrl: String? by lazy {
-        val raw = url.toString().replace("davs://", "https://").replace("dav://", "http://")
+        val raw = url.toString()
+            .replace("davs://", "https://")
+            .replace("dav://", "http://")
         return@lazy kotlin.runCatching {
             URLEncoder.encode(raw, "UTF-8")
-                .replace("\\+".toRegex(), "%20")
-                .replace("%3A".toRegex(), ":")
-                .replace("%2F".toRegex(), "/")
+                .replace("+", "%20")
+                .replace("%3A", ":")
+                .replace("%2F", "/")
         }.getOrNull()
     }
     private val webDavClient by lazy {
@@ -348,7 +350,17 @@ open class WebDav(val path: String, val authorization: Authorization) {
      */
     private fun checkResult(response: Response) {
         if (!response.isSuccessful) {
-            throw WebDavException("${url}\n${response.code}:${response.message}")
+            val body = response.body?.string()
+            if (response.message.isNotBlank() || body.isNullOrBlank()) {
+                throw WebDavException("${url}\n${response.code}:${response.message}")
+            }
+            val document = Jsoup.parse(body)
+            val exception = document.getElementsByTag("s:exception").firstOrNull()?.text()
+            val message = document.getElementsByTag("s:message").firstOrNull()?.text()
+            if (exception == "ObjectNotFound") {
+                throw ObjectNotFoundException(message ?: "$path doesn't exist")
+            }
+            throw WebDavException(message ?: "未知错误")
         }
     }
 
