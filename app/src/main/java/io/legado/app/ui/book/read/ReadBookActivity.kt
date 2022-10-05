@@ -191,6 +191,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        upSystemUiVisibility()
         binding.readView.upStatusBar()
     }
 
