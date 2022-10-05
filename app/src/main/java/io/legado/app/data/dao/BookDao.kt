@@ -77,7 +77,7 @@ interface BookDao {
     @get:Query("SELECT * FROM books")
     val all: List<Book>
 
-    @get:Query("SELECT * FROM books where type = 0 ORDER BY durChapterTime DESC limit 1")
+    @get:Query("SELECT * FROM books where type & ${BookType.text} > 0 ORDER BY durChapterTime DESC limit 1")
     val lastReadBook: Book?
 
     @get:Query("SELECT bookUrl FROM books")
