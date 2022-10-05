@@ -123,6 +123,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     } else if (remoteBook.lastModify > book.lastCheckTime) {
                         val uri = RemoteBookWebDav.downloadRemoteBook(remoteBook)
                         book.origin = if (uri.isContentScheme()) uri.toString() else uri.path!!
+                        book.lastCheckTime = remoteBook.lastModify
                     }
                 }
             }
