@@ -59,6 +59,7 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     private fun scrollToBottom() {
         adapter.let {
             if (loadMoreView.hasMore && !loadMoreView.isLoading) {
+                loadMoreView.startLoad()
                 viewModel.explore()
             }
         }
