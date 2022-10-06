@@ -10,9 +10,10 @@
         android:id="@+id/bg_book"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
         android:contentDescription="@string/bg_image"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ImageContrastCheck" />
 
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
@@ -25,10 +26,11 @@
     <LinearLayout
         android:id="@+id/vw_bg"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:background="#50000000"
         android:orientation="horizontal"
-        android:fitsSystemWindows="true"
+        app:layout_constraintTop_toBottomOf="@id/title_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="DisableBaselineAlignment">
 
         <LinearLayout
@@ -42,7 +44,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="68dp">
+                android:layout_marginTop="30dp">
 
                 <io.legado.app.ui.widget.image.ArcView
                     android:id="@+id/arc_view"
@@ -67,7 +69,8 @@
                         android:layout_height="200dp"
                         android:contentDescription="@string/img_cover"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/image_cover_default" />
+                        android:src="@drawable/image_cover_default"
+                        tools:ignore="ImageContrastCheck" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -136,7 +139,7 @@
                         android:text="@string/author"
                         android:textColor="@color/tv_text_summary"
                         android:textSize="13sp"
-                        tools:ignore="NestedWeights" />
+                        tools:ignore="NestedWeights,TextContrastCheck" />
 
                 </LinearLayout>
 
@@ -149,7 +152,6 @@
         <LinearLayout
             android:layout_weight="1.0"
             android:orientation="vertical"
-            android:layout_marginTop="65dp"
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -214,7 +216,7 @@
                                 android:singleLine="true"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry,TextContrastCheck"
                                 tools:text="@string/origin_format" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
@@ -260,7 +262,7 @@
                                 android:singleLine="true"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry,TextContrastCheck"
                                 tools:text="@string/read_dur_progress" />
 
                         </LinearLayout>
@@ -293,7 +295,7 @@
                                 android:singleLine="true"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry,TextContrastCheck"
                                 tools:text="@string/group_s" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
@@ -337,7 +339,7 @@
                                 android:singleLine="true"
                                 android:textColor="@color/tv_text_summary"
                                 android:textSize="13sp"
-                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry,TextContrastCheck"
                                 tools:text="@string/toc_s" />
 
                             <io.legado.app.ui.widget.text.AccentBgTextView
