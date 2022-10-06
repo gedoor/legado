@@ -42,10 +42,8 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         loadMoreView.startLoad()
         loadMoreView.setOnClickListener {
             if (!loadMoreView.isLoading) {
-                if (!loadMoreView.showErrorDialog()) {
-                    loadMoreView.hasMore()
-                    scrollToBottom()
-                }
+                loadMoreView.hasMore()
+                scrollToBottom()
             }
         }
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

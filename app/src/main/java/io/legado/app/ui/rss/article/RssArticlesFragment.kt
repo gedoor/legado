@@ -62,6 +62,11 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
     private fun initView() = binding.run {
         refreshLayout.setColorSchemeColors(accentColor)
         recyclerView.setEdgeEffectColor(primaryColor)
+        loadMoreView.setOnClickListener {
+            if (!loadMoreView.isLoading) {
+                scrollToBottom()
+            }
+        }
         recyclerView.layoutManager = if (activityViewModel.isGridLayout) {
             recyclerView.setPadding(8, 0, 8, 0)
             GridLayoutManager(requireContext(), 2)
@@ -117,7 +122,10 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
     }
 
     override fun observeLiveBus() {
-        viewModel.loadFinally.observe(viewLifecycleOwner) {
+        viewModel.loadErrorLiveData.observe(viewLifecycleOwner) {
+            loadMoreView.error(it)
+        }
+        viewModel.loadFinallyLiveData.observe(viewLifecycleOwner) {
             binding.refreshLayout.isRefreshing = false
             if (it) {
                 loadMoreView.startLoad()

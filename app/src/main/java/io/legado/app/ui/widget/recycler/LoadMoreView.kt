@@ -16,11 +16,25 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
     private val binding = ViewLoadMoreBinding.inflate(LayoutInflater.from(context), this)
     private var errorMsg = ""
 
+    private var onClickListener: OnClickListener? = null
+
     var isLoading = false
         private set
 
     var hasMore = true
         private set
+
+    init {
+        super.setOnClickListener {
+            if (!showErrorDialog()) {
+                onClickListener?.onClick(it)
+            }
+        }
+    }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        this.onClickListener = l
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -64,7 +78,7 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
         binding.tvText.visible()
     }
 
-    fun showErrorDialog(): Boolean {
+    private fun showErrorDialog(): Boolean {
         if (errorMsg.isBlank()) {
             return false
         }
