@@ -22,7 +22,6 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
 
     private val adapter by lazy { ExploreShowAdapter(this, this) }
     private val loadMoreView by lazy { LoadMoreView(this) }
-    private var isLoading = true
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.title = intent.getStringExtra("exploreName")
@@ -42,10 +41,11 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         }
         loadMoreView.startLoad()
         loadMoreView.setOnClickListener {
-            if (!isLoading) {
-                loadMoreView.hasMore()
-                scrollToBottom()
-                isLoading = true
+            if (!loadMoreView.isLoading) {
+                if (!loadMoreView.showErrorDialog()) {
+                    loadMoreView.hasMore()
+                    scrollToBottom()
+                }
             }
         }
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -60,14 +60,14 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
 
     private fun scrollToBottom() {
         adapter.let {
-            if (loadMoreView.hasMore && !isLoading) {
+            if (loadMoreView.hasMore && !loadMoreView.isLoading) {
                 viewModel.explore()
             }
         }
     }
 
     private fun upData(books: List<SearchBook>) {
-        isLoading = false
+        loadMoreView.stopLoad()
         if (books.isEmpty() && adapter.isEmpty()) {
             loadMoreView.noMore(getString(R.string.empty))
         } else if (books.isEmpty()) {

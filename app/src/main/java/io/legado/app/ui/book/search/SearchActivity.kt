@@ -26,7 +26,6 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
-import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -56,7 +55,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             setHasStableIds(true)
         }
     }
-    private val loadMoreView by lazy { LoadMoreView(this) }
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
@@ -271,7 +269,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
         if (viewModel.isSearchLiveData.value == false
             && viewModel.searchKey.isNotEmpty()
-            && loadMoreView.hasMore
         ) {
             viewModel.search("")
         }
@@ -364,7 +361,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      */
     private fun searchFinally() {
         binding.refreshProgressBar.isAutoLoading = false
-        loadMoreView.startLoad()
         binding.fbStop.invisible()
     }
 
