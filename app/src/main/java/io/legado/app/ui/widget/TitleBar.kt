@@ -2,9 +2,10 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.View
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.alpha
 import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
@@ -21,7 +23,7 @@ import io.legado.app.utils.activity
 import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.statusBarHeight
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class TitleBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
@@ -201,19 +203,30 @@ class TitleBar @JvmOverloads constructor(
         setSubTitleTextColor(color)
     }
 
-    fun setColorFilter(@ColorInt color: Int){
-        val colorFilter = PorterDuffColorFilter(color,PorterDuff.Mode.SRC_ATOP)
+    fun setColorFilter(@ColorInt color: Int) {
+        val colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
         toolbar.children.firstOrNull { it is ImageView }?.background?.colorFilter = colorFilter
         toolbar.navigationIcon?.colorFilter = colorFilter
         toolbar.overflowIcon?.colorFilter = colorFilter
-        toolbar.menu.children.forEach{
+        toolbar.menu.children.forEach {
             it.icon?.colorFilter = colorFilter
         }
     }
 
-    fun transparent() {
-        elevation = 0f
-        setBackgroundColor(Color.TRANSPARENT)
+    override fun setBackgroundColor(color: Int) {
+        if (color.alpha < 255) {
+            elevation = 0.1f
+        }
+        super.setBackgroundColor(color)
+    }
+
+    override fun setBackground(background: Drawable?) {
+        if (background is ColorDrawable) {
+            if (background.alpha < 255) {
+                elevation = 0.1f
+            }
+        }
+        super.setBackground(background)
     }
 
     fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, fullScreen: Boolean) {

@@ -2,6 +2,7 @@ package io.legado.app.ui.book.audio
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -78,7 +79,7 @@ class AudioPlayActivity :
         }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        binding.titleBar.transparent()
+        binding.titleBar.setBackgroundColor(Color.argb(60, 0, 0, 0))
         AudioPlay.titleData.observe(this) {
             binding.titleBar.title = it
         }
