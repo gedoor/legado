@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.local.rule
+package io.legado.app.ui.book.import.local.rule
 
 import android.annotation.SuppressLint
 import android.os.Bundle

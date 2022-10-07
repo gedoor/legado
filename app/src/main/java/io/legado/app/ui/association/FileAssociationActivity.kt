@@ -172,7 +172,7 @@ class FileAssociationActivity :
             }.onFailure {
                 when (it) {
                     is SecurityException -> localBookTreeSelect.launch {
-                        title = "选择保存书籍的文件夹"
+                        title = getString(R.string.select_book_folder)
                         mode = HandleFileContract.DIR_SYS
                     }
                     else -> {

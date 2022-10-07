@@ -31,7 +31,6 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.BookshelfFragment1
 import io.legado.app.ui.main.bookshelf.style2.BookshelfFragment2
@@ -73,12 +72,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private var bottomMenuCount = 4
     private val realPositions = arrayOf(idBookshelf, idExplore, idRss, idMy)
 
-    private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { treeUri ->
-            AppConfig.defaultBookTreeUri = treeUri.toString()
-        }
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
         binding.run {
@@ -99,8 +92,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             if (!privacyPolicy()) return@launch
             //版本更新
             upVersion()
-            //请求设置书籍保存位置
-            setBookStorage()
             //自动更新书籍
             val isAutoRefreshedBook = savedInstanceState?.getBoolean("isAutoRefreshedBook") ?: false
             if (AppConfig.autoRefreshBook && !isAutoRefreshedBook) {
@@ -216,28 +207,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     viewModel.restoreWebDav(lastBackupFile.displayName)
                 }
             }
-        }
-    }
-
-    /**
-     * 设置书籍保存位置
-     */
-    private fun setBookStorage() {
-        //测试书籍保存位置是否设置
-        if (!AppConfig.defaultBookTreeUri.isNullOrBlank()) return
-        //测试读写??
-        val storageHelp = String(assets.open("storageHelp.md").readBytes())
-        alert("设置书籍保存位置", storageHelp) {
-            yesButton {
-                localBookTreeSelect.launch {
-                    title = getString(R.string.select_book_folder)
-                    mode = HandleFileContract.DIR_SYS
-                }
-            }
-            neutralButton("不想设置") {
-                AppConfig.defaultBookTreeUri = "null"
-            }
-            noButton()
         }
     }
 
