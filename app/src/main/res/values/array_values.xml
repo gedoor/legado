@@ -39,6 +39,11 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="progress_bar_behavior_value">
+        <item>page</item>
+        <item>chapter</item>
+    </string-array>
+
     <string-array name="language_value">
         <item>auto</item>
         <item>zh</item>

@@ -339,6 +339,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val doublePageHorizontal: String?
         get() = appCtx.getPrefString(PreferKey.doublePageHorizontal)
 
+    val progressBarBehavior: String?
+        get() = appCtx.getPrefString(PreferKey.progressBarBehavior, "page")
+
     var searchGroup: String
         get() = appCtx.getPrefString("searchGroup") ?: ""
         set(value) {

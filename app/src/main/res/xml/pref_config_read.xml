@@ -50,6 +50,15 @@
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
+    <io.legado.app.lib.prefs.NameListPreference
+        android:defaultValue="page"
+        android:entries="@array/progress_bar_behavior_title"
+        android:entryValues="@array/progress_bar_behavior_value"
+        android:key="progressBarBehavior"
+        android:title="@string/progress_bar_behavior"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="useZhLayout"

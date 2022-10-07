@@ -67,6 +67,11 @@
 		<item>横屏双页 竖屏单页</item>
 	</string-array>
 
+	<string-array name="progress_bar_behavior_title">
+		<item>调整本章页数</item>
+		<item>调整章节位置</item>
+	</string-array>
+
 	<string-array name="icon_names" tools:ignore="Typos">
 		<item>iconMain</item>
 		<item>icon1</item>

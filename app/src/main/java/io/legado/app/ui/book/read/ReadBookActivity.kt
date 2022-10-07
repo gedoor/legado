@@ -757,7 +757,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         launch {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex)
+            upSeekBarProgress()
             loadStates = false
             success?.invoke()
         }
@@ -775,9 +775,20 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun pageChanged() {
         launch {
             autoPageProgress = 0
-            binding.readMenu.setSeekPage(ReadBook.durPageIndex)
+            upSeekBarProgress()
             startBackupJob()
         }
+    }
+
+    /**
+     * 更新进度条位置
+     */
+    private fun upSeekBarProgress() {
+        val progress = when (AppConfig.progressBarBehavior) {
+            "page" -> ReadBook.durPageIndex
+            else /* chapter */ -> ReadBook.durChapterIndex
+        }
+        binding.readMenu.setSeekPage(progress)
     }
 
     /**
@@ -913,6 +924,13 @@ class ReadBookActivity : BaseReadBookActivity(),
         ReadBook.book?.let {
             tocActivity.launch(it.bookUrl)
         }
+    }
+
+    /**
+     * 跳转到指定章节
+     */
+    override fun skipToChapter(index: Int) {
+        viewModel.openChapter(index)
     }
 
     /**
@@ -1281,6 +1299,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         observeEvent<Boolean>(EventBus.updateReadActionBar) {
             binding.readMenu.reset()
+        }
+        observeEvent<Boolean>(EventBus.UP_SEEK_BAR) {
+            binding.readMenu.upSeekBar()
         }
     }
 

@@ -234,6 +234,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     mode = HandleFileContract.DIR_SYS
                 }
             }
+            neutralButton("不想设置") {
+                AppConfig.defaultBookTreeUri = "null"
+            }
             noButton()
         }
     }
