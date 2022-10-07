@@ -136,6 +136,7 @@ class ContentProcessor private constructor(
 
     suspend fun replaceContent(content: String): String {
         var mContent = content
+        mContent = mContent.lines().joinToString("\n") { it.trim() }
         getContentReplaceRules().forEach { item ->
             if (item.pattern.isNotEmpty()) {
                 try {

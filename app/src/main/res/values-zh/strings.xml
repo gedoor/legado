@@ -1038,4 +1038,5 @@
     <string name="net_no_group">网络未分组</string>
     <string name="local_no_group">本地未分组</string>
     <string name="parallel_export_book">多线程导出TXT</string>
+    <string name="progress_bar_behavior">进度条行为</string>
 </resources>
