@@ -220,6 +220,11 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:$glideVersion")
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
 
+    //Svg
+    implementation("com.caverock:androidsvg-aar:1.4")
+    //Glide svg plugin
+    implementation("com.github.qoqa:glide-svg:4.0.2")
+
     //webServer
     def nanoHttpdVersion = "2.3.1"
     implementation("org.nanohttpd:nanohttpd:$nanoHttpdVersion")
