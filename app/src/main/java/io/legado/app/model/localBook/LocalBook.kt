@@ -42,7 +42,7 @@ object LocalBook {
     @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
         val uri = book.getLocalUri()
-        //文件不存在 尝试下载webDav文件 book.remoteUrl
+        //文件不存在 尝试下载webDav文件
         val inputStream = uri.inputStream(appCtx) ?: downloadRemoteBook(book)
         if (inputStream != null) return inputStream
         throw FileNotFoundException("${uri.path} 文件不存在")
@@ -303,7 +303,7 @@ object LocalBook {
         return localBook
     }
 
-    //下载book.remoteUrl对应的远程文件并更新bookUrl 返回inputStream
+    //下载book对应的远程文件并更新bookUrl 返回inputStream
     private fun downloadRemoteBook(localBook: Book): InputStream? {
         val webDavUrl = localBook.getRemoteUrl()
         if (webDavUrl.isNullOrBlank()) return null

@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.remote
+package io.legado.app.ui.book.import.remote
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,11 +9,11 @@ import androidx.activity.viewModels
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
-import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.showDialogFragment
@@ -28,7 +28,7 @@ import java.io.File
  * @author qianfanguojin
  * @time 2022/05/12
  */
-class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookViewModel>(),
+class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, RemoteBookViewModel>(),
     RemoteBookAdapter.CallBack,
     SelectActionBar.CallBack {
     override val binding by viewBinding(ActivityImportBookBinding::inflate)
@@ -41,6 +41,7 @@ class RemoteBookActivity : VMBaseActivity<ActivityImportBookBinding, RemoteBookV
         initView()
         initData()
         initEvent()
+        setBookStorage()
     }
 
     private fun initView() {

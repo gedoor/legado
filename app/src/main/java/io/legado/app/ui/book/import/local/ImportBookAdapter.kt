@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.local
+package io.legado.app.ui.book.import.local
 
 import android.annotation.SuppressLint
 import android.content.Context

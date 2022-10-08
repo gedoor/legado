@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.local
+package io.legado.app.ui.book.import.local
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -11,7 +11,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
-import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityImportBookBinding
@@ -21,6 +20,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
@@ -34,7 +34,7 @@ import java.io.File
 /**
  * 导入本地书籍界面
  */
-class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookViewModel>(),
+class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, ImportBookViewModel>(),
     PopupMenu.OnMenuItemClickListener,
     ImportBookAdapter.CallBack,
     SelectActionBar.CallBack {
@@ -61,6 +61,7 @@ class ImportBookActivity : VMBaseActivity<ActivityImportBookBinding, ImportBookV
         initView()
         initEvent()
         initData()
+        setBookStorage()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
