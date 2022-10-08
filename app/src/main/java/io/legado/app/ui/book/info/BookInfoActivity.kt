@@ -11,7 +11,6 @@ import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import io.legado.app.R
-import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
@@ -36,6 +35,7 @@ import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
+import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
@@ -52,7 +52,7 @@ import kotlinx.coroutines.withContext
 
 
 class BookInfoActivity :
-    VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
+    BaseImportBookActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChangeBookSourceDialog.CallBack,
     ChangeCoverDialog.CallBack {
@@ -113,6 +113,8 @@ class BookInfoActivity :
         viewModel.chapterListData.observe(this) { upLoading(false, it) }
         viewModel.initData(intent)
         initViewEvent()
+        //当前书籍可从webDav同步书籍或者为文件类书源 需要设置书籍保存位置
+        if (viewModel.isImportBookOnLine || viewModel.isWebDavBook) setBookStorage()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

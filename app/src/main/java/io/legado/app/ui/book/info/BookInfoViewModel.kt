@@ -38,8 +38,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
+
     val isImportBookOnLine: Boolean
         get() = bookSource?.bookSourceType == BookSourceType.file
+    val isWebDavBook: Boolean
+        get() = bookData.value?.getRemoteUrl() != null
 
     fun initData(intent: Intent) {
         execute {

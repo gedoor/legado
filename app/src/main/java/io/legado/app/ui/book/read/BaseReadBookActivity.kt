@@ -13,7 +13,6 @@ import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import io.legado.app.R
-import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst.charsets
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ActivityBookReadBinding
@@ -29,6 +28,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.model.CacheBook
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.book.read.config.BgTextConfigDialog
 import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
@@ -40,7 +40,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  * 阅读界面
  */
 abstract class BaseReadBookActivity :
-    VMBaseActivity<ActivityBookReadBinding, ReadBookViewModel>(imageBg = false) {
+    BaseImportBookActivity<ActivityBookReadBinding, ReadBookViewModel>(imageBg = false) {
 
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
     override val viewModel by viewModels<ReadBookViewModel>()
@@ -71,6 +71,8 @@ abstract class BaseReadBookActivity :
         if (!LocalConfig.readHelpVersionIsLast) {
             showClickRegionalConfig()
         }
+        //当前阅读书籍可从webDav同步书籍 需要设置书籍保存位置
+        if (ReadBook.book?.getRemoteUrl() != null) setBookStorage()
     }
 
     fun showPaddingConfig() {
