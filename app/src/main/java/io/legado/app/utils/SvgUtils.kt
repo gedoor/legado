@@ -2,13 +2,11 @@ package io.legado.app.utils
 
 import android.graphics.Canvas
 import android.graphics.Bitmap
-import android.graphics.drawable.PictureDrawable
+import android.graphics.RectF
 import android.util.Size
 import java.io.FileInputStream
 import java.io.InputStream
 import com.caverock.androidsvg.SVG
-import com.caverock.androidsvg.PreserveAspectRatio
-import com.caverock.androidsvg.SVGParseException
 import kotlin.math.max
 
 @Suppress("WeakerAccess", "MemberVisibilityCanBePrivate")
@@ -16,12 +14,13 @@ object SvgUtils {
 
     /**
      * 从Svg中解码bitmap
-     * https://github.com/qoqa/glide-svg/blob/master/library/src/main/java/ch/qoqa/glide/svg/SvgBitmapTranscoder.kt
      */
     
     fun createBitmap(filePath: String, width: Int, height: Int? = null): Bitmap? {
-        val inputStream = FileInputStream(filePath)
-        return createBitmap(inputStream, width, height)
+        return kotlin.runCatching {
+            val inputStream = FileInputStream(filePath)
+            createBitmap(inputStream, width, height)
+        }.getOrNull()
     }
 
     fun createBitmap(inputStream: InputStream, width: Int, height: Int? = null): Bitmap? {
@@ -33,8 +32,10 @@ object SvgUtils {
 
     //获取svg图片大小
     fun getSize(filePath: String): Size? {
-        val inputStream = FileInputStream(filePath)
-        return getSize(inputStream)
+        return kotlin.runCatching {
+            val inputStream = FileInputStream(filePath)
+            getSize(inputStream)
+        }.getOrNull()
     }
 
     fun getSize(inputStream: InputStream): Size? {
@@ -56,13 +57,20 @@ object SvgUtils {
             hRatio > 1 -> hRatio
             else -> 1
         }
-        svg.documentPreserveAspectRatio = PreserveAspectRatio.START
-        val picture = svg.renderToPicture(size.width / ratio, size.height / ratio)
-        val drawable = PictureDrawable(picture)
 
-        val bitmap = Bitmap.createBitmap(size.width / ratio, size.height / ratio, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        canvas.drawPicture(drawable.picture)
+        val viewBox: RectF? = svg.documentViewBox
+        if (viewBox == null && size.width > 0 && size.height > 0) {
+            svg.setDocumentViewBox(0f, 0f, svg.documentWidth, svg.documentHeight)
+        }
+
+        svg.setDocumentWidth("100%")
+        svg.setDocumentHeight("100%")
+
+        val bitmapWidth = size.width / ratio
+        val bitmapHeight = size.height / ratio
+        val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
+
+        svg.renderToCanvas(Canvas(bitmap))
         return bitmap
     }
 
