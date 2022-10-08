@@ -17,6 +17,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.utils.BitmapUtils
+import io.legado.app.utils.SvgUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
@@ -55,8 +56,8 @@ object ImageProvider {
             if (oldBitmap != errorBitmap) {
                 oldBitmap.recycle()
                 triggerRecycled = true
-                putDebug("ImageProvider: trigger bitmap recycle. URI: $filePath")
-                putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
+                //putDebug("ImageProvider: trigger bitmap recycle. URI: $filePath")
+                //putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
             }
         }
     }
@@ -97,15 +98,16 @@ object ImageProvider {
         bookSource: BookSource?
     ): Size {
         val file = cacheImage(book, src, bookSource)
+        //svg size
+        val size = SvgUtils.getSize(file.absolutePath)
+        if (size != null) return size
         val op = BitmapFactory.Options()
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
         if (op.outWidth < 1 && op.outHeight < 1) {
-            Coroutine.async {
-                putDebug("ImageProvider: delete file due to image size ${op.outHeight}*${op.outWidth}. path: ${file.absolutePath}")
-                file.delete()
-            }
+            putDebug("ImageProvider: $src Unsupported image type")
+            //file.delete() 重复下载
             return Size(errorBitmap.width, errorBitmap.height)
         }
         return Size(op.outWidth, op.outHeight)
@@ -135,6 +137,7 @@ object ImageProvider {
         if (height != null && AppConfig.asyncLoadImage && ReadBook.pageAnim() == PageAnim.scrollPageAnim) {
             Coroutine.async {
                 val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
+                    ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
                     ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
                 withContext(Main) {
                     bitmapLruCache.put(vFile.absolutePath, bitmap)
@@ -142,10 +145,6 @@ object ImageProvider {
             }.onError {
                 //错误图片占位,防止重复获取
                 bitmapLruCache.put(vFile.absolutePath, errorBitmap)
-                putDebug(
-                    "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
-                    it
-                )
             }.onFinally {
                 block?.invoke()
             }
@@ -154,16 +153,13 @@ object ImageProvider {
         @Suppress("BlockingMethodInNonBlockingContext")
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
+                ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
                 ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
             bitmapLruCache.put(vFile.absolutePath, bitmap)
             bitmap
         }.onFailure {
             //错误图片占位,防止重复获取
             bitmapLruCache.put(vFile.absolutePath, errorBitmap)
-            putDebug(
-                "ImageProvider: decode bitmap failed. path: ${vFile.absolutePath}\n$it",
-                it
-            )
         }.getOrDefault(errorBitmap)
     }
 
