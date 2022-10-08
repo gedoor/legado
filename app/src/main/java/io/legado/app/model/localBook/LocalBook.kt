@@ -308,6 +308,8 @@ object LocalBook {
         val webDavUrl = localBook.getRemoteUrl()
         if (webDavUrl.isNullOrBlank()) return null
         try {
+            AppConfig.defaultBookTreeUri
+                ?: throw NoStackTraceException("没有设置书籍保存位置!")
             val uri = AppWebDav.authorization?.let {
                 val webdav = WebDav(webDavUrl, it)
                 runBlocking {
