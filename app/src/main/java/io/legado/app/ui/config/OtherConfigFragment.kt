@@ -183,7 +183,10 @@ class OtherConfigFragment : PreferenceFragment(),
                 getString(R.string.pre_download_s, value)
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
-            PreferKey.bitmapCacheSize -> preference.summary = getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.bitmapCacheSize -> preference.summary =
+                getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.sourceEditMaxLine -> preference.summary =
+                getString(R.string.source_edit_max_line_summary, value)
             else -> if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.
