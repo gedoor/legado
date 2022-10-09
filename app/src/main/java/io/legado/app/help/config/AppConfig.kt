@@ -381,7 +381,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     var sourceEditMaxLine: Int
         get() {
-            val maxLine = appCtx.getPrefInt(PreferKey.sourceEditMaxLine, Int.MAX_VALUE)
+            val maxLine = appCtx.getPrefInt(PreferKey.sourceEditMaxLine, 99)
             if (maxLine < 10) {
                 return 99
             }
