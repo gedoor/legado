@@ -1037,4 +1037,5 @@
     <string name="local_no_group">本地未分组</string>
     <string name="parallel_export_book">多线程导出TXT</string>
     <string name="progress_bar_behavior">进度条行为</string>
+    <string name="source_edit_text_max_line">源编辑框最大行数</string>
 </resources>

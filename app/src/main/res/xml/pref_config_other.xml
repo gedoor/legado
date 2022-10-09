@@ -62,6 +62,10 @@
             android:title="@string/book_tree_uri_t" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="sourceEditMaxLine"
+            android:title="@string/source_edit_text_max_line" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="checkSource"
             android:title="@string/check_source_config" />
 

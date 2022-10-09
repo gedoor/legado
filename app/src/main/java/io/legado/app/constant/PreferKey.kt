@@ -115,6 +115,7 @@ object PreferKey {
     const val ignoreAudioFocus = "ignoreAudioFocus"
     const val parallelExportBook = "parallelExportBook"
     const val progressBarBehavior = "progressBarBehavior"
+    const val sourceEditMaxLine = "sourceEditMaxLine"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
