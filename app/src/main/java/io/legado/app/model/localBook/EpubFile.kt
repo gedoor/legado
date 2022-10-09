@@ -92,7 +92,7 @@ class EpubFile(var book: Book) {
                         cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
                         out.flush()
                         out.close()
-                    }
+                    } ?: AppLog.put("封面获取为空")
                 }
             }
         } catch (e: Exception) {
@@ -131,22 +131,22 @@ class EpubFile(var book: Book) {
             val startFragmentId = chapter.startFragmentId
             val endFragmentId = chapter.endFragmentId
             val elements = Elements()
-            var isChapter = false
+            var hasMoreResources = false
+            val includeNextChapterResource = endFragmentId.isNullOrBlank()
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
             for (res in epubBook.contents) {
-                if (chapter.url.substringBeforeLast("#") == res.href) {
+                val isFirstResource = chapter.url.substringBeforeLast("#") == res.href
+                val isNextChapterResource = res.href == nextUrl?.substringBeforeLast("#")
+                if (isFirstResource) {
+                    // add first resource to elements
                     elements.add(getBody(res, startFragmentId, endFragmentId))
-                    isChapter = true
-                    /**
-                     * fix https://github.com/gedoor/legado/issues/1927 加载全部内容的bug
-                     * content src text/000001.html（当前章节）
-                    -                   * content src text/000001.html#toc_id_x (下一章节）
-                     */
-                    if (res.href == nextUrl?.substringBeforeLast("#")) break
-                } else if (isChapter) {
-                    // fix 最后一章存在多个html时 内容缺失
-                    if (res.href == nextUrl?.substringBeforeLast("#")) {
+                    // check current resource 
+                    if (isNextChapterResource) break
+                    hasMoreResources = true
+                } else if (hasMoreResources) {
+                    if (isNextChapterResource) {
+                        if (includeNextChapterResource) elements.add(getBody(res, startFragmentId, endFragmentId))
                         break
                     }
                     elements.add(getBody(res, startFragmentId, endFragmentId))
