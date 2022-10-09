@@ -226,6 +226,7 @@ class EpubFile(var book: Book) {
         epubBook?.let { eBook ->
             val refs = eBook.tableOfContents.tocReferences
             if (refs == null || refs.isEmpty()) {
+                AppLog.put("NCX file parse error, check the epub file")
                 val spineReferences = eBook.spine.spineReferences
                 var i = 0
                 val size = spineReferences.size
@@ -253,6 +254,7 @@ class EpubFile(var book: Book) {
                     } else {
                         chapter.title = title
                     }
+                    chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
                     chapterList.add(chapter)
                     i++
                 }
