@@ -92,7 +92,7 @@ class EpubFile(var book: Book) {
                         cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
                         out.flush()
                         out.close()
-                    } ?: AppLog.put("封面获取为空")
+                    } ?: AppLog.putDebug("Epub: 封面获取为空. path: ${book.BookUrl}")
                 }
             }
         } catch (e: Exception) {
@@ -140,16 +140,25 @@ class EpubFile(var book: Book) {
                 val isNextChapterResource = res.href == nextUrl?.substringBeforeLast("#")
                 if (isFirstResource) {
                     // add first resource to elements
-                    elements.add(getBody(res, startFragmentId, endFragmentId))
+                    elements.add(
+                        /* pass endFragmentId if only has one resource */
+                        getBody(res, startFragmentId, endFragmentId)
+                    )
                     // check current resource 
-                    if (isNextChapterResource) break
+                    if (isNextChapterResource) {
+                        /* FragmentId should not be same in same resource */
+                        if (!endFragmentId.isNullOrBlank() && endFragmentId == startFragmentId)
+                            AppLog.putDebug("Epub: Resource (${res.href}) has same FragmentId, check the file: ${book.bookUrl}")
+                        break
+                    }
                     hasMoreResources = true
                 } else if (hasMoreResources) {
                     if (isNextChapterResource) {
-                        if (includeNextChapterResource) elements.add(getBody(res, startFragmentId, endFragmentId))
+                        if (includeNextChapterResource) elements.add(getBody(res, null/* FragmentId may be same in different resources, pass null */, endFragmentId))
                         break
                     }
-                    elements.add(getBody(res, startFragmentId, endFragmentId))
+                    // rest resource should not have fragmentId, pass null 
+                    elements.add(getBody(res, null, null))
                 }
             }
             //title标签中的内容不需要显示在正文中，去除
@@ -226,7 +235,7 @@ class EpubFile(var book: Book) {
         epubBook?.let { eBook ->
             val refs = eBook.tableOfContents.tocReferences
             if (refs == null || refs.isEmpty()) {
-                AppLog.put("NCX file parse error, check the epub file")
+                AppLog.putDebug("Epub: NCX file parse error, check the file: ${book.bookUrl}")
                 val spineReferences = eBook.spine.spineReferences
                 var i = 0
                 val size = spineReferences.size
