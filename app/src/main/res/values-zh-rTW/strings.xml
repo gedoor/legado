@@ -1042,4 +1042,6 @@
     <string name="source_edit_text_max_line">源编辑框最大行数</string>
     <string name="source_edit_max_line_summary">%s,设置行数小于屏幕可显示的最大行数可以更方便的滑动到其他的字段进行编辑</string>
     <string name="restore_last_book_process">是否恢复到跳转前的阅读进度？</string>
+    <string name="search_scope">搜索范围</string>
+    <string name="toggle_search_scope">切换</string>
 </resources>

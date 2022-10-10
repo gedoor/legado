@@ -92,7 +92,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        binding.llHistory.setBackgroundColor(backgroundColor)
+        binding.llInputHelp.setBackgroundColor(backgroundColor)
         viewModel.searchFinishCallback = searchFinishCallback
         initRecyclerView()
         initSearchView()
@@ -158,7 +158,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                     viewModel.searchKey = ""
                     viewModel.search(it)
                 }
-                openOrCloseHistory(false)
+                visibleInputHelp(false)
                 return true
             }
 
@@ -172,10 +172,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             if (!hasFocus && searchView.query.toString().trim().isEmpty()) {
                 finish()
             } else {
-                openOrCloseHistory(hasFocus)
+                visibleInputHelp(hasFocus)
             }
         }
-        openOrCloseHistory(true)
+        visibleInputHelp(true)
     }
 
     private fun initRecyclerView() {
@@ -275,14 +275,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     /**
-     * 打开关闭历史界面
+     * 打开关闭输入帮助
      */
-    private fun openOrCloseHistory(open: Boolean) {
-        if (open) {
+    private fun visibleInputHelp(visible: Boolean) {
+        if (visible) {
             upHistory(searchView.query.toString())
-            binding.llHistory.visibility = VISIBLE
+            binding.llInputHelp.visibility = VISIBLE
         } else {
-            binding.llHistory.visibility = GONE
+            binding.llInputHelp.visibility = GONE
         }
     }
 
