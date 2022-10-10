@@ -60,6 +60,7 @@ class OtherConfigFragment : PreferenceFragment(),
         }
         upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
         upPreferenceSummary(PreferKey.bitmapCacheSize, AppConfig.bitmapCacheSize.toString())
+        upPreferenceSummary(PreferKey.sourceEditMaxLine, AppConfig.sourceEditMaxLine.toString())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -119,7 +120,16 @@ class OtherConfigFragment : PreferenceFragment(),
                         ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
                     }
             }
-
+            PreferKey.sourceEditMaxLine -> {
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.source_edit_text_max_line))
+                    .setMaxValue(99)
+                    .setMinValue(10)
+                    .setValue(AppConfig.sourceEditMaxLine)
+                    .show {
+                        AppConfig.sourceEditMaxLine = it
+                    }
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -160,6 +170,9 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.bitmapCacheSize -> {
                 upPreferenceSummary(key, AppConfig.bitmapCacheSize.toString())
             }
+            PreferKey.sourceEditMaxLine -> {
+                upPreferenceSummary(key, AppConfig.sourceEditMaxLine.toString())
+            }
         }
     }
 
@@ -170,7 +183,10 @@ class OtherConfigFragment : PreferenceFragment(),
                 getString(R.string.pre_download_s, value)
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
-            PreferKey.bitmapCacheSize -> preference.summary = getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.bitmapCacheSize -> preference.summary =
+                getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.sourceEditMaxLine -> preference.summary =
+                getString(R.string.source_edit_max_line_summary, value)
             else -> if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.

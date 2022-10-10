@@ -1023,7 +1023,7 @@
     <string name="delete_review_url">删除段评URL（deleteUrl）</string>
     <string name="tag_explore_enabled">标志:发现已启用</string>
     <string name="tag_explore_disabled">标志:发现已禁用</string>
-    <string name="show_read_title_addition">show read title addition area</string>
+    <string name="show_read_title_addition">show read title addition área</string>
     <string name="read_bar_style_follow_page">read bar style follow page</string>
     <string name="rule_image_decode">Decode Image(imageDecode)</string>
     <string name="like_source">赞</string>
@@ -1037,4 +1037,6 @@
     <string name="local_no_group">本地未分组</string>
     <string name="parallel_export_book">多线程导出TXT</string>
     <string name="progress_bar_behavior">进度条行为</string>
+    <string name="source_edit_text_max_line">源编辑框最大行数</string>
+    <string name="source_edit_max_line_summary">%s,设置行数小于屏幕可显示的最大行数可以更方便的滑动到其他的字段进行编辑</string>
 </resources>
