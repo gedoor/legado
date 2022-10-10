@@ -1331,7 +1331,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         observeEvent<List<SearchResult>>(EventBus.SEARCH_RESULT) {
             viewModel.searchResultList = it
         }
-        observeEvent<Boolean>(EventBus.updateReadActionBar) {
+        observeEvent<Boolean>(EventBus.UPDATE_READ_ACTION_BAR) {
             binding.readMenu.reset()
         }
         observeEvent<Boolean>(EventBus.UP_SEEK_BAR) {
