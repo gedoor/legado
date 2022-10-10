@@ -60,6 +60,7 @@
                 android:text="@string/search_scope" />
 
             <TextView
+                android:id="@+id/tv_toggle_search_scope"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="6dp"

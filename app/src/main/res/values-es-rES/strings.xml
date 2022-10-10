@@ -1042,4 +1042,5 @@
     <string name="restore_last_book_process">是否恢复到跳转前的阅读进度？</string>
     <string name="search_scope">搜索范围</string>
     <string name="toggle_search_scope">切换</string>
+    <string name="sure_clear_search_history">是否确认清除所有搜索历史记录</string>
 </resources>

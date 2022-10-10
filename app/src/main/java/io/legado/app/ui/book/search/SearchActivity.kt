@@ -224,7 +224,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             viewModel.stop()
             binding.refreshProgressBar.isAutoLoading = false
         }
-        binding.tvClearHistory.setOnClickListener { viewModel.clearHistory() }
+        binding.tvToggleSearchScope.setOnClickListener { alertSearchScope() }
+        binding.tvClearHistory.setOnClickListener { alertClearHistory() }
     }
 
     private fun initData() {
@@ -405,6 +406,19 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         viewModel.deleteHistory(searchKeyword)
     }
 
+    private fun alertSearchScope() {
+
+    }
+
+    private fun alertClearHistory() {
+        alert(R.string.draw) {
+            setMessage(R.string.sure_clear_search_history)
+            yesButton {
+                viewModel.clearHistory()
+            }
+            noButton()
+        }
+    }
 
     companion object {
 
