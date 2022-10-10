@@ -125,6 +125,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     viewModel.searchResultIndex = index
                     binding.searchMenu.updateSearchResultIndex(index)
                     binding.searchMenu.selectedSearchResult?.let { currentResult ->
+                        ReadBook.saveCurrentBookProcess() //退出全文搜索恢复此时进度
                         skipToSearch(currentResult)
                         showActionMenu()
                     }
@@ -493,6 +494,11 @@ class ReadBookActivity : BaseReadBookActivity(),
             keyCode == KeyEvent.KEYCODE_BACK -> {
                 if (isShowingSearchResult) {
                     exitSearchMenu()
+                    restoreLastBookProcess()
+                    return true
+                }
+                if (ReadBook.lastBookPress != null) {
+                    restoreLastBookProcess()
                     return true
                 }
             }
@@ -977,6 +983,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         upNavigationBarColor()
     }
 
+    // 退出全文搜索
     override fun exitSearchMenu() {
         if (isShowingSearchResult) {
             isShowingSearchResult = false
@@ -984,6 +991,19 @@ class ReadBookActivity : BaseReadBookActivity(),
             binding.searchMenu.invisible()
             binding.readView.isTextSelected = false
             binding.readView.curPage.cancelSelect(true)
+        }
+    }
+
+    /* 恢复到 全文搜索/进度条跳转前的位置 */
+    private fun restoreLastBookProcess() {
+        alert(R.string.draw) {
+            setMessage(R.string.restore_last_book_process)
+            yesButton {
+                ReadBook.restoreLastBookProcess() //恢复启动全文搜索前的进度
+            }
+            noButton {
+                ReadBook.lastBookPress = null
+            }
         }
     }
 
@@ -1133,8 +1153,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             noButton()
         }
     }
-
-    /* 回复到 全文搜索/进度条跳转前的位置 */
 
     /* 进度条跳转到指定章节 */
     override fun skipToChapter(index: Int) {
