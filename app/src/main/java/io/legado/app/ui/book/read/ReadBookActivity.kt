@@ -927,13 +927,6 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     /**
-     * 跳转到指定章节
-     */
-    override fun skipToChapter(index: Int) {
-        viewModel.openChapter(index)
-    }
-
-    /**
      * 打开搜索界面
      */
     override fun openSearchActivity(searchWord: String?) {
@@ -1141,11 +1134,20 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
+    /* 回复到 全文搜索/进度条跳转前的位置 */
+
+    /* 进度条跳转到指定章节 */
+    override fun skipToChapter(index: Int) {
+        viewModel.openChapter(index)
+    }
+
+    /* 全文搜索跳转 */
     override fun navigateToSearch(searchResult: SearchResult, index: Int) {
         viewModel.searchResultIndex = index
         skipToSearch(searchResult)
     }
 
+    /* 全文搜索跳转 */
     private fun skipToSearch(searchResult: SearchResult) {
         val previousResult = binding.searchMenu.previousSearchResult
 
