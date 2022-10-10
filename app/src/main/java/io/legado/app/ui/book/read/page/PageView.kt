@@ -337,6 +337,14 @@ class PageView(context: Context) : FrameLayout(context) {
         return binding.contentTextView.selectText(x, y - headerHeight, select)
     }
 
+    fun getCurVisiblePage(): TextPage {
+        return binding.contentTextView.getCurVisiblePage()
+    }
+
+    fun markAsMainView() {
+        binding.contentTextView.isMainView = true
+    }
+
     fun selectStartMove(x: Float, y: Float) {
         binding.contentTextView.selectStartMove(x, y - headerHeight)
     }

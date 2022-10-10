@@ -15,6 +15,12 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ImageContrastCheck" />
 
+    <View
+        android:id="@+id/vw_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#50000000" />
+
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
@@ -24,10 +30,8 @@
         app:themeMode="dark" />
 
     <LinearLayout
-        android:id="@+id/vw_bg"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#50000000"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/title_bar"
         app:layout_constraintBottom_toBottomOf="parent"
