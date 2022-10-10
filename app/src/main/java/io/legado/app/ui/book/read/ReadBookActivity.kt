@@ -1171,6 +1171,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     /* 进度条跳转到指定章节 */
     override fun skipToChapter(index: Int) {
+        ReadBook.saveCurrentBookProcess() //退出章节跳转恢复此时进度
         viewModel.openChapter(index)
     }
 

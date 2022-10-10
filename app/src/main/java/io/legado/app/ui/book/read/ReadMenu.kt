@@ -375,13 +375,11 @@ class ReadMenu @JvmOverloads constructor(
                     "page" -> ReadBook.skipToPage(seekBar.progress)
                     "chapter" -> {
                         if (confirmSkipToChapter) {
-                            ReadBook.saveCurrentBookProcess()
                             callBack.skipToChapter(seekBar.progress)
                         } else {
                             context.alert("章节跳转确认", "确定要跳转章节吗？") {
                                 yesButton {
                                     confirmSkipToChapter = true
-                                    ReadBook.saveCurrentBookProcess()
                                     callBack.skipToChapter(seekBar.progress)
                                 }
                                 noButton {
