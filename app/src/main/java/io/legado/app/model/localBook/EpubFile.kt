@@ -92,7 +92,7 @@ class EpubFile(var book: Book) {
                         cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
                         out.flush()
                         out.close()
-                    } ?: AppLog.putDebug("Epub: 封面获取为空. path: ${book.BookUrl}")
+                    } ?: AppLog.putDebug("Epub: 封面获取为空. path: ${book.bookUrl}")
                 }
             }
         } catch (e: Exception) {
