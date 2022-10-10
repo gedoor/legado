@@ -167,6 +167,9 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val nextPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.NEXT) } }
     private val prevPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.PREV) } }
 
+    //恢复跳转前进度对话框的交互结果
+    private var confirmRestoreProcess: Boolean? = null
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -497,7 +500,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                     restoreLastBookProcess()
                     return true
                 }
-                if (ReadBook.lastBookPress != null) {
+                //拦截返回供恢复阅读进度
+                if (ReadBook.lastBookPress != null && confirmRestoreProcess != false) {
                     restoreLastBookProcess()
                     return true
                 }
@@ -997,13 +1001,23 @@ class ReadBookActivity : BaseReadBookActivity(),
     /* 恢复到 全文搜索/进度条跳转前的位置 */
     private fun restoreLastBookProcess() {
         // 默认提示恢复
-        alert(R.string.draw) {
-            setMessage(R.string.restore_last_book_process)
-            yesButton {
-                ReadBook.restoreLastBookProcess() //恢复启动全文搜索前的进度
-            }
-            noButton {
-                ReadBook.lastBookPress = null
+        if (confirmRestoreProcess == true) {
+            ReadBook.restoreLastBookProcess()
+        } else {
+            alert(R.string.draw) {
+                setMessage(R.string.restore_last_book_process)
+                yesButton {
+                    confirmRestoreProcess = true
+                    ReadBook.restoreLastBookProcess() //恢复启动全文搜索前的进度
+                }
+                noButton {
+                    ReadBook.lastBookPress = null
+                    confirmRestoreProcess = false
+                }
+                onCancelled {
+                   ReadBook.lastBookPress = null
+                   confirmRestoreProcess = false
+                }
             }
         }
     }
