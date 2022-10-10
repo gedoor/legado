@@ -3,9 +3,12 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
+import io.legado.app.help.book.isImage
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
+@Suppress("UnnecessaryVariable")
 class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     // 滑动追踪的时间
@@ -102,7 +105,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
             return
         }
         readView.setStartPoint(0f, 0f, false)
-        startScroll(0, 0, 0, -ChapterProvider.visibleHeight, animationSpeed)
+        startScroll(0, 0, 0, calcNextPageOffset(), animationSpeed)
     }
 
     override fun prevPageByAnim(animationSpeed: Int) {
@@ -110,6 +113,38 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
             return
         }
         readView.setStartPoint(0f, 0f, false)
-        startScroll(0, 0, 0, ChapterProvider.visibleHeight, animationSpeed)
+        startScroll(0, 0, 0, calcPrevPageOffset(), animationSpeed)
+    }
+
+    /**
+     * 计算点击翻页保留一行的滚动距离
+     * 图片页使用可视高度作为滚动距离
+     */
+    private fun calcNextPageOffset(): Int {
+        val visibleHeight = ChapterProvider.visibleHeight
+        if (ReadBook.book?.isImage == true) {
+            return -visibleHeight
+        }
+        val visiblePage = readView.getCurVisiblePage()
+        if (visiblePage.isImageOrEmpty()) {
+            return -visibleHeight
+        }
+        val lastLineTop = visiblePage.lines.last().lineTop.toInt()
+        val offset = lastLineTop - ChapterProvider.paddingTop
+        return -offset
+    }
+
+    private fun calcPrevPageOffset(): Int {
+        val visibleHeight = ChapterProvider.visibleHeight
+        if (ReadBook.book?.isImage == true) {
+            return visibleHeight
+        }
+        val visiblePage = readView.getCurVisiblePage()
+        if (visiblePage.isImageOrEmpty()) {
+            return visibleHeight
+        }
+        val firstLineBottom = visiblePage.lines.first().lineBottom.toInt()
+        val offset = visibleHeight - (firstLineBottom - ChapterProvider.paddingTop)
+        return offset
     }
 }

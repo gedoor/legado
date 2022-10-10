@@ -230,4 +230,8 @@ data class TextPage(
         }
         return null
     }
+
+    fun isImageOrEmpty(): Boolean {
+        return textLines.all { it.isTitle || it.isImage }
+    }
 }

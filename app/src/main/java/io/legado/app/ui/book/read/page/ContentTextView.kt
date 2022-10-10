@@ -46,6 +46,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     val selectEnd = TextPos(0, 0, 0)
     var textPage: TextPage = TextPage()
         private set
+    var isMainView = false
     private var drawVisibleImageOnly = false
     private var cacheIncreased = false
     private val increaseSize = 8 * 1024 * 1024
@@ -93,6 +94,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        if (!isMainView) return
         ChapterProvider.upViewSize(w, h)
         upVisibleRect()
         textPage.format()
@@ -466,6 +468,30 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
             }
         }
+    }
+
+    fun getCurVisiblePage(): TextPage {
+        val visiblePage = TextPage()
+        var relativeOffset: Float
+        for (relativePos in 0..2) {
+            relativeOffset = relativeOffset(relativePos)
+            if (relativePos > 0) {
+                //滚动翻页
+                if (!callBack.isScroll) break
+                if (relativeOffset >= ChapterProvider.visibleHeight) break
+            }
+            val textPage = relativePage(relativePos)
+            for (textLine in textPage.lines) {
+                if (textLine.isVisible(relativeOffset)) {
+                    val visibleLine = textLine.copy().apply {
+                        lineTop += relativeOffset
+                        lineBottom += relativeOffset
+                    }
+                    visiblePage.addLine(visibleLine)
+                }
+            }
+        }
+        return visiblePage
     }
 
     /**

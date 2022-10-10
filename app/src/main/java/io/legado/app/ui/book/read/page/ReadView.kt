@@ -22,6 +22,7 @@ import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
@@ -104,6 +105,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         addView(prevPage)
         nextPage.invisible()
         prevPage.invisible()
+        curPage.markAsMainView()
         if (!isInEditMode) {
             upBg()
             setWillNotDraw(false)
@@ -605,6 +607,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     fun getSelectText(): String {
         return curPage.selectedText
+    }
+
+    fun getCurVisiblePage(): TextPage {
+        return curPage.getCurVisiblePage()
     }
 
     override val currentChapter: TextChapter?
