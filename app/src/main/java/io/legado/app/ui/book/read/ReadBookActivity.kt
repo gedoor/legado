@@ -996,6 +996,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     /* 恢复到 全文搜索/进度条跳转前的位置 */
     private fun restoreLastBookProcess() {
+        // 默认提示恢复
         alert(R.string.draw) {
             setMessage(R.string.restore_last_book_process)
             yesButton {

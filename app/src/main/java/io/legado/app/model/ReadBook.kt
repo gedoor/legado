@@ -49,6 +49,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
     //暂时保存跳转前进度
     fun saveCurrentBookProcess() {
+        if (lastBookPress != null) return //避免进度条连续跳转不能覆盖最初的进度记录
         lastBookPress = book?.let { BookProgress(it) }
     }
     //恢复跳转前进度
