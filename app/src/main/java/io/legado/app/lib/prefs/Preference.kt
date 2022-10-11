@@ -108,21 +108,21 @@ open class Preference(context: Context, attrs: AttributeSet) :
 
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder) {
-        bindView<View>(
-            context,
-            holder,
-            icon,
-            title,
-            summary,
-            isBottomBackground = isBottomBackground
-        )
+    final override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
+        onBindView(holder)
         onLongClick?.let { listener ->
             holder.itemView.onLongClick {
                 listener.invoke(this)
             }
         }
+    }
+
+    open fun onBindView(holder: PreferenceViewHolder) {
+        bindView<View>(
+            context, holder, icon, title, summary,
+            isBottomBackground = isBottomBackground
+        )
     }
 
     fun onLongClick(listener: (preference: Preference) -> Boolean) {
