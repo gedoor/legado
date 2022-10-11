@@ -407,7 +407,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun alertSearchScope() {
-
+        showDialogFragment<SearchScopeDialog>()
     }
 
     private fun alertClearHistory() {
