@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
 import android.os.Build
@@ -172,6 +173,7 @@ val Activity.isNavigationBarExist: Boolean
  * 返回NavigationBar高度
  */
 val Activity.navigationBarHeight: Int
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
     get() {
         if (isNavigationBarExist) {
             val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
