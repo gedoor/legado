@@ -37,7 +37,7 @@ class Preference(context: Context, attrs: AttributeSet) :
 
         fun <T : View> bindView(
             context: Context,
-            it: PreferenceViewHolder?,
+            viewHolder: PreferenceViewHolder?,
             icon: Drawable?,
             title: CharSequence?,
             summary: CharSequence?,
@@ -47,23 +47,25 @@ class Preference(context: Context, attrs: AttributeSet) :
             weightHeight: Int = 0,
             isBottomBackground: Boolean = false
         ): T? {
-            if (it == null) return null
-            val tvTitle = it.findViewById(R.id.preference_title) as TextView
-            tvTitle.text = title
-            tvTitle.isVisible = title != null && title.isNotEmpty()
-            val tvSummary = it.findViewById(R.id.preference_desc) as? TextView
+            if (viewHolder == null) return null
+            val tvTitle = viewHolder.findViewById(R.id.preference_title) as? TextView
+            tvTitle?.let {
+                tvTitle.text = title
+                tvTitle.isVisible = title != null && title.isNotEmpty()
+            }
+            val tvSummary = viewHolder.findViewById(R.id.preference_desc) as? TextView
             tvSummary?.let {
                 tvSummary.text = summary
                 tvSummary.isGone = summary.isNullOrEmpty()
             }
-            if (isBottomBackground && !tvTitle.isInEditMode) {
+            if (isBottomBackground && !viewHolder.itemView.isInEditMode) {
                 val isLight = ColorUtils.isColorLight(context.bottomBackground)
                 val pTextColor = context.getPrimaryTextColor(isLight)
-                tvTitle.setTextColor(pTextColor)
+                tvTitle?.setTextColor(pTextColor)
                 val sTextColor = context.getSecondaryTextColor(isLight)
                 tvSummary?.setTextColor(sTextColor)
             }
-            val iconView = it.findViewById(R.id.preference_icon)
+            val iconView = viewHolder.findViewById(R.id.preference_icon)
             if (iconView is ImageView) {
                 iconView.isVisible = icon != null
                 iconView.setImageDrawable(icon)
@@ -71,10 +73,10 @@ class Preference(context: Context, attrs: AttributeSet) :
             }
 
             if (weightLayoutRes != null && weightLayoutRes != 0 && viewId != null && viewId != 0) {
-                val lay = it.findViewById(R.id.preference_widget)
+                val lay = viewHolder.findViewById(R.id.preference_widget)
                 if (lay is FrameLayout) {
                     var needRequestLayout = false
-                    var v = it.itemView.findViewById<T>(viewId)
+                    var v = viewHolder.itemView.findViewById<T>(viewId)
                     if (v == null) {
                         val inflater: LayoutInflater = LayoutInflater.from(context)
                         val childView = inflater.inflate(weightLayoutRes, null)

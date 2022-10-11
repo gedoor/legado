@@ -63,6 +63,7 @@
                 android:id="@+id/tv_toggle_search_scope"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
                 android:text="@string/toggle_search_scope" />
 
@@ -104,6 +105,7 @@
                 android:id="@+id/tv_clear_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:padding="6dp"
                 android:text="@string/clear" />
 
