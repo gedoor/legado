@@ -10,7 +10,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.jaredrummler.android.colorpicker.*
 import io.legado.app.utils.ColorUtils
@@ -118,14 +117,14 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
-        val v = io.legado.app.lib.prefs.Preference.bindView<ColorPanelView>(
+        super.onBindViewHolder(holder)
+        val v = bindView<ColorPanelView>(
             context, holder, icon, title, summary, widgetLayoutResource,
-            com.jaredrummler.android.colorpicker.R.id.cpv_preference_preview_color_panel, 30, 30
+            R.id.cpv_preference_preview_color_panel, 30, 30
         )
         if (v is ColorPanelView) {
             v.color = mColor
         }
-        super.onBindViewHolder(holder)
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {
