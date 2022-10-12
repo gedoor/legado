@@ -7,10 +7,24 @@ import io.legado.app.base.BaseDialogFragment
 
 class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope, true) {
 
+    val callback: Callback
+        get() {
+            return parentFragment as? Callback ?: activity as Callback
+        }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        TODO("Not yet implemented")
+
+
     }
 
+
+    interface Callback {
+
+        /**
+         * 搜索范围确认
+         */
+        fun onSearchScopeOk()
+
+    }
 
 }

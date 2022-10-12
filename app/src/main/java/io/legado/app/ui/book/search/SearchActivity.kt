@@ -39,6 +39,7 @@ import splitties.init.appCtx
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
     BookAdapter.CallBack,
     HistoryKeyAdapter.CallBack,
+    SearchScopeDialog.Callback,
     SearchAdapter.CallBack {
 
     override val binding by viewBinding(ActivityBookSearchBinding::inflate)
@@ -402,8 +403,16 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
     }
 
+    /**
+     * 删除搜索记录
+     */
     override fun deleteHistory(searchKeyword: SearchKeyword) {
         viewModel.deleteHistory(searchKeyword)
+    }
+
+
+    override fun onSearchScopeOk() {
+
     }
 
     private fun alertSearchScope() {
