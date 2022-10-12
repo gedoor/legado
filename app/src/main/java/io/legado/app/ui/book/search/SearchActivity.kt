@@ -21,6 +21,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ActivityBookSearchBinding
+import io.legado.app.help.IntentData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
@@ -50,6 +51,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         BookAdapter(this, this).apply {
             setHasStableIds(true)
         }
+    }
+    private val searchScopeAdapter by lazy {
+        SearchScopeAdapter(this)
     }
     private val historyKeyAdapter by lazy {
         HistoryKeyAdapter(this, this).apply {
@@ -181,8 +185,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun initRecyclerView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
+        binding.rvSearchScope.setEdgeEffectColor(primaryColor)
         binding.rvBookshelfSearch.setEdgeEffectColor(primaryColor)
         binding.rvHistoryKey.setEdgeEffectColor(primaryColor)
+        binding.rvSearchScope.adapter = searchScopeAdapter
         binding.rvBookshelfSearch.layoutManager = FlexboxLayoutManager(this)
         binding.rvBookshelfSearch.adapter = bookAdapter
         binding.rvHistoryKey.layoutManager = FlexboxLayoutManager(this)
@@ -230,6 +236,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initData() {
+        searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
         viewModel.isSearchLiveData.observe(this) {
             if (it) {
                 startSearch()
@@ -253,6 +260,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun receiptIntent(intent: Intent? = null) {
+        val searchScopeKey = intent?.getStringExtra("searchScopeKey")
+        searchScopeKey?.let {
+            IntentData.get<SearchScope>(searchScopeKey)?.let { searchScope ->
+                viewModel.searchScope = searchScope
+            }
+        }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {
             searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
@@ -411,8 +424,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
 
-    override fun onSearchScopeOk() {
-
+    override fun onSearchScopeOk(searchScope: SearchScope) {
+        viewModel.searchScope = searchScope
     }
 
     private fun alertSearchScope() {

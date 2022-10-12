@@ -34,6 +34,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     })
     var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var isSearchLiveData = MutableLiveData<Boolean>()
+    var searchScope: SearchScope = SearchScope()
     var searchKey: String = ""
     private var searchID = 0L
     private var searchFlowCallBack: ((searchBooks: ArrayList<SearchBook>) -> Unit)? = null

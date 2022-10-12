@@ -23,7 +23,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope, true)
         /**
          * 搜索范围确认
          */
-        fun onSearchScopeOk()
+        fun onSearchScopeOk(searchScope: SearchScope)
 
     }
 
