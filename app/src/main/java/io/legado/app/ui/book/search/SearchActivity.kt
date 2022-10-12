@@ -21,7 +21,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ActivityBookSearchBinding
-import io.legado.app.help.IntentData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
@@ -260,11 +259,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun receiptIntent(intent: Intent? = null) {
-        val searchScopeKey = intent?.getStringExtra("searchScopeKey")
-        searchScopeKey?.let {
-            IntentData.get<SearchScope>(searchScopeKey)?.let { searchScope ->
-                viewModel.searchScope = searchScope
-            }
+        val searchScope = intent?.getStringExtra("searchScope")
+        searchScope?.let {
+            viewModel.searchScope.scope = searchScope
+            searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
         }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {
@@ -296,6 +294,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         if (visible) {
             upHistory(searchView.query.toString())
             binding.llInputHelp.visibility = VISIBLE
+            searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
         } else {
             binding.llInputHelp.visibility = GONE
         }
@@ -426,6 +425,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     override fun onSearchScopeOk(searchScope: SearchScope) {
         viewModel.searchScope = searchScope
+        searchScopeAdapter.setItems(searchScope.getShowNames())
     }
 
     private fun alertSearchScope() {

@@ -7,6 +7,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.webBook.SearchModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.awaitClose
@@ -34,7 +35,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     })
     var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var isSearchLiveData = MutableLiveData<Boolean>()
-    var searchScope: SearchScope = SearchScope()
+    var searchScope: SearchScope = SearchScope(AppConfig.searchScope)
     var searchKey: String = ""
     private var searchID = 0L
     private var searchFlowCallBack: ((searchBooks: ArrayList<SearchBook>) -> Unit)? = null

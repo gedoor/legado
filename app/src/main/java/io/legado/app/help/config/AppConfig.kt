@@ -342,6 +342,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val progressBarBehavior: String?
         get() = appCtx.getPrefString(PreferKey.progressBarBehavior, "page")
 
+    var searchScope: String
+        get() = appCtx.getPrefString("searchScope") ?: ""
+        set(value) {
+            appCtx.putPrefString("searchScope", value)
+        }
+
     var searchGroup: String
         get() = appCtx.getPrefString("searchGroup") ?: ""
         set(value) {
