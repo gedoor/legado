@@ -50,14 +50,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-legado-${{ hashFiles('**/updateLog.md') }}-
       - name: Clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"
