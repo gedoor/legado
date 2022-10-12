@@ -20,7 +20,6 @@ import me.ag2s.umdlib.tool.UmdUtils;
  * http://blog.sina.com.cn/s/blog_7c8dc2d501018o5l.html
  *
  */
-
 public class UmdReader {
     UmdBook book;
     InputStream inputStream;

@@ -101,7 +101,7 @@ https://www.yuque.com/legado/wiki/community
 
 ##### Disclaimers
 
-https://gedoor.github.io/about.html
+https://gedoor.github.io/Disclaimer
 
 ##### Legado 3.0
 
