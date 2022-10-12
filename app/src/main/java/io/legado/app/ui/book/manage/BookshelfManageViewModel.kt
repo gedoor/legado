@@ -13,7 +13,8 @@ import io.legado.app.utils.toastOnUi
 
 
 class BookshelfManageViewModel(application: Application) : BaseViewModel(application) {
-
+    var groupId: Long = -1L
+    var groupName: String? = null
     val batchChangeSourceState = mutableStateOf(false)
     val batchChangeSourceSize = mutableStateOf(0)
     val batchChangeSourcePosition = mutableStateOf(0)

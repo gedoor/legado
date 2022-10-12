@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -34,6 +35,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,23 +57,26 @@ class BookshelfManageActivity :
     private val adapter by lazy { BookAdapter(this, this) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
-    private var groupId: Long = -1
+    private var searchView: SearchView? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        groupId = intent.getLongExtra("groupId", -1)
+        viewModel.groupId = intent.getLongExtra("groupId", -1)
         launch {
-            binding.titleBar.subtitle = withContext(IO) {
-                appDb.bookGroupDao.getByID(groupId)?.groupName
+            viewModel.groupName = withContext(IO) {
+                appDb.bookGroupDao.getByID(viewModel.groupId)?.groupName
                     ?: getString(R.string.no_group)
             }
+            binding.titleBar.subtitle = viewModel.groupName
         }
-        initView()
+        initRecyclerView()
+        initOtherView()
         initGroupData()
-        initBookData()
+        upBookData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.bookshelf_manage, menu)
+        initSearchView(menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -93,7 +98,37 @@ class BookshelfManageActivity :
         selectGroup(groupRequestCode, 0)
     }
 
-    private fun initView() {
+    private fun showTitle() {
+        binding.titleBar.title = getString(R.string.bookshelf_management)
+        binding.titleBar.subtitle = viewModel.groupName
+    }
+
+    private fun initSearchView(menu: Menu) {
+        searchView = menu.findItem(R.id.menu_screen).actionView as SearchView
+        searchView?.run {
+            setOnCloseListener {
+                showTitle()
+                false
+            }
+            setOnSearchClickListener {
+                binding.titleBar.title = ""
+                binding.titleBar.subtitle = ""
+            }
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    upBookData(newText)
+                    return false
+                }
+
+            })
+        }
+    }
+
+    private fun initRecyclerView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
@@ -107,6 +142,9 @@ class BookshelfManageActivity :
         dragSelectTouchHelper.activeSlideSelect()
         // Note: need judge selection first, so add ItemTouchHelper after it.
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
+    }
+
+    private fun initOtherView() {
         binding.selectActionBar.setMainActionText(R.string.move_to_group)
         binding.selectActionBar.inflateMenu(R.menu.bookshelf_menage_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
@@ -136,18 +174,25 @@ class BookshelfManageActivity :
         }
     }
 
-    private fun initBookData() {
+    private fun upBookData(searchKey: String? = null) {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            when (groupId) {
+            when (viewModel.groupId) {
                 AppConst.rootGroupId -> appDb.bookDao.flowNetNoGroup()
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
                 AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
                 AppConst.bookGroupNetNoneId -> appDb.bookDao.flowNetNoGroup()
                 AppConst.bookGroupLocalNoneId -> appDb.bookDao.flowLocalNoGroup()
-                else -> appDb.bookDao.flowByGroup(groupId)
-            }.conflate().map { books ->
+                else -> appDb.bookDao.flowByGroup(viewModel.groupId)
+            }.conflate().map { list ->
+                val books = if (searchKey.isNullOrBlank()) {
+                    list
+                } else {
+                    list.filter {
+                        it.name.contains(searchKey) || it.author.contains(searchKey)
+                    }
+                }
                 when (getPrefInt(PreferKey.bookshelfSort)) {
                     1 -> books.sortedByDescending {
                         it.latestChapterTime
@@ -162,9 +207,10 @@ class BookshelfManageActivity :
                         it.durChapterTime
                     }
                 }
-            }.conflate().collect { books ->
-                adapter.setItems(books)
-            }
+            }.flowOn(IO)
+                .conflate().collect { books ->
+                    adapter.setItems(books)
+                }
         }
     }
 
@@ -172,9 +218,11 @@ class BookshelfManageActivity :
         when (item.itemId) {
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             else -> if (item.groupId == R.id.menu_group) {
+                viewModel.groupName = item.title.toString()
                 binding.titleBar.subtitle = item.title
-                groupId = appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
-                initBookData()
+                viewModel.groupId =
+                    appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
+                upBookData()
             }
         }
         return super.onCompatOptionsItemSelected(item)
