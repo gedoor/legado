@@ -13,13 +13,13 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
     fun initData(intent: Intent, finally: (replaceRule: ReplaceRule) -> Unit) {
         execute {
             val id = intent.getLongExtra("id", -1)
-            if (id > 0) {
-                replaceRule = appDb.replaceRuleDao.findById(id)
+            replaceRule = if (id > 0) {
+                appDb.replaceRuleDao.findById(id)
             } else {
                 val pattern = intent.getStringExtra("pattern") ?: ""
                 val isRegex = intent.getBooleanExtra("isRegex", false)
                 val scope = intent.getStringExtra("scope")
-                replaceRule = ReplaceRule(
+                ReplaceRule(
                     name = pattern,
                     pattern = pattern,
                     isRegex = isRegex,
@@ -35,7 +35,7 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
 
     fun save(replaceRule: ReplaceRule, success: () -> Unit) {
         execute {
-            if (replaceRule.order == 0) {
+            if (replaceRule.order == Int.MIN_VALUE) {
                 replaceRule.order = appDb.replaceRuleDao.maxOrder + 1
             }
             appDb.replaceRuleDao.insert(replaceRule)

@@ -48,7 +48,7 @@ data class ReplaceRule(
     var timeoutMillisecond: Long = 3000L,
     //排序
     @ColumnInfo(name = "sortOrder", defaultValue = "0")
-    var order: Int = 0
+    var order: Int = Int.MIN_VALUE
 ) : Parcelable {
 
     override fun equals(other: Any?): Boolean {
