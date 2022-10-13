@@ -14,6 +14,7 @@ import io.legado.app.databinding.DialogSearchScopeBinding
 import io.legado.app.databinding.ItemCheckBoxBinding
 import io.legado.app.databinding.ItemRadioButtonBinding
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -24,8 +25,9 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
     private val binding by viewBinding(DialogSearchScopeBinding::bind)
     val callback: Callback get() = parentFragment as? Callback ?: activity as Callback
-    var groups = arrayListOf<String>()
-    var sources = arrayListOf<BookSource>()
+    var groups: List<String> = arrayListOf()
+    var sources: List<BookSource> = arrayListOf()
+
 
     val adapter by lazy {
         RecyclerAdapter()
@@ -39,14 +41,20 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.recyclerView.adapter = adapter
+        initMenu()
         initOtherView()
         initData()
         upData()
     }
 
+    private fun initMenu() {
+        binding.toolBar.inflateMenu(R.menu.change_source)
+        binding.toolBar.menu.applyTint(requireContext())
+    }
 
     private fun initOtherView() {
-        binding.rgScope.setOnCheckedChangeListener { _, _ ->
+        binding.rgScope.setOnCheckedChangeListener { group, checkedId ->
+            binding.toolBar.menu.findItem(R.id.menu_screen)?.isVisible = checkedId == R.id.rb_source
             upData()
         }
         binding.tvCancel.setOnClickListener {
@@ -73,9 +81,11 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
     private fun initData() {
         launch {
-            withContext(IO) {
-                groups.addAll(appDb.bookSourceDao.allGroups)
-                sources.addAll(appDb.bookSourceDao.allEnabled)
+            groups = withContext(IO) {
+                appDb.bookSourceDao.allGroups
+            }
+            sources = withContext(IO) {
+                appDb.bookSourceDao.allEnabled
             }
             upData()
         }
