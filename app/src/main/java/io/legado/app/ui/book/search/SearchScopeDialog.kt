@@ -24,8 +24,8 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
     private val binding by viewBinding(DialogSearchScopeBinding::bind)
     val callback: Callback get() = parentFragment as? Callback ?: activity as Callback
-    var groups: List<String>? = null
-    var sources: List<BookSource>? = null
+    var groups: List<String> = arrayListOf()
+    var sources: List<BookSource> = arrayListOf()
 
     val adapter by lazy {
         RecyclerAdapter()
@@ -46,7 +46,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
 
     private fun initOtherView() {
-        binding.rgScope.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgScope.setOnCheckedChangeListener { _, _ ->
             upData()
         }
         binding.tvCancel.setOnClickListener {
@@ -119,13 +119,13 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
             } else {
                 when (holder.binding) {
                     is ItemCheckBoxBinding -> {
-                        groups?.get(position)?.let {
+                        groups.getOrNull(position)?.let {
                             holder.binding.checkBox.isChecked = selectGroups.contains(it)
                             holder.binding.checkBox.text = it
                         }
                     }
                     is ItemRadioButtonBinding -> {
-                        sources?.get(position)?.let {
+                        sources.getOrNull(position)?.let {
                             holder.binding.radioButton.isChecked = selectSource == it
                             holder.binding.radioButton.text = it.bookSourceName
                         }
@@ -137,7 +137,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             when (holder.binding) {
                 is ItemCheckBoxBinding -> {
-                    groups?.get(position)?.let {
+                    groups.getOrNull(position)?.let {
                         holder.binding.checkBox.isChecked = selectGroups.contains(it)
                         holder.binding.checkBox.text = it
                         holder.binding.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -153,7 +153,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
                     }
                 }
                 is ItemRadioButtonBinding -> {
-                    sources?.get(position)?.let {
+                    sources.getOrNull(position)?.let {
                         holder.binding.radioButton.isChecked = selectSource == it
                         holder.binding.radioButton.text = it.bookSourceName
                         holder.binding.radioButton.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -171,9 +171,9 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
         override fun getItemCount(): Int {
             return if (binding.rbSource.isChecked) {
-                sources?.size ?: 0
+                sources.size
             } else {
-                groups?.size ?: 0
+                groups.size
             }
         }
 
