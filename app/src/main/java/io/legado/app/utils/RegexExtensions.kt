@@ -1,6 +1,8 @@
 package io.legado.app.utils
 
 import androidx.core.os.postDelayed
+import com.script.SimpleBindings
+import io.legado.app.constant.AppConst
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.coroutine.Coroutine
@@ -20,8 +22,23 @@ suspend fun CharSequence.replace(regex: Regex, replacement: String, timeout: Lon
     return suspendCancellableCoroutine { block ->
         val coroutine = Coroutine.async {
             try {
-                val result = regex.replace(charSequence, replacement)
-                block.resume(result)
+                if (replacement.startsWith("@js:")) {
+                    val js = replacement.substring(4)
+                    val pattern = regex.toPattern()
+                    val matcher = pattern.matcher(charSequence)
+                    val stringBuffer = StringBuffer()
+                    while (matcher.find()) {
+                        val bindings = SimpleBindings()
+                        bindings["result"] = matcher.group(1)
+                        val jsResult = AppConst.SCRIPT_ENGINE.eval(js, bindings).toString()
+                        matcher.appendReplacement(stringBuffer, jsResult)
+                    }
+                    matcher.appendTail(stringBuffer)
+                    block.resume(stringBuffer.toString())
+                } else {
+                    val result = regex.replace(charSequence, replacement)
+                    block.resume(result)
+                }
             } catch (e: Exception) {
                 block.resumeWithException(e)
             }
