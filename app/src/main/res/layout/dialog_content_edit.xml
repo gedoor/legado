@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background"
     android:orientation="vertical">
 
@@ -11,14 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarStyle"
-        app:title="edit"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:title="edit"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <io.legado.app.lib.theme.view.ThemeEditText
         android:id="@+id/content_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="12dp" />
+        android:layout_height="0dp"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</LinearLayout>
+    <io.legado.app.ui.widget.anima.RotateLoading
+        android:id="@+id/rl_loading"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
