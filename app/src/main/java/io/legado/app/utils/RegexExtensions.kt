@@ -29,7 +29,7 @@ suspend fun CharSequence.replace(regex: Regex, replacement: String, timeout: Lon
                     val stringBuffer = StringBuffer()
                     while (matcher.find()) {
                         val bindings = SimpleBindings()
-                        bindings["result"] = matcher.group(1)
+                        bindings["result"] = matcher.group()
                         val jsResult = AppConst.SCRIPT_ENGINE.eval(js, bindings).toString()
                         matcher.appendReplacement(stringBuffer, jsResult)
                     }
