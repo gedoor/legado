@@ -24,8 +24,8 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
     private val binding by viewBinding(DialogSearchScopeBinding::bind)
     val callback: Callback get() = parentFragment as? Callback ?: activity as Callback
-    var groups: List<String> = arrayListOf()
-    var sources: List<BookSource> = arrayListOf()
+    var groups = arrayListOf<String>()
+    var sources = arrayListOf<BookSource>()
 
     val adapter by lazy {
         RecyclerAdapter()
@@ -74,8 +74,8 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     private fun initData() {
         launch {
             withContext(IO) {
-                groups = appDb.bookSourceDao.allGroups
-                sources = appDb.bookSourceDao.allEnabled
+                groups.addAll(appDb.bookSourceDao.allGroups)
+                sources.addAll(appDb.bookSourceDao.allEnabled)
             }
             upData()
         }
