@@ -112,6 +112,7 @@
         <!-- 主界面 -->
         <activity
             android:name=".ui.main.MainActivity"
+            android:exported="true"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTask" />
