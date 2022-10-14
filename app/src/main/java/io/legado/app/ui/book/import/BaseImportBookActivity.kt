@@ -25,7 +25,6 @@ abstract class BaseImportBookActivity<VB : ViewBinding, VM : ViewModel> : VMBase
      * 设置书籍保存位置
      */
     protected suspend fun setBookStorage() = suspendCoroutine { block ->
-        AppConfig.defaultBookTreeUri = ""
         localBookTreeSelectListener = {
             block.resume(it)
         }
