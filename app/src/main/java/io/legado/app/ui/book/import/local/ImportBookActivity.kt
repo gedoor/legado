@@ -58,10 +58,12 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setTitle(R.string.book_local)
-        initView()
-        initEvent()
-        initData()
-        setBookStorage()
+        launch {
+            setBookStorage()
+            initView()
+            initEvent()
+            initData()
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

@@ -38,10 +38,15 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
     private var groupMenu: SubMenu? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setTitle(R.string.remote_book)
-        initView()
-        initData()
-        initEvent()
-        setBookStorage()
+        launch {
+            if (!setBookStorage()) {
+                finish()
+                return@launch
+            }
+            initView()
+            initData()
+            initEvent()
+        }
     }
 
     private fun initView() {

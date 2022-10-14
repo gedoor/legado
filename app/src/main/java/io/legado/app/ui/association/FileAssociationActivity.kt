@@ -33,7 +33,8 @@ class FileAssociationActivity :
                 AppConfig.defaultBookTreeUri = treeUri.toString()
                 importBook(treeUri, uri)
             } ?: let {
-                toastOnUi("不选择文件夹重启应用后可能没有权限访问")
+                val storageHelp = String(assets.open("storageHelp.md").readBytes())
+                toastOnUi(storageHelp)
                 viewModel.importBook(uri)
             }
         }
