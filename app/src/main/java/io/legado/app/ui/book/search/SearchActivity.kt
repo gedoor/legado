@@ -24,6 +24,7 @@ import io.legado.app.databinding.ActivityBookSearchBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.*
@@ -128,17 +129,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
             }
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
-            else -> if (item.groupId == R.id.source_group) {
-                item.isChecked = true
-                if (item.title.toString() == getString(R.string.all_source)) {
-                    AppConfig.searchGroup = ""
-                } else {
-                    AppConfig.searchGroup = item.title.toString()
-                }
-                searchView.query?.toString()?.trim()?.let {
-                    searchView.setQuery(it, true)
-                }
-            }
+            R.id.menu_log -> showDialogFragment(AppLogDialog())
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -247,6 +238,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
     }
 
+    /**
+     * 处理传入数据
+     */
     private fun receiptIntent(intent: Intent? = null) {
         val searchScope = intent?.getStringExtra("searchScope")
         searchScope?.let {
