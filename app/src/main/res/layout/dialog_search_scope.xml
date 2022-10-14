@@ -40,8 +40,7 @@
             android:padding="5dp"
             android:singleLine="true"
             android:checked="true"
-            android:text="@string/group"
-            app:isBottomBackground="true" />
+            android:text="@string/group" />
 
         <io.legado.app.lib.theme.view.ThemeRadioNoButton
             android:id="@+id/rb_source"
@@ -53,8 +52,7 @@
             android:gravity="center"
             android:padding="5dp"
             android:singleLine="true"
-            android:text="@string/book_source"
-            app:isBottomBackground="true" />
+            android:text="@string/book_source" />
 
     </RadioGroup>
 
@@ -77,7 +75,7 @@
         android:paddingRight="10dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
+        <io.legado.app.ui.widget.text.AccentTextView
             android:id="@+id/tv_all_source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -98,6 +96,7 @@
             android:layout_marginRight="16dp"
             android:padding="12dp"
             android:text="@string/cancel"
+            android:textColor="@color/secondaryText"
             tools:ignore="RtlHardcoded" />
 
         <io.legado.app.ui.widget.text.AccentTextView

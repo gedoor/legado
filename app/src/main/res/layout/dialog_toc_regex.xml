@@ -37,6 +37,7 @@
             android:layout_marginRight="16dp"
             android:padding="12dp"
             android:text="@string/cancel"
+            android:textColor="@color/secondaryText"
             tools:ignore="RtlHardcoded" />
 
         <io.legado.app.ui.widget.text.AccentTextView
