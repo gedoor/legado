@@ -21,7 +21,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ActivityBookSearchBinding
-import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.*
 import io.legado.app.ui.about.AppLogDialog
@@ -68,13 +67,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var precisionSearchMenuItem: MenuItem? = null
     private var isManualStopSearch = false
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = searchFinish@{ isEmpty ->
-        val searchGroup = AppConfig.searchGroup
-        if (!isEmpty || searchGroup.isEmpty()) return@searchFinish
+        if (!isEmpty || viewModel.searchScope.isAll()) return@searchFinish
         launch {
             alert("搜索结果为空") {
                 val precisionSearch = appCtx.getPrefBoolean(PreferKey.precisionSearch)
                 if (precisionSearch) {
-                    setMessage("${searchGroup}分组搜索结果为空，是否关闭精准搜索？")
+                    setMessage("${viewModel.searchScope.display}分组搜索结果为空，是否关闭精准搜索？")
                     yesButton {
                         appCtx.putPrefBoolean(PreferKey.precisionSearch, false)
                         precisionSearchMenuItem?.isChecked = false
@@ -82,10 +80,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                         viewModel.search(searchView.query.toString())
                     }
                 } else {
-                    setMessage("${searchGroup}分组搜索结果为空，是否切换到全部分组？")
+                    setMessage("${viewModel.searchScope.display}分组搜索结果为空，是否切换到全部分组？")
                     yesButton {
-                        AppConfig.searchGroup = ""
-                        viewModel.searchKey = ""
+                        viewModel.searchScope.update("")
+                        viewModel.searchScope.save()
                         viewModel.search(searchView.query.toString())
                     }
                 }
@@ -222,7 +220,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     private fun initData() {
-        searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
+        searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
         viewModel.isSearchLiveData.observe(this) {
             if (it) {
                 startSearch()
@@ -245,7 +243,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         val searchScope = intent?.getStringExtra("searchScope")
         searchScope?.let {
             viewModel.searchScope.update(searchScope)
-            searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
+            searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
         }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {
@@ -277,7 +275,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         if (visible) {
             upHistory(searchView.query.toString())
             binding.llInputHelp.visibility = VISIBLE
-            searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
+            searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
         } else {
             binding.llInputHelp.visibility = GONE
         }
@@ -385,7 +383,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun onSearchScopeOk(searchScope: SearchScope) {
         searchScope.save()
         viewModel.searchScope.update(searchScope.toString())
-        searchScopeAdapter.setItems(searchScope.getShowNames())
+        searchScopeAdapter.setItems(searchScope.displayNames)
     }
 
     private fun alertSearchScope() {

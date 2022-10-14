@@ -31,20 +31,29 @@ data class SearchScope(private var scope: String) {
         scope = "${source.bookSourceName}::${source.bookSourceUrl}"
     }
 
+    val display: String
+        get() {
+            if (scope.contains("::")) {
+                return scope.substringBefore("::")
+            }
+            return scope
+        }
+
     /**
      * 搜索范围显示
      */
-    fun getShowNames(): List<String> {
-        val list = arrayListOf<String>()
-        if (scope.contains("::")) {
-            list.add(scope.substringBefore("::"))
-        } else {
-            scope.splitNotBlank(",").forEach {
-                list.add(it)
+    val displayNames: List<String>
+        get() {
+            val list = arrayListOf<String>()
+            if (scope.contains("::")) {
+                list.add(scope.substringBefore("::"))
+            } else {
+                scope.splitNotBlank(",").forEach {
+                    list.add(it)
+                }
             }
-        }
-        if (list.isEmpty()) {
-            list.add("全部书源")
+            if (list.isEmpty()) {
+                list.add("全部书源")
         }
         return list
     }
@@ -70,6 +79,10 @@ data class SearchScope(private var scope: String) {
             return appDb.bookSourceDao.allEnabled
         }
         return list.sortedBy { it.customOrder }
+    }
+
+    fun isAll(): Boolean {
+        return scope.isEmpty()
     }
 
     fun save() {
