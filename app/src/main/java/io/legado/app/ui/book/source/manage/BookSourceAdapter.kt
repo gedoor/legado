@@ -188,6 +188,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     putExtra("type", "bookSource")
                     putExtra("key", source.bookSourceUrl)
                 }
+                R.id.menu_search -> callBack.searchBook(source)
                 R.id.menu_debug_source -> callBack.debug(source)
                 R.id.menu_del -> callBack.del(source)
                 R.id.menu_enable_explore -> {
@@ -314,6 +315,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun update(vararg bookSource: BookSource)
         fun toTop(bookSource: BookSource)
         fun toBottom(bookSource: BookSource)
+        fun searchBook(bookSource: BookSource)
         fun debug(bookSource: BookSource)
         fun upOrder()
         fun upCountView()
