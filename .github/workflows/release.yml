@@ -19,14 +19,14 @@ jobs:
     steps:
       - id: set-ver
         run: |
-          echo "::set-output name=version::$(date -d "8 hour" -u +3.%y.%m%d%H)"
+          echo "version=$(date -d "8 hour" -u +3.%y.%m%d%H)" >> $GITHUB_OUTPUT
       - id: check
         run: |
           if [ ! -z "${{ secrets.RELEASE_KEY_STORE }}" ]; then
-            echo "::set-output name=sign::yes"
+            echo "sign=yes" >> $GITHUB_OUTPUT
           fi
           if [ ! -z "${{ secrets.SERVICE_ACCOUNT_JSON }}" ]; then
-            echo "::set-output name=play::yes"
+            echo "play=yes" >> $GITHUB_OUTPUT
           fi
 
   build:
@@ -48,7 +48,8 @@ jobs:
 
       - name: Release Apk Sign
         run: |
-          echo "::set-output name=KeyStore::yes"
+          # not use this output
+          # echo "KeyStore=yes" >> $GITHUB_OUTPUT
           echo RELEASE_KEY_ALIAS='${{ secrets.RELEASE_KEY_ALIAS }}' >> gradle.properties
           echo RELEASE_KEY_PASSWORD='${{ secrets.RELEASE_KEY_PASSWORD }}' >> gradle.properties
           echo RELEASE_STORE_PASSWORD='${{ secrets.RELEASE_STORE_PASSWORD }}' >> gradle.properties

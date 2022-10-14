@@ -22,15 +22,15 @@ jobs:
     steps:
       - id: set-ver
         run: |
-          echo "::set-output name=version::$(date -d "8 hour" -u +3.%y.%m%d%H)"
-          echo "::set-output name=versionL::$(date -d "8 hour" -u +3.%y.%m%d%H%M)"
+          echo "version=$(date -d "8 hour" -u +3.%y.%m%d%H)" >> $GITHUB_OUTPUT
+          echo "versionL=$(date -d "8 hour" -u +3.%y.%m%d%H%M)" >> $GITHUB_OUTPUT
       - id: check
         run: |
           if [ ${{ secrets.LANZOU_ID }} ]; then
-            echo "::set-output name=lanzou::yes"
+            echo "lanzou=yes" >> $GITHUB_OUTPUT
           fi
           if [ ${{ secrets.BOT_TOKEN }} ]; then
-            echo "::set-output name=telegram::yes"
+            echo "telegram=yes" >> $GITHUB_OUTPUT
           fi
 
   build:
