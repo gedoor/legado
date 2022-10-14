@@ -46,6 +46,8 @@ object ReadBook : CoroutineScope by MainScope() {
     var bookProgressHistory: List<BookProgress>? = null
     /* 跳转进度前进度记录 */
     var lastBookPress: BookProgress? = null
+    /* web端阅读进度记录 */
+    var webBookProgress: BookProgress? = null
 
     //暂时保存跳转前进度
     fun saveCurrentBookProcess() {
@@ -55,16 +57,8 @@ object ReadBook : CoroutineScope by MainScope() {
     //恢复跳转前进度
     fun restoreLastBookProcess() {
         lastBookPress?.let {
-            durChapterPos = it.durChapterPos
-            if (durChapterIndex != it.durChapterIndex) {
-                clearTextChapter()
-                durChapterIndex = it.durChapterIndex
-            }
-            callBack?.upContent()
-            saveRead()
-            loadContent(resetPageOffset = true) {
-                lastBookPress = null
-            }
+            setProgress(it)
+            lastBookPress = null
         }
     }
 
@@ -81,6 +75,7 @@ object ReadBook : CoroutineScope by MainScope() {
         callBack?.upPageAnim()
         upWebBook(book)
         lastBookPress = null
+        webBookProgress = null
         synchronized(this) {
             loadingChapters.clear()
         }
