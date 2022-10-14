@@ -9,7 +9,7 @@ import io.legado.app.utils.splitNotBlank
  * 搜索范围
  */
 @Suppress("unused")
-data class SearchScope(var scope: String) {
+data class SearchScope(private var scope: String) {
 
     constructor(groups: List<String>) : this(groups.joinToString(","))
 
@@ -17,6 +17,18 @@ data class SearchScope(var scope: String) {
 
     override fun toString(): String {
         return scope
+    }
+
+    fun update(scope: String) {
+        this.scope = scope
+    }
+
+    fun update(groups: List<String>) {
+        scope = groups.joinToString(",")
+    }
+
+    fun update(source: BookSource) {
+        scope = "${source.bookSourceName}::${source.bookSourceUrl}"
     }
 
     /**

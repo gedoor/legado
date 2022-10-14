@@ -1,7 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.activity.MainActivity">
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_precision_search"
+        android:checkable="true"
+        android:title="@string/precision_search"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_source_manage"
@@ -9,9 +15,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_precision_search"
-        android:title="@string/precision_search"
-        android:checkable="true"
+        android:id="@+id/menu_log"
+        android:title="@string/log"
         app:showAsAction="never" />
 
 </menu>

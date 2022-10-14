@@ -64,9 +64,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
     private var historyFlowJob: Job? = null
     private var booksFlowJob: Job? = null
-    private var menu: Menu? = null
     private var precisionSearchMenuItem: MenuItem? = null
-    private var groups = linkedSetOf<String>()
     private var isManualStopSearch = false
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = searchFinish@{ isEmpty ->
         val searchGroup = AppConfig.searchGroup
@@ -114,8 +112,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         menuInflater.inflate(R.menu.book_search, menu)
         precisionSearchMenuItem = menu.findItem(R.id.menu_precision_search)
         precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
-        this.menu = menu
-        upGroupMenu()
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -249,19 +245,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 delay(1000)
             }
         }
-        launch {
-            appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
-                groups.clear()
-                groups.addAll(it)
-                upGroupMenu()
-            }
-        }
     }
 
     private fun receiptIntent(intent: Intent? = null) {
         val searchScope = intent?.getStringExtra("searchScope")
         searchScope?.let {
-            viewModel.searchScope.scope = searchScope
+            viewModel.searchScope.update(searchScope)
             searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
         }
         val key = intent?.getStringExtra("key")
@@ -297,30 +286,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             searchScopeAdapter.setItems(viewModel.searchScope.getShowNames())
         } else {
             binding.llInputHelp.visibility = GONE
-        }
-    }
-
-    /**
-     * 更新分组菜单
-     */
-    private fun upGroupMenu() = menu?.let { menu ->
-        val selectedGroup = AppConfig.searchGroup
-        menu.removeGroup(R.id.source_group)
-        val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
-        var hasSelectedGroup = false
-        groups.sortedWith { o1, o2 ->
-            o1.cnCompare(o2)
-        }.forEach { group ->
-            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
-                if (group == selectedGroup) {
-                    it.isChecked = true
-                    hasSelectedGroup = true
-                }
-            }
-        }
-        menu.setGroupCheckable(R.id.source_group, true, true)
-        if (!hasSelectedGroup) {
-            allItem.isChecked = true
         }
     }
 
@@ -424,7 +389,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
 
     override fun onSearchScopeOk(searchScope: SearchScope) {
-        viewModel.searchScope = searchScope
+        searchScope.save()
+        viewModel.searchScope.update(searchScope.toString())
         searchScopeAdapter.setItems(searchScope.getShowNames())
     }
 

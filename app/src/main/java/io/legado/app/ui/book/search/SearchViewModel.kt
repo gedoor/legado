@@ -15,7 +15,13 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 
 class SearchViewModel(application: Application) : BaseViewModel(application) {
+    val searchScope: SearchScope = SearchScope(AppConfig.searchScope)
     private val searchModel = SearchModel(viewModelScope, object : SearchModel.CallBack {
+
+        override fun getSearchScope(): SearchScope {
+            return searchScope
+        }
+
         override fun onSearchStart() {
             isSearchLiveData.postValue(true)
         }
@@ -35,7 +41,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     })
     var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var isSearchLiveData = MutableLiveData<Boolean>()
-    var searchScope: SearchScope = SearchScope(AppConfig.searchScope)
     var searchKey: String = ""
     private var searchID = 0L
     private var searchFlowCallBack: ((searchBooks: ArrayList<SearchBook>) -> Unit)? = null
