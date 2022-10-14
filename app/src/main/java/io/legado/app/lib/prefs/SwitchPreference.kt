@@ -23,7 +23,7 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
-        super.onBindViewHolder(holder)
+
         val v = Preference.bindView<SwitchCompat>(
             context,
             holder,
@@ -37,6 +37,7 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
         if (v is SwitchCompat && !v.isInEditMode) {
             v.applyTint(context.accentColor)
         }
+        super.onBindViewHolder(holder)
         onLongClick?.let { listener ->
             holder.itemView.setOnLongClickListener {
                 listener.invoke(this)
