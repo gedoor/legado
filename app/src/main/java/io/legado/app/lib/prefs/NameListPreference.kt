@@ -24,7 +24,6 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
-        super.onBindViewHolder(holder)
         val v = Preference.bindView<TextView>(
             context, holder, icon, title, summary, widgetLayoutResource,
             R.id.text_view, isBottomBackground = isBottomBackground
@@ -37,6 +36,7 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 v.setTextColor(pTextColor)
             }
         }
+        super.onBindViewHolder(holder)
     }
 
 }
