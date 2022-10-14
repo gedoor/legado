@@ -202,6 +202,11 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onResume() {
         super.onResume()
         ReadBook.readStartTime = System.currentTimeMillis()
+        //web端阅读时，app处于阅读界面，本地记录会覆盖web保存的进度，在此处恢复
+        ReadBook.webBookProgress?.let {
+            ReadBook.setProgress(it)
+            ReadBook.webBookProgress = null
+        }
         upSystemUiVisibility()
         registerReceiver(timeBatteryReceiver, timeBatteryReceiver.filter)
         binding.readView.upTime()
@@ -1273,10 +1278,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         super.observeLiveBus()
         observeEvent<String>(EventBus.TIME_CHANGED) { readView.upTime() }
         observeEvent<Int>(EventBus.BATTERY_CHANGED) { readView.upBattery(it) }
-        observeEvent<BookChapter>(EventBus.OPEN_CHAPTER) {
-            viewModel.openChapter(it.index, ReadBook.durChapterPos)
-            readView.upContent()
-        }
         observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {
             if (it) {
                 onClickReadAloud()
