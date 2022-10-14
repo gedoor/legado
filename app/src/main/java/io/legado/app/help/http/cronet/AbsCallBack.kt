@@ -148,7 +148,7 @@ abstract class AbsCallBack(
     override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
         super.onCanceled(request, info)
         this.eventListener?.callEnd(mCall)
-        onError(IOException("Cronet Request Canceled"))
+        //onError(IOException("Cronet Request Canceled"))
     }
 
 
