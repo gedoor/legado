@@ -9,10 +9,7 @@ import io.legado.app.exception.RegexTimeoutException
  */
 fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): String {
     val startTime = System.currentTimeMillis()
-    val charSequence = ListenerCharSequence(this) {
-        //根本没有执行到这步,和网上的方案不符
-        print(it)
-    }
+    val charSequence = this
     val isJs = replacement.startsWith("@js:")
     val replacement1 = if (isJs) replacement.substring(4) else replacement
     val pattern = regex.toPattern()
@@ -36,24 +33,3 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): Stri
     return stringBuffer.toString()
 }
 
-class ListenerCharSequence(
-    private val inner: CharSequence,
-    private val charAtListener: ((Int) -> Unit)
-) : CharSequence {
-
-    override fun toString(): String {
-        return inner.toString()
-    }
-
-    override val length: Int = inner.length
-
-    override fun get(index: Int): Char {
-        charAtListener.invoke(index)
-        return inner[index]
-    }
-
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
-        return ListenerCharSequence(inner.subSequence(startIndex, endIndex), charAtListener)
-    }
-
-}
