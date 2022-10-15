@@ -86,18 +86,18 @@ fun Book.getRemoteUrl(): String? {
     return null
 }
 
-fun Book.setType(vararg types: Int) {
+fun Book.setType(@BookType.Type vararg types: Int) {
     type = 0
     addType(*types)
 }
 
-fun Book.addType(vararg types: Int) {
+fun Book.addType(@BookType.Type vararg types: Int) {
     types.forEach {
         type = type or it
     }
 }
 
-fun Book.removeType(vararg types: Int) {
+fun Book.removeType(@BookType.Type vararg types: Int) {
     types.forEach {
         type = type and it.inv()
     }
