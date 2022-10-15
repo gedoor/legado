@@ -71,7 +71,7 @@ data class SearchScope(private var scope: String) {
             }
         } else {
             scope.splitNotBlank(",").forEach {
-                list.addAll(appDb.bookSourceDao.getByGroup(it))
+                list.addAll(appDb.bookSourceDao.getEnabledByGroup(it))
             }
         }
         if (list.isEmpty()) {
