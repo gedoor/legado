@@ -358,9 +358,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
             val exception = document.getElementsByTag("s:exception").firstOrNull()?.text()
             val message = document.getElementsByTag("s:message").firstOrNull()?.text()
             if (exception == "ObjectNotFound") {
-                throw ObjectNotFoundException(message ?: "$path doesn't exist")
+                throw ObjectNotFoundException(message ?: "$path doesn't exist. code:${response.code}")
             }
-            throw WebDavException(message ?: "未知错误")
+            throw WebDavException(message ?: "未知错误 code:${response.code}")
         }
     }
 

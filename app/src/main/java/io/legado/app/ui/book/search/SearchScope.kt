@@ -54,9 +54,9 @@ data class SearchScope(private var scope: String) {
             }
             if (list.isEmpty()) {
                 list.add("全部书源")
+            }
+            return list
         }
-        return list
-    }
 
     /**
      * 搜索范围书源
