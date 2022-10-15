@@ -145,6 +145,10 @@ data class FileDoc(
 
     companion object {
 
+        fun fromUri(uri: Uri, isDir: Boolean, name: String = ""): FileDoc {
+            return FileDoc(name, isDir, 0, 0, uri)
+        }
+
         fun fromDocumentFile(doc: DocumentFile): FileDoc {
             return FileDoc(
                 name = doc.name ?: "",
@@ -166,6 +170,19 @@ data class FileDoc(
         }
 
     }
+}
+
+fun FileDoc.list(filter: ((file: FileDoc) -> Boolean)? = null): ArrayList<FileDoc>? {
+    if (isDir) {
+        return DocumentUtils.listFiles(uri, filter)
+    }
+    return null
+}
+
+fun FileDoc.find(name: String): FileDoc? {
+    return list {
+        it.name == name
+    }?.firstOrNull()
 }
 
 @Throws(Exception::class)
