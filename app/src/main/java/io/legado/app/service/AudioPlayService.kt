@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
@@ -36,6 +37,7 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 import splitties.systemservices.audioManager
+import splitties.systemservices.powerManager
 
 /**
  * 音频播放服务
@@ -61,6 +63,9 @@ class AudioPlayService : BaseService(),
             private set
     }
 
+    private val wakeLock by lazy {
+        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:webService")
+    }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
     }
@@ -82,8 +87,10 @@ class AudioPlayService : BaseService(),
     private var upPlayProgressJob: Job? = null
     private var playSpeed: Float = 1f
 
+    @SuppressLint("WakelockTimeout")
     override fun onCreate() {
         super.onCreate()
+        wakeLock.acquire()
         isRun = true
         upNotification()
         exoPlayer.addListener(this)
@@ -120,6 +127,7 @@ class AudioPlayService : BaseService(),
 
     override fun onDestroy() {
         super.onDestroy()
+        wakeLock.release()
         isRun = false
         abandonFocus()
         exoPlayer.release()
