@@ -76,3 +76,10 @@ suspend fun BookSource.clearExploreKindsCache() {
         exploreKindsMap.remove(getExploreKindsKey())
     }
 }
+
+fun BookSource.contains(word: String): Boolean {
+    return bookSourceName.contains(word)
+            || bookSourceUrl.contains(word)
+            || bookSourceGroup?.contains(word) == true
+            || bookSourceComment?.contains(word) == true
+}

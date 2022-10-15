@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.DialogSearchScopeBinding
 import io.legado.app.databinding.ItemCheckBoxBinding
 import io.legado.app.databinding.ItemRadioButtonBinding
+import io.legado.app.help.source.contains
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
@@ -117,7 +118,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
                 if (binding.rbSource.isChecked) {
                     sources.filter { source ->
                         screenText?.let { screenText ->
-                            source.bookSourceName.contains(screenText)
+                            source.contains(screenText)
                         } ?: true
                     }.let {
                         screenSources.clear()
