@@ -145,8 +145,17 @@ data class FileDoc(
 
     companion object {
 
-        fun fromUri(uri: Uri, isDir: Boolean, name: String = ""): FileDoc {
-            return FileDoc(name, isDir, 0, 0, uri)
+        fun fromUri(uri: Uri, isDir: Boolean): FileDoc {
+            if (uri.isContentScheme()) {
+                val doc = if (isDir) {
+                    DocumentFile.fromTreeUri(appCtx, uri)!!
+                } else {
+                    DocumentFile.fromSingleUri(appCtx, uri)!!
+                }
+                return FileDoc(doc.name ?: "", true, doc.length(), doc.lastModified(), doc.uri)
+            }
+            val file = File(uri.path!!)
+            return FileDoc(file.name, isDir, file.length(), file.lastModified(), uri)
         }
 
         fun fromDocumentFile(doc: DocumentFile): FileDoc {
