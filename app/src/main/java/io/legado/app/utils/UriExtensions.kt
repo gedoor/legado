@@ -13,6 +13,7 @@ import io.legado.app.lib.permission.PermissionsCompat
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
+import java.nio.charset.Charset
 
 fun Uri.isContentScheme() = this.scheme == "content"
 
@@ -100,7 +101,13 @@ fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputSt
 @Throws(Exception::class)
 fun Uri.readBytes(context: Context): ByteArray {
     return if (this.isContentScheme()) {
-        DocumentUtils.readBytes(context, this)
+        context.contentResolver.openInputStream(this)?.let {
+            val len: Int = it.available()
+            val buffer = ByteArray(len)
+            it.read(buffer)
+            it.close()
+            return buffer
+        } ?: throw NoStackTraceException("打开文件失败\n${this}")
     } else {
         val path = RealPathUtil.getPath(context, this)
         if (path?.isNotEmpty() == true) {
@@ -124,7 +131,12 @@ fun Uri.writeBytes(
     byteArray: ByteArray
 ): Boolean {
     if (this.isContentScheme()) {
-        return DocumentUtils.writeBytes(context, byteArray, this)
+        context.contentResolver.openOutputStream(this)?.let {
+            it.write(byteArray)
+            it.close()
+            return true
+        }
+        return false
     } else {
         val path = RealPathUtil.getPath(context, this)
         if (path?.isNotEmpty() == true) {
@@ -136,8 +148,8 @@ fun Uri.writeBytes(
 }
 
 @Throws(Exception::class)
-fun Uri.writeText(context: Context, text: String): Boolean {
-    return writeBytes(context, text.toByteArray())
+fun Uri.writeText(context: Context, text: String, charset: Charset = Charsets.UTF_8): Boolean {
+    return writeBytes(context, text.toByteArray(charset))
 }
 
 fun Uri.writeBytes(

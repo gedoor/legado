@@ -53,44 +53,14 @@ object DocumentUtils {
         return parent
     }
 
-    @JvmStatic
-    @Throws(Exception::class)
-    fun writeText(
-        context: Context,
-        data: String,
-        fileUri: Uri,
-        charset: Charset = Charsets.UTF_8
-    ): Boolean {
-        return writeBytes(context, data.toByteArray(charset), fileUri)
-    }
-
-    @JvmStatic
-    @Throws(Exception::class)
-    fun writeBytes(context: Context, data: ByteArray, fileUri: Uri): Boolean {
-        context.contentResolver.openOutputStream(fileUri)?.let {
-            it.write(data)
-            it.close()
-            return true
-        }
-        return false
-    }
-
-    @JvmStatic
-    @Throws(Exception::class)
-    fun readText(context: Context, uri: Uri): String {
-        return String(readBytes(context, uri))
-    }
-
-    @JvmStatic
-    @Throws(Exception::class)
-    fun readBytes(context: Context, uri: Uri): ByteArray {
-        context.contentResolver.openInputStream(uri)?.let {
-            val len: Int = it.available()
-            val buffer = ByteArray(len)
-            it.read(buffer)
-            it.close()
-            return buffer
-        } ?: throw NoStackTraceException("打开文件失败\n${uri}")
+    private val projection by lazy {
+        arrayOf(
+            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+            DocumentsContract.Document.COLUMN_LAST_MODIFIED,
+            DocumentsContract.Document.COLUMN_SIZE,
+            DocumentsContract.Document.COLUMN_MIME_TYPE
+        )
     }
 
     @Throws(Exception::class)
@@ -104,13 +74,7 @@ object DocumentUtils {
         var cursor: Cursor? = null
         try {
             cursor = appCtx.contentResolver.query(
-                childrenUri, arrayOf(
-                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-                    DocumentsContract.Document.COLUMN_LAST_MODIFIED,
-                    DocumentsContract.Document.COLUMN_SIZE,
-                    DocumentsContract.Document.COLUMN_MIME_TYPE
-                ), null, null, DocumentsContract.Document.COLUMN_DISPLAY_NAME
+                childrenUri, projection, null, null, DocumentsContract.Document.COLUMN_DISPLAY_NAME
             )
             cursor?.let {
                 val ici = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
@@ -206,20 +170,26 @@ data class FileDoc(
 
 @Throws(Exception::class)
 fun DocumentFile.writeText(context: Context, data: String, charset: Charset = Charsets.UTF_8) {
-    DocumentUtils.writeText(context, data, this.uri, charset)
+    uri.writeText(context, data, charset)
 }
 
 @Throws(Exception::class)
 fun DocumentFile.writeBytes(context: Context, data: ByteArray) {
-    DocumentUtils.writeBytes(context, data, this.uri)
+    uri.writeBytes(context, data)
 }
 
 @Throws(Exception::class)
 fun DocumentFile.readText(context: Context): String {
-    return DocumentUtils.readText(context, this.uri)
+    return String(readBytes(context))
 }
 
 @Throws(Exception::class)
 fun DocumentFile.readBytes(context: Context): ByteArray {
-    return DocumentUtils.readBytes(context, this.uri)
+    return context.contentResolver.openInputStream(uri)?.let {
+        val len: Int = it.available()
+        val buffer = ByteArray(len)
+        it.read(buffer)
+        it.close()
+        return buffer
+    } ?: throw NoStackTraceException("打开文件失败\n${uri}")
 }
