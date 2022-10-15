@@ -25,6 +25,7 @@ interface BookGroupDao {
         or (groupId = -1 and show > 0)
         or (groupId = -2 and show > 0 and (select count(*) from books where type & ${BookType.local} > 0) > 0)
         or (groupId = -3 and show > 0 and (select count(*) from books where type & ${BookType.audio} > 0) > 0)
+        or (groupId = -11 and show > 0 and (select count(*) from books where type & ${BookType.updateError} > 0) > 0)
         or (groupId = -4 and show > 0 
             and (
                 select count(*) from books 

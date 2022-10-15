@@ -43,6 +43,7 @@ object AppConst {
     const val bookGroupAudioId = -3L
     const val bookGroupNetNoneId = -4L
     const val bookGroupLocalNoneId = -5L
+    const val bookGroupErrorId = -11L
 
     const val notificationIdRead = -1122391
     const val notificationIdAudio = -1122392

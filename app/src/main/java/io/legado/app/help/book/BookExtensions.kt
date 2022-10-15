@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.help.book
 
 import android.net.Uri
@@ -6,12 +8,12 @@ import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.config.AppConfig.defaultBookTreeUri
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.utils.isContentScheme
+import io.legado.app.help.config.AppConfig.defaultBookTreeUri
 import io.legado.app.utils.getFile
-import java.io.File
+import io.legado.app.utils.isContentScheme
 import splitties.init.appCtx
+import java.io.File
 
 
 val Book.isAudio: Boolean
@@ -54,11 +56,11 @@ val Book.isOnLineTxt: Boolean
 
 fun Book.getLocalUri(): Uri {
     if (isLocal) {
-         val originBookUri = if (bookUrl.isContentScheme()) {
-             Uri.parse(bookUrl)
-         } else {
-             Uri.fromFile(File(bookUrl))
-         }
+        val originBookUri = if (bookUrl.isContentScheme()) {
+            Uri.parse(bookUrl)
+        } else {
+            Uri.fromFile(File(bookUrl))
+        }
         //不同的设备书籍保存路径可能不一样 优先尝试寻找当前保存路径下的文件
         defaultBookTreeUri ?: return originBookUri
         val treeUri = Uri.parse(defaultBookTreeUri)
@@ -82,6 +84,27 @@ fun Book.getRemoteUrl(): String? {
         return origin.substring(8)
     }
     return null
+}
+
+fun Book.setType(vararg types: Int) {
+    type = 0
+    addType(*types)
+}
+
+fun Book.addType(vararg types: Int) {
+    types.forEach {
+        type = type or it
+    }
+}
+
+fun Book.removeType(vararg types: Int) {
+    types.forEach {
+        type = type and it.inv()
+    }
+}
+
+fun Book.clearType() {
+    type = 0
 }
 
 fun Book.upType() {

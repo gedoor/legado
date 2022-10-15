@@ -184,6 +184,7 @@ class BookshelfManageActivity :
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
                 AppConst.bookGroupNetNoneId -> appDb.bookDao.flowNetNoGroup()
                 AppConst.bookGroupLocalNoneId -> appDb.bookDao.flowLocalNoGroup()
+                AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(viewModel.groupId)
             }.conflate().map { list ->
                 val books = if (searchKey.isNullOrBlank()) {

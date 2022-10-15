@@ -105,8 +105,13 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                 db.execSQL(
                     """insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${AppConst.bookGroupLocalNoneId}, '本地未分组', -8, 0
+                    select ${AppConst.bookGroupLocalNoneId}, '本地未分组', -6, 0
                     where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalNoneId})"""
+                )
+                db.execSQL(
+                    """insert into book_groups(groupId, groupName, 'order', show) 
+                    select ${AppConst.bookGroupErrorId}, '更新失败', -1, 1
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupErrorId})"""
                 )
                 db.execSQL("update book_sources set loginUi = null where loginUi = 'null'")
                 db.execSQL("update rssSources set loginUi = null where loginUi = 'null'")

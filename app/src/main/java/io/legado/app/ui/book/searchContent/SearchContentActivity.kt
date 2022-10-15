@@ -193,7 +193,7 @@ class SearchContentActivity :
         }
     }
 
-    val isLocalBook: Boolean
+    private val isLocalBook: Boolean
         get() = viewModel.book?.isLocal == true
 
     override fun openSearchResult(searchResult: SearchResult, index: Int) {
