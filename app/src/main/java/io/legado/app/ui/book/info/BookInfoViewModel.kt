@@ -18,6 +18,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.getRemoteUrl
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.removeType
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
 import io.legado.app.model.BookCover
@@ -236,6 +237,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookSource = source
             bookData.value?.changeTo(book, toc)
             if (inBookshelf) {
+                book.removeType(BookType.updateError)
                 appDb.bookDao.insert(book)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
             }

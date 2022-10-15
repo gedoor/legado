@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -19,6 +20,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
@@ -215,6 +217,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         changeSourceCoroutine = execute {
             ReadBook.upMsg(context.getString(R.string.loading))
             ReadBook.book?.changeTo(book, toc)
+            book.removeType(BookType.updateError)
             appDb.bookDao.insert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadBook.resetData(book)
