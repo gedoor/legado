@@ -117,9 +117,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
             withContext(IO) {
                 if (binding.rbSource.isChecked) {
                     sources.filter { source ->
-                        screenText?.let { screenText ->
-                            source.contains(screenText)
-                        } ?: true
+                        source.contains(screenText)
                     }.let {
                         screenSources.clear()
                         screenSources.addAll(it)
