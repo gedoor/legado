@@ -72,7 +72,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     }
 
     private fun initOtherView() {
-        binding.rgScope.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgScope.setOnCheckedChangeListener { _, checkedId ->
             binding.toolBar.menu.findItem(R.id.menu_screen)?.isVisible = checkedId == R.id.rb_source
             upData()
         }
