@@ -162,14 +162,19 @@ deleteFile(path: String)
 > DES transformation默认实现DES/ECB/PKCS5Padding  
 > TripleDES tansformation默认实现DESede/ECB/PKCS5Padding  
 > 内部实现为cn.hutool.crypto 解密加密接口支持ByteArray|Base64String|HexString|InputStream  
-> 输入参数key iv 支持ByteArray|Base64String|HexString|Utf8String
+> 输入参数key iv 支持ByteArray|Utf8String  
+> 如果key iv 为Hex Base64,且需要解码为ByteArray，调用java.decodeBase64Hex
 ```
 //解密为ByteArray 字符串
 java.createSymmetricCrypto(transformation, key, iv).decrypt(data)
+
 java.createSymmetricCrypto(transformation, key, iv).decryptStr(data)
+
 //加密为ByteArray Base64字符 HEX字符
 java.createSymmetricCrypto(transformation, key, iv).encrypt(data)
+
 java.createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
+
 java.createSymmetricCrypto(transformation, key, iv).encryptHex(data)
 ```
 * 摘要

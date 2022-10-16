@@ -8,7 +8,6 @@ import android.net.Uri
 import android.text.Editable
 import cn.hutool.core.lang.Validator
 import io.legado.app.constant.AppPattern.dataUriRegex
-import io.legado.app.constant.AppPattern.base64Regex
 import java.io.File
 import java.util.*
 
@@ -37,11 +36,6 @@ fun String?.isAbsUrl() =
 fun String?.isDataUrl() =
     this?.let {
         dataUriRegex.matches(it)
-    } ?: false
-
-fun String?.isBase64() =
-    this?.let {
-        base64Regex.matches(it)
     } ?: false
 
 fun String?.isJson(): Boolean =
