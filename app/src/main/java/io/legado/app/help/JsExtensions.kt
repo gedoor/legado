@@ -3,11 +3,11 @@ package io.legado.app.help
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.Keep
+import cn.hutool.core.util.HexUtil
+import cn.hutool.crypto.SecureUtil
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
-import cn.hutool.core.util.HexUtil
 import cn.hutool.crypto.symmetric.SymmetricCrypto
-import cn.hutool.crypto.SecureUtil
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -178,13 +178,16 @@ interface JsExtensions {
     /**
      * 缓存以文本方式保存的文件 如.js .txt等
      * @param urlStr 网络文件的链接
-     * @param saveTime 缓存时间，单位：秒
      * @return 返回缓存后的文件内容
      */
     fun cacheFile(urlStr: String): String? {
         return cacheFile(urlStr, 0)
     }
 
+    /**
+     * 缓存以文本方式保存的文件 如.js .txt等
+     * @param saveTime 缓存时间，单位：秒
+     */
     fun cacheFile(urlStr: String, saveTime: Int): String? {
         val key = md5Encode16(urlStr)
         val cache = CacheManager.getFile(key)
@@ -675,7 +678,7 @@ interface JsExtensions {
         iv: ByteArray?
     ): SymmetricCrypto {
         val symmetricCrypto = SymmetricCrypto(transformation, key)
-        return if (iv != null && !iv.isEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto
+        return if (iv != null && iv.isNotEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto
     }
 
     fun createSymmetricCrypto(
