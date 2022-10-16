@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import android.app.DownloadManager
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -7,6 +8,7 @@ import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.exception.NoStackTraceException
 import splitties.init.appCtx
+import splitties.systemservices.downloadManager
 import java.io.File
 import java.nio.charset.Charset
 
@@ -63,6 +65,9 @@ object DocumentUtils {
         )
     }
 
+    /**
+     * DocumentFile 的 listFiles() 非常的慢,所以这里直接从数据库查询
+     */
     @Throws(Exception::class)
     fun listFiles(uri: Uri, filter: ((file: FileDoc) -> Boolean)? = null): ArrayList<FileDoc> {
         if (!uri.isContentScheme()) {
@@ -149,6 +154,18 @@ data class FileDoc(
             if (uri.isContentScheme()) {
                 val doc = if (isDir) {
                     DocumentFile.fromTreeUri(appCtx, uri)!!
+                } else if (uri.host == "downloads") {
+                    val query = DownloadManager.Query()
+                    query.setFilterById(uri.lastPathSegment!!.toLong())
+                    downloadManager.query(query).use {
+                        if (it.moveToFirst()) {
+                            val lUriColum = it.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)
+                            val lUri = it.getString(lUriColum)
+                            DocumentFile.fromSingleUri(appCtx, Uri.parse(lUri))!!
+                        } else {
+                            DocumentFile.fromSingleUri(appCtx, uri)!!
+                        }
+                    }
                 } else {
                     DocumentFile.fromSingleUri(appCtx, uri)!!
                 }

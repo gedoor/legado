@@ -17,6 +17,8 @@ import java.nio.charset.Charset
 
 fun Uri.isContentScheme() = this.scheme == "content"
 
+fun Uri.isFileScheme() = this.scheme == "file"
+
 /**
  * 读取URI
  */
