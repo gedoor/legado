@@ -161,7 +161,7 @@ deleteFile(path: String)
 > AES transformation默认实现AES/ECB/PKCS5Padding  
 > DES transformation默认实现DES/ECB/PKCS5Padding  
 > TripleDES tansformation默认实现DESede/ECB/PKCS5Padding  
-> 内部实现为cn.hutool.crypto 解密加密接口支持ByteArray|Base64String|HexString  
+> 内部实现为cn.hutool.crypto 解密加密接口支持ByteArray|Base64String|HexString|InputStream  
 > 输入参数key iv 支持ByteArray|Base64String|HexString|Utf8String
 ```
 //解密为ByteArray 字符串
