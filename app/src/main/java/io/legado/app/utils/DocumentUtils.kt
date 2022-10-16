@@ -1,6 +1,5 @@
 package io.legado.app.utils
 
-import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -43,16 +42,6 @@ object DocumentUtils {
             parent = subDir ?: return null
         }
         return parent
-    }
-
-    val projection by lazy {
-        arrayOf(
-            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-            DocumentsContract.Document.COLUMN_LAST_MODIFIED,
-            DocumentsContract.Document.COLUMN_SIZE,
-            DocumentsContract.Document.COLUMN_MIME_TYPE
-        )
     }
 
 }

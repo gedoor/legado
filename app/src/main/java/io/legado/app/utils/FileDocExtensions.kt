@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
 import android.app.DownloadManager
@@ -86,6 +88,16 @@ data class FileDoc(
  */
 typealias FileDocFilter = (file: FileDoc) -> Boolean
 
+private val projection by lazy {
+    arrayOf(
+        DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+        DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+        DocumentsContract.Document.COLUMN_LAST_MODIFIED,
+        DocumentsContract.Document.COLUMN_SIZE,
+        DocumentsContract.Document.COLUMN_MIME_TYPE
+    )
+}
+
 /**
  * 返回子文件列表,如果不是文件夹则返回null
  */
@@ -102,7 +114,7 @@ fun FileDoc.list(filter: FileDocFilter? = null): ArrayList<FileDoc>? {
             try {
                 cursor = appCtx.contentResolver.query(
                     childrenUri,
-                    DocumentUtils.projection,
+                    projection,
                     null,
                     null,
                     DocumentsContract.Document.COLUMN_DISPLAY_NAME
@@ -165,6 +177,48 @@ fun FileDoc.find(name: String, depth: Int = 0): FileDoc? {
         }
     }
     return null
+}
+
+fun FileDoc.createFileIfNotExist(
+    fileName: String,
+    mimeType: String = "",
+    vararg subDirs: String
+): FileDoc {
+    return if (uri.isContentScheme()) {
+        val documentFile = DocumentFile.fromTreeUri(appCtx, uri)!!
+        val tmp = DocumentUtils.createFileIfNotExist(documentFile, fileName, mimeType, *subDirs)!!
+        FileDoc.fromDocumentFile(tmp)
+    } else {
+        val path = FileUtils.getPath(uri.path!!, *subDirs) + File.separator + fileName
+        val tmp = FileUtils.createFileIfNotExist(path)
+        FileDoc.fromFile(tmp)
+    }
+}
+
+fun FileDoc.createFolderIfNotExist(
+    vararg subDirs: String
+): FileDoc {
+    return if (uri.isContentScheme()) {
+        val documentFile = DocumentFile.fromTreeUri(appCtx, uri)!!
+        val tmp = DocumentUtils.createFolderIfNotExist(documentFile, *subDirs)!!
+        FileDoc.fromDocumentFile(tmp)
+    } else {
+        val path = FileUtils.getPath(uri.path!!, *subDirs)
+        val tmp = FileUtils.createFolderIfNotExist(path)
+        FileDoc.fromFile(tmp)
+    }
+}
+
+fun FileDoc.exists(
+    fileName: String,
+    vararg subDirs: String
+): Boolean {
+    return if (uri.isContentScheme()) {
+        DocumentUtils.exists(DocumentFile.fromTreeUri(appCtx, uri)!!, fileName, *subDirs)
+    } else {
+        val path = FileUtils.getPath(uri.path!!, *subDirs) + File.separator + fileName
+        FileUtils.exist(path)
+    }
 }
 
 /**
