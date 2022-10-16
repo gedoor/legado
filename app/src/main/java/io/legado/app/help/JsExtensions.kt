@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
 import cn.hutool.core.util.HexUtil
 import cn.hutool.crypto.symmetric.SymmetricCrypto
+import cn.hutool.crypto.SecureUtil
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -658,9 +659,32 @@ interface JsExtensions {
      * java.createSymmetricCrypto(transformation, key, iv).encrypt(data)
      * java.createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
      * java.createSymmetricCrypto(transformation, key, iv).encryptHex(data)
-    */
 
-    /* 自动转换key iv 到ByteArray 支持base64 hex uft8*/
+     * 如果key iv 为Hex Base64,且需要解码为ByteArray，调用java.decodeBase64Hex
+
+    */
+    /* iv key 为Base64String HexString 到ByteArray的转换函数 */
+    fun decodeBase64Hex(str: String): ByteArray? {
+        return SecureUtil.decode(str)
+    }
+
+    /* 调用SymmetricCrypto key为null时使用随机密钥*/
+    fun createSymmetricCrypto(
+        transformation: String,
+        key: ByteArray?,
+        iv: ByteArray?
+    ): SymmetricCrypto {
+        val symmetricCrypto = SymmetricCrypto(transformation, key)
+        return if (iv != null && !iv.isEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto
+    }
+
+    fun createSymmetricCrypto(
+        transformation: String,
+        key: ByteArray
+    ): SymmetricCrypto {
+        return createSymmetricCrypto(transformation, key, null)
+    }
+
     fun createSymmetricCrypto(
         transformation: String,
         key: String
@@ -674,34 +698,10 @@ interface JsExtensions {
         iv: String?
     ): SymmetricCrypto {
         return createSymmetricCrypto(
-            transformation,
-            StringUtils.encodeStringToByteArray(key),
-            StringUtils.encodeStringToByteArray(iv)
+            transformation, key.encodeToByteArray(), iv?.encodeToByteArray()
         )
     }
 
-    /* 调用SymmetricCrypto key为null时使用随机密钥*/
-    fun createSymmetricCrypto(
-        transformation: String
-    ): SymmetricCrypto {
-        return createSymmetricCrypto(transformation, null, null)
-    }
-
-    fun createSymmetricCrypto(
-        transformation: String,
-        key: ByteArray
-    ): SymmetricCrypto {
-        return createSymmetricCrypto(transformation, key, null)
-    }
-
-    fun createSymmetricCrypto(
-        transformation: String,
-        key: ByteArray?,
-        iv: ByteArray?
-    ): SymmetricCrypto {
-        val symmetricCrypto = SymmetricCrypto(transformation, key)
-        return if (iv != null && !iv.isEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto
-    }
 
 //******************消息摘要/散列消息鉴别码************************//
 

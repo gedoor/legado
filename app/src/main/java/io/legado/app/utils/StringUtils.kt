@@ -1,11 +1,7 @@
 package io.legado.app.utils
 
-import android.util.Base64
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
-
-import cn.hutool.core.util.HexUtil
-import cn.hutool.core.lang.Validator
 
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -289,18 +285,6 @@ object StringUtils {
         }
         m.appendTail(buf)
         return buf.toString()
-    }
-
-    /**
-     * 自动识别Base64 Hex Utf8字符串 并转成ByteArray
-     */
-    fun encodeStringToByteArray(str: String?): ByteArray? {
-        return when {
-            str.isNullOrBlank() -> null
-            Validator.isHex(str) -> HexUtil.decodeHex(str)
-            str.isBase64() -> Base64.decode(str, Base64.DEFAULT)
-            else -> str.encodeToByteArray()
-        }
     }
 
 }
