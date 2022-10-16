@@ -114,6 +114,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
         val source = appDb.bookSourceDao.getBookSource(book.origin)
         if (source == null) {
+            book.addType(BookType.updateError)
+            appDb.bookDao.update(book)
             waitUpTocBooks.remove(book.bookUrl)
             return
         }
