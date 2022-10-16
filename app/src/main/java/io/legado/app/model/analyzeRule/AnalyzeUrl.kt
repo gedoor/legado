@@ -5,6 +5,7 @@ import android.util.Base64
 import androidx.annotation.Keep
 import com.bumptech.glide.load.model.GlideUrl
 import com.script.SimpleBindings
+import cn.hutool.core.util.HexUtil
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern.JS_PATTERN
@@ -350,7 +351,7 @@ class AnalyzeUrl(
         useWebView: Boolean = true,
     ): StrResponse {
         if (type != null) {
-            return StrResponse(url, StringUtils.byteToHexString(getByteArrayAwait()))
+            return StrResponse(url, HexUtil.encodeHexStr(getByteArrayAwait()))
         }
         val concurrentRecord = fetchStart()
         setCookie(source?.getKey())

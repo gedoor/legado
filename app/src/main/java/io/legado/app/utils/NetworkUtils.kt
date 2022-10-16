@@ -4,7 +4,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.AppPattern
 import okhttp3.internal.publicsuffix.PublicSuffixDatabase
 import splitties.systemservices.connectivityManager
 
@@ -13,8 +12,8 @@ import java.net.NetworkInterface
 import java.net.SocketException
 import java.net.URL
 import java.util.*
-import java.util.regex.Pattern
 
+import cn.hutool.core.lang.Validator
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
@@ -113,7 +112,7 @@ object NetworkUtils {
     fun getAbsoluteURL(baseURL: String?, relativePath: String): String {
         if (baseURL.isNullOrEmpty()) return relativePath
         if (relativePath.isAbsUrl()) return relativePath
-        if (relativePath.matches(AppPattern.dataUriRegex)) return relativePath
+        if (relativePath.isDataUrl()) return relativePath
         if (relativePath.startsWith("javascript")) return ""
         var relativeUrl = relativePath
         try {
@@ -133,7 +132,7 @@ object NetworkUtils {
     fun getAbsoluteURL(baseURL: URL?, relativePath: String): String {
         if (baseURL == null) return relativePath
         if (relativePath.isAbsUrl()) return relativePath
-        if (relativePath.matches(AppPattern.dataUriRegex)) return relativePath
+        if (relativePath.isDataUrl()) return relativePath
         if (relativePath.startsWith("javascript")) return ""
         var relativeUrl = relativePath
         try {
@@ -214,14 +213,14 @@ object NetworkUtils {
      * @return True if the input parameter is a valid IPv4 address.
      */
     fun isIPv4Address(input: String?): Boolean {
-        return input != null && IPV4_PATTERN.matcher(input).matches()
+        return input != null && Validator.isIpv4(input)
     }
 
     /**
      * Check if valid IPV6 address.
      */
     fun isIPv6Address(input: String?): Boolean {
-        return input != null && IPV6_PATTERN.matcher(input).matches()
+        return input != null && Validator.isIpv6(input)
     }
 
     /**
@@ -230,20 +229,5 @@ object NetworkUtils {
     fun isIPAddress(input: String?): Boolean {
         return isIPv4Address(input) || isIPv6Address(input)
     }
-
-    /**
-     * Ipv4 address check.
-     */
-    private val IPV4_PATTERN = Pattern.compile(
-        "^(" + "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}" +
-                "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
-    )
-
-    /**
-     * Ipv6 address check.
-     */
-    private val IPV6_PATTERN = Pattern.compile(
-        "^\\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:)(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$"
-    )
 
 }

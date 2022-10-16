@@ -1,7 +1,11 @@
 package io.legado.app.utils
 
+import android.util.Base64
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
+
+import cn.hutool.core.util.HexUtil
+import cn.hutool.core.lang.Validator
 
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -287,30 +291,16 @@ object StringUtils {
         return buf.toString()
     }
 
-    fun byteToHexString(bytes: ByteArray?): String {
-        if (bytes == null) return ""
-        val sb = StringBuilder(bytes.size * 2)
-        for (b in bytes) {
-            val hex = 0xff and b.toInt()
-            if (hex < 16) {
-                sb.append('0')
-            }
-            sb.append(Integer.toHexString(hex))
+    /**
+     * 自动识别Base64 Hex Utf8字符串 并转成ByteArray
+     */
+    fun encodeStringToByteArray(str: String?): ByteArray? {
+        return when {
+            str.isNullOrBlank() -> null
+            Validator.isHex(str) -> HexUtil.decodeHex(str)
+            str.isBase64() -> Base64.decode(str, Base64.DEFAULT)
+            else -> str.encodeToByteArray()
         }
-        return sb.toString()
     }
 
-    fun hexStringToByte(hexString: String): ByteArray {
-        val hexStr = hexString.replace(" ", "")
-        val len = hexStr.length
-        val bytes = ByteArray(len / 2)
-        var i = 0
-        while (i < len) {
-            // 两位一组，表示一个字节,把这样表示的16进制字符串，还原成一个字节
-            bytes[i / 2] = ((Character.digit(hexString[i], 16) shl 4) +
-                    Character.digit(hexString[i + 1], 16)).toByte()
-            i += 2
-        }
-        return bytes
-    }
 }
