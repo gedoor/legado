@@ -366,6 +366,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.pageTouchSlop, value)
         }
 
+    var bookshelfSort: Int
+        get() = appCtx.getPrefInt(PreferKey.bookshelfSort, 0)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.bookshelfSort, value)
+        }
+
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {

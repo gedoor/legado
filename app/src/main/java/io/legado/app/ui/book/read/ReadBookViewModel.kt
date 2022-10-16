@@ -211,7 +211,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
             ReadBook.upMsg(context.getString(R.string.loading))
-            ReadBook.book?.changeTo(book, toc)
+            ReadBook.book?.migrateTo(book, toc)
             book.removeType(BookType.updateError)
             appDb.bookDao.insert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())

@@ -12,6 +12,7 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.BookCover
 import io.legado.app.model.localBook.LocalBook
@@ -39,7 +40,7 @@ object BookController {
             return if (books.isEmpty()) {
                 returnData.setErrorMsg("还没有添加小说")
             } else {
-                val data = when (appCtx.getPrefInt(PreferKey.bookshelfSort)) {
+                val data = when (AppConfig.bookshelfSort) {
                     1 -> books.sortedByDescending { it.latestChapterTime }
                     2 -> books.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)

@@ -214,7 +214,7 @@ class AudioPlayActivity :
             AudioPlay.stop(this)
             launch {
                 withContext(IO) {
-                    AudioPlay.book?.changeTo(book, toc)
+                    AudioPlay.book?.migrateTo(book, toc)
                     appDb.bookDao.insert(book)
                 }
                 startActivity<ReadBookActivity> {

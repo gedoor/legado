@@ -59,7 +59,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                             .onFailure {
                                 context.toastOnUi("获取目录出错\n${it.localizedMessage}")
                             }.getOrNull()?.let { toc ->
-                                book.changeTo(newBook, toc)
+                                book.migrateTo(newBook, toc)
                                 book.removeType(BookType.updateError)
                                 appDb.bookDao.insert(newBook)
                                 appDb.bookChapterDao.insert(*toc.toTypedArray())

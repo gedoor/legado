@@ -130,7 +130,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     fun configBookshelf() {
         alert(titleResource = R.string.bookshelf_layout) {
             val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
-            val bookshelfSort = getPrefInt(PreferKey.bookshelfSort)
+            val bookshelfSort = AppConfig.bookshelfSort
             val alertBinding =
                 DialogBookshelfConfigBinding.inflate(layoutInflater)
                     .apply {
@@ -156,7 +156,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         changed = true
                     }
                     if (bookshelfSort != rgSort.getCheckedIndex()) {
-                        putPrefInt(PreferKey.bookshelfSort, rgSort.getCheckedIndex())
+                        AppConfig.bookshelfSort = rgSort.getCheckedIndex()
                         changed = true
                     }
                     if (changed) {

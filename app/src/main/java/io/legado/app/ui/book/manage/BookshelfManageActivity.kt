@@ -18,6 +18,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityArrangeBookBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.group.GroupManageDialog
@@ -134,7 +135,7 @@ class BookshelfManageActivity :
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
         val itemTouchCallback = ItemTouchCallback(adapter)
-        itemTouchCallback.isCanDrag = getPrefInt(PreferKey.bookshelfSort) == 3
+        itemTouchCallback.isCanDrag = AppConfig.bookshelfSort == 3
         val dragSelectTouchHelper: DragSelectTouchHelper =
             DragSelectTouchHelper(adapter.dragSelectCallback).setSlideArea(16, 50)
         dragSelectTouchHelper.attachToRecyclerView(binding.recyclerView)
@@ -194,7 +195,7 @@ class BookshelfManageActivity :
                         it.name.contains(searchKey) || it.author.contains(searchKey)
                     }
                 }
-                when (getPrefInt(PreferKey.bookshelfSort)) {
+                when (AppConfig.bookshelfSort) {
                     1 -> books.sortedByDescending {
                         it.latestChapterTime
                     }
