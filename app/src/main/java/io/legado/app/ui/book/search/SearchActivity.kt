@@ -221,6 +221,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun initData() {
         searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
+        viewModel.searchScope.stateLiveData.observe(this) {
+            searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
+        }
         viewModel.isSearchLiveData.observe(this) {
             if (it) {
                 startSearch()

@@ -134,6 +134,9 @@ interface BookSourceDao {
     @get:Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
     val allGroupsUnProcessed: List<String>
 
+    @get:Query("select distinct bookSourceGroup from book_sources where enabled = 1 and trim(bookSourceGroup) <> ''")
+    val allEnabledGroupsUnProcessed: List<String>
+
     @Query("select * from book_sources where bookSourceUrl = :key")
     fun getBookSource(key: String): BookSource?
 
@@ -173,6 +176,11 @@ interface BookSourceDao {
     val allGroups: List<String>
         get() {
             return dealGroups(allGroupsUnProcessed)
+        }
+
+    val allEnabledGroups: List<String>
+        get() {
+            return dealGroups(allEnabledGroupsUnProcessed)
         }
 
     fun flowGroups(): Flow<List<String>> {
