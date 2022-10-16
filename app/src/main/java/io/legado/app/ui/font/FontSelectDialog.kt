@@ -117,16 +117,16 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     private fun getLocalFonts(): ArrayList<FileDoc> {
         val path = FileUtils.getPath(requireContext().externalFiles, "font")
-        return DocumentUtils.listFiles(path) {
+        return File(path).listFileDocs {
             it.name.matches(fontRegex)
         }
     }
 
     private fun loadFontFiles(doc: DocumentFile) {
         execute {
-            val fontItems = DocumentUtils.listFiles(doc.uri) {
+            val fontItems = doc.listFileDocs {
                 it.name.matches(fontRegex)
-            }
+            }!!
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
             adapter.setItems(it)
@@ -147,7 +147,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     private fun loadFontFiles(path: String) {
         execute {
-            val fontItems = DocumentUtils.listFiles(path) {
+            val fontItems = File(path).listFileDocs {
                 it.name.matches(fontRegex)
             }
             mergeFontItems(fontItems, getLocalFonts())

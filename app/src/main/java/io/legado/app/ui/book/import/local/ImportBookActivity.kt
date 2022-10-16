@@ -233,7 +233,7 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
         binding.tvPath.text = path
         adapter.selectedUris.clear()
         adapter.clearItems()
-        viewModel.loadDoc(lastDoc.uri)
+        viewModel.loadDoc(lastDoc)
     }
 
     /**
