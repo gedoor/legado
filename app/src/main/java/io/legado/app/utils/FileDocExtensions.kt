@@ -52,7 +52,7 @@ data class FileDoc(
                 } else {
                     DocumentFile.fromSingleUri(appCtx, uri)!!
                 }
-                return FileDoc(doc.name ?: "", true, doc.length(), doc.lastModified(), doc.uri)
+                return FileDoc(doc.name ?: "", isDir, doc.length(), doc.lastModified(), doc.uri)
             }
             val file = File(uri.path!!)
             return FileDoc(file.name, isDir, file.length(), file.lastModified(), uri)
