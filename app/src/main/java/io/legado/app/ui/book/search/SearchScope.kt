@@ -15,7 +15,7 @@ data class SearchScope(private var scope: String) {
     constructor(groups: List<String>) : this(groups.joinToString(","))
 
     constructor(source: BookSource) : this(
-        "${source.bookSourceName.replace("::", "")}::${source.bookSourceUrl}"
+        "${source.bookSourceName.replace(":", "")}::${source.bookSourceUrl}"
     )
 
     override fun toString(): String {
