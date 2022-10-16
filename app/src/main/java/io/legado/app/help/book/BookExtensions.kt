@@ -8,9 +8,10 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.config.AppConfig.defaultBookTreeUri
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.*
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 
 val Book.isAudio: Boolean
@@ -51,20 +52,46 @@ val Book.isOnLineTxt: Boolean
         return !isLocal && type and BookType.text > 0
     }
 
+private val localUriCache by lazy {
+    ConcurrentHashMap<String, Uri>()
+}
+
 fun Book.getLocalUri(): Uri {
     if (isLocal) {
-        val originBookUri = if (bookUrl.isContentScheme()) {
+        var uri = localUriCache[bookUrl]
+        if (uri != null) {
+            return uri
+        }
+        uri = if (bookUrl.isUri()) {
             Uri.parse(bookUrl)
         } else {
             Uri.fromFile(File(bookUrl))
         }
         //不同的设备书籍保存路径可能不一样 优先尝试寻找当前保存路径下的文件
-        defaultBookTreeUri ?: return originBookUri
-        val treeUri = Uri.parse(defaultBookTreeUri)
+        val defaultBookDir = AppConfig.defaultBookTreeUri
+        if (defaultBookDir.isNullOrBlank()) {
+            localUriCache[bookUrl] = uri
+            return uri
+        }
+        val treeUri = Uri.parse(defaultBookDir)
         val treeFileDoc = FileDoc.fromUri(treeUri, true)
-        return treeFileDoc.find(originName, 5)?.uri ?: originBookUri
+        val fileDoc = treeFileDoc.find(originName, 3)
+        if (fileDoc != null) {
+            localUriCache[bookUrl] = fileDoc.uri
+            return fileDoc.uri
+        }
+        localUriCache[bookUrl] = uri
+        return uri
     }
     throw NoStackTraceException("不是本地书籍")
+}
+
+fun Book.cacheLocalUri(uri: Uri) {
+    localUriCache[bookUrl] = uri
+}
+
+fun Book.removeLocalUriCache() {
+    localUriCache.remove(bookUrl)
 }
 
 fun Book.getRemoteUrl(): String? {

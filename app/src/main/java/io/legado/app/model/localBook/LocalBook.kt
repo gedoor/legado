@@ -43,8 +43,12 @@ object LocalBook {
     fun getBookInputStream(book: Book): InputStream {
         val uri = book.getLocalUri()
         //文件不存在 尝试下载webDav文件
-        val inputStream = uri.inputStream(appCtx) ?: downloadRemoteBook(book)
+        val inputStream = uri.inputStream(appCtx) ?: let {
+            book.removeLocalUriCache()
+            downloadRemoteBook(book)
+        }
         if (inputStream != null) return inputStream
+        book.removeLocalUriCache()
         throw FileNotFoundException("${uri.path} 文件不存在")
     }
 
@@ -319,6 +323,7 @@ object LocalBook {
             return uri?.let {
                 localBook.bookUrl = if (it.isContentScheme()) it.toString() else it.path!!
                 localBook.save()
+                localBook.cacheLocalUri(it)
                 it.inputStream(appCtx)
             }
         } catch (e: Exception) {
