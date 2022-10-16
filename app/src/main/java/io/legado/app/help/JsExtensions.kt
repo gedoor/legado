@@ -319,7 +319,7 @@ interface JsExtensions {
     }
 
     /**
-     * js实现解码,不能删
+     * js实现base64解码,不能删
      */
     fun base64Decode(str: String): String {
         return EncoderUtils.base64Decode(str, Base64.NO_WRAP)
@@ -349,6 +349,19 @@ interface JsExtensions {
 
     fun base64Encode(str: String, flags: Int): String? {
         return EncoderUtils.base64Encode(str, flags)
+    }
+
+    /* HexString 解码为字节数组 */
+    fun hexDecodeToByteArray(hex: String): ByteArray? {
+        return HexUtil.decodeHex(hex)
+    }
+    /* hexString 解码为utf8String*/
+    fun hexDecodeToString(hex: String): String? {
+        return HexUtil.decodeHexStr(hex)
+    }
+    /* utf8 编码为hexString */
+    fun hexEncodeToString(utf8: String): String? {
+        return HexUtil.encodeHexStr(hex)
     }
 
     /**
@@ -662,14 +675,7 @@ interface JsExtensions {
      * java.createSymmetricCrypto(transformation, key, iv).encrypt(data)
      * java.createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
      * java.createSymmetricCrypto(transformation, key, iv).encryptHex(data)
-
-     * 如果key iv 为Hex Base64,且需要解码为ByteArray，调用java.decodeBase64Hex
-
     */
-    /* iv key 为Base64String HexString 到ByteArray的转换函数 */
-    fun decodeBase64Hex(str: String): ByteArray? {
-        return SecureUtil.decode(str)
-    }
 
     /* 调用SymmetricCrypto key为null时使用随机密钥*/
     fun createSymmetricCrypto(

@@ -132,7 +132,17 @@ java.getZipStringContent(url: String, path: String)
 > flags参数可省略，默认Base64.NO_WRAP，查看[flags参数说明](https://blog.csdn.net/zcmain/article/details/97051870)
 ```
 java.base64Decode(str: String, flags: Int)
+java.base64DecodeToByteArray(str: String, flags: Int)
 java.base64Encode(str: String, flags: Int)
+```
+* Hex
+```
+/* HexString 解码为字节数组 */
+hexDecodeToByteArray(hex: String): ByteArray?
+/* hexString 解码为utf8String*/
+hexDecodeToString(hex: String): String?
+/* utf8 编码为hexString */
+hexEncodeToString(utf8: String): String?
 ```
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
@@ -163,7 +173,7 @@ deleteFile(path: String)
 > TripleDES tansformation默认实现DESede/ECB/PKCS5Padding  
 > 内部实现为cn.hutool.crypto 解密加密接口支持ByteArray|Base64String|HexString|InputStream  
 > 输入参数key iv 支持ByteArray|Utf8String  
-> 如果key iv 为Hex Base64,且需要解码为ByteArray，调用java.decodeBase64Hex
+> 如果key iv 为Hex Base64,且需要解码为ByteArray，自行调用java.base64DecodeToByteArray java.hexDecodeToByteArray
 ```
 //解密为ByteArray 字符串
 java.createSymmetricCrypto(transformation, key, iv).decrypt(data)
