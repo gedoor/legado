@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -12,7 +13,9 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.DefaultData
 import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.addType
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.model.CacheBook
@@ -126,6 +129,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 WebBook.getBookInfoAwait(source, book)
             }
             val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
+            book.removeType(BookType.updateError)
             if (book.bookUrl == bookUrl) {
                 appDb.bookDao.update(book)
             } else {
@@ -137,6 +141,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             addDownload(source, book)
         }.onError(upTocPool) {
+            book.addType(BookType.updateError)
+            appDb.bookDao.update(book)
             AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
         }.onCancel(upTocPool) {
             upTocCancel(bookUrl)

@@ -13,6 +13,11 @@ object BookType {
     const val text = 0b1000
 
     /**
+     * 16 更新失败
+     */
+    const val updateError = 0b10000
+
+    /**
      * 32 音频
      */
     const val audio = 0b100000
@@ -35,8 +40,9 @@ object BookType {
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(text, audio, image, webFile)
+    @IntDef(text, updateError, audio, image, webFile, local)
     annotation class Type
+
 
     /**
      * 本地书籍书源标志

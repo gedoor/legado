@@ -4,7 +4,6 @@ import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.annotation.IntDef
 import splitties.init.appCtx
-
 import java.io.*
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -115,7 +114,7 @@ object FileUtils {
     const val BY_EXTENSION_DESC = 7
 
     @IntDef(value = [BY_NAME_ASC, BY_NAME_DESC, BY_TIME_ASC, BY_TIME_DESC, BY_SIZE_ASC, BY_SIZE_DESC, BY_EXTENSION_ASC, BY_EXTENSION_DESC])
-    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.SOURCE)
     annotation class SortType
 
     /**

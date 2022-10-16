@@ -145,7 +145,7 @@ class Coroutine<T>(
         context: CoroutineContext,
         block: suspend CoroutineScope.() -> T
     ): Job {
-        return (scope + Dispatchers.Main).launch(start = startOption) {
+        return (scope.plus(Dispatchers.Main)).launch(start = startOption) {
             try {
                 start?.let { dispatchVoidCallback(this, it) }
                 ensureActive()

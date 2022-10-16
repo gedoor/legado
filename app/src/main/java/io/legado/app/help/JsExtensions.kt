@@ -166,7 +166,7 @@ interface JsExtensions {
     fun importScript(path: String): String {
         val result = when {
             path.startsWith("http") -> cacheFile(path) ?: ""
-            path.isContentScheme() -> DocumentUtils.readText(appCtx, Uri.parse(path))
+            path.isUri() -> Uri.parse(path).readText(appCtx)
             path.startsWith("/storage") -> FileUtils.readText(path)
             else -> readTxtFile(path)
         }

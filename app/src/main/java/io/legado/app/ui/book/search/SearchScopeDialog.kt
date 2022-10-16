@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.DialogSearchScopeBinding
 import io.legado.app.databinding.ItemCheckBoxBinding
 import io.legado.app.databinding.ItemRadioButtonBinding
+import io.legado.app.help.source.contains
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
@@ -72,7 +73,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     }
 
     private fun initOtherView() {
-        binding.rgScope.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgScope.setOnCheckedChangeListener { _, checkedId ->
             binding.toolBar.menu.findItem(R.id.menu_screen)?.isVisible = checkedId == R.id.rb_source
             upData()
         }
@@ -101,7 +102,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     private fun initData() {
         launch {
             groups = withContext(IO) {
-                appDb.bookSourceDao.allGroups
+                appDb.bookSourceDao.allEnabledGroups
             }
             sources = withContext(IO) {
                 appDb.bookSourceDao.allEnabled
@@ -116,9 +117,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
             withContext(IO) {
                 if (binding.rbSource.isChecked) {
                     sources.filter { source ->
-                        screenText?.let { screenText ->
-                            source.bookSourceName.contains(screenText)
-                        } ?: true
+                        source.contains(screenText)
                     }.let {
                         screenSources.clear()
                         screenSources.addAll(it)

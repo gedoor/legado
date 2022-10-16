@@ -102,16 +102,16 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun loadDoc(uri: Uri) {
+    fun loadDoc(fileDoc: FileDoc) {
         execute {
-            val docList = DocumentUtils.listFiles(uri) { item ->
+            val docList = fileDoc.list { item ->
                 when {
                     item.name.startsWith(".") -> false
                     item.isDir -> true
                     else -> item.name.matches(bookFileRegex)
                 }
             }
-            dataCallback?.setItems(docList)
+            dataCallback?.setItems(docList!!)
         }.onError {
             context.toastOnUi("获取文件列表出错\n${it.localizedMessage}")
         }
@@ -132,7 +132,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
         kotlin.runCatching {
             val list = ArrayList<FileDoc>()
-            DocumentUtils.listFiles(fileDoc.uri).forEach { docItem ->
+            fileDoc.list()!!.forEach { docItem ->
                 if (!scope.isActive) {
                     finally?.invoke()
                     return

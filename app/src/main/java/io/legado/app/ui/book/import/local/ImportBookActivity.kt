@@ -46,22 +46,19 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
 
     private val selectFolder = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            if (uri.isContentScheme()) {
-                AppConfig.importBookPath = uri.toString()
-                initRootDoc(true)
-            } else {
-                AppConfig.importBookPath = uri.path
-                initRootDoc(true)
-            }
+            AppConfig.importBookPath = uri.toString()
+            initRootDoc(true)
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setTitle(R.string.book_local)
         launch {
-            setBookStorage()
             initView()
             initEvent()
+            if (setBookStorage() && AppConfig.importBookPath.isNullOrBlank()) {
+                AppConfig.importBookPath = AppConfig.defaultBookTreeUri
+            }
             initData()
         }
     }
@@ -150,35 +147,43 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
     }
 
     private fun initRootDoc(changedFolder: Boolean = false) {
-        val lastPath = AppConfig.importBookPath
-        when {
-            viewModel.rootDoc != null && !changedFolder -> upPath()
-            lastPath.isNullOrEmpty() -> {
+        if (viewModel.rootDoc != null && !changedFolder) {
+            upPath()
+        } else {
+            val lastPath = AppConfig.importBookPath
+            if (lastPath.isNullOrBlank()) {
                 binding.tvEmptyMsg.visible()
                 selectFolder.launch()
-            }
-            lastPath.isContentScheme() -> {
-                val rootUri = Uri.parse(lastPath)
-                kotlin.runCatching {
-                    val doc = DocumentFile.fromTreeUri(this, rootUri)
-                    if (doc == null || doc.name.isNullOrEmpty()) {
+            } else {
+                val rootUri = if (lastPath.isUri()) {
+                    Uri.parse(lastPath)
+                } else {
+                    Uri.fromFile(File(lastPath))
+                }
+                when {
+                    rootUri.isContentScheme() -> {
+                        kotlin.runCatching {
+                            val doc = DocumentFile.fromTreeUri(this, rootUri)
+                            if (doc == null || doc.name.isNullOrEmpty()) {
+                                binding.tvEmptyMsg.visible()
+                                selectFolder.launch()
+                            } else {
+                                viewModel.subDocs.clear()
+                                viewModel.rootDoc = FileDoc.fromDocumentFile(doc)
+                                upDocs(viewModel.rootDoc!!)
+                            }
+                        }.onFailure {
+                            binding.tvEmptyMsg.visible()
+                            selectFolder.launch()
+                        }
+                    }
+                    Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
                         binding.tvEmptyMsg.visible()
                         selectFolder.launch()
-                    } else {
-                        viewModel.subDocs.clear()
-                        viewModel.rootDoc = FileDoc.fromDocumentFile(doc)
-                        upDocs(viewModel.rootDoc!!)
                     }
-                }.onFailure {
-                    binding.tvEmptyMsg.visible()
-                    selectFolder.launch()
+                    else -> initRootPath(rootUri.path!!)
                 }
             }
-            Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
-                binding.tvEmptyMsg.visible()
-                selectFolder.launch()
-            }
-            else -> initRootPath(lastPath)
         }
     }
 
@@ -228,7 +233,7 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
         binding.tvPath.text = path
         adapter.selectedUris.clear()
         adapter.clearItems()
-        viewModel.loadDoc(lastDoc.uri)
+        viewModel.loadDoc(lastDoc)
     }
 
     /**

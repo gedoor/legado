@@ -130,6 +130,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
                 AppConst.bookGroupNetNoneId -> appDb.bookDao.flowNetNoGroup()
                 AppConst.bookGroupLocalNoneId -> appDb.bookDao.flowLocalNoGroup()
+                AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { list ->
                 when (getPrefInt(PreferKey.bookshelfSort)) {

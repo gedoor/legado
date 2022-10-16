@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.search
 
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.config.AppConfig
@@ -13,11 +14,17 @@ data class SearchScope(private var scope: String) {
 
     constructor(groups: List<String>) : this(groups.joinToString(","))
 
-    constructor(source: BookSource) : this("${source.bookSourceName}::${source.bookSourceUrl}")
+    constructor(source: BookSource) : this(
+        "${
+            source.bookSourceName.replace("::", "")
+        }::${source.bookSourceUrl}"
+    )
 
     override fun toString(): String {
         return scope
     }
+
+    val stateLiveData = MutableLiveData("")
 
     fun update(scope: String) {
         this.scope = scope
@@ -54,9 +61,9 @@ data class SearchScope(private var scope: String) {
             }
             if (list.isEmpty()) {
                 list.add("全部书源")
+            }
+            return list
         }
-        return list
-    }
 
     /**
      * 搜索范围书源
@@ -70,12 +77,20 @@ data class SearchScope(private var scope: String) {
                 }
             }
         } else {
-            scope.splitNotBlank(",").forEach {
-                list.addAll(appDb.bookSourceDao.getByGroup(it))
+            val oldScope = scope.splitNotBlank(",")
+            val newScope = oldScope.filter {
+                val bookSources = appDb.bookSourceDao.getEnabledByGroup(it)
+                list.addAll(bookSources)
+                bookSources.isNotEmpty()
+            }
+            if (oldScope.size != newScope.size) {
+                update(newScope)
+                stateLiveData.postValue("")
             }
         }
         if (list.isEmpty()) {
             scope = ""
+            stateLiveData.postValue("")
             return appDb.bookSourceDao.allEnabled
         }
         return list.sortedBy { it.customOrder }
