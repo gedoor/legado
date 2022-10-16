@@ -137,6 +137,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
+                AppConfig.ttsTimer = seekTimer.progress
                 ReadAloud.setTimer(requireContext(), seekTimer.progress)
             }
         })

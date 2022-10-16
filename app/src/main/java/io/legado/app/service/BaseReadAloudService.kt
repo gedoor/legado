@@ -26,10 +26,7 @@ import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
 
@@ -92,7 +89,7 @@ abstract class BaseReadAloudService : BaseService(),
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-        doDs()
+        setTimer(AppConfig.ttsTimer)
     }
 
     override fun onDestroy() {
