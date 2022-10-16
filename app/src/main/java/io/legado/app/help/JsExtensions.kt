@@ -361,7 +361,7 @@ interface JsExtensions {
     }
     /* utf8 编码为hexString */
     fun hexEncodeToString(utf8: String): String? {
-        return HexUtil.encodeHexStr(hex)
+        return HexUtil.encodeHexStr(ut8)
     }
 
     /**
