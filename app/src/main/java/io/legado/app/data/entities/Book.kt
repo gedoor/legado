@@ -267,7 +267,10 @@ data class Book(
         this.tocHtml = this@Book.tocHtml
     }
 
-    fun changeTo(newBook: Book, toc: List<BookChapter>): Book {
+    /**
+     * 迁移旧的书籍的一些信息到新的书籍中
+     */
+    fun migrateTo(newBook: Book, toc: List<BookChapter>): Book {
         newBook.durChapterIndex = BookHelp
             .getDurChapter(durChapterIndex, durChapterTitle, toc, totalChapterNum)
         newBook.durChapterTitle = runBlocking {
@@ -276,6 +279,7 @@ data class Book(
             )
         }
         newBook.durChapterPos = durChapterPos
+        newBook.durChapterTime = durChapterTime
         newBook.group = group
         newBook.order = order
         newBook.customCoverUrl = customCoverUrl

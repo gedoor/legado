@@ -822,7 +822,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         } else {
             ReadAloud.stop(this)
             launch {
-                ReadBook.book?.changeTo(book, toc)
+                ReadBook.book?.migrateTo(book, toc)
                 appDb.bookDao.insert(book)
             }
             startActivity<AudioPlayActivity> {

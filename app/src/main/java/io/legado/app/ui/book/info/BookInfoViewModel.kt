@@ -235,7 +235,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
             bookSource = source
-            bookData.value?.changeTo(book, toc)
+            bookData.value?.migrateTo(book, toc)
             if (inBookshelf) {
                 book.removeType(BookType.updateError)
                 appDb.bookDao.insert(book)
