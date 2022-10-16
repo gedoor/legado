@@ -176,18 +176,15 @@ interface JsExtensions {
 
     /**
      * 缓存以文本方式保存的文件 如.js .txt等
+     * @param urlStr 网络文件的链接
+     * @param saveTime 缓存时间，单位：秒
+     * @return 返回缓存后的文件内容
      */
     fun cacheFile(urlStr: String): String? {
         return cacheFile(urlStr, 0)
     }
 
-    /**
-     * 缓存以文本方式保存的文件 如.js .txt等
-     * @param urlStr 网络文件的链接
-     * @param saveTime 缓存时间，单位：秒
-     * @return 返回缓存后的文件内容
-     */
-    fun cacheFile(urlStr: String, saveTime: Int = 0): String? {
+    fun cacheFile(urlStr: String, saveTime: Int): String? {
         val key = md5Encode16(urlStr)
         val cache = CacheManager.getFile(key)
         if (cache.isNullOrBlank()) {
@@ -202,7 +199,11 @@ interface JsExtensions {
     /**
      *js实现读取cookie
      */
-    fun getCookie(tag: String, key: String? = null): String {
+    fun getCookie(tag: String): String {
+        return getCookie(tag, null)
+    }
+
+    fun getCookie(tag: String, key: String?): String {
         return if (key != null) {
             CookieStore.getKey(tag, key)
         } else {
@@ -649,11 +650,28 @@ interface JsExtensions {
 
 //******************对称加密解密************************//
 
+    /**
+     * 在js中这样使用
+     * java.createSymmetricCrypto(transformation, key, iv).decrypt(data)
+     * java.createSymmetricCrypto(transformation, key, iv).decryptStr(data)
+
+     * java.createSymmetricCrypto(transformation, key, iv).encrypt(data)
+     * java.createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
+     * java.createSymmetricCrypto(transformation, key, iv).encryptHex(data)
+    */
+
     /* 自动转换key iv 到ByteArray 支持base64 hex uft8*/
     fun createSymmetricCrypto(
         transformation: String,
+        key: String
+    ): SymmetricCrypto {
+        return createSymmetricCrypto(transformation, key, null)
+    }
+
+    fun createSymmetricCrypto(
+        transformation: String,
         key: String,
-        iv: String? = null
+        iv: String?
     ): SymmetricCrypto {
         return createSymmetricCrypto(
             transformation,
@@ -664,9 +682,22 @@ interface JsExtensions {
 
     /* 调用SymmetricCrypto key为null时使用随机密钥*/
     fun createSymmetricCrypto(
+        transformation: String
+    ): SymmetricCrypto {
+        return createSymmetricCrypto(transformation, null, null)
+    }
+
+    fun createSymmetricCrypto(
         transformation: String,
-        key: ByteArray? = null,
-        iv: ByteArray? = null
+        key: ByteArray
+    ): SymmetricCrypto {
+        return createSymmetricCrypto(transformation, key, null)
+    }
+
+    fun createSymmetricCrypto(
+        transformation: String,
+        key: ByteArray?,
+        iv: ByteArray?
     ): SymmetricCrypto {
         val symmetricCrypto = SymmetricCrypto(transformation, key)
         return if (iv != null && !iv.isEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto

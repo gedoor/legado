@@ -157,34 +157,20 @@ deleteFile(path: String)
 
 > 其他加密方式 可在js中[调用](https://m.jb51.net/article/92138.htm)[hutool-crypto](https://www.hutool.cn/docs/#/)
 
-* AES
-> transformation默认实现AES/ECB/PKCS5Padding
+* 对称加密AES/DES/TripleDES
+> AES transformation默认实现AES/ECB/PKCS5Padding  
+> DES transformation默认实现DES/ECB/PKCS5Padding  
+> TripleDES tansformation默认实现DESede/ECB/PKCS5Padding  
+> 内部实现为cn.hutool.crypto 解密加密接口支持ByteArray|Base64String|HexString  
+> 输入参数key iv 支持ByteArray|Base64String|HexString|Utf8String
 ```
-java.aesDecodeToString(str: String, key: String, transformation: String, iv: String)
-
-java.aesBase64DecodeToString(str: String, key: String, transformation: String, iv: String)
-
-java.aesEncodeToString(str: String, key: String, transformation: String, iv: String)
-
-java.aesEncodeToBase64String(str: String, key: String, transformation: String, iv: String)
-```
-* DES
-> transformation默认实现DES/ECB/PKCS5Padding
-```
-java.desDecodeToString(str: String, key: String, transformation: String, iv: String)
-
-java.desBase64DecodeToString(str: String, key: String, transformation: String, iv: String)
-
-java.desEncodeToString(str: String, key: String, transformation: String, iv: String)
-
-java.desEncodeToBase64String(str: String, key: String, transformation: String, iv: String)
-```
-* 3DES
-> tansformation默认实现DESede/ECB/PKCS5Padding
-```
-java.tripleDESEncodeBase64Str(data: String,key: String,mode: String,padding: String,iv: String): String?
-
-java.tripleDESDecodeStr(data: String,key: String,mode: String,padding: String,iv: String): String?
+//解密为ByteArray 字符串
+java.createSymmetricCrypto(transformation, key, iv).decrypt(data)
+java.createSymmetricCrypto(transformation, key, iv).decryptStr(data)
+//加密为ByteArray Base64字符 HEX字符
+java.createSymmetricCrypto(transformation, key, iv).encrypt(data)
+java.createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
+java.createSymmetricCrypto(transformation, key, iv).encryptHex(data)
 ```
 * 摘要
 > MD5 SHA-1 SHA-224 SHA-256 SHA-384 SHA-512
