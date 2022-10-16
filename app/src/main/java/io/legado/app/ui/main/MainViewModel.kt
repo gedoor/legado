@@ -19,7 +19,6 @@ import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.model.CacheBook
-import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
@@ -123,14 +122,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         upTocAdd(bookUrl)
         execute(context = upTocPool) {
             val oldBook = book.copy()
-            val preUpdateJs = source.ruleToc?.preUpdateJs
-            if (!preUpdateJs.isNullOrBlank()) {
-                AnalyzeRule(book, source).evalJS(preUpdateJs)
-            }
             if (book.tocUrl.isBlank()) {
                 WebBook.getBookInfoAwait(source, book)
             }
-            val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
+            val toc = WebBook.getChapterListAwait(source, book, true).getOrThrow()
             book.removeType(BookType.updateError)
             if (book.bookUrl == bookUrl) {
                 appDb.bookDao.update(book)

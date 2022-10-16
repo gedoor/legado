@@ -25,7 +25,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
-import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
@@ -154,17 +153,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.bookSource?.let {
                 viewModelScope.launch(IO) {
                     val oldBook = book.copy()
-                    val preUpdateJs = it.ruleToc?.preUpdateJs
-                    if (!preUpdateJs.isNullOrBlank()) {
-                        val source = it
-                        kotlin.runCatching {
-                            AnalyzeRule(book, it).evalJS(preUpdateJs)
-                        }.onFailure {
-                            ReadBook.upMsg("执行preUpdateJs规则失败")
-                            AppLog.put("执行preUpdateJs规则失败 书源:${source.bookSourceName}", it)
-                        }
-                    }
-                    WebBook.getChapterList(viewModelScope, it, book)
+                    WebBook.getChapterList(viewModelScope, it, book, true)
                         .onSuccess(IO) { cList ->
                             if (oldBook.bookUrl == book.bookUrl) {
                                 appDb.bookDao.update(book)
