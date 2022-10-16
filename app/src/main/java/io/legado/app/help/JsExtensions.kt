@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
 import cn.hutool.core.util.HexUtil
+import cn.hutool.crypto.symmetric.SymmetricCrypto
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -647,6 +648,29 @@ interface JsExtensions {
     }
 
 //******************对称加密解密************************//
+
+    /* 自动转换key iv 到ByteArray 支持base64 hex uft8*/
+    fun createSymmetricCrypto(
+        transformation: String,
+        key: String,
+        iv: String? = null
+    ): SymmetricCrypto {
+        return createSymmetricCrypto(
+            transformation,
+            StringUtils.encodeStringToByteArray(key),
+            StringUtils.encodeStringToByteArray(iv)
+        )
+    }
+
+    /* 调用SymmetricCrypto key为null时使用随机密钥*/
+    fun createSymmetricCrypto(
+        transformation: String,
+        key: ByteArray? = null,
+        iv: ByteArray? = null
+    ): SymmetricCrypto {
+        val symmetricCrypto = SymmetricCrypto(transformation, key)
+        return if (iv != null && !iv.isEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto
+    }
 
 //******************消息摘要/散列消息鉴别码************************//
 
