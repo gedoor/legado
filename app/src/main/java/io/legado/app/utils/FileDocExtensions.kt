@@ -142,10 +142,29 @@ fun FileDoc.list(filter: FileDocFilter? = null): ArrayList<FileDoc>? {
     return null
 }
 
-fun FileDoc.find(name: String): FileDoc? {
-    return list {
-        it.name == name
-    }?.firstOrNull()
+/**
+ * 查找文档, 如果存在则返回文档,如果不存在返回空
+ * @param name 文件名
+ * @param depth 查找文件夹深度
+ */
+fun FileDoc.find(name: String, depth: Int = 0): FileDoc? {
+    val list = list()
+    list?.forEach {
+        if (it.name == name) {
+            return it
+        }
+    }
+    if (depth > 0) {
+        list?.forEach {
+            if (it.isDir) {
+                val fileDoc = it.find(name, depth - 1)
+                if (fileDoc != null) {
+                    return fileDoc
+                }
+            }
+        }
+    }
+    return null
 }
 
 /**

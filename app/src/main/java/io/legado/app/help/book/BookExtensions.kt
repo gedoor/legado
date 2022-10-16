@@ -62,7 +62,7 @@ fun Book.getLocalUri(): Uri {
         defaultBookTreeUri ?: return originBookUri
         val treeUri = Uri.parse(defaultBookTreeUri)
         val treeFileDoc = FileDoc.fromUri(treeUri, true)
-        return treeFileDoc.find(originName)?.uri ?: originBookUri
+        return treeFileDoc.find(originName, 5)?.uri ?: originBookUri
     }
     throw NoStackTraceException("不是本地书籍")
 }
