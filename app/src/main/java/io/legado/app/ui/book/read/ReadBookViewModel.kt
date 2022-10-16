@@ -156,7 +156,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     val oldBook = book.copy()
                     val preUpdateJs = it.ruleToc?.preUpdateJs
                     if (!preUpdateJs.isNullOrBlank()) {
-                        AnalyzeRule(book, it).evalJS(preUpdateJs)
+                        val source = it
+                        kotlin.runCatching {
+                            AnalyzeRule(book, it).evalJS(preUpdateJs)
+                        }.onFailure {
+                            ReadBook.upMsg("执行preUpdateJs规则失败")
+                            AppLog.put("执行preUpdateJs规则失败 书源:${source.bookSourceName}", it)
+                        }
                     }
                     WebBook.getChapterList(viewModelScope, it, book)
                         .onSuccess(IO) { cList ->

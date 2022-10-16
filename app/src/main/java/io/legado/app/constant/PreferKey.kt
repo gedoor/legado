@@ -116,6 +116,7 @@ object PreferKey {
     const val parallelExportBook = "parallelExportBook"
     const val progressBarBehavior = "progressBarBehavior"
     const val sourceEditMaxLine = "sourceEditMaxLine"
+    const val ttsTimer = "ttsTimer"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

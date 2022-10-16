@@ -355,10 +355,12 @@ interface JsExtensions {
     fun hexDecodeToByteArray(hex: String): ByteArray? {
         return HexUtil.decodeHex(hex)
     }
+
     /* hexString 解码为utf8String*/
     fun hexDecodeToString(hex: String): String? {
         return HexUtil.decodeHexStr(hex)
     }
+
     /* utf8 编码为hexString */
     fun hexEncodeToString(utf8: String): String? {
         return HexUtil.encodeHexStr(utf8)
@@ -675,7 +677,7 @@ interface JsExtensions {
      * java.createSymmetricCrypto(transformation, key, iv).encrypt(data)
      * java.createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
      * java.createSymmetricCrypto(transformation, key, iv).encryptHex(data)
-    */
+     */
 
     /* 调用SymmetricCrypto key为null时使用随机密钥*/
     fun createSymmetricCrypto(
