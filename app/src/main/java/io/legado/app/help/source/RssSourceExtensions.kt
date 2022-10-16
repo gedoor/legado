@@ -3,6 +3,7 @@ package io.legado.app.help.source
 import io.legado.app.data.entities.RssSource
 import io.legado.app.utils.ACache
 import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -32,10 +33,12 @@ suspend fun RssSource.sortUrls(): List<Pair<String, String>> {
                         aCache.put(sortUrlsKey, str)
                     }
                 }
-                str?.split("(&&|\n)+".toRegex())?.forEach { c ->
-                    val d = c.split("::")
-                    if (d.size > 1)
-                        add(Pair(d[0], d[1]))
+                str?.split("(&&|\n)+".toRegex())?.forEach { sort ->
+                    val name = sort.substringBefore("::")
+                    val url = sort.substringAfter("::", "")
+                    if (url.isNotEmpty()) {
+                        add(Pair(name, NetworkUtils.getAbsoluteURL(sortUrl, url)))
+                    }
                 }
                 if (isEmpty()) {
                     add(Pair("", sourceUrl))
