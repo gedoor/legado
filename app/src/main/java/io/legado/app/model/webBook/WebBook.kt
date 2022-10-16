@@ -189,6 +189,22 @@ object WebBook {
         }
     }
 
+    fun runPreUpdateJs(bookSource: BookSource, book: Book): Result<Boolean> {
+        return kotlin.runCatching {
+            val preUpdateJs = bookSource.ruleToc?.preUpdateJs
+            if (!preUpdateJs.isNullOrBlank()) {
+                kotlin.runCatching {
+                    AnalyzeRule(book, bookSource).evalJS(preUpdateJs)
+                }.onFailure {
+                    AppLog.put("执行preUpdateJs规则失败 书源:${bookSource.bookSourceName}", it)
+                    throw it
+                }
+                return@runCatching true
+            }
+            return@runCatching false
+        }
+    }
+
     suspend fun getChapterListAwait(
         bookSource: BookSource,
         book: Book,
@@ -196,14 +212,8 @@ object WebBook {
     ): Result<List<BookChapter>> {
         book.type = bookSource.getBookType()
         return kotlin.runCatching {
-            val preUpdateJs = bookSource.ruleToc?.preUpdateJs
-            if (runPerJs && !preUpdateJs.isNullOrBlank()) {
-                kotlin.runCatching {
-                    AnalyzeRule(book, bookSource).evalJS(preUpdateJs)
-                }.onFailure {
-                    AppLog.put("执行preUpdateJs规则失败 书源:${bookSource.bookSourceName}", it)
-                    throw it
-                }
+            if (runPerJs) {
+                runPreUpdateJs(bookSource, book).getOrThrow()
             }
             if (book.bookUrl == book.tocUrl && !book.tocHtml.isNullOrEmpty()) {
                 BookChapterList.analyzeChapterList(

@@ -122,10 +122,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         upTocAdd(bookUrl)
         execute(context = upTocPool) {
             val oldBook = book.copy()
+            WebBook.runPreUpdateJs(source, book)
             if (book.tocUrl.isBlank()) {
                 WebBook.getBookInfoAwait(source, book)
             }
-            val toc = WebBook.getChapterListAwait(source, book, true).getOrThrow()
+            val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
             book.removeType(BookType.updateError)
             if (book.bookUrl == bookUrl) {
                 appDb.bookDao.update(book)
