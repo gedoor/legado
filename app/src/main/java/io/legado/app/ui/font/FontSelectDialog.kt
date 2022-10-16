@@ -24,6 +24,9 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import java.io.File
 
+/**
+ * 字体选择对话框
+ */
 class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     Toolbar.OnMenuItemClickListener,
     FontAdapter.CallBack {
@@ -35,11 +38,11 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     }
     private val selectFontDir = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            if (uri.toString().isContentScheme()) {
+            if (uri.isContentScheme()) {
                 putPrefString(PreferKey.fontFolder, uri.toString())
                 val doc = DocumentFile.fromTreeUri(requireContext(), uri)
                 if (doc != null) {
-                    loadFontFiles(doc)
+                    loadFontFiles(FileDoc.fromDocumentFile(doc))
                 } else {
                     RealPathUtil.getPath(requireContext(), uri)?.let { path ->
                         loadFontFilesByPermission(path)
@@ -75,7 +78,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
             if (fontPath.isContentScheme()) {
                 val doc = DocumentFile.fromTreeUri(requireContext(), Uri.parse(fontPath))
                 if (doc?.canRead() == true) {
-                    loadFontFiles(doc)
+                    loadFontFiles(FileDoc.fromDocumentFile(doc))
                 } else {
                     openFolder()
                 }
@@ -122,35 +125,24 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         }
     }
 
-    private fun loadFontFiles(doc: DocumentFile) {
-        execute {
-            val fontItems = doc.listFileDocs {
-                it.name.matches(fontRegex)
-            }!!
-            mergeFontItems(fontItems, getLocalFonts())
-        }.onSuccess {
-            adapter.setItems(it)
-        }.onError {
-            toastOnUi("getFontFiles:${it.localizedMessage}")
-        }
-    }
-
     private fun loadFontFilesByPermission(path: String) {
         PermissionsCompat.Builder(this@FontSelectDialog)
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
-                loadFontFiles(path)
+                loadFontFiles(
+                    FileDoc.fromFile(File(path))
+                )
             }
             .request()
     }
 
-    private fun loadFontFiles(path: String) {
+    private fun loadFontFiles(fileDoc: FileDoc) {
         execute {
-            val fontItems = File(path).listFileDocs {
+            val fontItems = fileDoc.list {
                 it.name.matches(fontRegex)
             }
-            mergeFontItems(fontItems, getLocalFonts())
+            mergeFontItems(fontItems!!, getLocalFonts())
         }.onSuccess {
             adapter.setItems(it)
         }.onError {
