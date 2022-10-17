@@ -10,6 +10,7 @@ import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -126,6 +127,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                     searchView.setQuery(it, true)
                 }
             }
+            R.id.menu_search_scope -> alertSearchScope()
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
             R.id.menu_log -> showDialogFragment(AppLogDialog())
         }
@@ -387,6 +389,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         searchScope.save()
         viewModel.searchScope.update(searchScope.toString())
         searchScopeAdapter.setItems(searchScope.displayNames)
+        if (!binding.llInputHelp.isVisible) {
+            searchView.query?.toString()?.trim()?.let {
+                searchView.setQuery(it, true)
+            }
+        }
     }
 
     private fun alertSearchScope() {
