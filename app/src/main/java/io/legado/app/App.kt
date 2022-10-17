@@ -28,7 +28,7 @@ import io.legado.app.help.http.cronet.CronetLoader
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import splitties.systemservices.notificationManager
 import java.util.concurrent.TimeUnit
@@ -51,7 +51,7 @@ class App : MultiDexApplication() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         Coroutine.async {
-            async { installGmsTlsProvider(appCtx) }.start()
+            launch { installGmsTlsProvider(appCtx) }
             //初始化封面
             BookCover.toString()
             //清除过期数据
