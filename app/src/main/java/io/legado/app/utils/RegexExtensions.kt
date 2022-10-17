@@ -5,7 +5,8 @@ import com.script.SimpleBindings
 import io.legado.app.constant.AppConst
 
 /**
- * 带有超时检测的正则替换
+ * 带有js功能的正则替换
+ * 采用com.google.re2j.Pattern,不会导致无限执行
  */
 fun CharSequence.replaceRegex(regex: String, replacement: String): Result<String> {
     return kotlin.runCatching {
