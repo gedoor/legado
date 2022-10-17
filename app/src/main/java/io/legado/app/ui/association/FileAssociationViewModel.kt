@@ -23,7 +23,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                 val fileDoc = FileDoc.fromUri(uri, false)
                 fileName = fileDoc.name
                 kotlin.runCatching {
-                    if (uri.inputStream(context).isJson()) {
+                    if (uri.inputStream(context).getOrNull().isJson()) {
                         importJson(uri)
                         return@execute
                     }

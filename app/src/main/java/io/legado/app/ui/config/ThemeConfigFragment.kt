@@ -30,6 +30,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.FileOutputStream
 
 
@@ -303,17 +304,21 @@ class ThemeConfigFragment : PreferenceFragment(),
 
     private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
         readUri(uri) { fileDoc, inputStream ->
-            var file = requireContext().externalFiles
-            val suffix = fileDoc.name.substringAfterLast(".")
-            val fileName = uri.inputStream(requireContext())!!.use {
-                MD5Utils.md5Encode(it) + ".$suffix"
+            kotlin.runCatching {
+                var file = requireContext().externalFiles
+                val suffix = fileDoc.name.substringAfterLast(".")
+                val fileName = uri.inputStream(requireContext()).getOrThrow().use {
+                    MD5Utils.md5Encode(it) + ".$suffix"
+                }
+                file = FileUtils.createFileIfNotExist(file, preferenceKey, fileName)
+                FileOutputStream(file).use {
+                    inputStream.copyTo(it)
+                }
+                putPrefString(preferenceKey, file.absolutePath)
+                success()
+            }.onFailure {
+                appCtx.toastOnUi(it.localizedMessage)
             }
-            file = FileUtils.createFileIfNotExist(file, preferenceKey, fileName)
-            FileOutputStream(file).use {
-                inputStream.copyTo(it)
-            }
-            putPrefString(preferenceKey, file.absolutePath)
-            success()
         }
     }
 

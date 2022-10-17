@@ -69,7 +69,7 @@ fun Book.getLocalUri(): Uri {
             Uri.fromFile(File(bookUrl))
         }
         //先检测uri是否有效,这个比较快
-        uri.inputStream(appCtx)?.use {
+        uri.inputStream(appCtx).getOrNull()?.use {
             localUriCache[bookUrl] = uri
         }?.let {
             return uri

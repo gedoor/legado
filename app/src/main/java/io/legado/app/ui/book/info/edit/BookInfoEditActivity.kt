@@ -17,6 +17,7 @@ import io.legado.app.help.book.isLocal
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 import java.io.FileOutputStream
 
 class BookInfoEditActivity :
@@ -120,17 +121,21 @@ class BookInfoEditActivity :
 
     private fun coverChangeTo(uri: Uri) {
         readUri(uri) { fileDoc, inputStream ->
-            inputStream.use {
-                var file = this.externalFiles
-                val suffix = fileDoc.name.substringAfterLast(".")
-                val fileName = uri.inputStream(this)!!.use {
-                    MD5Utils.md5Encode(it) + ".$suffix"
+            runCatching {
+                inputStream.use {
+                    var file = this.externalFiles
+                    val suffix = fileDoc.name.substringAfterLast(".")
+                    val fileName = uri.inputStream(this).getOrThrow().use {
+                        MD5Utils.md5Encode(it) + ".$suffix"
+                    }
+                    file = FileUtils.createFileIfNotExist(file, "covers", fileName)
+                    FileOutputStream(file).use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                    coverChangeTo(file.absolutePath)
                 }
-                file = FileUtils.createFileIfNotExist(file, "covers", fileName)
-                FileOutputStream(file).use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-                coverChangeTo(file.absolutePath)
+            }.onFailure {
+                appCtx.toastOnUi(it.localizedMessage)
             }
         }
     }

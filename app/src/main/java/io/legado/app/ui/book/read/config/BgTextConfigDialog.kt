@@ -34,6 +34,7 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 
 import java.io.File
 import java.io.FileOutputStream
@@ -353,17 +354,21 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
     private fun setBgFromUri(uri: Uri) {
         readUri(uri) { fileDoc, inputStream ->
-            var file = requireContext().externalFiles
-            val suffix = fileDoc.name.substringAfterLast(".")
-            val fileName = uri.inputStream(requireContext())!!.use {
-                MD5Utils.md5Encode(it) + ".$suffix"
+            kotlin.runCatching {
+                var file = requireContext().externalFiles
+                val suffix = fileDoc.name.substringAfterLast(".")
+                val fileName = uri.inputStream(requireContext()).getOrThrow().use {
+                    MD5Utils.md5Encode(it) + ".$suffix"
+                }
+                file = FileUtils.createFileIfNotExist(file, "bg", fileName)
+                FileOutputStream(file).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+                ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
+                postEvent(EventBus.UP_CONFIG, false)
+            }.onFailure {
+                appCtx.toastOnUi(it.localizedMessage)
             }
-            file = FileUtils.createFileIfNotExist(file, "bg", fileName)
-            FileOutputStream(file).use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-            ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
-            postEvent(EventBus.UP_CONFIG, false)
         }
     }
 }

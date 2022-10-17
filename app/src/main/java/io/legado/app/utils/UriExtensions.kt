@@ -173,23 +173,28 @@ fun Uri.writeBytes(
     return false
 }
 
-fun Uri.inputStream(context: Context): InputStream? {
+fun Uri.inputStream(context: Context): Result<InputStream> {
     val uri = this
-    try {
-        if (isContentScheme()) {
-            val doc = DocumentFile.fromSingleUri(context, uri)
-            doc ?: throw NoStackTraceException("未获取到文件")
-            return context.contentResolver.openInputStream(uri)!!
-        } else {
-            RealPathUtil.getPath(context, uri)?.let { path ->
+    return kotlin.runCatching {
+        try {
+            if (isContentScheme()) {
+                DocumentFile.fromSingleUri(context, uri)
+                    ?: throw NoStackTraceException("未获取到文件")
+                return@runCatching context.contentResolver.openInputStream(uri)!!
+            } else {
+                val path = RealPathUtil.getPath(context, uri)
+                    ?: throw NoStackTraceException("未获取到文件")
                 val file = File(path)
-                return FileInputStream(file)
+                if (file.exists()) {
+                    return@runCatching FileInputStream(file)
+                } else {
+                    throw NoStackTraceException("文件不存在")
+                }
             }
+        } catch (e: Exception) {
+            e.printOnDebug()
+            AppLog.put("读取inputStream失败：${e.localizedMessage}", e)
+            throw e
         }
-    } catch (e: Exception) {
-        e.printOnDebug()
-        context.toastOnUi("读取inputStream失败：${e.localizedMessage}")
-        AppLog.put("读取inputStream失败：${e.localizedMessage}", e)
     }
-    return null
 }

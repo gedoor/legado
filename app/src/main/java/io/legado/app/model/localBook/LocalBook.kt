@@ -43,10 +43,11 @@ object LocalBook {
     fun getBookInputStream(book: Book): InputStream {
         val uri = book.getLocalUri()
         //文件不存在 尝试下载webDav文件
-        val inputStream = uri.inputStream(appCtx) ?: let {
-            book.removeLocalUriCache()
-            downloadRemoteBook(book)
-        }
+        val inputStream = uri.inputStream(appCtx).getOrNull()
+            ?: let {
+                book.removeLocalUriCache()
+                downloadRemoteBook(book)
+            }
         if (inputStream != null) return inputStream
         book.removeLocalUriCache()
         throw FileNotFoundException("${uri.path} 文件不存在")
@@ -241,7 +242,12 @@ object LocalBook {
             ?: throw NoStackTraceException("没有设置书籍保存位置!")
         val bytes = when {
             str.isAbsUrl() -> AnalyzeUrl(str, source = source).getInputStream()
-            str.isDataUrl() -> ByteArrayInputStream(Base64.decode(str.substringAfter("base64,"), Base64.DEFAULT))
+            str.isDataUrl() -> ByteArrayInputStream(
+                Base64.decode(
+                    str.substringAfter("base64,"),
+                    Base64.DEFAULT
+                )
+            )
             else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
         }
         return saveBookFile(bytes, fileName)
@@ -324,7 +330,7 @@ object LocalBook {
                 localBook.bookUrl = if (it.isContentScheme()) it.toString() else it.path!!
                 localBook.save()
                 localBook.cacheLocalUri(it)
-                it.inputStream(appCtx)
+                it.inputStream(appCtx).getOrThrow()
             }
         } catch (e: Exception) {
             e.printOnDebug()

@@ -12,6 +12,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 import splitties.views.onClick
 import java.io.FileOutputStream
 
@@ -27,17 +28,23 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
     val selectImage = registerForActivityResult(SelectImageContract()) {
-        readUri(it?.uri) { fileDoc, inputStream ->
-            var file = requireContext().externalFiles
-            val suffix = fileDoc.name.substringAfterLast(".")
-            val fileName = it.uri!!.inputStream(requireContext())!!.use {
-                MD5Utils.md5Encode(it) + ".$suffix"
+        it ?: return@registerForActivityResult
+        it.uri ?: return@registerForActivityResult
+        readUri(it.uri) { fileDoc, inputStream ->
+            try {
+                var file = requireContext().externalFiles
+                val suffix = fileDoc.name.substringAfterLast(".")
+                val fileName = it.uri.inputStream(requireContext()).getOrThrow().use { tmp ->
+                    MD5Utils.md5Encode(tmp) + ".$suffix"
+                }
+                file = FileUtils.createFileIfNotExist(file, "covers", fileName)
+                FileOutputStream(file).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+                binding.ivCover.load(file.absolutePath)
+            } catch (e: Exception) {
+                appCtx.toastOnUi(e.localizedMessage)
             }
-            file = FileUtils.createFileIfNotExist(file, "covers", fileName)
-            FileOutputStream(file).use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-            binding.ivCover.load(file.absolutePath)
         }
     }
 

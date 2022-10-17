@@ -15,7 +15,7 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
 
     fun importJson(uri: Uri) {
         when {
-            uri.inputStream(context).contains("bookSourceUrl") ->
+            uri.inputStream(context).getOrNull().contains("bookSourceUrl") ->
                 successLive.postValue(Pair("bookSource", uri.toString()))
             else -> importJson(uri.readText(context))
         }
