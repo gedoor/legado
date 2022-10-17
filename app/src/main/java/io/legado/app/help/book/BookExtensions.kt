@@ -53,6 +53,14 @@ val Book.isOnLineTxt: Boolean
         return !isLocal && type and BookType.text > 0
     }
 
+fun Book.contains(word: String?): Boolean {
+    if (word.isNullOrEmpty()) {
+        return true
+    }
+    return name.contains(word) || author.contains(word)
+            || originName.contains(word) || origin.contains(word)
+}
+
 private val localUriCache by lazy {
     ConcurrentHashMap<String, Uri>()
 }

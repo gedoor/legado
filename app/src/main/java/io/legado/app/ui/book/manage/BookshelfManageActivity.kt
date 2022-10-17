@@ -12,12 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityArrangeBookBinding
+import io.legado.app.help.book.contains
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
@@ -29,7 +29,6 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.cnCompare
-import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -192,7 +191,7 @@ class BookshelfManageActivity :
                     list
                 } else {
                     list.filter {
-                        it.name.contains(searchKey) || it.author.contains(searchKey)
+                        it.contains(searchKey)
                     }
                 }
                 when (AppConfig.bookshelfSort) {
