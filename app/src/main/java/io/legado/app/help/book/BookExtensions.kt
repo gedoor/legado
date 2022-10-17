@@ -93,6 +93,9 @@ fun Book.getLocalUri(): Uri {
         val fileDoc = treeFileDoc.find(originName, 3)
         if (fileDoc != null) {
             localUriCache[bookUrl] = fileDoc.uri
+            //更新bookUrl 重启不用再找一遍
+            bookUrl = fileDoc.toString()
+            save()
             return fileDoc.uri
         }
         localUriCache[bookUrl] = uri
