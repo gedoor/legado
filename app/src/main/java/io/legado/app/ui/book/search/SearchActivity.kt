@@ -52,9 +52,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             setHasStableIds(true)
         }
     }
-    private val searchScopeAdapter by lazy {
-        SearchScopeAdapter(this)
-    }
     private val historyKeyAdapter by lazy {
         HistoryKeyAdapter(this, this).apply {
             setHasStableIds(true)
@@ -63,6 +60,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
+    private var menu: Menu? = null
     private var historyFlowJob: Job? = null
     private var booksFlowJob: Job? = null
     private var precisionSearchMenuItem: MenuItem? = null
@@ -110,6 +108,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_search, menu)
+        this.menu = menu
+        upSearchScopeMenu()
         precisionSearchMenuItem = menu.findItem(R.id.menu_precision_search)
         precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
         return super.onCompatCreateOptionsMenu(menu)
@@ -171,10 +171,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun initRecyclerView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-        binding.rvSearchScope.setEdgeEffectColor(primaryColor)
         binding.rvBookshelfSearch.setEdgeEffectColor(primaryColor)
         binding.rvHistoryKey.setEdgeEffectColor(primaryColor)
-        binding.rvSearchScope.adapter = searchScopeAdapter
         binding.rvBookshelfSearch.layoutManager = FlexboxLayoutManager(this)
         binding.rvBookshelfSearch.adapter = bookAdapter
         binding.rvHistoryKey.layoutManager = FlexboxLayoutManager(this)
@@ -217,14 +215,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             viewModel.stop()
             binding.refreshProgressBar.isAutoLoading = false
         }
-        binding.tvToggleSearchScope.setOnClickListener { alertSearchScope() }
         binding.tvClearHistory.setOnClickListener { alertClearHistory() }
     }
 
     private fun initData() {
-        searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
         viewModel.searchScope.stateLiveData.observe(this) {
-            searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
+            upSearchScopeMenu()
         }
         viewModel.isSearchLiveData.observe(this) {
             if (it) {
@@ -241,6 +237,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
     }
 
+    private fun upSearchScopeMenu() {
+        menu?.findItem(R.id.menu_search_scope)?.title =
+            "${getString(R.string.search_scope)}-${viewModel.searchScope.display}"
+    }
+
     /**
      * 处理传入数据
      */
@@ -248,7 +249,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         val searchScope = intent?.getStringExtra("searchScope")
         searchScope?.let {
             viewModel.searchScope.update(searchScope)
-            searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
+            upSearchScopeMenu()
         }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {
@@ -280,7 +281,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         if (visible) {
             upHistory(searchView.query.toString())
             binding.llInputHelp.visibility = VISIBLE
-            searchScopeAdapter.setItems(viewModel.searchScope.displayNames)
         } else {
             binding.llInputHelp.visibility = GONE
         }
@@ -388,7 +388,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun onSearchScopeOk(searchScope: SearchScope) {
         searchScope.save()
         viewModel.searchScope.update(searchScope.toString())
-        searchScopeAdapter.setItems(searchScope.displayNames)
         if (!binding.llInputHelp.isVisible) {
             searchView.query?.toString()?.trim()?.let {
                 searchView.setQuery(it, true)

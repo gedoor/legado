@@ -1,10 +1,12 @@
 package io.legado.app.ui.book.search
 
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.R
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.splitNotBlank
+import splitties.init.appCtx
 
 /**
  * 搜索范围
@@ -26,6 +28,7 @@ data class SearchScope(private var scope: String) {
 
     fun update(scope: String) {
         this.scope = scope
+        stateLiveData.postValue(scope)
     }
 
     fun update(groups: List<String>) {
@@ -40,6 +43,9 @@ data class SearchScope(private var scope: String) {
         get() {
             if (scope.contains("::")) {
                 return scope.substringBefore("::")
+            }
+            if (scope.isEmpty()) {
+                return appCtx.getString(R.string.all_source)
             }
             return scope
         }
@@ -58,7 +64,7 @@ data class SearchScope(private var scope: String) {
                 }
             }
             if (list.isEmpty()) {
-                list.add("全部书源")
+                list.add(appCtx.getString(R.string.all_source))
             }
             return list
         }
@@ -83,12 +89,12 @@ data class SearchScope(private var scope: String) {
             }
             if (oldScope.size != newScope.size) {
                 update(newScope)
-                stateLiveData.postValue("")
+                stateLiveData.postValue(scope)
             }
         }
         if (list.isEmpty()) {
             scope = ""
-            stateLiveData.postValue("")
+            stateLiveData.postValue(scope)
             return appDb.bookSourceDao.allEnabled
         }
         return list.sortedBy { it.customOrder }
