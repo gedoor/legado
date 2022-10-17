@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -242,7 +243,8 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        if (searchBook.type == callBack?.oldBook?.type) {
+        val oldBookType = callBack?.oldBook?.type?.and(BookType.updateError.inv())
+        if (searchBook.type == oldBookType) {
             changeSource(searchBook) {
                 dismissAllowingStateLoss()
             }
