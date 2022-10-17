@@ -187,7 +187,9 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
                                 } else {
                                     selectGroups.remove(it)
                                 }
-                                notifyItemRangeChanged(0, itemCount, "up")
+                                buttonView.post {
+                                    notifyItemRangeChanged(0, itemCount, "up")
+                                }
                             }
                         }
                     }
@@ -201,7 +203,9 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
                                 if (isChecked) {
                                     selectSource = it
                                 }
-                                notifyItemRangeChanged(0, itemCount, "up")
+                                buttonView.post {
+                                    notifyItemRangeChanged(0, itemCount, "up")
+                                }
                             }
                         }
                     }
