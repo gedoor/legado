@@ -221,6 +221,14 @@ fun FileDoc.exists(
     }
 }
 
+fun FileDoc.exists(): Boolean {
+    return if (uri.isContentScheme()) {
+        DocumentFile.fromTreeUri(appCtx, uri)!!.exists()
+    } else {
+        FileUtils.exist(uri.path!!)
+    }
+}
+
 /**
  * DocumentFile 的 listFiles() 非常的慢,尽量不要使用
  */
