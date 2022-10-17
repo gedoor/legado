@@ -70,8 +70,9 @@ android {
             }
             applicationIdSuffix '.release'
 
-            minifyEnabled true
-            shrinkResources true
+            //混淆还是有点问题, exoplayer的库出问题了
+            minifyEnabled false
+            //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
