@@ -74,7 +74,7 @@ fun Book.getLocalUri(): Uri {
         }?.let {
             return uri
         }
-        //不同的设备书籍保存路径可能不一样 优先尝试寻找当前保存路径下的文件
+        //不同的设备书籍保存路径可能不一样, uri无效时尝试寻找当前保存路径下的文件
         val defaultBookDir = AppConfig.defaultBookTreeUri
         if (defaultBookDir.isNullOrBlank()) {
             localUriCache[bookUrl] = uri
