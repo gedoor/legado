@@ -144,7 +144,7 @@ class ContentProcessor private constructor(
                         mContent.replaceRegex(
                             item.pattern,
                             item.replacement
-                        )
+                        ).getOrThrow()
                     } else {
                         mContent.replace(item.pattern, item.replacement)
                     }

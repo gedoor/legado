@@ -103,7 +103,7 @@ data class BookChapter(
                             displayTitle.replaceRegex(
                                 item.pattern,
                                 item.replacement
-                            )
+                            ).getOrThrow()
                         } else {
                             displayTitle.replace(item.pattern, item.replacement)
                         }
