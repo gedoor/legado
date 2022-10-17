@@ -237,7 +237,7 @@
     *** upstreamDataSourceFactory;
 }
 ## ExoPlayer 暂时不混淆 
--keep class com.google.android.exoplayer.** {*;}
+-keep class com.google.android.exoplayer2.** {*;}
 
 ## 对外提供api
 -keep class io.legado.app.api.ReturnData{*;}
