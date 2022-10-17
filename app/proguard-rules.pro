@@ -236,8 +236,8 @@
 -keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
     *** upstreamDataSourceFactory;
 }
-## ExoPlayer 暂时不混淆 
--keep class com.google.android.exoplayer2.** {*;}
+## ExoPlayer 如果还不能播放就取消注释这个
+# -keep class com.google.android.exoplayer2.** {*;}
 
 ## 对外提供api
 -keep class io.legado.app.api.ReturnData{*;}
