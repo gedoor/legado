@@ -9,6 +9,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
@@ -133,7 +134,7 @@ class ContentProcessor private constructor(
         return contents
     }
 
-    fun replaceContent(content: String): String {
+    suspend fun replaceContent(content: String): String {
         var mContent = content
         mContent = mContent.lines().joinToString("\n") { it.trim() }
         getContentReplaceRules().forEach { item ->
@@ -142,7 +143,8 @@ class ContentProcessor private constructor(
                     mContent = if (item.isRegex) {
                         mContent.replace(
                             item.pattern.toRegex(),
-                            item.replacement
+                            item.replacement,
+                            item.timeoutMillisecond
                         )
                     } else {
                         mContent.replace(item.pattern, item.replacement)

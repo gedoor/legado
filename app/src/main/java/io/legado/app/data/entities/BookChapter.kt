@@ -102,7 +102,8 @@ data class BookChapter(
                         val mDisplayTitle = if (item.isRegex) {
                             displayTitle.replace(
                                 item.pattern.toRegex(),
-                                item.replacement
+                                item.replacement,
+                                item.timeoutMillisecond
                             )
                         } else {
                             displayTitle.replace(item.pattern, item.replacement)
