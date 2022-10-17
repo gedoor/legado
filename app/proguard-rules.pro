@@ -234,8 +234,7 @@
 
 ## 保证该私有变量不被混淆
 -keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
-    #noinspection ShrinkerUnresolvedReference
-    private DataSource.Factory upstreamDataSourceFactory;
+    upstreamDataSourceFactory;
 }
 
 ## 对外提供api
