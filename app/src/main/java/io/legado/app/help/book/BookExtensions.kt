@@ -10,6 +10,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -66,6 +67,12 @@ fun Book.getLocalUri(): Uri {
             Uri.parse(bookUrl)
         } else {
             Uri.fromFile(File(bookUrl))
+        }
+        //先检测uri是否有效,这个比较快
+        uri.inputStream(appCtx)?.use {
+            localUriCache[bookUrl] = uri
+        }?.let {
+            return uri
         }
         //不同的设备书籍保存路径可能不一样 优先尝试寻找当前保存路径下的文件
         val defaultBookDir = AppConfig.defaultBookTreeUri
