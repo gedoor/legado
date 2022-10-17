@@ -29,7 +29,6 @@ import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import splitties.init.appCtx
 import splitties.systemservices.notificationManager
 import java.util.concurrent.TimeUnit
@@ -98,7 +97,7 @@ class App : MultiDexApplication() {
      * @param context
      * @return
      */
-    private suspend fun installGmsTlsProvider(context: Context) {
+    private fun installGmsTlsProvider(context: Context) {
         try {
             val gms = context.createPackageContext(
                 "com.google.android.gms",
@@ -108,7 +107,6 @@ class App : MultiDexApplication() {
                 .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
                 .getMethod("insertProvider", Context::class.java)
                 .invoke(null, gms)
-            delay(1000)
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
