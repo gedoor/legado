@@ -107,7 +107,7 @@ fun Book.getLocalUri(): Uri {
     }
 
     // 查找添加本地选择的目录
-    if (!importBookDir.isNullOrBlank()) {
+    if (!importBookDir.isNullOrBlank() && defaultBookDir != importBookDir) {
         val treeUri = if (importBookDir.isUri()) {
             Uri.parse(importBookDir)
         } else {
