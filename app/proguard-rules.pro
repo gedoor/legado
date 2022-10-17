@@ -232,10 +232,12 @@
     public static ** valueOf(java.lang.String);
 }
 
-## 保证该私有变量不被混淆
+## ExoPlayer 反射设置ua 保证该私有变量不被混淆
 -keepclassmembers class com.google.android.exoplayer2.upstream.cache.CacheDataSource$Factory {
     *** upstreamDataSourceFactory;
 }
+## ExoPlayer 暂时不混淆 
+-keep class com.google.android.exoplayer.** {*;}
 
 ## 对外提供api
 -keep class io.legado.app.api.ReturnData{*;}
