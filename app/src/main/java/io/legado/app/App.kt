@@ -28,10 +28,9 @@ import io.legado.app.help.http.cronet.CronetLoader
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import splitties.init.appCtx
 import splitties.systemservices.notificationManager
 import java.util.concurrent.TimeUnit
 
@@ -53,7 +52,7 @@ class App : MultiDexApplication() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         Coroutine.async {
-            installGmsTlsProviderAsync(this@App).start()
+            async { installGmsTlsProvider(appCtx) }.start()
             //初始化封面
             BookCover.toString()
             //清除过期数据
@@ -99,24 +98,19 @@ class App : MultiDexApplication() {
      * @param context
      * @return
      */
-    private suspend fun installGmsTlsProviderAsync(context: Context): Deferred<Boolean> {
-        return coroutineScope {
-            async(IO) {
-                try {
-                    val gms = context.createPackageContext(
-                        "com.google.android.gms",
-                        CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY
-                    )
-                    gms.classLoader
-                        .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
-                        .getMethod("insertProvider", Context::class.java)
-                        .invoke(null, gms)
-                    true
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
-                    false
-                }
-            }
+    private suspend fun installGmsTlsProvider(context: Context) {
+        try {
+            val gms = context.createPackageContext(
+                "com.google.android.gms",
+                CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY
+            )
+            gms.classLoader
+                .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
+                .getMethod("insertProvider", Context::class.java)
+                .invoke(null, gms)
+            delay(1000)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
     }
 
