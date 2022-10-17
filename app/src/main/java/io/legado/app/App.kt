@@ -49,6 +49,7 @@ class App : MultiDexApplication() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         Coroutine.async {
+            installGmsTlsProvider(this@App)
             //初始化封面
             BookCover.toString()
             //清除过期数据
@@ -82,6 +83,33 @@ class App : MultiDexApplication() {
             applyDayNight(this)
         }
         oldConfig = Configuration(newConfig)
+    }
+
+    /**
+     * 尝试在安装了GMS的设备上(GMS或者MicroG)使用GMS内置的Conscrypt
+     * 作为首选JCE提供程序，而使Okhttp在低版本Android上
+     * 能够启用TLSv1.3
+     * https://f-droid.org/zh_Hans/2020/05/29/android-updates-and-tls-connections.html
+     * https://developer.android.google.cn/reference/javax/net/ssl/SSLSocket
+     *
+     * @param context
+     * @return
+     */
+    private suspend fun installGmsTlsProvider(context: Context): Boolean {
+        return try {
+            val gms = context.createPackageContext(
+                "com.google.android.gms",
+                CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY
+            )
+            gms.classLoader
+                .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
+                .getMethod("insertProvider", Context::class.java)
+                .invoke(null, gms)
+            true
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
     /**

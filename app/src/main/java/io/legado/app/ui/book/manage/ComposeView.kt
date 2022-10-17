@@ -26,7 +26,7 @@ fun BatchChangeSourceDialog(
                     cancel.invoke()
                     state.value = false
                 }, content = {
-                    Text(text = "取消")
+                    Text(text = appCtx.getString(R.string.cancel))
                 })
             },
             title = {
