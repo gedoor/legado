@@ -28,6 +28,10 @@ import io.legado.app.help.http.cronet.CronetLoader
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import splitties.systemservices.notificationManager
 import java.util.concurrent.TimeUnit
 
@@ -49,7 +53,7 @@ class App : MultiDexApplication() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         Coroutine.async {
-            installGmsTlsProvider(this@App)
+            installGmsTlsProviderAsync(this@App).start()
             //初始化封面
             BookCover.toString()
             //清除过期数据
@@ -95,20 +99,24 @@ class App : MultiDexApplication() {
      * @param context
      * @return
      */
-    private suspend fun installGmsTlsProvider(context: Context): Boolean {
-        return try {
-            val gms = context.createPackageContext(
-                "com.google.android.gms",
-                CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY
-            )
-            gms.classLoader
-                .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
-                .getMethod("insertProvider", Context::class.java)
-                .invoke(null, gms)
-            true
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-            false
+    private suspend fun installGmsTlsProviderAsync(context: Context): Deferred<Boolean> {
+        return coroutineScope {
+            async(IO) {
+                try {
+                    val gms = context.createPackageContext(
+                        "com.google.android.gms",
+                        CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY
+                    )
+                    gms.classLoader
+                        .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
+                        .getMethod("insertProvider", Context::class.java)
+                        .invoke(null, gms)
+                    true
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                    false
+                }
+            }
         }
     }
 
