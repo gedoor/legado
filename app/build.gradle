@@ -212,9 +212,6 @@ dependencies {
     //implementation('com.github.gedoor:rhino-android:1.8')
     implementation(fileTree(dir: 'lib', include: ['rhino-*.jar']))
 
-    //正则匹配,android自带的正则匹配出现超时问题无法处理
-    implementation('com.google.re2j:re2j:1.7')
-
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.10.0')
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
