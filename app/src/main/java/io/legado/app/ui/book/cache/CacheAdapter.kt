@@ -18,7 +18,7 @@ import io.legado.app.utils.visible
 class CacheAdapter(context: Context, private val callBack: CallBack) :
     RecyclerAdapter<Book, ItemDownloadBinding>(context) {
 
-    val cacheChapters = hashMapOf<String, HashSet<String>>()
+
 
     override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding {
         return ItemDownloadBinding.inflate(inflater, parent, false)
@@ -37,7 +37,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                 if (item.isLocal) {
                     tvDownload.setText(R.string.local_book)
                 } else {
-                    val cs = cacheChapters[item.bookUrl]
+                    val cs = callBack.cacheChapters[item.bookUrl]
                     if (cs == null) {
                         tvDownload.setText(R.string.loading)
                     } else {
@@ -53,7 +53,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                 if (item.isLocal) {
                     tvDownload.setText(R.string.local_book)
                 } else {
-                    val cacheSize = cacheChapters[item.bookUrl]?.size ?: 0
+                    val cacheSize = callBack.cacheChapters[item.bookUrl]?.size ?: 0
                     tvDownload.text =
                         context.getString(R.string.download_count, cacheSize, item.totalChapterNum)
                 }
@@ -121,6 +121,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
     }
 
     interface CallBack {
+        val cacheChapters: HashMap<String, HashSet<String>>
         fun export(position: Int)
         fun exportProgress(bookUrl: String): Int?
         fun exportMsg(bookUrl: String): String?

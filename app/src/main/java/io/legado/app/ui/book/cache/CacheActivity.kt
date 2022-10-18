@@ -11,14 +11,11 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.charsets
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ActivityCacheBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
@@ -32,8 +29,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -76,6 +72,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         initRecyclerView()
         initGroupData()
         initBookData()
+        initCacheData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -178,7 +175,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
             }.conflate().collect { books ->
                 adapter.setItems(books)
-                initCacheSize(books)
             }
         }
     }
@@ -195,17 +191,10 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
     }
 
-    private fun initCacheSize(books: List<Book>) {
-        launch(IO) {
-            books.forEach { book ->
-                val chapterCaches = hashSetOf<String>()
-                val cacheNames = BookHelp.getChapterFiles(book)
-                appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
-                    if (cacheNames.contains(chapter.getFileName())) {
-                        chapterCaches.add(chapter.url)
-                    }
-                }
-                adapter.cacheChapters[book.bookUrl] = chapterCaches
+    private fun initCacheData() {
+        launch {
+            viewModel.bookCacheFlow.conflate().collect {
+                viewModel.cacheChapters[it.first] = it.second
                 withContext(Dispatchers.Main) {
                     adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
                 }
@@ -242,7 +231,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
         }
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
-            adapter.cacheChapters[it.bookUrl]?.add(it.url)
+            viewModel.cacheChapters[it.bookUrl]?.add(it.url)
         }
     }
 
@@ -340,6 +329,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             cancelButton()
         }
     }
+
+    override val cacheChapters: HashMap<String, HashSet<String>>
+        get() = viewModel.cacheChapters
 
     override fun exportProgress(bookUrl: String): Int? {
         return viewModel.exportProgress[bookUrl]
