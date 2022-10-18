@@ -241,11 +241,7 @@ class BookshelfManageActivity :
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_del_selection ->
-                alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-                    okButton { viewModel.deleteBook(*adapter.selection.toTypedArray()) }
-                    noButton()
-                }
+            R.id.menu_del_selection -> alertDelSelection()
             R.id.menu_update_enable ->
                 viewModel.upCanUpdate(adapter.selection, true)
             R.id.menu_update_disable ->
@@ -263,6 +259,13 @@ class BookshelfManageActivity :
             groupList.forEach { bookGroup ->
                 subMenu.add(R.id.menu_group, bookGroup.order, Menu.NONE, bookGroup.groupName)
             }
+        }
+    }
+
+    private fun alertDelSelection() {
+        alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
+            okButton { viewModel.deleteBook(*adapter.selection.toTypedArray()) }
+            noButton()
         }
     }
 
