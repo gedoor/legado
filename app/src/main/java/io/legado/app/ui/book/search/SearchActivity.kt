@@ -109,7 +109,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_search, menu)
         this.menu = menu
-        upSearchScopeMenu()
         precisionSearchMenuItem = menu.findItem(R.id.menu_precision_search)
         precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
         return super.onCompatCreateOptionsMenu(menu)
@@ -220,7 +219,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     private fun initData() {
         viewModel.searchScope.stateLiveData.observe(this) {
-            upSearchScopeMenu()
+            upSearchScope()
         }
         viewModel.isSearchLiveData.observe(this) {
             if (it) {
@@ -237,9 +236,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
     }
 
-    private fun upSearchScopeMenu() {
-        menu?.findItem(R.id.menu_search_scope)?.title =
-            "${getString(R.string.search_scope)}-${viewModel.searchScope.display}"
+    private fun upSearchScope() {
+        binding.tvSearchScope.text = viewModel.searchScope.display
     }
 
     /**
@@ -249,7 +247,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         val searchScope = intent?.getStringExtra("searchScope")
         searchScope?.let {
             viewModel.searchScope.update(searchScope)
-            upSearchScopeMenu()
+            upSearchScope()
         }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {
