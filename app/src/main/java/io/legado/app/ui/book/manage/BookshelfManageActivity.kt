@@ -58,6 +58,7 @@ class BookshelfManageActivity :
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
     private var searchView: SearchView? = null
+    private var books: List<Book>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.groupId = intent.getLongExtra("groupId", -1)
@@ -71,7 +72,7 @@ class BookshelfManageActivity :
         initRecyclerView()
         initOtherView()
         initGroupData()
-        upBookData()
+        upBookDataByGroupId()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -120,7 +121,7 @@ class BookshelfManageActivity :
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    upBookData(newText)
+                    upBookData()
                     return false
                 }
 
@@ -174,7 +175,7 @@ class BookshelfManageActivity :
         }
     }
 
-    private fun upBookData(searchKey: String? = null) {
+    private fun upBookDataByGroupId() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             when (viewModel.groupId) {
@@ -187,31 +188,40 @@ class BookshelfManageActivity :
                 AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(viewModel.groupId)
             }.conflate().map { list ->
-                val books = if (searchKey.isNullOrBlank()) {
-                    list
-                } else {
-                    list.filter {
-                        it.contains(searchKey)
-                    }
-                }
                 when (AppConfig.bookshelfSort) {
-                    1 -> books.sortedByDescending {
+                    1 -> list.sortedByDescending {
                         it.latestChapterTime
                     }
-                    2 -> books.sortedWith { o1, o2 ->
+                    2 -> list.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
-                    3 -> books.sortedBy {
+                    3 -> list.sortedBy {
                         it.order
                     }
-                    else -> books.sortedByDescending {
+                    else -> list.sortedByDescending {
                         it.durChapterTime
                     }
                 }
             }.flowOn(IO)
-                .conflate().collect { books ->
-                    adapter.setItems(books)
+                .conflate().collect {
+                    books = it
+                    upBookData()
                 }
+        }
+    }
+
+    private fun upBookData() {
+        books?.let { books ->
+            val searchKey = searchView?.query
+            if (searchKey.isNullOrEmpty()) {
+                adapter.setItems(books)
+            } else {
+                books.filter {
+                    it.contains(searchKey.toString())
+                }.let {
+                    adapter.setItems(it)
+                }
+            }
         }
     }
 
@@ -223,7 +233,7 @@ class BookshelfManageActivity :
                 binding.titleBar.subtitle = item.title
                 viewModel.groupId =
                     appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
-                upBookData()
+                upBookDataByGroupId()
             }
         }
         return super.onCompatOptionsItemSelected(item)
