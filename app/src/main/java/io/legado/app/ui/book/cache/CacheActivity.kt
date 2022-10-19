@@ -26,7 +26,6 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -72,7 +71,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         initRecyclerView()
         initGroupData()
         initBookData()
-        initCacheData()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -191,17 +189,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
     }
 
-    private fun initCacheData() {
-        launch {
-            viewModel.bookCacheFlow.conflate().collect {
-                viewModel.cacheChapters[it.first] = it.second
-                withContext(Dispatchers.Main) {
-                    adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
-                }
-            }
-        }
-    }
-
     override fun observeLiveBus() {
         viewModel.upAdapterLiveData.observe(this) {
             adapter.getItems().forEachIndexed { index, book ->
@@ -232,6 +219,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
         observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
             viewModel.cacheChapters[it.bookUrl]?.add(it.url)
+            adapter.getItems().forEachIndexed { index, book ->
+                if (book.bookUrl == it.bookUrl) {
+                    adapter.notifyItemChanged(index, true)
+                }
+            }
         }
     }
 
