@@ -140,6 +140,9 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.progressBarBehavior -> {
                     postEvent(EventBus.UP_SEEK_BAR, true)
                 }
+                PreferKey.noAnimScrollPage -> {
+                    ReadBook.callBack?.upPageAnim()
+                }
             }
         }
 

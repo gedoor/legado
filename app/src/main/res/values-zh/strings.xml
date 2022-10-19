@@ -1045,4 +1045,6 @@
     <string name="search_scope">搜索范围</string>
     <string name="toggle_search_scope">切换</string>
     <string name="sure_clear_search_history">是否确认清除所有搜索历史记录</string>
+    <string name="no_anim_scroll_page">禁用滚动点击动画</string>
+    <string name="webdav_device_name">设备名称</string>
 </resources>

@@ -503,6 +503,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 pageDelegate = NoAnimPageDelegate(this)
             }
         }
+        (pageDelegate as? ScrollPageDelegate)?.noAnim = AppConfig.noAnimScrollPage
     }
 
     /**

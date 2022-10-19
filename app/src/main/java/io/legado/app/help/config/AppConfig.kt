@@ -2,6 +2,7 @@ package io.legado.app.help.config
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
@@ -184,6 +185,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.ttsFollowSys, value)
         }
 
+    val noAnimScrollPage: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.noAnimScrollPage, false)
+
     const val defaultSpeechRate = 5
 
     var ttsSpeechRate: Int
@@ -333,6 +337,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val replaceEnableDefault get() = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
 
     val webDavDir get() = appCtx.getPrefString(PreferKey.webDavDir, "legado")
+
+    val webDavDeviceName get() = appCtx.getPrefString(PreferKey.webDavDeviceName, Build.MODEL)
 
     val recordLog get() = appCtx.getPrefBoolean(PreferKey.recordLog)
 

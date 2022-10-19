@@ -34,6 +34,13 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.lib.prefs.EditTextPreference
+            android:key="webDavDeviceName"
+            android:title="@string/webdav_device_name"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
         <io.legado.app.lib.prefs.SwitchPreference
             android:key="syncBookProgress"
             android:defaultValue="true"
