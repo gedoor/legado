@@ -24,7 +24,7 @@ data class SearchScope(private var scope: String) {
         return scope
     }
 
-    val stateLiveData = MutableLiveData("")
+    val stateLiveData = MutableLiveData(scope)
 
     fun update(scope: String) {
         this.scope = scope
@@ -33,10 +33,16 @@ data class SearchScope(private var scope: String) {
 
     fun update(groups: List<String>) {
         scope = groups.joinToString(",")
+        stateLiveData.postValue(scope)
     }
 
     fun update(source: BookSource) {
         scope = "${source.bookSourceName}::${source.bookSourceUrl}"
+        stateLiveData.postValue(scope)
+    }
+
+    fun isSource(): Boolean {
+        return scope.contains("::")
     }
 
     val display: String
