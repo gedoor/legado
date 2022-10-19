@@ -99,6 +99,7 @@ class Coroutine<T>(
         return this@Coroutine
     }
 
+    // 如果协程被取消，有可能会不执行
     fun onFinally(
         context: CoroutineContext? = null,
         block: suspend CoroutineScope.() -> Unit

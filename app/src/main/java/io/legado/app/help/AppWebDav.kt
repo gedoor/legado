@@ -68,7 +68,12 @@ object AppWebDav {
         get() {
             val backupDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 .format(Date(System.currentTimeMillis()))
-            return "backup${backupDate}.zip"
+            val deviceName = AppConfig.webDavDeviceName
+            return if (deviceName?.isNotBlank() == true) {
+                "backup${backupDate}-${deviceName}.zip"
+            } else {
+                "backup${backupDate}.zip"
+            }
         }
 
     suspend fun upConfig() {

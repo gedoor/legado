@@ -1,15 +1,15 @@
 package io.legado.app.base
 
-import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.CallSuper
+import androidx.lifecycle.LifecycleService
 import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseService : Service(), CoroutineScope by MainScope() {
+abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
 
     fun <T> execute(
         scope: CoroutineScope = this,
@@ -30,7 +30,8 @@ abstract class BaseService : Service(), CoroutineScope by MainScope() {
         stopSelf()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
         return null
     }
 

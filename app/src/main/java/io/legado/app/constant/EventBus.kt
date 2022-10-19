@@ -30,4 +30,5 @@ object EventBus {
     const val FILE_SOURCE_DOWNLOAD_DONE = "fileSourceDownloadDone"
     const val UPDATE_READ_ACTION_BAR = "updateReadActionBar"
     const val UP_SEEK_BAR = "upSeekBar"
+    const val READ_ALOUD_PLAY = "readAloudPlay"
 }

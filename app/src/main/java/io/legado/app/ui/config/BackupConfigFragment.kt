@@ -122,14 +122,17 @@ class BackupConfigFragment : PreferenceFragment(),
             it.setOnBindEditTextListener { editText ->
                 editText.text = AppConfig.webDavDir?.toEditable()
             }
-            it.setOnPreferenceChangeListener { _, newValue ->
-                (newValue as String).isNotBlank()
+        }
+        findPreference<EditTextPreference>(PreferKey.webDavDeviceName)?.let {
+            it.setOnBindEditTextListener { editText ->
+                editText.text = AppConfig.webDavDeviceName?.toEditable()
             }
         }
         upPreferenceSummary(PreferKey.webDavUrl, getPrefString(PreferKey.webDavUrl))
         upPreferenceSummary(PreferKey.webDavAccount, getPrefString(PreferKey.webDavAccount))
         upPreferenceSummary(PreferKey.webDavPassword, getPrefString(PreferKey.webDavPassword))
         upPreferenceSummary(PreferKey.webDavDir, AppConfig.webDavDir)
+        upPreferenceSummary(PreferKey.webDavDeviceName, AppConfig.webDavDeviceName)
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
         findPreference<io.legado.app.lib.prefs.Preference>("web_dav_restore")
             ?.onLongClick { restoreDir.launch(); true }

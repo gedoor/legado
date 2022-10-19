@@ -17,6 +17,8 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     //速度追踪器
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
 
+    var noAnim: Boolean = false
+
     override fun onAnimStart(animationSpeed: Int) {
         //惯性滚动
         fling(
@@ -104,12 +106,20 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         if (readView.isAbortAnim) {
             return
         }
+        if (noAnim) {
+            curPage.scroll(calcNextPageOffset())
+            return
+        }
         readView.setStartPoint(0f, 0f, false)
         startScroll(0, 0, 0, calcNextPageOffset(), animationSpeed)
     }
 
     override fun prevPageByAnim(animationSpeed: Int) {
         if (readView.isAbortAnim) {
+            return
+        }
+        if (noAnim) {
+            curPage.scroll(calcPrevPageOffset())
             return
         }
         readView.setStartPoint(0f, 0f, false)

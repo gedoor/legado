@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -85,11 +86,21 @@ abstract class BaseReadAloudService : BaseService(),
         wakeLock.acquire()
         isRun = true
         pause = false
+        observeLiveBus()
         initMediaSession()
         initBroadcastReceiver()
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         setTimer(AppConfig.ttsTimer)
+    }
+
+    fun observeLiveBus() {
+        observeEvent<Bundle>(EventBus.READ_ALOUD_PLAY) {
+            val play = it.getBoolean("play")
+            val pageIndex = it.getInt("pageIndex")
+            val startPos = it.getInt("startPos")
+            newReadAloud(play, pageIndex, startPos)
+        }
     }
 
     override fun onDestroy() {

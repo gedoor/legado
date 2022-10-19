@@ -83,7 +83,6 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
     private fun initData() = binding.run {
         upPlayState()
         upTimerText(BaseReadAloudService.timeMinute)
-        seekTimer.progress = BaseReadAloudService.timeMinute
         cbTtsFollowSys.isChecked = requireContext().getPrefBoolean("ttsFollowSys", true)
         upTtsSpeechRateEnabled(!cbTtsFollowSys.isChecked)
         upSeekTimer()
@@ -170,7 +169,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             if (BaseReadAloudService.timeMinute > 0) {
                 binding.seekTimer.progress = BaseReadAloudService.timeMinute
             } else {
-                binding.seekTimer.progress = 0
+                binding.seekTimer.progress = AppConfig.ttsTimer
             }
         }
     }
