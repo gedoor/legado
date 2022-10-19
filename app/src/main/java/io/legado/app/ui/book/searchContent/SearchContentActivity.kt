@@ -132,9 +132,9 @@ class SearchContentActivity :
     }
 
     override fun observeLiveBus() {
-        observeEvent<BookChapter>(EventBus.SAVE_CONTENT) { chapter ->
+        observeEvent<Pair<Book, BookChapter>>(EventBus.SAVE_CONTENT) { (book, chapter) ->
             viewModel.book?.bookUrl?.let { bookUrl ->
-                if (chapter.bookUrl == bookUrl) {
+                if (book.bookUrl == bookUrl) {
                     viewModel.cacheChapterNames.add(chapter.getFileName())
                     adapter.notifyItemChanged(chapter.index, true)
                 }

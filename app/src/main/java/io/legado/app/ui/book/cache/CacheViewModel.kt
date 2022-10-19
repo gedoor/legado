@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
@@ -25,8 +26,7 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.OrderCoroutine
 import io.legado.app.utils.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.ag2s.epublib.domain.*
@@ -37,15 +37,19 @@ import splitties.init.appCtx
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.charset.Charset
 import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.coroutineContext
+import kotlin.io.path.name
 
 
 class CacheViewModel(application: Application) : BaseViewModel(application) {
     val upAdapterLiveData = MutableLiveData<String>()
+    val cacheLiveData = MutableLiveData<String>()
     val exportProgress = ConcurrentHashMap<String, Int>()
     val exportMsg = ConcurrentHashMap<String, String>()
     private val mutex = Mutex()
@@ -61,52 +65,47 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     private fun loadCacheFiles() {
         execute {
             //直接获取全部缓存信息,避免切换分组重新获取
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                val visitor = object : SimpleFileVisitor<Path>() {
-//
-//                    var names: HashSet<String>? = null
-//
-//                    override fun preVisitDirectory(
-//                        dir: Path,
-//                        attrs: BasicFileAttributes?
-//                    ): FileVisitResult {
-//                        if (dir.name != "book_cache") {
-//                            names = hashSetOf()
-//                        }
-//                        return FileVisitResult.CONTINUE
-//                    }
-//
-//                    override fun visitFile(
-//                        file: Path,
-//                        attrs: BasicFileAttributes?
-//                    ): FileVisitResult {
-//                        names!!.add(file.name)
-//                        return FileVisitResult.CONTINUE
-//                    }
-//
-//                    override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
-//                        if (dir.name != "book_cache") {
-//                            cacheChapters[dir.name] = names!!
-//                        }
-//                        return FileVisitResult.CONTINUE
-//                    }
-//                }
-//                withContext(Dispatchers.IO) {
-//                    Files.walkFileTree(Paths.get(BookHelp.cachePath), emptySet(), 2, visitor)
-//                }
-//                return@execute
-//            }
             val books = appDb.bookDao.getByTypeOnLine(BookType.text or BookType.image)
-            books.forEach { book ->
-                val chapterCaches = hashSetOf<String>()
-                val cacheNames = BookHelp.getChapterFiles(book)
-                appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
-                    if (cacheNames.contains(chapter.getFileName())) {
-                        chapterCaches.add(chapter.url)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val visitor = object : SimpleFileVisitor<Path>() {
+
+                    var names: HashSet<String>? = null
+
+                    override fun preVisitDirectory(
+                        dir: Path,
+                        attrs: BasicFileAttributes?
+                    ): FileVisitResult {
+                        if (dir.name != "book_cache") {
+                            names = hashSetOf()
+                        }
+                        return FileVisitResult.CONTINUE
+                    }
+
+                    override fun visitFile(
+                        file: Path,
+                        attrs: BasicFileAttributes?
+                    ): FileVisitResult {
+                        names!!.add(file.name)
+                        return FileVisitResult.CONTINUE
+                    }
+
+                    override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+                        if (dir.name != "book_cache") {
+                            cacheChapters[dir.name] = names!!
+                            cacheLiveData.postValue(dir.name)
+                        }
+                        return FileVisitResult.CONTINUE
                     }
                 }
-                cacheChapters[book.bookUrl] = chapterCaches
-                upAdapterLiveData.postValue(book.bookUrl)
+                withContext(Dispatchers.IO) {
+                    Files.walkFileTree(Paths.get(BookHelp.cachePath), emptySet(), 2, visitor)
+                }
+                return@execute
+            }
+            books.forEach { book ->
+                val cacheNames = BookHelp.getChapterFiles(book)
+                cacheChapters[book.getFolderName()] = cacheNames
+                cacheLiveData.postValue(book.getFolderName())
             }
         }
     }

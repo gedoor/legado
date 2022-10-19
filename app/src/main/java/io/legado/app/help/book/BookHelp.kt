@@ -87,7 +87,7 @@ object BookHelp {
     ) {
         saveText(book, bookChapter, content)
         saveImages(bookSource, book, bookChapter, content)
-        postEvent(EventBus.SAVE_CONTENT, bookChapter)
+        postEvent(EventBus.SAVE_CONTENT, Pair(book, bookChapter))
     }
 
     fun saveText(
@@ -198,11 +198,11 @@ object BookHelp {
         return ZipFile(uri.path)
     }
 
-    fun getChapterFiles(book: Book): Set<String> {
-        if (book.isLocalTxt) {
-            return emptySet()
-        }
+    fun getChapterFiles(book: Book): HashSet<String> {
         val fileNames = hashSetOf<String>()
+        if (book.isLocalTxt) {
+            return fileNames
+        }
         FileUtils.createFolderIfNotExist(
             downloadDir,
             subDirs = arrayOf(cacheFolderName, book.getFolderName())

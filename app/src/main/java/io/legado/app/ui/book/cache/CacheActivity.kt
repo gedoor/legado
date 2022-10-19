@@ -12,6 +12,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.charsets
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ActivityCacheBookBinding
@@ -26,6 +27,7 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -191,9 +193,24 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun observeLiveBus() {
         viewModel.upAdapterLiveData.observe(this) {
-            adapter.getItems().forEachIndexed { index, book ->
-                if (book.bookUrl == it) {
-                    adapter.notifyItemChanged(index, true)
+            launch(Default) {
+                adapter.getItems().forEachIndexed { index, book ->
+                    if (book.bookUrl == it) {
+                        binding.recyclerView.post {
+                            adapter.notifyItemChanged(index, true)
+                        }
+                    }
+                }
+            }
+        }
+        viewModel.cacheLiveData.observe(this) {
+            launch(Default) {
+                adapter.getItems().forEachIndexed { index, book ->
+                    if (book.getFolderName() == it) {
+                        binding.recyclerView.post {
+                            adapter.notifyItemChanged(index, true)
+                        }
+                    }
                 }
             }
         }
@@ -217,11 +234,15 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
             }
         }
-        observeEvent<BookChapter>(EventBus.SAVE_CONTENT) {
-            viewModel.cacheChapters[it.bookUrl]?.add(it.url)
-            adapter.getItems().forEachIndexed { index, book ->
-                if (book.bookUrl == it.bookUrl) {
-                    adapter.notifyItemChanged(index, true)
+        observeEvent<Pair<Book, BookChapter>>(EventBus.SAVE_CONTENT) { (book, chapter) ->
+            viewModel.cacheChapters[book.bookUrl]?.add(chapter.url)
+            launch(Default) {
+                adapter.getItems().forEachIndexed { index, item ->
+                    if (book.bookUrl == item.bookUrl) {
+                        binding.recyclerView.post {
+                            adapter.notifyItemChanged(index, true)
+                        }
+                    }
                 }
             }
         }
