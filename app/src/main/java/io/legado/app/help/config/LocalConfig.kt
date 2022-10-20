@@ -36,6 +36,9 @@ object LocalConfig :
     val bookSourcesHelpVersionIsLast: Boolean
         get() = isLastVersion(1, "bookSourceHelpVersion", "firstOpenBookSources")
 
+    val webDavBookHelpVersionIsLast: Boolean
+        get() = isLastVersion(1, "webDavBookHelpVersion", "firstOpenWebDavBook")
+
     val ruleHelpVersionIsLast: Boolean
         get() = isLastVersion(1, "ruleHelpVersion")
 
