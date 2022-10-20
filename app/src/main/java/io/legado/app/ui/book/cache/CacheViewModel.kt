@@ -21,6 +21,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.coroutine.OrderCoroutine
@@ -58,7 +59,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         loadChapterCoroutine?.cancel()
         loadChapterCoroutine = execute {
             books.forEach { book ->
-                if (!cacheChapters.contains(book.bookUrl)) {
+                if (!book.isLocal && !cacheChapters.contains(book.bookUrl)) {
                     val chapterCaches = hashSetOf<String>()
                     val cacheNames = BookHelp.getChapterFiles(book)
                     if (cacheNames.isNotEmpty()) {

@@ -27,7 +27,6 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -42,6 +41,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     private val exportBookPathKey = "exportBookPath"
     private val exportTypes = arrayListOf("txt", "epub")
+    private val layoutManager by lazy { LinearLayoutManager(this) }
     private val adapter by lazy { CacheAdapter(this, this) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
@@ -147,7 +147,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     }
 
     private fun initRecyclerView() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
     }
 
@@ -192,17 +192,20 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
     }
 
-    override fun observeLiveBus() {
-        viewModel.upAdapterLiveData.observe(this) {
-            launch(Default) {
-                adapter.getItems().forEachIndexed { index, book ->
-                    if (book.bookUrl == it) {
-                        binding.recyclerView.post {
-                            adapter.notifyItemChanged(index, true)
-                        }
-                    }
+    private fun notifyItemChanged(bookUrl: String) {
+        kotlin.runCatching {
+            adapter.getItems().forEachIndexed { index, book ->
+                if (bookUrl == book.bookUrl) {
+                    adapter.notifyItemChanged(index, true)
+                    return
                 }
             }
+        }
+    }
+
+    override fun observeLiveBus() {
+        viewModel.upAdapterLiveData.observe(this) {
+            notifyItemChanged(it)
         }
         observeEvent<String>(EventBus.UP_DOWNLOAD) {
             if (!CacheBook.isRun) {
@@ -218,23 +221,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
                 menu?.applyTint(this)
             }
-            adapter.getItems().forEachIndexed { index, book ->
-                if (book.bookUrl == it) {
-                    adapter.notifyItemChanged(index, true)
-                }
-            }
+            notifyItemChanged(it)
         }
         observeEvent<Pair<Book, BookChapter>>(EventBus.SAVE_CONTENT) { (book, chapter) ->
             viewModel.cacheChapters[book.bookUrl]?.add(chapter.url)
-            launch(Default) {
-                adapter.getItems().forEachIndexed { index, item ->
-                    if (book.bookUrl == item.bookUrl) {
-                        binding.recyclerView.post {
-                            adapter.notifyItemChanged(index, true)
-                        }
-                    }
-                }
-            }
+            notifyItemChanged(book.bookUrl)
         }
     }
 
