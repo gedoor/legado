@@ -1,6 +1,5 @@
 package io.legado.app.utils
 
-import android.util.Log
 import androidx.core.os.postDelayed
 import com.script.SimpleBindings
 import io.legado.app.constant.AppConst
@@ -39,7 +38,6 @@ suspend fun CharSequence.replace(regex: Regex, replacement: String, timeout: Lon
                     }
                 }
                 matcher.appendTail(stringBuffer)
-                Log.e("regex", "end")
                 block.resume(stringBuffer.toString())
             } catch (e: Exception) {
                 block.resumeWithException(e)

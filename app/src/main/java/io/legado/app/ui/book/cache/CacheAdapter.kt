@@ -37,7 +37,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                 if (item.isLocal) {
                     tvDownload.setText(R.string.local_book)
                 } else {
-                    val cs = callBack.cacheChapters[item.getFolderName()]
+                    val cs = callBack.cacheChapters[item.bookUrl]
                     if (cs == null) {
                         tvDownload.setText(R.string.loading)
                     } else {
@@ -53,7 +53,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                 if (item.isLocal) {
                     tvDownload.setText(R.string.local_book)
                 } else {
-                    val cacheSize = callBack.cacheChapters[item.getFolderName()]?.size ?: 0
+                    val cacheSize = callBack.cacheChapters[item.bookUrl]?.size ?: 0
                     tvDownload.text =
                         context.getString(R.string.download_count, cacheSize, item.totalChapterNum)
                 }

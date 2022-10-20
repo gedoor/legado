@@ -175,6 +175,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
             }.conflate().collect { books ->
                 adapter.setItems(books)
+                viewModel.loadCacheFiles(books)
             }
         }
     }
@@ -196,17 +197,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             launch(Default) {
                 adapter.getItems().forEachIndexed { index, book ->
                     if (book.bookUrl == it) {
-                        binding.recyclerView.post {
-                            adapter.notifyItemChanged(index, true)
-                        }
-                    }
-                }
-            }
-        }
-        viewModel.cacheLiveData.observe(this) {
-            launch(Default) {
-                adapter.getItems().forEachIndexed { index, book ->
-                    if (book.getFolderName() == it) {
                         binding.recyclerView.post {
                             adapter.notifyItemChanged(index, true)
                         }

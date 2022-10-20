@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
@@ -15,7 +14,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -24,6 +22,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.coroutine.OrderCoroutine
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
@@ -37,75 +36,40 @@ import splitties.init.appCtx
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.charset.Charset
 import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.coroutineContext
-import kotlin.io.path.name
 
 
 class CacheViewModel(application: Application) : BaseViewModel(application) {
     val upAdapterLiveData = MutableLiveData<String>()
-    val cacheLiveData = MutableLiveData<String>()
     val exportProgress = ConcurrentHashMap<String, Int>()
     val exportMsg = ConcurrentHashMap<String, String>()
     private val mutex = Mutex()
     val cacheChapters = hashMapOf<String, HashSet<String>>()
+    var loadChapterCoroutine: Coroutine<Unit>? = null
 
     @Volatile
     private var exportNumber = 0
 
-    init {
-        loadCacheFiles()
-    }
-
-    private fun loadCacheFiles() {
-        execute {
-            //直接获取全部缓存信息,避免切换分组重新获取
-            val books = appDb.bookDao.getByTypeOnLine(BookType.text or BookType.image)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val visitor = object : SimpleFileVisitor<Path>() {
-
-                    var names: HashSet<String>? = null
-
-                    override fun preVisitDirectory(
-                        dir: Path,
-                        attrs: BasicFileAttributes?
-                    ): FileVisitResult {
-                        if (dir.name != "book_cache") {
-                            names = hashSetOf()
-                        }
-                        return FileVisitResult.CONTINUE
-                    }
-
-                    override fun visitFile(
-                        file: Path,
-                        attrs: BasicFileAttributes?
-                    ): FileVisitResult {
-                        names!!.add(file.name)
-                        return FileVisitResult.CONTINUE
-                    }
-
-                    override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
-                        if (dir.name != "book_cache") {
-                            cacheChapters[dir.name] = names!!
-                            cacheLiveData.postValue(dir.name)
-                        }
-                        return FileVisitResult.CONTINUE
-                    }
-                }
-                withContext(Dispatchers.IO) {
-                    Files.walkFileTree(Paths.get(BookHelp.cachePath), emptySet(), 2, visitor)
-                }
-                return@execute
-            }
+    fun loadCacheFiles(books: List<Book>) {
+        loadChapterCoroutine?.cancel()
+        loadChapterCoroutine = execute {
             books.forEach { book ->
+                val chapterCaches = hashSetOf<String>()
                 val cacheNames = BookHelp.getChapterFiles(book)
-                cacheChapters[book.getFolderName()] = cacheNames
-                cacheLiveData.postValue(book.getFolderName())
+                if (cacheNames.isNotEmpty()) {
+                    appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                        if (cacheNames.contains(chapter.getFileName())) {
+                            chapterCaches.add(chapter.url)
+                        }
+                    }
+                }
+                cacheChapters[book.bookUrl] = chapterCaches
+                upAdapterLiveData.postValue(book.bookUrl)
+                ensureActive()
             }
         }
     }
