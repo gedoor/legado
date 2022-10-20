@@ -29,16 +29,19 @@ data class SearchScope(private var scope: String) {
     fun update(scope: String) {
         this.scope = scope
         stateLiveData.postValue(scope)
+        save()
     }
 
     fun update(groups: List<String>) {
         scope = groups.joinToString(",")
         stateLiveData.postValue(scope)
+        save()
     }
 
     fun update(source: BookSource) {
         scope = "${source.bookSourceName}::${source.bookSourceUrl}"
         stateLiveData.postValue(scope)
+        save()
     }
 
     fun isSource(): Boolean {
@@ -69,11 +72,26 @@ data class SearchScope(private var scope: String) {
                     list.add(it)
                 }
             }
-            if (list.isEmpty()) {
-                list.add(appCtx.getString(R.string.all_source))
-            }
             return list
         }
+
+    fun remove(scope: String) {
+        if (isSource()) {
+            this.scope = ""
+        } else {
+            val stringBuilder = StringBuilder()
+            this.scope.split(",").forEach {
+                if (it != scope) {
+                    if (stringBuilder.isNotEmpty()) {
+                        stringBuilder.append(",")
+                    }
+                    stringBuilder.append(it)
+                }
+            }
+            this.scope = stringBuilder.toString()
+        }
+        stateLiveData.postValue(this.scope)
+    }
 
     /**
      * 搜索范围书源

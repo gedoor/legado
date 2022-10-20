@@ -49,15 +49,6 @@
         app:layout_constraintTop_toBottomOf="@id/title_bar">
 
         <TextView
-            android:id="@+id/tv_searchScope"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="6dp"
-            android:text="@string/all_source"
-            android:singleLine="true"
-            android:gravity="center" />
-
-        <TextView
             android:id="@+id/tv_book_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

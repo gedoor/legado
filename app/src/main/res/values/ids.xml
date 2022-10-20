@@ -5,6 +5,11 @@
     <item name="tag1" type="id" />
     <item name="tag2" type="id" />
 
+    <item name="menu_group_1" type="id" />
+    <item name="menu_group_2" type="id" />
+
+    <item name="menu_1" type="id" />
+
     <item name="fast_scroller" type="id" />
 
     <item name="bettermovementmethod_highlight_background_span" type="id" />

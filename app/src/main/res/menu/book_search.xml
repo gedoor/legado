@@ -4,11 +4,6 @@
     tools:ignore="AlwaysShowAction">
 
     <item
-        android:id="@+id/menu_search_scope"
-        android:title="@string/search_scope"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_precision_search"
         android:checkable="true"
         android:title="@string/precision_search"
@@ -20,8 +15,14 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_search_scope"
+        android:title="@string/change_search_scope"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
+        android:orderInCategory="9999"
         app:showAsAction="never" />
 
 </menu>

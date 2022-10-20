@@ -1050,4 +1050,5 @@
     <string name="webdav_device_name">设备名称</string>
     <string name="wake_lock">唤醒锁</string>
     <string name="wake_lock_summary">开启web服务的时候启用唤醒锁,有些手机开启唤醒锁会被杀后台</string>
+    <string name="change_search_scope">切换搜索范围</string>
 </resources>
