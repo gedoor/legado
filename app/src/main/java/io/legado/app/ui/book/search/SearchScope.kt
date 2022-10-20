@@ -120,8 +120,12 @@ data class SearchScope(private var scope: String) {
         }
         if (list.isEmpty()) {
             scope = ""
-            stateLiveData.postValue(scope)
-            return appDb.bookSourceDao.allEnabled
+            appDb.bookSourceDao.allEnabled.let {
+                if (it.isNotEmpty()) {
+                    stateLiveData.postValue(scope)
+                    list.addAll(it)
+                }
+            }
         }
         return list.sortedBy { it.customOrder }
     }
