@@ -98,7 +98,9 @@ data class SearchScope(private var scope: String) {
      */
     fun getBookSources(): List<BookSource> {
         val list = hashSetOf<BookSource>()
-        if (scope.contains("::")) {
+        if (scope.isEmpty()) {
+            list.addAll(appDb.bookSourceDao.allEnabled)
+        } else if (scope.contains("::")) {
             scope.substringAfter("::").let {
                 appDb.bookSourceDao.getBookSource(it)?.let { source ->
                     list.add(source)
