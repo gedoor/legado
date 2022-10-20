@@ -16,6 +16,7 @@ import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.utils.*
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
+import splitties.init.appCtx
 import splitties.systemservices.powerManager
 
 import java.io.IOException
@@ -36,6 +37,7 @@ class WebService : BaseService() {
 
     }
 
+    private val useWakeLock = appCtx.getPrefBoolean(PreferKey.wakeLock, false)
     private val wakeLock by lazy {
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:webService")
     }
@@ -49,7 +51,9 @@ class WebService : BaseService() {
     @SuppressLint("WakelockTimeout")
     override fun onCreate() {
         super.onCreate()
-        wakeLock.acquire()
+        if (useWakeLock) {
+            wakeLock.acquire()
+        }
         isRun = true
         notificationContent = getString(R.string.service_starting)
         upNotification()
@@ -81,7 +85,9 @@ class WebService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+        }
         networkChangedListener.unRegister()
         isRun = false
         if (httpServer?.isAlive == true) {

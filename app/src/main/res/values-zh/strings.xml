@@ -1047,4 +1047,6 @@
     <string name="sure_clear_search_history">是否确认清除所有搜索历史记录</string>
     <string name="no_anim_scroll_page">禁用滚动点击动画</string>
     <string name="webdav_device_name">设备名称</string>
+    <string name="wake_lock">唤醒锁</string>
+    <string name="wake_lock_summary">开启web服务的时候启用唤醒锁,有些手机开启唤醒锁会被杀后台</string>
 </resources>

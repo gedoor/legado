@@ -56,6 +56,12 @@
             android:key="userAgent"
             android:title="@string/user_agent" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="wakeLock"
+            android:title="@string/wake_lock"
+            android:summary="@string/wake_lock_summary" />
+
         <io.legado.app.lib.prefs.Preference
             android:key="defaultBookTreeUri"
             android:summary="@string/book_tree_uri_s"
