@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/menu_save"
         android:icon="@drawable/ic_save"
         android:title="@string/action_save"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_copy_rule"
+        android:title="@string/copy_rule"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_paste_rule"
+        android:title="@string/paste_rule"
+        app:showAsAction="never" />
 
 </menu>
