@@ -58,17 +58,19 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         loadChapterCoroutine?.cancel()
         loadChapterCoroutine = execute {
             books.forEach { book ->
-                val chapterCaches = hashSetOf<String>()
-                val cacheNames = BookHelp.getChapterFiles(book)
-                if (cacheNames.isNotEmpty()) {
-                    appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
-                        if (cacheNames.contains(chapter.getFileName())) {
-                            chapterCaches.add(chapter.url)
+                if (!cacheChapters.contains(book.bookUrl)) {
+                    val chapterCaches = hashSetOf<String>()
+                    val cacheNames = BookHelp.getChapterFiles(book)
+                    if (cacheNames.isNotEmpty()) {
+                        appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                            if (cacheNames.contains(chapter.getFileName())) {
+                                chapterCaches.add(chapter.url)
+                            }
                         }
                     }
+                    cacheChapters[book.bookUrl] = chapterCaches
+                    upAdapterLiveData.postValue(book.bookUrl)
                 }
-                cacheChapters[book.bookUrl] = chapterCaches
-                upAdapterLiveData.postValue(book.bookUrl)
                 ensureActive()
             }
         }
