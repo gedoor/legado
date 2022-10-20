@@ -185,6 +185,7 @@ class BackupConfigFragment : PreferenceFragment(),
                 upPreferenceSummary(key, getPrefString(key))
                 viewModel.upWebDavConfig()
             }
+            PreferKey.webDavDeviceName -> upPreferenceSummary(key, getPrefString(key))
         }
     }
 

@@ -50,7 +50,8 @@ object BackupConfig {
         PreferKey.defaultCover,
         PreferKey.defaultCoverDark,
         PreferKey.backupPath,
-        PreferKey.defaultBookTreeUri
+        PreferKey.defaultBookTreeUri,
+        PreferKey.webDavDeviceName
     )
 
     //阅读配置
