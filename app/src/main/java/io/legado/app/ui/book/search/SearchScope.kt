@@ -100,30 +100,32 @@ data class SearchScope(private var scope: String) {
         val list = hashSetOf<BookSource>()
         if (scope.isEmpty()) {
             list.addAll(appDb.bookSourceDao.allEnabled)
-        } else if (scope.contains("::")) {
-            scope.substringAfter("::").let {
-                appDb.bookSourceDao.getBookSource(it)?.let { source ->
-                    list.add(source)
+        } else {
+            if (scope.contains("::")) {
+                scope.substringAfter("::").let {
+                    appDb.bookSourceDao.getBookSource(it)?.let { source ->
+                        list.add(source)
+                    }
+                }
+            } else {
+                val oldScope = scope.splitNotBlank(",")
+                val newScope = oldScope.filter {
+                    val bookSources = appDb.bookSourceDao.getEnabledByGroup(it)
+                    list.addAll(bookSources)
+                    bookSources.isNotEmpty()
+                }
+                if (oldScope.size != newScope.size) {
+                    update(newScope)
+                    stateLiveData.postValue(scope)
                 }
             }
-        } else {
-            val oldScope = scope.splitNotBlank(",")
-            val newScope = oldScope.filter {
-                val bookSources = appDb.bookSourceDao.getEnabledByGroup(it)
-                list.addAll(bookSources)
-                bookSources.isNotEmpty()
-            }
-            if (oldScope.size != newScope.size) {
-                update(newScope)
-                stateLiveData.postValue(scope)
-            }
-        }
-        if (list.isEmpty()) {
-            scope = ""
-            appDb.bookSourceDao.allEnabled.let {
-                if (it.isNotEmpty()) {
-                    stateLiveData.postValue(scope)
-                    list.addAll(it)
+            if (list.isEmpty()) {
+                scope = ""
+                appDb.bookSourceDao.allEnabled.let {
+                    if (it.isNotEmpty()) {
+                        stateLiveData.postValue(scope)
+                        list.addAll(it)
+                    }
                 }
             }
         }
