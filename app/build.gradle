@@ -163,7 +163,7 @@ dependencies {
     implementation('androidx.webkit:webkit:1.5.0')
 
     //google
-    implementation('com.google.android.material:material:1.6.1')
+    implementation('com.google.android.material:material:1.7.0')
     implementation('com.google.android.flexbox:flexbox:3.0.0')
     implementation('com.google.code.gson:gson:2.9.1')
 
