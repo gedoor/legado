@@ -10,11 +10,13 @@ import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.databinding.ActivityImportBookBinding
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -55,6 +57,9 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
         binding.recyclerView.adapter = adapter
         binding.selectActionBar.setMainActionText(R.string.add_to_shelf)
         binding.selectActionBar.setCallBack(this)
+        if (!LocalConfig.webDavBookHelpVersionIsLast) {
+            showHelp("webDavBookHelp")
+        }
     }
 
     private fun sortCheck(sortKey: RemoteBookSort) {
@@ -85,6 +90,7 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
         }
     }
 
+
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_remote, menu)
         return super.onCompatCreateOptionsMenu(menu)
@@ -94,6 +100,7 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
         when (item.itemId) {
             R.id.menu_refresh -> upPath()
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
+            R.id.menu_help -> showHelp("webDavBookHelp")
             R.id.menu_sort_name -> {
                 item.isChecked = true
                 sortCheck(RemoteBookSort.Name)
@@ -181,5 +188,9 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
     override fun upCountView() {
         binding.selectActionBar.upCountView(adapter.selected.size, adapter.checkableCount)
     }
-
+    private fun showHelp(fileName: String) {
+        //显示目录help下的帮助文档
+        val mdText = String(assets.open("help/${fileName}.md").readBytes())
+        showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
+    }
 }
