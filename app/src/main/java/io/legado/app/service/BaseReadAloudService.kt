@@ -56,7 +56,9 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private val wakeLock by lazy {
-        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:readAloud")
+        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:readAloud").apply {
+            setReferenceCounted(false)
+        }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
@@ -174,13 +176,16 @@ abstract class BaseReadAloudService : BaseService(),
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
         ReadBook.uploadProgress()
         doDs()
+        wakeLock.release()
     }
 
+    @SuppressLint("WakelockTimeout")
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
+        wakeLock.acquire()
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
