@@ -167,8 +167,10 @@ class HttpReadAloudService : BaseReadAloudService(),
                     }
                 }
                 ensureActive()
-                downloadErrorNo = 0
-                return response.body!!.byteStream()
+                response.body!!.byteStream().let { stream ->
+                    downloadErrorNo = 0
+                    return stream
+                }
             } catch (e: Exception) {
                 when (e) {
                     is CancellationException -> throw e
