@@ -117,8 +117,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         menu.removeGroup(R.id.menu_group_1)
         menu.removeGroup(R.id.menu_group_2)
         val searchScopeNames = viewModel.searchScope.displayNames
-        searchScopeNames.forEach {
-            menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, it).apply {
+        if (viewModel.searchScope.isSource()) {
+            menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, searchScopeNames.first()).apply {
                 isChecked = true
             }
         }
@@ -128,7 +128,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             }
         }
         groups?.forEach {
-            if (!searchScopeNames.contains(it)) {
+            if (searchScopeNames.contains(it)) {
+                menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, it).apply {
+                    isChecked = true
+                }
+            } else {
                 menu.add(R.id.menu_group_2, Menu.NONE, Menu.NONE, it)
             }
         }
