@@ -53,6 +53,9 @@ val Book.isOnLineTxt: Boolean
         return !isLocal && type and BookType.text > 0
     }
 
+val Book.isUpError: Boolean
+    get() = type and BookType.updateError > 0
+
 fun Book.contains(word: String?): Boolean {
     if (word.isNullOrEmpty()) {
         return true

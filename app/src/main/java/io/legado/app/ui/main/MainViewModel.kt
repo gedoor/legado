@@ -12,10 +12,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.DefaultData
-import io.legado.app.help.book.BookHelp
-import io.legado.app.help.book.addType
-import io.legado.app.help.book.isLocal
-import io.legado.app.help.book.removeType
+import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.model.CacheBook
@@ -113,35 +110,42 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
         val source = appDb.bookSourceDao.getBookSource(book.origin)
         if (source == null) {
-            book.addType(BookType.updateError)
-            appDb.bookDao.update(book)
+            if (!book.isUpError) {
+                book.addType(BookType.updateError)
+                appDb.bookDao.update(book)
+            }
             waitUpTocBooks.remove(book.bookUrl)
             return
         }
         waitUpTocBooks.remove(bookUrl)
         upTocAdd(bookUrl)
         execute(context = upTocPool) {
-            val oldBook = book.copy()
-            WebBook.runPreUpdateJs(source, book)
-            if (book.tocUrl.isBlank()) {
-                WebBook.getBookInfoAwait(source, book)
+            kotlin.runCatching {
+                val oldBook = book.copy()
+                WebBook.runPreUpdateJs(source, book)
+                if (book.tocUrl.isBlank()) {
+                    WebBook.getBookInfoAwait(source, book)
+                }
+                val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
+                book.removeType(BookType.updateError)
+                if (book.bookUrl == bookUrl) {
+                    appDb.bookDao.update(book)
+                } else {
+                    upTocAdd(book.bookUrl)
+                    appDb.bookDao.insert(book)
+                    BookHelp.updateCacheFolder(oldBook, book)
+                }
+                appDb.bookChapterDao.delByBook(bookUrl)
+                appDb.bookChapterDao.insert(*toc.toTypedArray())
+                addDownload(source, book)
+            }.onFailure {
+                AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
+                //这里可能因为时间太长书籍信息已经更改,所以重新获取
+                appDb.bookDao.getBook(book.bookUrl)?.let { book ->
+                    book.addType(BookType.updateError)
+                    appDb.bookDao.update(book)
+                }
             }
-            val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
-            book.removeType(BookType.updateError)
-            if (book.bookUrl == bookUrl) {
-                appDb.bookDao.update(book)
-            } else {
-                upTocAdd(book.bookUrl)
-                appDb.bookDao.insert(book)
-                BookHelp.updateCacheFolder(oldBook, book)
-            }
-            appDb.bookChapterDao.delByBook(bookUrl)
-            appDb.bookChapterDao.insert(*toc.toTypedArray())
-            addDownload(source, book)
-        }.onError(upTocPool) {
-            book.addType(BookType.updateError)
-            appDb.bookDao.update(book)
-            AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
         }.onCancel(upTocPool) {
             upTocCancel(bookUrl)
             upTocCancel(book.bookUrl)
