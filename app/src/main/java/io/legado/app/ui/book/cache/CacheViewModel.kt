@@ -50,7 +50,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     val exportMsg = ConcurrentHashMap<String, String>()
     private val mutex = Mutex()
     val cacheChapters = hashMapOf<String, HashSet<String>>()
-    var loadChapterCoroutine: Coroutine<Unit>? = null
+    private var loadChapterCoroutine: Coroutine<Unit>? = null
 
     @Volatile
     private var exportNumber = 0
