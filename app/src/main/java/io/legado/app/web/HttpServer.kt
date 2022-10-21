@@ -6,6 +6,7 @@ import fi.iki.elonen.NanoHTTPD
 import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
+import io.legado.app.api.controller.ReplaceRuleController
 import io.legado.app.api.controller.RssSourceController
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.externalFiles
@@ -50,6 +51,9 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/saveRssSource" -> RssSourceController.saveSource(postData)
                         "/saveRssSources" -> RssSourceController.saveSources(postData)
                         "/deleteRssSources" -> RssSourceController.deleteSources(postData)
+                        "/saveReplaceRule" -> ReplaceRuleController.saveRule(postData)
+                        "/deleteReplaceRule" -> ReplaceRuleController.delete(postData)
+                        "/testReplaceRule" -> ReplaceRuleController.testRule(postData)
                         else -> null
                     }
                 }
@@ -68,6 +72,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "/getReadConfig" -> BookController.getWebReadConfig()
                         "/getRssSource" -> RssSourceController.getSource(parameters)
                         "/getRssSources" -> RssSourceController.sources
+                        "/getReplaceRules" -> ReplaceRuleController.allRules
                         else -> null
                     }
                 }
