@@ -128,6 +128,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
                 book.removeType(BookType.updateError)
+                book.sync(oldBook)
                 if (book.bookUrl == bookUrl) {
                     appDb.bookDao.update(book)
                 } else {
