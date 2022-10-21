@@ -16,7 +16,7 @@
 
     <item
         android:id="@+id/menu_search_scope"
-        android:title="@string/change_search_scope"
+        android:title="@string/groups_or_source"
         app:showAsAction="never" />
 
     <item

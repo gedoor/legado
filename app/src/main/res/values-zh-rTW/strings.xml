@@ -1052,4 +1052,5 @@
     <string name="change_search_scope">切换搜索范围</string>
     <string name="copy_rule">拷贝规则</string>
     <string name="paste_rule">粘贴规则</string>
+    <string name="groups_or_source">多分组/书源</string>
 </resources>
