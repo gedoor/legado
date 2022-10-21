@@ -2,7 +2,6 @@ package io.legado.app.api.controller
 
 import androidx.core.graphics.drawable.toBitmap
 import io.legado.app.api.ReturnData
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookProgress
@@ -15,9 +14,9 @@ import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.BookCover
+import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
@@ -201,7 +200,7 @@ object BookController {
     fun saveBook(postData: String?): ReturnData {
         val returnData = ReturnData()
         GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
-            book.save()
+            appDb.bookDao.update(book)
             AppWebDav.uploadBookProgress(book)
             return returnData.setData("")
         }
