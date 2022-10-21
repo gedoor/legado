@@ -116,25 +116,35 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.removeGroup(R.id.menu_group_1)
         menu.removeGroup(R.id.menu_group_2)
+        var hasChecked = false
         val searchScopeNames = viewModel.searchScope.displayNames
         if (viewModel.searchScope.isSource()) {
             menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, searchScopeNames.first()).apply {
                 isChecked = true
+                hasChecked = true
             }
         }
-        menu.add(R.id.menu_group_2, R.id.menu_1, Menu.NONE, getString(R.string.all_source)).apply {
-            if (searchScopeNames.isEmpty()) {
-                isChecked = true
-            }
-        }
+        val allSourceMenu =
+            menu.add(R.id.menu_group_2, R.id.menu_1, Menu.NONE, getString(R.string.all_source))
+                .apply {
+                    if (searchScopeNames.isEmpty()) {
+                        isChecked = true
+                        hasChecked = true
+                    }
+                }
         groups?.forEach {
             if (searchScopeNames.contains(it)) {
                 menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, it).apply {
                     isChecked = true
+                    hasChecked = true
                 }
             } else {
                 menu.add(R.id.menu_group_2, Menu.NONE, Menu.NONE, it)
             }
+        }
+        if (!hasChecked) {
+            viewModel.searchScope.update("")
+            allSourceMenu.isChecked = true
         }
         menu.setGroupCheckable(R.id.menu_group_1, true, false)
         menu.setGroupCheckable(R.id.menu_group_2, true, true)
