@@ -36,6 +36,8 @@
         android:id="@+id/tv_open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:background="?attr/selectableItemBackground"
         android:padding="8dp"
         android:text="@string/open"
         android:textColor="@color/secondaryText"
