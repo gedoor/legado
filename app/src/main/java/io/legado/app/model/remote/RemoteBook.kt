@@ -1,6 +1,6 @@
 package io.legado.app.model.remote
 
-import com.android.tools.r8.Keep
+import androidx.annotation.Keep
 import io.legado.app.lib.webdav.WebDavFile
 import io.legado.app.model.localBook.LocalBook
 

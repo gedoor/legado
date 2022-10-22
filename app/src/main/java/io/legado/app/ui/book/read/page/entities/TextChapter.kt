@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page.entities
 
-import com.android.tools.r8.Keep
+
+import androidx.annotation.Keep
 import kotlin.math.min
 
 /**

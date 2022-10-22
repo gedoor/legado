@@ -3,7 +3,7 @@ package io.legado.app.ui.book.read.page.entities.column
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import com.android.tools.r8.Keep
+import androidx.annotation.Keep
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
 /**

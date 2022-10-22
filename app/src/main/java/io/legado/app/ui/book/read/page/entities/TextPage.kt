@@ -2,7 +2,7 @@ package io.legado.app.ui.book.read.page.entities
 
 import android.text.Layout
 import android.text.StaticLayout
-import com.android.tools.r8.Keep
+import androidx.annotation.Keep
 import io.legado.app.R
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook

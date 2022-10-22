@@ -1,6 +1,6 @@
 package io.legado.app.ui.book.read.page.entities.column
 
-import com.android.tools.r8.Keep
+import androidx.annotation.Keep
 
 /**
  * 图片列
