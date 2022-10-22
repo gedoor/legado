@@ -515,8 +515,10 @@ class BookInfoActivity :
     override fun coverChangeTo(coverUrl: String) {
         viewModel.bookData.value?.let { book ->
             book.customCoverUrl = coverUrl
-            viewModel.saveBook(book)
             showCover(book)
+            if (viewModel.inBookshelf) {
+                viewModel.saveBook(book)
+            }
         }
     }
 
