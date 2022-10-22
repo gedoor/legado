@@ -60,12 +60,12 @@ object DefaultData {
         RssSource.fromJsonArray(json).getOrDefault(emptyList())
     }
 
-    val coverRuleConfig: BookCover.CoverRuleConfig by lazy {
+    val coverRule: BookCover.CoverRule by lazy {
         val json = String(
-            appCtx.assets.open("defaultData${File.separator}coverRuleConfig.json")
+            appCtx.assets.open("defaultData${File.separator}coverRule.json")
                 .readBytes()
         )
-        GSON.fromJsonObject<BookCover.CoverRuleConfig>(json).getOrThrow()!!
+        GSON.fromJsonObject<BookCover.CoverRule>(json).getOrThrow()!!
     }
 
     val keyboardAssists: List<KeyboardAssist> by lazy {

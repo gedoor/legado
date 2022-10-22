@@ -3,11 +3,13 @@ package io.legado.app.ui.book.read.page.entities.column
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import com.android.tools.r8.Keep
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
 /**
  * 评论按钮列
  */
+@Keep
 data class ReviewColumn(
     override var start: Float,
     override var end: Float,

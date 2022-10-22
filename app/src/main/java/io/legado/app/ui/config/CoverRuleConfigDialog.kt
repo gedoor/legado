@@ -1,15 +1,21 @@
 package io.legado.app.ui.config
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogCoverRuleConfigBinding
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.BookCover
+import io.legado.app.utils.GSON
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import splitties.views.onClick
 
 class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_config) {
@@ -22,9 +28,8 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.cbEnable.isChecked = BookCover.coverRuleConfig.enable
-        binding.editSearchUrl.setText(BookCover.coverRuleConfig.searchUrl)
-        binding.editCoverUrlRule.setText(BookCover.coverRuleConfig.coverRule)
+        binding.toolBar.setBackgroundColor(primaryColor)
+        initData()
         binding.tvCancel.onClick {
             dismissAllowingStateLoss()
         }
@@ -35,15 +40,27 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
             if (searchUrl.isNullOrBlank() || coverRule.isNullOrBlank()) {
                 toastOnUi("搜索url和cover规则不能为空")
             } else {
-                BookCover.CoverRuleConfig(enable, searchUrl, coverRule).let { config ->
-                    BookCover.saveCoverRuleConfig(config)
+                BookCover.CoverRule(enable, searchUrl, coverRule).let { config ->
+                    BookCover.saveCoverRule(config)
                 }
                 dismissAllowingStateLoss()
             }
         }
         binding.tvFooterLeft.onClick {
-            BookCover.delCoverRuleConfig()
+            BookCover.delCoverRule()
             dismissAllowingStateLoss()
+        }
+    }
+
+    private fun initData() {
+        launch {
+            val rule = withContext(IO) {
+                BookCover.getCoverRule()
+            }
+            Log.e("coverRule", GSON.toJson(rule))
+            binding.cbEnable.isChecked = rule.enable
+            binding.editSearchUrl.setText(rule.searchUrl)
+            binding.editCoverUrlRule.setText(rule.coverRule)
         }
     }
 

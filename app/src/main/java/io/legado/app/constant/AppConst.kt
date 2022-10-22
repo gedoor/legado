@@ -3,6 +3,7 @@ package io.legado.app.constant
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.provider.Settings
+import com.android.tools.r8.Keep
 import com.script.javascript.RhinoScriptEngine
 import io.legado.app.BuildConfig
 import splitties.init.appCtx
@@ -87,6 +88,7 @@ object AppConst {
     val charsets =
         arrayListOf("UTF-8", "GB2312", "GB18030", "GBK", "Unicode", "UTF-16", "UTF-16LE", "ASCII")
 
+    @Keep
     data class AppInfo(
         var versionCode: Long = 0L,
         var versionName: String = ""

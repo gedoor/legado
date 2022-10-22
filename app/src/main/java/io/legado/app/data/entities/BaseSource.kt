@@ -1,8 +1,7 @@
 package io.legado.app.data.entities
 
-import android.util.Base64
-import com.script.SimpleBindings
 import cn.hutool.crypto.symmetric.AES
+import com.script.SimpleBindings
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi

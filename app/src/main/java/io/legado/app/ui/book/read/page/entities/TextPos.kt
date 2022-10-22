@@ -1,8 +1,12 @@
 package io.legado.app.ui.book.read.page.entities
 
+import com.android.tools.r8.Keep
+
 /**
  * 位置信息
  */
+@Keep
+@Suppress("unused")
 data class TextPos(
     var relativePagePos: Int,
     var lineIndex: Int,

@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.entities
 
 import android.text.Layout
 import android.text.StaticLayout
+import com.android.tools.r8.Keep
 import io.legado.app.R
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
@@ -15,6 +16,7 @@ import kotlin.math.min
 /**
  * 页面信息
  */
+@Keep
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 data class TextPage(
     var index: Int = 0,

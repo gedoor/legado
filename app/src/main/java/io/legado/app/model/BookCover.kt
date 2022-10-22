@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import com.android.tools.r8.Keep
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -23,6 +24,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import splitties.init.appCtx
 
+@Keep
 object BookCover {
 
     private const val coverRuleConfigKey = "legadoCoverRuleConfig"
@@ -32,12 +34,6 @@ object BookCover {
         private set
     lateinit var defaultDrawable: Drawable
         private set
-    val coverRuleConfig: CoverRuleConfig
-        get() {
-            return GSON.fromJsonObject<CoverRuleConfig>(CacheManager.get(coverRuleConfigKey))
-                .getOrNull()
-                ?: DefaultData.coverRuleConfig
-        }
 
 
     init {
@@ -117,8 +113,14 @@ object BookCover {
             .thumbnail(loadBlur)
     }
 
+    fun getCoverRule(): CoverRule {
+        return GSON.fromJsonObject<CoverRule>(CacheManager.get(coverRuleConfigKey))
+            .getOrNull()
+            ?: DefaultData.coverRule
+    }
+
     suspend fun searchCover(book: Book): String? {
-        val config = coverRuleConfig
+        val config = getCoverRule()
         if (!config.enable || config.searchUrl.isBlank() || config.coverRule.isBlank()) {
             return null
         }
@@ -135,16 +137,17 @@ object BookCover {
         return analyzeRule.getString(config.coverRule, isUrl = true)
     }
 
-    fun saveCoverRuleConfig(config: CoverRuleConfig) {
+    fun saveCoverRule(config: CoverRule) {
         val json = GSON.toJson(config)
         CacheManager.put(coverRuleConfigKey, json)
     }
 
-    fun delCoverRuleConfig() {
+    fun delCoverRule() {
         CacheManager.delete(coverRuleConfigKey)
     }
 
-    data class CoverRuleConfig(
+    @Keep
+    data class CoverRule(
         var enable: Boolean = true,
         var searchUrl: String,
         var coverRule: String,
