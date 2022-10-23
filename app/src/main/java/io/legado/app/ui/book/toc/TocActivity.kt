@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityChapterListBinding
+import io.legado.app.help.book.isLocalTxt
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
@@ -25,13 +26,16 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
-
+/**
+ * 目录
+ */
 class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
 
     override val binding by viewBinding(ActivityChapterListBinding::inflate)
     override val viewModel by viewModels<TocViewModel>()
 
     private lateinit var tabLayout: TabLayout
+    private var menu: Menu? = null
     private var searchView: SearchView? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -40,6 +44,9 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
         tabLayout.setSelectedTabIndicatorColor(accentColor)
         binding.viewPager.adapter = TabFragmentPageAdapter()
         tabLayout.setupWithViewPager(binding.viewPager)
+        viewModel.bookData.observe(this) {
+            menu?.setGroupVisible(R.id.menu_group_text, it.isLocalTxt)
+        }
         intent.getStringExtra("bookUrl")?.let {
             viewModel.initBook(it)
         }
@@ -47,6 +54,10 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_toc, menu)
+        this.menu = menu
+        viewModel.bookData.value?.let {
+            menu.setGroupVisible(R.id.menu_group_text, it.isLocalTxt)
+        }
         val search = menu.findItem(R.id.menu_search)
         searchView = (search.actionView as SearchView).apply {
             applyTint(primaryTextColor)
@@ -84,6 +95,9 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_toc_regex -> showDialogFragment(
+                TxtTocRegexDialog(viewModel.bookData.value?.tocUrl)
+            )
             R.id.menu_reverse_toc -> viewModel.reverseToc {
                 viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
                 setResult(RESULT_OK, Intent().apply {
@@ -101,12 +115,12 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
+    override fun finish() {
         if (tabLayout.isGone) {
             searchView?.onActionViewCollapsed()
             tabLayout.visible()
         } else {
-            super.onBackPressed()
+            super.finish()
         }
     }
 

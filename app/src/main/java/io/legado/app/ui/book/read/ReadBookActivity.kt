@@ -57,6 +57,7 @@ import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
+import io.legado.app.ui.book.toc.TxtTocRegexDialog
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.dict.DictDialog
 import io.legado.app.ui.document.HandleFileContract
@@ -86,7 +87,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     ChangeChapterSourceDialog.CallBack,
     ReadBook.CallBack,
     AutoReadDialog.CallBack,
-    TocRegexDialog.CallBack,
+    TxtTocRegexDialog.CallBack,
     ColorPickerDialogListener {
 
     private val tocActivity =
@@ -383,7 +384,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_toc_regex -> showDialogFragment(
-                TocRegexDialog(ReadBook.book?.tocUrl)
+                TxtTocRegexDialog(ReadBook.book?.tocUrl)
             )
             R.id.menu_reverse_content -> ReadBook.book?.let {
                 viewModel.reverseContent(it)

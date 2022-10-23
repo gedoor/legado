@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.read.config
+package io.legado.app.ui.book.toc
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -33,7 +33,10 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
-class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
+/**
+ * txt目录规则
+ */
+class TxtTocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     Toolbar.OnMenuItemClickListener {
 
     constructor(tocRegex: String?) : this() {
@@ -43,7 +46,7 @@ class TocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     }
 
     private val importTocRuleKey = "tocRuleUrl"
-    private val viewModel: TocRegexViewModel by viewModels()
+    private val viewModel: TxtTocRegexViewModel by viewModels()
     private val binding by viewBinding(DialogTocRegexBinding::bind)
     private val adapter by lazy { TocRegexAdapter(requireContext()) }
     var selectedName: String? = null
