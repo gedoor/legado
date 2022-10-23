@@ -3,6 +3,7 @@ package io.legado.app.model.rss
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -42,8 +43,9 @@ object Rss {
             ruleData = ruleData,
             headerMapF = rssSource.getHeaderMap()
         )
-        val body = analyzeUrl.getStrResponseAwait().body
-        return RssParserByRule.parseXML(sortName, sortUrl, body, rssSource, ruleData)
+        val res = analyzeUrl.getStrResponseAwait()
+        checkRedirect(rssSource, res)
+        return RssParserByRule.parseXML(sortName, sortUrl, res.body, rssSource, ruleData)
     }
 
     fun getContent(
@@ -70,12 +72,26 @@ object Rss {
             ruleData = rssArticle,
             headerMapF = rssSource.getHeaderMap()
         )
-        val body = analyzeUrl.getStrResponseAwait().body
+        val res = analyzeUrl.getStrResponseAwait()
+        checkRedirect(rssSource, res)
         Debug.log(rssSource.sourceUrl, "≡获取成功:${rssSource.sourceUrl}")
-        Debug.log(rssSource.sourceUrl, body, state = 20)
+        Debug.log(rssSource.sourceUrl, res.body, state = 20)
         val analyzeRule = AnalyzeRule(rssArticle, rssSource)
-        analyzeRule.setContent(body)
+        analyzeRule.setContent(res.body)
             .setBaseUrl(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))
         return analyzeRule.getString(ruleContent)
+    }
+
+    /**
+     * 检测重定向
+     */
+    private fun checkRedirect(rssSource: RssSource, response: StrResponse) {
+        response.raw.priorResponse?.let {
+            if (it.isRedirect) {
+                Debug.log(rssSource.sourceUrl, "≡检测到重定向(${it.code})")
+                Debug.log(rssSource.sourceUrl, "┌重定向后地址")
+                Debug.log(rssSource.sourceUrl, "└${response.url}")
+            }
+        }
     }
 }

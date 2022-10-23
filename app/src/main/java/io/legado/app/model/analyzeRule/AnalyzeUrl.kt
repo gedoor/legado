@@ -463,46 +463,28 @@ class AnalyzeUrl(
         }
     }
 
+    @Suppress("UnnecessaryVariable")
+    private fun getByteArrayIfDataUri(): ByteArray? {
+        @Suppress("RegExpRedundantEscape")
+        val dataUriFindResult = dataUriRegex.find(urlNoQuery)
+        @Suppress("BlockingMethodInNonBlockingContext")
+        if (dataUriFindResult != null) {
+            val dataUriBase64 = dataUriFindResult.groupValues[1]
+            val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
+            return byteArray
+        }
+        return null
+    }
+
     /**
      * 访问网站,返回ByteArray
      */
-    @Suppress("UnnecessaryVariable")
+    @Suppress("UnnecessaryVariable", "LiftReturnOrAssignment")
     suspend fun getByteArrayAwait(): ByteArray {
-        val concurrentRecord = fetchStart()
-        try {
-            @Suppress("RegExpRedundantEscape")
-            val dataUriFindResult = dataUriRegex.find(urlNoQuery)
-            @Suppress("BlockingMethodInNonBlockingContext")
-            if (dataUriFindResult != null) {
-                val dataUriBase64 = dataUriFindResult.groupValues[1]
-                val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
-                return byteArray
-            } else {
-                setCookie(source?.getKey())
-                val byteArray = getProxyClient(proxy).newCallResponseBody(retry) {
-                    addHeaders(headerMap)
-                    when (method) {
-                        RequestMethod.POST -> {
-                            url(urlNoQuery)
-                            val contentType = headerMap["Content-Type"]
-                            val body = body
-                            if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                                postForm(fieldMap, true)
-                            } else if (!contentType.isNullOrBlank()) {
-                                val requestBody = body.toRequestBody(contentType.toMediaType())
-                                post(requestBody)
-                            } else {
-                                postJson(body)
-                            }
-                        }
-                        else -> get(urlNoQuery, fieldMap, true)
-                    }
-                }.bytes()
-                return byteArray
-            }
-        } finally {
-            fetchEnd(concurrentRecord)
+        getByteArrayIfDataUri()?.let {
+            return it
         }
+        return getResponseAwait().body!!.bytes()
     }
 
     fun getByteArray(): ByteArray {
@@ -511,9 +493,20 @@ class AnalyzeUrl(
         }
     }
 
+    /**
+     * 访问网站,返回InputStream
+     */
+    @Suppress("LiftReturnOrAssignment")
+    suspend fun getInputStreamAwait(): InputStream {
+        getByteArrayIfDataUri()?.let {
+            return ByteArrayInputStream(it)
+        }
+        return getResponseAwait().body!!.byteStream()
+    }
+
     fun getInputStream(): InputStream {
         return runBlocking {
-            getResponseAwait().body!!.byteStream()
+            getInputStreamAwait()
         }
     }
 

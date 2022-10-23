@@ -59,6 +59,7 @@ object WebBook {
                     res = analyzeUrl.evalJS(checkJs, res) as StrResponse
                 }
             }
+            checkRedirect(bookSource, res)
             return BookList.analyzeBookList(
                 bookSource = bookSource,
                 ruleData = ruleData,
@@ -107,6 +108,7 @@ object WebBook {
                 res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
             }
         }
+        checkRedirect(bookSource, res)
         return BookList.analyzeBookList(
             bookSource = bookSource,
             ruleData = ruleData,
@@ -162,6 +164,7 @@ object WebBook {
                     res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
                 }
             }
+            checkRedirect(bookSource, res)
             BookInfo.analyzeBookInfo(
                 bookSource = bookSource,
                 book = book,
@@ -238,6 +241,7 @@ object WebBook {
                         res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
                     }
                 }
+                checkRedirect(bookSource, res)
                 BookChapterList.analyzeChapterList(
                     bookSource = bookSource,
                     book = book,
@@ -311,6 +315,7 @@ object WebBook {
                     res = analyzeUrl.evalJS(checkJs, result = res) as StrResponse
                 }
             }
+            checkRedirect(bookSource, res)
             BookContent.analyzeContent(
                 bookSource = bookSource,
                 book = book,
@@ -371,6 +376,19 @@ object WebBook {
                 return@runCatching book
             }
             throw NoStackTraceException("未搜索到 $name($author) 书籍")
+        }
+    }
+
+    /**
+     * 检测重定向
+     */
+    private fun checkRedirect(bookSource: BookSource, response: StrResponse) {
+        response.raw.priorResponse?.let {
+            if (it.isRedirect) {
+                Debug.log(bookSource.bookSourceUrl, "≡检测到重定向(${it.code})")
+                Debug.log(bookSource.bookSourceUrl, "┌重定向后地址")
+                Debug.log(bookSource.bookSourceUrl, "└${response.url}")
+            }
         }
     }
 
