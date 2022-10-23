@@ -479,6 +479,10 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
+    fun exit() {
+        callBack?.exit()
+    }
+
     interface CallBack {
         fun upMenuView()
 
@@ -495,6 +499,8 @@ object ReadBook : CoroutineScope by MainScope() {
         fun contentLoadFinish()
 
         fun upPageAnim()
+
+        fun exit()
     }
 
 }

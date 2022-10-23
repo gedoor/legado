@@ -180,6 +180,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.cursorRight.setOnTouchListener(this)
         window.setBackgroundDrawable(null)
         upScreenTimeOut()
+        ReadBook.exit()
         ReadBook.callBack = this
     }
 
@@ -783,6 +784,16 @@ class ReadBookActivity : BaseReadBookActivity(),
         launch {
             binding.readView.upPageAnim()
         }
+    }
+
+    override fun exit() {
+        ReadBook.book?.let {
+            if (!ReadBook.inBookshelf) {
+                viewModel.removeFromBookshelf { super.finish() }
+            } else {
+                super.finish()
+            }
+        } ?: super.finish()
     }
 
     /**
