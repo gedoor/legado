@@ -203,7 +203,7 @@
             android:screenOrientation="behind" />
         <!-- txt目录规则管理 -->
         <activity
-            android:name=".ui.book.import.local.rule.TxtTocRuleActivity"
+            android:name=".ui.book.toc.rule.TxtTocRuleActivity"
             android:launchMode="singleTop"
             android:screenOrientation="behind" />
         <!-- 替换规则界面 -->

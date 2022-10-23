@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.import.local.rule
+package io.legado.app.ui.book.toc.rule
 
 import android.app.Application
 import io.legado.app.base.BaseViewModel
@@ -15,6 +15,9 @@ class TxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
 
     fun save(txtTocRule: TxtTocRule) {
         execute {
+            if (txtTocRule.serialNumber < 0) {
+                txtTocRule.serialNumber = appDb.txtTocRuleDao.maxOrder + 1
+            }
             appDb.txtTocRuleDao.insert(txtTocRule)
         }
     }

@@ -20,6 +20,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.book.toc.rule.TxtTocRuleDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.gone
 import io.legado.app.utils.showDialogFragment
@@ -96,7 +97,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_toc_regex -> showDialogFragment(
-                TxtTocRegexDialog(viewModel.bookData.value?.tocUrl)
+                TxtTocRuleDialog(viewModel.bookData.value?.tocUrl)
             )
             R.id.menu_reverse_toc -> viewModel.reverseToc {
                 viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())

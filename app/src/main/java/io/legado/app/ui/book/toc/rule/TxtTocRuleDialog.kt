@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.toc
+package io.legado.app.ui.book.toc.rule
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 /**
  * txt目录规则
  */
-class TxtTocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
+class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     Toolbar.OnMenuItemClickListener {
 
     constructor(tocRegex: String?) : this() {
@@ -46,7 +46,7 @@ class TxtTocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     }
 
     private val importTocRuleKey = "tocRuleUrl"
-    private val viewModel: TxtTocRegexViewModel by viewModels()
+    private val viewModel: TxtTocRuleViewModel by viewModels()
     private val binding by viewBinding(DialogTocRegexBinding::bind)
     private val adapter by lazy { TocRegexAdapter(requireContext()) }
     var selectedName: String? = null
@@ -180,7 +180,7 @@ class TxtTocRegexDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                     tocRule.name = tvRuleName.text.toString()
                     tocRule.rule = tvRuleRegex.text.toString()
                     tocRule.example = tvRuleExample.text.toString()
-                    viewModel.saveRule(tocRule)
+                    viewModel.save(tocRule)
                 }
             }
             cancelButton()

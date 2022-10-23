@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.import.local.rule
+package io.legado.app.ui.book.toc.rule
 
 import android.content.Context
 import android.os.Bundle
