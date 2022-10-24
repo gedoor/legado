@@ -13,12 +13,11 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.DialogTocRegexEditBinding
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.GSON
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.sendToClip
-import io.legado.app.utils.setLayout
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers
 
 class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit, true),
     Toolbar.OnMenuItemClickListener {
@@ -43,9 +42,7 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
         binding.toolBar.setBackgroundColor(primaryColor)
         initMenu()
         viewModel.initData(arguments?.getLong("id")) {
-            binding.tvRuleName.setText(it?.name)
-            binding.tvRuleRegex.setText(it?.rule)
-            binding.tvRuleExample.setText(it?.example)
+            upRuleView(it)
         }
     }
 
@@ -62,9 +59,17 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
                 dismissAllowingStateLoss()
             }
             R.id.menu_copy_rule -> context?.sendToClip(GSON.toJson(getRuleFromView()))
-            R.id.menu_paste_rule -> {}
+            R.id.menu_paste_rule -> viewModel.pasteRule {
+                upRuleView(it)
+            }
         }
         return true
+    }
+
+    private fun upRuleView(tocRule: TxtTocRule?) {
+        binding.tvRuleName.setText(tocRule?.name)
+        binding.tvRuleRegex.setText(tocRule?.rule)
+        binding.tvRuleExample.setText(tocRule?.example)
     }
 
     private fun getRuleFromView(): TxtTocRule {
@@ -84,16 +89,28 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
         var tocRule: TxtTocRule? = null
 
         fun initData(id: Long?, finally: (tocRule: TxtTocRule?) -> Unit) {
+            if (tocRule != null) return
             execute {
-                tocRule?.let {
-                    return@execute
-                }
-                if (id == null) {
-                    return@execute
-                }
+                if (id == null) return@execute
                 tocRule = appDb.txtTocRuleDao.get(id)
             }.onFinally {
                 finally.invoke(tocRule)
+            }
+        }
+
+        fun pasteRule(success: (TxtTocRule) -> Unit) {
+            execute(context = Dispatchers.Main) {
+                val text = context.getClipText()
+                if (text.isNullOrBlank()) {
+                    throw NoStackTraceException("剪贴板为空")
+                }
+                GSON.fromJsonObject<TxtTocRule>(text).getOrNull()
+                    ?: throw NoStackTraceException("格式不对")
+            }.onSuccess {
+                success.invoke(it)
+            }.onError {
+                context.toastOnUi(it.localizedMessage ?: "Error")
+                it.printOnDebug()
             }
         }
 
