@@ -269,6 +269,10 @@ class AudioPlayActivity :
         }
         observeEventSticky<String>(EventBus.AUDIO_SUB_TITLE) {
             binding.tvSubTitle.text = it
+            AudioPlay.book?.let { book ->
+                binding.ivSkipPrevious.isEnabled = book.durChapterIndex > 0
+                binding.ivSkipNext.isEnabled = book.durChapterIndex < book.totalChapterNum - 1
+            }
         }
         observeEventSticky<Int>(EventBus.AUDIO_SIZE) {
             binding.playerProgress.max = it

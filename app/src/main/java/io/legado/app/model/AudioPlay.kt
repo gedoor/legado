@@ -114,28 +114,30 @@ object AudioPlay {
     fun prev(context: Context) {
         Coroutine.async {
             book?.let { book ->
-                if (book.durChapterIndex <= 0) {
-                    return@let
+                if (book.durChapterIndex > 0) {
+                    book.durChapterIndex = book.durChapterIndex - 1
+                    book.durChapterPos = 0
+                    durChapter = null
+                    saveRead()
+                    play(context)
+                } else {
+                    stop(context)
                 }
-                book.durChapterIndex = book.durChapterIndex - 1
-                book.durChapterPos = 0
-                durChapter = null
-                saveRead()
-                play(context)
             }
         }
     }
 
     fun next(context: Context) {
         book?.let { book ->
-            if (book.durChapterIndex >= book.totalChapterNum) {
-                return@let
+            if (book.durChapterIndex + 1 < book.totalChapterNum) {
+                book.durChapterIndex = book.durChapterIndex + 1
+                book.durChapterPos = 0
+                durChapter = null
+                saveRead()
+                play(context)
+            } else {
+                stop(context)
             }
-            book.durChapterIndex = book.durChapterIndex + 1
-            book.durChapterPos = 0
-            durChapter = null
-            saveRead()
-            play(context)
         }
     }
 
