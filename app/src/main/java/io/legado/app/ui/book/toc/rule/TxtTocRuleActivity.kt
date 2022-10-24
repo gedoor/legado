@@ -12,24 +12,21 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.ActivityTxtTocRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.databinding.DialogTocRegexEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.ACache
-import io.legado.app.utils.setEdgeEffectColor
-import io.legado.app.utils.splitNotBlank
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleViewModel>(),
     TxtTocRuleAdapter.CallBack,
-    SelectActionBar.CallBack {
+    SelectActionBar.CallBack,
+    TxtTocRuleEditDialog.Callback {
 
     override val viewModel: TxtTocRuleViewModel by viewModels()
     override val binding: ActivityTxtTocRuleBinding by viewBinding(ActivityTxtTocRuleBinding::inflate)
@@ -80,7 +77,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_add -> edit(TxtTocRule())
+            R.id.menu_add -> showDialogFragment(TxtTocRuleEditDialog())
             R.id.menu_default -> viewModel.importDefault()
             R.id.menu_import -> showImportDialog()
         }
@@ -98,24 +95,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     }
 
     override fun edit(source: TxtTocRule) {
-        alert(titleResource = R.string.txt_toc_regex) {
-            val alertBinding = DialogTocRegexEditBinding.inflate(layoutInflater)
-            alertBinding.apply {
-                tvRuleName.setText(source.name)
-                tvRuleRegex.setText(source.rule)
-                tvRuleExample.setText(source.example)
-            }
-            customView { alertBinding.root }
-            okButton {
-                alertBinding.apply {
-                    source.name = tvRuleName.text.toString()
-                    source.rule = tvRuleRegex.text.toString()
-                    source.example = tvRuleExample.text.toString()
-                    viewModel.save(source)
-                }
-            }
-            cancelButton()
-        }
+        showDialogFragment(TxtTocRuleEditDialog(source.id))
     }
 
     override fun onClickSelectBarMainAction() {
@@ -132,6 +112,10 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
         } else {
             adapter.revertSelection()
         }
+    }
+
+    override fun saveTxtTocRule(txtTocRule: TxtTocRule) {
+        viewModel.save(txtTocRule)
     }
 
     override fun update(vararg source: TxtTocRule) {
