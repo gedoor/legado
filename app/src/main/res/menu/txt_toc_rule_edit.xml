@@ -9,7 +9,7 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_copy"
+        android:id="@+id/menu_copy_rule"
         android:title="@string/copy_rule" />
 
     <item
