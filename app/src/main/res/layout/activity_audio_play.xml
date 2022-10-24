@@ -123,15 +123,15 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
+        android:paddingHorizontal="6dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageView
+        <io.legado.app.ui.widget.image.ImageButton
             android:id="@+id/iv_timer"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:padding="5dp"
+            android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/set_timer"
             android:src="@drawable/ic_timer_black_24dp"
             app:tint="@color/md_white_1000"
@@ -142,11 +142,12 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <ImageView
+        <io.legado.app.ui.widget.image.ImageButton
             android:id="@+id/iv_fast_rewind"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:padding="5dp"
+            android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_previous"
             android:src="@drawable/ic_fast_rewind"
             app:tint="@color/md_white_1000"
@@ -157,11 +158,12 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <ImageView
+        <io.legado.app.ui.widget.image.ImageButton
             android:id="@+id/iv_skip_previous"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:padding="5dp"
+            android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_previous"
             android:src="@drawable/ic_skip_previous"
             app:tint="@color/md_white_1000"
@@ -181,11 +183,12 @@
             app:pressedTranslationZ="2dp"
             tools:ignore="ImageContrastCheck" />
 
-        <ImageView
+        <io.legado.app.ui.widget.image.ImageButton
             android:id="@+id/iv_skip_next"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:padding="5dp"
+            android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_next"
             android:src="@drawable/ic_skip_next"
             app:tint="@color/md_white_1000"
@@ -196,11 +199,12 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <ImageView
+        <io.legado.app.ui.widget.image.ImageButton
             android:id="@+id/iv_fast_forward"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:padding="5dp"
+            android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_next"
             android:src="@drawable/ic_fast_forward"
             app:tint="@color/md_white_1000"
@@ -211,11 +215,12 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <ImageView
+        <io.legado.app.ui.widget.image.ImageButton
             android:id="@+id/iv_chapter"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:padding="5dp"
+            android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/chapter_list"
             android:src="@drawable/ic_chapter_list"
             app:tint="@color/md_white_1000"

@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -16,13 +15,11 @@ import android.view.ViewOutlineProvider
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import io.legado.app.R
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.spToPx
-
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -431,7 +428,6 @@ class CircleImageView @JvmOverloads constructor(
             .pow(2.0) <= mBorderRadius.toDouble().pow(2.0)
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private inner class OutlineProvider : ViewOutlineProvider() {
 
         override fun getOutline(view: View, outline: Outline) {
