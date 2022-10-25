@@ -416,5 +416,15 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefInt(PreferKey.sourceEditMaxLine, value)
         }
+
+    fun detectClickArea() {
+        if (clickActionTL * clickActionTC * clickActionTR
+            * clickActionML * clickActionMC * clickActionMR
+            * clickActionBL * clickActionBC * clickActionBR != 0
+        ) {
+            appCtx.putPrefInt(PreferKey.clickActionMC, 0)
+            appCtx.toastOnUi("当前没有配置菜单区域,自动恢复中间区域为菜单.")
+        }
+    }
 }
 

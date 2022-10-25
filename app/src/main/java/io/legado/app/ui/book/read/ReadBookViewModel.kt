@@ -49,6 +49,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     var searchResultIndex: Int = 0
     private var changeSourceCoroutine: Coroutine<*>? = null
 
+    init {
+        AppConfig.detectClickArea()
+    }
+
     /**
      * 初始化
      */
