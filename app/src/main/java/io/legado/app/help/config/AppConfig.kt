@@ -34,19 +34,19 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             PreferKey.clickActionTC -> clickActionTC =
                 appCtx.getPrefInt(PreferKey.clickActionTC, 2)
             PreferKey.clickActionTR -> clickActionTR =
-                appCtx.getPrefInt(PreferKey.clickActionTR, 2)
+                appCtx.getPrefInt(PreferKey.clickActionTR, 1)
             PreferKey.clickActionML -> clickActionML =
                 appCtx.getPrefInt(PreferKey.clickActionML, 2)
             PreferKey.clickActionMC -> clickActionMC =
-                appCtx.getPrefInt(PreferKey.clickActionMC, 2)
+                appCtx.getPrefInt(PreferKey.clickActionMC, 0)
             PreferKey.clickActionMR -> clickActionMR =
-                appCtx.getPrefInt(PreferKey.clickActionMR, 2)
+                appCtx.getPrefInt(PreferKey.clickActionMR, 1)
             PreferKey.clickActionBL -> clickActionBL =
                 appCtx.getPrefInt(PreferKey.clickActionBL, 2)
             PreferKey.clickActionBC -> clickActionBC =
-                appCtx.getPrefInt(PreferKey.clickActionBC, 2)
+                appCtx.getPrefInt(PreferKey.clickActionBC, 1)
             PreferKey.clickActionBR -> clickActionBR =
-                appCtx.getPrefInt(PreferKey.clickActionBR, 2)
+                appCtx.getPrefInt(PreferKey.clickActionBR, 1)
             PreferKey.readBodyToLh -> ReadBookConfig.readBodyToLh =
                 appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
             PreferKey.useZhLayout -> ReadBookConfig.useZhLayout =

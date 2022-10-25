@@ -14,9 +14,13 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 
-
+/**
+ * 点击区域设置
+ */
 class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_config) {
     private val binding by viewBinding(DialogClickActionConfigBinding::bind)
     private val actions by lazy {
@@ -29,6 +33,9 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
             this[4] = getString(R.string.previous_chapter)
             this[5] = getString(R.string.read_aloud_prev_paragraph)
             this[6] = getString(R.string.read_aloud_next_paragraph)
+            this[7] = getString(R.string.bookmark_add)
+            this[8] = getString(R.string.edit_content)
+            this[9] = getString(R.string.replace_rule)
         }
     }
 
@@ -57,6 +64,7 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
         tvTopCenter.text = actions[AppConfig.clickActionTC]
         tvTopRight.text = actions[AppConfig.clickActionTR]
         tvMiddleLeft.text = actions[AppConfig.clickActionML]
+        tvMiddleCenter.text = actions[AppConfig.clickActionMC]
         tvMiddleRight.text = actions[AppConfig.clickActionMR]
         tvBottomLeft.text = actions[AppConfig.clickActionBL]
         tvBottomCenter.text = actions[AppConfig.clickActionBC]
@@ -88,6 +96,12 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
         binding.tvMiddleLeft.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionML, action)
+                (it as? TextView)?.text = actions[action]
+            }
+        }
+        binding.tvMiddleCenter.setOnClickListener {
+            selectAction { action ->
+                putPrefInt(PreferKey.clickActionMC, action)
                 (it as? TextView)?.text = actions[action]
             }
         }
@@ -123,6 +137,19 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
             actions.values.toList()
         ) { _, index ->
             success.invoke(actions.keys.toList()[index])
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AppConfig.run {
+            if (clickActionTL * clickActionTC * clickActionTR
+                * clickActionML * clickActionMC * clickActionMR
+                * clickActionBL * clickActionBC * clickActionBR != 0
+            ) {
+                putPrefInt(PreferKey.clickActionMC, 0)
+                appCtx.toastOnUi("当前没有配置菜单区域,自动恢复中间区域为菜单.")
+            }
         }
     }
 
