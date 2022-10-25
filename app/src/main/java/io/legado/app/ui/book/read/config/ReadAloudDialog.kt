@@ -22,6 +22,7 @@ import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
@@ -122,6 +123,10 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             AppConfig.ttsSpeechRate = AppConfig.ttsSpeechRate + 1
             upTtsSpeechRate()
         }
+        ivTimer.setOnClickListener {
+            AppConfig.ttsTimer = seekTimer.progress
+            toastOnUi("保存设定时间成功！")
+        }
         //设置保存的默认值
         seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate
         seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
@@ -136,7 +141,6 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                AppConfig.ttsTimer = seekTimer.progress
                 ReadAloud.setTimer(requireContext(), seekTimer.progress)
             }
         })

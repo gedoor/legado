@@ -86,6 +86,9 @@ abstract class BaseReadAloudService : BaseService(),
         upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         setTimer(AppConfig.ttsTimer)
+        if (AppConfig.ttsTimer > 0) {
+            toastOnUi("朗读定时 ${AppConfig.ttsTimer} 分钟")
+        }
     }
 
     fun observeLiveBus() {

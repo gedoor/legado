@@ -126,6 +126,7 @@
             android:id="@+id/iv_timer"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:tooltipText="@string/set_timer"
             android:contentDescription="@string/set_timer"
             android:src="@drawable/ic_time_add_24dp"
