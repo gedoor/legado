@@ -125,11 +125,9 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
         viewModel.loadErrorLiveData.observe(viewLifecycleOwner) {
             loadMoreView.error(it)
         }
-        viewModel.loadFinallyLiveData.observe(viewLifecycleOwner) {
+        viewModel.loadFinallyLiveData.observe(viewLifecycleOwner) { hasMore ->
             binding.refreshLayout.isRefreshing = false
-            if (it) {
-                loadMoreView.stopLoad()
-            } else {
+            if (!hasMore) {
                 loadMoreView.noMore()
             }
         }

@@ -35,6 +35,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     fun loadContent(rssSource: RssSource) {
         isLoading = true
         page = 1
+        order = System.currentTimeMillis()
         Rss.getArticles(viewModelScope, sortName, sortUrl, rssSource, page)
             .onSuccess(Dispatchers.IO) {
                 nextPageUrl = it.second
@@ -45,12 +46,9 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                     appDb.rssArticleDao.insert(*list.toTypedArray())
                     if (!rssSource.ruleNextPage.isNullOrEmpty()) {
                         appDb.rssArticleDao.clearOld(rssSource.sourceUrl, sortName, order)
-                        loadFinallyLiveData.postValue(true)
-                    } else {
-                        withContext(Dispatchers.Main) {
-                            loadFinallyLiveData.postValue(false)
-                        }
                     }
+                    val hasMore = list.isNotEmpty() && !rssSource.ruleNextPage.isNullOrEmpty()
+                    loadFinallyLiveData.postValue(hasMore)
                     isLoading = false
                 }
             }.onError {
