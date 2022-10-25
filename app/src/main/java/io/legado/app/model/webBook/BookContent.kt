@@ -71,28 +71,15 @@ object BookContent {
                 ) break
                 nextUrlList.add(nextUrl)
                 coroutineContext.ensureActive()
-                val analyzeUrl = AnalyzeUrl(
+                val res = AnalyzeUrl(
                     mUrl = nextUrl,
                     source = bookSource,
                     ruleData = book,
                     headerMapF = bookSource.getHeaderMap()
-                )
-                var res: StrResponse? = null
-                var isConcurrent: Boolean
-                do {
-                    //控制并发访问
-                    isConcurrent = false
-                    try {
-                        res = analyzeUrl.getStrResponseAwait()
-                    } catch (e: ConcurrentException) {
-                        isConcurrent = true
-                        //如果是并发限制等待再次访问
-                        delay(e.waitTime.toLong())
-                    }
-                } while (!isConcurrent)
-                res!!.body?.let { nextBody ->
+                ).getStrResponseConcurrentAwait() //控制并发访问
+                res.body?.let { nextBody ->
                     contentData = analyzeContent(
-                        book, nextUrl, res!!.url, nextBody, contentRule,
+                        book, nextUrl, res.url, nextBody, contentRule,
                         bookChapter, bookSource, mNextChapterUrl, false
                     )
                     nextUrl =
@@ -107,27 +94,14 @@ object BookContent {
                 val asyncArray = Array(contentData.second.size) {
                     async(IO) {
                         val urlStr = contentData.second[it]
-                        val analyzeUrl = AnalyzeUrl(
+                        val res = AnalyzeUrl(
                             mUrl = urlStr,
                             source = bookSource,
                             ruleData = book,
                             headerMapF = bookSource.getHeaderMap()
-                        )
-                        var res: StrResponse? = null
-                        var isConcurrent: Boolean
-                        do {
-                            //控制并发访问
-                            isConcurrent = false
-                            try {
-                                res = analyzeUrl.getStrResponseAwait()
-                            } catch (e: ConcurrentException) {
-                                isConcurrent = true
-                                //如果是并发限制等待再次访问
-                                delay(e.waitTime.toLong())
-                            }
-                        } while (!isConcurrent)
+                        ).getStrResponseConcurrentAwait() //控制并发访问
                         analyzeContent(
-                            book, urlStr, res!!.url, res!!.body!!, contentRule,
+                            book, urlStr, res.url, res.body!!, contentRule,
                             bookChapter, bookSource, mNextChapterUrl, false
                         ).first
                     }

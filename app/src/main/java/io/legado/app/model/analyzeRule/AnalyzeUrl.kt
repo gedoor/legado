@@ -20,6 +20,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
 import io.legado.app.utils.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -417,6 +418,24 @@ class AnalyzeUrl(
             return strResponse
         } finally {
             fetchEnd(concurrentRecord)
+        }
+    }
+
+    /**
+     * 访问网站,返回StrResponse
+     * 并发异常自动重试
+     */
+    suspend fun getStrResponseConcurrentAwait(
+        jsStr: String? = null,
+        sourceRegex: String? = null,
+        useWebView: Boolean = true,
+    ): StrResponse {
+        while (true) {
+            try {
+                return getStrResponseAwait(jsStr, sourceRegex, useWebView)
+            } catch (e: ConcurrentException) {
+                delay(e.waitTime.toLong())
+            }
         }
     }
 
