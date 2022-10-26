@@ -70,8 +70,9 @@ android {
             }
             applicationIdSuffix '.release'
 
-            minifyEnabled true
-            shrinkResources true
+            //临时关闭构建一版测试一下
+            minifyEnabled false
+            //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
