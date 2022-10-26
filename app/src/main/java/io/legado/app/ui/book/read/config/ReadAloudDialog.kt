@@ -129,7 +129,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             toastOnUi("保存设定时间成功！")
         }
         tvTimer.setOnClickListener {
-            val times = arrayOf(0, 5, 10, 15, 30, 60, 90, 180)
+            val times = intArrayOf(0, 5, 10, 15, 30, 60, 90, 180)
             val timeKeys = times.map { "$it 分钟" }
             context?.selector("设定时间", timeKeys) { _, index ->
                 ReadAloud.setTimer(requireContext(), times[index])
