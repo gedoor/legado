@@ -22,19 +22,20 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_config) {
     private val binding by viewBinding(DialogClickActionConfigBinding::bind)
     private val actions by lazy {
-        linkedMapOf<Int, String>().apply {
-            this[-1] = getString(R.string.non_action)
-            this[0] = getString(R.string.menu)
-            this[1] = getString(R.string.next_page)
-            this[2] = getString(R.string.prev_page)
-            this[3] = getString(R.string.next_chapter)
-            this[4] = getString(R.string.previous_chapter)
-            this[5] = getString(R.string.read_aloud_prev_paragraph)
-            this[6] = getString(R.string.read_aloud_next_paragraph)
-            this[7] = getString(R.string.bookmark_add)
-            this[8] = getString(R.string.edit_content)
-            this[9] = getString(R.string.replace_rule)
-        }
+        linkedMapOf(
+            Pair(-1, getString(R.string.non_action)),
+            Pair(0, getString(R.string.menu)),
+            Pair(1, getString(R.string.next_page)),
+            Pair(2, getString(R.string.prev_page)),
+            Pair(3, getString(R.string.next_chapter)),
+            Pair(4, getString(R.string.previous_chapter)),
+            Pair(5, getString(R.string.read_aloud_prev_paragraph)),
+            Pair(6, getString(R.string.read_aloud_next_paragraph)),
+            Pair(7, getString(R.string.bookmark_add)),
+            Pair(8, getString(R.string.edit_content)),
+            Pair(9, getString(R.string.replace_state_change)),
+            Pair(10, getString(R.string.chapter_list))
+        )
     }
 
     override fun onStart() {

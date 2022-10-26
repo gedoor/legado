@@ -18,6 +18,7 @@ import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.read.ContentEditDialog
 import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.delegate.*
 import io.legado.app.ui.book.read.page.entities.PageDirection
@@ -29,6 +30,7 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.invisible
 import io.legado.app.utils.screenshot
+import io.legado.app.utils.showDialogFragment
 import java.text.BreakIterator
 import java.util.*
 import kotlin.math.abs
@@ -418,6 +420,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
             4 -> ReadBook.moveToPrevChapter(upContent = true, toLast = false)
             5 -> ReadAloud.prevParagraph(context)
             6 -> ReadAloud.nextParagraph(context)
+            7 -> callBack.addBookmark()
+            8 -> activity?.showDialogFragment(ContentEditDialog())
+            9 -> callBack.changeReplaceRuleState()
+            10 -> callBack.openChapterList()
         }
     }
 
@@ -645,5 +651,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun screenOffTimerStart()
         fun showTextActionMenu()
         fun autoPageStop()
+        fun openChapterList()
+        fun addBookmark()
+        fun changeReplaceRuleState()
     }
 }

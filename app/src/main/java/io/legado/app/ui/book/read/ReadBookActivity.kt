@@ -352,19 +352,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 }
             }
             R.id.menu_download -> showDownloadDialog()
-            R.id.menu_add_bookmark -> {
-                val book = ReadBook.book
-                val page = ReadBook.curTextChapter?.getPage(ReadBook.durPageIndex)
-                if (book != null && page != null) {
-                    val bookmark = book.createBookMark().apply {
-                        chapterIndex = ReadBook.durChapterIndex
-                        chapterPos = ReadBook.durChapterPos
-                        chapterName = page.title
-                        bookText = page.text.trim()
-                    }
-                    showDialogFragment(BookmarkDialog(bookmark))
-                }
-            }
+            R.id.menu_add_bookmark -> addBookmark()
             R.id.menu_edit_content -> showDialogFragment(ContentEditDialog())
             R.id.menu_update_toc -> ReadBook.book?.let {
                 if (it.isEpub) {
@@ -372,12 +360,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 }
                 loadChapterList(it)
             }
-            R.id.menu_enable_replace -> ReadBook.book?.let {
-                it.setUseReplaceRule(!it.getUseReplaceRule())
-                ReadBook.saveRead()
-                menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.getUseReplaceRule()
-                viewModel.replaceRuleChanged()
-            }
+            R.id.menu_enable_replace -> changeReplaceRuleState()
             R.id.menu_re_segment -> ReadBook.book?.let {
                 it.setReSegment(!it.getReSegment())
                 menu?.findItem(R.id.menu_re_segment)?.isChecked = it.getReSegment()
@@ -1244,6 +1227,29 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         } else {
             jumpToPosition()
+        }
+    }
+
+    override fun addBookmark() {
+        val book = ReadBook.book
+        val page = ReadBook.curTextChapter?.getPage(ReadBook.durPageIndex)
+        if (book != null && page != null) {
+            val bookmark = book.createBookMark().apply {
+                chapterIndex = ReadBook.durChapterIndex
+                chapterPos = ReadBook.durChapterPos
+                chapterName = page.title
+                bookText = page.text.trim()
+            }
+            showDialogFragment(BookmarkDialog(bookmark))
+        }
+    }
+
+    override fun changeReplaceRuleState() {
+        ReadBook.book?.let {
+            it.setUseReplaceRule(!it.getUseReplaceRule())
+            ReadBook.saveRead()
+            menu?.findItem(R.id.menu_enable_replace)?.isChecked = it.getUseReplaceRule()
+            viewModel.replaceRuleChanged()
         }
     }
 

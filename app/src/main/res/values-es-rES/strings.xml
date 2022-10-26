@@ -1051,4 +1051,5 @@
     <string name="copy_rule">拷贝规则</string>
     <string name="paste_rule">粘贴规则</string>
     <string name="groups_or_source">多分组/书源</string>
+    <string name="replace_state_change">替换(启用/禁用)</string>
 </resources>
