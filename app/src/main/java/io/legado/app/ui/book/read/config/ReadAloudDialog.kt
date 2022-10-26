@@ -12,6 +12,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.databinding.DialogReadAloudBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadAloud
@@ -126,6 +127,13 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
         ivTimer.setOnClickListener {
             AppConfig.ttsTimer = seekTimer.progress
             toastOnUi("保存设定时间成功！")
+        }
+        tvTimer.setOnClickListener {
+            val times = arrayOf(0, 5, 10, 15, 30, 60, 90, 180)
+            val timeKeys = times.map { "$it 分钟" }
+            context?.selector("设定时间", timeKeys) { _, index ->
+                ReadAloud.setTimer(requireContext(), times[index])
+            }
         }
         //设置保存的默认值
         seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate
