@@ -9,6 +9,7 @@ import io.legado.app.databinding.ItemBookshelfListBinding
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.invisible
+import io.legado.app.utils.toTimeAgo
 import splitties.views.onLongClick
 
 class BooksAdapterList(context: Context, private val callBack: CallBack) :
@@ -32,6 +33,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
             tvLast.text = item.latestChapterTitle
             ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
             upRefresh(binding, item)
+            upLastUpdateTime(binding, item)
         } else {
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle
@@ -41,6 +43,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                     "author" -> tvAuthor.text = item.author
                     "cover" -> ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
                     "refresh" -> upRefresh(binding, item)
+                    "lastUpdateTime" -> upLastUpdateTime(binding, item)
                 }
             }
         }
@@ -58,6 +61,14 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
             } else {
                 binding.bvUnread.invisible()
             }
+        }
+    }
+
+    private fun upLastUpdateTime(binding: ItemBookshelfListBinding, item: Book) {
+        if (AppConfig.showLastUpdateTime && !item.isLocal) {
+            binding.tvLastUpdateTime.text = item.latestChapterTime.toTimeAgo()
+        } else {
+            binding.tvLastUpdateTime.text = ""
         }
     }
 

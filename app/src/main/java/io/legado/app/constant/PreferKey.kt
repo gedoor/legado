@@ -120,6 +120,7 @@ object PreferKey {
     const val noAnimScrollPage = "noAnimScrollPage"
     const val webDavDeviceName = "webDavDeviceName"
     const val wakeLock = "wakeLock"
+    const val showLastUpdateTime = "showLastUpdateTime"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

@@ -27,14 +27,11 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**
@@ -66,6 +63,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     private var savedInstanceState: Bundle? = null
     private var position = 0
     private var groupId = -1L
+    private var upLastUpdateTimeJob : Job? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         this.savedInstanceState = savedInstanceState
@@ -107,6 +105,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 }
             }
         })
+        startLastUpdateTimeJob()
     }
 
     private fun upRecyclerData() {
@@ -150,6 +149,19 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 layoutManager.scrollToPositionWithOffset(leavePosition, leaveOffset)
             }
             savedInstanceState!!.putBoolean("needRecoverState", false)
+        }
+    }
+
+    private fun startLastUpdateTimeJob() {
+        upLastUpdateTimeJob?.cancel()
+        if (!AppConfig.showLastUpdateTime) {
+            return
+        }
+        upLastUpdateTimeJob = launch {
+            while (isActive) {
+                booksAdapter.upLastUpdateTime()
+                delay(30 * 1000)
+            }
         }
     }
 
@@ -222,6 +234,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
         observeEvent<String>(EventBus.BOOKSHELF_REFRESH) {
             booksAdapter.notifyDataSetChanged()
+            startLastUpdateTimeJob()
         }
     }
 }

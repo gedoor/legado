@@ -136,6 +136,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     .apply {
                         spGroupStyle.setSelection(AppConfig.bookGroupStyle)
                         swShowUnread.isChecked = AppConfig.showUnread
+                        swShowLastUpdateTime.isChecked = AppConfig.showLastUpdateTime
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
                     }
@@ -148,6 +149,10 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     }
                     if (AppConfig.showUnread != swShowUnread.isChecked) {
                         AppConfig.showUnread = swShowUnread.isChecked
+                        postEvent(EventBus.BOOKSHELF_REFRESH, "")
+                    }
+                    if (AppConfig.showLastUpdateTime != swShowLastUpdateTime.isChecked) {
+                        AppConfig.showLastUpdateTime = swShowLastUpdateTime.isChecked
                         postEvent(EventBus.BOOKSHELF_REFRESH, "")
                     }
                     var changed = false

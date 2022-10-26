@@ -66,11 +66,15 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
         for (i in 0 until itemCount) {
             getItem(i)?.let {
                 if (it.bookUrl == bookUrl) {
-                    notifyItemChanged(i, bundleOf(Pair("refresh", null)))
+                    notifyItemChanged(i, bundleOf(Pair("refresh", null), Pair("lastUpdateTime", null)))
                     return
                 }
             }
         }
+    }
+
+    fun upLastUpdateTime() {
+        notifyItemRangeChanged(0, itemCount, bundleOf(Pair("lastUpdateTime", null)))
     }
 
     interface CallBack {

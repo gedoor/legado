@@ -98,6 +98,23 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_read"
         app:layout_constraintLeft_toRightOf="@+id/iv_author"
+        app:layout_constraintRight_toLeftOf="@id/tv_last_update_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name"
+        tools:ignore="RtlSymmetry,TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_last_update_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:paddingEnd="6dp"
+        android:text=""
+        android:textColor="@color/tv_text_summary"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_read"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/tv_author"
         app:layout_constraintRight_toRightOf="@id/fl_has_new"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
         tools:ignore="RtlSymmetry,TextContrastCheck" />
