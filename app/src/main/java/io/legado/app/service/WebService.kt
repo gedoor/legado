@@ -1,6 +1,5 @@
 package io.legado.app.service
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -18,7 +17,6 @@ import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
 import splitties.init.appCtx
 import splitties.systemservices.powerManager
-
 import java.io.IOException
 
 class WebService : BaseService() {
@@ -56,12 +54,9 @@ class WebService : BaseService() {
         NetworkChangedListener(this)
     }
 
-    @SuppressLint("WakelockTimeout")
     override fun onCreate() {
         super.onCreate()
-        if (useWakeLock) {
-            wakeLock.acquire()
-        }
+        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         isRun = true
         notificationContent = getString(R.string.service_starting)
         upNotification()
@@ -94,9 +89,7 @@ class WebService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (useWakeLock) {
-            wakeLock.release()
-        }
+        if (useWakeLock) wakeLock.release()
         networkChangedListener.unRegister()
         isRun = false
         if (httpServer?.isAlive == true) {
