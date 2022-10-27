@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.exception.ConcurrentException
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
@@ -222,8 +223,9 @@ class AnalyzeUrl(
         queryStr = fieldsTxt
         val queryS = fieldsTxt.splitNotBlank("&")
         for (query in queryS) {
-            val value = query.substringAfter("=")
-            val key = query.substringBefore("=")
+            val queryPair = query.splitNotBlank("=", limit = 2)
+            val key = queryPair[0]
+            val value = queryPair.getOrNull(1) ?: ""
             if (charset.isNullOrEmpty()) {
                 if (NetworkUtils.hasUrlEncoded(value)) {
                     fieldMap[key] = value
