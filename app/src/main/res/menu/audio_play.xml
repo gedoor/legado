@@ -26,6 +26,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_wake_lock"
+        android:title="@string/audio_play_wake_lock"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
         app:showAsAction="never" />

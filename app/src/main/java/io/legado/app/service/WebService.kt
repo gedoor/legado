@@ -35,11 +35,19 @@ class WebService : BaseService() {
             context.stopService<WebService>()
         }
 
+        fun serve() {
+            appCtx.startService<WebService> {
+                action = "serve"
+            }
+        }
     }
 
-    private val useWakeLock = appCtx.getPrefBoolean(PreferKey.wakeLock, false)
-    private val wakeLock by lazy {
+    private val useWakeLock = appCtx.getPrefBoolean(PreferKey.webServiceWakeLock, false)
+    private val wakeLock: PowerManager.WakeLock by lazy {
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:webService")
+            .apply {
+                setReferenceCounted(false)
+            }
     }
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
@@ -78,6 +86,7 @@ class WebService : BaseService() {
         when (intent?.action) {
             IntentAction.stop -> stopSelf()
             "copyHostAddress" -> sendToClip(hostAddress)
+            "serve" -> if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
             else -> upWebServer()
         }
         return super.onStartCommand(intent, flags, startId)

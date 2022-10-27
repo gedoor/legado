@@ -63,8 +63,12 @@ class AudioPlayService : BaseService(),
             private set
     }
 
+    private val useWakeLock = AppConfig.audioPlayUseWakeLock
     private val wakeLock by lazy {
-        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:webService")
+        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:AudioPlayService")
+            .apply {
+                this.setReferenceCounted(false)
+            }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
@@ -87,10 +91,8 @@ class AudioPlayService : BaseService(),
     private var upPlayProgressJob: Job? = null
     private var playSpeed: Float = 1f
 
-    @SuppressLint("WakelockTimeout")
     override fun onCreate() {
         super.onCreate()
-        wakeLock.acquire()
         isRun = true
         upNotification()
         exoPlayer.addListener(this)
@@ -127,7 +129,7 @@ class AudioPlayService : BaseService(),
 
     override fun onDestroy() {
         super.onDestroy()
-        wakeLock.release()
+        if (useWakeLock) wakeLock.release()
         isRun = false
         abandonFocus()
         exoPlayer.release()
@@ -142,6 +144,7 @@ class AudioPlayService : BaseService(),
      * 播放音频
      */
     private fun play() {
+        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         upNotification()
         if (requestFocus()) {
             execute(context = Main) {
@@ -176,6 +179,7 @@ class AudioPlayService : BaseService(),
      * 暂停播放
      */
     private fun pause(abandonFocus: Boolean = true) {
+        if (useWakeLock) wakeLock.release()
         try {
             pause = true
             if (abandonFocus) {
@@ -197,6 +201,7 @@ class AudioPlayService : BaseService(),
      * 恢复播放
      */
     private fun resume() {
+        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         try {
             pause = false
             if (url.isEmpty()) {

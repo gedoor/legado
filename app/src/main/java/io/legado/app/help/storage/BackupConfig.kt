@@ -32,7 +32,7 @@ object BackupConfig {
         PreferKey.webDavPassword,
         PreferKey.launcherIcon,
         PreferKey.bitmapCacheSize,
-        PreferKey.wakeLock
+        PreferKey.webServiceWakeLock
     )
 
     //配置忽略标题

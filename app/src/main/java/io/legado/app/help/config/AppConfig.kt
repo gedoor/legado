@@ -423,6 +423,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.sourceEditMaxLine, value)
         }
 
+    var audioPlayUseWakeLock: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.audioPlayWakeLock)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.audioPlayWakeLock, value)
+        }
+
     fun detectClickArea() {
         if (clickActionTL * clickActionTC * clickActionTR
             * clickActionML * clickActionMC * clickActionMR
