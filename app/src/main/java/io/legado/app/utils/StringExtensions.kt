@@ -73,8 +73,9 @@ fun String?.isTrue(nullIsTrue: Boolean = false): Boolean {
     return !this.matches("\\s*(?i)(false|no|not|0)\\s*".toRegex())
 }
 
-fun String.splitNotBlank(vararg delimiter: String): Array<String> = run {
-    this.split(*delimiter).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
+fun String.splitNotBlank(vararg delimiter: String, limit: Int = 0): Array<String> = run {
+    this.split(*delimiter, limit = limit).map { it.trim() }.filterNot { it.isBlank() }
+        .toTypedArray()
 }
 
 fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
