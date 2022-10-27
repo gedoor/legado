@@ -70,7 +70,7 @@ fun String?.isTrue(nullIsTrue: Boolean = false): Boolean {
     if (this.isNullOrBlank() || this == "null") {
         return nullIsTrue
     }
-    return !this.matches("\\s*(?i)(false|no|not|0)\\s*".toRegex())
+    return !this.trim().matches("(?i)^(false|no|not|0)$".toRegex())
 }
 
 fun String.splitNotBlank(vararg delimiter: String, limit: Int = 0): Array<String> = run {
