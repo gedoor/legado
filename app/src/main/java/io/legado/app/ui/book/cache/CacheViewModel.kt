@@ -122,7 +122,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
             upAdapterLiveData.postValue(book.bookUrl)
         }.onFinally {
-            exportNumber--
+            mutex.withLock {
+                exportNumber--
+            }
         }
     }
 
@@ -132,14 +134,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         DocumentUtils.delete(doc, filename)
         val bookDoc = DocumentUtils.createFileIfNotExist(doc, filename)
             ?: throw NoStackTraceException("创建文档失败，请尝试重新设置导出文件夹")
-        val stringBuilder = StringBuilder()
-        val exportToWebDav = AppConfig.exportToWebDav
         context.contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
             getAllContents(book) { text, srcList ->
                 bookOs.write(text.toByteArray(Charset.forName(AppConfig.exportCharset)))
-                if (exportToWebDav) {
-                    stringBuilder.append(text)
-                }
                 srcList?.forEach {
                     val vFile = BookHelp.getImage(book, it.third)
                     if (vFile.exists()) {
@@ -154,9 +151,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
         if (AppConfig.exportToWebDav) {
             // 导出到webdav
-            val byteArray =
-                stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
-            AppWebDav.exportWebDav(byteArray, filename)
+            AppWebDav.exportWebDav(bookDoc.uri, filename)
         }
     }
 
@@ -164,13 +159,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         val filename = "${getExportFileName(book)}.txt"
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
-        val stringBuilder = StringBuilder()
-        val exportToWebDav = AppConfig.exportToWebDav
         getAllContents(book) { text, srcList ->
             bookFile.appendText(text, Charset.forName(AppConfig.exportCharset))
-            if (exportToWebDav) {
-                stringBuilder.append(text)
-            }
             srcList?.forEach {
                 val vFile = BookHelp.getImage(book, it.third)
                 if (vFile.exists()) {
@@ -185,9 +175,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
         }
         if (AppConfig.exportToWebDav) {
-            val byteArray =
-                stringBuilder.toString().toByteArray(Charset.forName(AppConfig.exportCharset))
-            AppWebDav.exportWebDav(byteArray, filename) // 导出到webdav
+            AppWebDav.exportWebDav(Uri.fromFile(bookFile), filename) // 导出到webdav
         }
     }
 
@@ -299,7 +287,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
             upAdapterLiveData.postValue(book.bookUrl)
         }.onFinally {
-            exportNumber--
+            mutex.withLock {
+                exportNumber--
+            }
         }
     }
 
@@ -322,7 +312,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             context.contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
                 EpubWriter().write(epubBook, bookOs)
             }
-
+            if (AppConfig.exportToWebDav) {
+                // 导出到webdav
+                AppWebDav.exportWebDav(bookDoc.uri, filename)
+            }
         }
     }
 
@@ -344,6 +337,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         setEpubContent(contentModel, book, epubBook)
         @Suppress("BlockingMethodInNonBlockingContext")
         EpubWriter().write(epubBook, FileOutputStream(bookFile))
+        if (AppConfig.exportToWebDav) {
+            // 导出到webdav
+            AppWebDav.exportWebDav(Uri.fromFile(bookFile), filename)
+        }
     }
 
     private fun setAssets(doc: DocumentFile, book: Book, epubBook: EpubBook): String {
