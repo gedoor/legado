@@ -26,13 +26,6 @@ object BackupConfig {
         PreferKey.bookshelfLayout,
         PreferKey.showRss,
         PreferKey.threadCount,
-        PreferKey.webDavUrl,
-        PreferKey.webDavDir,
-        PreferKey.webDavAccount,
-        PreferKey.webDavPassword,
-        PreferKey.launcherIcon,
-        PreferKey.bitmapCacheSize,
-        PreferKey.webServiceWakeLock
     )
 
     //配置忽略标题
@@ -51,7 +44,16 @@ object BackupConfig {
         PreferKey.defaultCoverDark,
         PreferKey.backupPath,
         PreferKey.defaultBookTreeUri,
-        PreferKey.webDavDeviceName
+        PreferKey.webDavDeviceName,
+        PreferKey.webDavUrl,
+        PreferKey.webDavDir,
+        PreferKey.webDavAccount,
+        PreferKey.webDavPassword,
+        PreferKey.launcherIcon,
+        PreferKey.bitmapCacheSize,
+        PreferKey.webServiceWakeLock,
+        PreferKey.readAloudWakeLock,
+        PreferKey.audioPlayWakeLock
     )
 
     //阅读配置
