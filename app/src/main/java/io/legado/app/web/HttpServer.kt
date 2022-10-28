@@ -8,6 +8,7 @@ import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.ReplaceRuleController
 import io.legado.app.api.controller.RssSourceController
+import io.legado.app.service.WebService
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.externalFiles
 import io.legado.app.web.utils.AssetsWeb
@@ -18,8 +19,8 @@ import java.io.*
 class HttpServer(port: Int) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
 
-
     override fun serve(session: IHTTPSession): Response {
+        WebService.serve()
         var returnData: ReturnData? = null
         val ct = ContentType(session.headers["content-type"]).tryUTF8()
         session.headers["content-type"] = ct.contentTypeHeader

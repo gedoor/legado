@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Bundle
+import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
@@ -27,7 +28,9 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
+import splitties.init.appCtx
 import splitties.systemservices.audioManager
+import splitties.systemservices.powerManager
 
 /**
  * 朗读服务
@@ -51,8 +54,16 @@ abstract class BaseReadAloudService : BaseService(),
         fun isPlay(): Boolean {
             return isRun && !pause
         }
+
     }
 
+    private val useWakeLock = appCtx.getPrefBoolean(PreferKey.readAloudWakeLock, false)
+    private val wakeLock by lazy {
+        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:ReadAloudService")
+            .apply {
+                this.setReferenceCounted(false)
+            }
+    }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
     }
@@ -102,6 +113,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     override fun onDestroy() {
         super.onDestroy()
+        if (useWakeLock) wakeLock.release()
         isRun = false
         pause = true
         abandonFocus()
@@ -150,6 +162,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     open fun play() {
+        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         isRun = true
         pause = false
         needResumeOnAudioFocusGain = false
@@ -161,6 +174,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     @CallSuper
     open fun pauseReadAloud(abandonFocus: Boolean = true) {
+        if (useWakeLock) wakeLock.release()
         pause = true
         if (abandonFocus) {
             abandonFocus()

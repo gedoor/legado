@@ -1,6 +1,5 @@
 package io.legado.app.service
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -18,7 +17,6 @@ import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
 import splitties.init.appCtx
 import splitties.systemservices.powerManager
-
 import java.io.IOException
 
 class WebService : BaseService() {
@@ -35,11 +33,19 @@ class WebService : BaseService() {
             context.stopService<WebService>()
         }
 
+        fun serve() {
+            appCtx.startService<WebService> {
+                action = "serve"
+            }
+        }
     }
 
-    private val useWakeLock = appCtx.getPrefBoolean(PreferKey.wakeLock, false)
-    private val wakeLock by lazy {
+    private val useWakeLock = appCtx.getPrefBoolean(PreferKey.webServiceWakeLock, false)
+    private val wakeLock: PowerManager.WakeLock by lazy {
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:webService")
+            .apply {
+                setReferenceCounted(false)
+            }
     }
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
@@ -48,12 +54,9 @@ class WebService : BaseService() {
         NetworkChangedListener(this)
     }
 
-    @SuppressLint("WakelockTimeout")
     override fun onCreate() {
         super.onCreate()
-        if (useWakeLock) {
-            wakeLock.acquire()
-        }
+        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         isRun = true
         notificationContent = getString(R.string.service_starting)
         upNotification()
@@ -78,6 +81,7 @@ class WebService : BaseService() {
         when (intent?.action) {
             IntentAction.stop -> stopSelf()
             "copyHostAddress" -> sendToClip(hostAddress)
+            "serve" -> if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
             else -> upWebServer()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -85,9 +89,7 @@ class WebService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (useWakeLock) {
-            wakeLock.release()
-        }
+        if (useWakeLock) wakeLock.release()
         networkChangedListener.unRegister()
         isRun = false
         if (httpServer?.isAlive == true) {

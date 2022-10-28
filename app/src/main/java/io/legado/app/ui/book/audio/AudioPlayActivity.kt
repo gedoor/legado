@@ -51,7 +51,6 @@ class AudioPlayActivity :
 
     override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
     override val viewModel by viewModels<AudioPlayViewModel>()
-    private var menu: Menu? = null
     private var adjustProgress = false
     private val timerViewState = mutableStateOf(false)
     private val progressTimeFormat by lazy {
@@ -94,10 +93,10 @@ class AudioPlayActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        this.menu = menu
-        upMenu()
-        return super.onPrepareOptionsMenu(menu)
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_login)?.isVisible = !AudioPlay.bookSource?.loginUrl.isNullOrBlank()
+        menu.findItem(R.id.menu_wake_lock)?.isChecked = AppConfig.audioPlayUseWakeLock
+        return super.onMenuOpened(featureId, menu)
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
@@ -111,6 +110,7 @@ class AudioPlayActivity :
                     putExtra("key", it.bookSourceUrl)
                 }
             }
+            R.id.menu_wake_lock -> AppConfig.audioPlayUseWakeLock = !AppConfig.audioPlayUseWakeLock
             R.id.menu_copy_audio_url -> sendToClip(AudioPlayService.url)
             R.id.menu_edit_source -> AudioPlay.bookSource?.let {
                 sourceEditResult.launch {
@@ -178,13 +178,6 @@ class AudioPlayActivity :
                     binding.ivTimer
                 )
             }
-        }
-    }
-
-    private fun upMenu() {
-        menu?.let { menu ->
-            menu.findItem(R.id.menu_login)?.isVisible =
-                !AudioPlay.bookSource?.loginUrl.isNullOrBlank()
         }
     }
 

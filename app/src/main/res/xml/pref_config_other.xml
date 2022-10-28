@@ -58,9 +58,9 @@
 
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
-            android:key="wakeLock"
-            android:title="@string/wake_lock"
-            android:summary="@string/wake_lock_summary" />
+            android:key="webServiceWakeLock"
+            android:title="@string/web_service_wake_lock"
+            android:summary="@string/web_service_wake_lock_summary" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="defaultBookTreeUri"
