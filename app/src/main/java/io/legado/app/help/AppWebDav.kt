@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import android.content.Context
+import android.net.Uri
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
@@ -199,6 +200,21 @@ object AppWebDav {
                 // 如果导出的本地文件存在,开始上传
                 val putUrl = exportsWebDavUrl + fileName
                 WebDav(putUrl, it).upload(byteArray, "text/plain")
+            }
+        } catch (e: Exception) {
+            val msg = "WebDav导出\n${e.localizedMessage}"
+            AppLog.put(msg, e)
+            appCtx.toastOnUi(msg)
+        }
+    }
+
+    suspend fun exportWebDav(uri: Uri, fileName: String) {
+        if (!NetworkUtils.isAvailable()) return
+        try {
+            authorization?.let {
+                // 如果导出的本地文件存在,开始上传
+                val putUrl = exportsWebDavUrl + fileName
+                WebDav(putUrl, it).upload(uri, "text/plain")
             }
         } catch (e: Exception) {
             val msg = "WebDav导出\n${e.localizedMessage}"

@@ -1,6 +1,7 @@
 package io.legado.app.lib.webdav
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
@@ -8,6 +9,7 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.toRequestBody
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
@@ -302,6 +304,26 @@ open class WebDav(val path: String, val authorization: Authorization) {
         kotlin.runCatching {
             withContext(IO) {
                 val fileBody = byteArray.toRequestBody(contentType.toMediaType())
+                val url = httpUrl ?: throw NoStackTraceException("url不能为空")
+                webDavClient.newCallResponse {
+                    url(url)
+                    put(fileBody)
+                }.let {
+                    checkResult(it)
+                }
+            }
+        }.onFailure {
+            AppLog.put("WebDav上传失败\n${it.localizedMessage}", it)
+            throw WebDavException("WebDav上传失败\n${it.localizedMessage}")
+        }
+    }
+
+    @Throws(WebDavException::class)
+    suspend fun upload(uri: Uri, contentType: String) {
+        // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
+        kotlin.runCatching {
+            withContext(IO) {
+                val fileBody = uri.toRequestBody(contentType.toMediaType())
                 val url = httpUrl ?: throw NoStackTraceException("url不能为空")
                 webDavClient.newCallResponse {
                     url(url)
