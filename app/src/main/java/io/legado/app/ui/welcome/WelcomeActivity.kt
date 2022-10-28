@@ -46,6 +46,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
                         BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels).let {
                             binding.tvLegado.visible(getPrefBoolean(PreferKey.welcomeShowTextDark))
                             binding.ivBook.visible(getPrefBoolean(PreferKey.welcomeShowIconDark))
+                            binding.tvGzh.visible(getPrefBoolean(PreferKey.welcomeShowTextDark))
                             window.decorView.background = BitmapDrawable(resources, it)
                             return
                         }
@@ -55,6 +56,7 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
                         BitmapUtils.decodeBitmap(path, size.widthPixels, size.heightPixels).let {
                             binding.tvLegado.visible(getPrefBoolean(PreferKey.welcomeShowText))
                             binding.ivBook.visible(getPrefBoolean(PreferKey.welcomeShowIcon))
+                            binding.tvGzh.visible(getPrefBoolean(PreferKey.welcomeShowText))
                             window.decorView.background = BitmapDrawable(resources, it)
                             return
                         }
