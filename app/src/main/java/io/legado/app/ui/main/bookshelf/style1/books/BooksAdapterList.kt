@@ -65,7 +65,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
     }
 
     private fun upLastUpdateTime(binding: ItemBookshelfListBinding, item: Book) {
-        if (!item.isLocal && item.canUpdate && AppConfig.showLastUpdateTime) {
+        if (AppConfig.showLastUpdateTime && !item.isLocal && item.canUpdate) {
             binding.tvLastUpdateTime.text = item.latestChapterTime.toTimeAgo()
         } else {
             binding.tvLastUpdateTime.text = ""
