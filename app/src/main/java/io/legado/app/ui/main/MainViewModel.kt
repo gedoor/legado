@@ -174,6 +174,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         waitUpTocBooks.remove(bookUrl)
         onUpTocBooks.remove(bookUrl)
         postEvent(EventBus.UP_BOOKSHELF, bookUrl)
+        if (waitUpTocBooks.isEmpty()
+            && onUpTocBooks.isEmpty()
+            && cacheBookJob == null
+            && !CacheBookService.isRun
+        ) {
+            //所有目录更新完再开始缓存章节
+            cacheBook()
+        }
     }
 
     @Synchronized
@@ -185,9 +193,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         )
         val cacheBook = CacheBook.getOrCreate(source, book)
         cacheBook.addDownload(book.durChapterIndex, endIndex)
-        if (cacheBookJob == null && !CacheBookService.isRun) {
-            cacheBook()
-        }
     }
 
     /**
@@ -205,7 +210,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 CacheBook.cacheBookMap.forEach {
                     val cacheBookModel = it.value
                     while (cacheBookModel.waitCount > 0) {
-                        if (CacheBook.onDownloadCount < threadCount) {
+                        //有目录更新是不缓存,优先更新目录,现在更多网站限制并发
+                        if (waitUpTocBooks.isEmpty()
+                            && onUpTocBooks.isEmpty()
+                            && CacheBook.onDownloadCount < threadCount
+                        ) {
                             cacheBookModel.download(this, upTocPool)
                         } else {
                             delay(100)
