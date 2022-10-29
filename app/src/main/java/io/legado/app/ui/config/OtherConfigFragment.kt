@@ -85,7 +85,7 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.pre_download))
                 .setMaxValue(9999)
-                .setMinValue(1)
+                .setMinValue(0)
                 .setValue(AppConfig.preDownloadNum)
                 .show {
                     AppConfig.preDownloadNum = it
@@ -123,7 +123,7 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.sourceEditMaxLine -> {
                 NumberPickerDialog(requireContext())
                     .setTitle(getString(R.string.source_edit_text_max_line))
-                    .setMaxValue(99)
+                    .setMaxValue(Int.MAX_VALUE)
                     .setMinValue(10)
                     .setValue(AppConfig.sourceEditMaxLine)
                     .show {

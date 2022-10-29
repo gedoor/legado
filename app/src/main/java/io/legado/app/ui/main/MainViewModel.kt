@@ -178,6 +178,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     @Synchronized
     private fun addDownload(source: BookSource, book: Book) {
+        if (AppConfig.preDownloadNum == 0) return
         val endIndex = min(
             book.totalChapterNum - 1,
             book.durChapterIndex.plus(AppConfig.preDownloadNum)

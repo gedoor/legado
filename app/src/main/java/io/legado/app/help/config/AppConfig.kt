@@ -413,9 +413,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     var sourceEditMaxLine: Int
         get() {
-            val maxLine = appCtx.getPrefInt(PreferKey.sourceEditMaxLine, 99)
+            val maxLine = appCtx.getPrefInt(PreferKey.sourceEditMaxLine, Int.MAX_VALUE)
             if (maxLine < 10) {
-                return 99
+                return Int.MAX_VALUE
             }
             return maxLine
         }
