@@ -45,7 +45,7 @@ object BookList {
         val analyzeRule = AnalyzeRule(ruleData, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
-        bookSource.bookUrlPattern?.let {
+        if (isSearch) bookSource.bookUrlPattern?.let {
             coroutineContext.ensureActive()
             if (baseUrl.matches(it.toRegex())) {
                 Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
