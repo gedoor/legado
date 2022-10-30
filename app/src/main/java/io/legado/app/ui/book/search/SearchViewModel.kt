@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     val bookshelf = hashSetOf<String>()
+    val upAdapterLiveData = MutableLiveData<String>()
     val searchScope: SearchScope = SearchScope(AppConfig.searchScope)
     private val searchModel = SearchModel(viewModelScope, object : SearchModel.CallBack {
 
@@ -67,6 +68,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             }.collect {
                 bookshelf.clear()
                 bookshelf.addAll(it)
+                upAdapterLiveData.postValue("isInBookshelf")
             }
         }
     }

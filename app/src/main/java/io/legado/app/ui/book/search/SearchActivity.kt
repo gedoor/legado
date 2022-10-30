@@ -387,6 +387,12 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         binding.fbStop.invisible()
     }
 
+    override fun observeLiveBus() {
+        viewModel.upAdapterLiveData.observe(this) {
+            adapter.notifyItemRangeChanged(0, adapter.itemCount, it)
+        }
+    }
+
     /**
      * 显示书籍详情
      */
@@ -398,6 +404,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
     }
 
+    /**
+     * 是否已经加入书架
+     */
     override fun isInBookshelf(name: String, author: String): Boolean {
         return viewModel.bookshelf.contains("$name-$author")
     }
