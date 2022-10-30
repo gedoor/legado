@@ -128,6 +128,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
+        fun isInBookshelf(name: String, author: String): Boolean
         fun showBookInfo(name: String, author: String, bookUrl: String)
     }
 }

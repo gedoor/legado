@@ -398,6 +398,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
     }
 
+    override fun isInBookshelf(name: String, author: String): Boolean {
+        return viewModel.bookshelf.contains("$name-$author")
+    }
+
     /**
      * 显示书籍详情
      */
