@@ -3,6 +3,7 @@ package io.legado.app.ui.book.search
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
 import io.legado.app.base.adapter.DiffRecyclerAdapter
@@ -78,6 +79,8 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         binding.run {
             tvName.text = searchBook.name
             tvAuthor.text = context.getString(R.string.author_show, searchBook.author)
+            ivInBookshelf.isVisible =
+                callBack.isInBookshelf(searchBook.name, searchBook.author)
             bvOriginCount.setBadgeCount(searchBook.origins.size)
             upLasted(binding, searchBook.latestChapterTitle)
             tvIntroduce.text = searchBook.trimIntro(context)
@@ -100,7 +103,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                     "last" -> upLasted(binding, searchBook.latestChapterTitle)
                     "intro" -> tvIntroduce.text = searchBook.trimIntro(context)
                     "kind" -> upKind(binding, searchBook.getKindList())
-                    "isInBookshelf" -> // todo 添加标志view
+                    "isInBookshelf" -> ivInBookshelf.isVisible =
                         callBack.isInBookshelf(searchBook.name, searchBook.author)
                     "cover" -> ivCover.load(
                         searchBook.coverUrl,

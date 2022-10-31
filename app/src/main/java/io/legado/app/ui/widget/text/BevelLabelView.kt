@@ -13,6 +13,9 @@ import androidx.annotation.IntDef
 import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
 
+/**
+ * 斜角标签
+ */
 @Suppress("unused")
 class BevelLabelView @JvmOverloads constructor(
     context: Context,
