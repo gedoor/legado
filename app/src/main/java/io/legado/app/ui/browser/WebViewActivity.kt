@@ -34,6 +34,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private val imagePathKey = "imagePath"
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
     private var webPic: String? = null
+    private var isCloudflareChallenge = false
     private val saveImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             ACache.get().put(imagePathKey, uri.toString())
@@ -68,7 +69,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             R.id.menu_copy_url -> sendToClip(viewModel.baseUrl)
             R.id.menu_ok -> {
                 if (viewModel.sourceVerificationEnable) {
-                    viewModel.saveVerificationResult {
+                    viewModel.saveVerificationResult(intent) {
                         finish()
                     }
                 } else {
@@ -225,6 +226,16 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     binding.titleBar.title = title
                 } else {
                     binding.titleBar.title = intent.getStringExtra("title")
+                }
+                if (title == "Just a moment...") {
+                    isCloudflareChallenge = true
+                }
+                if (isCloudflareChallenge && title != "Just a moment...") {
+                    if (viewModel.sourceVerificationEnable) {
+                        viewModel.saveVerificationResult(intent) {
+                            finish()
+                        }
+                    }
                 }
             }
         }
