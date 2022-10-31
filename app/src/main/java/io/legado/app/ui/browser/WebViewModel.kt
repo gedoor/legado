@@ -8,6 +8,7 @@ import android.webkit.URLUtil
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.IntentData
@@ -83,11 +84,17 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun saveVerificationResult(success: () -> Unit) {
+    fun saveVerificationResult(intent: Intent, success: () -> Unit) {
         execute {
             if (sourceVerificationEnable) {
+                val url = intent.getStringExtra("url")!!
+                val source = appDb.bookSourceDao.getBookSource(sourceOrigin)
                 val key = "${sourceOrigin}_verificationResult"
-                html = AnalyzeUrl(baseUrl, headerMapF = headerMap).getStrResponseAwait(useWebView = false).body
+                html = AnalyzeUrl(
+                    url,
+                    headerMapF = headerMap,
+                    source = source
+                ).getStrResponseAwait(useWebView = false).body
                 CacheManager.putMemory(key, html ?: "")
             }
         }.onSuccess {
