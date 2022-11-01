@@ -108,6 +108,7 @@ data class RssSource(
                 && equal(ruleContent, source.ruleContent)
                 && enableJs == source.enableJs
                 && loadWithBaseUrl == source.loadWithBaseUrl
+                && equal(variableComment, source.variableComment)
     }
 
     private fun equal(a: String?, b: String?): Boolean {
@@ -182,7 +183,8 @@ data class RssSource(
                     enabledCookieJar = doc.readBool("$.enabledCookieJar") ?: false,
                     customOrder = doc.readInt("$.customOrder") ?: 0,
                     lastUpdateTime = doc.readLong("$.lastUpdateTime") ?: 0L,
-                    coverDecodeJs = doc.readString("$.coverDecodeJs")
+                    coverDecodeJs = doc.readString("$.coverDecodeJs"),
+                    variableComment = doc.readString("$.variableComment")
                 )
             }
         }
