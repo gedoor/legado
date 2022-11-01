@@ -31,6 +31,9 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         viewModel.errorLiveData.observe(this) {
             loadMoreView.error(it)
         }
+        viewModel.upAdapterLiveData.observe(this) {
+            adapter.notifyItemRangeChanged(0, adapter.itemCount, it)
+        }
     }
 
     private fun initRecyclerView() {
@@ -78,6 +81,10 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         } else {
             adapter.addItems(books)
         }
+    }
+
+    override fun isInBookshelf(name: String, author: String): Boolean {
+        return viewModel.bookshelf.contains("$name-$author")
     }
 
     override fun showBookInfo(book: Book) {

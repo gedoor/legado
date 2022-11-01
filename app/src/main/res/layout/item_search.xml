@@ -26,6 +26,7 @@
         android:layout_margin="8dp"
         android:scaleType="centerCrop"
         android:src="@color/md_green_600"
+        android:visibility="invisible"
         app:layout_constraintRight_toRightOf="@id/iv_cover"
         app:layout_constraintTop_toTopOf="@id/iv_cover" />
 

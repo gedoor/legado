@@ -1,7 +1,9 @@
 package io.legado.app.ui.book.explore
 
 import android.content.Context
+import android.os.Bundle
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
@@ -26,9 +28,20 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
         item: SearchBook,
         payloads: MutableList<Any>
     ) {
-        binding.apply {
+        val bundle = payloads.getOrNull(0) as? Bundle
+        if (bundle == null) {
+            bind(binding, item)
+        } else {
+            bindChange(binding, item, bundle)
+        }
+
+    }
+
+    private fun bind(binding: ItemSearchBinding, item: SearchBook) {
+        binding.run {
             tvName.text = item.name
             tvAuthor.text = context.getString(R.string.author_show, item.author)
+            ivInBookshelf.isVisible = callBack.isInBookshelf(item.name, item.author)
             if (item.latestChapterTitle.isNullOrEmpty()) {
                 tvLasted.gone()
             } else {
@@ -53,6 +66,17 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
+    private fun bindChange(binding: ItemSearchBinding, item: SearchBook, bundle: Bundle) {
+        binding.run {
+            bundle.keySet().forEach {
+                when (it) {
+                    "isInBookshelf" -> ivInBookshelf.isVisible =
+                        callBack.isInBookshelf(item.name, item.author)
+                }
+            }
+        }
+    }
+
     override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
@@ -62,6 +86,11 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
+        /**
+         * 是否已经加入书架
+         */
+        fun isInBookshelf(name: String, author: String): Boolean
+
         fun showBookInfo(book: Book)
     }
 }

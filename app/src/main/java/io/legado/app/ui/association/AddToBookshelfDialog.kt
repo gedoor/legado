@@ -30,6 +30,11 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        val bookUrl = arguments?.getString("bookUrl")
+        if (bookUrl.isNullOrBlank()) {
+
+            return
+        }
 
     }
 
