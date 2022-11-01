@@ -108,7 +108,7 @@ data class RssSource(
                 && equal(ruleContent, source.ruleContent)
                 && enableJs == source.enableJs
                 && loadWithBaseUrl == source.loadWithBaseUrl
-                && equa(variableComment, source.variableComment)
+                && equal(variableComment, source.variableComment)
     }
 
     private fun equal(a: String?, b: String?): Boolean {
