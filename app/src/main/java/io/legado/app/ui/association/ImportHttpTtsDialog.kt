@@ -25,7 +25,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import splitties.views.onClick
 
-class ImportHttpTtsDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) {
+class ImportHttpTtsDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
+    CodeDialog.Callback {
 
     constructor(source: String, finishOnDismiss: Boolean = false) : this() {
         arguments = Bundle().apply {
@@ -175,5 +176,14 @@ class ImportHttpTtsDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) 
             }
         }
 
+    }
+
+    override fun onCodeSave(code: String, requestId: String?) {
+        requestId?.toInt()?.let {
+            HttpTTS.fromJson(code).getOrNull()?.let { source ->
+                viewModel.allSources[it] = source
+                adapter.setItem(it, source)
+            }
+        }
     }
 }
