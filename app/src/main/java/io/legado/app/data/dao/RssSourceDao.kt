@@ -17,7 +17,7 @@ interface RssSourceDao {
     @Query("select * from rssSources where sourceUrl in (:sourceUrls)")
     fun getRssSources(vararg sourceUrls: String): List<RssSource>
 
-    @get:Query("SELECT * FROM rssSources")
+    @get:Query("SELECT * FROM rssSources order by customOrder")
     val all: List<RssSource>
 
     @get:Query("select count(sourceUrl) from rssSources")
