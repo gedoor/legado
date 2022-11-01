@@ -85,6 +85,11 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
                     return false
                 }
             })
+            setOnQueryTextFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
+                    searchView?.isIconified = true
+                }
+            }
         }
         return super.onCompatCreateOptionsMenu(menu)
     }
@@ -114,15 +119,6 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
-    }
-
-    override fun finish() {
-        if (tabLayout.isGone) {
-            searchView?.onActionViewCollapsed()
-            tabLayout.visible()
-        } else {
-            super.finish()
-        }
     }
 
     @Suppress("DEPRECATION")

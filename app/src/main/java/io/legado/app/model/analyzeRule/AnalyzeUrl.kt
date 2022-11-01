@@ -289,7 +289,7 @@ class AnalyzeUrl(
     private fun fetchStart(): ConcurrentRecord? {
         source ?: return null
         val concurrentRate = source.concurrentRate
-        if (concurrentRate.isNullOrEmpty()) {
+        if (concurrentRate.isNullOrEmpty() || concurrentRate == "0") {
             return null
         }
         val rateIndex = concurrentRate.indexOf("/")
