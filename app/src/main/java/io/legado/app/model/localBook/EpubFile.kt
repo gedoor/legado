@@ -112,7 +112,7 @@ class EpubFile(var book: Book) {
         }.onFailure {
             AppLog.put("读取Epub文件失败\n${it.localizedMessage}", it)
             it.printOnDebug()
-        }.getOrNull()
+        }.getOrThrow()
     }
 
     private fun getContent(chapter: BookChapter): String? {

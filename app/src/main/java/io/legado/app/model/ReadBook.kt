@@ -501,6 +501,8 @@ object ReadBook : CoroutineScope by MainScope() {
         fun upPageAnim()
 
         fun exit()
+
+        fun notifyBookChanged()
     }
 
 }

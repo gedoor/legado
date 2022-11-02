@@ -18,11 +18,8 @@ import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.visible
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
@@ -75,7 +72,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
             val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
             val useReplace = AppConfig.tocUiUseReplace && book.getUseReplaceRule()
             val items = getItems()
-            async {
+            launch {
                 for (i in startIndex until items.size) {
                     val item = items[i]
                     if (displayTitleMap[item.title] == null) {
@@ -88,8 +85,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                         }
                     }
                 }
-            }.start()
-            async {
+            }
+            launch {
                 for (i in startIndex downTo 0) {
                     val item = items[i]
                     if (displayTitleMap[item.title] == null) {
@@ -102,7 +99,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                         }
                     }
                 }
-            }.start()
+            }
         }
     }
 

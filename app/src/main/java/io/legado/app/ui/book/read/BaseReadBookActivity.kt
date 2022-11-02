@@ -46,9 +46,13 @@ abstract class BaseReadBookActivity :
     override val viewModel by viewModels<ReadBookViewModel>()
     var bottomDialog = 0
     private val selectBookFolderResult = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let {
+        it.uri?.let { uri ->
             ReadBook.book?.let { book ->
-                viewModel.loadChapterList(book)
+                FileDoc.fromUri(uri, true).find(book.originName)?.let { doc ->
+                    book.bookUrl = doc.uri.toString()
+                    book.save()
+                    viewModel.loadChapterList(book)
+                } ?: ReadBook.upMsg("找不到文件")
             }
         } ?: ReadBook.upMsg("没有权限访问")
     }
@@ -123,11 +127,12 @@ abstract class BaseReadBookActivity :
         if (toolBarHide) {
             setLightStatusBar(ReadBookConfig.durConfig.curStatusIconDark())
         } else {
-            val statusBarColor = if (AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0) {
-                ReadBookConfig.bgMeanColor
-            } else {
-                ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
-            }
+            val statusBarColor =
+                if (AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0) {
+                    ReadBookConfig.bgMeanColor
+                } else {
+                    ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
+                }
             setLightStatusBar(ColorUtils.isColorLight(statusBarColor))
         }
     }
@@ -202,7 +207,8 @@ abstract class BaseReadBookActivity :
      * 保持亮屏
      */
     fun keepScreenOn(on: Boolean) {
-        val isScreenOn = (window.attributes.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
+        val isScreenOn =
+            (window.attributes.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
         if (on == isScreenOn) return
         if (on) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

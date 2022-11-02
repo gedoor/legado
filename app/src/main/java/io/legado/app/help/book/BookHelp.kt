@@ -1,6 +1,5 @@
 package io.legado.app.help.book
 
-import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
@@ -17,6 +16,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.concurrent.CopyOnWriteArraySet
@@ -141,7 +141,7 @@ object BookHelp {
             val bytes = analyzeUrl.getByteArrayAwait()
             //某些图片被加密，需要进一步解密
             ImageUtils.decode(
-              src, bytes, isCover = false, bookSource, book
+                src, bytes, isCover = false, bookSource, book
             )?.let {
                 FileUtils.createFileIfNotExist(
                     downloadDir,
@@ -177,9 +177,9 @@ object BookHelp {
         return suffix
     }
 
-    @Throws(IOException::class)
+    @Throws(IOException::class, FileNotFoundException::class)
     fun getEpubFile(book: Book): ZipFile {
-        val uri = Uri.parse(book.bookUrl)
+        val uri = book.getLocalUri()
         if (uri.isContentScheme()) {
             FileUtils.createFolderIfNotExist(downloadDir, cacheEpubFolderName)
             val path = FileUtils.getPath(downloadDir, cacheEpubFolderName, book.originName)

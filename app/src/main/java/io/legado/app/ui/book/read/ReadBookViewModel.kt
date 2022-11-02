@@ -36,6 +36,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 
 /**
@@ -144,7 +145,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 }
             }.onError {
                 when (it) {
-                    is SecurityException -> {
+                    is SecurityException, is FileNotFoundException -> {
                         permissionDenialLiveData.postValue(1)
                     }
                     else -> {

@@ -167,7 +167,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val menuLayoutIsVisible get() = bottomDialog > 0 || binding.readMenu.isVisible
     private val nextPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.NEXT) } }
     private val prevPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.PREV) } }
-    private var isFirstResume = true
+    private var bookChanged = false
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -181,6 +181,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.cursorRight.setOnTouchListener(this)
         window.setBackgroundDrawable(null)
         upScreenTimeOut()
+        ReadBook.callBack?.notifyBookChanged()
         ReadBook.callBack = this
     }
 
@@ -204,8 +205,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onResume() {
         super.onResume()
         ReadBook.readStartTime = System.currentTimeMillis()
-        val bookUrl = intent.getStringExtra("bookUrl")
-        if (!isFirstResume && ReadBook.book?.bookUrl != bookUrl) {
+        if (bookChanged) {
+            bookChanged = false
             ReadBook.callBack = this
             viewModel.initData(intent)
         } else {
@@ -218,9 +219,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         upSystemUiVisibility()
         registerReceiver(timeBatteryReceiver, timeBatteryReceiver.filter)
         binding.readView.upTime()
-        if (isFirstResume) {
-            isFirstResume = false
-        }
     }
 
     override fun onPause() {
@@ -786,6 +784,10 @@ class ReadBookActivity : BaseReadBookActivity(),
                 super.finish()
             }
         } ?: super.finish()
+    }
+
+    override fun notifyBookChanged() {
+        bookChanged = true
     }
 
     /**
