@@ -1,7 +1,7 @@
 package io.legado.app.ui.book.manage
 
 import android.app.Application
-import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
@@ -17,9 +17,8 @@ import io.legado.app.utils.toastOnUi
 class BookshelfManageViewModel(application: Application) : BaseViewModel(application) {
     var groupId: Long = -1L
     var groupName: String? = null
-    val batchChangeSourceState = mutableStateOf(false)
-    val batchChangeSourceSize = mutableStateOf(0)
-    val batchChangeSourcePosition = mutableStateOf(0)
+    val batchChangeSourceState = MutableLiveData<Boolean>()
+    val batchChangeSourceProcessLiveData = MutableLiveData<String>()
     var batchChangeSourceCoroutine: Coroutine<Unit>? = null
 
     fun upCanUpdate(books: List<Book>, canUpdate: Boolean) {
@@ -46,9 +45,8 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
     fun changeSource(books: List<Book>, source: BookSource) {
         batchChangeSourceCoroutine?.cancel()
         batchChangeSourceCoroutine = execute {
-            batchChangeSourceSize.value = books.size
             books.forEachIndexed { index, book ->
-                batchChangeSourcePosition.value = index + 1
+                batchChangeSourceProcessLiveData.postValue("${index + 1}/${books.size}")
                 if (book.isLocal) return@forEachIndexed
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
                 WebBook.preciseSearchAwait(this, source, book.name, book.author)
@@ -66,8 +64,10 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                             }
                     }
             }
+        }.onStart {
+            batchChangeSourceState.postValue(true)
         }.onFinally {
-            batchChangeSourceState.value = false
+            batchChangeSourceState.postValue(false)
         }
     }
 

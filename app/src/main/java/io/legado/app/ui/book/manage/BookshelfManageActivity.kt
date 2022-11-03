@@ -23,8 +23,8 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
-import io.legado.app.ui.theme.AppTheme
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -59,6 +59,7 @@ class BookshelfManageActivity :
     private var menu: Menu? = null
     private var searchView: SearchView? = null
     private var books: List<Book>? = null
+    private val waitDialog by lazy { WaitDialog(this) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.groupId = intent.getLongExtra("groupId", -1)
@@ -73,6 +74,20 @@ class BookshelfManageActivity :
         initOtherView()
         initGroupData()
         upBookDataByGroupId()
+    }
+
+    override fun observeLiveBus() {
+        viewModel.batchChangeSourceState.observe(this) {
+            if (it) {
+                waitDialog.setText(R.string.change_source_batch)
+                waitDialog.show()
+            } else {
+                waitDialog.dismiss()
+            }
+        }
+        viewModel.batchChangeSourceProcessLiveData.observe(this) {
+            waitDialog.setText(it)
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -150,16 +165,8 @@ class BookshelfManageActivity :
         binding.selectActionBar.inflateMenu(R.menu.bookshelf_menage_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
         binding.selectActionBar.setCallBack(this)
-        binding.composeView.setContent {
-            AppTheme {
-                BatchChangeSourceDialog(
-                    state = viewModel.batchChangeSourceState,
-                    size = viewModel.batchChangeSourceSize,
-                    position = viewModel.batchChangeSourcePosition
-                ) {
-                    viewModel.batchChangeSourceCoroutine?.cancel()
-                }
-            }
+        waitDialog.setOnCancelListener {
+            viewModel.batchChangeSourceCoroutine?.cancel()
         }
     }
 
