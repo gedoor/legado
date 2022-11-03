@@ -164,7 +164,7 @@ class AudioPlayActivity :
         }
         binding.ivTimer.setOnClickListener {
             if (AudioPlayService.isRun) {
-
+                AudioPlay.addTimer(this)
             } else {
                 toastOnUi(R.string.cannot_timed_non_playback)
             }

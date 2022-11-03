@@ -148,6 +148,12 @@ object AudioPlay {
         appCtx.startService(intent)
     }
 
+    fun addTimer(context: Context) {
+        val intent = Intent(appCtx, AudioPlayService::class.java)
+        intent.action = IntentAction.addTimer
+        appCtx.startService(intent)
+    }
+
     fun saveRead() {
         book?.let { book ->
             book.lastCheckCount = 0
