@@ -99,6 +99,7 @@ abstract class BaseReadBookActivity :
             "1" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             "2" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             "3" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            "4" -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
         }
     }
 

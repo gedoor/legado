@@ -59,6 +59,7 @@
 		<item>@string/screen_portrait</item>
 		<item>@string/screen_landscape</item>
 		<item>@string/screen_sensor</item>
+		<item>反向竖屏</item>
 	</string-array>
 
 	<string-array name="double_page_title">
