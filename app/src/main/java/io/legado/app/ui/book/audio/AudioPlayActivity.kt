@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.activity.viewModels
-import androidx.compose.runtime.mutableStateOf
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.EventBus
@@ -32,7 +31,6 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.login.SourceLoginActivity
-import io.legado.app.ui.theme.AppTheme
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -52,7 +50,7 @@ class AudioPlayActivity :
     override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
     override val viewModel by viewModels<AudioPlayViewModel>()
     private var adjustProgress = false
-    private val timerViewState = mutableStateOf(false)
+
     private val progressTimeFormat by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             SimpleDateFormat("mm:ss", Locale.getDefault())
@@ -166,17 +164,9 @@ class AudioPlayActivity :
         }
         binding.ivTimer.setOnClickListener {
             if (AudioPlayService.isRun) {
-                timerViewState.value = true
+
             } else {
                 toastOnUi(R.string.cannot_timed_non_playback)
-            }
-        }
-        binding.composeView.setContent {
-            AppTheme {
-                TimerDialog(
-                    state = timerViewState,
-                    binding.ivTimer
-                )
             }
         }
     }

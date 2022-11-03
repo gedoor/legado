@@ -61,7 +61,6 @@ android {
     buildFeatures {
         buildConfig true
         viewBinding true
-        compose true
     }
     buildTypes {
         release {
@@ -111,9 +110,6 @@ android {
         // Sets Java compatibility to Java 11
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion "$compose_compiler_version"
     }
 
     sourceSets {
@@ -170,18 +166,6 @@ dependencies {
     def lifecycle_version = '2.5.1'
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
-
-    //compose
-    // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.6.1'
-    // Compose Material Design
-    implementation "androidx.compose.material:material:$compose_version"
-    // Animations
-    implementation "androidx.compose.animation:animation:$compose_version"
-    // Tooling support (Previews, etc.)
-    implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    // UI Tests
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
 
     //media
     implementation("androidx.media:media:1.6.0")
