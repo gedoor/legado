@@ -13,6 +13,7 @@ import com.script.SimpleBindings
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -116,7 +117,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = it.localizedMessage ?: "ERROR"
             upAdapterLiveData.postValue(book.bookUrl)
-            it.printOnDebug()
+            AppLog.put("导出书籍<${book.name}>出错", it)
         }.onSuccess {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
