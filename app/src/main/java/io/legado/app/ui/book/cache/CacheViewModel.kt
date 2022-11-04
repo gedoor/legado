@@ -123,9 +123,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
             upAdapterLiveData.postValue(book.bookUrl)
         }.onFinally {
-            mutex.withLock {
-                exportNumber--
-            }
+            exportNumber--
         }
     }
 
@@ -288,9 +286,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
             upAdapterLiveData.postValue(book.bookUrl)
         }.onFinally {
-            mutex.withLock {
-                exportNumber--
-            }
+            exportNumber--
         }
     }
 
