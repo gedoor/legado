@@ -49,6 +49,7 @@ class AudioPlayActivity :
 
     override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
     override val viewModel by viewModels<AudioPlayViewModel>()
+    private val timerSliderPopup by lazy { TimerSliderPopup(this) }
     private var adjustProgress = false
 
     private val progressTimeFormat by lazy {
@@ -163,11 +164,7 @@ class AudioPlayActivity :
             AudioPlay.adjustSpeed(this@AudioPlayActivity, -0.1f)
         }
         binding.ivTimer.setOnClickListener {
-            if (AudioPlayService.isRun) {
-                AudioPlay.addTimer(this)
-            } else {
-                toastOnUi(R.string.cannot_timed_non_playback)
-            }
+            timerSliderPopup.showAsDropDown(binding.tvSubTitle)
         }
     }
 
