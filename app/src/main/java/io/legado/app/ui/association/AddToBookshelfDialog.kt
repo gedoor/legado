@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.DialogAddToBookshelfBinding
@@ -54,6 +55,9 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         viewModel.loadStateLiveData.observe(this) {
             //todo
         }
+        viewModel.loadErrorLiveData.observe(this) {
+            //todo
+        }
         viewModel.load(bookUrl) {
             //todo
         }
@@ -62,6 +66,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
     class ViewModel(application: Application) : BaseViewModel(application) {
 
         val loadStateLiveData = MutableLiveData<Boolean>()
+        val loadErrorLiveData = MutableLiveData<String>()
 
         fun load(bookUrl: String, success: (book: Book) -> Unit) {
             execute {
@@ -90,6 +95,9 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
                     book.order = appDb.bookDao.minOrder - 1
                     return@execute book
                 } ?: throw NoStackTraceException("未找到匹配书源")
+            }.onError {
+                AppLog.put("添加书籍 ${bookUrl} 出错", it)
+                loadErrorLiveData.postValue(it.localizedMessage)
             }.onSuccess {
                 success.invoke(it)
             }.onStart {
