@@ -5,6 +5,7 @@ import android.app.Activity
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
@@ -164,7 +165,7 @@ class AudioPlayActivity :
             AudioPlay.adjustSpeed(this@AudioPlayActivity, -0.1f)
         }
         binding.ivTimer.setOnClickListener {
-            timerSliderPopup.showAsDropDown(binding.tvSubTitle)
+            timerSliderPopup.showAsDropDown(it, 0, (-100).dpToPx(), Gravity.TOP)
         }
     }
 

@@ -150,6 +150,7 @@ object AudioPlay {
             appCtx.startService(intent)
         } else {
             AudioPlayService.timeMinute = minute
+            postEvent(EventBus.AUDIO_DS, minute)
         }
     }
 
