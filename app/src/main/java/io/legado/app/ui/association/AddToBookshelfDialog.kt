@@ -51,8 +51,11 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             dismiss()
             return
         }
+        viewModel.loadStateLiveData.observe(this) {
+            //todo
+        }
         viewModel.load(bookUrl) {
-
+            //todo
         }
     }
 
