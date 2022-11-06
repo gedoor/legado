@@ -53,13 +53,26 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             return
         }
         viewModel.loadStateLiveData.observe(this) {
-            //todo
+            if (it) {
+                binding.rotateLoading.show()
+            } else {
+                binding.rotateLoading.hide()
+            }
         }
         viewModel.loadErrorLiveData.observe(this) {
-            //todo
+            toastOnUi(it)
+            dismiss()
         }
         viewModel.load(bookUrl) {
-            //todo
+            binding.tvMessage
+        }
+        binding.tvCancel.setOnClickListener {
+            dismiss()
+        }
+        binding.tvOk.setOnClickListener {
+            viewModel.saveBook {
+                dismiss()
+            }
         }
     }
 
@@ -67,6 +80,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
 
         val loadStateLiveData = MutableLiveData<Boolean>()
         val loadErrorLiveData = MutableLiveData<String>()
+        var book: Book? = null
 
         fun load(bookUrl: String, success: (book: Book) -> Unit) {
             execute {
@@ -99,11 +113,20 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
                 AppLog.put("添加书籍 ${bookUrl} 出错", it)
                 loadErrorLiveData.postValue(it.localizedMessage)
             }.onSuccess {
+                book = it
                 success.invoke(it)
             }.onStart {
                 loadStateLiveData.postValue(true)
             }.onFinally {
                 loadStateLiveData.postValue(false)
+            }
+        }
+
+        fun saveBook(finally: () -> Unit) {
+            execute {
+                book?.save()
+            }.onFinally {
+                finally.invoke()
             }
         }
 
