@@ -1,5 +1,6 @@
 package io.legado.app.ui.association
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.DialogInterface
 import android.os.Bundle
@@ -45,6 +46,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         val bookUrl = arguments?.getString("bookUrl")
         if (bookUrl.isNullOrBlank()) {
@@ -64,7 +66,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             dismiss()
         }
         viewModel.load(bookUrl) {
-            binding.tvMessage
+            binding.tvMessage.text = "${it.name}(${it.author})"
         }
         binding.tvCancel.setOnClickListener {
             dismiss()
