@@ -139,7 +139,7 @@
                         <ImageView
                             android:layout_width="18sp"
                             android:layout_height="18sp"
-                            android:contentDescription="@string/origin_format"
+                            android:contentDescription="@string/author"
                             android:paddingRight="2dp"
                             android:src="@drawable/ic_author"
                             app:tint="@color/tv_text_summary"

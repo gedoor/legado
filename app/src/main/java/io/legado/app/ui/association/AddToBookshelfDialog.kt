@@ -18,10 +18,7 @@ import io.legado.app.databinding.DialogAddToBookshelfBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.setLayout
-import io.legado.app.utils.startActivity
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshelf) {
@@ -59,6 +56,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         viewModel.loadStateLiveData.observe(this) {
             if (it) {
                 binding.rotateLoading.show()
+                binding.bookInfo.invisible()
             } else {
                 binding.rotateLoading.hide()
             }
@@ -68,6 +66,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             dismiss()
         }
         viewModel.load(bookUrl) {
+            binding.bookInfo.visible()
             binding.tvName.text = it.name
             binding.tvAuthor.text = it.author
             binding.tvOrigin.text = it.originName
@@ -77,18 +76,20 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         }
         binding.tvOk.setOnClickListener {
             viewModel.saveBook {
-                dismiss()
+                it?.let {
+                    dismiss()
+                } ?: toastOnUi(R.string.no_book)
             }
         }
         binding.tvRead.setOnClickListener {
             viewModel.saveBook {
-                viewModel.book?.let {
+                it?.let {
                     startActivity<ReadBookActivity> {
                         putExtra("bookUrl", it.bookUrl)
                         putExtra("inBookshelf", false)
                     }
-                }
-                dismiss()
+                    dismiss()
+                } ?: toastOnUi(R.string.no_book)
             }
         }
     }
@@ -139,11 +140,12 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             }
         }
 
-        fun saveBook(finally: () -> Unit) {
+        fun saveBook(success: (book: Book?) -> Unit) {
             execute {
                 book?.save()
-            }.onFinally {
-                finally.invoke()
+                book
+            }.onSuccess {
+                success.invoke(it)
             }
         }
 

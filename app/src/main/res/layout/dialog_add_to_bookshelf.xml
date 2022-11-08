@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/tv_title"
@@ -15,26 +16,69 @@
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_name"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/book_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+        android:layout_marginHorizontal="16dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@id/tv_title">
 
-    <TextView
-        android:id="@+id/tv_author"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_origin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_author" />
+        <ImageView
+            android:id="@+id/iv_author"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:contentDescription="@string/author"
+            android:paddingRight="2dp"
+            android:src="@drawable/ic_author"
+            app:tint="@color/tv_text_summary"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_author"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_author"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+        <TextView
+            android:id="@+id/tv_author"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            app:layout_constraintLeft_toRightOf="@+id/iv_author"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name"
+            tools:ignore="RtlHardcoded" />
+
+        <ImageView
+            android:id="@+id/iv_origin"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:contentDescription="@string/origin_format"
+            android:paddingRight="2dp"
+            android:src="@drawable/ic_web_outline"
+            app:tint="@color/tv_text_summary"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_origin"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_origin"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+        <TextView
+            android:id="@+id/tv_origin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            app:layout_constraintLeft_toRightOf="@+id/iv_origin"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_author"
+            tools:ignore="RtlHardcoded" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <io.legado.app.ui.widget.anima.RotateLoading
         android:id="@+id/rotate_loading"
@@ -42,8 +86,8 @@
         android:layout_height="48dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_name"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_origin" />
+        app:layout_constraintTop_toTopOf="@id/book_info"
+        app:layout_constraintBottom_toBottomOf="@+id/book_info" />
 
     <io.legado.app.ui.widget.text.AccentTextView
         android:id="@+id/tv_ok"
@@ -51,7 +95,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="@string/ok"
-        app:layout_constraintTop_toBottomOf="@+id/tv_origin"
+        app:layout_constraintTop_toBottomOf="@+id/book_info"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
