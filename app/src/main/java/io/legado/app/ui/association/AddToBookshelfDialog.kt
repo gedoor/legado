@@ -17,8 +17,10 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.DialogAddToBookshelfBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -66,13 +68,26 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             dismiss()
         }
         viewModel.load(bookUrl) {
-            binding.tvMessage.text = "${it.name}(${it.author})"
+            binding.tvName.text = it.name
+            binding.tvAuthor.text = it.author
+            binding.tvOrigin.text = it.originName
         }
         binding.tvCancel.setOnClickListener {
             dismiss()
         }
         binding.tvOk.setOnClickListener {
             viewModel.saveBook {
+                dismiss()
+            }
+        }
+        binding.tvRead.setOnClickListener {
+            viewModel.saveBook {
+                viewModel.book?.let {
+                    startActivity<ReadBookActivity> {
+                        putExtra("bookUrl", it.bookUrl)
+                        putExtra("inBookshelf", false)
+                    }
+                }
                 dismiss()
             }
         }
