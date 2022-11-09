@@ -47,6 +47,7 @@ android {
         multiDexEnabled true
 
         buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
+        buildConfigField "String", "Cronet_Main_Version", "\"$CronetMainVersion\""
 
         javaCompileOptions {
             annotationProcessorOptions {
