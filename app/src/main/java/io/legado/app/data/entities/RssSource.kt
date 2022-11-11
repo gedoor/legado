@@ -59,6 +59,8 @@ data class RssSource(
     var style: String? = null,
     var enableJs: Boolean = true,
     var loadWithBaseUrl: Boolean = true,
+    /**注入js**/
+    var injectJs: String? = null,
     /*其它规则*/
     // 最后更新时间，用于排序
     @ColumnInfo(defaultValue = "0")
