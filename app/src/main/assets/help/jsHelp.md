@@ -107,12 +107,12 @@ java.getVerificationCode(imageUrl)
 java.longToast(msg: Any?)
 java.toast(msg: Any?)
 ```
-* 从网络(由java.cacheFile实现)、本地导入JavaScript脚本
+* 从网络(由java.cacheFile实现)、本地读取JavaScript文件，导入上下文请手动`eval(String(...))`
 ```
-{{java.importScript(url)}}
+java.importScript(url)
 //相对路径支持android/data/{package}/cache
-{{java.importScript(relativePath)}}
-{{java.importScript(absolutePath)}}
+java.importScript(relativePath)
+java.importScript(absolutePath)
 ```
 * 缓存网络文件
 ```
@@ -293,7 +293,7 @@ cookie.getCookie(url)
 获取cookie某一键值
 cookie.getKey(url,key)
 删除cookie
-cookie.removeCookie(key)
+cookie.removeCookie(url)
 ```
 
 ## cache对象的部分可用函数
