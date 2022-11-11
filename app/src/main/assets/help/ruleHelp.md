@@ -37,6 +37,11 @@
         name: "注册",
         type: "button",
         action: "http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C"
+    },
+    {
+        name: "获取验证码",
+        type: "button",
+        action: "java.ajax(...)"
     }
 ]
 成功登录后在js中获取读取登录信息

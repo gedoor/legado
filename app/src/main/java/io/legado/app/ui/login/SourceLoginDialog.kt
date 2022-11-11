@@ -67,6 +67,15 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     it.root.onClick {
                         if (rowUi.action.isAbsUrl()) {
                             context?.openUrl(rowUi.action!!)
+                        } else {
+                            // JavaScript
+                            rowUi.action?.let {
+                                kotlin.runCatching {
+                                    source.evalJS(it)
+                                }.onFailure {
+                                    AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", it)
+                                }
+                            }
                         }
                     }
                 }
