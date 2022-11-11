@@ -22,6 +22,7 @@ import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.UrlOptionDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
+import io.legado.app.ui.widget.text.EditEntity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -183,6 +184,7 @@ class RssSourceEditActivity :
             add(EditEntity("ruleLink", source?.ruleLink, R.string.r_link))
             add(EditEntity("ruleContent", source?.ruleContent, R.string.r_content))
             add(EditEntity("style", source?.style, R.string.r_style))
+            add(EditEntity("injectJs", source?.injectJs, R.string.r_inject_js))
         }
         adapter.editEntities = sourceEntities
     }
@@ -225,6 +227,7 @@ class RssSourceEditActivity :
                 "ruleContent" -> source.ruleContent =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
                 "style" -> source.style = it.value
+                "injectJs" -> source.injectJs = it.value
             }
         }
         return source

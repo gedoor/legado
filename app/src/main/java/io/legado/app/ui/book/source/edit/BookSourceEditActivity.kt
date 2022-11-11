@@ -31,6 +31,7 @@ import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.UrlOptionDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
+import io.legado.app.ui.widget.text.EditEntity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -477,7 +478,7 @@ class BookSourceEditActivity :
                 "voteDownUrl" -> reviewRule.voteDownUrl = it.value
                 "postReviewUrl" -> reviewRule.postReviewUrl = it.value
                 "postQuoteUrl" -> reviewRule.postQuoteUrl = it.value
-                "deleteUrl" -> reviewRule.deleteUrl =it.value
+                "deleteUrl" -> reviewRule.deleteUrl = it.value
             }
         }
         source.ruleSearch = searchRule

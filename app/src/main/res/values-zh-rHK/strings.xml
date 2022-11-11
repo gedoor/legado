@@ -434,6 +434,7 @@
     <string name="r_image">圖片 url 規則 (ruleImage)</string>
     <string name="r_content">內容規則 (ruleContent)</string>
     <string name="r_style">樣式 (style)</string>
+    <string name="r_inject_js">注入Js(injectJs)</string>
     <string name="r_link">鏈接規則 (ruleLink)</string>
     <string name="check_key_word">校驗關鍵字(checkKeyWord)</string>
     <string name="rule_actions">操作(actions)</string>
