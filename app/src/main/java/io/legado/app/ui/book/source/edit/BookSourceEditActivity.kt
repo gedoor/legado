@@ -146,6 +146,7 @@ class BookSourceEditActivity :
 
     private fun initView() {
         if (!BuildConfig.DEBUG) {
+            binding.cbIsEnableReview.gone()
             binding.tabLayout.removeTabAt(6)
         }
         binding.recyclerView.setEdgeEffectColor(primaryColor)

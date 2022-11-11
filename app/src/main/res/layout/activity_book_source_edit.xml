@@ -36,7 +36,7 @@
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/sp_type"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:entries="@array/book_type"
                 app:theme="@style/Spinner" />
 
