@@ -16,6 +16,7 @@ import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.model.CacheBook
+import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
@@ -138,6 +139,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 appDb.bookChapterDao.delByBook(bookUrl)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
+                if (book.isSameNameAuthor(ReadBook)) {
+                    ReadBook.book = book
+                    ReadBook.chapterSize = book.totalChapterNum
+                }
                 addDownload(source, book)
             }.onFailure {
                 AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)

@@ -15,10 +15,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.book.BookHelp
-import io.legado.app.help.book.getRemoteUrl
-import io.legado.app.help.book.isLocal
-import io.legado.app.help.book.removeType
+import io.legado.app.help.book.*
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
 import io.legado.app.model.BookCover
@@ -201,6 +198,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 }
                                 appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                                 appDb.bookChapterDao.insert(*it.toTypedArray())
+                                if (book.isSameNameAuthor(ReadBook.book)) {
+                                    ReadBook.book = book
+                                    ReadBook.chapterSize = book.totalChapterNum
+                                }
                             }
                             chapterListData.postValue(it)
                         }.onError {
