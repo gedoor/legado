@@ -366,7 +366,7 @@
     <string name="status_bar_immersion">A cor da barra de status fica transparente</string>
     <string name="imm_navigation_bar">barra de navegação de imersão</string>
     <string name="imm_navigation_bar_s">A barra de navegação fica transparente</string>
-    <string name="add_to_shelf">Adicionar à Estante</string>
+    <string name="add_to_bookshelf">Adicionar à Estante</string>
     <string name="continue_read">Continuar lendo</string>
     <string name="cover_path">Pasta das capas</string>
     <string name="page_anim_cover">Capa</string>

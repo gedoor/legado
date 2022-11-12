@@ -365,7 +365,7 @@
     <string name="status_bar_immersion">狀態欄顏色透明</string>
     <string name="imm_navigation_bar">沉浸式导航栏</string>
     <string name="imm_navigation_bar_s">导航栏颜色透明</string>
-    <string name="add_to_shelf">放入書架</string>
+    <string name="add_to_bookshelf">放入書架</string>
     <string name="continue_read">繼續閲讀</string>
     <string name="cover_path">封面地址</string>
     <string name="page_anim_cover">覆蓋</string>

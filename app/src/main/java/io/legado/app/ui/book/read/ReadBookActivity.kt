@@ -1274,7 +1274,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 if (!AppConfig.showAddToShelfAlert) {
                     viewModel.removeFromBookshelf { super.finish() }
                 } else {
-                    alert(title = getString(R.string.add_to_shelf)) {
+                    alert(title = getString(R.string.add_to_bookshelf)) {
                         setMessage(getString(R.string.check_add_bookshelf, it.name))
                         okButton {
                             ReadBook.inBookshelf = true

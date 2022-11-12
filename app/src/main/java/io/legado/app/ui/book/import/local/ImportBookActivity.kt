@@ -118,7 +118,7 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
         binding.tvEmptyMsg.setText(R.string.empty_msg_import_book)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-        binding.selectActionBar.setMainActionText(R.string.add_to_shelf)
+        binding.selectActionBar.setMainActionText(R.string.add_to_bookshelf)
         binding.selectActionBar.inflateMenu(R.menu.import_book_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
         binding.selectActionBar.setCallBack(this)

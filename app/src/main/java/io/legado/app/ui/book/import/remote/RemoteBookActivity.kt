@@ -27,8 +27,6 @@ import java.io.File
 
 /**
  * 展示远程书籍
- * @author qianfanguojin
- * @time 2022/05/12
  */
 class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, RemoteBookViewModel>(),
     RemoteBookAdapter.CallBack,
@@ -55,7 +53,7 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
         binding.layTop.setBackgroundColor(backgroundColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-        binding.selectActionBar.setMainActionText(R.string.add_to_shelf)
+        binding.selectActionBar.setMainActionText(R.string.add_to_bookshelf)
         binding.selectActionBar.setCallBack(this)
         if (!LocalConfig.webDavBookHelpVersionIsLast) {
             showHelp("webDavBookHelp")
@@ -188,6 +186,9 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
     override fun upCountView() {
         binding.selectActionBar.upCountView(adapter.selected.size, adapter.checkableCount)
     }
+
+
+    @Suppress("SameParameterValue")
     private fun showHelp(fileName: String) {
         //显示目录help下的帮助文档
         val mdText = String(assets.open("help/${fileName}.md").readBytes())

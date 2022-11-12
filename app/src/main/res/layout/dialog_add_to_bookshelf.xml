@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="18dp"
-        android:text="@string/add_book_url"
+        android:text="@string/add_to_bookshelf"
         android:textColor="@color/primaryText"
         android:textSize="16sp"
         android:textStyle="bold"

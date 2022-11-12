@@ -283,7 +283,7 @@ class BookInfoActivity :
         if (viewModel.inBookshelf) {
             binding.tvShelf.text = getString(R.string.remove_from_bookshelf)
         } else {
-            binding.tvShelf.text = getString(R.string.add_to_shelf)
+            binding.tvShelf.text = getString(R.string.add_to_bookshelf)
         }
     }
 
