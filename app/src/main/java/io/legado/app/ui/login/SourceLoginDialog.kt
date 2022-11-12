@@ -11,6 +11,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
+import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemSourceEditBinding
@@ -71,6 +72,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                             // JavaScript
                             rowUi.action?.let {
                                 kotlin.runCatching {
+                                    saveLoginData(source, loginUi)
                                     source.evalJS(it)
                                 }.onFailure {
                                     AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", it)
@@ -86,17 +88,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         binding.toolBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.menu_ok -> {
-                    val loginData = hashMapOf<String, String>()
-                    loginUi?.forEachIndexed { index, rowUi ->
-                        when (rowUi.type) {
-                            "text", "password" -> {
-                                val rowView = binding.root.findViewById<View>(index)
-                                ItemSourceEditBinding.bind(rowView).editText.text?.let {
-                                    loginData[rowUi.name] = it.toString()
-                                }
-                            }
-                        }
-                    }
+                    val loginData = getLoginData(loginUi)
                     login(source, loginData)
                 }
                 R.id.menu_show_login_header -> alert {
@@ -109,6 +101,30 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                 R.id.menu_log -> showDialogFragment<AppLogDialog>()
             }
             return@setOnMenuItemClickListener true
+        }
+    }
+
+    private fun getLoginData(loginUi: List<RowUi>): HashMap<String, String>) {
+        val loginData = hashMapOf<String, String>()
+        loginUi.forEachIndexed { index, rowUi ->
+            when (rowUi.type) {
+                "text", "password" -> {
+                    val rowView = binding.root.findViewById<View>(index)
+                    ItemSourceEditBinding.bind(rowView).editText.text?.let {
+                        loginData[rowUi.name] = it.toString()
+                    }
+                }
+            }
+        }
+        return loginData
+    }
+
+    private fun saveLoginData(source: BaseSource, loginUi: List<RowUi>) {
+        val loginData = getLoginData(loginUi)
+        if (loginData.isEmpty()) {
+            source.removeLoginInfo()
+        } else {
+            source.putLoginInfo(GSON.toJson(loginData))
         }
     }
 
