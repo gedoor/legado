@@ -10,14 +10,10 @@ import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.webBook.SearchModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     val bookshelf = hashSetOf<String>()
     val upAdapterLiveData = MutableLiveData<String>()
@@ -60,18 +56,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchFlowCallBack = null
         }
     }.flowOn(IO)
-
-    init {
-        viewModelScope.launch {
-            appDb.bookDao.flowAll().mapLatest { books ->
-                books.map { "${it.name}-${it.author}" }
-            }.collect {
-                bookshelf.clear()
-                bookshelf.addAll(it)
-                upAdapterLiveData.postValue("isInBookshelf")
-            }
-        }
-    }
 
     /**
      * 开始搜索

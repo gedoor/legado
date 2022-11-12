@@ -73,6 +73,7 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
             getItem(holder.layoutPosition)?.let {
                 if (buttonView.isPressed) {
                     it.enable = isChecked
+                    callBack.update(it)
                 }
             }
         }

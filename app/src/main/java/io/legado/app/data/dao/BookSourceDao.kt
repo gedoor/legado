@@ -116,7 +116,7 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabled = 1 and bookSourceType = :type")
     fun getEnabledByType(type: Int): List<BookSource>
 
-    @get:Query("select * from book_sources where trim(bookUrlPattern) <> '' order by enabled desc, customOrder")
+    @get:Query("select * from book_sources where enabled = 1 and trim(bookUrlPattern) <> '' order by enabled desc, customOrder")
     val hasBookUrlPattern: List<BookSource>
 
     @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = ''")

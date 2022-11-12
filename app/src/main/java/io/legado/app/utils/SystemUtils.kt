@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.view.Display
+import splitties.systemservices.displayManager
 import splitties.systemservices.powerManager
 
 
@@ -28,4 +30,9 @@ object SystemUtils {
         }
     }
 
+    fun isScreenOn(): Boolean {
+        return displayManager.displays.filterNotNull().any {
+            it.state != Display.STATE_OFF
+        }
+    }
 }

@@ -71,7 +71,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                         }
                     }
                     cacheChapters[book.bookUrl] = chapterCaches
-                    upAdapterLiveData.postValue(book.bookUrl)
+                    upAdapterLiveData.sendValue(book.bookUrl)
                 }
                 ensureActive()
             }
@@ -97,7 +97,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         if (exportProgress.contains(book.bookUrl)) return
         exportProgress[book.bookUrl] = 0
         exportMsg.remove(book.bookUrl)
-        upAdapterLiveData.postValue(book.bookUrl)
+        upAdapterLiveData.sendValue(book.bookUrl)
         execute {
             mutex.withLock {
                 while (exportNumber > 0) {
@@ -260,7 +260,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         if (exportProgress.contains(book.bookUrl)) return
         exportProgress[book.bookUrl] = 0
         exportMsg.remove(book.bookUrl)
-        upAdapterLiveData.postValue(book.bookUrl)
+        upAdapterLiveData.sendValue(book.bookUrl)
         execute {
             mutex.withLock {
                 while (exportNumber > 0) {
