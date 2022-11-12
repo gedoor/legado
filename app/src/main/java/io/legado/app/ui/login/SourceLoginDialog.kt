@@ -104,7 +104,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }
     }
 
-    private fun getLoginData(loginUi: List<RowUi>): HashMap<String, String>) {
+    private fun getLoginData(loginUi: List<RowUi>): HashMap<String, String> {
         val loginData = hashMapOf<String, String>()
         loginUi.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
