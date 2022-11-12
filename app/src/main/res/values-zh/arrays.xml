@@ -28,7 +28,8 @@
     <string-array name="double_page_title">
         <item>全局单页</item>
         <item>全局双页</item>
-        <item>横屏双页/竖屏单页</item>
+        <item>横屏双页</item>
+        <item>平板/横屏双页</item>
     </string-array>
 
     <string-array name="NavBarColors">

@@ -1,12 +1,11 @@
 package io.legado.app.ui.book.source.manage
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.hardware.display.DisplayManager
 import android.os.Bundle
 import android.view.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
@@ -70,9 +69,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var sort = Sort.Default
     private var sortAscending = true
     private var snackBar: Snackbar? = null
-    private val displayManager by lazy {
-        getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
-    }
+    private var isPaused = false
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         showDialogFragment(ImportBookSourceDialog(it))
@@ -516,7 +513,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     delay(300L)
                 }
             }.collect {
-                if (isScreenOn()) {
+                if (SystemUtils.isScreenOn() && !isPaused) {
                     if (lastItem == 0) {
                         adapter.notifyItemRangeChanged(
                             0,
@@ -552,11 +549,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
-    private fun isScreenOn(): Boolean {
-        return displayManager.displays.any {
-            it ?: return@any false
-            it.state != Display.STATE_OFF
-        }
+    override fun onPause() {
+        super.onPause()
+        isPaused = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isPaused = false
     }
 
     override fun upCountView() {

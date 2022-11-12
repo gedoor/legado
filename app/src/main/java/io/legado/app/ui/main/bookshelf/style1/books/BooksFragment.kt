@@ -152,6 +152,18 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        upLastUpdateTimeJob?.cancel()
+        booksFlowJob?.cancel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startLastUpdateTimeJob()
+        upRecyclerData()
+    }
+
     private fun startLastUpdateTimeJob() {
         upLastUpdateTimeJob?.cancel()
         if (!AppConfig.showLastUpdateTime) {
@@ -159,7 +171,9 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
         upLastUpdateTimeJob = launch {
             while (isActive) {
-                booksAdapter.upLastUpdateTime()
+                if (SystemUtils.isScreenOn()) {
+                    booksAdapter.upLastUpdateTime()
+                }
                 delay(30 * 1000)
             }
         }

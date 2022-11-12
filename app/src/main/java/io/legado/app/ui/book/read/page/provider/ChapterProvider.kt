@@ -650,6 +650,10 @@ object ChapterProvider {
             "0" -> doublePage = false
             "1" -> doublePage = true
             "2" -> {
+                doublePage = (viewWidth > viewHeight)
+                        && ReadBook.pageAnim() != 3
+            }
+            "3" -> {
                 doublePage = (viewWidth > viewHeight || appCtx.isPad)
                         && ReadBook.pageAnim() != 3
             }

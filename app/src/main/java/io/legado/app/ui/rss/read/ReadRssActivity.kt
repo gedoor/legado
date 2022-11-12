@@ -215,6 +215,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     override fun upStarMenu() {
+        starMenuItem?.isVisible = viewModel.rssArticle != null
         if (viewModel.rssStar != null) {
             starMenuItem?.setIcon(R.drawable.ic_star)
             starMenuItem?.setTitle(R.string.in_favorites)

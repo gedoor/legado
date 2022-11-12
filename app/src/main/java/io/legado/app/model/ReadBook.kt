@@ -464,6 +464,9 @@ object ReadBook : CoroutineScope by MainScope() {
      * 预下载
      */
     private fun preDownload() {
+        if (AppConfig.preDownloadNum < 2) {
+            return
+        }
         Coroutine.async {
             //预下载
             val maxChapterIndex = durChapterIndex + AppConfig.preDownloadNum

@@ -17,6 +17,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.*
 import io.legado.app.databinding.ActivityBookSourceEditBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -140,6 +141,7 @@ class BookSourceEditActivity :
                     }
                 }
             }
+            R.id.menu_set_source_variable -> setSourceVariable()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -171,7 +173,12 @@ class BookSourceEditActivity :
 
     override fun finish() {
         val source = getSource()
-        if (!source.equal(viewModel.bookSource ?: BookSource())) {
+        val source2 = viewModel.bookSource ?: BookSource().apply {
+            enabledExplore = true
+            enabledCookieJar = true
+            enabledReview = true
+        }
+        if (!source.equal(source2)) {
             alert(R.string.exit) {
                 setMessage(R.string.exit_no_save)
                 positiveButton(R.string.yes)
@@ -567,6 +574,32 @@ class BookSourceEditActivity :
         //显示目录help下的帮助文档
         val mdText = String(assets.open("help/${fileName}.md").readBytes())
         showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
+    }
+
+    private fun setSourceVariable() {
+        launch {
+            val source = viewModel.bookSource
+            if (source == null) {
+                toastOnUi("书源不存在")
+                return@launch
+            }
+            val variable = withContext(IO) { source.getVariable() }
+            alert(R.string.set_source_variable) {
+                setMessage(source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取"))
+                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "source variable"
+                    editView.setText(variable)
+                }
+                customView { alertBinding.root }
+                okButton {
+                    viewModel.bookSource?.setVariable(alertBinding.editView.text?.toString())
+                }
+                cancelButton()
+                neutralButton(R.string.delete) {
+                    viewModel.bookSource?.setVariable(null)
+                }
+            }
+        }
     }
 
 }

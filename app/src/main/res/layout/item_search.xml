@@ -27,8 +27,8 @@
         android:scaleType="centerCrop"
         android:src="@color/md_green_600"
         android:visibility="invisible"
-        app:layout_constraintRight_toRightOf="@id/iv_cover"
-        app:layout_constraintTop_toTopOf="@id/iv_cover" />
+        app:layout_constraintLeft_toRightOf="@id/iv_cover"
+        app:layout_constraintTop_toTopOf="@id/tv_name" />
 
     <io.legado.app.ui.widget.text.BadgeView
         android:id="@+id/bv_originCount"
@@ -48,16 +48,17 @@
         android:textColor="@color/primaryText"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/bv_originCount"
-        app:layout_constraintStart_toEndOf="@+id/iv_cover"
+        app:layout_constraintStart_toEndOf="@+id/iv_in_bookshelf"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="8dp"
         android:orientation="vertical"
         android:layout_marginTop="3dp"
         app:layout_constraintBottom_toBottomOf="@id/iv_cover"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toRightOf="@id/tv_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_name">
 

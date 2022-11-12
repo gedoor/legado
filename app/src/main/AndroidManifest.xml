@@ -272,6 +272,7 @@
         <!-- WebView界面 -->
         <activity
             android:name=".ui.browser.WebViewActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="standard" />
         <!-- 书源登录 -->
         <activity

@@ -62,6 +62,9 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 //获取系统信息
                 map["MANUFACTURER"] = Build.MANUFACTURER
                 map["BRAND"] = Build.BRAND
+                map["MODEL"] = Build.MODEL
+                map["SDK_INT"] = Build.VERSION.SDK_INT.toString()
+                map["RELEASE"] = Build.VERSION.RELEASE
                 //获取app版本信息
                 AppConst.appInfo.let {
                     map["versionName"] = it.versionName
