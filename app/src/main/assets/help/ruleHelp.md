@@ -22,7 +22,8 @@
 > 启用后会自动保存每次返回头中的Set-Cookie中的值，适用于验证码图片一类需要session的网站
 
 * 登录UI
-> 不使用内置webView登录网站，需要使用`登录URL`规则实现登录逻辑，可使用`登录检查JS`检查登录结果
+> 不使用内置webView登录网站，需要使用`登录URL`规则实现登录逻辑，可使用`登录检查JS`检查登录结果  
+> 版本20221113重要更改：按钮支持调用`登录URL`规则里面的函数，必须实现`login`函数
 ```
 规则填写示范
 [
@@ -42,12 +43,25 @@
     {
         name: "获取验证码",
         type: "button",
-        action: "java.ajax(...)"
+        action: "getVerificationCode()"
     }
 ]
-按钮的action为JavaScript时获取登录信息
+```
+* 登录URL
+> 可填写登录链接或者实现登录UI的登录逻辑的JavaScript
+```
+示范填写
+function login() {
+    java.log("模拟登录请求");
+    java.log(source.getLoginInfoMap());
+}
+function getVerificationCode() {
+    java.log("登录UI按钮：获取到手机号码"+result.get("telephone"))
+}
+
+登录按钮函数获取登录信息
 result.get("telephone")
-点击确定登录后在js中获取读取登录信息
+login函数获取登录信息
 source.getLoginInfo()
 source.getLoginInfoMap().get("telephone")
 source登录相关方法,可在js内通过source.调用,可以参考阿里云语音登录

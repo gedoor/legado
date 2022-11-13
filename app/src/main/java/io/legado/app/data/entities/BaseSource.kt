@@ -49,9 +49,10 @@ interface BaseSource : JsExtensions {
         }
     }
 
+    // 调用login函数 实现登录请求
     fun login() {
         getLoginJs()?.let {
-            evalJS(it)
+            evalJS("$it\nif(typeof login=='function'){login.apply(this);}else{throw('Function login not implements!!!')}")
         }
     }
 
