@@ -72,8 +72,9 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                             // JavaScript
                             rowUi.action?.let {
                                 kotlin.runCatching {
-                                    saveLoginData(source, loginUi)
-                                    source.evalJS(it)
+                                    source.evalJS(it) {
+                                        put("result", getLoginData(loginUi))
+                                    }
                                 }.onFailure {
                                     AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", it)
                                 }
@@ -104,9 +105,9 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }
     }
 
-    private fun getLoginData(loginUi: List<RowUi>): HashMap<String, String> {
+    private fun getLoginData(loginUi: List<RowUi>?): HashMap<String, String> {
         val loginData = hashMapOf<String, String>()
-        loginUi.forEachIndexed { index, rowUi ->
+        loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 "text", "password" -> {
                     val rowView = binding.root.findViewById<View>(index)
@@ -117,15 +118,6 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
             }
         }
         return loginData
-    }
-
-    private fun saveLoginData(source: BaseSource, loginUi: List<RowUi>) {
-        val loginData = getLoginData(loginUi)
-        if (loginData.isEmpty()) {
-            source.removeLoginInfo()
-        } else {
-            source.putLoginInfo(GSON.toJson(loginData))
-        }
     }
 
     private fun login(source: BaseSource, loginData: HashMap<String, String>) {
