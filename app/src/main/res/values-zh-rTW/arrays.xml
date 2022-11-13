@@ -40,6 +40,26 @@
         <item>常亮</item>
     </string-array>
 
+    <string-array name="screen_direction_title">
+        <item>@string/screen_unspecified</item>
+        <item>@string/screen_portrait</item>
+        <item>@string/screen_landscape</item>
+        <item>@string/screen_sensor</item>
+        <item>反向直向</item>
+    </string-array>
+
+    <string-array name="double_page_title">
+        <item>全域單頁</item>
+        <item>全域雙頁</item>
+        <item>橫向雙頁</item>
+        <item>平板/橫向雙页</item>
+    </string-array>
+
+    <string-array name="progress_bar_behavior_title">
+        <item>調整本章頁數</item>
+        <item>調整章節位置</item>
+    </string-array>
+
     <string-array name="icon_names">
         <item>iconMain</item>
         <item>icon1</item>
