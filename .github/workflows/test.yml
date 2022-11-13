@@ -8,6 +8,7 @@ on:
       - '**'
       - '!**/assets/**'
       - '!**.md'
+      - '!**/ISSUE_TEMPLATE/**'
   pull_request:
   workflow_dispatch:
 

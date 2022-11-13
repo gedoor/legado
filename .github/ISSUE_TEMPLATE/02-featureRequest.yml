@@ -1,0 +1,32 @@
+name: 功能请求
+description: 提交你希望能够在阅读中增加的功能
+labels: ["需求"]
+body:
+  - type: textarea
+    attributes:
+      label: 功能描述
+      placeholder: 请清晰的、详细的描述你想要的功能
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 期望实现方式
+      placeholder: 阅读应该如何实现该功能
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 附加信息
+      placeholder: 其他的与功能相关的附加信息
+  - type: textarea
+    attributes:
+      label: 效果演示
+      placeholder: 可以手绘一些草图，或者提供可借鉴的图片
+
+  - type: checkboxes
+    attributes:
+      label: 确认
+      description: 提交issue请确保完成以下前提，否则该issue可能被忽略
+      options:
+        - label: 搜索现有issues，不存在相似或相关的issue
+          required: true
