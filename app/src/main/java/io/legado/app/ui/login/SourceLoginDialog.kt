@@ -70,10 +70,12 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                             context?.openUrl(rowUi.action!!)
                         } else {
                             // JavaScript
-                            rowUi.action?.let {
+                            rowUi.action?.let { buttonFunctionJS ->
                                 kotlin.runCatching {
-                                    source.evalJS(it) {
-                                        put("result", getLoginData(loginUi))
+                                    source.getLoginJs()?.let { loginJS ->
+                                        source.evalJS("$loginJS\n$buttonFunctionJS") {
+                                            put("result", getLoginData(loginUi))
+                                        }
                                     }
                                 }.onFailure {
                                     AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", it)
@@ -128,18 +130,16 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     dismiss()
                 }
             } else if (source.putLoginInfo(GSON.toJson(loginData))) {
-                source.getLoginJs()?.let {
-                    try {
-                        source.evalJS(it)
-                        context?.toastOnUi(R.string.success)
-                        withContext(Main) {
-                            dismiss()
-                        }
-                    } catch (e: Exception) {
-                        AppLog.put("登录出错\n${e.localizedMessage}", e)
-                        context?.toastOnUi("登录出错\n${e.localizedMessage}")
-                        e.printOnDebug()
+                try {
+                    source.login()
+                    context?.toastOnUi(R.string.success)
+                    withContext(Main) {
+                        dismiss()
                     }
+                } catch (e: Exception) {
+                    AppLog.put("登录出错\n${e.localizedMessage}", e)
+                    context?.toastOnUi("登录出错\n${e.localizedMessage}")
+                    e.printOnDebug()
                 }
             }
         }
