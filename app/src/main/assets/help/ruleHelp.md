@@ -20,6 +20,7 @@
 
 * CookieJar
 > 启用后会自动保存每次返回头中的Set-Cookie中的值，适用于验证码图片一类需要session的网站
+
 * 登录UI
 > 不使用内置webView登录网站，需要使用`登录URL`规则实现登录逻辑，可使用`登录检查JS`检查登录结果
 ```
@@ -44,14 +45,11 @@
         action: "java.ajax(...)"
     }
 ]
-成功登录后在js中获取读取登录信息
+按钮的action为JavaScript时获取登录信息
+result.get("telephone")
+点击确定登录后在js中获取读取登录信息
 source.getLoginInfo()
 source.getLoginInfoMap().get("telephone")
-登录信息示范
-{
-    "telephone":"123456",
-    "password":"123456"
-}
 source登录相关方法,可在js内通过source.调用,可以参考阿里云语音登录
 login()
 getHeaderMap(hasLoginHeader: Boolean = false)
