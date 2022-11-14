@@ -39,7 +39,6 @@ object AppWebDav {
     private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
     private val bookProgressUrl get() = "${rootWebDavUrl}bookProgress/"
     private val exportsWebDavUrl get() = "${rootWebDavUrl}books/"
-    val syncBookProgress get() = appCtx.getPrefBoolean(PreferKey.syncBookProgress, true)
 
     var authorization: Authorization? = null
         private set
@@ -225,7 +224,7 @@ object AppWebDav {
 
     fun uploadBookProgress(book: Book) {
         val authorization = authorization ?: return
-        if (!syncBookProgress) return
+        if (!AppConfig.syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
             val bookProgress = BookProgress(book)
@@ -239,7 +238,7 @@ object AppWebDav {
 
     fun uploadBookProgress(bookProgress: BookProgress) {
         val authorization = authorization ?: return
-        if (!syncBookProgress) return
+        if (!AppConfig.syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
         Coroutine.async {
             val json = GSON.toJson(bookProgress)
