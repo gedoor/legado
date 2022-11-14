@@ -2,6 +2,18 @@ name: BUG提交
 description: 提交使用过程中遇到的BUG
 labels: ["BUG"]
 body:
+  - type: checkboxes
+    attributes:
+      label: 确认
+      description: 提交issue请确保完成以下前提，否则该issue可能被忽略
+      options:
+        - label: 搜索现有issues，不存在相似或相关的issue
+          required: true
+        - label: 最新[测试版](https://kunfei.lanzoui.com/b0f810h4b)依然存在此问题
+          required: true
+        - label: 此问题和Xposed、Lsposed、Magisk、手机主题、浏览器插件等无关
+          required: true
+
   - type: textarea
     attributes:
       label: 问题描述
@@ -45,15 +57,3 @@ body:
       placeholder: |
         如果Bug复现需要某一书源，请提交书源内容，并用```包裹
         如果Bug涉及web服务，请提交使用的浏览器版本、网络环境
-
-  - type: checkboxes
-    attributes:
-      label: 确认
-      description: 提交issue请确保完成以下前提，否则该issue可能被忽略
-      options:
-        - label: 搜索现有issues，不存在相似或相关的issue
-          required: true
-        - label: 最新[测试版](https://kunfei.lanzoui.com/b0f810h4b)依然存在此问题
-          required: true
-        - label: 此问题和Xposed、Lsposed、Magisk、手机主题、浏览器插件等无关
-          required: true
