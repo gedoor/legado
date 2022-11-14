@@ -2,6 +2,14 @@ name: 功能请求
 description: 提交你希望能够在阅读中增加的功能
 labels: ["需求"]
 body:
+  - type: checkboxes
+    attributes:
+      label: 确认
+      description: 提交issue请确保完成以下前提，否则该issue可能被忽略
+      options:
+        - label: 搜索现有issues，不存在相似或相关的issue
+          required: true
+
   - type: textarea
     attributes:
       label: 功能描述
@@ -22,11 +30,3 @@ body:
     attributes:
       label: 效果演示
       placeholder: 可以手绘一些草图，或者提供可借鉴的图片
-
-  - type: checkboxes
-    attributes:
-      label: 确认
-      description: 提交issue请确保完成以下前提，否则该issue可能被忽略
-      options:
-        - label: 搜索现有issues，不存在相似或相关的issue
-          required: true
