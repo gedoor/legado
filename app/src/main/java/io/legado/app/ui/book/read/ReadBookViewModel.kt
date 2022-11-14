@@ -186,13 +186,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         alertSync: ((progress: BookProgress) -> Unit)? = null
     ) {
+        if (!AppWebDav.syncBookProgress) return
         execute {
-            if (AppWebDav.syncBookProgress) {
-                AppWebDav.getBookProgress(book)
-                    ?: throw NoStackTraceException("没有进度")
-            } else {
-                throw NoStackTraceException("进度同步未启用")
-            }
+            AppWebDav.getBookProgress(book)
+                ?: throw NoStackTraceException("没有进度")
         }.onError {
             AppLog.put("拉取阅读进度失败", it)
         }.onSuccess { progress ->
