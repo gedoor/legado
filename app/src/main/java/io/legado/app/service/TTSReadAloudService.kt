@@ -28,7 +28,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     override fun onCreate() {
         super.onCreate()
         initTts()
-        upSpeechRate()
     }
 
     override fun onDestroy() {
@@ -45,6 +44,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         } else {
             TextToSpeech(this, this, engine)
         }
+        upSpeechRate()
     }
 
     @Synchronized
