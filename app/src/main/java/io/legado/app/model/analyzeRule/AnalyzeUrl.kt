@@ -661,6 +661,14 @@ class AnalyzeUrl(
             return charset
         }
 
+        fun setOrigin(value: String?) {
+            origin = if (value.isNullOrBlank()) null else value
+        }
+
+        fun getOrigin(): String? {
+            return origin
+        }
+
         fun setRetry(value: String?) {
             retry = if (value.isNullOrEmpty()) null else value.toIntOrNull()
         }
