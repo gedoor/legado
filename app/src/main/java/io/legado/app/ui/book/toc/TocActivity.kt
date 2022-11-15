@@ -86,7 +86,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
                     return false
                 }
             })
-            setOnQueryTextFocusChangeListener { v, hasFocus ->
+            setOnQueryTextFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     searchView?.isIconified = true
                 }
