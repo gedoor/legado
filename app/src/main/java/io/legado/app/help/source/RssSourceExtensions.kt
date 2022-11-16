@@ -37,7 +37,11 @@ suspend fun RssSource.sortUrls(): List<Pair<String, String>> {
                     val name = sort.substringBefore("::")
                     val url = sort.substringAfter("::", "")
                     if (url.isNotEmpty()) {
-                        add(Pair(name, NetworkUtils.getAbsoluteURL(sourceUrl, url)))
+                        if (url.startsWith("{{")) {
+                            add(Pair(name, url))
+                        } else {
+                            add(Pair(name, NetworkUtils.getAbsoluteURL(sourceUrl, url)))
+                        }
                     }
                 }
                 if (isEmpty()) {
