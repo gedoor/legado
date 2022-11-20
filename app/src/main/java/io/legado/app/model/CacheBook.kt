@@ -16,11 +16,8 @@ import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
 
 import io.legado.app.utils.startService
-import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import splitties.init.appCtx
 
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
@@ -177,18 +174,6 @@ object CacheBook {
                 }
             }
             postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
-            val chapterCount = appDb.bookChapterDao.getChapterCount(book.bookUrl)
-            if (chapterCount == 0) {
-                runBlocking {
-                    WebBook.getChapterListAwait(bookSource, book)
-                        .onFailure {
-                            AppLog.put("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}", it)
-                            appCtx.toastOnUi("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}")
-                        }.getOrNull()
-                }?.let { toc ->
-                    appDb.bookChapterDao.insert(*toc.toTypedArray())
-                }
-            }
         }
 
         @Synchronized

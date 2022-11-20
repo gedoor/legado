@@ -5,15 +5,20 @@ import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.data.appDb
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.CacheBook
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.*
+import splitties.init.appCtx
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -84,7 +89,22 @@ class CacheBookService : BaseService() {
         bookUrl ?: return
         execute {
             val cacheBook = CacheBook.getOrCreate(bookUrl) ?: return@execute
-            cacheBook.addDownload(start, end)
+            val chapterCount = appDb.bookChapterDao.getChapterCount(bookUrl)
+            if (chapterCount == 0) {
+                WebBook.getChapterListAwait(cacheBook.bookSource, cacheBook.book)
+                    .onFailure {
+                        AppLog.put("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}", it)
+                        appCtx.toastOnUi("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}")
+                    }.getOrNull()?.let { toc ->
+                        appDb.bookChapterDao.insert(*toc.toTypedArray())
+                    }
+            }
+            val end2 = if (end == 0) {
+                appDb.bookChapterDao.getChapterCount(bookUrl)
+            } else {
+                end
+            }
+            cacheBook.addDownload(start, end2)
             upNotification(CacheBook.downloadSummary)
             if (downloadJob == null) {
                 download()
