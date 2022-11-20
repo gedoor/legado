@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.exception.NoStackTraceException
@@ -89,7 +90,12 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
 
     private suspend fun importSourceUrl(url: String) {
         okHttpClient.newCallResponseBody {
-            url(url)
+            if (url.endsWith("#requestWithoutUA")) {
+                url(url.substringBeforeLast("#requestWithoutUA"))
+                header(AppConst.UA_NAME, "null")
+            } else {
+                url(url)
+            }
         }.text().let {
             importSourceAwait(it)
         }

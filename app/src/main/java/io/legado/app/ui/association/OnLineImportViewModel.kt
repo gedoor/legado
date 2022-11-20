@@ -3,6 +3,7 @@ package io.legado.app.ui.association
 import android.app.Application
 import androidx.core.net.toUri
 import io.legado.app.R
+import io.legado.app.constant.AppConst
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
@@ -17,7 +18,12 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
     fun getText(url: String, success: (text: String) -> Unit) {
         execute {
             okHttpClient.newCallResponseBody {
-                url(url)
+                if (url.endsWith("#requestWithoutUA")) {
+                    url(url.substringBeforeLast("#requestWithoutUA"))
+                    header(AppConst.UA_NAME, "null")
+                } else {
+                    url(url)
+                }
             }.text("utf-8")
         }.onSuccess {
             success.invoke(it)
@@ -32,7 +38,12 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
         execute {
             @Suppress("BlockingMethodInNonBlockingContext")
             okHttpClient.newCallResponseBody {
-                url(url)
+                if (url.endsWith("#requestWithoutUA")) {
+                    url(url.substringBeforeLast("#requestWithoutUA"))
+                    header(AppConst.UA_NAME, "null")
+                } else {
+                    url(url)
+                }
             }.bytes()
         }.onSuccess {
             success.invoke(it)
@@ -67,7 +78,12 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
     fun determineType(url: String, finally: (title: String, msg: String) -> Unit) {
         execute {
             val rs = okHttpClient.newCallResponseBody {
-                url(url)
+                if (url.endsWith("#requestWithoutUA")) {
+                    url(url.substringBeforeLast("#requestWithoutUA"))
+                    header(AppConst.UA_NAME, "null")
+                } else {
+                    url(url)
+                }
             }
             when (rs.contentType()) {
                 "application/zip".toMediaType(),

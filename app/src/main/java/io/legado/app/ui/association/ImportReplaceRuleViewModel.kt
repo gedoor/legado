@@ -3,6 +3,7 @@ package io.legado.app.ui.association
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
@@ -111,7 +112,12 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
 
     private suspend fun importUrl(url: String) {
         okHttpClient.newCallResponseBody {
-            url(url)
+            if (url.endsWith("#requestWithoutUA")) {
+                url(url.substringBeforeLast("#requestWithoutUA"))
+                header(AppConst.UA_NAME, "null")
+            } else {
+                url(url)
+            }
         }.text("utf-8").let {
             importAwait(it)
         }

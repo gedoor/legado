@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.jayway.jsonpath.JsonPath
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
@@ -122,7 +123,12 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
 
     private suspend fun importSourceUrl(url: String) {
         okHttpClient.newCallResponseBody {
-            url(url)
+            if (url.endsWith("#requestWithoutUA")) {
+                url(url.substringBeforeLast("#requestWithoutUA"))
+                header(AppConst.UA_NAME, "null")
+            } else {
+                url(url)
+            }
         }.byteStream().let { body ->
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
