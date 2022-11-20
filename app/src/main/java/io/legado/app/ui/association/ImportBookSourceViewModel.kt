@@ -14,6 +14,7 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.requestWithoutUA
 import io.legado.app.help.source.SourceHelp
 import io.legado.app.utils.*
 
@@ -127,10 +128,15 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        okHttpClient.newCallResponseBody {
-            url(url)
-        }.byteStream().let {
-            allSources.addAll(BookSource.fromJsonArray(it).getOrThrow())
+        if (url.indexOf("#requestWithoutUA")>-1) {
+            val res = requestWithoutUA(url).body()
+            allSources.addAll(BookSource.fromJsonArray(res).getOrThrow())
+        } else {
+            okHttpClient.newCallResponseBody {
+                url(url)
+            }.byteStream().let {
+                allSources.addAll(BookSource.fromJsonArray(it).getOrThrow())
+            }
         }
     }
 

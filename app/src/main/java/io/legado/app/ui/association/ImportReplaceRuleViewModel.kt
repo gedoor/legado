@@ -11,6 +11,7 @@ import io.legado.app.help.ReplaceAnalyzer
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.requestWithoutUA
 import io.legado.app.help.http.text
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
@@ -110,10 +111,15 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importUrl(url: String) {
-        okHttpClient.newCallResponseBody {
-            url(url)
-        }.text("utf-8").let {
-            importAwait(it)
+        if (url.indexOf("#requestWithoutUA")>-1) {
+            val res = requestWithoutUA(url).body()
+            importAwait(res)
+        } else {
+            okHttpClient.newCallResponseBody {
+                url(url)
+            }.text("utf-8").let {
+                importAwait(it)
+            }
         }
     }
 

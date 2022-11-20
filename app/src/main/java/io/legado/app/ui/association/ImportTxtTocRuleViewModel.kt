@@ -9,6 +9,7 @@ import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.requestWithoutUA
 import io.legado.app.help.http.text
 import io.legado.app.utils.*
 
@@ -86,10 +87,15 @@ class ImportTxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        okHttpClient.newCallResponseBody {
-            url(url)
-        }.text().let {
-            importSourceAwait(it)
+        if (url.indexOf("#requestWithoutUA")>-1) {
+            val res = requestWithoutUA(url).body()
+            importSourceAwait(res)
+        } else {
+            okHttpClient.newCallResponseBody {
+                url(url)
+            }.text().let {
+                importSourceAwait(it)
+            }
         }
     }
 

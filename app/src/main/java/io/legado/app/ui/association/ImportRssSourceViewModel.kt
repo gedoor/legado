@@ -12,6 +12,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.requestWithoutUA
 import io.legado.app.help.source.SourceHelp
 import io.legado.app.utils.*
 
@@ -121,14 +122,19 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        okHttpClient.newCallResponseBody {
-            url(url)
-        }.byteStream().let { body ->
-            val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
-            for (item in items) {
-                val jsonItem = jsonPath.parse(item)
-                RssSource.fromJson(jsonItem.jsonString()).getOrThrow().let { source ->
-                    allSources.add(source)
+        if (url.indexOf("#requestWithoutUA")>-1) {
+            val res = requestWithoutUA(url).body()
+            importSource(res)
+        } else {
+            okHttpClient.newCallResponseBody {
+                url(url)
+            }.byteStream().let { body ->
+                val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
+                for (item in items) {
+                    val jsonItem = jsonPath.parse(item)
+                    RssSource.fromJson(jsonItem.jsonString()).getOrThrow().let { source ->
+                        allSources.add(source)
+                    }
                 }
             }
         }

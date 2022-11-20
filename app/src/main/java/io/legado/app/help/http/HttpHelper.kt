@@ -7,6 +7,8 @@ import io.legado.app.help.http.cronet.CronetInterceptor
 import io.legado.app.help.http.cronet.CronetLoader
 import io.legado.app.utils.NetworkUtils
 import okhttp3.*
+import org.jsoup.Connection
+import org.jsoup.Jsoup
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -36,6 +38,17 @@ val cookieJar by lazy {
         }
 
     }
+}
+
+fun requestWithoutUA(url: String): Connection.Response {
+    val response = Jsoup.connect(url.replace("#requestWithoutUA", ""))
+        .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
+        .ignoreContentType(true)
+        .followRedirects(false)
+        .headers(mapOf("User-Agent" to ""))
+        .method(Connection.Method.GET)
+        .execute()
+    return response
 }
 
 val okHttpClient: OkHttpClient by lazy {
