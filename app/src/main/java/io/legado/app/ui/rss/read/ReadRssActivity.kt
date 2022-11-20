@@ -276,7 +276,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             binding.webView.evaluateJavascript("document.documentElement.outerHTML") {
                 val html = StringEscapeUtils.unescapeJson(it)
                     .replace("^\"|\"$".toRegex(), "")
-                viewModel.readAloud(Jsoup.parse(html).textArray().joinToString("\n"))
+                viewModel.readAloud(
+                    Jsoup.parse(html)
+                        .textArray()
+                        .joinToString("\n")
+                )
             }
         }
     }
