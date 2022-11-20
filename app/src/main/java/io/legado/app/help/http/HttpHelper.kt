@@ -62,6 +62,8 @@ val okHttpClient: OkHttpClient by lazy {
             val builder = request.newBuilder()
             if (request.header(AppConst.UA_NAME) == null) {
                 builder.addHeader(AppConst.UA_NAME, AppConfig.userAgent)
+            } else if (request.header(AppConst.UA_NAME) == "null") {
+                builder.removeHeader(AppConst.UA_NAME)
             }
             builder.addHeader("Keep-Alive", "300")
             builder.addHeader("Connection", "Keep-Alive")
@@ -96,7 +98,7 @@ fun getProxyClient(proxy: String? = null): OkHttpClient {
         username = group.groupValues[4].split("@")[1]
         password = group.groupValues[4].split("@")[2]
     }
-    if (type != "direct" && host != "") {
+    if (host != "") {
         val builder = okHttpClient.newBuilder()
         if (type == "http") {
             builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(host, port)))
