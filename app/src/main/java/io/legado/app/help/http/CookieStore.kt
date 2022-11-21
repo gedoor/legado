@@ -41,7 +41,10 @@ object CookieStore : CookieManager {
      */
     override fun getCookie(url: String): String {
         val domain = NetworkUtils.getSubDomain(url)
-        CacheManager.getFromMemory("${domain}_cookie")?.let { return it }
+        CacheManager.getFromMemory("${domain}_cookie")?.let {
+            return it
+        }
+
         val cookieBean = appDb.cookieDao.get(domain)
         val cookie = cookieBean?.cookie ?: ""
         CacheManager.putMemory(url, cookie)
