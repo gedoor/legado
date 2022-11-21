@@ -41,35 +41,36 @@ object WebBook {
         key: String,
         page: Int? = 1,
     ): ArrayList<SearchBook> {
-        val ruleData = RuleData()
-        bookSource.searchUrl?.let { searchUrl ->
-            val analyzeUrl = AnalyzeUrl(
-                mUrl = searchUrl,
-                key = key,
-                page = page,
-                baseUrl = bookSource.bookSourceUrl,
-                headerMapF = bookSource.getHeaderMap(true),
-                source = bookSource,
-                ruleData = ruleData,
-            )
-            var res = analyzeUrl.getStrResponseAwait()
-            //检测书源是否已登录
-            bookSource.loginCheckJs?.let { checkJs ->
-                if (checkJs.isNotBlank()) {
-                    res = analyzeUrl.evalJS(checkJs, res) as StrResponse
-                }
-            }
-            checkRedirect(bookSource, res)
-            return BookList.analyzeBookList(
-                bookSource = bookSource,
-                ruleData = ruleData,
-                analyzeUrl = analyzeUrl,
-                baseUrl = res.url,
-                body = res.body,
-                isSearch = true
-            )
+        val searchUrl = bookSource.searchUrl
+        if (searchUrl.isNullOrBlank()) {
+            throw NoStackTraceException("搜索url不能为空")
         }
-        return arrayListOf()
+        val ruleData = RuleData()
+        val analyzeUrl = AnalyzeUrl(
+            mUrl = searchUrl,
+            key = key,
+            page = page,
+            baseUrl = bookSource.bookSourceUrl,
+            headerMapF = bookSource.getHeaderMap(true),
+            source = bookSource,
+            ruleData = ruleData,
+        )
+        var res = analyzeUrl.getStrResponseAwait()
+        //检测书源是否已登录
+        bookSource.loginCheckJs?.let { checkJs ->
+            if (checkJs.isNotBlank()) {
+                res = analyzeUrl.evalJS(checkJs, res) as StrResponse
+            }
+        }
+        checkRedirect(bookSource, res)
+        return BookList.analyzeBookList(
+            bookSource = bookSource,
+            ruleData = ruleData,
+            analyzeUrl = analyzeUrl,
+            baseUrl = res.url,
+            body = res.body,
+            isSearch = true
+        )
     }
 
     /**
