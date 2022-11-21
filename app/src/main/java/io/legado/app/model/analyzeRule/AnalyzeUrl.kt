@@ -597,8 +597,7 @@ class AnalyzeUrl(
     }
 
     /**
-     * 保存cookie
-     *
+     * 保存cookie在访问结束时就保存,不等到下次访问
      */
     private fun saveCookie() {
         //书源启用保存cookie时 添加内存中的cookie到数据库
