@@ -172,7 +172,7 @@
 -dontwarn okhttp3.**
 -dontwarn org.conscrypt.**
 -dontwarn com.jeremyliao.liveeventbus.**
--dontwarn org.commonmark.ext.gfm.*
+-dontwarn org.commonmark.ext.gfm.**
 
 -keep class com.google.gson.** { *; }
 -keep class com.ke.gson.** { *; }
