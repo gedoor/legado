@@ -14,6 +14,7 @@
 **2022/11/21**
 
 * 修复朗读长时间暂停后恢复时朗读速度可能不对的bug
+* addBookshelf url参数添加origin,可以指定书源
 * 通过增加特定标识使用无UA请求，适用于网络导入书源等,用法：http://xxx.xxx/xxxx#requestWithoutUA
 * 修复cookie.getCookie(source.getKey())返回的cookie不及时的bug
 * 书签添加导出功能
