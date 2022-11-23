@@ -168,11 +168,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             }
         }
 
-        override fun onError(utteranceId: String?, errorCode: Int) {
-            AppLog.put("tts朗读出错 errorCode:$errorCode")
-            onDone("")
-        }
-
         @Deprecated("Deprecated in Java")
         override fun onError(s: String) {
             //nothing
