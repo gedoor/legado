@@ -64,6 +64,7 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
             loadWithOverviewMode = true
             builtInZoomControls = true
             javaScriptEnabled = true
+            displayZoomControls = false
             source.getHeaderMap()[AppConst.UA_NAME]?.let {
                 userAgentString = it
             }

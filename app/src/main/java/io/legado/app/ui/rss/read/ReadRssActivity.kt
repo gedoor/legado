@@ -125,6 +125,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             domStorageEnabled = true
             allowContentAccess = true
             builtInZoomControls = true
+            displayZoomControls = false
             setDarkeningAllowed(AppConfig.isNightTheme)
         }
         binding.webView.addJavascriptInterface(this, "app")

@@ -93,6 +93,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             useWideViewPort = true
             loadWithOverviewMode = true
             javaScriptEnabled = true
+            builtInZoomControls = true
+            displayZoomControls = false
             headerMap[AppConst.UA_NAME]?.let {
                 userAgentString = it
             }
