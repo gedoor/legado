@@ -16,11 +16,15 @@ import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 图片验证码对话框
@@ -50,7 +54,6 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         setLayout(1f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    @SuppressLint("CheckResult")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initMenu()
         binding.run {
@@ -59,16 +62,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
                 toolBar.subtitle = arguments.getString("sourceName")
                 val sourceOrigin = arguments.getString("sourceOrigin")
                 arguments.getString("imageUrl")?.let { imageUrl ->
-                    ImageLoader.load(requireContext(), imageUrl).apply {
-                        sourceOrigin?.let {
-                            apply(
-                                RequestOptions().set(OkHttpModelLoader.sourceOriginOption, it)
-                            )
-                        }
-                    }.error(R.drawable.image_loading_error)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        //.skipMemoryCache(true)
-                        .into(verificationCodeImageView)
+                    loadImage(imageUrl, sourceOrigin)
                     verificationCodeImageView.setOnClickListener {
                         showDialogFragment(PhotoDialog(imageUrl, sourceOrigin))
                     }
@@ -81,6 +75,28 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         binding.toolBar.setOnMenuItemClickListener(this)
         binding.toolBar.inflateMenu(R.menu.verification_code)
         binding.toolBar.menu.applyTint(requireContext())
+    }
+
+    @SuppressLint("CheckResult")
+    private fun loadImage(url: String, sourceUrl: String?) {
+        launch {
+            ImageProvider.bitmapLruCache.remove(url)
+            val image = withContext(IO) {
+                ImageLoader.loadBitmap(requireContext(), url).apply {
+                    sourceUrl?.let {
+                        apply(
+                            RequestOptions().set(OkHttpModelLoader.sourceOriginOption, it)
+                        )
+                    }
+                }.error(R.drawable.image_loading_error)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .submit()
+                    .get()
+            }
+            ImageProvider.bitmapLruCache.put(url, image)
+            binding.verificationCodeImageView.setImageBitmap(image)
+        }
     }
 
     @SuppressLint("InflateParams")

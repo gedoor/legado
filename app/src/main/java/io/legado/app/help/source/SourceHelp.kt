@@ -3,6 +3,7 @@ package io.legado.app.help.source
 import android.os.Handler
 import android.os.Looper
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.config.AppConfig
@@ -22,6 +23,12 @@ object SourceHelp {
         } catch (e: Exception) {
             return@lazy arrayOf<String>()
         }
+    }
+
+    fun getSource(key: String?): BaseSource? {
+        key ?: return null
+        return appDb.bookSourceDao.getBookSource(key)
+            ?: appDb.rssSourceDao.getByKey(key)
     }
 
     fun insertRssSource(vararg rssSources: RssSource) {

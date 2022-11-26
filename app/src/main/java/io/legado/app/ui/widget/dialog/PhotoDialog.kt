@@ -12,6 +12,7 @@ import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -36,31 +37,33 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
     @SuppressLint("CheckResult")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.let { arguments ->
-            arguments.getString("src")?.let { src ->
-                val file = ReadBook.book?.let { book ->
-                    BookHelp.getImage(book, src)
-                }
-                if (file?.exists() == true) {
-                    ImageLoader.load(requireContext(), file)
-                        .error(R.drawable.image_loading_error)
-                        .into(binding.photoView)
-                } else {
-                    ImageLoader.load(requireContext(), src).apply {
-                        arguments.getString("sourceOrigin")?.let { sourceOrigin ->
-                            apply(
-                                RequestOptions().set(
-                                    OkHttpModelLoader.sourceOriginOption,
-                                    sourceOrigin
-                                )
+        val arguments = arguments ?: return
+        arguments.getString("src")?.let { src ->
+            ImageProvider.bitmapLruCache.get(src)?.let {
+                binding.photoView.setImageBitmap(it)
+                return
+            }
+            val file = ReadBook.book?.let { book ->
+                BookHelp.getImage(book, src)
+            }
+            if (file?.exists() == true) {
+                ImageLoader.load(requireContext(), file)
+                    .error(R.drawable.image_loading_error)
+                    .into(binding.photoView)
+            } else {
+                ImageLoader.load(requireContext(), src).apply {
+                    arguments.getString("sourceOrigin")?.let { sourceOrigin ->
+                        apply(
+                            RequestOptions().set(
+                                OkHttpModelLoader.sourceOriginOption,
+                                sourceOrigin
                             )
-                        }
-                    }.error(BookCover.defaultDrawable)
-                        .into(binding.photoView)
-                }
+                        )
+                    }
+                }.error(BookCover.defaultDrawable)
+                    .into(binding.photoView)
             }
         }
-
     }
 
 }
