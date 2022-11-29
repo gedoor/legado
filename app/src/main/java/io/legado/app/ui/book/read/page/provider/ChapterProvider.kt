@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.provider
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.net.Uri
@@ -567,6 +568,7 @@ object ChapterProvider {
         upLayout()
     }
 
+    @SuppressLint("Recycle")
     private fun getTypeface(fontPath: String): Typeface {
         return kotlin.runCatching {
             when {
