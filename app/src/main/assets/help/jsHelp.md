@@ -150,9 +150,9 @@ java.bytesToStr(bytes: ByteArray, charset: String)
 HexString 解码为字节数组
 java.hexDecodeToByteArray(hex: String)
 hexString 解码为utf8String
-java.hexDecode(hex: String)
+java.hexDecodeToString(hex: String)
 utf8 编码为hexString
-java.hexEncode(utf8: String)
+java.hexEncodeToString(utf8: String)
 ```
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
