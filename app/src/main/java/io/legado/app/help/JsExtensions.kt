@@ -1,8 +1,8 @@
 package io.legado.app.help
 
 import android.net.Uri
-import android.util.Base64
 import androidx.annotation.Keep
+import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
@@ -313,12 +313,34 @@ interface JsExtensions : JsEncodeUtils {
         }
         return response
     }
+    
+    /* Str转ByteArray */
+    fun strToBytes(str: String): ByteArray {
+        return str.toByteArray(charset("UTF-8"))
+    }
+    
+    fun strToBytes(str: String, charset: String): ByteArray {
+        return str.toByteArray(charset(charset))
+    }
+    
+    /* ByteArray转Str */
+    fun bytesToStr(bytes: ByteArray): String {
+        return String(bytes, charset("UTF-8"))
+    }
+    
+    fun bytesToStr(bytes: ByteArray, charset: String): String {
+        return String(bytes, charset(charset))
+    }
 
     /**
      * js实现base64解码,不能删
      */
-    fun base64Decode(str: String): String {
-        return EncoderUtils.base64Decode(str, Base64.NO_WRAP)
+    fun base64Decode(str: String?): String {
+        return Base64.decodeStr(str)
+    }
+    
+    fun base64Decode(str: String?, charset: String): String {
+        return Base64.decodeStr(str, charset(charset))
     }
 
     fun base64Decode(str: String, flags: Int): String {
@@ -329,18 +351,18 @@ interface JsExtensions : JsEncodeUtils {
         if (str.isNullOrBlank()) {
             return null
         }
-        return Base64.decode(str, Base64.DEFAULT)
+        return EncoderUtils.base64DecodeToByteArray(str, 0)
     }
 
     fun base64DecodeToByteArray(str: String?, flags: Int): ByteArray? {
         if (str.isNullOrBlank()) {
             return null
         }
-        return Base64.decode(str, flags)
+        return EncoderUtils.base64DecodeToByteArray(str, flags)
     }
 
     fun base64Encode(str: String): String? {
-        return EncoderUtils.base64Encode(str, Base64.NO_WRAP)
+        return EncoderUtils.base64Encode(str, 2)
     }
 
     fun base64Encode(str: String, flags: Int): String? {

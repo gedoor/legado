@@ -131,18 +131,28 @@ java.getZipStringContent(url: String, path: String)
 * base64
 > flags参数可省略，默认Base64.NO_WRAP，查看[flags参数说明](https://blog.csdn.net/zcmain/article/details/97051870)
 ```
-java.base64Decode(str: String, flags: Int)
+java.base64Decode(str: String)
+java.base64Decode(str: String, charset: String)
 java.base64DecodeToByteArray(str: String, flags: Int)
 java.base64Encode(str: String, flags: Int)
 ```
+* ByteArray
+```
+Str转Bytes
+java.strToBytes(str: String)
+java.strToBytes(str: String, charset: String)
+Bytes转Str
+java.bytesToStr(bytes: ByteArray)
+java.bytesToStr(bytes: ByteArray, charset: String)
+```
 * Hex
 ```
-/* HexString 解码为字节数组 */
-hexDecodeToByteArray(hex: String): ByteArray?
-/* hexString 解码为utf8String*/
-hexDecodeToString(hex: String): String?
-/* utf8 编码为hexString */
-hexEncodeToString(utf8: String): String?
+HexString 解码为字节数组
+java.hexDecodeToByteArray(hex: String)
+hexString 解码为utf8String
+java.hexDecodeToString(hex: String)
+utf8 编码为hexString
+java.hexEncodeToString(utf8: String)
 ```
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
