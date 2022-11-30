@@ -375,12 +375,12 @@ interface JsExtensions : JsEncodeUtils {
     }
 
     /* hexString 解码为utf8String*/
-    fun hexDecode(hex: String): String? {
+    fun hexDecodeToString(hex: String): String? {
         return HexUtil.decodeHexStr(hex)
     }
 
     /* utf8 编码为hexString */
-    fun hexEncode(utf8: String): String? {
+    fun hexEncodeToString(utf8: String): String? {
         return HexUtil.encodeHexStr(utf8)
     }
 
