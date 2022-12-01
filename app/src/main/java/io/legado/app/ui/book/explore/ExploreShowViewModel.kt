@@ -5,17 +5,16 @@ import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.stackTraceStr
-
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -29,7 +28,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
     private var page = 1
 
     init {
-        viewModelScope.launch {
+        execute {
             appDb.bookDao.flowAll().mapLatest { books ->
                 books.map { "${it.name}-${it.author}" }
             }.collect {
@@ -37,6 +36,8 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                 bookshelf.addAll(it)
                 upAdapterLiveData.postValue("isInBookshelf")
             }
+        }.onError {
+            AppLog.put("加载书架数据失败", it)
         }
     }
 

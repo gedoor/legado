@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
@@ -70,6 +71,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 bookshelf.addAll(it)
                 upAdapterLiveData.postValue("isInBookshelf")
             }
+        }.onError {
+            AppLog.put("加载书架数据失败", it)
         }
     }
 
