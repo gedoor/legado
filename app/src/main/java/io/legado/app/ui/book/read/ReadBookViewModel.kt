@@ -70,6 +70,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 book != null -> initBook(book)
                 else -> ReadBook.upMsg(context.getString(R.string.no_book))
             }
+        }.onError {
+            val msg = "初始化数据失败\n${it.localizedMessage}"
+            ReadBook.upMsg(msg)
+            AppLog.put(msg, it)
         }.onFinally {
             ReadBook.saveRead()
         }

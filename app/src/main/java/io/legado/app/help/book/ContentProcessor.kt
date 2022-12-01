@@ -83,14 +83,14 @@ class ContentProcessor private constructor(
         var mContent = content
         if (content != "null") {
             //去除重复标题
-            try {
-                val name = Pattern.quote(book.name)
-                val title = Pattern.quote(chapter.title)
-                val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*".toRegex()
-                mContent = mContent.replace(titleRegex, "")
-            } catch (e: Exception) {
-                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
-            }
+//            try {
+//                val name = Pattern.quote(book.name)
+//                val title = Pattern.quote(chapter.title)
+//                val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*".toRegex()
+//                mContent = mContent.replace(titleRegex, "")
+//            } catch (e: Exception) {
+//                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
+//            }
             if (reSegment && book.getReSegment()) {
                 //重新分段
                 mContent = ContentHelp.reSegment(mContent, chapter.title)

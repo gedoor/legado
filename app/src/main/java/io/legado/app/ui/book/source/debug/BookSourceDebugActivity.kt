@@ -108,28 +108,10 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             }
         }
         binding.textToc.onClick {
-            val query = searchView.query
-            if (query.isNullOrBlank() || query.length <= 2) {
-                searchView.setQuery("++", false)
-            } else {
-                if (!query.startsWith("++")) {
-                    searchView.setQuery("++$query", true)
-                } else {
-                    searchView.setQuery(query, true)
-                }
-            }
+            prefixAutoComplete("++")
         }
         binding.textContent.onClick {
-            val query = searchView.query
-            if (query.isNullOrBlank() || query.length <= 2) {
-                searchView.setQuery("--", false)
-            } else {
-                if (!query.startsWith("--")) {
-                    searchView.setQuery("--$query", true)
-                } else {
-                    searchView.setQuery(query, true)
-                }
-            }
+            prefixAutoComplete("--")
         }
         launch {
             val exploreKinds = viewModel.bookSource?.exploreKinds()?.filter {
@@ -152,6 +134,19 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
                         searchView.setQuery(binding.textFx.text, true)
                     }
                 }
+            }
+        }
+    }
+
+    private fun prefixAutoComplete(prefix: String) {
+        val query = searchView.query
+        if (query.isNullOrBlank() || query.length <= 2) {
+            searchView.setQuery(prefix, false)
+        } else {
+            if (!query.startsWith(prefix)) {
+                searchView.setQuery("$prefix$query", true)
+            } else {
+                searchView.setQuery(query, true)
             }
         }
     }

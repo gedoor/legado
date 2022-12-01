@@ -46,6 +46,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var tasks = CompositeCoroutine()
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
+    private var searchBookList = arrayListOf<SearchBook>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
     private var searchCallback: SourceCallback? = null
@@ -136,6 +137,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         }
     }
 
+    /**
+     * 搜索书籍
+     */
     fun startSearch() {
         execute {
             stopSearch()
@@ -231,6 +235,58 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 searchStateData.postValue(false)
                 tasks.clear()
                 searchFinishCallback?.invoke(searchBooks.isEmpty())
+            }
+        }
+    }
+
+    /**
+     * 刷新列表
+     */
+    fun startRefreshList() {
+        execute {
+            stopSearch()
+            searchBookList.clear()
+            searchBookList.addAll(searchBooks)
+            searchBooks.clear()
+            searchStateData.postValue(true)
+            initSearchPool()
+            for (i in 0 until threadCount) {
+                refreshList()
+            }
+        }
+    }
+
+    private fun refreshList() {
+        synchronized(this) {
+            if (searchIndex >= searchBookList.lastIndex) {
+                return
+            }
+            searchIndex++
+        }
+        val searchBook = searchBookList[searchIndex]
+        val task = Coroutine.async(scope = viewModelScope, context = searchPool!!) {
+            val source = appDb.bookSourceDao.getBookSource(searchBook.origin) ?: return@async
+            loadBookInfo(source, searchBook.toBook())
+        }.timeout(60000L)
+            .onError {
+                nextRefreshList()
+            }
+            .onSuccess {
+                nextRefreshList()
+            }
+        tasks.add(task)
+    }
+
+    private fun nextRefreshList() {
+        synchronized(this) {
+            if (searchIndex < searchBookList.lastIndex) {
+                refreshList()
+            } else {
+                searchIndex++
+            }
+            if (searchIndex >= searchBookList.lastIndex + min(searchBookList.size, threadCount)) {
+                searchStateData.postValue(false)
+                tasks.clear()
             }
         }
     }

@@ -24,6 +24,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_refresh_list"
+        android:title="@string/refresh_list"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_check_author"
         android:title="@string/checkAuthor"
         android:checkable="true"
