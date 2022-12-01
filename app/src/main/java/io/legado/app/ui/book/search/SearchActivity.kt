@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -33,9 +32,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -289,17 +286,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         launch {
             appDb.bookSourceDao.flowEnabledGroups().collect {
                 groups = it
-            }
-        }
-        launch {
-            appDb.bookDao.flowAll().conflate().map { books ->
-                books.map { "${it.name}-${it.author}" }
-            }.catch { e ->
-                AppLog.put("加载书架数据失败", e)
-            }.collect {
-                viewModel.bookshelf.clear()
-                viewModel.bookshelf.addAll(it)
-                viewModel.upAdapterLiveData.postValue("isInBookshelf")
             }
         }
     }
