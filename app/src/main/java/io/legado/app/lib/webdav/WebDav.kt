@@ -7,9 +7,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import io.legado.app.utils.NetworkUtils
-import io.legado.app.utils.printOnDebug
-import io.legado.app.utils.toRequestBody
+import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
@@ -153,53 +151,51 @@ open class WebDav(val path: String, val authorization: Authorization) {
     private fun parseBody(s: String): List<WebDavFile> {
         val list = ArrayList<WebDavFile>()
         val document = Jsoup.parse(s)
-        val elements = document.getElementsByTag("d:response")
-        httpUrl?.let { urlStr ->
-            val baseUrl = NetworkUtils.getBaseUrl(urlStr)
-            for (element in elements) {
-                //依然是优化支持 caddy 自建的 WebDav ，其目录后缀都为“/”, 所以删除“/”的判定，不然无法获取该目录项
-                var href = URLDecoder.decode(element.getElementsByTag("d:href")[0].text(), "UTF-8")
-                if (href.endsWith("/")) {
-                    href = href.removeSuffix("/")
+        val ns = document.findNSPrefix("DAV:")
+        val elements = document.findNS("response", ns)
+        val urlStr = httpUrl ?: return list
+        val baseUrl = NetworkUtils.getBaseUrl(urlStr)
+        for (element in elements) {
+            //依然是优化支持 caddy 自建的 WebDav ，其目录后缀都为“/”, 所以删除“/”的判定，不然无法获取该目录项
+            val href = URLDecoder.decode(element.findNS("href", ns)[0].text(), "UTF-8")
+                .removeSuffix("/")
+            val fileName = href.substringAfterLast("/")
+            val webDavFile: WebDav
+            try {
+                val urlName = href.ifEmpty {
+                    url.file.replace("/", "")
                 }
-                val fileName = href.substring(href.lastIndexOf("/") + 1)
-                val webDavFile: WebDav
-                try {
-                    val urlName = href.ifEmpty {
-                        url.file.replace("/", "")
-                    }
-                    val contentType = element
-                        .getElementsByTag("d:getcontenttype")
-                        .firstOrNull()?.text().orEmpty()
-                    val resourceType = element
-                        .getElementsByTag("d:resourcetype")
-                        .firstOrNull()?.html()?.trim().orEmpty()
-                    val size = kotlin.runCatching {
-                        element.getElementsByTag("d:getcontentlength")
-                            .firstOrNull()?.text()?.toLong() ?: 0
-                    }.getOrDefault(0)
-                    val lastModify: Long = kotlin.runCatching {
-                        element.getElementsByTag("d:getlastmodified")
-                            .firstOrNull()?.text()?.let {
-                                LocalDateTime.parse(it, dateTimeFormatter)
-                                    .toInstant(ZoneOffset.of("+8")).toEpochMilli()
-                            }
-                    }.getOrNull() ?: 0
-                    val fullURL = NetworkUtils.getAbsoluteURL(baseUrl, href)
-                    webDavFile = WebDavFile(
-                        fullURL,
-                        authorization,
-                        displayName = fileName,
-                        urlName = urlName,
-                        size = size,
-                        contentType = contentType,
-                        resourceType = resourceType,
-                        lastModify = lastModify
-                    )
-                    list.add(webDavFile)
-                } catch (e: MalformedURLException) {
-                    e.printOnDebug()
-                }
+                val contentType = element
+                    .findNS("getcontenttype", ns)
+                    .firstOrNull()?.text().orEmpty()
+                val resourceType = element
+                    .findNS("resourcetype", ns)
+                    .firstOrNull()?.html()?.trim().orEmpty()
+                val size = kotlin.runCatching {
+                    element.findNS("getcontentlength", ns)
+                        .firstOrNull()?.text()?.toLong() ?: 0
+                }.getOrDefault(0)
+                val lastModify: Long = kotlin.runCatching {
+                    element.findNS("getlastmodified", ns)
+                        .firstOrNull()?.text()?.let {
+                            LocalDateTime.parse(it, dateTimeFormatter)
+                                .toInstant(ZoneOffset.of("+8")).toEpochMilli()
+                        }
+                }.getOrNull() ?: 0
+                val fullURL = NetworkUtils.getAbsoluteURL(baseUrl, href)
+                webDavFile = WebDavFile(
+                    fullURL,
+                    authorization,
+                    displayName = fileName,
+                    urlName = urlName,
+                    size = size,
+                    contentType = contentType,
+                    resourceType = resourceType,
+                    lastModify = lastModify
+                )
+                list.add(webDavFile)
+            } catch (e: MalformedURLException) {
+                e.printOnDebug()
             }
         }
         return list
@@ -380,7 +376,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
             val exception = document.getElementsByTag("s:exception").firstOrNull()?.text()
             val message = document.getElementsByTag("s:message").firstOrNull()?.text()
             if (exception == "ObjectNotFound") {
-                throw ObjectNotFoundException(message ?: "$path doesn't exist. code:${response.code}")
+                throw ObjectNotFoundException(
+                    message ?: "$path doesn't exist. code:${response.code}"
+                )
             }
             throw WebDavException(message ?: "未知错误 code:${response.code}")
         }
