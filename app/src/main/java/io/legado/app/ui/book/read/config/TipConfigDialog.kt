@@ -19,6 +19,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
 
     companion object {
         const val TIP_COLOR = 7897
+        const val TIP_DIVIDER_COLOR = 7898
     }
 
     private val binding by viewBinding(DialogTipConfigBinding::bind)
@@ -33,6 +34,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
         initEvent()
         observeEvent<String>(EventBus.TIP_COLOR) {
             upTvTipColor()
+            upTvTipDividerColor()
         }
     }
 
@@ -64,6 +66,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             }
         }
         upTvTipColor()
+        upTvTipDividerColor()
     }
 
     private fun upTvTipColor() {
@@ -73,6 +76,14 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             } else {
                 "#${ReadTipConfig.tipColor.hexString}"
             }
+    }
+
+    private fun upTvTipDividerColor() {
+        binding.tvTipDividerColor.text = when (ReadTipConfig.tipDividerColor) {
+            -1 -> "默认"
+            0 -> "跟随文字颜色"
+            else -> "#${ReadTipConfig.tipDividerColor.hexString}"
+        }
     }
 
     private fun initEvent() = binding.run {
@@ -174,6 +185,22 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                         .setShowAlphaSlider(false)
                         .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
                         .setDialogId(TIP_COLOR)
+                        .show(requireActivity())
+                }
+            }
+        }
+        llTipDividerColor.setOnClickListener {
+            context?.selector(items = arrayListOf("默认", "跟随文字颜色", "自定义")) { _, i ->
+                when (i) {
+                    0, 1 -> {
+                        ReadTipConfig.tipDividerColor = i - 1
+                        upTvTipDividerColor()
+                        postEvent(EventBus.UP_CONFIG, true)
+                    }
+                    2 -> ColorPickerDialog.newBuilder()
+                        .setShowAlphaSlider(false)
+                        .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
+                        .setDialogId(TIP_DIVIDER_COLOR)
                         .show(requireActivity())
                 }
             }

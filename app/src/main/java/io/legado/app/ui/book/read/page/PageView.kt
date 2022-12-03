@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isGone
@@ -70,12 +71,21 @@ class PageView(context: Context) : FrameLayout(context) {
             val tipColor = with(ReadTipConfig) {
                 if (tipColor == 0) it.textColor else tipColor
             }
+            val tipDividerColor = with(ReadTipConfig) {
+                when (tipDividerColor) {
+                    -1 -> Color.parseColor("#66666666")
+                    0 -> tipColor
+                    else -> tipDividerColor
+                }
+            }
             tvHeaderLeft.setColor(tipColor)
             tvHeaderMiddle.setColor(tipColor)
             tvHeaderRight.setColor(tipColor)
             tvFooterLeft.setColor(tipColor)
             tvFooterMiddle.setColor(tipColor)
             tvFooterRight.setColor(tipColor)
+            vwTopDivider.backgroundColor = tipDividerColor
+            vwBottomDivider.backgroundColor = tipDividerColor
             upStatusBar()
             llHeader.setPadding(
                 it.headerPaddingLeft.dpToPx(),

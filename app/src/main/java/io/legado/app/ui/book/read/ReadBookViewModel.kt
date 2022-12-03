@@ -135,7 +135,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 加载目录
      */
-    fun loadChapterList(book: Book) {
+    fun loadChapterList(book: Book, callback: (() -> Unit)? = null) {
         if (book.isLocal) {
             execute {
                 LocalBook.getChapterList(book).let {
@@ -157,28 +157,30 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
                     }
                 }
+            }.onFinally {
+                callback?.invoke()
             }
         } else {
             ReadBook.bookSource?.let {
-                viewModelScope.launch(IO) {
-                    val oldBook = book.copy()
-                    WebBook.getChapterList(viewModelScope, it, book, true)
-                        .onSuccess(IO) { cList ->
-                            if (oldBook.bookUrl == book.bookUrl) {
-                                appDb.bookDao.update(book)
-                            } else {
-                                appDb.bookDao.insert(book)
-                                BookHelp.updateCacheFolder(oldBook, book)
-                            }
-                            appDb.bookChapterDao.delByBook(oldBook.bookUrl)
-                            appDb.bookChapterDao.insert(*cList.toTypedArray())
-                            ReadBook.chapterSize = cList.size
-                            ReadBook.upMsg(null)
-                            ReadBook.loadContent(resetPageOffset = true)
-                        }.onError {
-                            ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                val oldBook = book.copy()
+                WebBook.getChapterList(viewModelScope, it, book, true)
+                    .onSuccess(IO) { cList ->
+                        if (oldBook.bookUrl == book.bookUrl) {
+                            appDb.bookDao.update(book)
+                        } else {
+                            appDb.bookDao.insert(book)
+                            BookHelp.updateCacheFolder(oldBook, book)
                         }
-                }
+                        appDb.bookChapterDao.delByBook(oldBook.bookUrl)
+                        appDb.bookChapterDao.insert(*cList.toTypedArray())
+                        ReadBook.chapterSize = cList.size
+                        ReadBook.upMsg(null)
+                        ReadBook.loadContent(resetPageOffset = true)
+                    }.onError {
+                        ReadBook.upMsg(context.getString(R.string.error_load_toc))
+                    }.onFinally {
+                        callback?.invoke()
+                    }
             }
         }
     }

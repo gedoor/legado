@@ -1062,4 +1062,5 @@
     <string name="replace_state_change">替换(启用/禁用)</string>
     <string name="show_last_update_time">显示上次更新时间</string>
     <string name="refresh_list">刷新列表</string>
+    <string name="tip_divider_color">分隔线颜色</string>
 </resources>

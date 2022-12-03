@@ -49,6 +49,7 @@ import io.legado.app.ui.book.read.config.*
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
 import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_COLOR
+import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_DIVIDER_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
@@ -737,9 +738,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    override fun loadChapterList(book: Book) {
+    override fun loadChapterList(book: Book, callback: (() -> Unit)?) {
         ReadBook.upMsg(getString(R.string.toc_updateing))
-        viewModel.loadChapterList(book)
+        viewModel.loadChapterList(book, callback)
     }
 
     /**
@@ -774,16 +775,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         launch {
             binding.readView.upPageAnim()
         }
-    }
-
-    override fun exit() {
-        ReadBook.book?.let {
-            if (!ReadBook.inBookshelf) {
-                viewModel.removeFromBookshelf { super.finish() }
-            } else {
-                super.finish()
-            }
-        } ?: super.finish()
     }
 
     override fun notifyBookChanged() {
@@ -1151,6 +1142,11 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
             TIP_COLOR -> {
                 ReadTipConfig.tipColor = color
+                postEvent(EventBus.TIP_COLOR, "")
+                postEvent(EventBus.UP_CONFIG, true)
+            }
+            TIP_DIVIDER_COLOR -> {
+                ReadTipConfig.tipDividerColor = color
                 postEvent(EventBus.TIP_COLOR, "")
                 postEvent(EventBus.UP_CONFIG, true)
             }

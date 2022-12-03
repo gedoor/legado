@@ -78,6 +78,12 @@ object ReadTipConfig {
             ReadBookConfig.config.tipColor = value
         }
 
+    var tipDividerColor: Int
+        get() = ReadBookConfig.config.tipDividerColor
+        set(value) {
+            ReadBookConfig.config.tipDividerColor = value
+        }
+
     fun getHeaderModes(context: Context): LinkedHashMap<Int, String> {
         return linkedMapOf(
             Pair(0, context.getString(R.string.hide_when_status_bar_show)),

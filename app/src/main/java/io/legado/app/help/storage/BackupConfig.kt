@@ -62,7 +62,16 @@ object BackupConfig {
         PreferKey.shareLayout,
         PreferKey.hideStatusBar,
         PreferKey.hideNavigationBar,
-        PreferKey.autoReadSpeed
+        PreferKey.autoReadSpeed,
+        PreferKey.clickActionTL,
+        PreferKey.clickActionTC,
+        PreferKey.clickActionTR,
+        PreferKey.clickActionML,
+        PreferKey.clickActionMC,
+        PreferKey.clickActionMR,
+        PreferKey.clickActionBL,
+        PreferKey.clickActionBC,
+        PreferKey.clickActionBR
     )
 
 

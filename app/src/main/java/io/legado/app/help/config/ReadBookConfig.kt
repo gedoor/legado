@@ -476,6 +476,7 @@ object ReadBookConfig {
         var tipFooterMiddle: Int = ReadTipConfig.none,
         var tipFooterRight: Int = ReadTipConfig.pageAndTotal,
         var tipColor: Int = 0,
+        var tipDividerColor: Int = -1,
         var headerMode: Int = 0,
         var footerMode: Int = 0
     ) {

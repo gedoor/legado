@@ -322,6 +322,32 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_tip_divider_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="@string/tip_divider_color"
+                android:textColor="@color/primaryText" />
+
+            <TextView
+                android:id="@+id/tv_tip_divider_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:textColor="@color/primaryText"
+                tools:text="@string/tip_divider_color" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

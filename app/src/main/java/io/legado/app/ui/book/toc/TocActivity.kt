@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
@@ -19,8 +18,10 @@ import io.legado.app.help.book.isLocalTxt
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.model.ReadBook
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.toc.rule.TxtTocRuleDialog
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.gone
 import io.legado.app.utils.showDialogFragment
@@ -30,7 +31,8 @@ import io.legado.app.utils.visible
 /**
  * 目录
  */
-class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
+class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
+    TxtTocRuleDialog.CallBack {
 
     override val binding by viewBinding(ActivityChapterListBinding::inflate)
     override val viewModel by viewModels<TocViewModel>()
@@ -38,6 +40,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
     private lateinit var tabLayout: TabLayout
     private var menu: Menu? = null
     private var searchView: SearchView? = null
+    private val waitDialog by lazy { WaitDialog(this) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
@@ -120,6 +123,17 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>() {
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun onTocRegexDialogResult(tocRegex: String) {
+        ReadBook.book?.let { book ->
+            book.tocUrl = tocRegex
+            waitDialog.show()
+            ReadBook.callBack?.loadChapterList(book) {
+                viewModel.initBook(book.bookUrl)
+                waitDialog.dismiss()
+            }
+        }
     }
 
     @Suppress("DEPRECATION")
