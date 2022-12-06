@@ -6,18 +6,15 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.TocRule
-import io.legado.app.exception.ConcurrentException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.book.ContentProcessor
-import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.isTrue
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -218,12 +215,16 @@ object BookChapterList {
                 }
             }
             Debug.log(bookSource.bookSourceUrl, "└目录列表解析完成", log)
-            Debug.log(bookSource.bookSourceUrl, "≡首章信息", log)
-            Debug.log(bookSource.bookSourceUrl, "◇章节名称:${chapterList[0].title}", log)
-            Debug.log(bookSource.bookSourceUrl, "◇章节链接:${chapterList[0].url}", log)
-            Debug.log(bookSource.bookSourceUrl, "◇章节信息:${chapterList[0].tag}", log)
-            Debug.log(bookSource.bookSourceUrl, "◇是否VIP:${chapterList[0].isVip}", log)
-            Debug.log(bookSource.bookSourceUrl, "◇是否购买:${chapterList[0].isPay}", log)
+            if (chapterList.isEmpty()) {
+                Debug.log(bookSource.bookSourceUrl, "◇章节列表为空")
+            } else {
+                Debug.log(bookSource.bookSourceUrl, "≡首章信息", log)
+                Debug.log(bookSource.bookSourceUrl, "◇章节名称:${chapterList[0].title}", log)
+                Debug.log(bookSource.bookSourceUrl, "◇章节链接:${chapterList[0].url}", log)
+                Debug.log(bookSource.bookSourceUrl, "◇章节信息:${chapterList[0].tag}", log)
+                Debug.log(bookSource.bookSourceUrl, "◇是否VIP:${chapterList[0].isVip}", log)
+                Debug.log(bookSource.bookSourceUrl, "◇是否购买:${chapterList[0].isPay}", log)
+            }
         }
         return Pair(chapterList, nextUrlList)
     }
