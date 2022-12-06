@@ -216,7 +216,7 @@ object BookChapterList {
             }
             Debug.log(bookSource.bookSourceUrl, "└目录列表解析完成", log)
             if (chapterList.isEmpty()) {
-                Debug.log(bookSource.bookSourceUrl, "◇章节列表为空")
+                Debug.log(bookSource.bookSourceUrl, "◇章节列表为空", log)
             } else {
                 Debug.log(bookSource.bookSourceUrl, "≡首章信息", log)
                 Debug.log(bookSource.bookSourceUrl, "◇章节名称:${chapterList[0].title}", log)
