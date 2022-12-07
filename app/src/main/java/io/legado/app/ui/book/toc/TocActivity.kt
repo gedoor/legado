@@ -126,12 +126,16 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
     }
 
     override fun onTocRegexDialogResult(tocRegex: String) {
-        ReadBook.book?.let { book ->
+        viewModel.bookData.value?.let { book ->
             book.tocUrl = tocRegex
             waitDialog.show()
-            ReadBook.callBack?.loadChapterList(book) {
-                viewModel.initBook(book.bookUrl)
+            viewModel.upBookTocRule(book) {
                 waitDialog.dismiss()
+            }
+            ReadBook.book?.let { readBook ->
+                if (readBook == book) {
+                    readBook.tocUrl = tocRegex
+                }
             }
         }
     }
