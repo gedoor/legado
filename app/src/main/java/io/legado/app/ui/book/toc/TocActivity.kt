@@ -131,10 +131,13 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
             waitDialog.show()
             viewModel.upBookTocRule(book) {
                 waitDialog.dismiss()
-            }
-            ReadBook.book?.let { readBook ->
-                if (readBook == book) {
-                    readBook.tocUrl = tocRegex
+                ReadBook.book?.let { readBook ->
+                    if (readBook == book) {
+                        readBook.tocUrl = tocRegex
+                        ReadBook.chapterSize = book.totalChapterNum
+                        ReadBook.upMsg(null)
+                        ReadBook.loadContent(resetPageOffset = true)
+                    }
                 }
             }
         }
