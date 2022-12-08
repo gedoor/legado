@@ -86,10 +86,12 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     return
                 }
                 for (i in nowSpeak until contentList.size) {
-                    val text = contentList[i].replace(AppPattern.notReadAloudRegex, "")
-                    result = tts.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
-                    if (result == TextToSpeech.ERROR) {
-                        AppLog.put("tts朗读出错:$text")
+                    val text = contentList[i]
+                    if (!text.matches(AppPattern.notReadAloudRegex)) {
+                        result = tts.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                        if (result == TextToSpeech.ERROR) {
+                            AppLog.put("tts朗读出错:$text")
+                        }
                     }
                 }
             }.onFailure {
@@ -150,11 +152,15 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         }
 
         override fun onDone(s: String) {
-            readAloudNumber += contentList[nowSpeak].length + 1
-            nowSpeak++
-            if (nowSpeak >= contentList.size) {
-                nextChapter()
-            }
+            //跳过全标点段落
+            do {
+                readAloudNumber += contentList[nowSpeak].length + 1
+                nowSpeak++
+                if (nowSpeak >= contentList.size) {
+                    nextChapter()
+                    return
+                }
+            } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
         }
 
         override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
