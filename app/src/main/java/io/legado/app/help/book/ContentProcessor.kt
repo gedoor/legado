@@ -9,7 +9,6 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
@@ -85,8 +84,7 @@ class ContentProcessor private constructor(
         var sameTitleRemoved = false
         if (content != "null") {
             //去除重复标题
-            val key = "NRT" + MD5Utils.md5Encode(chapter.bookUrl + chapter.url)
-            if (appDb.cacheDao.get(key) == null) try {
+            try {
                 val name = Pattern.quote(book.name)
                 val title = Pattern.quote(chapter.title)
                 val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*".toRegex()

@@ -262,7 +262,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
-        menu.findItem(R.id.menu_same_title_removed).isChecked =
+        menu.findItem(R.id.menu_same_title_removed)?.isChecked =
             ReadBook.curTextChapter?.sameTitleRemoved == true
         return super.onMenuOpened(featureId, menu)
     }
@@ -403,6 +403,10 @@ class ReadBookActivity : BaseReadBookActivity(),
                 viewModel.syncBookProgress(it) { progress ->
                     sureSyncProgress(progress)
                 }
+            }
+            R.id.menu_same_title_removed -> {
+                val chapterUrl = ReadBook.curTextChapter?.url
+                MD5Utils.md5Encode(chapterUrl)
             }
             R.id.menu_help -> showReadMenuHelp()
         }
