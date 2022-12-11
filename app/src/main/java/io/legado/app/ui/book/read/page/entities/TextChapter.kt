@@ -15,6 +15,7 @@ data class TextChapter(
     val url: String,
     val pages: List<TextPage>,
     val chaptersSize: Int,
+    val sameTitleRemoved: Boolean,
     val isVip: Boolean,
     val isPay: Boolean,
 ) {

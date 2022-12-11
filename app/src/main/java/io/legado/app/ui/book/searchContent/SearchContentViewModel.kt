@@ -56,7 +56,7 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
                         coroutineContext.ensureActive()
                         mContent = contentProcessor!!.getContent(
                             book, chapter, chapterContent
-                        ).joinToString("")
+                        ).toString()
                     }
                     val positions = searchPosition(mContent, query)
                     positions.forEachIndexed { index, position ->

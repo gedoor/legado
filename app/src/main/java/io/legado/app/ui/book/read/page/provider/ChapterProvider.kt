@@ -12,6 +12,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.help.book.BookContent
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
@@ -117,9 +118,10 @@ object ChapterProvider {
         book: Book,
         bookChapter: BookChapter,
         displayTitle: String,
-        contents: List<String>,
+        bookContent: BookContent,
         chapterSize: Int,
     ): TextChapter {
+        val contents = bookContent.textList
         val textPages = arrayListOf<TextPage>()
         val stringBuilder = StringBuilder()
         var absStartX = paddingLeft
@@ -217,6 +219,7 @@ object ChapterProvider {
             bookChapter.index, displayTitle,
             bookChapter.getAbsoluteURL(),
             textPages, chapterSize,
+            bookContent.sameTitleRemoved,
             bookChapter.isVip, bookChapter.isPay
         )
     }

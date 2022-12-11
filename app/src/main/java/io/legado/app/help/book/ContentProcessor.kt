@@ -9,6 +9,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
@@ -16,6 +17,7 @@ import kotlinx.coroutines.CancellationException
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.regex.Pattern
 
 class ContentProcessor private constructor(
     private val bookName: String,
@@ -78,9 +80,21 @@ class ContentProcessor private constructor(
         useReplace: Boolean = true,
         chineseConvert: Boolean = true,
         reSegment: Boolean = true
-    ): List<String> {
+    ): BookContent {
         var mContent = content
+        var sameTitleRemoved = false
         if (content != "null") {
+            //去除重复标题
+            val key = "NRT" + MD5Utils.md5Encode(chapter.bookUrl + chapter.url)
+            if (appDb.cacheDao.get(key) == null) try {
+                val name = Pattern.quote(book.name)
+                val title = Pattern.quote(chapter.title)
+                val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*".toRegex()
+                mContent = mContent.replace(titleRegex, "")
+                sameTitleRemoved = true
+            } catch (e: Exception) {
+                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
+            }
             if (reSegment && book.getReSegment()) {
                 //重新分段
                 mContent = ContentHelp.reSegment(mContent, chapter.title)
@@ -121,7 +135,7 @@ class ContentProcessor private constructor(
                 }
             }
         }
-        return contents
+        return BookContent(sameTitleRemoved, contents)
     }
 
     suspend fun replaceContent(content: String): String {

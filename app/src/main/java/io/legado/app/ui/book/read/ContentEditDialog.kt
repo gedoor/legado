@@ -152,7 +152,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                     val contentProcessor = ContentProcessor.get(book.name, book.origin)
                     val content = BookHelp.getContent(book, chapter) ?: return@let null
                     contentProcessor.getContent(book, chapter, content, includeTitle = false)
-                        .joinToString("\n")
+                        .toString()
                 }
             }.onStart {
                 loadStateLiveData.postValue(true)

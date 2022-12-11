@@ -232,7 +232,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     useReplace = useReplace,
                     chineseConvert = false,
                     reSegment = false
-                ).joinToString("\n")
+                ).toString()
             if (AppConfig.exportPictureFile) {
                 //txt导出图片文件
                 val srcList = arrayListOf<Triple<String, Int, String>>()
@@ -515,8 +515,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                         useReplace = useReplace,
                         chineseConvert = false,
                         reSegment = false
-                    )
-                    .joinToString("\n")
+                    ).toString()
                 val title = chapter.getDisplayTitle(
                     contentProcessor.getTitleReplaceRules(),
                     useReplace = useReplace

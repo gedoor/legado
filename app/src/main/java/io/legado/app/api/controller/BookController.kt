@@ -173,7 +173,7 @@ object BookController {
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             content = runBlocking {
                 contentProcessor.getContent(book, chapter, content!!, includeTitle = false)
-                    .joinToString("\n")
+                    .toString()
             }
             return returnData.setData(content)
         }
@@ -184,7 +184,7 @@ object BookController {
                 WebBook.getContentAwait(bookSource, book, chapter).let {
                     val contentProcessor = ContentProcessor.get(book.name, book.origin)
                     contentProcessor.getContent(book, chapter, it, includeTitle = false)
-                        .joinToString("\n")
+                        .toString()
                 }
             }
             returnData.setData(content)
