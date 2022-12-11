@@ -261,6 +261,12 @@ class ReadBookActivity : BaseReadBookActivity(),
         return super.onPrepareOptionsMenu(menu)
     }
 
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_same_title_removed).isChecked =
+            ReadBook.curTextChapter?.sameTitleRemoved == true
+        return super.onMenuOpened(featureId, menu)
+    }
+
     /**
      * 更新菜单
      */
