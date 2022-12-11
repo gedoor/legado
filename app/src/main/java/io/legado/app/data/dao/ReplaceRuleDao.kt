@@ -24,6 +24,9 @@ interface ReplaceRuleDao {
     @Query("select `group` from replace_rules where `group` is not null and `group` <> ''")
     fun flowGroupsUnProcessed(): Flow<List<String>>
 
+    @Query("select * from replace_rules where `group` is null or trim(`group`) = '' or trim(`group`) like '%未分组%'")
+    fun flowNoGroup(): Flow<List<ReplaceRule>>
+
     @get:Query("SELECT MIN(sortOrder) FROM replace_rules")
     val minOrder: Int
 

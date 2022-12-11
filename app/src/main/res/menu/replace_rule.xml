@@ -16,6 +16,10 @@
                 android:id="@+id/menu_group_manage"
                 android:title="@string/group_manage" />
 
+            <item
+                android:id="@+id/menu_group_null"
+                android:title="@string/no_group" />
+
             <group android:id="@+id/replace_group">
 
             </group>

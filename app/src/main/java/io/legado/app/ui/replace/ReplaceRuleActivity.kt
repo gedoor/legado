@@ -182,6 +182,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 searchKey.isNullOrEmpty() -> {
                     appDb.replaceRuleDao.flowAll()
                 }
+                searchKey == getString(R.string.no_group) -> {
+                    appDb.replaceRuleDao.flowNoGroup()
+                }
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
                     appDb.replaceRuleDao.flowGroupSearch("%$key%")
@@ -225,6 +228,9 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             }
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_help -> showHelp()
+            R.id.menu_group_null -> {
+                searchView.setQuery(getString(R.string.no_group), true)
+            }
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)
             }
