@@ -144,7 +144,8 @@ data class BookChapter(
     }
 
     @Suppress("unused")
-    fun getFileName(): String = String.format("%05d-%s.nb", index, MD5Utils.md5Encode16(title))
+    fun getFileName(suffix: String = "nb"): String =
+        String.format("%05d-%s.%s", index, MD5Utils.md5Encode16(title), suffix)
 
     @Suppress("unused")
     fun getFontName(): String = String.format("%05d-%s.ttf", index, MD5Utils.md5Encode16(title))

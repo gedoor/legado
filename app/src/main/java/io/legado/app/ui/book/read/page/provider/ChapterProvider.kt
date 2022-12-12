@@ -216,8 +216,8 @@ object ChapterProvider {
         }
 
         return TextChapter(
+            bookChapter,
             bookChapter.index, displayTitle,
-            bookChapter.getAbsoluteURL(),
             textPages, chapterSize,
             bookContent.sameTitleRemoved,
             bookChapter.isVip, bookChapter.isPay

@@ -404,10 +404,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     sureSyncProgress(progress)
                 }
             }
-            R.id.menu_same_title_removed -> {
-                val chapterUrl = ReadBook.curTextChapter?.url
-                MD5Utils.md5Encode(chapterUrl)
-            }
+            R.id.menu_same_title_removed -> viewModel.reverseRemoveSameTitle()
             R.id.menu_help -> showReadMenuHelp()
         }
         return super.onCompatOptionsItemSelected(item)

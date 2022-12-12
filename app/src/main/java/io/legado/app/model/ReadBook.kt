@@ -43,9 +43,6 @@ object ReadBook : CoroutineScope by MainScope() {
     private val readRecord = ReadRecord()
     var readStartTime: Long = System.currentTimeMillis()
 
-    /* 跳转历史记录 */
-    var bookProgressHistory: List<BookProgress>? = null
-
     /* 跳转进度前进度记录 */
     var lastBookPress: BookProgress? = null
 
@@ -274,7 +271,9 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     /**
-     * 加载章节内容
+     * 加载当前章节和前后一章内容
+     * @param resetPageOffset 滚动阅读是否重置滚动位置
+     * @param success 当前章节加载完成回调
      */
     fun loadContent(resetPageOffset: Boolean, success: (() -> Unit)? = null) {
         loadContent(durChapterIndex, resetPageOffset = resetPageOffset) {
@@ -284,6 +283,13 @@ object ReadBook : CoroutineScope by MainScope() {
         loadContent(durChapterIndex - 1, resetPageOffset = resetPageOffset)
     }
 
+    /**
+     * 加载章节内容
+     * @param index 章节序号
+     * @param upContent 是否更新视图
+     * @param resetPageOffset 滚动阅读是否重置滚动位置
+     * @param success 加载完成回调
+     */
     fun loadContent(
         index: Int,
         upContent: Boolean = true,
@@ -308,6 +314,9 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
+    /**
+     * 下载正文
+     */
     private fun download(index: Int) {
         if (index < 0) return
         if (index > chapterSize - 1) {
@@ -332,6 +341,9 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
+    /**
+     * 下载正文
+     */
     private fun download(
         scope: CoroutineScope,
         chapter: BookChapter,

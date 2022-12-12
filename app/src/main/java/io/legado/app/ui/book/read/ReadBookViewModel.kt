@@ -33,7 +33,6 @@ import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -429,6 +428,25 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         return arrayOf(pageIndex, lineIndex, charIndex, addLine, charIndex2)
     }
 
+    /**
+     * 翻转删除重复标题
+     */
+    fun reverseRemoveSameTitle() {
+        execute {
+            val book = ReadBook.book
+            val textChapter = ReadBook.curTextChapter
+            if (book != null && textChapter != null) {
+                BookHelp.setRemoveSameTitle(
+                    book, textChapter.chapter, !textChapter.sameTitleRemoved
+                )
+                ReadBook.loadContent(ReadBook.durChapterIndex)
+            }
+        }
+    }
+
+    /**
+     * 刷新图片
+     */
     fun refreshImage(src: String) {
         execute {
             ReadBook.book?.let { book ->
@@ -441,6 +459,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /**
+     * 保存图片
+     */
     @Suppress("BlockingMethodInNonBlockingContext")
     fun saveImage(src: String?, uri: Uri) {
         src ?: return
