@@ -1,5 +1,13 @@
 [
   {
+    "themeName": "默认",
+    "isNightTheme": false,
+    "primaryColor": "#795548",
+    "accentColor": "#E53935",
+    "backgroundColor": "#F5F5F5",
+    "bottomBackground": "#EEEEEE"
+  },
+  {
     "themeName": "典雅蓝",
     "isNightTheme": false,
     "primaryColor": "#03A9F4",
