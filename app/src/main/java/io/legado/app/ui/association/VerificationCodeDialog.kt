@@ -1,13 +1,18 @@
 package io.legado.app.ui.association
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogVerificationCodeViewBinding
@@ -22,9 +27,6 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * 图片验证码对话框
@@ -79,24 +81,35 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
 
     @SuppressLint("CheckResult")
     private fun loadImage(url: String, sourceUrl: String?) {
-        launch {
-            ImageProvider.bitmapLruCache.remove(url)
-            val image = withContext(IO) {
-                ImageLoader.loadBitmap(requireContext(), url).apply {
-                    sourceUrl?.let {
-                        apply(
-                            RequestOptions().set(OkHttpModelLoader.sourceOriginOption, it)
-                        )
-                    }
-                }.error(R.drawable.image_loading_error)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .submit()
-                    .get()
+        ImageProvider.bitmapLruCache.remove(url)
+        ImageLoader.loadBitmap(requireContext(), url).apply {
+            sourceUrl?.let {
+                apply(
+                    RequestOptions().set(OkHttpModelLoader.sourceOriginOption, it)
+                )
             }
-            ImageProvider.bitmapLruCache.put(url, image)
-            binding.verificationCodeImageView.setImageBitmap(image)
-        }
+        }.error(R.drawable.image_loading_error)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    errorDrawable?.toBitmap()?.let {
+                        onResourceReady(it, null)
+                    }
+                }
+
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    ImageProvider.bitmapLruCache.put(url, resource)
+                    binding.verificationCodeImageView.setImageBitmap(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // do nothing
+                }
+            })
     }
 
     @SuppressLint("InflateParams")
