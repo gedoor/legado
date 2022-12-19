@@ -214,7 +214,7 @@ object BitmapUtils {
      */
     fun toInputStream(bitmap: Bitmap): InputStream {
         val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90 /*ignored for PNG*/, bos)
         return ByteArrayInputStream(bos.toByteArray()).also { bos.close() }
     }
 

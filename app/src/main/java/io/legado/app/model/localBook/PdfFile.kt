@@ -1,6 +1,7 @@
 package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import io.legado.app.constant.AppLog
@@ -144,6 +145,7 @@ class PdfFile(var book: Book) {
                 Bitmap.Config.ARGB_8888
             )
                 .apply {
+                    this.eraseColor(Color.WHITE)
                     page.render(this, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
                 }
         }
