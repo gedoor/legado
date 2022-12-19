@@ -16,7 +16,8 @@ def version = "3." + releaseTime()
 def gitCommits = Integer.parseInt('git rev-list HEAD --count'.execute().text.trim())
 
 android {
-    compileSdk 33
+    compileSdk = compile_sdk_version
+    buildToolsVersion = build_tool_version
     namespace 'io.legado.app'
     kotlinOptions {
         jvmTarget = "11"

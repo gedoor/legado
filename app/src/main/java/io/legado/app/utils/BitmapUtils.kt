@@ -8,8 +8,7 @@ import android.graphics.Bitmap.Config
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import com.google.android.renderscript.Toolkit
-import java.io.FileInputStream
-import java.io.IOException
+import java.io.*
 import kotlin.math.*
 
 
@@ -207,6 +206,18 @@ object BitmapUtils {
         }
     }
 
+    /**
+     * 将Bitmap转换成InputStream
+     *
+     * @param bitmap
+     * @return
+     */
+    fun toInputStream(bitmap: Bitmap): InputStream {
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
+        return ByteArrayInputStream(bos.toByteArray()).also { bos.close() }
+    }
+
 }
 
 /**
@@ -255,4 +266,5 @@ fun Bitmap.getMeanColor(): Int {
         averagePixelGreen + 3,
         averagePixelBlue + 3
     )
+
 }

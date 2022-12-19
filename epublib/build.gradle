@@ -3,7 +3,8 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk = compile_sdk_version
+    buildToolsVersion = build_tool_version
     namespace 'me.ag2s.epublib'
     defaultConfig {
         minSdk 21
@@ -21,8 +22,8 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     lint {
         checkDependencies true
