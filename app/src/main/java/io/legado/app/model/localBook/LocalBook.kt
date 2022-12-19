@@ -76,6 +76,9 @@ object LocalBook {
             book.isUmd -> {
                 UmdFile.getChapterList(book)
             }
+            book.isPdf -> {
+                PdfFile.getChapterList(book)
+            }
             else -> {
                 TextFile.getChapterList(book)
             }
@@ -99,6 +102,9 @@ object LocalBook {
                 }
                 book.isUmd -> {
                     UmdFile.getContent(book, chapter)
+                }
+                book.isPdf -> {
+                    PdfFile.getContent(book, chapter)
                 }
                 else -> {
                     TextFile.getContent(book, chapter)
@@ -166,6 +172,7 @@ object LocalBook {
             )
             if (book.isEpub) EpubFile.upBookInfo(book)
             if (book.isUmd) UmdFile.upBookInfo(book)
+            if (book.isPdf) PdfFile.upBookInfo(book)
             appDb.bookDao.insert(book)
         } else {
             //已有书籍说明是更新,删除原有目录

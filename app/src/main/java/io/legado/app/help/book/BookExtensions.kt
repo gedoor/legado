@@ -49,6 +49,10 @@ val Book.isUmd: Boolean
     get() {
         return isLocal && originName.endsWith(".umd", true)
     }
+val Book.isPdf: Boolean
+    get() {
+        return isLocal && originName.endsWith(".pdf", true)
+    }
 
 val Book.isOnLineTxt: Boolean
     get() {

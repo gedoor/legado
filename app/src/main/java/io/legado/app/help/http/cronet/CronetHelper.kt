@@ -7,10 +7,8 @@ import io.legado.app.utils.DebugLog
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.Request
-import okio.Buffer
 import org.chromium.net.CronetEngine.Builder.HTTP_CACHE_DISK
 import org.chromium.net.ExperimentalCronetEngine
-import org.chromium.net.UploadDataProviders
 import org.chromium.net.UrlRequest
 import org.json.JSONObject
 import splitties.init.appCtx
@@ -85,10 +83,8 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
             } else {
                 addHeader("Content-Type", "text/plain")
             }
-            val buffer = Buffer()
-            requestBody.writeTo(buffer)
             setUploadDataProvider(
-                UploadDataProviders.create(buffer.readByteArray()),
+                BodyUploadProvider(requestBody),
                 okHttpClient.dispatcher.executorService
             )
 

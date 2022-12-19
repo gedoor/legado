@@ -140,7 +140,10 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                 if (docItem.isDir) {
                     scanDoc(docItem, false, scope)
                 } else if (docItem.name.endsWith(".txt", true)
-                    || docItem.name.endsWith(".epub", true)
+                    || docItem.name.endsWith(".epub", true) || docItem.name.endsWith(
+                        ".pdf",
+                        true
+                    ) || docItem.name.endsWith(".umd", true)
                 ) {
                     list.add(docItem)
                 }
