@@ -9,6 +9,8 @@ buildscript {
         exoplayer_version = '2.18.2'
         splitties_version = '3.0.0'
         room_version = '2.4.3'
+        compile_sdk_version = 33
+        build_tool_version = '33.0.1'
     }
 }
 

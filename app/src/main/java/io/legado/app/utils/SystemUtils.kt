@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.view.Display
+import splitties.init.appCtx
 import splitties.systemservices.displayManager
 import splitties.systemservices.powerManager
 
@@ -34,5 +35,19 @@ object SystemUtils {
         return displayManager.displays.filterNotNull().any {
             it.state != Display.STATE_OFF
         }
+    }
+
+    /**
+     * 屏幕像素宽度
+     */
+    val screenWidthPx by lazy {
+        appCtx.resources.displayMetrics.widthPixels
+    }
+
+    /**
+     * 屏幕像素高度
+     */
+    val screenHeightPx by lazy {
+        appCtx.resources.displayMetrics.heightPixels
     }
 }

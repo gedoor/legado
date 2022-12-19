@@ -12,13 +12,15 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isEpub
+import io.legado.app.help.book.isPdf
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.EpubFile
+import io.legado.app.model.localBook.PdfFile
 import io.legado.app.utils.BitmapUtils
-import io.legado.app.utils.SvgUtils
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.SvgUtils
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -75,6 +77,14 @@ object ImageProvider {
             if (!vFile.exists()) {
                 if (book.isEpub) {
                     EpubFile.getImage(book, src)?.use { input ->
+                        val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
+                        @Suppress("BlockingMethodInNonBlockingContext")
+                        FileOutputStream(newFile).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                } else if (book.isPdf) {
+                    PdfFile.getImage(book, src)?.use { input ->
                         val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
                         @Suppress("BlockingMethodInNonBlockingContext")
                         FileOutputStream(newFile).use { output ->
