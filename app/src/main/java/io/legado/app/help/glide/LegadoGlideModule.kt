@@ -8,9 +8,11 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import java.io.InputStream
 
+
 @Suppress("unused")
 @GlideModule
 class LegadoGlideModule : AppGlideModule() {
+
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         registry.replace(

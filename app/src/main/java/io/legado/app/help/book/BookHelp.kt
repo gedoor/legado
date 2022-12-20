@@ -1,5 +1,6 @@
 package io.legado.app.help.book
 
+import android.os.ParcelFileDescriptor
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
@@ -196,6 +197,22 @@ object BookHelp {
             return ZipFile(file)
         }
         return ZipFile(uri.path)
+    }
+
+    /**
+     * 获取本地书籍文件的ParcelFileDescriptor
+     *
+     * @param book
+     * @return
+     */
+    @Throws(IOException::class, FileNotFoundException::class)
+    fun getBookPFD(book: Book): ParcelFileDescriptor? {
+        val uri = book.getLocalUri()
+        return if (uri.isContentScheme()) {
+            appCtx.contentResolver.openFileDescriptor(uri, "r")
+        } else {
+            ParcelFileDescriptor.open(File(uri.path), ParcelFileDescriptor.MODE_READ_ONLY)
+        }
     }
 
     fun getChapterFiles(book: Book): HashSet<String> {

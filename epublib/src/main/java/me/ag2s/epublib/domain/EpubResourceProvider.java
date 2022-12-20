@@ -4,8 +4,9 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+
+import me.ag2s.epublib.util.zip.ZipEntryWrapper;
+import me.ag2s.epublib.util.zip.ZipFileWrapper;
 
 /**
  * @author jake
@@ -13,24 +14,24 @@ import java.util.zip.ZipFile;
 public class EpubResourceProvider implements LazyResourceProvider {
 
 
-  private final String epubFilename;
+  private final ZipFileWrapper zipFileWrapper;
 
 
-  public EpubResourceProvider(String epubFilename) {
-    this.epubFilename = epubFilename;
+  public EpubResourceProvider(ZipFileWrapper zipFileWrapper) {
+    this.zipFileWrapper = zipFileWrapper;
   }
 
 
   @Override
   public InputStream getResourceStream(@NonNull String href) throws IOException {
 
-    ZipFile zipFile = new ZipFile(epubFilename);
-    ZipEntry zipEntry = zipFile.getEntry(href);
+    //ZipFile zipFile = new ZipFile(epubFilename);
+    ZipEntryWrapper zipEntry = zipFileWrapper.getEntry(href);
     if (zipEntry == null) {
-      zipFile.close();
+      //zipFile.close();
       throw new IllegalStateException(
-              "Cannot find entry " + href + " in epub file " + epubFilename);
+              "Cannot find entry " + href + " in epub file " + zipFileWrapper);
     }
-    return new ResourceInputStream(zipFile.getInputStream(zipEntry), zipFile);
+    return new ResourceInputStream(zipFileWrapper.getInputStream(zipEntry));
   }
 }
