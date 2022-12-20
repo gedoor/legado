@@ -2,6 +2,7 @@ package io.legado.app.model.localBook
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.ParcelFileDescriptor
 import android.text.TextUtils
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
@@ -12,6 +13,7 @@ import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
+import me.ag2s.epublib.util.zip.AndroidZipFile
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -65,9 +67,14 @@ class EpubFile(var book: Book) {
     }
 
     private var mCharset: Charset = Charset.defaultCharset()
+
+    /**
+     *持有引用，避免被回收
+     */
+    private var fileDescriptor: ParcelFileDescriptor? = null
     private var epubBook: EpubBook? = null
         get() {
-            if (field != null) {
+            if (field != null && fileDescriptor != null) {
                 return field
             }
             field = readEpub()
@@ -107,8 +114,14 @@ class EpubFile(var book: Book) {
     private fun readEpub(): EpubBook? {
         return kotlin.runCatching {
             //ContentScheme拷贝到私有文件夹采用懒加载防止OOM
-            val zipFile = BookHelp.getEpubFile(book)
-            EpubReader().readEpubLazy(zipFile, "utf-8")
+            //val zipFile = BookHelp.getEpubFile(book)
+            BookHelp.getBookPFD(book)?.let {
+                fileDescriptor = it
+                val zipFile = AndroidZipFile(it, book.originName)
+                EpubReader().readEpubLazy(zipFile, "utf-8")
+            }
+
+
         }.onFailure {
             AppLog.put("读取Epub文件失败\n${it.localizedMessage}", it)
             it.printOnDebug()
@@ -348,6 +361,11 @@ class EpubFile(var book: Book) {
                 parseMenu(chapterList, ref.children, level + 1)
             }
         }
+    }
+
+
+    protected fun finalize() {
+        fileDescriptor?.close()
     }
 
 }

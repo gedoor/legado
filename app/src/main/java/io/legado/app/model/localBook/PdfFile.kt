@@ -57,10 +57,13 @@ class PdfFile(var book: Book) {
 
     }
 
+    /**
+     *持有引用，避免被回收
+     */
     private var fileDescriptor: ParcelFileDescriptor? = null
     private var pdfRenderer: PdfRenderer? = null
         get() {
-            if (field != null) {
+            if (field != null && fileDescriptor != null) {
                 return field
             }
             field = readPdf()
@@ -180,7 +183,7 @@ class PdfFile(var book: Book) {
             val index = href.toInt()
             val bitmap = openPdfPage(pdfRenderer!!, index)
             if (bitmap != null) {
-                BitmapUtils.toInputStream(bitmap).also { bitmap.recycle() }
+                BitmapUtils.toInputStream(bitmap)
             } else {
                 null
             }

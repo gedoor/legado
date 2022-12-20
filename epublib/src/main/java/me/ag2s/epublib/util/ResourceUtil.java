@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -102,20 +101,20 @@ public class ResourceUtil {
     /**
      * Creates a resource out of the given zipEntry and zipInputStream.
      *
-     * @param zipEntry       v
+     * @param name           v
      * @param zipInputStream v
      * @return a resource created out of the given zipEntry and zipInputStream.
      * @throws IOException v
      */
-    public static Resource createResource(ZipEntry zipEntry,
+    public static Resource createResource(String name,
                                           ZipInputStream zipInputStream) throws IOException {
-        return new Resource(zipInputStream, zipEntry.getName());
+        return new Resource(zipInputStream, name);
 
     }
 
-    public static Resource createResource(ZipEntry zipEntry,
+    public static Resource createResource(String name,
                                           InputStream zipInputStream) throws IOException {
-        return new Resource(zipInputStream, zipEntry.getName());
+        return new Resource(zipInputStream, name);
 
     }
 

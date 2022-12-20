@@ -9,7 +9,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import me.ag2s.epublib.domain.EpubResourceProvider;
@@ -21,6 +20,8 @@ import me.ag2s.epublib.domain.Resource;
 import me.ag2s.epublib.domain.Resources;
 import me.ag2s.epublib.util.CollectionUtil;
 import me.ag2s.epublib.util.ResourceUtil;
+import me.ag2s.epublib.util.zip.ZipEntryWrapper;
+import me.ag2s.epublib.util.zip.ZipFileWrapper;
 
 
 /**
@@ -34,32 +35,32 @@ public class ResourcesLoader {
 
 
     /**
-     * Loads the entries of the zipFile as resources.
+     * Loads the entries of the zipFileWrapper as resources.
      * <p>
      * The MediaTypes that are in the lazyLoadedTypes will not get their
      * contents loaded, but are stored as references to entries into the
-     * ZipFile and are loaded on demand by the Resource system.
+     * AndroidZipFile and are loaded on demand by the Resource system.
      *
-     * @param zipFile             import epub zipfile
+     * @param zipFileWrapper      import epub zipfile
      * @param defaultHtmlEncoding epub xhtml default encoding
      * @param lazyLoadedTypes     lazyLoadedTypes
      * @return Resources
      * @throws IOException IOException
      */
     public static Resources loadResources(
-            ZipFile zipFile,
+            ZipFileWrapper zipFileWrapper,
             String defaultHtmlEncoding,
             List<MediaType> lazyLoadedTypes
     ) throws IOException {
 
         LazyResourceProvider resourceProvider =
-                new EpubResourceProvider(zipFile.getName());
+                new EpubResourceProvider(zipFileWrapper);
 
         Resources result = new Resources();
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        Enumeration entries = zipFileWrapper.entries();
 
         while (entries.hasMoreElements()) {
-            ZipEntry zipEntry = entries.nextElement();
+            ZipEntryWrapper zipEntry = new ZipEntryWrapper(entries.nextElement());
 
             if (zipEntry == null || zipEntry.isDirectory()) {
                 continue;
@@ -73,7 +74,7 @@ public class ResourcesLoader {
                 resource = new LazyResource(resourceProvider, zipEntry.getSize(), href);
             } else {
                 resource = ResourceUtil
-                        .createResource(zipEntry, zipFile.getInputStream(zipEntry));
+                        .createResource(zipEntry.getName(), zipFileWrapper.getInputStream(zipEntry));
                 /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
                 if (href.endsWith("opf")) {
                     String string = new String(resource.getData())
@@ -136,7 +137,7 @@ public class ResourcesLoader {
             String href = zipEntry.getName();
 
             // store resource
-            Resource resource = ResourceUtil.createResource(zipEntry, zipInputStream);
+            Resource resource = ResourceUtil.createResource(zipEntry.getName(), zipInputStream);
             ///*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
             if (href.endsWith("opf")) {
                 String string = new String(resource.getData())
@@ -184,7 +185,7 @@ public class ResourcesLoader {
      * @return Resources
      * @throws IOException IOException
      */
-    public static Resources loadResources(ZipFile zipFile, String defaultHtmlEncoding) throws IOException {
+    public static Resources loadResources(ZipFileWrapper zipFile, String defaultHtmlEncoding) throws IOException {
         List<MediaType> ls = new ArrayList<>();
         return loadResources(zipFile, defaultHtmlEncoding, ls);
     }
