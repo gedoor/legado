@@ -29,16 +29,10 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun delGroup(vararg bookGroup: BookGroup, finally: () -> Unit) {
+    fun delGroup(bookGroup: BookGroup, finally: () -> Unit) {
         execute {
-            appDb.bookGroupDao.delete(*bookGroup)
-            bookGroup.forEach { group ->
-                val books = appDb.bookDao.getBooksByGroup(group.groupId)
-                books.forEach {
-                    it.group = it.group - group.groupId
-                }
-                appDb.bookDao.update(*books.toTypedArray())
-            }
+            appDb.bookGroupDao.delete(bookGroup)
+            appDb.bookDao.removeGroup(bookGroup.groupId)
         }.onFinally {
             finally()
         }

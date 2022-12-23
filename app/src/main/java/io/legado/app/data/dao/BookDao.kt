@@ -119,4 +119,6 @@ interface BookDao {
     @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
     fun upGroup(oldGroupId: Long, newGroupId: Long)
 
+    @Query("update books set `group` = `group` - :group where `group` & :group > 0")
+    fun removeGroup(group: Long)
 }
