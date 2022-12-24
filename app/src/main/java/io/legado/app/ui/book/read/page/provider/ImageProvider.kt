@@ -62,6 +62,16 @@ object ImageProvider {
                 //putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
             }
         }
+
+    }
+
+    fun getNotRecycled(key: String): Bitmap? {
+        val bitmap = bitmapLruCache.get(key) ?: return null
+        if (bitmap.isRecycled) {
+            bitmapLruCache.remove(key)
+            return null
+        }
+        return bitmap
     }
 
     /**
@@ -142,7 +152,7 @@ object ImageProvider {
         if (!vFile.exists()) return errorBitmap
         //epub文件提供图片链接是相对链接，同时阅读多个epub文件，缓存命中错误
         //bitmapLruCache的key同一改成缓存文件的路径
-        val cacheBitmap = bitmapLruCache.get(vFile.absolutePath)
+        val cacheBitmap = getNotRecycled(vFile.absolutePath)
         if (cacheBitmap != null) return cacheBitmap
         if (height != null && AppConfig.asyncLoadImage && ReadBook.pageAnim() == PageAnim.scrollPageAnim) {
             Coroutine.async {
