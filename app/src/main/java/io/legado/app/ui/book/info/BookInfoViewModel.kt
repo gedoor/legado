@@ -150,6 +150,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 bookSource?.let { bookSource ->
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
+                            appDb.bookDao.getBook(book.name, book.author)?.let {
+                                inBookshelf = true
+                            }
                             bookData.postValue(book)
                             if (isImportBookOnLine) {
                                 appDb.searchBookDao.update(book.toSearchBook())
