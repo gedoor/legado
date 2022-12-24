@@ -65,7 +65,7 @@ object ImageProvider {
 
     }
 
-    fun getNotRecycled(key: String): Bitmap? {
+    private fun getNotRecycled(key: String): Bitmap? {
         val bitmap = bitmapLruCache.get(key) ?: return null
         if (bitmap.isRecycled) {
             bitmapLruCache.remove(key)
