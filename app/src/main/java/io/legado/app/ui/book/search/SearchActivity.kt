@@ -408,7 +408,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 是否已经加入书架
      */
     override fun isInBookshelf(name: String, author: String): Boolean {
-        return viewModel.bookshelf.contains("$name-$author")
+        return if (author.isNotBlank()) {
+            viewModel.bookshelf.contains("$name-$author")
+        } else {
+            viewModel.bookshelf.any { it.startsWith("$name-") }
+        }
     }
 
     /**
