@@ -6,10 +6,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.constant.PageAnim
 import io.legado.app.data.appDb
-import io.legado.app.help.book.BookHelp
-import io.legado.app.help.book.ContentProcessor
-import io.legado.app.help.book.isEpub
-import io.legado.app.help.book.isImage
+import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
@@ -217,7 +214,7 @@ data class Book(
 
     fun getImageStyle(): String? {
         return config.imageStyle
-            ?: if (isImage) imgStyleFull else null
+            ?: if (isImage || isPdf) imgStyleFull else null
     }
 
     fun setTtsEngine(ttsEngine: String?) {
