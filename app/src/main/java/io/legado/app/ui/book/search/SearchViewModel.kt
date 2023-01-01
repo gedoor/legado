@@ -10,6 +10,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.webBook.SearchModel
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -41,9 +42,13 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchFinishCallback?.invoke(isEmpty)
         }
 
-        override fun onSearchCancel() {
+        override fun onSearchCancel(exception: Exception?) {
             isSearchLiveData.postValue(false)
+            exception?.let {
+                context.toastOnUi(it.localizedMessage)
+            }
         }
+
     })
     var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var isSearchLiveData = MutableLiveData<Boolean>()

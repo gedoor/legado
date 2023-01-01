@@ -5,6 +5,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.ui.book.search.SearchScope
@@ -55,6 +56,10 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
             searchBooks.clear()
             callBack.onSearchSuccess(searchBooks)
             bookSourceList.addAll(callBack.getSearchScope().getBookSources())
+            if (bookSourceList.isEmpty()) {
+                callBack.onSearchCancel(NoStackTraceException("启用书源为空"))
+                return
+            }
         } else {
             searchPage++
         }
@@ -197,7 +202,7 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
         fun onSearchStart()
         fun onSearchSuccess(searchBooks: ArrayList<SearchBook>)
         fun onSearchFinish(isEmpty: Boolean)
-        fun onSearchCancel()
+        fun onSearchCancel(exception: Exception? = null)
     }
 
 }
