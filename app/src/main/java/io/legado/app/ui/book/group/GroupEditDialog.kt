@@ -20,7 +20,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
 
     constructor(bookGroup: BookGroup? = null) : this() {
         arguments = Bundle().apply {
-            putParcelable("group", bookGroup)
+            putParcelable("group", bookGroup?.copy())
         }
     }
 
