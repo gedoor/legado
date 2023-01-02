@@ -13,10 +13,12 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.LauncherIconHelp
+import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.upType
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -69,6 +71,10 @@ object Restore {
                 it.forEach { book ->
                     book.upType()
                 }
+                it.filter { book -> book.isLocal }
+                    .forEach { book ->
+                        book.coverUrl = LocalBook.getCoverPath(book)
+                    }
                 appDb.bookDao.insert(*it.toTypedArray())
             }
             fileToListT<Bookmark>(path, "bookmark.json")?.let {
