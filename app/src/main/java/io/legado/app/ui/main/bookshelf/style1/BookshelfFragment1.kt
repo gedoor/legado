@@ -19,14 +19,18 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.FragmentBookshelfBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.book.group.GroupEditDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.books.BooksFragment
-import io.legado.app.utils.getPrefInt
-import io.legado.app.utils.putPrefInt
-import io.legado.app.utils.setEdgeEffectColor
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlin.collections.List
+import kotlin.collections.emptyList
+import kotlin.collections.getOrNull
+import kotlin.collections.hashMapOf
+import kotlin.collections.mutableListOf
+import kotlin.collections.set
 
 /**
  * 书架界面
@@ -88,6 +92,12 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
                 bookGroups.addAll(data)
                 adapter.notifyDataSetChanged()
                 selectLastTab()
+                for (i in 0 until adapter.count) {
+                    tabLayout.getTabAt(i)?.view?.setOnLongClickListener {
+                        showDialogFragment(GroupEditDialog(bookGroups[i]))
+                        true
+                    }
+                }
             }
         }
     }
