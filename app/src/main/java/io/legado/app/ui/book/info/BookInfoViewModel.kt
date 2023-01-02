@@ -80,7 +80,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             upCoverByRule(book)
             bookSource = if (book.isLocal) null else
                 appDb.bookSourceDao.getBookSource(book.origin)
-            if (book.tocUrl.isEmpty()) {
+            if (book.tocUrl.isEmpty() && !book.isLocal) {
                 loadBookInfo(book)
             } else if (isImportBookOnLine) {
                 chapterListData.postValue(emptyList())

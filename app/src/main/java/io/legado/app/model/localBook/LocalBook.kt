@@ -123,6 +123,18 @@ object LocalBook {
         }.getOrElse { content }
     }
 
+    fun getCoverPath(book: Book): String {
+        return getCoverPath(book.bookUrl)
+    }
+
+    private fun getCoverPath(bookUrl: String): String {
+        return FileUtils.getPath(
+            appCtx.externalFiles,
+            "covers",
+            "${MD5Utils.md5Encode16(bookUrl)}.jpg"
+        )
+    }
+
     /**
      * 下载在线的文件并自动导入到阅读（txt umd epub)
      * 压缩文件请先提示用户解压
@@ -162,11 +174,7 @@ object LocalBook {
                 name = nameAuthor.first,
                 author = nameAuthor.second,
                 originName = fileName,
-                coverUrl = FileUtils.getPath(
-                    appCtx.externalFiles,
-                    "covers",
-                    "${MD5Utils.md5Encode16(bookUrl)}.jpg"
-                ),
+                coverUrl = getCoverPath(bookUrl),
                 latestChapterTime = updateTime,
                 order = appDb.bookDao.minOrder - 1
             )

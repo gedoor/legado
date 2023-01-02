@@ -85,11 +85,7 @@ class EpubFile(var book: Book) {
         try {
             epubBook?.let {
                 if (book.coverUrl.isNullOrEmpty()) {
-                    book.coverUrl = FileUtils.getPath(
-                        appCtx.externalFiles,
-                        "covers",
-                        "${MD5Utils.md5Encode16(book.bookUrl)}.jpg"
-                    )
+                    book.coverUrl = LocalBook.getCoverPath(book)
                 }
                 if (!File(book.coverUrl!!).exists()) {
                     /*部分书籍DRM处理后，封面获取异常，待优化*/

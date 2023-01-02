@@ -64,11 +64,7 @@ class UmdFile(var book: Book) {
         try {
             umdBook?.let {
                 if (book.coverUrl.isNullOrEmpty()) {
-                    book.coverUrl = FileUtils.getPath(
-                        appCtx.externalFiles,
-                        "covers",
-                        "${MD5Utils.md5Encode16(book.bookUrl)}.jpg"
-                    )
+                    book.coverUrl = LocalBook.getCoverPath(book)
                 }
                 if (!File(book.coverUrl!!).exists()) {
                     FileUtils.writeBytes(book.coverUrl!!, it.cover.coverData)
