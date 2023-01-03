@@ -308,6 +308,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * 单击
      * @return true:已处理, false:未处理
      */
+    @Suppress("UNUSED_ANONYMOUS_PARAMETER")
     fun click(x: Float, y: Float): Boolean {
         var handled = false
         touch(x, y) { _, textPos, textPage, textLine, column ->

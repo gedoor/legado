@@ -107,7 +107,7 @@ class PdfFile(var book: Book) {
             }
         } else {
             fileDescriptor =
-                ParcelFileDescriptor.open(File(uri.path), ParcelFileDescriptor.MODE_READ_ONLY)
+                ParcelFileDescriptor.open(File(uri.path!!), ParcelFileDescriptor.MODE_READ_ONLY)
                     ?.also {
                         pdfRenderer = PdfRenderer(it)
                     }

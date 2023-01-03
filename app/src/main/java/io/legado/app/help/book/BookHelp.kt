@@ -211,7 +211,7 @@ object BookHelp {
         return if (uri.isContentScheme()) {
             appCtx.contentResolver.openFileDescriptor(uri, "r")
         } else {
-            ParcelFileDescriptor.open(File(uri.path), ParcelFileDescriptor.MODE_READ_ONLY)
+            ParcelFileDescriptor.open(File(uri.path!!), ParcelFileDescriptor.MODE_READ_ONLY)
         }
     }
 
