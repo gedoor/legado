@@ -187,11 +187,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.clearFocus()
-                query?.let {
+                query?.trim()?.let { searchKey ->
                     isManualStopSearch = false
-                    viewModel.saveSearchKey(query)
+                    viewModel.saveSearchKey(searchKey)
                     viewModel.searchKey = ""
-                    viewModel.search(it)
+                    viewModel.search(searchKey)
                 }
                 visibleInputHelp(false)
                 return true
@@ -199,7 +199,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrBlank()) viewModel.stop()
-                upHistory(newText)
+                upHistory(newText?.trim())
                 return false
             }
         })
