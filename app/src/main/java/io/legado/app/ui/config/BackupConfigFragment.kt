@@ -330,6 +330,7 @@ class BackupConfigFragment : PreferenceFragment(),
             restoreJob = coroutineContext[Job]
             AppWebDav.showRestoreDialog(requireContext())
         }.onError {
+            AppLog.put("恢复备份出错WebDavError\n${it.localizedMessage}", it)
             alert {
                 setTitle(R.string.restore)
                 setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。")
