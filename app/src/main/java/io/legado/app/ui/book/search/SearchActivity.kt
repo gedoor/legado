@@ -185,9 +185,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         searchView.queryHint = getString(R.string.search_book_key)
         searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
+            override fun onQueryTextSubmit(query: String): Boolean {
                 searchView.clearFocus()
-                query?.trim()?.let { searchKey ->
+                query.trim().let { searchKey ->
                     isManualStopSearch = false
                     viewModel.saveSearchKey(searchKey)
                     viewModel.searchKey = ""
@@ -197,9 +197,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrBlank()) viewModel.stop()
-                upHistory(newText?.trim())
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (newText.isBlank()) viewModel.stop()
+                upHistory(newText.trim())
                 return false
             }
         })

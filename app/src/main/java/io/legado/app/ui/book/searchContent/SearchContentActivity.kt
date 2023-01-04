@@ -78,12 +78,12 @@ class SearchContentActivity :
         searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                startContentSearch(query)
+                startContentSearch(query.trim())
                 searchView.clearFocus()
                 return false
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
+            override fun onQueryTextChange(newText: String): Boolean {
                 return false
             }
         })
