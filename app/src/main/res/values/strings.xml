@@ -1064,4 +1064,5 @@
     <string name="refresh_list">刷新列表</string>
     <string name="tip_divider_color">分隔线颜色</string>
     <string name="same_title_removed">移除重复标题</string>
+    <string name="update_book_fail">更新失败</string>
 </resources>

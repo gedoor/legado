@@ -26,6 +26,7 @@ data class BookGroup(
             AppConst.bookGroupLocalId -> "$groupName(${context.getString(R.string.local)})"
             AppConst.bookGroupNetNoneId -> "$groupName(${context.getString(R.string.net_no_group)})"
             AppConst.bookGroupLocalNoneId -> "$groupName(${context.getString(R.string.local_no_group)})"
+            AppConst.bookGroupErrorId -> "$groupName(${context.getString(R.string.update_book_fail)})"
             else -> groupName
         }
     }
