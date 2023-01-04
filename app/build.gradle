@@ -132,7 +132,7 @@ dependencies {
     coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:1.2.2')
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.5.1')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.5.0')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1')
     implementation('androidx.multidex:multidex:2.0.1')
     //kotlin
     //noinspection GradleDependency,DifferentStdlibGradleVersion
