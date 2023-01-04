@@ -17,12 +17,14 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
 
     fun addGroup(groupName: String, cover: String?, finally: () -> Unit) {
         execute {
+            val groupId = appDb.bookGroupDao.getUnusedId()
             val bookGroup = BookGroup(
-                groupId = appDb.bookGroupDao.getUnusedId(),
+                groupId = groupId,
                 groupName = groupName,
                 cover = cover,
                 order = appDb.bookGroupDao.maxOrder.plus(1)
             )
+            appDb.bookGroupDao.getByID(groupId) ?: appDb.bookDao.removeGroup(groupId)
             appDb.bookGroupDao.insert(bookGroup)
         }.onFinally {
             finally()
