@@ -43,7 +43,7 @@
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tool_bar"
-        app:layout_constraintBottom_toTopOf="@+id/btn_ok">
+        app:layout_constraintBottom_toTopOf="@+id/tv_sort">
 
         <io.legado.app.lib.theme.view.ThemeEditText
             android:id="@+id/tie_group_name"
@@ -53,12 +53,22 @@
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
     </io.legado.app.ui.widget.text.TextInputLayout>
 
+    <TextView
+        android:id="@+id/tv_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sort"
+        android:textColor="@color/primaryText"
+        app:layout_constraintTop_toBottomOf="@id/til_group_name"
+        app:layout_constraintLeft_toLeftOf="@id/til_group_name"
+        app:layout_constraintBottom_toTopOf="@id/btn_ok" />
+
     <io.legado.app.ui.widget.text.AccentTextView
         android:id="@+id/btn_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_marginLeft="12dp"
+        android:padding="6dp"
+        android:layout_margin="6dp"
         android:text="@string/delete"
         app:layout_constraintBottom_toBottomOf="@id/btn_ok"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
@@ -69,19 +79,20 @@
         android:id="@+id/btn_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_marginRight="12dp"
+        android:padding="6dp"
+        android:layout_margin="6dp"
         android:text="@string/ok"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_group_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sort"
         tools:ignore="RtlHardcoded" />
 
     <io.legado.app.ui.widget.text.AccentTextView
         android:id="@+id/btn_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="6dp"
+        android:layout_margin="6dp"
         android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="@id/btn_ok"
         app:layout_constraintRight_toLeftOf="@+id/btn_ok"
