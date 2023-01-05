@@ -12,6 +12,14 @@
 		<item>Folder</item>
 	</string-array>
 
+	<string-array name="book_sort">
+		<item>@string/text_default</item>
+		<item>@string/bookshelf_px_0</item>
+		<item>@string/bookshelf_px_1</item>
+		<item>@string/bookshelf_px_2</item>
+		<item>@string/bookshelf_px_3</item>
+	</string-array>
+
 	<string-array name="indent">
 		<item>@string/indent_0</item>
 		<item>@string/indent_1</item>

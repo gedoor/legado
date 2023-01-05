@@ -665,6 +665,7 @@
     <string name="plus">加</string>
     <string name="system_typeface">系统内置字体样式</string>
     <string name="delete_book_file">删除源文件</string>
+    <string name="text_default">默认</string>
     <string name="default1">预设一</string>
     <string name="default2">预设二</string>
     <string name="default3">预设三</string>
