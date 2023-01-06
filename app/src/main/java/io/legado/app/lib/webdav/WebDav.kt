@@ -17,6 +17,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.intellij.lang.annotations.Language
 import org.jsoup.Jsoup
+import org.jsoup.parser.Parser
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -150,7 +151,7 @@ open class WebDav(val path: String, val authorization: Authorization) {
      */
     private fun parseBody(s: String): List<WebDavFile> {
         val list = ArrayList<WebDavFile>()
-        val document = Jsoup.parse(s)
+        val document = Jsoup.parse(s, Parser.xmlParser())
         val ns = document.findNSPrefix("DAV:")
         val elements = document.findNS("response", ns)
         val urlStr = httpUrl ?: return list

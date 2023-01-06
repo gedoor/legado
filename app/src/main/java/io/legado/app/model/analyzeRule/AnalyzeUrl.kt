@@ -420,6 +420,12 @@ class AnalyzeUrl(
                         }
                         else -> get(urlNoQuery, fieldMap, true)
                     }
+                }.let {
+                    val isXml = it.raw.body?.contentType()?.toString()
+                        ?.matches("(application|text)/\\w*\\+?xml.*".toRegex()) == true
+                    if (isXml && it.body?.trim()?.startsWith("<?xml", true) == false) {
+                        StrResponse(it.raw, "<?xml version=\"1.0\"?>" + it.body)
+                    } else it
                 }
             }
             return strResponse
