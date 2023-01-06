@@ -25,11 +25,6 @@ import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.books.BooksFragment
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlin.collections.List
-import kotlin.collections.emptyList
-import kotlin.collections.getOrNull
-import kotlin.collections.hashMapOf
-import kotlin.collections.mutableListOf
 import kotlin.collections.set
 
 /**
@@ -140,7 +135,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
 
         override fun getItem(position: Int): Fragment {
             val group = bookGroups[position]
-            return BooksFragment(position, group.groupId)
+            return BooksFragment(position, group)
         }
 
         override fun getCount(): Int {

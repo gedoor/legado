@@ -16,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.FragmentBooksBinding
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.config.AppConfig
@@ -40,10 +41,11 @@ import kotlin.math.max
 class BooksFragment() : BaseFragment(R.layout.fragment_books),
     BaseBooksAdapter.CallBack {
 
-    constructor(position: Int, groupId: Long) : this() {
+    constructor(position: Int, group: BookGroup) : this() {
         val bundle = Bundle()
         bundle.putInt("position", position)
-        bundle.putLong("groupId", groupId)
+        bundle.putLong("groupId", group.groupId)
+        bundle.putInt("bookSort", group.getRealBookSort())
         arguments = bundle
     }
 
@@ -63,6 +65,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     private var savedInstanceState: Bundle? = null
     private var position = 0
     private var groupId = -1L
+    private var bookSort = 0
     private var upLastUpdateTimeJob : Job? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,6 +73,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         arguments?.let {
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
+            bookSort = it.getInt("bookSort", 0)
         }
         initRecyclerView()
         upRecyclerData()
@@ -120,7 +124,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { list ->
-                when (AppConfig.bookshelfSort) {
+                when (bookSort) {
                     1 -> list.sortedByDescending { it.latestChapterTime }
                     2 -> list.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)

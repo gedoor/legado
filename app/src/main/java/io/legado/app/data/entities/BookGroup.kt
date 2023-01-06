@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.help.config.AppConfig
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -32,6 +33,13 @@ data class BookGroup(
             AppConst.bookGroupErrorId -> "$groupName(${context.getString(R.string.update_book_fail)})"
             else -> groupName
         }
+    }
+
+    fun getRealBookSort(): Int {
+        if (bookSort < 0) {
+            return AppConfig.bookshelfSort
+        }
+        return bookSort
     }
 
     override fun hashCode(): Int {
