@@ -45,6 +45,7 @@ data class BookGroup(
                     && other.cover == cover
                     && other.order == order
                     && other.show == show
+                    && other.bookSort == bookSort
         }
         return false
     }
