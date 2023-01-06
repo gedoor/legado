@@ -2,8 +2,10 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.parser.Parser
 import org.jsoup.select.Elements
 import org.seimicrawler.xpath.JXDocument
 import org.seimicrawler.xpath.JXNode
@@ -29,6 +31,9 @@ class AnalyzeByXPath(doc: Any) {
         }
         if (html1.endsWith("</tr>") || html1.endsWith("</tbody>")) {
             html1 = "<table>${html1}</table>"
+        }
+        if (html1.trim().startsWith("<?xml", true)) {
+            return JXDocument.create(Jsoup.parse(html1, Parser.xmlParser()))
         }
         return JXDocument.create(html1)
     }

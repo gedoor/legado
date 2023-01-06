@@ -227,7 +227,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 .getContent(
                     book,
                     chapter,
-                    content ?: "null",
+                    content ?: if (chapter.isVolume) "" else "null",
                     includeTitle = !AppConfig.exportNoChapterName,
                     useReplace = useReplace,
                     chineseConvert = false,
