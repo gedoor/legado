@@ -60,6 +60,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
         bookGroup?.let {
             binding.btnDelete.visible(it.groupId > 0 || it.groupId == Long.MIN_VALUE)
             binding.tieGroupName.setText(it.groupName)
+            binding.spSort.setSelection(it.bookSort + 1)
             binding.ivCover.load(it.cover)
         } ?: let {
             binding.toolBar.title = getString(R.string.add_group)
@@ -81,6 +82,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
                     bookGroup?.let {
                         it.groupName = groupName
                         it.cover = binding.ivCover.bitmapPath
+                        it.bookSort = binding.spSort.selectedItemPosition - 1
                         viewModel.upGroup(it) {
                             dismiss()
                         }
