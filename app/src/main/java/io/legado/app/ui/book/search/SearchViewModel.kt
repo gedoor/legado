@@ -1,6 +1,8 @@
 package io.legado.app.ui.book.search
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
@@ -11,18 +13,23 @@ import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.webBook.SearchModel
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(application: Application) : BaseViewModel(application) {
+    val handler = Handler(Looper.getMainLooper())
     val bookshelf = hashSetOf<String>()
     val upAdapterLiveData = MutableLiveData<String>()
+    var searchBookLiveData = MutableLiveData<List<SearchBook>>()
     val searchScope: SearchScope = SearchScope(AppConfig.searchScope)
+    var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
+    var isSearchLiveData = MutableLiveData<Boolean>()
+    var searchKey: String = ""
+    private var searchID = 0L
+    private var searchResult = arrayListOf<SearchBook>()
+    private val sendRunnable = Runnable { upAdapter() }
+    private var postTime = 0L
     private val searchModel = SearchModel(viewModelScope, object : SearchModel.CallBack {
 
         override fun getSearchScope(): SearchScope {
@@ -34,7 +41,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
 
         override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
-            searchFlowCallBack?.invoke(searchBooks)
+            searchResult = searchBooks
+            upAdapter()
         }
 
         override fun onSearchFinish(isEmpty: Boolean) {
@@ -50,22 +58,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
 
     })
-    var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
-    var isSearchLiveData = MutableLiveData<Boolean>()
-    var searchKey: String = ""
-    private var searchID = 0L
-    private var searchFlowCallBack: ((searchBooks: ArrayList<SearchBook>) -> Unit)? = null
-    val searchDataFlow = callbackFlow {
-
-        searchFlowCallBack = {
-            trySend(ArrayList(it))
-        }
-
-        awaitClose {
-            searchFlowCallBack = null
-        }
-    }.flowOn(IO)
-
 
     init {
         execute {
@@ -78,6 +70,18 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onError {
             AppLog.put("加载书架数据失败", it)
+        }
+    }
+
+    @Synchronized
+    private fun upAdapter() {
+        if (System.currentTimeMillis() >= postTime + 1000) {
+            handler.removeCallbacks(sendRunnable)
+            postTime = System.currentTimeMillis()
+            searchBookLiveData.postValue(searchResult)
+        } else {
+            handler.removeCallbacks(sendRunnable)
+            handler.postDelayed(sendRunnable, 1000 - System.currentTimeMillis() + postTime)
         }
     }
 
