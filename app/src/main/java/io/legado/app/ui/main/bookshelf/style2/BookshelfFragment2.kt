@@ -133,10 +133,7 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(groupId)
             }.conflate().map { list ->
-                when (
-                    appDb.bookGroupDao.getByID(groupId)?.getRealBookSort()
-                        ?: AppConfig.bookshelfSort
-                ) {
+                when (AppConfig.getBookSortByGroupId(groupId)) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
                     }

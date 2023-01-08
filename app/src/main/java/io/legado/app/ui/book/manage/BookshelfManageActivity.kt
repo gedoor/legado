@@ -195,7 +195,7 @@ class BookshelfManageActivity :
                 AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(viewModel.groupId)
             }.conflate().map { list ->
-                when (AppConfig.bookshelfSort) {
+                when (AppConfig.getBookSortByGroupId(viewModel.groupId)) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
                     }

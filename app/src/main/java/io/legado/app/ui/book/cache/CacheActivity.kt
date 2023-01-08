@@ -165,7 +165,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 val booksDownload = books.filter {
                     !it.isAudio
                 }
-                when (AppConfig.bookshelfSort) {
+                when (AppConfig.getBookSortByGroupId(groupId)) {
                     1 -> booksDownload.sortedByDescending { it.latestChapterTime }
                     2 -> booksDownload.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)

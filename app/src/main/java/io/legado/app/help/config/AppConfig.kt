@@ -6,6 +6,7 @@ import android.os.Build
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.utils.*
 import splitties.init.appCtx
 
@@ -387,6 +388,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefInt(PreferKey.bookshelfSort, value)
         }
+
+    fun getBookSortByGroupId(groupId: Long): Int {
+        return appDb.bookGroupDao.getByID(groupId)?.getRealBookSort()
+            ?: bookshelfSort
+    }
 
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
