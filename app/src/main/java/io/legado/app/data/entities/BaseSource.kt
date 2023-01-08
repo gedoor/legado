@@ -10,18 +10,37 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.*
+import org.intellij.lang.annotations.Language
 
 /**
  * 可在js里调用,source.xxx()
  */
 @Suppress("unused")
 interface BaseSource : JsExtensions {
+    /**
+     * 并发率
+     */
+    var concurrentRate: String?
 
-    var concurrentRate: String? // 并发率
-    var loginUrl: String?       // 登录地址
-    var loginUi: String?   // 登录UI
-    var header: String?         // 请求头
-    var enabledCookieJar: Boolean?    //启用cookieJar
+    /**
+     * 登录地址
+     */
+    var loginUrl: String?
+
+    /**
+     * 登录UI
+     */
+    var loginUi: String?
+
+    /**
+     * 请求头
+     */
+    var header: String?
+
+    /**
+     * 启用cookieJar
+     */
+    var enabledCookieJar: Boolean?
 
     fun getTag(): String
 
@@ -32,8 +51,7 @@ interface BaseSource : JsExtensions {
     }
 
     fun loginUi(): List<RowUi>? {
-        return GSON.fromJsonArray<RowUi>(loginUi)
-            .onFailure {
+        return GSON.fromJsonArray<RowUi>(loginUi).onFailure {
                 it.printOnDebug()
             }.getOrNull()
     }
@@ -43,16 +61,24 @@ interface BaseSource : JsExtensions {
         return when {
             loginJs == null -> null
             loginJs.startsWith("@js:") -> loginJs.substring(4)
-            loginJs.startsWith("<js>") ->
-                loginJs.substring(4, loginJs.lastIndexOf("<"))
+            loginJs.startsWith("<js>") -> loginJs.substring(4, loginJs.lastIndexOf("<"))
             else -> loginJs
         }
     }
 
     // 调用login函数 实现登录请求
     fun login() {
-        getLoginJs()?.let {
-            evalJS("$it\nif(typeof login=='function'){login.apply(this);}else{throw('Function login not implements!!!')}")
+        val loginJs = getLoginJs()
+        if (!loginJs.isNullOrBlank()) {
+            @Language("js")
+            val js = """$loginJs
+                if(typeof login=='function'){
+                    login.apply(this);
+                } else {
+                    throw('Function login not implements!!!')
+                }
+            """.trimIndent()
+            evalJS(js)
         }
     }
 
@@ -63,10 +89,13 @@ interface BaseSource : JsExtensions {
         header?.let {
             GSON.fromJsonObject<Map<String, String>>(
                 when {
-                    it.startsWith("@js:", true) ->
-                        evalJS(it.substring(4)).toString()
-                    it.startsWith("<js>", true) ->
-                        evalJS(it.substring(4, it.lastIndexOf("<"))).toString()
+                    it.startsWith("@js:", true) -> evalJS(it.substring(4)).toString()
+                    it.startsWith("<js>", true) -> evalJS(
+                        it.substring(
+                            4,
+                            it.lastIndexOf("<")
+                        )
+                    ).toString()
                     else -> it
                 }
             ).getOrNull()?.let { map ->
