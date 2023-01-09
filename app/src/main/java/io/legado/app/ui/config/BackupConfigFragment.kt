@@ -333,7 +333,7 @@ class BackupConfigFragment : PreferenceFragment(),
             AppLog.put("恢复备份出错WebDavError\n${it.localizedMessage}", it)
             alert {
                 setTitle(R.string.restore)
-                setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。")
+                setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。\n从WebDav手动下载备份文件需要解压才能恢复。")
                 okButton {
                     restoreFromLocal()
                 }
