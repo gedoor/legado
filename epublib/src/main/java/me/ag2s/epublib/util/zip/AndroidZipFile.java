@@ -242,9 +242,9 @@ public class AndroidZipFile implements ZipConstants {
                 buffer = new byte[needBuffer];
 
             PfdHelper.readFully(pfd, buffer, 0, nameLen);
-            String name = new String(buffer, 0, 0, nameLen);
+            String name = new String(buffer, 0, nameLen);
 
-            AndroidZipEntry entry = new AndroidZipEntry(name);
+            AndroidZipEntry entry = new AndroidZipEntry(name, nameLen);
             entry.setMethod(method);
             entry.setCrc(crc & 0xffffffffL);
             entry.setSize(size & 0xffffffffL);
@@ -361,10 +361,10 @@ public class AndroidZipFile implements ZipConstants {
             if (entry.getMethod() != readLeShort(locBuf, LOCHOW))
                 throw new ZipException("Compression method mismatch: " + name);
 
-            if (entry.getName().length() != readLeShort(locBuf, LOCNAM))
+            if (entry.getNameLen() != readLeShort(locBuf, LOCNAM))
                 throw new ZipException("file name length mismatch: " + name);
 
-            int extraLen = entry.getName().length() + readLeShort(locBuf, LOCEXT);
+            int extraLen = entry.getNameLen() + readLeShort(locBuf, LOCEXT);
             return entry.offset + LOCHDR + extraLen;
         }
     }
