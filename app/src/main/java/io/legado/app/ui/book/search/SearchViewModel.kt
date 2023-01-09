@@ -12,6 +12,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.webBook.SearchModel
+import io.legado.app.utils.DelayLiveData
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
@@ -21,15 +22,12 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     val handler = Handler(Looper.getMainLooper())
     val bookshelf = hashSetOf<String>()
     val upAdapterLiveData = MutableLiveData<String>()
-    var searchBookLiveData = MutableLiveData<List<SearchBook>>()
+    var searchBookLiveData = DelayLiveData<List<SearchBook>>(1000)
     val searchScope: SearchScope = SearchScope(AppConfig.searchScope)
     var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchKey: String = ""
     private var searchID = 0L
-    private var searchResult = arrayListOf<SearchBook>()
-    private val sendRunnable = Runnable { upAdapter() }
-    private var postTime = 0L
     private val searchModel = SearchModel(viewModelScope, object : SearchModel.CallBack {
 
         override fun getSearchScope(): SearchScope {
@@ -41,8 +39,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
 
         override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
-            searchResult = searchBooks
-            upAdapter()
+            searchBookLiveData.postValue(searchBooks)
         }
 
         override fun onSearchFinish(isEmpty: Boolean) {
@@ -70,18 +67,6 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onError {
             AppLog.put("加载书架数据失败", it)
-        }
-    }
-
-    @Synchronized
-    private fun upAdapter() {
-        if (System.currentTimeMillis() >= postTime + 1000) {
-            handler.removeCallbacks(sendRunnable)
-            postTime = System.currentTimeMillis()
-            searchBookLiveData.postValue(searchResult)
-        } else {
-            handler.removeCallbacks(sendRunnable)
-            handler.postDelayed(sendRunnable, 1000 - System.currentTimeMillis() + postTime)
         }
     }
 
