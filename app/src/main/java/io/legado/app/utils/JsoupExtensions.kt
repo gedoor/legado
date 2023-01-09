@@ -45,7 +45,7 @@ fun Element.findNS(tag: String, namespace: HashSet<String>): Elements {
 }
 
 fun Element.findNSPrefix(namespaceURI: String): HashSet<String> {
-    return select("[^xmlns]").map { element ->
+    return select("[^xmlns:]").map { element ->
         element.attributes().filter { it.value == namespaceURI }.map { it.key.substring(6) }
     }.flatten().toHashSet()
 }
