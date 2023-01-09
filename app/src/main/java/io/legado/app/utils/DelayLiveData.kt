@@ -16,15 +16,18 @@ class DelayLiveData<T>(val delay: Int) : LiveData<T>() {
         }
     }
 
+    @Synchronized
     public override fun postValue(value: T) {
         data = value
-        if (System.currentTimeMillis() >= postTime + delay) {
+        val postDelay = postTime + delay - System.currentTimeMillis()
+        if (postDelay > 0) {
+            handler.removeCallbacks(sendRunnable)
+            handler.postDelayed(sendRunnable, postDelay)
+        } else {
             handler.removeCallbacks(sendRunnable)
             postTime = System.currentTimeMillis()
             super.postValue(value)
-        } else {
-            handler.removeCallbacks(sendRunnable)
-            handler.postDelayed(sendRunnable, delay - System.currentTimeMillis() + postTime)
         }
     }
+
 }
