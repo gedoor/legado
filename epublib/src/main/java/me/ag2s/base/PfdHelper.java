@@ -39,7 +39,7 @@ public final class PfdHelper {
 
     public static long length(ParcelFileDescriptor pfd) throws IOException {
         try {
-            return android.system.Os.lseek(pfd.getFileDescriptor(), 0, OsConstants.SEEK_END);
+            return android.system.Os.fstat(pfd.getFileDescriptor()).st_size; //android.system.Os.lseek(pfd.getFileDescriptor(), 0, OsConstants.SEEK_END);
         } catch (ErrnoException e) {
             throw rethrowAsIOException(e);
         }

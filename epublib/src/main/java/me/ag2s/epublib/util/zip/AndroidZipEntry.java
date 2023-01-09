@@ -24,6 +24,7 @@ public class AndroidZipEntry implements ZipConstants, Cloneable {
   private static Calendar cal;
 
   private final String name;
+  private final int nameLen;
   private int size;
   private int compressedSize;
   private int crc;
@@ -54,12 +55,14 @@ public class AndroidZipEntry implements ZipConstants, Cloneable {
    * @throws NullPointerException     when name is null.
    * @throws IllegalArgumentException when name is bigger then 65535 chars.
    */
-  public AndroidZipEntry(String name) {
-    int length = name.length();
-    if (length > 65535)
-      throw new IllegalArgumentException("name length is " + length);
+  public AndroidZipEntry(String name, int nameLen) {
+    //int length = name.length();
+    this.nameLen = nameLen;
+    if (nameLen > 65535)
+      throw new IllegalArgumentException("name length is " + nameLen);
     this.name = name;
   }
+
 
   /**
    * Creates a copy of the given zip entry.
@@ -68,6 +71,7 @@ public class AndroidZipEntry implements ZipConstants, Cloneable {
    */
   public AndroidZipEntry(AndroidZipEntry e) {
     name = e.name;
+    nameLen = e.nameLen;
     known = e.known;
     size = e.size;
     compressedSize = e.compressedSize;
@@ -114,6 +118,10 @@ public class AndroidZipEntry implements ZipConstants, Cloneable {
    */
   public String getName() {
     return name;
+  }
+
+  public int getNameLen() {
+    return nameLen;
   }
 
   /**
