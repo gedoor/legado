@@ -5,12 +5,23 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cache
 import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.ACache
+import io.legado.app.utils.memorySize
 
 @Suppress("unused")
 object CacheManager {
 
     private val queryTTFMap = hashMapOf<String, Pair<Long, QueryTTF>>()
-    private val memoryLruCache = object : LruCache<String, String>(100) {}
+
+    /**
+     * 最多只缓存50M的数据,防止OOM
+     */
+    private val memoryLruCache = object : LruCache<String, String>(1024 * 1024 * 50) {
+
+        override fun sizeOf(key: String, value: String): Int {
+            return value.memorySize()
+        }
+
+    }
 
     /**
      * saveTime 单位为秒

@@ -6,7 +6,6 @@ import android.icu.text.Collator
 import android.icu.util.ULocale
 import android.net.Uri
 import android.text.Editable
-import cn.hutool.core.lang.Validator
 import io.legado.app.constant.AppPattern.dataUriRegex
 import java.io.File
 import java.util.*
@@ -88,6 +87,14 @@ fun String.cnCompare(other: String): Int {
     } else {
         java.text.Collator.getInstance(Locale.CHINA).compare(this, other)
     }
+}
+
+/**
+ * 字符串所占内存大小
+ */
+fun String?.memorySize(): Int {
+    this ?: return 0
+    return 40 + 2 * length
 }
 
 /**
