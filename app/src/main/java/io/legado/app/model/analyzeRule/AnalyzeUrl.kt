@@ -8,6 +8,7 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.script.SimpleBindings
 import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.data.entities.BaseSource
@@ -422,7 +423,7 @@ class AnalyzeUrl(
                     }
                 }.let {
                     val isXml = it.raw.body?.contentType()?.toString()
-                        ?.matches("(application|text)/\\w*\\+?xml.*".toRegex()) == true
+                        ?.matches(AppPattern.xmlContentTypeRegex) == true
                     if (isXml && it.body?.trim()?.startsWith("<?xml", true) == false) {
                         StrResponse(it.raw, "<?xml version=\"1.0\"?>" + it.body)
                     } else it
