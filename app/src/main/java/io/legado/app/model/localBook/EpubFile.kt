@@ -190,7 +190,8 @@ class EpubFile(var book: Book) {
     }
 
     private fun getBody(res: Resource, startFragmentId: String?, endFragmentId: String?): Element {
-        val body = Jsoup.parse(String(res.data, mCharset)).body()
+        val doc = Jsoup.parse(String(res.data, mCharset))
+        val body = doc.body()
         if (!startFragmentId.isNullOrBlank()) {
             body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
         }
@@ -215,7 +216,7 @@ class EpubFile(var book: Book) {
         val children = body.children()
         children.select("script").remove()
         children.select("style").remove()
-        return body
+        return doc.body()
     }
 
     private fun getImage(href: String): InputStream? {
