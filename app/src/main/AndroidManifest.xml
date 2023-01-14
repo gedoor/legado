@@ -12,10 +12,10 @@
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+        android:maxSdkVersion="29" />
 
     <application
         android:name=".App"
@@ -112,9 +112,9 @@
         <!-- 主界面 -->
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="true"
-            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
             android:alwaysRetainTaskState="true"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
+            android:exported="true"
             android:launchMode="singleTask" />
         <!-- 阅读界面 -->
         <activity
@@ -332,8 +332,7 @@
             android:name=".ui.association.VerificationCodeActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true"
-            android:theme="@style/AppTheme.Transparent">
-        </activity>
+            android:theme="@style/AppTheme.Transparent" />
         <!-- 打开文件 -->
         <activity
             android:name=".ui.association.FileAssociationActivity"
