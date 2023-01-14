@@ -86,8 +86,11 @@ class ContentProcessor private constructor(
             //去除重复标题
             if (BookHelp.removeSameTitle(book, chapter)) try {
                 val name = Pattern.quote(book.name)
-                val title = Pattern.quote(chapter.title)
-                val titleRegex = "^(\\s|\\p{P}|${name})*${title}(\\s)*"
+                val title0 = Pattern.quote(chapter.title)
+                val title1 = Pattern.quote(
+                    chapter.getDisplayTitle(contentReplaceRules, chineseConvert = false)
+                )
+                val titleRegex = "^(\\s|\\p{P}|${name})*(${title0}|${title1})(\\s)*"
                 val matcher = Pattern.compile(titleRegex)
                     .matcher(mContent)
                 if (matcher.find()) {
