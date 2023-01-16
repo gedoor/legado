@@ -86,16 +86,25 @@ class ContentProcessor private constructor(
             //去除重复标题
             if (BookHelp.removeSameTitle(book, chapter)) try {
                 val name = Pattern.quote(book.name)
-                val title0 = Pattern.quote(chapter.title)
-                val title1 = Pattern.quote(
-                    chapter.getDisplayTitle(contentReplaceRules, chineseConvert = false)
-                )
-                val titleRegex = "^(\\s|\\p{P}|${name})*(${title0}|${title1})(\\s)*"
-                val matcher = Pattern.compile(titleRegex)
+                var title = Pattern.quote(chapter.title)
+                var matcher = Pattern.compile("^(\\s|\\p{P}|${name})*${title}(\\s)*")
                     .matcher(mContent)
                 if (matcher.find()) {
                     mContent = mContent.substring(matcher.end())
                     sameTitleRemoved = true
+                } else {
+                    title = Pattern.quote(
+                        chapter.getDisplayTitle(
+                            contentReplaceRules,
+                            chineseConvert = false
+                        )
+                    )
+                    matcher = Pattern.compile("^(\\s|\\p{P}|${name})*${title}(\\s)*")
+                        .matcher(mContent)
+                    if (matcher.find()) {
+                        mContent = mContent.substring(matcher.end())
+                        sameTitleRemoved = true
+                    }
                 }
             } catch (e: Exception) {
                 AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
@@ -143,7 +152,7 @@ class ContentProcessor private constructor(
         return BookContent(sameTitleRemoved, contents)
     }
 
-    suspend fun replaceContent(content: String): String {
+    private suspend fun replaceContent(content: String): String {
         var mContent = content
         mContent = mContent.lines().joinToString("\n") { it.trim() }
         getContentReplaceRules().forEach { item ->
