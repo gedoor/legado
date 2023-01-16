@@ -52,8 +52,8 @@ interface BaseSource : JsExtensions {
 
     fun loginUi(): List<RowUi>? {
         return GSON.fromJsonArray<RowUi>(loginUi).onFailure {
-                it.printOnDebug()
-            }.getOrNull()
+            it.printOnDebug()
+        }.getOrNull()
     }
 
     fun getLoginJs(): String? {
@@ -66,7 +66,9 @@ interface BaseSource : JsExtensions {
         }
     }
 
-    // 调用login函数 实现登录请求
+    /**
+     * 调用login函数 实现登录请求
+     */
     fun login() {
         val loginJs = getLoginJs()
         if (!loginJs.isNullOrBlank()) {
@@ -196,6 +198,21 @@ interface BaseSource : JsExtensions {
      */
     fun getVariable(): String? {
         return CacheManager.get("sourceVariable_${getKey()}")
+    }
+
+    /**
+     * 保存数据
+     */
+    fun put(key: String, value: String): String {
+        CacheManager.put("v_${getKey()}_${key}", value)
+        return value
+    }
+
+    /**
+     * 获取保存的数据
+     */
+    fun get(key: String): String {
+        return CacheManager.get("v_${getKey()}_${key}") ?: ""
     }
 
     /**

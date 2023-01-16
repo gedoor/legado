@@ -610,13 +610,20 @@ class AnalyzeRule(
         XPath, Json, Default, Js, Regex
     }
 
+    /**
+     * 保存数据
+     */
     fun put(key: String, value: String): String {
         chapter?.putVariable(key, value)
             ?: book?.putVariable(key, value)
             ?: ruleData?.putVariable(key, value)
+            ?: source?.put(key, value)
         return value
     }
 
+    /**
+     * 获取保存的数据
+     */
     fun get(key: String): String {
         when (key) {
             "bookName" -> book?.let {
@@ -629,6 +636,7 @@ class AnalyzeRule(
         return chapter?.getVariable(key)
             ?: book?.getVariable(key)
             ?: ruleData?.getVariable(key)
+            ?: source?.get(key)
             ?: ""
     }
 
