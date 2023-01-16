@@ -8,7 +8,7 @@ interface RuleDataInterface {
         return when {
             value == null -> {
                 variableMap.remove(key)
-                putBigVariable(key, value)
+                putBigVariable(key, null)
                 true
             }
             value.length < 10000 -> {

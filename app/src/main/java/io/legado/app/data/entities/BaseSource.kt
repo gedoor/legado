@@ -179,6 +179,10 @@ interface BaseSource : JsExtensions {
         CacheManager.delete("userInfo_${getKey()}")
     }
 
+    /**
+     * 设置自定义变量
+     * @param variable 变量内容
+     */
     fun setVariable(variable: String?) {
         if (variable != null) {
             CacheManager.put("sourceVariable_${getKey()}", variable)
@@ -187,6 +191,9 @@ interface BaseSource : JsExtensions {
         }
     }
 
+    /**
+     * 获取自定义变量
+     */
     fun getVariable(): String? {
         return CacheManager.get("sourceVariable_${getKey()}")
     }
