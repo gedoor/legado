@@ -7,13 +7,10 @@ import org.chromium.net.UploadDataSink
 import java.io.IOException
 import java.nio.ByteBuffer
 
-class BodyUploadProvider(body: RequestBody) : UploadDataProvider(), AutoCloseable {
-    private val body: RequestBody
-    private val buffer: Buffer?
+class BodyUploadProvider(private val body: RequestBody) : UploadDataProvider(), AutoCloseable {
+    private val buffer = Buffer()
 
     init {
-        buffer = Buffer()
-        this.body = body
         try {
             body.writeTo(buffer)
         } catch (e: IOException) {
@@ -32,7 +29,7 @@ class BodyUploadProvider(body: RequestBody) : UploadDataProvider(), AutoCloseabl
         var read: Int
         var bytesRead = 0
         while (bytesRead == 0) {
-            read = buffer!!.read(byteBuffer)
+            read = buffer.read(byteBuffer)
             bytesRead += read
         }
         uploadDataSink.onReadSucceeded(false)
@@ -40,12 +37,14 @@ class BodyUploadProvider(body: RequestBody) : UploadDataProvider(), AutoCloseabl
 
     @Throws(IOException::class)
     override fun rewind(uploadDataSink: UploadDataSink) {
+        buffer.clear()
+        body.writeTo(buffer)
         uploadDataSink.onRewindSucceeded()
     }
 
     @Throws(IOException::class)
     override fun close() {
-        buffer?.close()
+        buffer.close()
         super.close()
     }
 }

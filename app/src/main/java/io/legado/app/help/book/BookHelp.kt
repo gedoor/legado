@@ -86,9 +86,14 @@ object BookHelp {
         bookChapter: BookChapter,
         content: String
     ) {
-        saveText(book, bookChapter, content)
-        saveImages(bookSource, book, bookChapter, content)
-        postEvent(EventBus.SAVE_CONTENT, Pair(book, bookChapter))
+        try {
+            saveText(book, bookChapter, content)
+            saveImages(bookSource, book, bookChapter, content)
+            postEvent(EventBus.SAVE_CONTENT, Pair(book, bookChapter))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            AppLog.put("保存正文失败 ${book.name} ${bookChapter.title}", e)
+        }
     }
 
     fun saveText(

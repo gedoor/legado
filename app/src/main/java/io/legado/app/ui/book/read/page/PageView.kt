@@ -18,10 +18,7 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
-import io.legado.app.utils.activity
-import io.legado.app.utils.dpToPx
-import io.legado.app.utils.statusBarHeight
-import io.legado.app.utils.visible
+import io.legado.app.utils.*
 import splitties.views.backgroundColor
 import java.util.*
 
@@ -223,11 +220,7 @@ class PageView(context: Context) : FrameLayout(context) {
      * 更新背景
      */
     fun upBg() {
-        if (ReadBookConfig.bgAlpha < 100) {
-            binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
-        } else {
-            binding.vwRoot.background = null
-        }
+        binding.vwRoot.backgroundColor = ReadBookConfig.bgMeanColor
         binding.vwBg.background = ReadBookConfig.bg
         upBgAlpha()
     }
