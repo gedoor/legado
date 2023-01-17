@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.page.delegate
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
+import io.legado.app.data.entities.Book
 import io.legado.app.help.book.isImage
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ReadView
@@ -132,11 +133,13 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
      */
     private fun calcNextPageOffset(): Int {
         val visibleHeight = ChapterProvider.visibleHeight
-        if (ReadBook.book?.isImage == true) {
+        val book = ReadBook.book!!
+        if (book.isImage) {
             return -visibleHeight
         }
         val visiblePage = readView.getCurVisiblePage()
-        if (visiblePage.isImageOrEmpty()) {
+        val isTextStyle = book.getImageStyle().equals(Book.imgStyleText, true)
+        if (!isTextStyle && visiblePage.hasImageOrEmpty()) {
             return -visibleHeight
         }
         val lastLineTop = visiblePage.lines.last().lineTop.toInt()
@@ -146,11 +149,13 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     private fun calcPrevPageOffset(): Int {
         val visibleHeight = ChapterProvider.visibleHeight
-        if (ReadBook.book?.isImage == true) {
+        val book = ReadBook.book!!
+        if (book.isImage) {
             return visibleHeight
         }
         val visiblePage = readView.getCurVisiblePage()
-        if (visiblePage.isImageOrEmpty()) {
+        val isTextStyle = book.getImageStyle().equals(Book.imgStyleText, true)
+        if (!isTextStyle && visiblePage.hasImageOrEmpty()) {
             return visibleHeight
         }
         val firstLineBottom = visiblePage.lines.first().lineBottom.toInt()
