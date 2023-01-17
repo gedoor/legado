@@ -1,7 +1,6 @@
 package io.legado.app.ui.font
 
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -115,9 +114,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         launch(Main) {
             val defaultPath = "SD${File.separator}Fonts"
             selectFontDir.launch {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                    otherActions = arrayListOf(SelectItem(defaultPath, -1))
-                }
+                otherActions = arrayListOf(SelectItem(defaultPath, -1))
             }
         }
     }
