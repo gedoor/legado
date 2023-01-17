@@ -1,6 +1,7 @@
 package io.legado.app.ui.association
 
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.documentfile.provider.DocumentFile
@@ -104,7 +105,9 @@ class FileAssociationActivity :
             }
         }
         intent.data?.let { data ->
-            if (!data.isContentScheme()) {
+            if (data.isContentScheme()) {
+                viewModel.dispatchIndent(data)
+            } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 PermissionsCompat.Builder(this)
                     .addPermissions(*Permissions.Group.STORAGE)
                     .rationale(R.string.tip_perm_request_storage)
@@ -112,7 +115,7 @@ class FileAssociationActivity :
                         viewModel.dispatchIndent(data)
                     }.request()
             } else {
-                viewModel.dispatchIndent(data)
+                toastOnUi("由于安卓系统限制，请使用系统文件管理重新打开。")
             }
         }
     }

@@ -750,9 +750,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    override fun loadChapterList(book: Book, callback: (() -> Unit)?) {
+    override fun loadChapterList(book: Book) {
         ReadBook.upMsg(getString(R.string.toc_updateing))
-        viewModel.loadChapterList(book, callback)
+        viewModel.loadChapterList(book)
     }
 
     /**

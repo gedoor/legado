@@ -501,7 +501,7 @@ object ReadBook : CoroutineScope by MainScope() {
     interface CallBack {
         fun upMenuView()
 
-        fun loadChapterList(book: Book, callback: (() -> Unit)? = null)
+        fun loadChapterList(book: Book)
 
         fun upContent(
             relativePosition: Int = 0,
