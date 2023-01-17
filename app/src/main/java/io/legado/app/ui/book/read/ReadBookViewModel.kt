@@ -134,7 +134,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 加载目录
      */
-    fun loadChapterList(book: Book, callback: (() -> Unit)? = null) {
+    fun loadChapterList(book: Book) {
         if (book.isLocal) {
             execute {
                 LocalBook.getChapterList(book).let {
@@ -156,8 +156,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
                     }
                 }
-            }.onFinally {
-                callback?.invoke()
             }
         } else {
             ReadBook.bookSource?.let {
@@ -177,8 +175,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         ReadBook.loadContent(resetPageOffset = true)
                     }.onError {
                         ReadBook.upMsg(context.getString(R.string.error_load_toc))
-                    }.onFinally {
-                        callback?.invoke()
                     }
             }
         }

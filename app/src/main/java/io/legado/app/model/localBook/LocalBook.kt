@@ -154,7 +154,7 @@ object LocalBook {
         val bookUrl: String
         val updateTime: Long
         //这个变量不要修改,否则会导致读取不到缓存
-        val fileName = (if (uri.isContentScheme()) {
+        val fileName = if (uri.isContentScheme()) {
             bookUrl = uri.toString()
             val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
             updateTime = doc.lastModified()
@@ -164,7 +164,7 @@ object LocalBook {
             val file = File(bookUrl)
             updateTime = file.lastModified()
             file.name
-        })
+        }
         var book = appDb.bookDao.getBook(bookUrl)
         if (book == null) {
             val nameAuthor = analyzeNameAuthor(fileName)

@@ -356,6 +356,8 @@
                 <data android:mimeType="application/json" />
                 <!-- EPUB -->
                 <data android:mimeType="application/epub+zip" />
+                <!-- pdf -->
+                <data android:mimeType="application/pdf" />
             </intent-filter>
             <!-- Works when an app doesn't know the media type, e.g. Dropbox -->
             <intent-filter>
@@ -372,14 +374,13 @@
                 <!-- This media type is necessary, otherwise it won't match on the file extension -->
                 <data android:mimeType="*/*" />
                 <!--TXT-->
-                <data android:pathPattern=".*\\.txt" />
-                <data android:pathPattern=".*\\.TXT" />
+                <data android:pathAdvancedPattern=".*\\.[tT][xX][tT]" />
                 <!--JSON-->
-                <data android:pathPattern=".*\\.json" />
-                <data android:pathPattern=".*\\.JSON" />
+                <data android:pathAdvancedPattern=".*\\.[jJ][sS][oO][nN]" />
                 <!-- EPUB -->
-                <data android:pathPattern=".*\\.epub" />
-                <data android:pathPattern=".*\\.EPUB" />
+                <data android:pathAdvancedPattern=".*\\.[eE][pP][uU][bB]" />
+                <!-- pdf -->
+                <data android:pathAdvancedPattern=".*\\.[pP][dD][fF]" />
             </intent-filter>
         </activity>
 
