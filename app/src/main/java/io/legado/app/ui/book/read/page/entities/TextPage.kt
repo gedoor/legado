@@ -234,6 +234,6 @@ data class TextPage(
     }
 
     fun hasImageOrEmpty(): Boolean {
-        return textLines.any { it.isImage }
+        return textLines.any { it.isImage } || textLines.isEmpty()
     }
 }
