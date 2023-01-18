@@ -43,7 +43,7 @@ object Permissions {
 
     object Group {
         val STORAGE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            arrayOf(READ_EXTERNAL_STORAGE, MANAGE_EXTERNAL_STORAGE)
+            arrayOf(MANAGE_EXTERNAL_STORAGE)
         } else {
             arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)
         }

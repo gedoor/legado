@@ -2,6 +2,7 @@ package io.legado.app.lib.permission
 
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Environment
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -123,7 +124,13 @@ internal class Request : OnRequestPermissionsResultCallback {
         if (permissions != null) {
             val deniedPermissionList = ArrayList<String>()
             for (permission in permissions) {
-                if (
+                if (permission == Permissions.MANAGE_EXTERNAL_STORAGE) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        if (!Environment.isExternalStorageManager()) {
+                            deniedPermissionList.add(permission)
+                        }
+                    }
+                } else if (
                     ContextCompat.checkSelfPermission(context, permission)
                     != PackageManager.PERMISSION_GRANTED
                 ) {
