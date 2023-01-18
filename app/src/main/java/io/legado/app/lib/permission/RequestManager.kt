@@ -62,7 +62,11 @@ internal object RequestManager : OnPermissionsResultCallback {
         startNextRequest()
     }
 
-    override fun onPermissionsDenied(deniedPermissions: Array<String>) {
+    override fun onPermissionsDenied(deniedPermissions: Array<String>?) {
+        startNextRequest()
+    }
+
+    override fun onError(e: Exception) {
         startNextRequest()
     }
 

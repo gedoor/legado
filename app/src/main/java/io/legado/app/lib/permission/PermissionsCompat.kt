@@ -47,6 +47,15 @@ class PermissionsCompat private constructor() {
             return this
         }
 
+        fun onError(callback: (e: Exception) -> Unit): Builder {
+            request.setOnErrorCallBack(object : OnErrorCallback{
+                override fun onError(e: Exception) {
+                    callback(e)
+                }
+            })
+            return this
+        }
+
         fun rationale(rationale: CharSequence): Builder {
             request.setRationale(rationale)
             return this

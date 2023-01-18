@@ -19,6 +19,7 @@ internal class Request : OnRequestPermissionsResultCallback {
     private var permissions: ArrayList<String>? = null
     private var grantedCallback: OnPermissionsGrantedCallback? = null
     private var deniedCallback: OnPermissionsDeniedCallback? = null
+    private var errorCallback: OnErrorCallback? = null
     private var rationaleResId: Int = 0
     private var rationale: CharSequence? = null
 
@@ -51,6 +52,10 @@ internal class Request : OnRequestPermissionsResultCallback {
 
     fun setOnDeniedCallback(callback: OnPermissionsDeniedCallback) {
         deniedCallback = callback
+    }
+
+    fun setOnErrorCallBack(callback: OnErrorCallback) {
+        errorCallback = callback
     }
 
     fun setRationale(@StringRes resId: Int) {
@@ -199,6 +204,11 @@ internal class Request : OnRequestPermissionsResultCallback {
         } else {
             onPermissionsDenied(deniedPermissions)
         }
+    }
+
+    override fun onError(e: Exception) {
+        errorCallback?.onError(e)
+        RequestPlugins.sResultCallback?.onError(e)
     }
 
     companion object {

@@ -23,12 +23,11 @@ class PermissionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val requestCode = intent.getIntExtra(KEY_INPUT_PERMISSIONS_CODE, 1000)
+        val permissions = intent.getStringArrayExtra(KEY_INPUT_PERMISSIONS)
         when (intent.getIntExtra(KEY_INPUT_REQUEST_TYPE, Request.TYPE_REQUEST_PERMISSION)) {
             //权限请求
             Request.TYPE_REQUEST_PERMISSION -> {
-                val requestCode = intent.getIntExtra(KEY_INPUT_PERMISSIONS_CODE, 1000)
-                val permissions = intent.getStringArrayExtra(KEY_INPUT_PERMISSIONS)
                 if (permissions != null) {
                     ActivityCompat.requestPermissions(this, permissions, requestCode)
                 } else {
@@ -42,6 +41,7 @@ class PermissionActivity : AppCompatActivity() {
                 settingActivityResult.launch(settingIntent)
             } catch (e: Exception) {
                 toastOnUi(R.string.tip_cannot_jump_setting_page)
+                RequestPlugins.sRequestCallback?.onError(e)
                 finish()
             }
             //所有文件所有文件的管理权限
@@ -54,7 +54,8 @@ class PermissionActivity : AppCompatActivity() {
                     throw NoStackTraceException("no MANAGE_ALL_FILES_ACCESS_PERMISSION")
                 }
             } catch (e: Exception) {
-                toastOnUi(R.string.tip_cannot_jump_setting_page)
+                toastOnUi(e.localizedMessage)
+                RequestPlugins.sRequestCallback?.onError(e)
                 finish()
             }
         }

@@ -192,6 +192,12 @@ class HandleFileActivity :
             .onGranted {
                 success?.invoke()
             }
+            .onDenied {
+                finish()
+            }
+            .onError {
+                finish()
+            }
             .request()
     }
 
