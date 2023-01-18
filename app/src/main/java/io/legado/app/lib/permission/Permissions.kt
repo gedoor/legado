@@ -1,5 +1,7 @@
 package io.legado.app.lib.permission
 
+import android.os.Build
+
 @Suppress("unused")
 object Permissions {
 
@@ -40,8 +42,11 @@ object Permissions {
     const val ACCESS_MEDIA_LOCATION = "android.permission.ACCESS_MEDIA_LOCATION"
 
     object Group {
-        val STORAGE =
-            arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, MANAGE_EXTERNAL_STORAGE)
+        val STORAGE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(READ_EXTERNAL_STORAGE, MANAGE_EXTERNAL_STORAGE)
+        } else {
+            arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)
+        }
 
         val CAMERA = arrayOf(Permissions.CAMERA)
 
