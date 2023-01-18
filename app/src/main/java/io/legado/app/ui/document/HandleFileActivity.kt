@@ -175,13 +175,13 @@ class HandleFileActivity :
     }
 
     private fun getFileActions(): ArrayList<SelectItem<Int>> {
-        return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && AppConfig.isGooglePlay) {
+            arrayListOf(SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE))
+        } else {
             arrayListOf(
                 SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE),
                 SelectItem(getString(R.string.app_file_picker), 11)
             )
-        } else {
-            arrayListOf(SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE))
         }
     }
 
