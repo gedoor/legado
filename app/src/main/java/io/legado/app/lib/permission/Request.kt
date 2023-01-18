@@ -119,15 +119,13 @@ internal class Request : OnRequestPermissionsResultCallback {
     }
 
     fun getDeniedPermissions(permissions: Array<String>?): Array<String>? {
+        val context = source?.context ?: return permissions
         if (permissions != null) {
             val deniedPermissionList = ArrayList<String>()
             for (permission in permissions) {
-                if (source?.context?.let {
-                        ContextCompat.checkSelfPermission(
-                            it,
-                            permission
-                        )
-                    } != PackageManager.PERMISSION_GRANTED
+                if (
+                    ContextCompat.checkSelfPermission(context, permission)
+                    != PackageManager.PERMISSION_GRANTED
                 ) {
                     deniedPermissionList.add(permission)
                 }
