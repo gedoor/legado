@@ -84,10 +84,23 @@ internal class Request : OnRequestPermissionsResultCallback {
             }
         } else {
             if (deniedPermissions != null) {
-                source?.context?.startActivity<PermissionActivity> {
-                    putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
-                    putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
-                    putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+                    && deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)
+                ) {
+                    source?.context?.startActivity<PermissionActivity> {
+                        putExtra(
+                            PermissionActivity.KEY_INPUT_REQUEST_TYPE,
+                            TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                        )
+                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                    }
+                } else if (!deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
+                    source?.context?.startActivity<PermissionActivity> {
+                        putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
+                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                    }
                 }
             } else {
                 onPermissionsGranted()
@@ -191,5 +204,6 @@ internal class Request : OnRequestPermissionsResultCallback {
     companion object {
         const val TYPE_REQUEST_PERMISSION = 1
         const val TYPE_REQUEST_SETTING = 2
+        const val TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION = 3
     }
 }

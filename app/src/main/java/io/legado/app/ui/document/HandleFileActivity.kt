@@ -13,6 +13,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.Theme
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentData
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
@@ -160,7 +161,10 @@ class HandleFileActivity :
     }
 
     private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
-        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q || onlySys) {
+        return if (
+            onlySys ||
+            (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && AppConfig.isGooglePlay)
+        ) {
             arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
         } else {
             arrayListOf(

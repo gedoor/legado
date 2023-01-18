@@ -2,6 +2,7 @@ package io.legado.app.lib.permission
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.KeyEvent
@@ -9,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import io.legado.app.R
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.toastOnUi
 
 class PermissionActivity : AppCompatActivity() {
@@ -23,8 +25,8 @@ class PermissionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         when (intent.getIntExtra(KEY_INPUT_REQUEST_TYPE, Request.TYPE_REQUEST_PERMISSION)) {
-            Request.TYPE_REQUEST_PERMISSION//权限请求
-            -> {
+            //权限请求
+            Request.TYPE_REQUEST_PERMISSION -> {
                 val requestCode = intent.getIntExtra(KEY_INPUT_PERMISSIONS_CODE, 1000)
                 val permissions = intent.getStringArrayExtra(KEY_INPUT_PERMISSIONS)
                 if (permissions != null) {
@@ -33,8 +35,8 @@ class PermissionActivity : AppCompatActivity() {
                     finish()
                 }
             }
-            Request.TYPE_REQUEST_SETTING//跳转到设置界面
-            -> try {
+            //跳转到设置界面
+            Request.TYPE_REQUEST_SETTING -> try {
                 val settingIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 settingIntent.data = Uri.fromParts("package", packageName, null)
                 settingActivityResult.launch(settingIntent)
@@ -42,7 +44,19 @@ class PermissionActivity : AppCompatActivity() {
                 toastOnUi(R.string.tip_cannot_jump_setting_page)
                 finish()
             }
-
+            //所有文件所有文件的管理权限
+            Request.TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION -> try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                    settingIntent.data = Uri.parse("package:$packageName")
+                    settingActivityResult.launch(settingIntent)
+                } else {
+                    throw NoStackTraceException("no MANAGE_ALL_FILES_ACCESS_PERMISSION")
+                }
+            } catch (e: Exception) {
+                toastOnUi(R.string.tip_cannot_jump_setting_page)
+                finish()
+            }
         }
     }
 
@@ -58,6 +72,7 @@ class PermissionActivity : AppCompatActivity() {
         )
         finish()
     }
+
 
     override fun startActivity(intent: Intent) {
         super.startActivity(intent)

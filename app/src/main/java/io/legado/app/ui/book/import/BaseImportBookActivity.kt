@@ -40,7 +40,6 @@ abstract class BaseImportBookActivity<VB : ViewBinding, VM : ViewModel> : VMBase
             yesButton {
                 localBookTreeSelect.launch {
                     title = hint
-                    mode = HandleFileContract.DIR_SYS
                 }
             }
             noButton {
