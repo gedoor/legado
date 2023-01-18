@@ -84,18 +84,18 @@ internal class Request : OnRequestPermissionsResultCallback {
             }
         } else {
             if (deniedPermissions != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-                    && deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)
-                ) {
-                    source?.context?.startActivity<PermissionActivity> {
-                        putExtra(
-                            PermissionActivity.KEY_INPUT_REQUEST_TYPE,
-                            TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION
-                        )
-                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
-                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        source?.context?.startActivity<PermissionActivity> {
+                            putExtra(
+                                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
+                                TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                            )
+                            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+                            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                        }
                     }
-                } else if (!deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
+                } else if (deniedPermissions.size > 1) {
                     source?.context?.startActivity<PermissionActivity> {
                         putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
                         putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
