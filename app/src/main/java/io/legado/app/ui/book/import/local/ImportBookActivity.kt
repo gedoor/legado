@@ -2,7 +2,6 @@ package io.legado.app.ui.book.import.local
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -177,7 +176,7 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
                             selectFolder.launch()
                         }
                     }
-                    Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
+                    AppConfig.isGooglePlay -> {
                         binding.tvEmptyMsg.visible()
                         selectFolder.launch()
                     }
