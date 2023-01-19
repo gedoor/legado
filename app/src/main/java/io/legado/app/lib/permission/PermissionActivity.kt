@@ -47,14 +47,8 @@ class PermissionActivity : AppCompatActivity() {
             //所有文件所有文件的管理权限
             Request.TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION -> try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    kotlin.runCatching {
-                        val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                        settingIntent.data = Uri.parse("package:$packageName")
-                        settingActivityResult.launch(settingIntent)
-                    }.onFailure {
-                        val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                        settingActivityResult.launch(settingIntent)
-                    }
+                    val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                    settingActivityResult.launch(settingIntent)
                 } else {
                     throw NoStackTraceException("no MANAGE_ALL_FILES_ACCESS_PERMISSION")
                 }
