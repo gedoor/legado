@@ -107,15 +107,15 @@ class FileAssociationActivity :
         intent.data?.let { data ->
             if (data.isContentScheme()) {
                 viewModel.dispatchIndent(data)
-            } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            } else {
                 PermissionsCompat.Builder(this)
                     .addPermissions(*Permissions.Group.STORAGE)
                     .rationale(R.string.tip_perm_request_storage)
                     .onGranted {
                         viewModel.dispatchIndent(data)
+                    }.onDenied {
+                        toastOnUi("请求存储权限失败。")
                     }.request()
-            } else {
-                toastOnUi("由于安卓系统限制，请使用系统文件管理重新打开。")
             }
         }
     }

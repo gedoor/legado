@@ -1304,7 +1304,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         popupAction.dismiss()
         binding.readView.onDestroy()
         ReadBook.msg = null
-        ReadBook.callBack = null
+        if (ReadBook.callBack === this) {
+            ReadBook.callBack = null
+        }
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
