@@ -45,6 +45,8 @@ object AppWebDav {
 
     val isOk get() = authorization != null
 
+    private val isJianGuoYun get() = rootWebDavUrl.startsWith(defaultWebDavUrl, true)
+
     init {
         runBlocking {
             upConfig()
@@ -109,6 +111,9 @@ object AppWebDav {
 
     suspend fun showRestoreDialog(context: Context) {
         val names = withContext(IO) { getBackupNames() }
+        if (isJianGuoYun && names.size > 700) {
+            context.toastOnUi("由于坚果云限制，部分备份可能未显示")
+        }
         if (names.isNotEmpty()) {
             coroutineContext.ensureActive()
             withContext(Main) {
