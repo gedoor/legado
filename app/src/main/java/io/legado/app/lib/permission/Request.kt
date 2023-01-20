@@ -21,7 +21,6 @@ internal class Request : OnRequestPermissionsResultCallback {
     private var grantedCallback: OnPermissionsGrantedCallback? = null
     private var deniedCallback: OnPermissionsDeniedCallback? = null
     private var errorCallback: OnErrorCallback? = null
-    private var rationaleResId: Int = 0
     private var rationale: CharSequence? = null
 
     private var rationaleDialog: AlertDialog? = null
@@ -60,26 +59,22 @@ internal class Request : OnRequestPermissionsResultCallback {
     }
 
     fun setRationale(@StringRes resId: Int) {
-        rationaleResId = resId
-        rationale = null
+        rationale = source?.context?.getString(resId)
     }
 
     fun setRationale(rationale: CharSequence) {
         this.rationale = rationale
-        rationaleResId = 0
     }
 
     fun start() {
         RequestPlugins.setOnRequestPermissionsCallback(this)
 
         val deniedPermissions = deniedPermissions
-
+        val rationale = this.rationale
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (deniedPermissions == null) {
                 onPermissionsGranted()
             } else {
-                val rationale =
-                    if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
                 if (rationale != null) {
                     showSettingDialog(rationale) {
                         onPermissionsDenied(deniedPermissions)
@@ -92,13 +87,12 @@ internal class Request : OnRequestPermissionsResultCallback {
             if (deniedPermissions != null) {
                 if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        source?.context?.startActivity<PermissionActivity> {
-                            putExtra(
-                                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
-                                TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION
-                            )
-                            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
-                            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                        if (rationale != null) {
+                            showManageFileDialog(rationale) {
+                                onPermissionsDenied(deniedPermissions)
+                            }
+                        } else {
+                            onPermissionsDenied(deniedPermissions)
                         }
                     }
                 } else if (deniedPermissions.size > 1) {
@@ -166,6 +160,29 @@ internal class Request : OnRequestPermissionsResultCallback {
         }
     }
 
+    private fun showManageFileDialog(rationale: CharSequence, cancel: () -> Unit) {
+        rationaleDialog?.dismiss()
+        source?.context?.let {
+            runCatching {
+                rationaleDialog = AlertDialog.Builder(it)
+                    .setTitle(R.string.dialog_title)
+                    .setMessage(rationale)
+                    .setPositiveButton(R.string.dialog_setting) { _, _ ->
+                        it.startActivity<PermissionActivity> {
+                            putExtra(
+                                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
+                                TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                            )
+                            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+                            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                        }
+                    }
+                    .setNegativeButton(R.string.dialog_cancel) { _, _ -> cancel() }
+                    .show()
+            }
+        }
+    }
+
     private fun onPermissionsGranted() {
         try {
             grantedCallback?.onPermissionsGranted()
@@ -190,8 +207,7 @@ internal class Request : OnRequestPermissionsResultCallback {
     ) {
         val deniedPermissions = getDeniedPermissions(permissions)
         if (deniedPermissions != null) {
-            val rationale =
-                if (rationaleResId != 0) source?.context?.getText(rationaleResId) else rationale
+            val rationale = this.rationale
             if (rationale != null) {
                 showSettingDialog(rationale) { onPermissionsDenied(deniedPermissions) }
             } else {
