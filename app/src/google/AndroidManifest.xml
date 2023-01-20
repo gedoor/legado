@@ -7,6 +7,7 @@
         tools:node="remove" />
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:node="remove" />
+        tools:node="remove"
+        tools:ignore="ScopedStorage" />
 
 </manifest>
