@@ -44,7 +44,7 @@ class PermissionActivity : AppCompatActivity() {
                 RequestPlugins.sRequestCallback?.onError(e)
                 finish()
             }
-            //所有文件所有文件的管理权限
+            //所有文件的管理权限
             Request.TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION -> try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
