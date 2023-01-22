@@ -6,8 +6,10 @@ import kotlinx.coroutines.CoroutineScope
 object AppUpdate {
 
     val gitHubUpdate by lazy {
-        Class.forName("io.legado.app.help.AppUpdateGitHub").kotlin.objectInstance
-                as? AppUpdateInterface
+        kotlin.runCatching {
+            Class.forName("io.legado.app.help.AppUpdateGitHub")
+                .kotlin.objectInstance as AppUpdateInterface
+        }.getOrNull()
     }
 
     data class UpdateInfo(
