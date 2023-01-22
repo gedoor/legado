@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.read.page.provider
 
-import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.net.Uri
@@ -571,15 +570,15 @@ object ChapterProvider {
         upLayout()
     }
 
-    @SuppressLint("Recycle")
     private fun getTypeface(fontPath: String): Typeface {
         return kotlin.runCatching {
             when {
                 fontPath.isContentScheme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
-                    val fd = appCtx.contentResolver
+                    appCtx.contentResolver
                         .openFileDescriptor(Uri.parse(fontPath), "r")!!
-                        .fileDescriptor
-                    Typeface.Builder(fd).build()
+                        .use {
+                            Typeface.Builder(it.fileDescriptor).build()
+                        }
                 }
                 fontPath.isContentScheme() -> {
                     Typeface.createFromFile(RealPathUtil.getPath(appCtx, Uri.parse(fontPath)))

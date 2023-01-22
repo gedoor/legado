@@ -115,26 +115,18 @@ object RealPathUtil {
             e.printOnDebug()
             val file = File(context.cacheDir, "tmp")
             val filePath = file.absolutePath
-            var input: FileInputStream? = null
-            var output: FileOutputStream? = null
             try {
-                val pfd =
-                    context.contentResolver.openFileDescriptor(filePathUri!!, "r")
-                        ?: return null
-                val fd = pfd.fileDescriptor
-                input = FileInputStream(fd)
-                output = FileOutputStream(filePath)
-                var read: Int
-                val bytes = ByteArray(4096)
-                while (input.read(bytes).also { read = it } != -1) {
-                    output.write(bytes, 0, read)
+                return context.contentResolver.openFileDescriptor(filePathUri!!, "r")?.use {
+                    val fd = it.fileDescriptor
+                    FileInputStream(fd).use { fis ->
+                        FileOutputStream(filePath).use { fos ->
+                            fis.copyTo(fos)
+                        }
+                    }
+                    File(filePath).absolutePath
                 }
-                return File(filePath).absolutePath
             } catch (e: IOException) {
                 e.printStackTrace()
-            } finally {
-                input?.close()
-                output?.close()
             }
         } finally {
             cursor?.close()
