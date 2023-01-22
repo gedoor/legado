@@ -3,8 +3,7 @@ package io.legado.app.help.http
 import io.legado.app.constant.AppConst
 import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.http.cronet.CronetInterceptor
-import io.legado.app.help.http.cronet.CronetLoader
+import io.legado.app.help.http.cronet.Cronet
 import io.legado.app.utils.NetworkUtils
 import okhttp3.*
 import java.net.InetSocketAddress
@@ -70,8 +69,12 @@ val okHttpClient: OkHttpClient by lazy {
             builder.addHeader("Cache-Control", "no-cache")
             chain.proceed(builder.build())
         })
-    if (!AppConfig.isGooglePlay && AppConfig.isCronet && CronetLoader.install()) {
-        builder.addInterceptor(CronetInterceptor(cookieJar = cookieJar))
+    if (!AppConfig.isGooglePlay && AppConfig.isCronet) {
+        if (Cronet.loader?.install() == true) {
+            Cronet.interceptor?.let {
+                builder.addInterceptor(it)
+            }
+        }
     }
     builder.build()
 }

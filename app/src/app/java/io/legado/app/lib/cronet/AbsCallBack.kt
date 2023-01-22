@@ -1,4 +1,4 @@
-package io.legado.app.help.http.cronet
+package io.legado.app.lib.cronet
 
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog

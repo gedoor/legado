@@ -1,4 +1,4 @@
-package io.legado.app.help.http.cronet
+package io.legado.app.lib.cronet
 
 import android.os.ConditionVariable
 import okhttp3.Call

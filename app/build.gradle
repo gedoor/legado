@@ -200,7 +200,7 @@ dependencies {
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.10.0')
-    implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
 
     //Glide
     def glideVersion = "4.14.2"

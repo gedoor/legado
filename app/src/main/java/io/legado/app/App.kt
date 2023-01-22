@@ -24,7 +24,7 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.http.cronet.CronetLoader
+import io.legado.app.help.http.cronet.Cronet
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
@@ -42,7 +42,7 @@ class App : MultiDexApplication() {
         oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so
-        CronetLoader.preDownload()
+        Cronet.preDownload()
         createNotificationChannels()
         applyDayNight(this)
         LiveEventBus.config()
