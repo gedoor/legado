@@ -11,7 +11,6 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.help.AppUpdate
-import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -45,9 +44,6 @@ class AboutFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("update_log")?.summary =
             "${getString(R.string.version)} ${appInfo.versionName}"
-        if (AppConfig.isGooglePlay) {
-            preferenceScreen.removePreferenceRecursively("check_update")
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,16 +90,18 @@ class AboutFragment : PreferenceFragmentCompat() {
      */
     private fun checkUpdate() {
         waitDialog.show()
-        AppUpdate.checkFromGitHub(lifecycleScope)
-            .onSuccess {
-                showDialogFragment(
-                    UpdateDialog(it)
-                )
-            }.onError {
-                appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
-            }.onFinally {
-                waitDialog.hide()
-            }
+        AppUpdate.gitHubUpdate?.run {
+            check(lifecycleScope)
+                .onSuccess {
+                    showDialogFragment(
+                        UpdateDialog(it)
+                    )
+                }.onError {
+                    appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
+                }.onFinally {
+                    waitDialog.hide()
+                }
+        }
     }
 
     /**

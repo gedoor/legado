@@ -15,6 +15,13 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.prefs.Preference
+        android:key="check_update"
+        android:title="@string/check_update"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.prefs.PreferenceCategory
         android:title="@string/contact"
         app:allowDividerAbove="true"
