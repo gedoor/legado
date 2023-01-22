@@ -8,7 +8,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemFontBinding
 import io.legado.app.utils.*
-
 import java.io.File
 import java.net.URLDecoder
 
@@ -34,9 +33,8 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
                 val typeface: Typeface? = if (item.isContentScheme) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         context.contentResolver
-                            .openFileDescriptor(item.uri, "r")
-                            ?.fileDescriptor?.let {
-                                Typeface.Builder(it).build()
+                            .openFileDescriptor(item.uri, "r")?.use {
+                                Typeface.Builder(it.fileDescriptor).build()
                             }
                     } else {
                         Typeface.createFromFile(RealPathUtil.getPath(context, item.uri))

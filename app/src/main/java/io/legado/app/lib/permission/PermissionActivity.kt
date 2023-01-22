@@ -2,7 +2,6 @@ package io.legado.app.lib.permission
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.KeyEvent
@@ -46,7 +45,7 @@ class PermissionActivity : AppCompatActivity() {
             }
             //所有文件的管理权限
             Request.TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION -> try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Permissions.isManageExternalStorage()) {
                     val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
                     settingActivityResult.launch(settingIntent)
                 } else {

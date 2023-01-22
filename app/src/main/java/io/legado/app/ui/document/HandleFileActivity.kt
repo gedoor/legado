@@ -2,7 +2,6 @@ package io.legado.app.ui.document
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.webkit.MimeTypeMap
 import androidx.activity.result.contract.ActivityResultContracts
@@ -162,8 +161,7 @@ class HandleFileActivity :
 
     private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
         return if (
-            onlySys ||
-            (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && AppConfig.isGooglePlay)
+            onlySys || (Permissions.isManageExternalStorage() && AppConfig.isGooglePlay)
         ) {
             arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
         } else {
@@ -175,7 +173,7 @@ class HandleFileActivity :
     }
 
     private fun getFileActions(): ArrayList<SelectItem<Int>> {
-        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && AppConfig.isGooglePlay) {
+        return if (Permissions.isManageExternalStorage() && AppConfig.isGooglePlay) {
             arrayListOf(SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE))
         } else {
             arrayListOf(

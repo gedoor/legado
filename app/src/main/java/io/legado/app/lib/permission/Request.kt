@@ -119,7 +119,7 @@ internal class Request : OnRequestPermissionsResultCallback {
             val deniedPermissionList = ArrayList<String>()
             for (permission in permissions) {
                 if (permission == Permissions.MANAGE_EXTERNAL_STORAGE) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Permissions.isManageExternalStorage()) {
                         if (!Environment.isExternalStorageManager()) {
                             deniedPermissionList.add(permission)
                         }

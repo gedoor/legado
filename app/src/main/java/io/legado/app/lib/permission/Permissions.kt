@@ -42,7 +42,7 @@ object Permissions {
     const val ACCESS_MEDIA_LOCATION = "android.permission.ACCESS_MEDIA_LOCATION"
 
     object Group {
-        val STORAGE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        val STORAGE = if (isManageExternalStorage()) {
             arrayOf(MANAGE_EXTERNAL_STORAGE)
         } else {
             arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)
@@ -77,5 +77,9 @@ object Permissions {
             RECEIVE_WAP_PUSH,
             RECEIVE_MMS
         )
+    }
+
+    fun isManageExternalStorage(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
     }
 }
