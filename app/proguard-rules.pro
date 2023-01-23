@@ -391,7 +391,7 @@
 #-------------------Cronet------------------------------------
 
 # Class.forName调用
-keep class io.legado.app.lib.cronet.CronetInterceptor{*;}
-keep class io.legado.app.lib.cronet.CronetLoader{*;}
-keep class io.legado.app.help.AppUpdateGitHub{*;}
+-keep class io.legado.app.lib.cronet.CronetInterceptor{*;}
+-keep class io.legado.app.lib.cronet.CronetLoader{*;}
+-keep class io.legado.app.help.AppUpdateGitHub{*;}
 
