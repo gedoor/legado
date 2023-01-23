@@ -160,9 +160,7 @@ class HandleFileActivity :
     }
 
     private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
-        return if (
-            onlySys || (Permissions.isManageExternalStorage() && AppConfig.isGooglePlay)
-        ) {
+        return if (onlySys || AppConfig.isGooglePlay) {
             arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
         } else {
             arrayListOf(
@@ -173,7 +171,7 @@ class HandleFileActivity :
     }
 
     private fun getFileActions(): ArrayList<SelectItem<Int>> {
-        return if (Permissions.isManageExternalStorage() && AppConfig.isGooglePlay) {
+        return if (AppConfig.isGooglePlay) {
             arrayListOf(SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE))
         } else {
             arrayListOf(
