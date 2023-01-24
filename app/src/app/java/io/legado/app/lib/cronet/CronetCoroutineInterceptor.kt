@@ -1,5 +1,6 @@
 package io.legado.app.lib.cronet
 
+import androidx.annotation.Keep
 import io.legado.app.help.http.cookieJar
 import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.runBlocking
@@ -13,6 +14,7 @@ import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+@Keep
 @Suppress("unused")
 class CronetCoroutineInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

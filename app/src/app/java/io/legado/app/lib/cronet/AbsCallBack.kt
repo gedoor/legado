@@ -1,5 +1,6 @@
 package io.legado.app.lib.cronet
 
+import androidx.annotation.Keep
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.asIOException
@@ -15,6 +16,7 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 
+@Keep
 abstract class AbsCallBack(
     val originalRequest: Request,
     val mCall: Call,

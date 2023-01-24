@@ -1,13 +1,14 @@
 package io.legado.app.lib.cronet
 
 import android.os.Build
+import androidx.annotation.Keep
 import io.legado.app.help.http.cookieJar
 import io.legado.app.utils.printOnDebug
 import okhttp3.*
 import okhttp3.internal.http.receiveHeaders
 import java.io.IOException
 
-
+@Keep
 @Suppress("unused")
 class CronetInterceptor : Interceptor {
     @Throws(IOException::class)

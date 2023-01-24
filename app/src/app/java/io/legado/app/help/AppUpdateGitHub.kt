@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import androidx.annotation.Keep
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.exception.NoStackTraceException
@@ -11,6 +12,7 @@ import io.legado.app.utils.readString
 import kotlinx.coroutines.CoroutineScope
 import splitties.init.appCtx
 
+@Keep
 @Suppress("unused")
 object AppUpdateGitHub: AppUpdate.AppUpdateInterface {
 

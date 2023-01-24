@@ -1,5 +1,6 @@
 package io.legado.app.lib.cronet
 
+import androidx.annotation.Keep
 import okhttp3.RequestBody
 import okio.Buffer
 import org.chromium.net.UploadDataProvider
@@ -7,6 +8,7 @@ import org.chromium.net.UploadDataSink
 import java.io.IOException
 import java.nio.ByteBuffer
 
+@Keep
 class BodyUploadProvider(private val body: RequestBody) : UploadDataProvider(), AutoCloseable {
     private val buffer = Buffer()
 

@@ -1,12 +1,14 @@
 package io.legado.app.lib.cronet
 
 import android.os.ConditionVariable
+import androidx.annotation.Keep
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
 import org.chromium.net.UrlRequest
 import java.io.IOException
 
+@Keep
 class OldCallback(originalRequest: Request, mCall: Call) : AbsCallBack(originalRequest, mCall) {
 
     private val mResponseCondition = ConditionVariable()

@@ -1,7 +1,7 @@
 package io.legado.app.lib.cronet
 
-
 import android.os.Build
+import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import okhttp3.Call
 import okhttp3.Request
@@ -11,6 +11,7 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
+@Keep
 @RequiresApi(api = Build.VERSION_CODES.N)
 class NewCallBack(originalRequest: Request, mCall: Call) : AbsCallBack(originalRequest, mCall) {
     private val responseFuture = CompletableFuture<Response>()

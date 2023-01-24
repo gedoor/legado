@@ -1,5 +1,8 @@
+@file:Keep
+
 package io.legado.app.lib.cronet
 
+import androidx.annotation.Keep
 import io.legado.app.constant.AppLog
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.okHttpClient
@@ -12,7 +15,6 @@ import org.chromium.net.ExperimentalCronetEngine
 import org.chromium.net.UrlRequest
 import org.json.JSONObject
 import splitties.init.appCtx
-
 
 val cronetEngine: ExperimentalCronetEngine? by lazy {
     if (!AppConfig.isGooglePlay) {

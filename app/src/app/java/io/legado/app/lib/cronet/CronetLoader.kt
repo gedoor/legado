@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Build
 import android.text.TextUtils
+import androidx.annotation.Keep
 import io.legado.app.BuildConfig
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -23,7 +24,7 @@ import java.net.URL
 import java.security.MessageDigest
 import java.util.*
 
-
+@Keep
 object CronetLoader : CronetEngine.Builder.LibraryLoader(), CronetLoaderInterface {
     //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.159/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
 
