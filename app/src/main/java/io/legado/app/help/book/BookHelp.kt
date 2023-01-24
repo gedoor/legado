@@ -111,7 +111,7 @@ object BookHelp {
         ).writeText(content)
     }
 
-    private suspend fun saveImages(
+    suspend fun saveImages(
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,

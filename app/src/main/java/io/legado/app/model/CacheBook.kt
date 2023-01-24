@@ -11,6 +11,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
@@ -247,12 +248,31 @@ object CacheBook {
                 waitDownloadSet.remove(chapterIndex)
                 return
             }
-            if (BookHelp.hasContent(book, chapter)) {
+            if (BookHelp.hasImageContent(book, chapter)) {
                 waitDownloadSet.remove(chapterIndex)
                 return
             }
             waitDownloadSet.remove(chapterIndex)
             onDownloadSet.add(chapterIndex)
+            if (BookHelp.hasContent(book, chapter)) {
+                Coroutine.async {
+                    BookHelp.getContent(book, chapter)?.let {
+                        BookHelp.saveImages(bookSource, book, chapter, it)
+                    }
+                }.onSuccess {
+                    onSuccess(chapterIndex)
+                }.onError {
+                    onPreError(chapterIndex, it)
+                    //出现错误等待一秒后重新加入待下载列表
+                    delay(1000)
+                    onPostError(chapterIndex, it, chapter.title)
+                }.onCancel {
+                    onCancel(chapterIndex)
+                }.onFinally {
+                    onFinally()
+                }
+                return
+            }
             WebBook.getContent(
                 scope,
                 bookSource,

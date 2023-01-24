@@ -65,7 +65,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     val cacheNames = BookHelp.getChapterFiles(book)
                     if (cacheNames.isNotEmpty()) {
                         appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
-                            if (cacheNames.contains(chapter.getFileName())) {
+                            if (cacheNames.contains(chapter.getFileName()) || chapter.isVolume) {
                                 chapterCaches.add(chapter.url)
                             }
                         }
