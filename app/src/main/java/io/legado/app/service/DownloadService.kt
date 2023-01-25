@@ -120,10 +120,8 @@ class DownloadService : BaseService() {
         if (!completeDownloads.contains(downloadId)) {
             completeDownloads.add(downloadId)
             val fileName = downloads[downloadId]?.second
-            if (fileName?.endsWith(".apk") == true) {
+            kotlin.runCatching {
                 openDownload(downloadId, fileName)
-            } else {
-                toastOnUi("$fileName ${getString(R.string.download_success)}")
             }
         }
     }
