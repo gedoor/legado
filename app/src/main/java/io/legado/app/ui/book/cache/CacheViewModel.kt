@@ -280,7 +280,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = it.localizedMessage ?: "ERROR"
             upAdapterLiveData.postValue(book.bookUrl)
-            it.printOnDebug()
+            it.printStackTrace()
+            AppLog.put("导出epub书籍<${book.name}>出错\n${it.localizedMessage}", it)
         }.onSuccess {
             exportProgress.remove(book.bookUrl)
             exportMsg[book.bookUrl] = context.getString(R.string.export_success)
@@ -482,7 +483,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     val stream = ByteArrayOutputStream()
                     resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val byteArray: ByteArray = stream.toByteArray()
-                    resource.recycle()
                     stream.close()
                     epubBook.coverImage = Resource(byteArray, "Images/cover.jpg")
                 }
