@@ -92,7 +92,10 @@ class CronetCoroutineInterceptor : Interceptor {
 
             }
 
-            buildRequest(request, callBack)?.start()
+            val req = buildRequest(request, callBack)?.also { it.start() }
+            coroutine.invokeOnCancellation {
+                req?.cancel()
+            }
 
 
         }
