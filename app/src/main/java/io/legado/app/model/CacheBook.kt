@@ -248,6 +248,12 @@ object CacheBook {
                 waitDownloadSet.remove(chapterIndex)
                 return
             }
+            if (chapter.isVolume) {
+                /** 修正下载计数 */
+                postEvent(EventBus.SAVE_CONTENT, Pair(book, chapter))
+                waitDownloadSet.remove(chapterIndex)
+                return
+            }
             if (BookHelp.hasImageContent(book, chapter)) {
                 waitDownloadSet.remove(chapterIndex)
                 return

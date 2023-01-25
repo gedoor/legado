@@ -505,7 +505,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             upAdapterLiveData.postValue(book.bookUrl)
             exportProgress[book.bookUrl] = index
             BookHelp.getContent(book, chapter).let { content ->
-                var content1 = fixPic(epubBook, book, content ?: "null", chapter)
+                var content1 = fixPic(
+                    epubBook,
+                    book,
+                    content ?: if (chapter.isVolume) "" else "null",
+                    chapter
+                )
                 content1 = contentProcessor
                     .getContent(
                         book,
