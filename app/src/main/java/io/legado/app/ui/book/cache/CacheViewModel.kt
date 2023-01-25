@@ -483,7 +483,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     val stream = ByteArrayOutputStream()
                     resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val byteArray: ByteArray = stream.toByteArray()
-                    resource.recycle()
                     stream.close()
                     epubBook.coverImage = Resource(byteArray, "Images/cover.jpg")
                 }
