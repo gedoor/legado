@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.IntentAction
 import io.legado.app.help.IntentType
 import io.legado.app.utils.openFileUri
@@ -71,6 +72,9 @@ class DownloadService : BaseService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    /**
+     * 开始下载
+     */
     @Synchronized
     private fun startDownload(url: String?, fileName: String?) {
         if (url == null || fileName == null) {
@@ -105,6 +109,9 @@ class DownloadService : BaseService() {
         }
     }
 
+    /**
+     * 取消下载
+     */
     @Synchronized
     private fun removeDownload(downloadId: Long) {
         if (!completeDownloads.contains(downloadId)) {
@@ -115,14 +122,15 @@ class DownloadService : BaseService() {
         notificationManager.cancel(downloadId.toInt())
     }
 
+    /**
+     * 下载成功
+     */
     @Synchronized
     private fun successDownload(downloadId: Long) {
         if (!completeDownloads.contains(downloadId)) {
             completeDownloads.add(downloadId)
             val fileName = downloads[downloadId]?.second
-            kotlin.runCatching {
-                openDownload(downloadId, fileName)
-            }
+            openDownload(downloadId, fileName)
         }
     }
 
@@ -136,7 +144,9 @@ class DownloadService : BaseService() {
         }
     }
 
-    //查询下载进度
+    /**
+     * 查询下载进度
+     */
     @Synchronized
     private fun queryState() {
         if (downloads.isEmpty()) {
@@ -174,13 +184,23 @@ class DownloadService : BaseService() {
         }
     }
 
+    /**
+     * 打开下载文件
+     */
     private fun openDownload(downloadId: Long, fileName: String?) {
-        downloadManager.getUriForDownloadedFile(downloadId)?.let { uri ->
-            val type = IntentType.from(fileName)
-            openFileUri(uri, type)
+        kotlin.runCatching {
+            downloadManager.getUriForDownloadedFile(downloadId)?.let { uri ->
+                val type = IntentType.from(fileName)
+                openFileUri(uri, type)
+            }
+        }.onFailure {
+            AppLog.put("打开下载文件${fileName}出错", it)
         }
     }
 
+    /**
+     * 更新下载进度条
+     */
     private fun upSummaryNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
