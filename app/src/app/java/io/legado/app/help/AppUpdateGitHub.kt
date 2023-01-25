@@ -1,7 +1,6 @@
 package io.legado.app.help
 
 import androidx.annotation.Keep
-import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.coroutine.Coroutine
@@ -10,7 +9,6 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.jsonPath
 import io.legado.app.utils.readString
 import kotlinx.coroutines.CoroutineScope
-import splitties.init.appCtx
 
 @Keep
 @Suppress("unused")
@@ -20,7 +18,7 @@ object AppUpdateGitHub: AppUpdate.AppUpdateInterface {
         scope: CoroutineScope,
     ): Coroutine<AppUpdate.UpdateInfo> {
         return Coroutine.async(scope) {
-            val lastReleaseUrl = appCtx.getString(R.string.latest_release_api)
+            val lastReleaseUrl = "https://api.github.com/repos/gedoor/legado/releases/latest"
             val body = okHttpClient.newCallStrResponse {
                 url(lastReleaseUrl)
             }.body

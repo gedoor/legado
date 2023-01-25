@@ -9,8 +9,6 @@
     <string name="contributors_url" translatable="false">https://github.com/gedoor/legado/graphs/contributors</string>
     <string name="home_page_url" translatable="false">https://gedoor.github.io</string>
     <string name="license_url" translatable="false">https://github.com/gedoor/legado/blob/master/LICENSE</string>
-    <string name="latest_release_url" translatable="false">https://github.com/gedoor/legado/releases/latest</string>
-    <string name="latest_release_api" translatable="false">https://api.github.com/repos/gedoor/legado/releases/latest</string>
     <string name="tg_url" translatable="false">https://t.me/legado_channels</string>
     <string name="discord_url" translatable="false">https://discord.gg/qDE52P5xGW</string>
 
