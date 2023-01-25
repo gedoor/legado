@@ -1031,12 +1031,12 @@
     <string name="show_read_title_addition">show read title addition area</string>
     <string name="read_bar_style_follow_page">read bar style follow page</string>
     <string name="rule_image_decode">Decode Image(imageDecode)</string>
-    <string name="like_source">赞</string>
-    <string name="not_like_source">踩</string>
+    <string name="like_source">Like</string>
+    <string name="not_like_source">Not like</string>
     <string name="async_load_image">异步加载图片</string>
     <string name="ignore_audio_focus_title">忽略音频焦点</string>
     <string name="ignore_audio_focus_summary">允许与其他应用同时播放音频</string>
-    <string name="refresh_sort">刷新分类</string>
+    <string name="refresh_sort">Refresh sort</string>
     <string name="cover_decode_js">Decode Cover Js(coverDecodeJs)</string>
     <string name="net_no_group">网络未分组</string>
     <string name="local_no_group">本地未分组</string>
