@@ -656,11 +656,10 @@ interface JsExtensions : JsEncodeUtils {
      * 输出调试日志
      */
     fun log(msg: Any?): Any? {
-        val msg1 = "书源调试输出：${msg}"
         getSource()?.let {
-            Debug.log(it.getKey(), msg1)
-        } ?: Debug.log(msg1)
-        AppLog.putDebug(msg1)
+            Debug.log(it.getKey(), msg.toString())
+        } ?: Debug.log(msg.toString())
+        AppLog.putDebug("书源调试输出：$msg")
         return msg
     }
 

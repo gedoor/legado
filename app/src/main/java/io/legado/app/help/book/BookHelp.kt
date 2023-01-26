@@ -162,7 +162,7 @@ object BookHelp {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            AppLog.put("图片 $src 下载错误", e)
+            AppLog.put("图片 $src 下载错误\n${e.localizedMessage}", e)
         } finally {
             downloadImages.remove(src)
         }
