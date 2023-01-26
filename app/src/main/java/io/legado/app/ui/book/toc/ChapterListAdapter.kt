@@ -119,7 +119,9 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
     ) {
         binding.run {
             val isDur = callback.durChapterIndex() == item.index
-            val cached = callback.isLocalBook || cacheFileNames.contains(item.getFileName())
+            val cached = callback.isLocalBook
+                    || item.isVolume
+                    || cacheFileNames.contains(item.getFileName())
             if (payloads.isEmpty()) {
                 if (isDur) {
                     tvChapterName.setTextColor(context.accentColor)
