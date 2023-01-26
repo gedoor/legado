@@ -458,14 +458,30 @@ object ChapterProvider {
             addCharsToLineNatural(book, absStartX, textLine, words, textPaint, startX, srcList)
             return
         }
-        val gapCount: Int = words.lastIndex
-        val d = (visibleWidth - desiredWidth) / gapCount
-        var x = startX
-        words.forEachIndexed { index, char ->
-            val cw = StaticLayout.getDesiredWidth(char, textPaint)
-            val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
-            addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
-            x = x1
+        val spaceSize = words.filter { it == " " }.size
+        if (spaceSize > 0) {
+            val d = (visibleWidth - desiredWidth) / spaceSize
+            var x = startX
+            words.forEachIndexed { index, char ->
+                val cw = StaticLayout.getDesiredWidth(char, textPaint)
+                val x1 = if (char == " ") {
+                    if (index != words.lastIndex) (x + cw + d) else (x + cw)
+                } else {
+                    (x + cw)
+                }
+                addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
+                x = x1
+            }
+        } else {
+            val gapCount: Int = words.lastIndex
+            val d = (visibleWidth - desiredWidth) / gapCount
+            var x = startX
+            words.forEachIndexed { index, char ->
+                val cw = StaticLayout.getDesiredWidth(char, textPaint)
+                val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
+                addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
+                x = x1
+            }
         }
         exceed(absStartX, textLine, words)
     }
