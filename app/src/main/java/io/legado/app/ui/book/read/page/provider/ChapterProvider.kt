@@ -300,10 +300,11 @@ object ChapterProvider {
         srcList: LinkedList<String>? = null
     ): Pair<Int, Float> {
         var absStartX = x
-        val layout = if (ReadBookConfig.useZhLayout) ZhLayout(text, textPaint, visibleWidth)
-        else StaticLayout(
-            text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true
-        )
+        val layout = if (ReadBookConfig.useZhLayout) {
+            ZhLayout(text, textPaint, visibleWidth)
+        } else {
+            StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
+        }
         var durY = when {
             //标题y轴居中
             isTitleWithNoContent && textPages.size == 1 -> {
@@ -375,7 +376,7 @@ object ChapterProvider {
                     } else {
                         0f
                     }
-                    addCharsToLineLast(
+                    addCharsToLineNatural(
                         book, absStartX, textLine, words.toStringArray(),
                         textPaint, startX, srcList
                     )
@@ -416,7 +417,7 @@ object ChapterProvider {
     ) {
         var x = 0f
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(book, absStartX, textLine, words, textPaint, x, srcList)
+            addCharsToLineNatural(book, absStartX, textLine, words, textPaint, x, srcList)
             return
         }
         val bodyIndent = ReadBookConfig.paragraphIndent
@@ -454,7 +455,7 @@ object ChapterProvider {
         srcList: LinkedList<String>?
     ) {
         if (!ReadBookConfig.textFullJustify) {
-            addCharsToLineLast(book, absStartX, textLine, words, textPaint, startX, srcList)
+            addCharsToLineNatural(book, absStartX, textLine, words, textPaint, startX, srcList)
             return
         }
         val gapCount: Int = words.lastIndex
@@ -470,9 +471,9 @@ object ChapterProvider {
     }
 
     /**
-     * 最后一行,自然排列
+     * 自然排列
      */
-    private suspend fun addCharsToLineLast(
+    private suspend fun addCharsToLineNatural(
         book: Book,
         absStartX: Int,
         textLine: TextLine,

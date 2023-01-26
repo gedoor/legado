@@ -12,7 +12,7 @@ import kotlin.math.max
  * */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ZhLayout(
-    text: String,
+    text: CharSequence,
     textPaint: TextPaint,
     width: Int
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {

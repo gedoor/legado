@@ -8,6 +8,8 @@ import android.net.Uri
 import android.text.Editable
 import io.legado.app.constant.AppPattern.dataUriRegex
 import java.io.File
+import java.lang.Character.codePointCount
+import java.lang.Character.offsetByCodePoints
 import java.util.*
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
@@ -100,12 +102,12 @@ fun String?.memorySize(): Int {
 /**
  * 将字符串拆分为单个字符,包含emoji
  */
-fun String.toStringArray(): Array<String> {
+fun CharSequence.toStringArray(): Array<String> {
     var codePointIndex = 0
     return try {
-        Array(codePointCount(0, length)) {
+        Array(codePointCount(this, 0, length)) {
             val start = codePointIndex
-            codePointIndex = offsetByCodePoints(start, 1)
+            codePointIndex = offsetByCodePoints(this, start, 1)
             substring(start, codePointIndex)
         }
     } catch (e: Exception) {

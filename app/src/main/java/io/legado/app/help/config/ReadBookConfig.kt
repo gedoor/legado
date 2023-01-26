@@ -154,7 +154,15 @@ object ReadBookConfig {
                 appCtx.putPrefBoolean(PreferKey.shareLayout, value)
             }
         }
+
+    /**
+     * 两端对齐
+     */
     val textFullJustify get() = appCtx.getPrefBoolean(PreferKey.textFullJustify, true)
+
+    /**
+     * 底部对齐
+     */
     val textBottomJustify get() = appCtx.getPrefBoolean(PreferKey.textBottomJustify, true)
     var hideStatusBar = appCtx.getPrefBoolean(PreferKey.hideStatusBar)
     var hideNavigationBar = appCtx.getPrefBoolean(PreferKey.hideNavigationBar)
