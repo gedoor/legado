@@ -10,6 +10,7 @@ import java.nio.ByteBuffer
 
 @Keep
 class BodyUploadProvider(private val body: RequestBody) : UploadDataProvider(), AutoCloseable {
+
     private val buffer = Buffer()
 
     init {

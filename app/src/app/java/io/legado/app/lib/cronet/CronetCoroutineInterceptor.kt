@@ -17,6 +17,7 @@ import kotlin.coroutines.resumeWithException
 @Keep
 @Suppress("unused")
 class CronetCoroutineInterceptor : Interceptor {
+
     override fun intercept(chain: Interceptor.Chain): Response {
         if (chain.call().isCanceled()) {
             throw IOException("Canceled")

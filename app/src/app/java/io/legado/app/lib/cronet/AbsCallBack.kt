@@ -22,7 +22,6 @@ abstract class AbsCallBack(
     val mCall: Call,
     private val eventListener: EventListener? = null,
     private val responseCallback: Callback? = null
-
 ) : UrlRequest.Callback(), AutoCloseable {
 
     val buffer = Buffer()

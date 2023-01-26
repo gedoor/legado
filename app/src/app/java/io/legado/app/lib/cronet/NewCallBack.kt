@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit
 @Keep
 @RequiresApi(api = Build.VERSION_CODES.N)
 class NewCallBack(originalRequest: Request, mCall: Call) : AbsCallBack(originalRequest, mCall) {
-    private val responseFuture = CompletableFuture<Response>()
 
+    private val responseFuture = CompletableFuture<Response>()
 
     @Throws(IOException::class)
     override fun waitForDone(urlRequest: UrlRequest): Response {

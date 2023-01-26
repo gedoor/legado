@@ -11,6 +11,7 @@ import java.io.IOException
 @Keep
 @Suppress("unused")
 class CronetInterceptor : Interceptor {
+
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         if (chain.call().isCanceled()) {
