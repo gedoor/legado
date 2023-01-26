@@ -29,7 +29,6 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.help.IntentHelp
-import io.legado.app.help.IntentType
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.connectivityManager
 import java.io.File

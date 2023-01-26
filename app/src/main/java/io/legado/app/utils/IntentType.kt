@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.utils
 
 import android.net.Uri
 import androidx.annotation.Keep
@@ -21,8 +21,19 @@ object IntentType {
             "3gp", "mp4" -> "audio/*"
             "jpg", "gif", "png", "jpeg", "bmp" -> "image/*"
             "txt", "json" -> "text/plain"
-            else -> null
+            else -> appIntentType?.from(path)
         }
+    }
+
+    private val appIntentType: TypeInterface? by lazy {
+        Class.forName("io.legado.app.help.AppIntentType")
+            .kotlin.objectInstance as? TypeInterface
+    }
+
+    interface TypeInterface {
+
+        fun from(path: String?): String?
+
     }
 
 }
