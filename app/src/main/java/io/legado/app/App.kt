@@ -24,7 +24,7 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.http.cronet.Cronet
+import io.legado.app.help.http.Cronet
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean

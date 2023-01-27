@@ -3,7 +3,6 @@ package io.legado.app.help.http
 import io.legado.app.constant.AppConst
 import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.http.cronet.Cronet
 import io.legado.app.utils.NetworkUtils
 import okhttp3.*
 import java.net.InetSocketAddress

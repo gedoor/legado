@@ -9,7 +9,7 @@ import androidx.annotation.Keep
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.http.cronet.CronetLoaderInterface
+import io.legado.app.help.http.Cronet
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.printOnDebug
 
@@ -25,7 +25,7 @@ import java.security.MessageDigest
 import java.util.*
 
 @Keep
-object CronetLoader : CronetEngine.Builder.LibraryLoader(), CronetLoaderInterface {
+object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterface {
     //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.159/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
 
     private const val soVersion = BuildConfig.Cronet_Version
