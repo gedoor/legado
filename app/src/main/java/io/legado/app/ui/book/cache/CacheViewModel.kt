@@ -342,7 +342,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun setAssets(doc: DocumentFile, book: Book, epubBook: EpubBook): String {
-        if (!(AppConfig.isGooglePlay || appCtx.packageName.contains(
+        if (!(AppConst.isPlayChannel || appCtx.packageName.contains(
                 "debug",
                 true
             ))

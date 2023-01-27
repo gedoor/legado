@@ -12,7 +12,6 @@ import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
-    const val isGooglePlay = BuildConfig.isGoogle//appCtx.channel == "google"
     val isCronet = appCtx.getPrefBoolean(PreferKey.cronet)
     val useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
     var userAgent: String = getPrefUserAgent()

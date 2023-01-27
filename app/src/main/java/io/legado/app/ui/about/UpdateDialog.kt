@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.AppConst
 import io.legado.app.databinding.DialogUpdateBinding
 import io.legado.app.help.AppUpdate
-import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.Download
 import io.legado.app.utils.setLayout
@@ -53,7 +53,7 @@ class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
                 .build()
                 .setMarkdown(binding.textView, updateBody)
         }
-        if (!AppConfig.isGooglePlay) {
+        if (!AppConst.isPlayChannel) {
             binding.toolBar.inflateMenu(R.menu.app_update)
             binding.toolBar.setOnMenuItemClickListener {
                 when (it.itemId) {

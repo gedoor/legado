@@ -2,11 +2,11 @@ package io.legado.app.help.source
 
 import android.os.Handler
 import android.os.Looper
+import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
-import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.splitNotBlank
@@ -59,7 +59,7 @@ object SourceHelp {
         url ?: return false
         val baseUrl = NetworkUtils.getBaseUrl(url)
         baseUrl ?: return false
-        if (AppConfig.isGooglePlay) return false
+        if (AppConst.isPlayChannel) return false
         kotlin.runCatching {
             val host = baseUrl.split("//", ".")
             val base64Url = EncoderUtils.base64Encode("${host[host.lastIndex - 1]}.${host.last()}")

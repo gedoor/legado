@@ -69,7 +69,7 @@ val okHttpClient: OkHttpClient by lazy {
             builder.addHeader("Cache-Control", "no-cache")
             chain.proceed(builder.build())
         })
-    if (!AppConfig.isGooglePlay && AppConfig.isCronet) {
+    if (!AppConst.isPlayChannel && AppConfig.isCronet) {
         if (Cronet.loader?.install() == true) {
             Cronet.interceptor?.let {
                 builder.addInterceptor(it)

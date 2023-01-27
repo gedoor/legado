@@ -3,8 +3,8 @@
 package io.legado.app.lib.cronet
 
 import androidx.annotation.Keep
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
-import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import okhttp3.Headers
@@ -20,11 +20,11 @@ import splitties.init.appCtx
 internal const val BUFFER_SIZE = 32 * 1024
 
 val cronetEngine: ExperimentalCronetEngine? by lazy {
-    if (!AppConfig.isGooglePlay) {
+    if (!AppConst.isPlayChannel) {
         CronetLoader.preDownload()
     }
     val builder = ExperimentalCronetEngine.Builder(appCtx).apply {
-        if (!AppConfig.isGooglePlay && CronetLoader.install()) {
+        if (!AppConst.isPlayChannel && CronetLoader.install()) {
             setLibraryLoader(CronetLoader)//设置自定义so库加载
         }
         setStoragePath(appCtx.externalCacheDir?.absolutePath)//设置缓存路径

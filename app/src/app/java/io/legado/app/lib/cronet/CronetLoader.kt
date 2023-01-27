@@ -7,7 +7,7 @@ import android.os.Build
 import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.BuildConfig
-import io.legado.app.help.config.AppConfig
+import io.legado.app.constant.AppConst
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.cronet.CronetLoaderInterface
 import io.legado.app.utils.DebugLog
@@ -64,7 +64,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), CronetLoaderInterfac
             }
         }
 
-        if (AppConfig.isGooglePlay) {
+        if (AppConst.isPlayChannel) {
             return false
         }
         if (md5.length != 32 || !soFile.exists() || md5 != getFileMD5(soFile)) {
@@ -80,7 +80,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), CronetLoaderInterfac
      * 预加载Cronet
      */
     override fun preDownload() {
-        if (AppConfig.isGooglePlay) {
+        if (AppConst.isPlayChannel) {
             return
         }
         Coroutine.async {
@@ -266,7 +266,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), CronetLoaderInterfac
         downloadTempFile: File,
         destSuccessFile: File
     ) {
-        if (download || AppConfig.isGooglePlay) {
+        if (download || AppConst.isPlayChannel) {
             return
         }
         download = true

@@ -49,7 +49,6 @@ android {
 
         buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
         buildConfigField "String", "Cronet_Main_Version", "\"$CronetMainVersion\""
-        buildConfigField "boolean", "isGoogle", "false"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -105,7 +104,6 @@ android {
             dimension "mode"
             applicationId "io.legado.play"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
-            buildConfigField "boolean", "isGoogle", "true"
         }
     }
     compileOptions {
