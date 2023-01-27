@@ -218,7 +218,9 @@ object ReadBookConfig {
             config.paragraphSpacing = value
         }
 
-    //标题位置 0:居左 1:居中 2:隐藏
+    /**
+     * 标题位置 0:居左 1:居中 2:隐藏
+     */
     var titleMode: Int
         get() = config.titleMode
         set(value) {
@@ -229,6 +231,11 @@ object ReadBookConfig {
         set(value) {
             config.titleSize = value
         }
+
+    /**
+     * 是否标题居中
+     */
+    val isMiddleTitle get() = titleMode == 1
 
     var titleTopSpacing: Int
         get() = config.titleTopSpacing
