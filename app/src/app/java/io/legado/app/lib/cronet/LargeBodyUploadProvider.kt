@@ -68,8 +68,8 @@ class LargeBodyUploadProvider(
     }
 
     override fun close() {
-        pipe.cancel()
-        source.close()
+//        pipe.cancel()
+//        source.close()
         super.close()
     }
 }
