@@ -292,9 +292,6 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), CronetLoaderInterfac
             @Suppress("SameParameterValue")
             (deleteHistoryFile(parentFile!!, null))
         }
-//        executor.execute {
-//
-//        }
     }
 
     /**
