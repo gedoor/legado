@@ -12,9 +12,12 @@ import okhttp3.MediaType
 import okhttp3.Request
 import org.chromium.net.CronetEngine.Builder.HTTP_CACHE_DISK
 import org.chromium.net.ExperimentalCronetEngine
+import org.chromium.net.UploadDataProvider
 import org.chromium.net.UrlRequest
 import org.json.JSONObject
 import splitties.init.appCtx
+
+internal const val BUFFER_SIZE = 32 * 1024
 
 val cronetEngine: ExperimentalCronetEngine? by lazy {
     if (!AppConfig.isGooglePlay) {
@@ -85,10 +88,14 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
             } else {
                 addHeader("Content-Type", "text/plain")
             }
-            setUploadDataProvider(
-                BodyUploadProvider(requestBody),
-                okHttpClient.dispatcher.executorService
-            )
+            val provider: UploadDataProvider = if (requestBody.contentLength() > BUFFER_SIZE) {
+                LargeBodyUploadProvider(requestBody, okHttpClient.dispatcher.executorService)
+            } else {
+                BodyUploadProvider(requestBody)
+            }
+            provider.use {
+                this.setUploadDataProvider(it, okHttpClient.dispatcher.executorService)
+            }
 
         }
 
