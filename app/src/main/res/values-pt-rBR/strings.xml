@@ -431,7 +431,7 @@
 
     <string name="source_icon">图标(fonteÍcone)</string>
     <string name="r_articles">列表规则(regrasArtigos)</string>
-    <string name="r_next">列表下一页规则(regrasArtigos)</string>
+    <string name="r_next">列表下一页规则(regrasNextArtigos)</string>
     <string name="r_title">标题规则(regrasTítulo)</string>
     <string name="r_guid">guid规则(regraGuid)</string>
     <string name="r_date">时间规则(regraPubData)</string>

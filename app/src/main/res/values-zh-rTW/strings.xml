@@ -432,7 +432,7 @@
 
     <string name="source_icon">圖示(sourceIcon)</string>
     <string name="r_articles">列表規則(ruleArticles)</string>
-    <string name="r_next">列表下一頁規則(ruleArticles)</string>
+    <string name="r_next">列表下一頁規則(ruleNextArticles)</string>
     <string name="r_title">標題規則(ruleTitle)</string>
     <string name="r_guid">guid規則(ruleGuid)</string>
     <string name="r_date">時間規則(rulePubDate)</string>
