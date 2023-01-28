@@ -476,7 +476,7 @@ object ChapterProvider {
         }
         val residualWidth = visibleWidth - desiredWidth
         val spaceSize = words.filter { it == " " }.size
-        if (spaceSize > 0) {
+        if (spaceSize > 1) {
             val d = residualWidth / spaceSize
             var x = startX
             words.forEachIndexed { index, char ->
