@@ -808,7 +808,7 @@
     <string name="show_hide">Show/Hide</string>
     <string name="header_footer">footer <![CDATA[&]]> header</string>
     <string name="rule_subscription">Rule Subscription</string>
-    <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
+    <string name="rule_sub_empty_msg">Add the rule import address provided by the bosses\nClick to import rules after adding</string>
     <string name="get_book_progress">Pull the cloud  progress</string>
     <string name="current_progress_exceeds_cloud">The current progress exceeds the cloud progress. Do you want to synchronize?</string>
     <string name="sync_book_progress_t">Synchronous reading progress</string>
@@ -882,12 +882,12 @@
     <string name="download_url_rule">downloadUrlRule(downloadUrls)</string>
     <string name="export_success">export success</string>
     <string name="path">path</string>
-    <string name="direct_link_upload_rule">直链上传规则</string>
+    <string name="direct_link_upload_rule">Straight chain upload rule</string>
     <string name="direct_link_upload_rule_summary">用于导出书源书单时生成直链url</string>
-    <string name="direct_link_upload_config">直链上传配置</string>
+    <string name="direct_link_upload_config">Straight-chain upload configuration</string>
     <string name="copy_play_url">拷贝播放Url</string>
-    <string name="set_source_variable">设置源变量</string>
-    <string name="set_book_variable">设置书籍变量</string>
+    <string name="set_source_variable">Set source variable</string>
+    <string name="set_book_variable">Set book variable</string>
     <string name="summary">summary</string>
     <string name="cover_config">cover config</string>
     <string name="cover_config_summary">通用封面规则及默认封面样式</string>
