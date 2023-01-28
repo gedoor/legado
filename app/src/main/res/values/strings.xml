@@ -433,20 +433,20 @@
 
     <string name="source_icon">Source icon(sourceIcon)</string>
     <string name="r_articles">Rule articles(ruleArticles)</string>
-    <string name="r_next">列表下一页规则(ruleNextArticles)</string>
-    <string name="r_title">标题规则(ruleTitle)</string>
-    <string name="r_guid">guid规则(ruleGuid)</string>
-    <string name="r_date">时间规则(rulePubDate)</string>
-    <string name="r_categories">类别规则(ruleCategories)</string>
-    <string name="r_description">描述规则(ruleDescription)</string>
-    <string name="r_image">图片url规则(ruleImage)</string>
-    <string name="r_content">内容规则(ruleContent)</string>
-    <string name="r_style">样式(style)</string>
-    <string name="r_link">链接规则(ruleLink)</string>
-    <string name="r_inject_js">注入Js(injectJs)</string>
-    <string name="check_key_word">校验关键字(checkKeyWord)</string>
-    <string name="rule_actions">操作(actions)</string>
-    <string name="rule_is_pay">购买标识(isPay)</string>
+    <string name="r_next">Rule next articles(ruleNextArticles)</string>
+    <string name="r_title">Rule title(ruleTitle)</string>
+    <string name="r_guid">Rule guid(ruleGuid)</string>
+    <string name="r_date">Rule pub date(rulePubDate)</string>
+    <string name="r_categories">Rule categories(ruleCategories)</string>
+    <string name="r_description">Rule description(ruleDescription)</string>
+    <string name="r_image">Rule image(ruleImage)</string>
+    <string name="r_content">Rule content(ruleContent)</string>
+    <string name="r_style">Style(style)</string>
+    <string name="r_link">Rule link(ruleLink)</string>
+    <string name="r_inject_js">Inject js(injectJs)</string>
+    <string name="check_key_word">Check key word(checkKeyWord)</string>
+    <string name="rule_actions">Actions(actions)</string>
+    <string name="rule_is_pay">Is pay(isPay)</string>
     <!-- source end-->
 
     <!--error string start-->
