@@ -92,7 +92,7 @@ class ContentProcessor private constructor(
                 if (matcher.find()) {
                     mContent = mContent.substring(matcher.end())
                     sameTitleRemoved = true
-                } else {
+                } else if (useReplace) {
                     title = Pattern.quote(
                         chapter.getDisplayTitle(
                             contentReplaceRules,
