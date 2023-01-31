@@ -1,59 +1,53 @@
-name: BUG提交
-description: 提交使用过程中遇到的BUG
+name: BUG提交 / BUG Report
+description: 提交使用过程中遇到的BUG / Report bugs to developers
 labels: ["BUG"]
 body:
   - type: checkboxes
     attributes:
-      label: 确认
-      description: 提交issue请确保完成以下前提，否则该issue可能被忽略
+      label: 确认 / Assignments
+      description: 提交issue请确保完成以下前提，否则该issue可能被忽略 / Make sure you read checkboxs below
       options:
-        - label: 搜索现有issues，不存在相似或相关的issue
+        - label: 搜索现有issues，不存在相似或相关的issue / No similar issues opened
           required: true
-        - label: 最新[测试版](https://kunfei.lanzoui.com/b0f810h4b)依然存在此问题
+        - label: 最新[测试版](https://kunfei.lanzoui.com/b0f810h4b)依然存在此问题 / Latest beta app does not works
           required: true
-        - label: 此问题和Xposed、Lsposed、Magisk、手机主题、浏览器插件等无关
+        - label: 此问题和Xposed、Lsposed、Magisk、手机主题、浏览器插件等无关 / Make sure your machine is not touched by hook frameworks, plugins etc
           required: true
 
   - type: textarea
     attributes:
-      label: 问题描述
-      placeholder: 简要描述发生的问题
+      label: 问题描述 / Describe Bugs
     validations:
       required: true
   - type: textarea
     attributes:
-      label: 复现步骤
-      placeholder: 详细描述导致问题产生的操作步骤，如果能稳定复现
+      label: 复现步骤 / How to reproduce
     validations:
       required: true
   - type: textarea
     attributes:
-      label: 日志提交
+      label: 日志提交 / Relevant log output
       description: 阅读日志位于我的-关于-崩溃日志、书架-右上角-日志，或者自行使用log工具抓取日志
-      placeholder: 粘贴日志内容或者上传文件或者相关截图
 
   - type: input
     attributes:
-      label: 阅读版本
+      label: 阅读版本 / Legado Version
       placeholder: "3.22.110823"
     validations:
       required: true
   - type: input
     attributes:
-      label: Android版本
+      label: Android版本 / Android Version
       placeholder: "Android 12"
     validations:
       required: true
   - type: input
     attributes:
-      label: 机型
+      label: 机型 / Model
       placeholder: "Redmi K30 Pro"
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: 其他信息
-      placeholder: |
-        如果Bug复现需要某一书源/本地文件，请提交对应内容或文件或链接
-        如果Bug涉及web服务，请提交使用的浏览器版本、网络环境
+      label: 其他信息 / Additions
