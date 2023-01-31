@@ -93,6 +93,18 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }.getOrDefault("${book.name} 作者：${book.getRealAuthor()}")
     }
 
+    fun exportFileExist(path: String, book: Book): Boolean {
+        val fileName = getExportFileName(book)
+        return if (path.isContentScheme()) {
+            val uri = Uri.parse(path)
+            val doc = DocumentFile.fromTreeUri(context, uri) ?: return false
+            doc.findFile(fileName) ?: return false
+            return true
+        } else {
+            File(path).exists(fileName)
+        }
+    }
+
     fun export(path: String, book: Book) {
         if (exportProgress.contains(book.bookUrl)) return
         exportProgress[book.bookUrl] = 0
@@ -111,7 +123,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     ?: throw NoStackTraceException("获取导出文档失败")
                 export(doc, book)
             } else {
-                export(FileUtils.createFolderIfNotExist(path), book)
+                export(File(path).createFolderIfNotExist(), book)
             }
         }.onError {
             exportProgress.remove(book.bookUrl)
@@ -274,7 +286,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     ?: throw NoStackTraceException("获取导出文档失败")
                 exportEpub(doc, book)
             } else {
-                exportEpub(FileUtils.createFolderIfNotExist(path), book)
+                exportEpub(File(path).createFolderIfNotExist(), book)
             }
         }.onError {
             exportProgress.remove(book.bookUrl)

@@ -220,12 +220,11 @@ interface JsExtensions : JsEncodeUtils {
         val analyzeUrl = AnalyzeUrl(url, source = getSource())
         val type = analyzeUrl.type ?: "zip"
         val path = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
+            File(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"
         )
-        FileUtils.delete(path)
+        val file = File(path).createFileReplace()
         analyzeUrl.getInputStream().use { iStream ->
-            val file = FileUtils.createFileIfNotExist(path)
             FileOutputStream(file).use { oStream ->
                 iStream.copyTo(oStream)
             }
@@ -246,8 +245,8 @@ interface JsExtensions : JsEncodeUtils {
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"
         )
-        FileUtils.delete(path)
-        val file = FileUtils.createFileIfNotExist(path)
+        val file = File(path)
+        file.createFileReplace()
         HexUtil.decodeHex(content).let {
             if (it.isNotEmpty()) {
                 file.writeBytes(it)
@@ -492,9 +491,8 @@ interface JsExtensions : JsEncodeUtils {
             FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
             FileUtils.getNameExcludeExtension(zipPath)
         )
-        FileUtils.delete(unzipPath)
+        val unzipFolder = File(unzipPath).createFolderReplace()
         val zipFile = getFile(zipPath)
-        val unzipFolder = FileUtils.createFolderIfNotExist(unzipPath)
         ZipUtils.unzipFile(zipFile, unzipFolder)
         FileUtils.delete(zipFile.absolutePath)
         return unzipPath.substring(FileUtils.getCachePath().length)

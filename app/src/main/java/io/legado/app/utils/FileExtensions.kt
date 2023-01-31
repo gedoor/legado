@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.legado.app.utils
 
 import android.net.Uri
@@ -31,4 +33,36 @@ fun File.listFileDocs(filter: FileDocFilter? = null): ArrayList<FileDoc> {
     return docList
 }
 
+fun File.createFileIfNotExist(): File {
+    if (!exists()) {
+        parentFile?.createFileIfNotExist()
+        createNewFile()
+    }
+    return this
+}
 
+fun File.createFileReplace(): File {
+    if (!exists()) {
+        parentFile?.createFileIfNotExist()
+        createNewFile()
+    } else {
+        delete()
+        createNewFile()
+    }
+    return this
+}
+
+fun File.createFolderIfNotExist(): File {
+    if (!exists()) {
+        mkdirs()
+    }
+    return this
+}
+
+fun File.createFolderReplace(): File {
+    if (exists()) {
+        FileUtils.delete(this, true)
+    }
+    mkdirs()
+    return this
+}

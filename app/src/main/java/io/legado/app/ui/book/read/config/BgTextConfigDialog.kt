@@ -234,14 +234,12 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         execute {
             val exportFiles = arrayListOf<File>()
-            val configDirPath = FileUtils.getPath(requireContext().externalCache, "readConfig")
-            FileUtils.delete(configDirPath)
-            val configDir = FileUtils.createFolderIfNotExist(configDirPath)
-            val configExportPath = FileUtils.getPath(configDir, "readConfig.json")
-            FileUtils.delete(configExportPath)
-            val configExportFile = FileUtils.createFileIfNotExist(configExportPath)
-            configExportFile.writeText(GSON.toJson(ReadBookConfig.getExportConfig()))
-            exportFiles.add(configExportFile)
+            val configDir = requireContext().externalCache.getFile("readConfig")
+            configDir.createFolderReplace()
+            val configFile = configDir.getFile("readConfig.json")
+            configFile.createFileReplace()
+            configFile.writeText(GSON.toJson(ReadBookConfig.getExportConfig()))
+            exportFiles.add(configFile)
             val fontPath = ReadBookConfig.textFont
             if (fontPath.isNotEmpty()) {
                 val fontName = FileUtils.getName(fontPath)
