@@ -1,5 +1,5 @@
 name: BUG提交 / BUG Report
-description: 提交使用过程中遇到的BUG / Report bugs to developers
+description: 提交BUG / Report bugs to developers
 labels: ["BUG"]
 body:
   - type: checkboxes
@@ -7,9 +7,9 @@ body:
       label: 确认 / Assignments
       description: 提交issue请确保完成以下前提，否则该issue可能被忽略 / Make sure you read checkboxs below
       options:
-        - label: 搜索现有issues，不存在相似或相关的issue / No similar issues opened
+        - label: 搜索现有issues，不存在相似或相关的issue / No similar or related issues
           required: true
-        - label: 最新[测试版](https://kunfei.lanzoui.com/b0f810h4b)依然存在此问题 / Latest beta app does not works
+        - label: 最新[测试版](https://kunfei.lanzoui.com/b0f810h4b)依然存在此问题 / Latest beta app does not work
           required: true
         - label: 此问题和Xposed、Lsposed、Magisk、手机主题、浏览器插件等无关 / Make sure your machine is not touched by hook frameworks, plugins etc
           required: true
@@ -31,13 +31,13 @@ body:
 
   - type: input
     attributes:
-      label: 阅读版本 / Legado Version
+      label: 阅读版本 / Legado version
       placeholder: "3.22.110823"
     validations:
       required: true
   - type: input
     attributes:
-      label: Android版本 / Android Version
+      label: Android版本 / Android version
       placeholder: "Android 12"
     validations:
       required: true
