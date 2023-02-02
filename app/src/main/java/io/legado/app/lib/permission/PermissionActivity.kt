@@ -2,6 +2,7 @@ package io.legado.app.lib.permission
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.KeyEvent
@@ -34,15 +35,7 @@ class PermissionActivity : AppCompatActivity() {
                 }
             }
             //跳转到设置界面
-            Request.TYPE_REQUEST_SETTING -> try {
-                val settingIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                settingIntent.data = Uri.fromParts("package", packageName, null)
-                settingActivityResult.launch(settingIntent)
-            } catch (e: Exception) {
-                toastOnUi(R.string.tip_cannot_jump_setting_page)
-                RequestPlugins.sRequestCallback?.onError(e)
-                finish()
-            }
+            Request.TYPE_REQUEST_SETTING -> openSettingsActivity()
             //所有文件的管理权限
             Request.TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION -> try {
                 if (Permissions.isManageExternalStorage()) {
@@ -56,6 +49,30 @@ class PermissionActivity : AppCompatActivity() {
                 RequestPlugins.sRequestCallback?.onError(e)
                 finish()
             }
+            Request.TYPE_REQUEST_NOTIFICATIONS -> kotlin.runCatching {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    //这种方案适用于 API 26, 即8.0（含8.0）以上可以用
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, applicationInfo.uid)
+                    settingActivityResult.launch(intent)
+                } else {
+                    openSettingsActivity()
+                }
+            }
+        }
+    }
+
+    private fun openSettingsActivity() {
+        try {
+            val settingIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            settingIntent.data = Uri.fromParts("package", packageName, null)
+            settingActivityResult.launch(settingIntent)
+        } catch (e: Exception) {
+            toastOnUi(R.string.tip_cannot_jump_setting_page)
+            RequestPlugins.sRequestCallback?.onError(e)
+            finish()
         }
     }
 

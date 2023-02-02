@@ -73,39 +73,35 @@ internal class Request : OnRequestPermissionsResultCallback {
 
         val deniedPermissions = deniedPermissions
         val rationale = this.rationale
+        if (deniedPermissions == null) {
+            onPermissionsGranted()
+            return
+        }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            if (deniedPermissions == null) {
-                onPermissionsGranted()
-            } else {
-                if (rationale != null) {
-                    showSettingDialog(rationale) {
-                        onPermissionsDenied(deniedPermissions)
-                    }
-                } else {
+            if (rationale != null) {
+                showSettingDialog(rationale) {
                     onPermissionsDenied(deniedPermissions)
                 }
+            } else {
+                onPermissionsDenied(deniedPermissions)
             }
         } else {
-            if (deniedPermissions != null) {
-                if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        if (rationale != null) {
-                            showManageFileDialog(rationale) {
-                                onPermissionsDenied(deniedPermissions)
-                            }
-                        } else {
+            if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (rationale != null) {
+                        showManageFileDialog(rationale) {
                             onPermissionsDenied(deniedPermissions)
                         }
-                    }
-                } else if (deniedPermissions.size > 1) {
-                    source?.context?.startActivity<PermissionActivity> {
-                        putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
-                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
-                        putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                    } else {
+                        onPermissionsDenied(deniedPermissions)
                     }
                 }
-            } else {
-                onPermissionsGranted()
+            } else if (deniedPermissions.size > 1) {
+                source?.context?.startActivity<PermissionActivity> {
+                    putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
+                    putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+                    putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+                }
             }
         }
     }
@@ -248,5 +244,6 @@ internal class Request : OnRequestPermissionsResultCallback {
         const val TYPE_REQUEST_PERMISSION = 1
         const val TYPE_REQUEST_SETTING = 2
         const val TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION = 3
+        const val TYPE_REQUEST_NOTIFICATIONS = 4
     }
 }
