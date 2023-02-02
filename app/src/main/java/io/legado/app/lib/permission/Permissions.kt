@@ -5,6 +5,8 @@ import android.os.Build
 @Suppress("unused")
 object Permissions {
 
+    const val POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
+
     const val READ_CALENDAR = "android.permission.READ_CALENDAR"
     const val WRITE_CALENDAR = "android.permission.WRITE_CALENDAR"
 

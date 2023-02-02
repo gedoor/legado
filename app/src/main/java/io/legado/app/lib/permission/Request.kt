@@ -6,10 +6,12 @@ import android.os.Environment
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.legado.app.R
 import io.legado.app.utils.startActivity
+import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal class Request : OnRequestPermissionsResultCallback {
@@ -118,17 +120,27 @@ internal class Request : OnRequestPermissionsResultCallback {
         if (permissions != null) {
             val deniedPermissionList = ArrayList<String>()
             for (permission in permissions) {
-                if (permission == Permissions.MANAGE_EXTERNAL_STORAGE) {
-                    if (Permissions.isManageExternalStorage()) {
-                        if (!Environment.isExternalStorageManager()) {
+                when (permission) {
+                    Permissions.POST_NOTIFICATIONS -> {
+                        if (!NotificationManagerCompat.from(appCtx).areNotificationsEnabled()) {
                             deniedPermissionList.add(permission)
                         }
                     }
-                } else if (
-                    ContextCompat.checkSelfPermission(context, permission)
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
-                    deniedPermissionList.add(permission)
+                    Permissions.MANAGE_EXTERNAL_STORAGE -> {
+                        if (Permissions.isManageExternalStorage()) {
+                            if (!Environment.isExternalStorageManager()) {
+                                deniedPermissionList.add(permission)
+                            }
+                        }
+                    }
+                    else -> {
+                        if (
+                            ContextCompat.checkSelfPermission(context, permission)
+                            != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            deniedPermissionList.add(permission)
+                        }
+                    }
                 }
             }
             val size = deniedPermissionList.size
