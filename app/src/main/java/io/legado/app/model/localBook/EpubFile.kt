@@ -204,7 +204,7 @@ class EpubFile(var book: Book) {
                 html = html.substringBefore(it)
             }
         }
-        if (html == originHtml) {
+        if (html != originHtml) {
             doc = Jsoup.parse(html)
             body = doc.body()
         }
