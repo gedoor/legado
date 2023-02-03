@@ -198,6 +198,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    /**
+     * 检测通知权限
+     */
     private suspend fun checkNotificationPermission() = suspendCoroutine { block ->
         PermissionsCompat.Builder(this)
             .addPermissions(Permissions.POST_NOTIFICATIONS)
@@ -217,13 +220,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     /**
      * 备份同步
      */
-    private suspend fun backupSync() = suspendCoroutine { block ->
+    private fun backupSync() {
         launch {
-            val lastBackupFile = withContext(IO) { AppWebDav.lastBackUp().getOrNull() }
-            if (lastBackupFile == null) {
-                block.resume(null)
-                return@launch
-            }
+            val lastBackupFile =
+                withContext(IO) { AppWebDav.lastBackUp().getOrNull() } ?: return@launch
             if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
                 LocalConfig.lastBackup = lastBackupFile.lastModify
                 alert("恢复", "webDav书源比本地新,是否恢复") {
@@ -231,12 +231,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     okButton {
                         viewModel.restoreWebDav(lastBackupFile.displayName)
                     }
-                    onDismiss {
-                        block.resume(null)
-                    }
                 }
-            } else {
-                block.resume(null)
             }
         }
     }
