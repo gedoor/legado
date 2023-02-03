@@ -74,7 +74,6 @@ class PermissionsCompat private constructor() {
 
         fun request(): PermissionsCompat {
             val compat = build()
-            compat.request = request
             compat.request()
             return compat
         }
