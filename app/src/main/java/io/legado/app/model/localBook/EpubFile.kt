@@ -190,16 +190,23 @@ class EpubFile(var book: Book) {
     }
 
     private fun getBody(res: Resource, startFragmentId: String?, endFragmentId: String?): Element {
-        val doc = Jsoup.parse(String(res.data, mCharset))
-        val body = doc.body()
+        val originHtml = String(res.data, mCharset)
+        var html = originHtml
+        var doc = Jsoup.parse(html)
+        var body = doc.body()
         if (!startFragmentId.isNullOrBlank()) {
-            body.getElementById(startFragmentId)?.previousElementSiblings()?.remove()
+            body.getElementById(startFragmentId)?.outerHtml()?.let {
+                html = html.substringAfter(it)
+            }
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
-            body.getElementById(endFragmentId)?.run {
-                nextElementSiblings().remove()
-                remove()
+            body.getElementById(endFragmentId)?.outerHtml()?.let {
+                html = html.substringBefore(it)
             }
+        }
+        if (html != originHtml) {
+            doc = Jsoup.parse(html)
+            body = doc.body()
         }
         /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
         val tag = Book.hTag
