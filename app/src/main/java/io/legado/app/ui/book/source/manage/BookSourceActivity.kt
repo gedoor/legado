@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
@@ -286,7 +285,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun showHelp() {
         val text = String(assets.open("help/SourceMBookHelp.md").readBytes())
-        showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
+        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 
     private fun sortCheck(sort: Sort) {

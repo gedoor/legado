@@ -98,7 +98,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 } else {
                     tv.setOnClickListener {
                         if (kind.title.startsWith("ERROR:")) {
-                            it.activity?.showDialogFragment(TextDialog(kind.url))
+                            it.activity?.showDialogFragment(TextDialog("ERROR", kind.url))
                         } else {
                             callBack.openExplore(sourceUrl, kind.title, kind.url)
                         }

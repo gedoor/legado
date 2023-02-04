@@ -49,8 +49,8 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_list_src -> showDialogFragment(TextDialog(viewModel.listSrc))
-            R.id.menu_content_src -> showDialogFragment(TextDialog(viewModel.contentSrc))
+            R.id.menu_list_src -> showDialogFragment(TextDialog("Html", viewModel.listSrc))
+            R.id.menu_content_src -> showDialogFragment(TextDialog("Html", viewModel.contentSrc))
         }
         return super.onCompatOptionsItemSelected(item)
     }

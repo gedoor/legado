@@ -179,10 +179,10 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_scan -> qrCodeResult.launch()
-            R.id.menu_search_src -> showDialogFragment(TextDialog(viewModel.searchSrc))
-            R.id.menu_book_src -> showDialogFragment(TextDialog(viewModel.bookSrc))
-            R.id.menu_toc_src -> showDialogFragment(TextDialog(viewModel.tocSrc))
-            R.id.menu_content_src -> showDialogFragment(TextDialog(viewModel.contentSrc))
+            R.id.menu_search_src -> showDialogFragment(TextDialog("html", viewModel.searchSrc))
+            R.id.menu_book_src -> showDialogFragment(TextDialog("html", viewModel.bookSrc))
+            R.id.menu_toc_src -> showDialogFragment(TextDialog("html", viewModel.tocSrc))
+            R.id.menu_content_src -> showDialogFragment(TextDialog("html", viewModel.contentSrc))
             R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)
@@ -190,7 +190,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
 
     private fun showHelp() {
         val text = String(assets.open("help/debugHelp.md").readBytes())
-        showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
+        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 
 }

@@ -53,7 +53,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
         when (item.itemId) {
             R.id.menu_help -> {
                 val text = String(requireContext().assets.open("help/appHelp.md").readBytes())
-                showDialogFragment(TextDialog(text, TextDialog.Mode.MD))
+                showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
             }
         }
     }

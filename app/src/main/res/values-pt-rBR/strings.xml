@@ -796,7 +796,7 @@
     <string name="no_book">Sem livros</string>
     <string name="keep_original_name">Manter o nome original</string>
     <string name="click_regional_config">O controle de toque da tela</string>
-    <string name="colse">Fechar</string>
+    <string name="close">Fechar</string>
     <string name="next_page">Próxima página</string>
     <string name="prev_page">Página anterior</string>
     <string name="non_action">Nenhuma Ação</string>

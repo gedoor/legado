@@ -79,7 +79,7 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             binding.root.onClick {
                 getItem(holder.layoutPosition)?.let { item ->
                     item.third?.let {
-                        showDialogFragment(TextDialog(it.stackTraceToString()))
+                        showDialogFragment(TextDialog("Log", it.stackTraceToString()))
                     }
                 }
             }

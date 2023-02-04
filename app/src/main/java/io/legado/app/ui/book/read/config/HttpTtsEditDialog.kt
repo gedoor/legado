@@ -134,7 +134,7 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
         val helpStr = String(
             requireContext().assets.open("help/httpTTSHelp.md").readBytes()
         )
-        showDialogFragment(TextDialog(helpStr, TextDialog.Mode.MD))
+        showDialogFragment(TextDialog(getString(R.string.help), helpStr, TextDialog.Mode.MD))
     }
 
 }

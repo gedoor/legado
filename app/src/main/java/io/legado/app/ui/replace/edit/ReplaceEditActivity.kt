@@ -155,7 +155,7 @@ class ReplaceEditActivity :
     private fun showHelp(fileName: String) {
         //显示目录help下的帮助文档
         val mdText = String(assets.open("help/${fileName}.md").readBytes())
-        showDialogFragment(TextDialog(mdText, TextDialog.Mode.MD))
+        showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
     }
 
 }

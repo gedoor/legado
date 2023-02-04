@@ -5,13 +5,24 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="?attr/actionBarStyle"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <io.legado.app.ui.widget.text.ScrollTextView
         android:id="@+id/text_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:padding="12dp"
         android:textColor="@color/secondaryText"
-        android:textIsSelectable="true" />
+        android:textIsSelectable="true"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <io.legado.app.ui.widget.text.BadgeView
         android:id="@+id/badge_view"

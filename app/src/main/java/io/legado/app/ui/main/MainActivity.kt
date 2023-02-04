@@ -181,14 +181,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         viewModel.upVersion()
         if (LocalConfig.isFirstOpenApp) {
             val help = String(assets.open("help/appHelp.md").readBytes())
-            val dialog = TextDialog(help, TextDialog.Mode.MD)
+            val dialog = TextDialog(getString(R.string.help), help, TextDialog.Mode.MD)
             dialog.setOnDismissListener {
                 block.resume(Unit)
             }
             showDialogFragment(dialog)
         } else if (!BuildConfig.DEBUG) {
             val log = String(assets.open("updateLog.md").readBytes())
-            val dialog = TextDialog(log, TextDialog.Mode.MD)
+            val dialog = TextDialog(getString(R.string.update_log), log, TextDialog.Mode.MD)
             dialog.setOnDismissListener {
                 block.resume(Unit)
             }
