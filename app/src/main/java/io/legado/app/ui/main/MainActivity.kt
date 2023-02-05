@@ -204,7 +204,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private suspend fun checkNotificationPermission() = suspendCoroutine { block ->
         PermissionsCompat.Builder(this)
             .addPermissions(Permissions.POST_NOTIFICATIONS)
-            .rationale("阅读需要发送通知来显示朗读控制和下载进度")
+            .rationale(R.string.notification_permission_rationale)
             .onDenied {
                 block.resume(null)
             }
@@ -226,7 +226,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 withContext(IO) { AppWebDav.lastBackUp().getOrNull() } ?: return@launch
             if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
                 LocalConfig.lastBackup = lastBackupFile.lastModify
-                alert("恢复", "webDav书源比本地新,是否恢复") {
+                alert(R.string.restore, R.string.webdav_after_local_restore_confirm) {
                     cancelButton()
                     okButton {
                         viewModel.restoreWebDav(lastBackupFile.displayName)
