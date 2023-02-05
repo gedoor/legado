@@ -311,6 +311,7 @@ class EpubFile(var book: Book) {
     ) {
         val contents = epubBook?.contents
         if (epubBook == null || contents == null || refs == null) return
+        val firstRef = refs.firstOrNull { it.resource != null } ?: return
         var i = 0
         durIndex = 0
         while (i < contents.size) {
@@ -321,7 +322,7 @@ class EpubFile(var book: Book) {
              * completeHref可能有fragment(#id) 必须去除
              * fix https://github.com/gedoor/legado/issues/1932
              */
-            if (refs[0].completeHref.substringBeforeLast("#") == content.href) break
+            if (firstRef.completeHref.substringBeforeLast("#") == content.href) break
             val chapter = BookChapter()
             var title = content.title
             if (TextUtils.isEmpty(title)) {
