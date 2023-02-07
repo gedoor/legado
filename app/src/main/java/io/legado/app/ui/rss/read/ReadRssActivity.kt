@@ -329,8 +329,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
 
         /**
-         * 如果有黑名单,黑名单匹配返回空白
-         * 没有黑名单再判断白名单,在白名单中的才通过
+         * 如果有黑名单,黑名单匹配返回空白,
+         * 没有黑名单再判断白名单,在白名单中的才通过,
          * 都没有不做处理
          */
         override fun shouldInterceptRequest(
