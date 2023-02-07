@@ -28,6 +28,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
+import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 
 /**
@@ -317,20 +318,47 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
         override fun shouldOverrideUrlLoading(
             view: WebView,
-            request: WebResourceRequest?
+            request: WebResourceRequest
         ): Boolean {
-            request?.let {
-                return shouldOverrideUrlLoading(it.url)
-            }
-            return true
+            return shouldOverrideUrlLoading(request.url)
         }
 
         @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "KotlinRedundantDiagnosticSuppress")
-        override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean {
-            url?.let {
-                return shouldOverrideUrlLoading(Uri.parse(it))
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            return shouldOverrideUrlLoading(Uri.parse(url))
+        }
+
+        /**
+         * 如果有黑名单,黑名单匹配返回空白
+         * 没有黑名单再判断白名单,在白名单中的才通过
+         * 都没有不做处理
+         */
+        override fun shouldInterceptRequest(
+            view: WebView,
+            request: WebResourceRequest
+        ): WebResourceResponse? {
+            val url = request.url.toString()
+            viewModel.rssSource?.let {source ->
+                val blacklist = source.contentBlacklist?.splitNotBlank(",")
+                if (!blacklist.isNullOrEmpty()) {
+                    blacklist.forEach {
+                        if (url.matches(it.toRegex())) {
+                            return createEmptyResource()
+                        }
+                    }
+                } else {
+                    val whitelist = source.contentWhitelist?.splitNotBlank(",")
+                    if (!whitelist.isNullOrEmpty()) {
+                        whitelist.forEach {
+                            if (url.matches(it.toRegex())) {
+                                return super.shouldInterceptRequest(view, request)
+                            }
+                        }
+                        return createEmptyResource()
+                    }
+                }
             }
-            return true
+            return super.shouldInterceptRequest(view, request)
         }
 
         override fun onPageFinished(view: WebView, url: String?) {
@@ -347,6 +375,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     view.evaluateJavascript(it, null)
                 }
             }
+        }
+
+        private fun createEmptyResource(): WebResourceResponse {
+            return WebResourceResponse(
+                "text/plain",
+                "utf-8",
+                ByteArrayInputStream("".toByteArray())
+            )
         }
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
