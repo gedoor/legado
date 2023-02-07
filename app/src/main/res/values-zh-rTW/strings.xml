@@ -1067,6 +1067,6 @@
     <string name="update_book_fail">更新失败</string>
     <string name="notification_permission_rationale">阅读需要发送通知来显示朗读控制和下载进度</string>
     <string name="webdav_after_local_restore_confirm">webDav书源比本地新,是否恢复</string>
-    <string name="content_whitelist">白名单(contentWhitelist)</string>
-    <string name="content_blacklist">黑名单(contentBlacklist)</string>
+    <string name="c_whitelist">白名单(contentWhitelist)</string>
+    <string name="c_blacklist">黑名单(contentBlacklist)</string>
 </resources>

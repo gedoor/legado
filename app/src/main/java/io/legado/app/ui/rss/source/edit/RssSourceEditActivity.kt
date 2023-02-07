@@ -152,53 +152,41 @@ class RssSourceEditActivity :
         binding.recyclerView.adapter = adapter
     }
 
-    private fun upSourceView(source: RssSource? = viewModel.rssSource) {
-        source?.let {
-            binding.cbIsEnable.isChecked = source.enabled
-            binding.cbSingleUrl.isChecked = source.singleUrl
-            binding.cbIsEnableCookie.isChecked = source.enabledCookieJar == true
-            binding.cbEnableJs.isChecked = source.enableJs
-            binding.cbEnableBaseUrl.isChecked = source.loadWithBaseUrl
+    private fun upSourceView(rs: RssSource? = viewModel.rssSource) {
+        rs?.let {
+            binding.cbIsEnable.isChecked = rs.enabled
+            binding.cbSingleUrl.isChecked = rs.singleUrl
+            binding.cbIsEnableCookie.isChecked = rs.enabledCookieJar == true
+            binding.cbEnableJs.isChecked = rs.enableJs
+            binding.cbEnableBaseUrl.isChecked = rs.loadWithBaseUrl
         }
         sourceEntities.clear()
         sourceEntities.apply {
-            add(EditEntity("sourceName", source?.sourceName, R.string.source_name))
-            add(EditEntity("sourceUrl", source?.sourceUrl, R.string.source_url))
-            add(EditEntity("sourceIcon", source?.sourceIcon, R.string.source_icon))
-            add(EditEntity("sourceGroup", source?.sourceGroup, R.string.source_group))
-            add(EditEntity("sourceComment", source?.sourceComment, R.string.comment))
-            add(EditEntity("loginUrl", source?.loginUrl, R.string.login_url))
-            add(EditEntity("loginUi", source?.loginUi, R.string.login_ui))
-            add(EditEntity("loginCheckJs", source?.loginCheckJs, R.string.login_check_js))
-            add(EditEntity("coverDecodeJs", source?.coverDecodeJs, R.string.cover_decode_js))
-            add(EditEntity("header", source?.header, R.string.source_http_header))
-            add(EditEntity("variableComment", source?.variableComment, R.string.variable_comment))
-            add(EditEntity("concurrentRate", source?.concurrentRate, R.string.concurrent_rate))
-            add(EditEntity("sortUrl", source?.sortUrl, R.string.sort_url))
-            add(EditEntity("ruleArticles", source?.ruleArticles, R.string.r_articles))
-            add(EditEntity("ruleNextPage", source?.ruleNextPage, R.string.r_next))
-            add(EditEntity("ruleTitle", source?.ruleTitle, R.string.r_title))
-            add(EditEntity("rulePubDate", source?.rulePubDate, R.string.r_date))
-            add(EditEntity("ruleDescription", source?.ruleDescription, R.string.r_description))
-            add(EditEntity("ruleImage", source?.ruleImage, R.string.r_image))
-            add(EditEntity("ruleLink", source?.ruleLink, R.string.r_link))
-            add(EditEntity("ruleContent", source?.ruleContent, R.string.r_content))
-            add(EditEntity("style", source?.style, R.string.r_style))
-            add(EditEntity("injectJs", source?.injectJs, R.string.r_inject_js))
-            add(
-                EditEntity(
-                    "contentWhitelist",
-                    source?.contentWhitelist,
-                    R.string.content_whitelist
-                )
-            )
-            add(
-                EditEntity(
-                    "contentBlacklist",
-                    source?.contentBlacklist,
-                    R.string.content_blacklist
-                )
-            )
+            add(EditEntity("sourceName", rs?.sourceName, R.string.source_name))
+            add(EditEntity("sourceUrl", rs?.sourceUrl, R.string.source_url))
+            add(EditEntity("sourceIcon", rs?.sourceIcon, R.string.source_icon))
+            add(EditEntity("sourceGroup", rs?.sourceGroup, R.string.source_group))
+            add(EditEntity("sourceComment", rs?.sourceComment, R.string.comment))
+            add(EditEntity("loginUrl", rs?.loginUrl, R.string.login_url))
+            add(EditEntity("loginUi", rs?.loginUi, R.string.login_ui))
+            add(EditEntity("loginCheckJs", rs?.loginCheckJs, R.string.login_check_js))
+            add(EditEntity("coverDecodeJs", rs?.coverDecodeJs, R.string.cover_decode_js))
+            add(EditEntity("header", rs?.header, R.string.source_http_header))
+            add(EditEntity("variableComment", rs?.variableComment, R.string.variable_comment))
+            add(EditEntity("concurrentRate", rs?.concurrentRate, R.string.concurrent_rate))
+            add(EditEntity("sortUrl", rs?.sortUrl, R.string.sort_url))
+            add(EditEntity("ruleArticles", rs?.ruleArticles, R.string.r_articles))
+            add(EditEntity("ruleNextPage", rs?.ruleNextPage, R.string.r_next))
+            add(EditEntity("ruleTitle", rs?.ruleTitle, R.string.r_title))
+            add(EditEntity("rulePubDate", rs?.rulePubDate, R.string.r_date))
+            add(EditEntity("ruleDescription", rs?.ruleDescription, R.string.r_description))
+            add(EditEntity("ruleImage", rs?.ruleImage, R.string.r_image))
+            add(EditEntity("ruleLink", rs?.ruleLink, R.string.r_link))
+            add(EditEntity("ruleContent", rs?.ruleContent, R.string.r_content))
+            add(EditEntity("style", rs?.style, R.string.r_style))
+            add(EditEntity("injectJs", rs?.injectJs, R.string.r_inject_js))
+            add(EditEntity("contentWhitelist", rs?.contentWhitelist, R.string.c_whitelist))
+            add(EditEntity("contentBlacklist", rs?.contentBlacklist, R.string.c_blacklist))
         }
         adapter.editEntities = sourceEntities
     }
