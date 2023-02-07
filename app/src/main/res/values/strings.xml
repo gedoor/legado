@@ -1068,4 +1068,6 @@
     <string name="update_book_fail">Update failed</string>
     <string name="notification_permission_rationale">Reading requires sending notifications to show reading control and download progress</string>
     <string name="webdav_after_local_restore_confirm">The webDav book source is newer than the local one, whether to restore it or not</string>
+    <string name="content_whitelist">白名单(contentWhitelist)</string>
+    <string name="content_blacklist">黑名单(contentBlacklist)</string>
 </resources>

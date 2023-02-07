@@ -185,6 +185,20 @@ class RssSourceEditActivity :
             add(EditEntity("ruleContent", source?.ruleContent, R.string.r_content))
             add(EditEntity("style", source?.style, R.string.r_style))
             add(EditEntity("injectJs", source?.injectJs, R.string.r_inject_js))
+            add(
+                EditEntity(
+                    "contentWhitelist",
+                    source?.contentWhitelist,
+                    R.string.content_whitelist
+                )
+            )
+            add(
+                EditEntity(
+                    "contentBlacklist",
+                    source?.contentBlacklist,
+                    R.string.content_blacklist
+                )
+            )
         }
         adapter.editEntities = sourceEntities
     }
@@ -228,6 +242,8 @@ class RssSourceEditActivity :
                     viewModel.ruleComplete(it.value, source.ruleArticles)
                 "style" -> source.style = it.value
                 "injectJs" -> source.injectJs = it.value
+                "contentWhitelist" -> source.contentWhitelist = it.value
+                "contentBlacklist" -> source.contentBlacklist = it.value
             }
         }
         return source
