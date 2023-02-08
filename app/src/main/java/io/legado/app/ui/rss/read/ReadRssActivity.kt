@@ -342,7 +342,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 val blacklist = source.contentBlacklist?.splitNotBlank(",")
                 if (!blacklist.isNullOrEmpty()) {
                     blacklist.forEach {
-                        if (url.matches(it.toRegex())) {
+                        if (url.startsWith(it) || url.matches(it.toRegex())) {
                             return createEmptyResource()
                         }
                     }
@@ -350,7 +350,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     val whitelist = source.contentWhitelist?.splitNotBlank(",")
                     if (!whitelist.isNullOrEmpty()) {
                         whitelist.forEach {
-                            if (url.matches(it.toRegex())) {
+                            if (url.startsWith(it) || url.matches(it.toRegex())) {
                                 return super.shouldInterceptRequest(view, request)
                             }
                         }
