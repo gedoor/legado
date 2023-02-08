@@ -96,9 +96,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 binding.webView.reload()
             }
             R.id.menu_rss_star -> viewModel.favorite()
-            R.id.menu_share_it -> viewModel.rssArticle?.let {
-                share(it.link)
-            } ?: toastOnUi(R.string.null_url)
+            R.id.menu_share_it -> {
+                binding.webView.url?.let {
+                    share(it)
+                } ?: viewModel.rssArticle?.let {
+                    share(it.link)
+                } ?: toastOnUi(R.string.null_url)
+            }
             R.id.menu_aloud -> readAloud()
             R.id.menu_login -> startActivity<SourceLoginActivity> {
                 putExtra("type", "rssSource")
@@ -338,7 +342,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             request: WebResourceRequest
         ): WebResourceResponse? {
             val url = request.url.toString()
-            viewModel.rssSource?.let {source ->
+            viewModel.rssSource?.let { source ->
                 val blacklist = source.contentBlacklist?.splitNotBlank(",")
                 if (!blacklist.isNullOrEmpty()) {
                     blacklist.forEach {
