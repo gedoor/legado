@@ -23,6 +23,7 @@ class BodyUploadProvider(private val body: RequestBody) : UploadDataProvider(), 
     private fun fillBuffer() {
         try {
             buffer.clear()
+            filled = true
             body.writeTo(buffer)
             buffer.flush()
         } catch (e: IOException) {
