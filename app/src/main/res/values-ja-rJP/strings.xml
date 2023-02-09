@@ -1070,4 +1070,6 @@
     <string name="webdav_after_local_restore_confirm">webDav书源比本地新,是否恢复</string>
     <string name="c_whitelist">白名单(contentWhitelist)</string>
     <string name="c_blacklist">黑名单(contentBlacklist)</string>
+    <string name="confirm">确认</string>
+    <string name="jump_to_another_app">跳转其它应用</string>
 </resources>

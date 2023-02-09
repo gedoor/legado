@@ -401,7 +401,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     return true
                 }
                 else -> {
-                    binding.root.longSnackbar("跳转其它应用", "确认") {
+                    binding.root.longSnackbar(R.string.jump_to_another_app, R.string.confirm) {
                         openUrl(url)
                     }
                     return true
