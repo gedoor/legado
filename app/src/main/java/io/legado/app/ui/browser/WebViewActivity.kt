@@ -132,6 +132,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             viewModel.saveImage(webPic, path)
         }
     }
+
     private fun selectSaveFolder() {
         val default = arrayListOf<SelectItem<Int>>()
         val path = ACache.get().getAsString(imagePathKey)
@@ -229,11 +230,10 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 } else {
                     binding.titleBar.title = intent.getStringExtra("title")
                 }
-                if (title == "Just a moment...") {
-                    isCloudflareChallenge = true
-                }
-                if (isCloudflareChallenge && title != "Just a moment...") {
-                    if (viewModel.sourceVerificationEnable) {
+                view.evaluateJavascript("!!window._cf_chl_opt") {
+                    if (it == "true") {
+                        isCloudflareChallenge = true
+                    } else if (isCloudflareChallenge && viewModel.sourceVerificationEnable) {
                         viewModel.saveVerificationResult(intent) {
                             finish()
                         }
