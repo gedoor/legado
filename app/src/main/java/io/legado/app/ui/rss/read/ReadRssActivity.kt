@@ -391,7 +391,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
             when (url.scheme) {
-                "http", "https" -> {
+                "http", "https", "jsbridge" -> {
                     return false
                 }
                 "legado", "yuedu" -> {
