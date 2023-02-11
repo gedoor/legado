@@ -123,6 +123,7 @@ object PreferKey {
     const val audioPlayWakeLock = "audioPlayWakeLock"
     const val readAloudWakeLock = "readAloudWakeLock"
     const val showLastUpdateTime = "showLastUpdateTime"
+    const val clearWebViewData = "clearWebViewData"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

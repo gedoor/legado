@@ -146,6 +146,12 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="clearWebViewData"
+            android:summary="@string/clear_webview_data_summary"
+            android:title="@string/clear_webview_data"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="threadCount"
             android:title="@string/threads_num_title"
             app:iconSpaceReserved="false" />

@@ -2,6 +2,7 @@ package io.legado.app.ui.config
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -131,6 +132,7 @@ class OtherConfigFragment : PreferenceFragment(),
                         AppConfig.sourceEditMaxLine = it
                     }
             }
+            PreferKey.clearWebViewData -> clearWebViewData()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -225,6 +227,15 @@ class OtherConfigFragment : PreferenceFragment(),
         ) {
             okButton {
                 viewModel.clearCache()
+            }
+            noButton()
+        }
+    }
+
+    private fun clearWebViewData() {
+        alert(R.string.clear_webview_data, R.string.sure_del) {
+            okButton {
+                viewModel.clearWebViewData()
             }
             noButton()
         }
