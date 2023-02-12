@@ -147,9 +147,28 @@ class BookSourceEditActivity :
     }
 
     private fun initView() {
-        if (!BuildConfig.DEBUG) {
-            binding.cbIsEnableReview.gone()
-            binding.tabLayout.removeTabAt(6)
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_base)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_search)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_find)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_info)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_toc)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_content)
+        })
+        if (BuildConfig.DEBUG) {
+            binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+                setText(R.string.review)
+            })
         }
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
