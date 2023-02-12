@@ -1057,8 +1057,8 @@
     <string name="audio_play_wake_lock">Audio service wake-up lock</string>
     <string name="audio_play_wake_lock_summary">The wake-up lock is enabled when playing audio, and some phones will be killed when the wake-up lock is turned on.</string>
     <string name="change_search_scope">Toggle search scope</string>
-    <string name="copy_rule">Copy Rul</string>
-    <string name="paste_rule">Paste Rul</string>
+    <string name="copy_rule">Copy Rule</string>
+    <string name="paste_rule">Paste Rule</string>
     <string name="groups_or_source">Multi-group / book source</string>
     <string name="replace_state_change">Replace (enable / disable)</string>
     <string name="show_last_update_time">Show last updated time</string>
@@ -1072,4 +1072,6 @@
     <string name="c_blacklist">黑名单(contentBlacklist)</string>
     <string name="confirm">Confirm</string>
     <string name="jump_to_another_app">Jump to another app</string>
+    <string name="clear_webview_data">清除 WebView 数据</string>
+    <string name="clear_webview_data_summary">清除内置浏览器所有数据</string>
 </resources>
