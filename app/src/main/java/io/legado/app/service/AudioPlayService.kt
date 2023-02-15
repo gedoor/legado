@@ -93,7 +93,6 @@ class AudioPlayService : BaseService(),
     override fun onCreate() {
         super.onCreate()
         isRun = true
-        upNotification()
         exoPlayer.addListener(this)
         initMediaSession()
         initBroadcastReceiver()

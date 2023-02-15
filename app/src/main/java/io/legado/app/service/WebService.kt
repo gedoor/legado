@@ -49,7 +49,7 @@ class WebService : BaseService() {
     }
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
-    private var notificationContent = ""
+    private var notificationContent = appCtx.getString(R.string.service_starting)
     private val networkChangedListener by lazy {
         NetworkChangedListener(this)
     }
@@ -58,8 +58,6 @@ class WebService : BaseService() {
         super.onCreate()
         if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         isRun = true
-        notificationContent = getString(R.string.service_starting)
-        upNotification()
         upTile(true)
         networkChangedListener.register()
         networkChangedListener.onNetworkChanged = {

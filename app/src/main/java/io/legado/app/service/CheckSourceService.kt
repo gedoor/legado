@@ -31,6 +31,7 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import org.mozilla.javascript.WrappedException
+import splitties.init.appCtx
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -44,7 +45,7 @@ class CheckSourceService : BaseService() {
     private val allIds = ArrayList<String>()
     private val checkedIds = ArrayList<String>()
     private var processIndex = 0
-    private var notificationMsg = ""
+    private var notificationMsg = appCtx.getString(R.string.service_starting)
 
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
@@ -60,12 +61,6 @@ class CheckSourceService : BaseService() {
                 servicePendingIntent<CheckSourceService>(IntentAction.stop)
             )
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        notificationMsg = getString(R.string.start)
-        upNotification()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

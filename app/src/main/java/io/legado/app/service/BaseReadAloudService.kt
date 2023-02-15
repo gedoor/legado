@@ -94,7 +94,6 @@ abstract class BaseReadAloudService : BaseService(),
         observeLiveBus()
         initMediaSession()
         initBroadcastReceiver()
-        upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         setTimer(AppConfig.ttsTimer)
         if (AppConfig.ttsTimer > 0) {

@@ -41,7 +41,6 @@ class DownloadService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
-        upSummaryNotification()
         registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
@@ -198,10 +197,7 @@ class DownloadService : BaseService() {
         }
     }
 
-    /**
-     * 更新下载进度条
-     */
-    private fun upSummaryNotification() {
+    override fun upNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setSubText(getString(R.string.action_download))

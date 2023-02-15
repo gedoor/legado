@@ -25,6 +25,7 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         LifecycleHelp.onServiceCreate(this)
+        upNotification()
         checkNotificationPermission()
     }
 

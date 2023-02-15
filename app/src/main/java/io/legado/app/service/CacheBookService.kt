@@ -33,7 +33,7 @@ class CacheBookService : BaseService() {
     private var cachePool =
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     private var downloadJob: Job? = null
-
+    private var notificationContent = appCtx.getString(R.string.service_starting)
     private val notificationBuilder by lazy {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
@@ -51,11 +51,11 @@ class CacheBookService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         isRun = true
-        upNotification(getString(R.string.starting_download))
         launch {
             while (isActive) {
                 delay(1000)
-                upNotification(CacheBook.downloadSummary)
+                notificationContent = CacheBook.downloadSummary
+                upNotification()
                 postEvent(EventBus.UP_DOWNLOAD, "")
             }
         }
@@ -105,7 +105,8 @@ class CacheBookService : BaseService() {
                 end
             }
             cacheBook.addDownload(start, end2)
-            upNotification(CacheBook.downloadSummary)
+            notificationContent = CacheBook.downloadSummary
+            upNotification()
             if (downloadJob == null) {
                 download()
             }
@@ -149,7 +150,7 @@ class CacheBookService : BaseService() {
     /**
      * 更新通知
      */
-    private fun upNotification(notificationContent: String) {
+    override fun upNotification() {
         notificationBuilder.setContentText(notificationContent)
         val notification = notificationBuilder.build()
         startForeground(AppConst.notificationIdCache, notification)
