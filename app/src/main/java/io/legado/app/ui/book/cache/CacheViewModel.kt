@@ -354,12 +354,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun setAssets(doc: DocumentFile, book: Book, epubBook: EpubBook): String {
-        if (!(AppConst.isPlayChannel || appCtx.packageName.contains(
-                "debug",
-                true
-            ))
-        ) return setAssets(book, epubBook)
-
         var contentModel = ""
         DocumentUtils.getDirDocument(doc, "Asset").let { customPath ->
             if (customPath == null) {//使用内置模板
