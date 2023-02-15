@@ -205,6 +205,7 @@ class RssSourceEditActivity :
             add(EditEntity("sourceIcon", rs?.sourceIcon, R.string.source_icon))
             add(EditEntity("sourceGroup", rs?.sourceGroup, R.string.source_group))
             add(EditEntity("sourceComment", rs?.sourceComment, R.string.comment))
+            add(EditEntity("sortUrl", rs?.sortUrl, R.string.sort_url))
             add(EditEntity("loginUrl", rs?.loginUrl, R.string.login_url))
             add(EditEntity("loginUi", rs?.loginUi, R.string.login_ui))
             add(EditEntity("loginCheckJs", rs?.loginCheckJs, R.string.login_check_js))
@@ -212,7 +213,6 @@ class RssSourceEditActivity :
             add(EditEntity("header", rs?.header, R.string.source_http_header))
             add(EditEntity("variableComment", rs?.variableComment, R.string.variable_comment))
             add(EditEntity("concurrentRate", rs?.concurrentRate, R.string.concurrent_rate))
-            add(EditEntity("sortUrl", rs?.sortUrl, R.string.sort_url))
         }
         listEntities.clear()
         listEntities.apply {
