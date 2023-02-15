@@ -144,7 +144,7 @@ class WebService : BaseService() {
     /**
      * 更新通知
      */
-    private fun upNotification() {
+    override fun upNotification() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdWeb)
             .setSmallIcon(R.drawable.ic_web_service_noti)
             .setOngoing(true)

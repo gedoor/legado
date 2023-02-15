@@ -295,7 +295,7 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     private fun backupUsePermission(path: String) {
-        PermissionsCompat.Builder(this)
+        PermissionsCompat.Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
@@ -366,7 +366,7 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     private fun restoreUsePermission(path: String) {
-        PermissionsCompat.Builder(this)
+        PermissionsCompat.Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {

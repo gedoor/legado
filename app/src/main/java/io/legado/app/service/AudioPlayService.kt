@@ -495,7 +495,7 @@ class AudioPlayService : BaseService(),
     /**
      * 更新通知
      */
-    private fun upNotification() {
+    override fun upNotification() {
         execute {
             var nTitle: String = when {
                 pause -> getString(R.string.audio_pause)

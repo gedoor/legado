@@ -182,7 +182,7 @@ class HandleFileActivity :
     }
 
     private fun checkPermissions(success: (() -> Unit)? = null) {
-        PermissionsCompat.Builder(this)
+        PermissionsCompat.Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {

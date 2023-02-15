@@ -109,7 +109,7 @@ class FileAssociationActivity :
             if (data.isContentScheme()) {
                 viewModel.dispatchIndent(data)
             } else if (!AppConst.isPlayChannel || Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                PermissionsCompat.Builder(this)
+                PermissionsCompat.Builder()
                     .addPermissions(*Permissions.Group.STORAGE)
                     .rationale(R.string.tip_perm_request_storage)
                     .onGranted {

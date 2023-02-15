@@ -260,7 +260,7 @@ class CheckSourceService : BaseService() {
     /**
      * 更新通知
      */
-    private fun upNotification() {
+    override fun upNotification() {
         notificationBuilder.setContentText(notificationMsg)
         notificationBuilder.setProgress(allIds.size, checkedIds.size, false)
         postEvent(EventBus.CHECK_SOURCE, notificationMsg)

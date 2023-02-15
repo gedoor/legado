@@ -127,7 +127,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     }
 
     private fun loadFontFilesByPermission(path: String) {
-        PermissionsCompat.Builder(this@FontSelectDialog)
+        PermissionsCompat.Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {

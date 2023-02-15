@@ -41,7 +41,7 @@ fun AppCompatActivity.readUri(
                 success.invoke(fileDoc, inputStream)
             }
         } else {
-            PermissionsCompat.Builder(this)
+            PermissionsCompat.Builder()
                 .addPermissions(
                     Permissions.READ_EXTERNAL_STORAGE,
                     Permissions.WRITE_EXTERNAL_STORAGE
@@ -81,7 +81,7 @@ fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputSt
                 success.invoke(fileDoc, inputStream)
             }
         } else {
-            PermissionsCompat.Builder(this)
+            PermissionsCompat.Builder()
                 .addPermissions(
                     Permissions.READ_EXTERNAL_STORAGE,
                     Permissions.WRITE_EXTERNAL_STORAGE

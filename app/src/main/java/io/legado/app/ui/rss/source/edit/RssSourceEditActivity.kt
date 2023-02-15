@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -14,6 +15,8 @@ import io.legado.app.databinding.ActivityRssSourceEditBinding
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
@@ -37,6 +40,8 @@ class RssSourceEditActivity :
     }
     private val adapter by lazy { RssSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
+    private val listEntities: ArrayList<EditEntity> = ArrayList()
+    private val webViewEntities: ArrayList<EditEntity> = ArrayList()
     private val selectDoc = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             if (uri.isContentScheme()) {
@@ -148,8 +153,41 @@ class RssSourceEditActivity :
     }
 
     private fun initView() {
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_base)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_list)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            text = "WEB_VIEW"
+        })
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.adapter = adapter
+        binding.tabLayout.setBackgroundColor(backgroundColor)
+        binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                setEditEntities(tab?.position)
+            }
+        })
+    }
+
+    private fun setEditEntities(tabPosition: Int?) {
+        when (tabPosition) {
+            1 -> adapter.editEntities = listEntities
+            2 -> adapter.editEntities = webViewEntities
+            else -> adapter.editEntities = sourceEntities
+        }
+        binding.recyclerView.scrollToPosition(0)
     }
 
     private fun upSourceView(rs: RssSource? = viewModel.rssSource) {
@@ -175,6 +213,9 @@ class RssSourceEditActivity :
             add(EditEntity("variableComment", rs?.variableComment, R.string.variable_comment))
             add(EditEntity("concurrentRate", rs?.concurrentRate, R.string.concurrent_rate))
             add(EditEntity("sortUrl", rs?.sortUrl, R.string.sort_url))
+        }
+        listEntities.clear()
+        listEntities.apply {
             add(EditEntity("ruleArticles", rs?.ruleArticles, R.string.r_articles))
             add(EditEntity("ruleNextPage", rs?.ruleNextPage, R.string.r_next))
             add(EditEntity("ruleTitle", rs?.ruleTitle, R.string.r_title))
@@ -182,13 +223,17 @@ class RssSourceEditActivity :
             add(EditEntity("ruleDescription", rs?.ruleDescription, R.string.r_description))
             add(EditEntity("ruleImage", rs?.ruleImage, R.string.r_image))
             add(EditEntity("ruleLink", rs?.ruleLink, R.string.r_link))
+        }
+        webViewEntities.clear()
+        webViewEntities.apply {
             add(EditEntity("ruleContent", rs?.ruleContent, R.string.r_content))
             add(EditEntity("style", rs?.style, R.string.r_style))
             add(EditEntity("injectJs", rs?.injectJs, R.string.r_inject_js))
             add(EditEntity("contentWhitelist", rs?.contentWhitelist, R.string.c_whitelist))
             add(EditEntity("contentBlacklist", rs?.contentBlacklist, R.string.c_blacklist))
         }
-        adapter.editEntities = sourceEntities
+        binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
+        setEditEntities(0)
     }
 
     private fun getRssSource(): RssSource {
@@ -213,6 +258,10 @@ class RssSourceEditActivity :
                 "variableComment" -> source.variableComment = it.value
                 "concurrentRate" -> source.concurrentRate = it.value
                 "sortUrl" -> source.sortUrl = it.value
+            }
+        }
+        listEntities.forEach {
+            when (it.key) {
                 "ruleArticles" -> source.ruleArticles = it.value
                 "ruleNextPage" -> source.ruleNextPage =
                     viewModel.ruleComplete(it.value, source.ruleArticles, 2)
@@ -226,6 +275,10 @@ class RssSourceEditActivity :
                     viewModel.ruleComplete(it.value, source.ruleArticles, 3)
                 "ruleLink" -> source.ruleLink =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
+            }
+        }
+        webViewEntities.forEach {
+            when (it.key) {
                 "ruleContent" -> source.ruleContent =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
                 "style" -> source.style = it.value

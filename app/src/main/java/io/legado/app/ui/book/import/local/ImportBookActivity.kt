@@ -189,7 +189,7 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
 
     private fun initRootPath(path: String) {
         binding.tvEmptyMsg.visible()
-        PermissionsCompat.Builder(this)
+        PermissionsCompat.Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {

@@ -4,8 +4,11 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LifecycleService
+import io.legado.app.R
 import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -22,6 +25,7 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         LifecycleHelp.onServiceCreate(this)
+        checkNotificationPermission()
     }
 
     @CallSuper
@@ -40,5 +44,25 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
         super.onDestroy()
         cancel()
         LifecycleHelp.onServiceDestroy(this)
+    }
+
+    /**
+     * 更新通知
+     */
+    open fun upNotification() {
+
+    }
+
+    /**
+     * 检测通知权限
+     */
+    private fun checkNotificationPermission()  {
+        PermissionsCompat.Builder()
+            .addPermissions(Permissions.POST_NOTIFICATIONS)
+            .rationale(R.string.notification_permission_rationale)
+            .onGranted {
+                upNotification()
+            }
+            .request()
     }
 }

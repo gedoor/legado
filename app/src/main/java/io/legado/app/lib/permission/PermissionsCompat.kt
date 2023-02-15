@@ -1,8 +1,6 @@
 package io.legado.app.lib.permission
 
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 
 @Suppress("unused")
 class PermissionsCompat private constructor() {
@@ -14,15 +12,7 @@ class PermissionsCompat private constructor() {
     }
 
     class Builder {
-        private val request: Request
-
-        constructor(activity: AppCompatActivity) {
-            request = Request(activity)
-        }
-
-        constructor(fragment: Fragment) {
-            request = Request(fragment)
-        }
+        private val request: Request = Request()
 
         fun addPermissions(vararg permissions: String): Builder {
             request.addPermissions(*permissions)

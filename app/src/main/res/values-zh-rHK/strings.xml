@@ -1071,4 +1071,5 @@
     <string name="jump_to_another_app">跳转其它应用</string>
     <string name="clear_webview_data">清除 WebView 数据</string>
     <string name="clear_webview_data_summary">清除内置浏览器所有数据</string>
+    <string name="source_tab_list">列表</string>
 </resources>

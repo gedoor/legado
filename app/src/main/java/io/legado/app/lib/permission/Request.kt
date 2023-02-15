@@ -4,48 +4,29 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import io.legado.app.R
 import io.legado.app.utils.startActivity
 import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal class Request : OnRequestPermissionsResultCallback {
 
-    internal val requestTime: Long
+    internal val requestTime: Long = System.currentTimeMillis()
     private var requestCode: Int = TYPE_REQUEST_PERMISSION
-    private var source: RequestSource? = null
-    private var permissions: ArrayList<String>? = null
+    private var permissions: ArrayList<String> = ArrayList()
     private var grantedCallback: OnPermissionsGrantedCallback? = null
     private var deniedCallback: OnPermissionsDeniedCallback? = null
     private var errorCallback: OnErrorCallback? = null
     private var rationale: CharSequence? = null
 
-    private var rationaleDialog: AlertDialog? = null
-
     private val deniedPermissions: Array<String>?
         get() {
-            return getDeniedPermissions(this.permissions?.toTypedArray())
+            return getDeniedPermissions(this.permissions.toTypedArray())
         }
 
-    constructor(activity: AppCompatActivity) {
-        source = ActivitySource(activity)
-        permissions = ArrayList()
-        requestTime = System.currentTimeMillis()
-    }
-
-    constructor(fragment: Fragment) {
-        source = FragmentSource(fragment)
-        permissions = ArrayList()
-        requestTime = System.currentTimeMillis()
-    }
-
     fun addPermissions(vararg permissions: String) {
-        this.permissions?.addAll(listOf(*permissions))
+        this.permissions.addAll(listOf(*permissions))
     }
 
     fun setOnGrantedCallback(callback: OnPermissionsGrantedCallback) {
@@ -61,7 +42,7 @@ internal class Request : OnRequestPermissionsResultCallback {
     }
 
     fun setRationale(@StringRes resId: Int) {
-        rationale = source?.context?.getString(resId)
+        rationale = appCtx.getString(resId)
     }
 
     fun setRationale(rationale: CharSequence) {
@@ -82,22 +63,16 @@ internal class Request : OnRequestPermissionsResultCallback {
             return
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            showSettingDialog(deniedPermissions, rationale) {
-                toSetting()
-            }
+            toSetting()
         } else {
             if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    showSettingDialog(deniedPermissions, rationale) {
-                        toManageFileSetting()
-                    }
+                    toManageFileSetting()
                 }
             } else if (deniedPermissions.contains(Permissions.POST_NOTIFICATIONS)) {
-                showSettingDialog(deniedPermissions, rationale) {
-                    toNotificationSetting()
-                }
+                toNotificationSetting()
             } else if (deniedPermissions.size > 1) {
-                source?.context?.startActivity<PermissionActivity> {
+                appCtx.startActivity<PermissionActivity> {
                     putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
                     putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
                     putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
@@ -111,90 +86,37 @@ internal class Request : OnRequestPermissionsResultCallback {
         deniedCallback = null
     }
 
-    fun getDeniedPermissions(permissions: Array<String>?): Array<String>? {
-        val context = source?.context ?: return permissions
-        if (permissions != null) {
-            val deniedPermissionList = ArrayList<String>()
-            for (permission in permissions) {
-                when (permission) {
-                    Permissions.POST_NOTIFICATIONS -> {
-                        if (!NotificationManagerCompat.from(appCtx).areNotificationsEnabled()) {
-                            deniedPermissionList.add(permission)
-                        }
+    fun getDeniedPermissions(permissions: Array<String>): Array<String>? {
+        val deniedPermissionList = ArrayList<String>()
+        for (permission in permissions) {
+            when (permission) {
+                Permissions.POST_NOTIFICATIONS -> {
+                    if (!NotificationManagerCompat.from(appCtx).areNotificationsEnabled()) {
+                        deniedPermissionList.add(permission)
                     }
-                    Permissions.MANAGE_EXTERNAL_STORAGE -> {
-                        if (Permissions.isManageExternalStorage()) {
-                            if (!Environment.isExternalStorageManager()) {
-                                deniedPermissionList.add(permission)
-                            }
-                        }
-                    }
-                    else -> {
-                        if (
-                            ContextCompat.checkSelfPermission(context, permission)
-                            != PackageManager.PERMISSION_GRANTED
-                        ) {
+                }
+                Permissions.MANAGE_EXTERNAL_STORAGE -> {
+                    if (Permissions.isManageExternalStorage()) {
+                        if (!Environment.isExternalStorageManager()) {
                             deniedPermissionList.add(permission)
                         }
                     }
                 }
+                else -> {
+                    if (
+                        ContextCompat.checkSelfPermission(appCtx, permission)
+                        != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        deniedPermissionList.add(permission)
+                    }
+                }
             }
-            val size = deniedPermissionList.size
-            if (size > 0) {
-                return deniedPermissionList.toTypedArray()
-            }
+        }
+        val size = deniedPermissionList.size
+        if (size > 0) {
+            return deniedPermissionList.toTypedArray()
         }
         return null
-    }
-
-    private fun showSettingDialog(
-        permissions: Array<String>,
-        rationale: CharSequence,
-        onOk: () -> Unit
-    ) {
-        rationaleDialog?.dismiss()
-        source?.context?.let {
-            runCatching {
-                rationaleDialog = AlertDialog.Builder(it)
-                    .setTitle(R.string.dialog_title)
-                    .setMessage(rationale)
-                    .setPositiveButton(R.string.dialog_setting) { _, _ ->
-                        onOk.invoke()
-                    }
-                    .setNegativeButton(R.string.dialog_cancel) { _, _ ->
-                        onPermissionsDenied(permissions)
-                    }
-                    .show()
-            }
-        }
-    }
-
-    private fun toSetting() {
-        source?.context?.startActivity<PermissionActivity> {
-            putExtra(
-                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
-                TYPE_REQUEST_SETTING
-            )
-        }
-    }
-
-    private fun toManageFileSetting() {
-        source?.context?.startActivity<PermissionActivity> {
-            putExtra(
-                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
-                TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION
-            )
-            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
-            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
-        }
-    }
-
-    private fun toNotificationSetting() {
-        source?.context?.startActivity<PermissionActivity> {
-            putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_NOTIFICATIONS)
-            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
-            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
-        }
     }
 
     private fun onPermissionsGranted() {
@@ -215,20 +137,40 @@ internal class Request : OnRequestPermissionsResultCallback {
         RequestPlugins.sResultCallback?.onPermissionsDenied(deniedPermissions)
     }
 
+    private fun toSetting() {
+        appCtx.startActivity<PermissionActivity> {
+            putExtra(
+                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
+                TYPE_REQUEST_SETTING
+            )
+        }
+    }
+
+    private fun toManageFileSetting() {
+        appCtx.startActivity<PermissionActivity> {
+            putExtra(PermissionActivity.KEY_RATIONALE, rationale)
+            putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_MANAGE_ALL_FILES_ACCESS)
+            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+        }
+    }
+
+    private fun toNotificationSetting() {
+        appCtx.startActivity<PermissionActivity> {
+            putExtra(PermissionActivity.KEY_RATIONALE, rationale)
+            putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_NOTIFICATIONS)
+            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+        }
+    }
+
     override fun onRequestPermissionsResult(
         permissions: Array<String>,
         grantResults: IntArray
     ) {
         val deniedPermissions = getDeniedPermissions(permissions)
         if (deniedPermissions != null) {
-            val rationale = this.rationale
-            if (rationale != null) {
-                showSettingDialog(deniedPermissions, rationale) {
-
-                }
-            } else {
-                onPermissionsDenied(deniedPermissions)
-            }
+            onPermissionsDenied(deniedPermissions)
         } else {
             onPermissionsGranted()
         }
@@ -251,7 +193,7 @@ internal class Request : OnRequestPermissionsResultCallback {
     companion object {
         const val TYPE_REQUEST_PERMISSION = 1
         const val TYPE_REQUEST_SETTING = 2
-        const val TYPE_MANAGE_ALL_FILES_ACCESS_PERMISSION = 3
+        const val TYPE_MANAGE_ALL_FILES_ACCESS = 3
         const val TYPE_REQUEST_NOTIFICATIONS = 4
     }
 }
