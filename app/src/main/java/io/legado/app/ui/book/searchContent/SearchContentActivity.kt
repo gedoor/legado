@@ -75,7 +75,6 @@ class SearchContentActivity :
         searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.search)
-        searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 startContentSearch(query.trim())
@@ -153,12 +152,12 @@ class SearchContentActivity :
             viewModel.lastQuery = query
             searchJob = launch {
                 kotlin.runCatching {
+                    binding.refreshProgressBar.isAutoLoading = true
+                    binding.fbStop.visible()
                     withContext(IO) {
                         appDb.bookChapterDao.getChapterList(viewModel.bookUrl)
                     }.forEach { bookChapter ->
                         ensureActive()
-                        binding.refreshProgressBar.isAutoLoading = true
-                        binding.fbStop.visible()
                         val searchResults = withContext(IO) {
                             if (isLocalBook || viewModel.cacheChapterNames.contains(bookChapter.getFileName())) {
                                 viewModel.searchChapter(query, bookChapter)
@@ -171,24 +170,19 @@ class SearchContentActivity :
                         ensureActive()
                         if (searchResults != null && searchResults.isNotEmpty()) {
                             viewModel.searchResultList.addAll(searchResults)
-                            binding.refreshProgressBar.isAutoLoading = false
                             adapter.addItems(searchResults)
                         }
                     }
-                    binding.refreshProgressBar.isAutoLoading = false
                     if (viewModel.searchResultCounts == 0) {
                         val noSearchResult =
                             SearchResult(resultText = getString(R.string.search_content_empty))
                         adapter.addItem(noSearchResult)
                     }
                 }.onFailure {
-                    binding.fbStop.invisible()
-                    binding.refreshProgressBar.isAutoLoading = false
                     AppLog.put("全文搜索出错\n${it.localizedMessage}", it)
-                }.onSuccess {
-                    binding.fbStop.invisible()
-                    binding.refreshProgressBar.isAutoLoading = false
                 }
+                binding.fbStop.invisible()
+                binding.refreshProgressBar.isAutoLoading = false
             }
         }
     }
