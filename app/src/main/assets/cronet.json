@@ -1,1 +1,7 @@
-{"arm64-v8a":"2b818ddff61241043109d2c8cc1eabbc","x86":"aa24a41e58b1baa42c4fe6879ba71a23","x86_64":"f5123aab5ad23856f617a45cbdcc88e3","armeabi-v7a":"d5fb5109dcf0c08edb3acb61d0763d05","version":"110.0.5481.65"}
+{
+  "arm64-v8a": "0f00768631fc7a17d0deb7d577b8d2de",
+  "armeabi-v7a": "59a30f60ed51921ad405da2a873afe72",
+  "x86": "c9f7f1a20dfaa40cfb019ccd7e1e79d3",
+  "x86_64": "deac8549b57a4acb3dcf648136aa0b6a",
+  "version": "111.0.5563.15"
+}
