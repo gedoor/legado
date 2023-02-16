@@ -39,7 +39,7 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
         val engine = builder.build()
         DebugLog.d("Cronet Version:", engine.versionString)
         return@lazy engine
-    } catch (e: UnsatisfiedLinkError) {
+    } catch (e: Throwable) {
         AppLog.put("初始化cronetEngine出错", e)
         return@lazy null
     }

@@ -71,8 +71,7 @@ val okHttpClient: OkHttpClient by lazy {
     if (!AppConst.isPlayChannel && AppConfig.isCronet) {
         if (Cronet.loader?.install() == true) {
             Cronet.interceptor?.let {
-                //崩溃
-                //builder.addInterceptor(it)
+                builder.addInterceptor(it)
             }
         }
     }
