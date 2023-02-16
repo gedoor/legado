@@ -51,6 +51,7 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
                 chain.proceed(original)
             }
         } catch (e: Exception) {
+            e.printOnDebug()
             return chain.proceed(original)
         }
     }
