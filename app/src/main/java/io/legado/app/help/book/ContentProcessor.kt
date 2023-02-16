@@ -25,6 +25,7 @@ class ContentProcessor private constructor(
 
     companion object {
         private val processors = hashMapOf<String, WeakReference<ContentProcessor>>()
+        var enableRemoveSameTitle = true
 
         fun get(bookName: String, bookOrigin: String): ContentProcessor {
             val processorWr = processors[bookName + bookOrigin]
@@ -84,7 +85,7 @@ class ContentProcessor private constructor(
         var sameTitleRemoved = false
         if (content != "null") {
             //去除重复标题
-            if (BookHelp.removeSameTitle(book, chapter)) try {
+            if (enableRemoveSameTitle && BookHelp.removeSameTitle(book, chapter)) try {
                 val name = Pattern.quote(book.name)
                 var title = Pattern.quote(chapter.title)
                 var matcher = Pattern.compile("^(\\s|\\p{P}|${name})*${title}(\\s)*")

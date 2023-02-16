@@ -41,42 +41,35 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
         chapter: BookChapter?
     ): List<SearchResult> {
         val searchResultsWithinChapter: MutableList<SearchResult> = mutableListOf()
-        if (chapter != null) {
-            book?.let { book ->
-                val chapterContent = BookHelp.getContent(book, chapter)
-                val mContent: String
-                coroutineContext.ensureActive()
-                if (chapterContent != null) {
-                    withContext(Dispatchers.IO) {
-                        chapter.title = when (AppConfig.chineseConverterType) {
-                            1 -> ChineseUtils.t2s(chapter.title)
-                            2 -> ChineseUtils.s2t(chapter.title)
-                            else -> chapter.title
-                        }
-                        coroutineContext.ensureActive()
-                        mContent = contentProcessor!!.getContent(
-                            book, chapter, chapterContent
-                        ).toString()
-                    }
-                    val positions = searchPosition(mContent, query)
-                    positions.forEachIndexed { index, position ->
-                        coroutineContext.ensureActive()
-                        val construct = getResultAndQueryIndex(mContent, position, query)
-                        val result = SearchResult(
-                            resultCountWithinChapter = index,
-                            resultText = construct.second,
-                            chapterTitle = chapter.title,
-                            query = query,
-                            chapterIndex = chapter.index,
-                            queryIndexInResult = construct.first,
-                            queryIndexInChapter = position
-                        )
-                        searchResultsWithinChapter.add(result)
-                    }
-                    searchResultCounts += searchResultsWithinChapter.size
-                }
-            }
+        chapter ?: return searchResultsWithinChapter
+        val book = book ?: return searchResultsWithinChapter
+        val chapterContent = BookHelp.getContent(book, chapter) ?: return searchResultsWithinChapter
+        coroutineContext.ensureActive()
+        chapter.title = when (AppConfig.chineseConverterType) {
+            1 -> ChineseUtils.t2s(chapter.title)
+            2 -> ChineseUtils.s2t(chapter.title)
+            else -> chapter.title
         }
+        coroutineContext.ensureActive()
+        val mContent = contentProcessor!!.getContent(
+            book, chapter, chapterContent
+        ).toString()
+        val positions = searchPosition(mContent, query)
+        positions.forEachIndexed { index, position ->
+            coroutineContext.ensureActive()
+            val construct = getResultAndQueryIndex(mContent, position, query)
+            val result = SearchResult(
+                resultCountWithinChapter = index,
+                resultText = construct.second,
+                chapterTitle = chapter.title,
+                query = query,
+                chapterIndex = chapter.index,
+                queryIndexInResult = construct.first,
+                queryIndexInChapter = position
+            )
+            searchResultsWithinChapter.add(result)
+        }
+        searchResultCounts += searchResultsWithinChapter.size
         return searchResultsWithinChapter
     }
 

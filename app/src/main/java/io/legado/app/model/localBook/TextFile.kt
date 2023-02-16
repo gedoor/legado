@@ -18,23 +18,60 @@ import kotlin.math.min
 class TextFile(private val book: Book) {
 
     companion object {
+        private val padRegex = "^[\\n\\s]+".toRegex()
+        private const val bufferSize = 8 * 1024 * 1024
+        var txtBuffer: ByteArray? = null
+        var bufferStart = -1
+        var bufferEnd = -1
+        var bookUrl = ""
 
         @Throws(FileNotFoundException::class)
         fun getChapterList(book: Book): ArrayList<BookChapter> {
             return TextFile(book).getChapterList()
         }
 
+        @Synchronized
         @Throws(FileNotFoundException::class)
         fun getContent(book: Book, bookChapter: BookChapter): String {
+            if (txtBuffer == null
+                || bookUrl != book.bookUrl
+                || bookChapter.start!! > bufferEnd
+                || bookChapter.end!! < bufferStart
+            ) {
+                bookUrl = book.bookUrl
+                LocalBook.getBookInputStream(book).use { bis ->
+                    bufferStart = bufferSize * (bookChapter.start!! / bufferSize).toInt()
+                    txtBuffer = ByteArray(min(bufferSize, bis.available() - bufferStart))
+                    bufferEnd = bufferStart + txtBuffer!!.size
+                    bis.skip(bufferStart.toLong())
+                    bis.read(txtBuffer)
+                }
+            }
+
             val count = (bookChapter.end!! - bookChapter.start!!).toInt()
             val buffer = ByteArray(count)
-            LocalBook.getBookInputStream(book).use { bis ->
-                bis.skip(bookChapter.start!!)
-                bis.read(buffer)
+
+            if (bookChapter.start!! < bufferEnd && bookChapter.end!! > bufferEnd
+                || bookChapter.start!! < bufferStart && bookChapter.end!! > bufferStart
+            ) {
+                /** 章节内容在缓冲区交界处 */
+                LocalBook.getBookInputStream(book).use { bis ->
+                    bis.skip(bookChapter.start!!)
+                    bis.read(buffer)
+                }
+            } else {
+                /** 章节内容在缓冲区内 */
+                txtBuffer!!.copyInto(
+                    buffer,
+                    0,
+                    (bookChapter.start!! - bufferStart).toInt(),
+                    (bookChapter.end!! - bufferStart).toInt()
+                )
             }
+
             return String(buffer, book.fileCharset())
                 .substringAfter(bookChapter.title)
-                .replace("^[\\n\\s]+".toRegex(), "　　")
+                .replace(padRegex, "　　")
         }
 
     }

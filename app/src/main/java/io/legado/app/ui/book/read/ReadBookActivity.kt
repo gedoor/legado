@@ -121,6 +121,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 val searchResult = IntentData.get<SearchResult>("searchResult$key")
                 val searchResultList = IntentData.get<List<SearchResult>>("searchResultList$key")
                 if (searchResult != null && searchResultList != null) {
+                    ContentProcessor.enableRemoveSameTitle = false
                     viewModel.searchContentQuery = searchResult.query
                     binding.searchMenu.upSearchResultList(searchResultList)
                     isShowingSearchResult = true
@@ -1005,6 +1006,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun exitSearchMenu() {
         if (isShowingSearchResult) {
             isShowingSearchResult = false
+            ContentProcessor.enableRemoveSameTitle = true
             binding.searchMenu.invalidate()
             binding.searchMenu.invisible()
             binding.readView.isTextSelected = false

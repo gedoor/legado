@@ -302,6 +302,9 @@ object BookHelp {
      * 读取章节内容
      */
     fun getContent(book: Book, bookChapter: BookChapter): String? {
+        if (book.isLocalTxt) {
+            return LocalBook.getContent(book, bookChapter)
+        }
         val file = downloadDir.getFile(
             cacheFolderName,
             book.getFolderName(),

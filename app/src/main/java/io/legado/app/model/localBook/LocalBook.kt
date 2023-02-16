@@ -95,7 +95,7 @@ object LocalBook {
     }
 
     fun getContent(book: Book, chapter: BookChapter): String? {
-        val content = try {
+        var content = try {
             when {
                 book.isEpub -> {
                     EpubFile.getContent(book, chapter)
@@ -114,13 +114,16 @@ object LocalBook {
             e.printOnDebug()
             AppLog.put("获取本地书籍内容失败\n${e.localizedMessage}", e)
             "获取本地书籍内容失败\n${e.localizedMessage}"
-        }?.replace("&lt;img", "&lt; img", true)
-        content ?: return null
-        return kotlin.runCatching {
-            Entities.unescape(content)
-        }.onFailure {
-            AppLog.put("HTML实体解码失败\n${it.localizedMessage}", it)
-        }.getOrElse { content }
+        }
+        if (book.isEpub) {
+            content = content?.replace("&lt;img", "&lt; img", true) ?: return null
+            return kotlin.runCatching {
+                Entities.unescape(content)
+            }.onFailure {
+                AppLog.put("HTML实体解码失败\n${it.localizedMessage}", it)
+            }.getOrDefault(content)
+        }
+        return content
     }
 
     fun getCoverPath(book: Book): String {
