@@ -13,43 +13,46 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (chain.call().isCanceled()) {
-            throw IOException("Canceled")
-        }
         val original: Request = chain.request()
-        //Cronet未初始化
-        return if (!CronetLoader.install() || cronetEngine == null) {
-            chain.proceed(original)
-        } else try {
-            val builder: Request.Builder = original.newBuilder()
-            //移除Keep-Alive,手动设置会导致400 BadRequest
-            builder.removeHeader("Keep-Alive")
-            builder.removeHeader("Accept-Encoding")
-            if (cookieJar != CookieJar.NO_COOKIES) {
-                val cookieStr = getCookie(original.url)
-                //设置Cookie
-                if (cookieStr.length > 3) {
-                    builder.addHeader("Cookie", cookieStr)
+        try {
+            if (chain.call().isCanceled()) {
+                return chain.proceed(original)
+            }
+            //Cronet未初始化
+            return if (!CronetLoader.install() || cronetEngine == null) {
+                chain.proceed(original)
+            } else try {
+                val builder: Request.Builder = original.newBuilder()
+                //移除Keep-Alive,手动设置会导致400 BadRequest
+                builder.removeHeader("Keep-Alive")
+                builder.removeHeader("Accept-Encoding")
+                if (cookieJar != CookieJar.NO_COOKIES) {
+                    val cookieStr = getCookie(original.url)
+                    //设置Cookie
+                    if (cookieStr.length > 3) {
+                        builder.addHeader("Cookie", cookieStr)
+                    }
                 }
-            }
 
-            val newReq = builder.build()
-            proceedWithCronet(newReq, chain.call())?.let { response ->
-                //从Response 中保存Cookie到CookieJar
-                cookieJar.receiveHeaders(newReq.url, response.headers)
-                response
-            } ?: chain.proceed(original)
+                val newReq = builder.build()
+                proceedWithCronet(newReq, chain.call())?.let { response ->
+                    //从Response 中保存Cookie到CookieJar
+                    cookieJar.receiveHeaders(newReq.url, response.headers)
+                    response
+                } ?: chain.proceed(original)
+            } catch (e: Exception) {
+                //不能抛出错误,抛出错误会导致应用崩溃
+                //遇到Cronet处理有问题时的情况，如证书过期等等，回退到okhttp处理
+                if (!e.message.toString().contains("ERR_CERT_", true)
+                    && !e.message.toString().contains("ERR_SSL_", true)
+                ) {
+                    e.printOnDebug()
+                }
+                chain.proceed(original)
+            }
         } catch (e: Exception) {
-            //不能抛出错误,抛出错误会导致应用崩溃
-            //遇到Cronet处理有问题时的情况，如证书过期等等，回退到okhttp处理
-            if (!e.message.toString().contains("ERR_CERT_", true)
-                && !e.message.toString().contains("ERR_SSL_", true)
-            ) {
-                e.printOnDebug()
-            }
-            chain.proceed(original)
+            return chain.proceed(original)
         }
-
     }
 
     private fun proceedWithCronet(request: Request, call: Call): Response? {
