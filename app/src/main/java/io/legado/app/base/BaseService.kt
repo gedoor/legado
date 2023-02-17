@@ -9,7 +9,6 @@ import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
-import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -63,10 +62,8 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
             .addPermissions(Permissions.POST_NOTIFICATIONS)
             .rationale(R.string.notification_permission_rationale)
             .onGranted {
-                kotlin.runCatching {
+                if (isActive) {
                     upNotification()
-                }.onFailure {
-                    it.printOnDebug()
                 }
             }
             .request()
