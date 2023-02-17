@@ -24,7 +24,8 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="8dp">
+            android:paddingHorizontal="8dp"
+            tools:ignore="VisualLintBounds">
 
             <TextView
                 android:layout_width="wrap_content"

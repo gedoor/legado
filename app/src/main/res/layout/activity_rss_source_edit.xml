@@ -15,77 +15,46 @@
         app:fitStatusBar="false"
         app:title="@string/rss_source_edit" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <HorizontalScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:orientation="horizontal"
-        android:layout_gravity="center_vertical">
+        android:scrollbars="none">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="source:"
-            tools:ignore="HardcodedText,RtlHardcoded" />
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            tools:ignore="VisualLintBounds">
 
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_is_enable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/is_enable"
-            tools:ignore="TouchTargetSizeCheck" />
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/is_enable"
+                tools:ignore="TouchTargetSizeCheck" />
 
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_single_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/single_url"
-            tools:ignore="TouchTargetSizeCheck" />
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_single_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/single_url"
+                tools:ignore="TouchTargetSizeCheck" />
 
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_is_enable_cookie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/auto_save_cookie"
-            tools:ignore="TouchTargetSizeCheck" />
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_enable_cookie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/auto_save_cookie"
+                tools:ignore="TouchTargetSizeCheck" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:orientation="horizontal"
-        android:layout_gravity="center_vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="WebView:"
-            tools:ignore="HardcodedText,RtlHardcoded" />
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_enable_js"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/enable_js"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_enable_base_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/load_with_base_url"
-            tools:ignore="TouchTargetSizeCheck" />
-
-    </LinearLayout>
+    </HorizontalScrollView>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"

@@ -195,8 +195,6 @@ class RssSourceEditActivity :
             binding.cbIsEnable.isChecked = rs.enabled
             binding.cbSingleUrl.isChecked = rs.singleUrl
             binding.cbIsEnableCookie.isChecked = rs.enabledCookieJar == true
-            binding.cbEnableJs.isChecked = rs.enableJs
-            binding.cbEnableBaseUrl.isChecked = rs.loadWithBaseUrl
         }
         sourceEntities.clear()
         sourceEntities.apply {
@@ -226,6 +224,22 @@ class RssSourceEditActivity :
         }
         webViewEntities.clear()
         webViewEntities.apply {
+            add(
+                EditEntity(
+                    "enableJs",
+                    rs?.enableJs.toString(),
+                    R.string.enable_js,
+                    EditEntity.ViewType.checkBox
+                )
+            )
+            add(
+                EditEntity(
+                    "loadWithBaseUrl",
+                    rs?.loadWithBaseUrl.toString(),
+                    R.string.load_with_base_url,
+                    EditEntity.ViewType.checkBox
+                )
+            )
             add(EditEntity("ruleContent", rs?.ruleContent, R.string.r_content))
             add(EditEntity("style", rs?.style, R.string.r_style))
             add(EditEntity("injectJs", rs?.injectJs, R.string.r_inject_js))
@@ -241,8 +255,6 @@ class RssSourceEditActivity :
         source.enabled = binding.cbIsEnable.isChecked
         source.singleUrl = binding.cbSingleUrl.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
-        source.enableJs = binding.cbEnableJs.isChecked
-        source.loadWithBaseUrl = binding.cbEnableBaseUrl.isChecked
         sourceEntities.forEach {
             when (it.key) {
                 "sourceName" -> source.sourceName = it.value ?: ""
@@ -279,6 +291,8 @@ class RssSourceEditActivity :
         }
         webViewEntities.forEach {
             when (it.key) {
+                "enableJs" -> source.enableJs = it.value.isTrue()
+                "loadWithBaseUrl" -> source.loadWithBaseUrl = it.value.isTrue()
                 "ruleContent" -> source.ruleContent =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
                 "style" -> source.style = it.value

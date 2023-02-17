@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -9,6 +10,7 @@
     <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/check_box"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="TouchTargetSizeCheck" />
 
 </FrameLayout>
