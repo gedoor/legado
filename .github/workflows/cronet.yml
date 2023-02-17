@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'gedoor' }}
+    if: ${{ github.repository == 'gedoor/legado' }}
     steps:
       - uses: actions/checkout@v3
         with:
