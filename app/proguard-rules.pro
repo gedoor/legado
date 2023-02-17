@@ -360,6 +360,7 @@
 # Proguard config for apps that depend on cronet_impl_native_java.jar.
 
 # This constructor is called using the reflection from Cronet API (cronet_api.jar).
+-keep class org.chromium.** { *; }
 -keep class * extends org.chromium.net.CronetProvider{
     public <init>(android.content.Context);
 }
@@ -385,9 +386,6 @@
 # https://android.googlesource.com/platform/sdk/+/marshmallow-mr1-release/files/proguard-android.txt#54
 -dontwarn android.support.**
 
-# This class should be explicitly kept to avoid failure if
-# class/merging/horizontal proguard optimization is enabled.
--keep class org.chromium.base.CollectionUtil
 #-------------------Cronet------------------------------------
 
 # Class.forName调用
