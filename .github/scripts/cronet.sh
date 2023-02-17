@@ -22,9 +22,7 @@ path=$GITHUB_WORKSPACE/gradle.properties
 current_cronet_version=`cat $path | grep CronetVersion | sed s/CronetVersion=//`
 echo "current_cronet_version: $current_cronet_version"
 
-if [[  $current_cronet_version == $lastest_cronet_version ]];then
-    echo "cronet is already latest"
-else
+if [[  $current_cronet_version < $lastest_cronet_version ]];then
     checkVersionExit
     sed -i s/CronetVersion=.*/CronetVersion=$lastest_cronet_version/ $path
     sed -i s/CronetMainVersion=.*/CronetMainVersion=$lastest_cronet_main_version/ $path
