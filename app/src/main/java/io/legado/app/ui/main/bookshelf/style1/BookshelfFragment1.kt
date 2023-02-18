@@ -99,9 +99,11 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
 
     @Synchronized
     private fun selectLastTab() {
-        tabLayout.removeOnTabSelectedListener(this)
-        tabLayout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
-        tabLayout.addOnTabSelectedListener(this)
+        tabLayout.post {
+            tabLayout.removeOnTabSelectedListener(this)
+            tabLayout.getTabAt(getPrefInt(PreferKey.saveTabPosition, 0))?.select()
+            tabLayout.addOnTabSelectedListener(this)
+        }
     }
 
     override fun onTabReselected(tab: TabLayout.Tab) {
