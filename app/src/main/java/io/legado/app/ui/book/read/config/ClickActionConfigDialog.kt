@@ -34,7 +34,8 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
             Pair(7, getString(R.string.bookmark_add)),
             Pair(8, getString(R.string.edit_content)),
             Pair(9, getString(R.string.replace_state_change)),
-            Pair(10, getString(R.string.chapter_list))
+            Pair(10, getString(R.string.chapter_list)),
+            Pair(11, getString(R.string.search_content))
         )
     }
 

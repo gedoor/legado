@@ -424,6 +424,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
             8 -> activity?.showDialogFragment(ContentEditDialog())
             9 -> callBack.changeReplaceRuleState()
             10 -> callBack.openChapterList()
+            11 -> callBack.openSearchActivity(null)
         }
     }
 
@@ -654,5 +655,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun openChapterList()
         fun addBookmark()
         fun changeReplaceRuleState()
+        fun openSearchActivity(searchWord: String?)
     }
 }
