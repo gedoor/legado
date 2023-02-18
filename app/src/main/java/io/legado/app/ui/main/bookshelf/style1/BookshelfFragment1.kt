@@ -97,7 +97,6 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
         }
     }
 
-    @Synchronized
     private fun selectLastTab() {
         tabLayout.post {
             tabLayout.removeOnTabSelectedListener(this)
