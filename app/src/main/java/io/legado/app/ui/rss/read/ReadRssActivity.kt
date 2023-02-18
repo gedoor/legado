@@ -133,7 +133,10 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             displayZoomControls = false
             setDarkeningAllowed(AppConfig.isNightTheme)
         }
-        binding.webView.addJavascriptInterface(this, "app")
+        binding.webView.addJavascriptInterface(this, "thisActivity")
+        viewModel.rssSource?.let {
+            binding.webView.addJavascriptInterface(it, "thisSource")
+        }
         binding.webView.setOnLongClickListener {
             val hitTestResult = binding.webView.hitTestResult
             if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE ||
