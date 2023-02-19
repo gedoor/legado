@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 60,
-    "identityHash": "a1c0854a62819a02546c82a1d60ac1b8",
+    "identityHash": "19e1f66252eb41afc0990f202fe4527a",
     "entities": [
       {
         "tableName": "books",
@@ -1689,7 +1689,7 @@
       },
       {
         "tableName": "dictRules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `urlRule` TEXT NOT NULL, `showRule` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `urlRule` TEXT NOT NULL, `showRule` TEXT NOT NULL, `enabled` INTEGER NOT NULL, PRIMARY KEY(`name`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -1707,6 +1707,12 @@
             "fieldPath": "showRule",
             "columnName": "showRule",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -1766,7 +1772,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a1c0854a62819a02546c82a1d60ac1b8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '19e1f66252eb41afc0990f202fe4527a')"
     ]
   }
 }

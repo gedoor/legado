@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 data class DictRule(
     @PrimaryKey
     val name: String,
-    val urlRule: String,
-    val showRule: String
+    var urlRule: String,
+    var showRule: String,
+    var enabled: Boolean
 )
