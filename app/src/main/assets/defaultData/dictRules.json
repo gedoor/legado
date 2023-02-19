@@ -9,7 +9,7 @@
   {
     "name": "海词英文",
     "urlRule": "https://apii.dict.cn/mini.php?q={{key}}",
-    "showRule": "all",
+    "showRule": "tag.body@all",
     "enabled": true,
     "sortNumber": 1
   }

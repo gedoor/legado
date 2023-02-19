@@ -3,6 +3,7 @@ package io.legado.app.ui.dict
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
+import io.legado.app.help.DefaultData
 import io.legado.app.help.http.get
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
@@ -30,13 +31,9 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
      */
     private fun haiciDict(word: String) {
         execute {
-            val body = okHttpClient.newCallStrResponse {
-                get("https://apii.dict.cn/mini.php", mapOf(Pair("q", word)))
-            }.body
-            val jsoup = Jsoup.parse(body!!)
-            jsoup.body()
+            DefaultData.dictRules[1].search(word)
         }.onSuccess {
-            dictHtmlData.postValue(it.html())
+            dictHtmlData.postValue(it)
         }.onError {
             context.toastOnUi(it.localizedMessage)
         }
