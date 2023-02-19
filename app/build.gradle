@@ -177,7 +177,7 @@ dependencies {
     implementation("com.louiscad.splitties:splitties-systemservices:$splitties_version")
     implementation("com.louiscad.splitties:splitties-views:$splitties_version")
 
-    //room
+    //room sql语句不高亮解决方法https://issuetracker.google.com/issues/234612964#comment6
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
