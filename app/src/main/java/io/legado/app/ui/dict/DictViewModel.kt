@@ -3,7 +3,6 @@ package io.legado.app.ui.dict
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
-import io.legado.app.help.DefaultData
 import io.legado.app.help.http.get
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
@@ -50,21 +49,20 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
      */
     private fun baiduDict(word: String) {
         execute {
-//            val body = okHttpClient.newCallStrResponse {
-//                get("https://dict.baidu.com/s", mapOf(Pair("wd", word)))
-//            }.body
-//            val jsoup = Jsoup.parse(body!!)
-//            jsoup.select("script").remove()//移除script
-//            jsoup.select("#word-header").remove()//移除单字的header
-//            jsoup.select("#term-header").remove()//移除词语的header
-//            jsoup.select(".more-button").remove()//移除展示更多
-//            jsoup.select(".disactive").remove()
-//            jsoup.select("#download-wrapper").remove()//移除下载广告
-//            jsoup.select("#right-panel").remove()//移除右侧广告
-//            jsoup.select("#content-panel")
-            DefaultData.dictRules[0].search(word)
+            val body = okHttpClient.newCallStrResponse {
+                get("https://dict.baidu.com/s", mapOf(Pair("wd", word)))
+            }.body
+            val jsoup = Jsoup.parse(body!!)
+            jsoup.select("script").remove()//移除script
+            jsoup.select("#word-header").remove()//移除单字的header
+            jsoup.select("#term-header").remove()//移除词语的header
+            jsoup.select(".more-button").remove()//移除展示更多
+            jsoup.select(".disactive").remove()
+            jsoup.select("#download-wrapper").remove()//移除下载广告
+            jsoup.select("#right-panel").remove()//移除右侧广告
+            jsoup.select("#content-panel")
         }.onSuccess {
-            dictHtmlData.postValue(it)
+            dictHtmlData.postValue(it.html())
         }.onError {
             context.toastOnUi(it.localizedMessage)
         }
