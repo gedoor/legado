@@ -3,7 +3,9 @@ package io.legado.app.data.entities.rule
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-
+/**
+ * 书籍详情页规则
+ */
 @Parcelize
 data class BookInfoRule(
     var init: String? = null,

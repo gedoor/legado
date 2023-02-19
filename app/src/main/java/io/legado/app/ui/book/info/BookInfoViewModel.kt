@@ -196,7 +196,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 if (oldBook.bookUrl == book.bookUrl) {
                                     appDb.bookDao.update(book)
                                 } else {
-                                    appDb.bookDao.insert(book)
+                                    appDb.bookDao.upsert(book)
                                     BookHelp.updateCacheFolder(oldBook, book)
                                 }
                                 appDb.bookChapterDao.delByBook(oldBook.bookUrl)
@@ -237,7 +237,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             bookData.value?.migrateTo(book, toc)
             if (inBookshelf) {
                 book.removeType(BookType.updateError)
-                appDb.bookDao.insert(book)
+                appDb.bookDao.upsert(book)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
             }
             bookData.postValue(book)

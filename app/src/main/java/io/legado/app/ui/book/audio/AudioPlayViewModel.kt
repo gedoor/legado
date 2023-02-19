@@ -79,7 +79,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         execute {
             AudioPlay.book?.migrateTo(book, toc)
-            appDb.bookDao.insert(book)
+            appDb.bookDao.upsert(book)
             AudioPlay.book = book
             AudioPlay.bookSource = source
             appDb.bookChapterDao.insert(*toc.toTypedArray())

@@ -59,7 +59,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                             }.getOrNull()?.let { toc ->
                                 book.migrateTo(newBook, toc)
                                 book.removeType(BookType.updateError)
-                                appDb.bookDao.insert(newBook)
+                                appDb.bookDao.upsert(newBook)
                                 appDb.bookChapterDao.insert(*toc.toTypedArray())
                             }
                     }

@@ -3,6 +3,9 @@ package io.legado.app.data.entities.rule
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 发现结果规则
+ */
 @Parcelize
 data class ExploreRule(
     override var bookList: String? = null,

@@ -134,7 +134,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookDao.update(book)
                 } else {
                     upTocAdd(book.bookUrl)
-                    appDb.bookDao.insert(book)
+                    appDb.bookDao.upsert(book)
                     BookHelp.updateCacheFolder(oldBook, book)
                 }
                 appDb.bookChapterDao.delByBook(bookUrl)

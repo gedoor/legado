@@ -3,10 +3,13 @@ package io.legado.app.data.entities.rule
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-
+/**
+ * 搜索结果处理规则
+ */
 @Parcelize
 data class SearchRule(
-    var checkKeyWord: String? = null,               // 校验关键字
+    /**校验关键字**/
+    var checkKeyWord: String? = null,
     override var bookList: String? = null,
     override var name: String? = null,
     override var author: String? = null,

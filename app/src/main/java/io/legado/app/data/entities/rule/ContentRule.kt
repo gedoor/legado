@@ -3,6 +3,9 @@ package io.legado.app.data.entities.rule
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 正文处理规则
+ */
 @Parcelize
 data class ContentRule(
     var content: String? = null,

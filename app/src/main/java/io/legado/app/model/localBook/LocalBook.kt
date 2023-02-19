@@ -184,7 +184,7 @@ object LocalBook {
             if (book.isEpub) EpubFile.upBookInfo(book)
             if (book.isUmd) UmdFile.upBookInfo(book)
             if (book.isPdf) PdfFile.upBookInfo(book)
-            appDb.bookDao.insert(book)
+            appDb.bookDao.upsert(book)
         } else {
             //已有书籍说明是更新,删除原有目录
             appDb.bookChapterDao.delByBook(bookUrl)

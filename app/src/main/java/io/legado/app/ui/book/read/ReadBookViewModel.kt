@@ -165,7 +165,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         if (oldBook.bookUrl == book.bookUrl) {
                             appDb.bookDao.update(book)
                         } else {
-                            appDb.bookDao.insert(book)
+                            appDb.bookDao.upsert(book)
                             BookHelp.updateCacheFolder(oldBook, book)
                         }
                         appDb.bookChapterDao.delByBook(oldBook.bookUrl)
@@ -216,7 +216,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.upMsg(context.getString(R.string.loading))
             ReadBook.book?.migrateTo(book, toc)
             book.removeType(BookType.updateError)
-            appDb.bookDao.insert(book)
+            appDb.bookDao.upsert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadBook.resetData(book)
             ReadBook.upMsg(null)
