@@ -1,0 +1,16 @@
+[
+  {
+    "name": "百度汉语",
+    "urlRule": "https://dict.baidu.com/s?wd={{key}}",
+    "showRule": "all",
+    "enabled": true,
+    "sortNumber": 0
+  },
+  {
+    "name": "海词英文",
+    "urlRule": "https://apii.dict.cn/mini.php?q={{key}}",
+    "showRule": "all",
+    "enabled": true,
+    "sortNumber": 1
+  }
+]

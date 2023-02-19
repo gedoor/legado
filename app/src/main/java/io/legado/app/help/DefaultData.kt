@@ -1,10 +1,7 @@
 package io.legado.app.help
 
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.HttpTTS
-import io.legado.app.data.entities.KeyboardAssist
-import io.legado.app.data.entities.RssSource
-import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.data.entities.*
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.model.BookCover
@@ -66,6 +63,14 @@ object DefaultData {
                 .readBytes()
         )
         GSON.fromJsonObject<BookCover.CoverRule>(json).getOrThrow()!!
+    }
+
+    val dictRules: List<DictRule> by lazy {
+        val json = String(
+            appCtx.assets.open("defaultData${File.separator}dictRules.json")
+                .readBytes()
+        )
+        GSON.fromJsonArray<DictRule>(json).getOrThrow()!!
     }
 
     val keyboardAssists: List<KeyboardAssist> by lazy {
