@@ -347,7 +347,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection) { file ->
                 exportDir.launch {
                     mode = HandleFileContract.EXPORT
-                    fileData = Triple("bookSource.json", file, "application/json")
+                    fileData = HandleFileContract.FileData(
+                        "bookSource.json",
+                        file,
+                        "application/json"
+                    )
                 }
             }
             R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {

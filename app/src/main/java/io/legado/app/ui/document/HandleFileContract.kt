@@ -28,9 +28,9 @@ class HandleFileContract :
             intent.putExtra("allowExtensions", it.allowExtensions)
             intent.putJson("otherActions", it.otherActions)
             it.fileData?.let { fileData ->
-                intent.putExtra("fileName", fileData.first)
-                intent.putExtra("fileKey", IntentData.put(fileData.second))
-                intent.putExtra("contentType", fileData.third)
+                intent.putExtra("fileName", fileData.name)
+                intent.putExtra("fileKey", IntentData.put(fileData.data))
+                intent.putExtra("contentType", fileData.type)
             }
             intent.putExtra("value", it.value)
         }
@@ -57,7 +57,7 @@ class HandleFileContract :
         var title: String? = null,
         var allowExtensions: Array<String> = arrayOf(),
         var otherActions: ArrayList<SelectItem<Int>>? = null,
-        var fileData: Triple<String, Any, String>? = null,
+        var fileData: FileData? = null,
         var requestCode: Int = 0,
         var value: String? = null
     )
@@ -66,6 +66,12 @@ class HandleFileContract :
         val uri: Uri?,
         val requestCode: Int,
         val value: String?
+    )
+
+    data class FileData(
+        val name: String,
+        val data: Any,
+        val type: String
     )
 
 }

@@ -91,7 +91,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             R.id.menu_export_bookshelf -> viewModel.exportBookshelf(books) { file ->
                 exportResult.launch {
                     mode = HandleFileContract.EXPORT
-                    fileData = Triple("bookshelf.json", file, "application/json")
+                    fileData = HandleFileContract.FileData("bookshelf.json", file, "application/json")
                 }
             }
             R.id.menu_import_bookshelf -> importBookshelfAlert(groupId)

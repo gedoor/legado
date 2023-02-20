@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_enable_selection"
+        android:title="@string/enable_selection"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_disable_selection"
+        android:title="@string/disable_selection"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_export_selection"
+        android:title="@string/export_selection"
+        app:showAsAction="never" />
+
+</menu>

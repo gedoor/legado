@@ -31,6 +31,24 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun enableSelection(vararg dictRule: DictRule) {
+        execute {
+            dictRule.forEach {
+                it.enabled = true
+            }
+            appDb.dictRuleDao.upsert(*dictRule)
+        }
+    }
+
+    fun disableSelection(vararg dictRule: DictRule) {
+        execute {
+            dictRule.forEach {
+                it.enabled = false
+            }
+            appDb.dictRuleDao.upsert(*dictRule)
+        }
+    }
+
     fun importDefault() {
         execute {
             DefaultData.importDefaultDictRules()

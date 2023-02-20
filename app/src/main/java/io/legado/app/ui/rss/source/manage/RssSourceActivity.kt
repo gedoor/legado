@@ -153,7 +153,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection) { file ->
                 exportResult.launch {
                     mode = HandleFileContract.EXPORT
-                    fileData = Triple("exportRssSource.json", file, "application/json")
+                    fileData = HandleFileContract.FileData("exportRssSource.json", file, "application/json")
                 }
             }
 

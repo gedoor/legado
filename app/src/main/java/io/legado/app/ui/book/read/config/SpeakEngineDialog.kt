@@ -152,7 +152,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
             R.id.menu_import_onLine -> importAlert()
             R.id.menu_export -> exportDirResult.launch {
                 mode = HandleFileContract.EXPORT
-                fileData = Triple(
+                fileData = HandleFileContract.FileData(
                     "httpTts.json",
                     GSON.toJson(adapter.getItems()).toByteArray(),
                     "application/json"
