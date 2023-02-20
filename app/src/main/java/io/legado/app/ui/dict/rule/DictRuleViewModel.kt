@@ -4,6 +4,7 @@ import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.DictRule
+import io.legado.app.help.DefaultData
 
 class DictRuleViewModel(application: Application) : BaseViewModel(application) {
 
@@ -27,6 +28,12 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
                 rule.sortNumber = index + 1
             }
             appDb.dictRuleDao.upsert(*rules.toTypedArray())
+        }
+    }
+
+    fun importDefault() {
+        execute {
+            DefaultData.importDefaultDictRules()
         }
     }
 

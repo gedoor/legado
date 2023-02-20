@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/menu_create"
         android:icon="@drawable/ic_add"
         android:title="@string/create"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_import_local"
@@ -24,6 +26,12 @@
         android:id="@+id/menu_import_qr"
         android:icon="@drawable/ic_import"
         android:title="@string/import_by_qr_code"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_default"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_default_rule"
         app:showAsAction="never" />
 
     <item

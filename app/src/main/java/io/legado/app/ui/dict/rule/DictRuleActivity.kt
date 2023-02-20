@@ -76,11 +76,13 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
         }
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_create -> showDialogFragment<DictRuleEditDialog>()
+            R.id.menu_import_default -> viewModel.importDefault()
+            R.id.menu_help -> {}
         }
-        return super.onContextItemSelected(item)
+        return super.onCompatOptionsItemSelected(item)
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
