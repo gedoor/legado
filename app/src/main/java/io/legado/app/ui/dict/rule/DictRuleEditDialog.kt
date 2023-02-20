@@ -15,8 +15,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.DictRule
 import io.legado.app.databinding.DialogDictRuleEditBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.setLayout
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class DictRuleEditDialog() : BaseDialogFragment(R.layout.dialog_dict_rule_edit, true),
@@ -100,11 +99,22 @@ class DictRuleEditDialog() : BaseDialogFragment(R.layout.dialog_dict_rule_edit, 
         }
 
         fun copyRule(dictRule: DictRule) {
-
+            context.sendToClip(GSON.toJson(dictRule))
         }
 
         fun pasteRule(success: (DictRule) -> Unit) {
-
+            val text = context.getClipText()
+            if (text.isNullOrBlank()) {
+                context.toastOnUi("剪贴板没有内容")
+                return
+            }
+            execute {
+                GSON.fromJsonObject<DictRule>(text).getOrThrow()!!
+            }.onSuccess {
+                success.invoke(it)
+            }.onError {
+                context.toastOnUi("格式不对")
+            }
         }
 
     }

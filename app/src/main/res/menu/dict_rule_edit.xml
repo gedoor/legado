@@ -20,9 +20,4 @@
         android:title="@string/paste_rule"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menu_help"
-        android:title="@string/help"
-        app:showAsAction="never" />
-
 </menu>
