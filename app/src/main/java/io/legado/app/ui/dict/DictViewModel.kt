@@ -1,32 +1,35 @@
 package io.legado.app.ui.dict
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.entities.DictRule
 import io.legado.app.help.DefaultData
-import io.legado.app.utils.toastOnUi
+import io.legado.app.help.coroutine.Coroutine
 
 class DictViewModel(application: Application) : BaseViewModel(application) {
-    var dictRules: List<DictRule>? = null
-    var dictHtmlData: MutableLiveData<String> = MutableLiveData()
 
-    fun initData(onSuccess: () -> Unit) {
+    private var dictJob: Coroutine<String>? = null
+
+    fun initData(onSuccess: (List<DictRule>) -> Unit) {
         execute {
             DefaultData.dictRules
         }.onSuccess {
-            dictRules = it
-            onSuccess.invoke()
+            onSuccess.invoke(it)
         }
     }
 
-    fun dict(dictRule: DictRule, word: String) {
-        execute {
+    fun dict(
+        dictRule: DictRule,
+        word: String,
+        onFinally: (String) -> Unit
+    ) {
+        dictJob?.cancel()
+        dictJob = execute {
             dictRule.search(word)
         }.onSuccess {
-            dictHtmlData.postValue(it)
+            onFinally.invoke(it)
         }.onError {
-            context.toastOnUi(it.localizedMessage)
+            onFinally.invoke(it.localizedMessage ?: "ERROR")
         }
     }
 

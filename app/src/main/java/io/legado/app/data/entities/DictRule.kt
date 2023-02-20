@@ -24,11 +24,11 @@ data class DictRule(
     /**
      * 搜索字典
      */
-    suspend fun search(word: String): String? {
+    suspend fun search(word: String): String {
         val analyzeUrl = AnalyzeUrl(urlRule, key = word)
         val body = analyzeUrl.getStrResponseAwait().body
         if (showRule.isBlank()) {
-             return body
+            return body!!
         }
         val analyzeRule = AnalyzeRule()
         return analyzeRule.getString(showRule, mContent = body)

@@ -60,15 +60,14 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val dictRule = tab.tag as DictRule
                 binding.rotateLoading.visible()
-                viewModel.dict(dictRule, word!!)
+                viewModel.dict(dictRule, word!!) {
+                    binding.rotateLoading.inVisible()
+                    binding.tvDict.setHtml(it)
+                }
             }
         })
-        viewModel.dictHtmlData.observe(viewLifecycleOwner) {
-            binding.rotateLoading.inVisible()
-            binding.tvDict.setHtml(it)
-        }
         viewModel.initData {
-            viewModel.dictRules?.forEach {
+            it.forEach {
                 binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
                     text = it.name
                     tag = it
