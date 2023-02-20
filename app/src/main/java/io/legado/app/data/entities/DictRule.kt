@@ -12,7 +12,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 @Entity(tableName = "dictRules")
 data class DictRule(
     @PrimaryKey
-    val name: String,
+    var name: String,
     var urlRule: String,
     var showRule: String,
     @ColumnInfo(defaultValue = "1")

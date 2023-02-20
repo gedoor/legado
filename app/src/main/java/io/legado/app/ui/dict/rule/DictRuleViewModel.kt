@@ -20,4 +20,14 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun upSortNumber() {
+        execute {
+            val rules = appDb.dictRuleDao.all
+            for ((index, rule) in rules.withIndex()) {
+                rule.sortNumber = index + 1
+            }
+            appDb.dictRuleDao.upsert(*rules.toTypedArray())
+        }
+    }
+
 }

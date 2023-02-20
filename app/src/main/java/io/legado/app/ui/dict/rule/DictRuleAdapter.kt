@@ -2,17 +2,14 @@ package io.legado.app.ui.dict.rule
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.DictRule
-import io.legado.app.databinding.ItemReplaceRuleBinding
+import io.legado.app.databinding.ItemDictRuleBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
@@ -20,7 +17,7 @@ import io.legado.app.utils.ColorUtils
 
 
 class DictRuleAdapter(context: Context, var callBack: CallBack) :
-    RecyclerAdapter<DictRule, ItemReplaceRuleBinding>(context),
+    RecyclerAdapter<DictRule, ItemDictRuleBinding>(context),
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<DictRule>()
@@ -83,8 +80,8 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
         callBack.upCountView()
     }
 
-    override fun getViewBinding(parent: ViewGroup): ItemReplaceRuleBinding {
-        return ItemReplaceRuleBinding.inflate(inflater, parent, false)
+    override fun getViewBinding(parent: ViewGroup): ItemDictRuleBinding {
+        return ItemDictRuleBinding.inflate(inflater, parent, false)
     }
 
     override fun onCurrentListChanged() {
@@ -93,7 +90,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
 
     override fun convert(
         holder: ItemViewHolder,
-        binding: ItemReplaceRuleBinding,
+        binding: ItemDictRuleBinding,
         item: DictRule,
         payloads: MutableList<Any>
     ) {
@@ -116,7 +113,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemReplaceRuleBinding) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemDictRuleBinding) {
         binding.apply {
             swtEnabled.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (buttonView.isPressed) {
@@ -124,11 +121,6 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
                         it.enabled = isChecked
                         callBack.update(it)
                     }
-                }
-            }
-            ivEdit.setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
-                    callBack.edit(it)
                 }
             }
             cbName.setOnClickListener {
@@ -141,25 +133,17 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
                 }
                 callBack.upCountView()
             }
-            ivMenuMore.setOnClickListener {
-                showMenu(ivMenuMore, holder.layoutPosition)
+            ivEdit.setOnClickListener {
+                getItem(holder.layoutPosition)?.let {
+                    callBack.edit(it)
+                }
+            }
+            ivDelete.setOnClickListener {
+                getItem(holder.layoutPosition)?.let {
+                    callBack.delete(it)
+                }
             }
         }
-    }
-
-    private fun showMenu(view: View, position: Int) {
-        val item = getItem(position) ?: return
-        val popupMenu = PopupMenu(context, view)
-        popupMenu.inflate(R.menu.replace_rule_item)
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menu_top -> callBack.toTop(item)
-                R.id.menu_bottom -> callBack.toBottom(item)
-                R.id.menu_del -> callBack.delete(item)
-            }
-            true
-        }
-        popupMenu.show()
     }
 
     override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
@@ -218,8 +202,6 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
         fun update(vararg rule: DictRule)
         fun delete(rule: DictRule)
         fun edit(rule: DictRule)
-        fun toTop(rule: DictRule)
-        fun toBottom(rule: DictRule)
         fun upOrder()
         fun upCountView()
     }

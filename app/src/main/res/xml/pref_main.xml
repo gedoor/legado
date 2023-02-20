@@ -19,6 +19,13 @@
         android:icon="@drawable/ic_cfg_replace"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.prefs.Preference
+        android:key="dictRuleManage"
+        android:title="@string/dict_rule"
+        android:summary="@string/config_dict_rule"
+        android:icon="@drawable/ic_translate"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.prefs.NameListPreference
         android:defaultValue="0"
         android:entries="@array/theme_mode"

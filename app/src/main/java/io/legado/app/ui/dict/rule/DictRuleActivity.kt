@@ -1,6 +1,7 @@
 package io.legado.app.ui.dict.rule
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
@@ -36,6 +37,11 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
         observeDictRuleData()
     }
 
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.dict_rule, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
     private fun initRecyclerView() {
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -53,6 +59,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
     }
 
+
     private fun initSelectActionView() {
         binding.selectActionBar.setMainActionText(R.string.delete)
         binding.selectActionBar.inflateMenu(R.menu.replace_rule_sel)
@@ -68,12 +75,11 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
         }
     }
 
-    override fun selectAll(selectAll: Boolean) {
-        adapter.selectAll()
-    }
-
-    override fun revertSelection() {
-        adapter.revertSelection()
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_create -> {}
+        }
+        return super.onContextItemSelected(item)
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
@@ -81,6 +87,18 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
         }
         return true
+    }
+
+    override fun selectAll(selectAll: Boolean) {
+        if (selectAll) {
+            adapter.revertSelection()
+        } else {
+            adapter.selectAll()
+        }
+    }
+
+    override fun revertSelection() {
+        adapter.revertSelection()
     }
 
     override fun update(vararg rule: DictRule) {
@@ -92,19 +110,11 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     }
 
     override fun edit(rule: DictRule) {
-        TODO("Not yet implemented")
-    }
 
-    override fun toTop(rule: DictRule) {
-        TODO("Not yet implemented")
-    }
-
-    override fun toBottom(rule: DictRule) {
-        TODO("Not yet implemented")
     }
 
     override fun upOrder() {
-        TODO("Not yet implemented")
+        viewModel.upSortNumber()
     }
 
     override fun upCountView() {
