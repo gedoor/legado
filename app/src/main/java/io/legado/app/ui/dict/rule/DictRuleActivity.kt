@@ -18,6 +18,7 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
 
@@ -77,7 +78,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_create -> {}
+            R.id.menu_create -> showDialogFragment<DictRuleEditDialog>()
         }
         return super.onContextItemSelected(item)
     }
@@ -91,9 +92,9 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     override fun selectAll(selectAll: Boolean) {
         if (selectAll) {
-            adapter.revertSelection()
-        } else {
             adapter.selectAll()
+        } else {
+            adapter.revertSelection()
         }
     }
 
@@ -110,7 +111,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     }
 
     override fun edit(rule: DictRule) {
-
+        showDialogFragment(DictRuleEditDialog(rule.name))
     }
 
     override fun upOrder() {

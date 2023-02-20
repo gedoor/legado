@@ -24,7 +24,7 @@
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/txt_toc_regex"
+            app:title="@string/dict_rule"
             app:titleTextAppearance="@style/ToolbarTitle" />
 
         <androidx.core.widget.NestedScrollView
@@ -54,10 +54,10 @@
                 <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/regex">
+                    android:hint="@string/url_rule">
 
                     <io.legado.app.lib.theme.view.ThemeEditText
-                        android:id="@+id/tv_rule_regex"
+                        android:id="@+id/tv_url_rule"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
@@ -67,10 +67,10 @@
                 <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/example">
+                    android:hint="@string/show_rule">
 
                     <io.legado.app.lib.theme.view.ThemeEditText
-                        android:id="@+id/tv_rule_example"
+                        android:id="@+id/tv_show_rule"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />

@@ -1078,4 +1078,6 @@
     <string name="dict_rule">字典规则</string>
     <string name="config_dict_rule">配置字典规则</string>
     <string name="create">新建</string>
+    <string name="url_rule">url规则(urlRule)</string>
+    <string name="show_rule">显示规则(showRule)</string>
 </resources>

@@ -20,6 +20,9 @@ interface DictRuleDao {
     @Query("select * from dictRules where enabled = 1 order by sortNumber")
     fun flowAll(): Flow<List<DictRule>>
 
+    @Query("select * from dictRules where name = :name")
+    fun getByName(name: String): DictRule?
+
     @Upsert
     fun upsert(vararg dictRule: DictRule)
 
