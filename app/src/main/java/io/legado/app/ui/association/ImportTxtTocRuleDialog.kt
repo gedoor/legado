@@ -54,7 +54,7 @@ class ImportTxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_txt_toc_rule)
-        binding.rotateLoading.show()
+        binding.rotateLoading.visible()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
         binding.tvCancel.visible()
@@ -82,14 +82,14 @@ class ImportTxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
             upSelectText()
         }
         viewModel.errorLiveData.observe(this) {
-            binding.rotateLoading.hide()
+            binding.rotateLoading.gone()
             binding.tvMsg.apply {
                 text = it
                 visible()
             }
         }
         viewModel.successLiveData.observe(this) {
-            binding.rotateLoading.hide()
+            binding.rotateLoading.gone()
             if (it > 0) {
                 adapter.setItems(viewModel.allSources)
                 upSelectText()

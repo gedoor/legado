@@ -44,12 +44,12 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
     fun startLoad() {
         isLoading = true
         binding.tvText.invisible()
-        binding.rotateLoading.show()
+        binding.rotateLoading.visible()
     }
 
     fun stopLoad() {
         isLoading = false
-        binding.rotateLoading.hide()
+        binding.rotateLoading.inVisible()
     }
 
     fun hasMore() {

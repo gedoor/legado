@@ -11,6 +11,7 @@ import java.io.File
 import java.lang.Character.codePointCount
 import java.lang.Character.offsetByCodePoints
 import java.util.*
+import java.util.regex.Pattern
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
 
@@ -97,6 +98,15 @@ fun String.cnCompare(other: String): Int {
 fun String?.memorySize(): Int {
     this ?: return 0
     return 40 + 2 * length
+}
+
+/**
+ * 是否中文
+ */
+fun String.isChinese(): Boolean {
+    val p = Pattern.compile("[\u4e00-\u9fa5]")
+    val m = p.matcher(this)
+    return m.find()
 }
 
 /**

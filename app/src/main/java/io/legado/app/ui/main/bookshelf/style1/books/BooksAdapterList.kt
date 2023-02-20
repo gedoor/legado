@@ -52,9 +52,9 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
     private fun upRefresh(binding: ItemBookshelfListBinding, item: Book) {
         if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
             binding.bvUnread.invisible()
-            binding.rlLoading.show()
+            binding.rlLoading.visible()
         } else {
-            binding.rlLoading.hide()
+            binding.rlLoading.gone()
             if (AppConfig.showUnread) {
                 binding.bvUnread.setHighlight(item.lastCheckCount > 0)
                 binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())

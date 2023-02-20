@@ -58,9 +58,9 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
         }
         viewModel.loadStateLiveData.observe(viewLifecycleOwner) {
             if (it) {
-                binding.rlLoading.show()
+                binding.rlLoading.visible()
             } else {
-                binding.rlLoading.hide()
+                binding.rlLoading.gone()
             }
         }
         viewModel.initContent {

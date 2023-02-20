@@ -33,7 +33,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
             launch {
                 adapter.addItem(msg)
                 if (state == -1 || state == 1000) {
-                    binding.rotateLoading.hide()
+                    binding.rotateLoading.gone()
                 }
             }
         }
@@ -68,7 +68,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
     private fun startDebug() {
         adapter.clearItems()
         viewModel.rssSource?.let {
-            binding.rotateLoading.show()
+            binding.rotateLoading.visible()
             viewModel.startDebug(it)
         } ?: toastOnUi(R.string.error_no_source)
     }

@@ -57,10 +57,10 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         }
         viewModel.loadStateLiveData.observe(this) {
             if (it) {
-                binding.rotateLoading.show()
+                binding.rotateLoading.visible()
                 binding.bookInfo.invisible()
             } else {
-                binding.rotateLoading.hide()
+                binding.rotateLoading.gone()
             }
         }
         viewModel.loadErrorLiveData.observe(this) {

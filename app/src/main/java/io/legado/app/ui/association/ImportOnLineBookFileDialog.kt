@@ -41,18 +41,18 @@ class ImportOnLineBookFileDialog : BaseDialogFragment(R.layout.dialog_recycler_v
         viewModel.initData(bookUrl)
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.download_and_import_file)
-        binding.rotateLoading.show()
+        binding.rotateLoading.visible()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
         viewModel.errorLiveData.observe(this) {
-            binding.rotateLoading.hide()
+            binding.rotateLoading.gone()
             binding.tvMsg.apply {
                 text = it
                 visible()
             }
         }
         viewModel.successLiveData.observe(this) {
-            binding.rotateLoading.hide()
+            binding.rotateLoading.gone()
             if (it > 0) {
                 adapter.setItems(viewModel.allBookFiles)
             }

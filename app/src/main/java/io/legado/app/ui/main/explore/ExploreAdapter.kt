@@ -53,7 +53,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
             if (exIndex == holder.layoutPosition) {
                 ivStatus.setImageResource(R.drawable.ic_arrow_down)
                 rotateLoading.loadingColor = context.accentColor
-                rotateLoading.show()
+                rotateLoading.visible()
                 if (scrollTo >= 0) {
                     callBack.scrollTo(scrollTo)
                 }
@@ -62,7 +62,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 }.onSuccess { kindList ->
                     upKindList(flexbox, item.bookSourceUrl, kindList)
                 }.onFinally {
-                    rotateLoading.hide()
+                    rotateLoading.gone()
                     if (scrollTo >= 0) {
                         callBack.scrollTo(scrollTo)
                         scrollTo = -1
@@ -70,7 +70,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 }
             } else kotlin.runCatching {
                 ivStatus.setImageResource(R.drawable.ic_arrow_right)
-                rotateLoading.hide()
+                rotateLoading.gone()
                 recyclerFlexbox(flexbox)
                 flexbox.gone()
             }

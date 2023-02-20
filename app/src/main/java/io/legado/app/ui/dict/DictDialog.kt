@@ -12,7 +12,6 @@ import io.legado.app.data.entities.DictRule
 import io.legado.app.databinding.DialogDictBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.invisible
 import io.legado.app.utils.setHtml
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
@@ -60,11 +59,12 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
 
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val dictRule = tab.tag as DictRule
+                binding.rotateLoading.visible()
                 viewModel.dict(dictRule, word!!)
             }
         })
         viewModel.dictHtmlData.observe(viewLifecycleOwner) {
-            binding.rotateLoading.invisible()
+            binding.rotateLoading.inVisible()
             binding.tvDict.setHtml(it)
         }
         viewModel.initData {

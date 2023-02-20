@@ -50,7 +50,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             launch {
                 adapter.addItem(msg)
                 if (state == -1 || state == 1000) {
-                    binding.rotateLoading.hide()
+                    binding.rotateLoading.gone()
                 }
             }
         }
@@ -165,7 +165,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     private fun startSearch(key: String) {
         adapter.clearItems()
         viewModel.startDebug(key, {
-            binding.rotateLoading.show()
+            binding.rotateLoading.visible()
         }, {
             toastOnUi("未获取到书源")
         })

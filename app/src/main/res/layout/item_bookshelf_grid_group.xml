@@ -51,7 +51,6 @@
                 android:layout_height="22dp"
                 android:layout_gravity="right"
                 android:visibility="invisible"
-                app:hide_mode="invisible"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:loading_width="2dp"

@@ -66,7 +66,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         ChangeChapterTocAdapter(requireContext(), this)
     }
     private val contentSuccess: (content: String) -> Unit = {
-        binding.loadingToc.hide()
+        binding.loadingToc.gone()
         callBack?.replaceContent(it)
         dismissAllowingStateLoss()
     }
@@ -267,7 +267,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         this.searchBook = searchBook
         tocAdapter.setItems(null)
         binding.clToc.visible()
-        binding.loadingToc.show()
+        binding.loadingToc.visible()
         val book = searchBook.toBook()
         viewModel.getToc(book, {
             binding.clToc.gone()
@@ -275,7 +275,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         }) { toc: List<BookChapter>, _: BookSource ->
             tocAdapter.durChapterIndex =
                 BookHelp.getDurChapter(viewModel.chapterIndex, viewModel.chapterTitle, toc)
-            binding.loadingToc.hide()
+            binding.loadingToc.gone()
             tocAdapter.setItems(toc)
             binding.recyclerViewToc.scrollToPosition(tocAdapter.durChapterIndex - 5)
         }
@@ -321,9 +321,9 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     override fun clickChapter(bookChapter: BookChapter, nextChapterUrl: String?) {
         searchBook?.let {
-            binding.loadingToc.show()
+            binding.loadingToc.visible()
             viewModel.getContent(it.toBook(), bookChapter, nextChapterUrl, contentSuccess) { msg ->
-                binding.loadingToc.hide()
+                binding.loadingToc.gone()
                 binding.clToc.gone()
                 toastOnUi(msg)
             }

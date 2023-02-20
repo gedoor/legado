@@ -39,7 +39,7 @@ class RotateLoading @JvmOverloads constructor(
 
     private var shadowPosition: Int = 0
 
-    var hideMode = GONE
+    private var hideMode = GONE
 
     var isStarted = false
         private set
@@ -78,10 +78,6 @@ class RotateLoading @JvmOverloads constructor(
             )
             speedOfDegree =
                 typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
-            hideMode = when (typedArray.getInt(R.styleable.RotateLoading_hide_mode, 2)) {
-                1 -> INVISIBLE
-                else -> GONE
-            }
             typedArray.recycle()
         }
         speedOfArc = (speedOfDegree / 4).toFloat()
@@ -174,13 +170,21 @@ class RotateLoading @JvmOverloads constructor(
         removeCallbacks(hidden)
     }
 
-    fun show() {
+    fun visible() {
         removeCallbacks(shown)
         removeCallbacks(hidden)
         post(shown)
     }
 
-    fun hide() {
+    fun inVisible() {
+        hideMode = INVISIBLE
+        removeCallbacks(shown)
+        removeCallbacks(hidden)
+        stopInternal()
+    }
+
+    fun gone() {
+        hideMode = GONE
         removeCallbacks(shown)
         removeCallbacks(hidden)
         stopInternal()

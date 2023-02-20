@@ -63,7 +63,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_rss_source)
-        binding.rotateLoading.show()
+        binding.rotateLoading.visible()
         initMenu()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
@@ -92,14 +92,14 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             upSelectText()
         }
         viewModel.errorLiveData.observe(this) {
-            binding.rotateLoading.hide()
+            binding.rotateLoading.gone()
             binding.tvMsg.apply {
                 text = it
                 visible()
             }
         }
         viewModel.successLiveData.observe(this) {
-            binding.rotateLoading.hide()
+            binding.rotateLoading.gone()
             if (it > 0) {
                 adapter.setItems(viewModel.allSources)
                 upSelectText()

@@ -12,7 +12,6 @@
         android:layout_margin="6dp"
         android:layout_gravity="center"
         android:visibility="invisible"
-        app:hide_mode="invisible"
         app:loading_width="2dp" />
 
     <TextView

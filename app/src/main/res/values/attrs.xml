@@ -128,12 +128,6 @@
         <attr name="loading_color" format="color" />
         <attr name="shadow_position" format="integer" />
         <attr name="loading_speed" format="integer" />
-        <attr name="hide_mode">
-            <!-- Not displayed, but taken into account during layout (space is left for it). -->
-            <enum name="invisible" value="1" />
-            <!-- Completely hidden, as if the view had not been added. -->
-            <enum name="gone" value="2" />
-        </attr>
     </declare-styleable>
 
     <declare-styleable name="CircleImageView">

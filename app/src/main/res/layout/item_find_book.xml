@@ -36,7 +36,6 @@
             android:visibility="gone"
             android:layout_gravity="center"
             android:layout_marginRight="4dp"
-            app:hide_mode="gone"
             app:loading_width="1dp"
             tools:ignore="RtlHardcoded" />
 
