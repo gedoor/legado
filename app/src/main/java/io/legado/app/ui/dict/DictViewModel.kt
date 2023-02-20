@@ -3,46 +3,27 @@ package io.legado.app.ui.dict
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.entities.DictRule
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.toastOnUi
 import java.util.regex.Pattern
 
 class DictViewModel(application: Application) : BaseViewModel(application) {
-
+    var dictRules: List<DictRule>? = null
     var dictHtmlData: MutableLiveData<String> = MutableLiveData()
 
-    fun dict(word: String) {
-        if (isChinese(word)) {
-            baiduDict(word)
-        } else {
-            haiciDict(word)
-        }
-
-    }
-
-    /**
-     * 海词英文词典
-     *
-     * @param word
-     */
-    private fun haiciDict(word: String) {
+    fun initData(onSuccess: () -> Unit) {
         execute {
-            DefaultData.dictRules[1].search(word)
+            DefaultData.dictRules
         }.onSuccess {
-            dictHtmlData.postValue(it)
-        }.onError {
-            context.toastOnUi(it.localizedMessage)
+            dictRules = it
+            onSuccess.invoke()
         }
     }
 
-    /**
-     * 百度汉语词典
-     *
-     * @param word
-     */
-    private fun baiduDict(word: String) {
+    fun dict(dictRule: DictRule, word: String) {
         execute {
-            DefaultData.dictRules[0].search(word)
+            dictRule.search(word)
         }.onSuccess {
             dictHtmlData.postValue(it)
         }.onError {

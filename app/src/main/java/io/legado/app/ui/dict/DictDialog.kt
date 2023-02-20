@@ -5,9 +5,13 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.data.entities.DictRule
 import io.legado.app.databinding.DialogDictBinding
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.invisible
 import io.legado.app.utils.setHtml
 import io.legado.app.utils.setLayout
@@ -28,6 +32,8 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
     private val viewModel by viewModels<DictViewModel>()
     private val binding by viewBinding(DialogDictBinding::bind)
 
+    private var word: String? = null
+
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -35,19 +41,41 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.tvDict.movementMethod = LinkMovementMethod()
-        val word = arguments?.getString("word")
+        word = arguments?.getString("word")
         if (word.isNullOrEmpty()) {
             toastOnUi(R.string.cannot_empty)
             dismiss()
             return
         }
+        binding.tabLayout.setBackgroundColor(backgroundColor)
+        binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab) {
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val dictRule = tab.tag as DictRule
+                viewModel.dict(dictRule, word!!)
+            }
+        })
         viewModel.dictHtmlData.observe(viewLifecycleOwner) {
             binding.rotateLoading.invisible()
             binding.tvDict.setHtml(it)
         }
-        viewModel.dict(word)
+        viewModel.initData {
+            viewModel.dictRules?.forEach {
+                binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+                    text = it.name
+                    tag = it
+                })
+            }
+        }
 
     }
-
 
 }

@@ -69,23 +69,26 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     }
 
     override fun selectAll(selectAll: Boolean) {
-        TODO("Not yet implemented")
+        adapter.selectAll()
     }
 
     override fun revertSelection() {
-        TODO("Not yet implemented")
+        adapter.revertSelection()
     }
 
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        TODO("Not yet implemented")
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+        }
+        return true
     }
 
     override fun update(vararg rule: DictRule) {
-        TODO("Not yet implemented")
+        viewModel.upsert(*rule)
     }
 
     override fun delete(rule: DictRule) {
-        TODO("Not yet implemented")
+        viewModel.delete(rule)
     }
 
     override fun edit(rule: DictRule) {
@@ -105,7 +108,10 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     }
 
     override fun upCountView() {
-        TODO("Not yet implemented")
+        binding.selectActionBar.upCountView(
+            adapter.selection.size,
+            adapter.itemCount
+        )
     }
 
 
