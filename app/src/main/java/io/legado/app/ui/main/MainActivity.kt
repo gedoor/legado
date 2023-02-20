@@ -174,7 +174,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return@suspendCoroutine
         }
         LocalConfig.versionCode = appInfo.versionCode
-        viewModel.upVersion()
         if (LocalConfig.isFirstOpenApp) {
             val help = String(assets.open("help/appHelp.md").readBytes())
             val dialog = TextDialog(getString(R.string.help), help, TextDialog.Mode.MD)

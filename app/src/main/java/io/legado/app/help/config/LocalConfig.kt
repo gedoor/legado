@@ -51,6 +51,9 @@ object LocalConfig :
     val needUpRssSources: Boolean
         get() = !isLastVersion(4, "rssSourceVersion")
 
+    val needUpDictRule: Boolean
+        get() = !isLastVersion(1, "needUpDictRule")
+
     var versionCode
         get() = getLong(versionCodeKey, 0)
         set(value) {

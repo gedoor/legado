@@ -1,17 +1,42 @@
 package io.legado.app.help
 
+import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.*
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.BookCover
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.printOnDebug
 import splitties.init.appCtx
 import java.io.File
 
 object DefaultData {
+
+    fun upVersion() {
+        if (LocalConfig.versionCode < AppConst.appInfo.versionCode) {
+            Coroutine.async {
+                if (LocalConfig.needUpHttpTTS) {
+                    importDefaultHttpTTS()
+                }
+                if (LocalConfig.needUpTxtTocRule) {
+                    importDefaultTocRules()
+                }
+                if (LocalConfig.needUpRssSources) {
+                    importDefaultRssSources()
+                }
+                if (LocalConfig.needUpDictRule) {
+                    importDefaultDictRules()
+                }
+            }.onError {
+                it.printOnDebug()
+            }
+        }
+    }
 
     val httpTTS: List<HttpTTS> by lazy {
         val json =
@@ -93,6 +118,10 @@ object DefaultData {
 
     fun importDefaultRssSources() {
         appDb.rssSourceDao.insert(*rssSources.toTypedArray())
+    }
+
+    fun importDefaultDictRules() {
+        appDb.dictRuleDao.upsert(*dictRules.toTypedArray())
     }
 
 }

@@ -14,7 +14,6 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.DefaultData
 import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.config.LocalConfig
 import io.legado.app.model.CacheBook
 import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
@@ -246,18 +245,4 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun upVersion() {
-        execute {
-            if (LocalConfig.needUpHttpTTS) {
-                DefaultData.importDefaultHttpTTS()
-            }
-            if (LocalConfig.needUpTxtTocRule) {
-                DefaultData.importDefaultTocRules()
-            }
-            if (LocalConfig.needUpRssSources) {
-                DefaultData.importDefaultRssSources()
-            }
-
-        }
-    }
 }
