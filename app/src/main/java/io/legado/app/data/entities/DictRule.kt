@@ -12,9 +12,9 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 @Entity(tableName = "dictRules")
 data class DictRule(
     @PrimaryKey
-    var name: String,
-    var urlRule: String,
-    var showRule: String,
+    var name: String = "",
+    var urlRule: String = "",
+    var showRule: String = "",
     @ColumnInfo(defaultValue = "1")
     var enabled: Boolean = true,
     @ColumnInfo(defaultValue = "0")
