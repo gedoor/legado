@@ -1,17 +1,112 @@
 package io.legado.app.ui.dict.rule
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.DictRule
 import io.legado.app.databinding.ActivityDictRuleBinding
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
+import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.launch
 
-class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewModel>() {
+class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewModel>(),
+    PopupMenu.OnMenuItemClickListener,
+    SelectActionBar.CallBack,
+    DictRuleAdapter.CallBack {
 
     override val viewModel by viewModels<DictRuleViewModel>()
     override val binding by viewBinding(ActivityDictRuleBinding::inflate)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+    private val adapter by lazy { DictRuleAdapter(this, this) }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        initRecyclerView()
+        initSelectActionView()
+        observeDictRuleData()
     }
+
+    private fun initRecyclerView() {
+        binding.recyclerView.setEdgeEffectColor(primaryColor)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.addItemDecoration(VerticalDivider(this))
+        val itemTouchCallback = ItemTouchCallback(adapter)
+        itemTouchCallback.isCanDrag = true
+        val dragSelectTouchHelper: DragSelectTouchHelper =
+            DragSelectTouchHelper(adapter.dragSelectCallback).setSlideArea(16, 50)
+        dragSelectTouchHelper.attachToRecyclerView(binding.recyclerView)
+        // When this page is opened, it is in selection mode
+        dragSelectTouchHelper.activeSlideSelect()
+
+        // Note: need judge selection first, so add ItemTouchHelper after it.
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
+    }
+
+    private fun initSelectActionView() {
+        binding.selectActionBar.setMainActionText(R.string.delete)
+        binding.selectActionBar.inflateMenu(R.menu.replace_rule_sel)
+        binding.selectActionBar.setOnMenuItemClickListener(this)
+        binding.selectActionBar.setCallBack(this)
+    }
+
+    private fun observeDictRuleData() {
+        launch {
+            appDb.dictRuleDao.flowAll().collect {
+                adapter.setItems(it, adapter.diffItemCallBack)
+            }
+        }
+    }
+
+    override fun selectAll(selectAll: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun revertSelection() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun update(vararg rule: DictRule) {
+        TODO("Not yet implemented")
+    }
+
+    override fun delete(rule: DictRule) {
+        TODO("Not yet implemented")
+    }
+
+    override fun edit(rule: DictRule) {
+        TODO("Not yet implemented")
+    }
+
+    override fun toTop(rule: DictRule) {
+        TODO("Not yet implemented")
+    }
+
+    override fun toBottom(rule: DictRule) {
+        TODO("Not yet implemented")
+    }
+
+    override fun upOrder() {
+        TODO("Not yet implemented")
+    }
+
+    override fun upCountView() {
+        TODO("Not yet implemented")
+    }
+
+
 }
