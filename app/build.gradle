@@ -19,8 +19,10 @@ android {
     compileSdk = compile_sdk_version
     buildToolsVersion = build_tool_version
     namespace 'io.legado.app'
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of("11"))
+        }
     }
 
     signingConfigs {
