@@ -12,11 +12,9 @@ fun CookieManager.removeCookie(domain: String) {
     )
     urls.forEach { url ->
         val cookieGlob = cm.getCookie(url)
-        cookieGlob.split(";").forEach {
+        cookieGlob.splitNotBlank(";").forEach {
             val cookieName = it.substringBefore("=")
-            if (cookieName.isEmpty()) {
-                cm.setCookie(url, "$cookieName=; Expires=Wed, 31 Dec 2000 23:59:59 GMT")
-            }
+            cm.setCookie(url, "$cookieName=; Expires=Wed, 31 Dec 2000 23:59:59 GMT")
         }
     }
 }
