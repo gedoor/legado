@@ -1,5 +1,6 @@
 package io.legado.app.ui.dict.rule
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,7 +17,9 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.association.ImportDictRuleDialog
 import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
@@ -32,8 +35,25 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     override val viewModel by viewModels<DictRuleViewModel>()
     override val binding by viewBinding(ActivityDictRuleBinding::inflate)
-
+    private val importRecordKey = "dictRuleUrls"
     private val adapter by lazy { DictRuleAdapter(this, this) }
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        showDialogFragment(
+            ImportDictRuleDialog(it)
+        )
+    }
+    private val importDoc = registerForActivityResult(HandleFileContract()) {
+        kotlin.runCatching {
+            it.uri?.readText(this)?.let {
+                showDialogFragment(
+                    ImportDictRuleDialog(it)
+                )
+            }
+        }.onFailure {
+            toastOnUi("readTextError:${it.localizedMessage}")
+        }
+    }
     private val exportResult = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             alert(R.string.export_success) {
@@ -102,6 +122,12 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
         when (item.itemId) {
             R.id.menu_create -> showDialogFragment<DictRuleEditDialog>()
             R.id.menu_import_default -> viewModel.importDefault()
+            R.id.menu_import_local -> importDoc.launch {
+                mode = HandleFileContract.FILE
+                allowExtensions = arrayOf("txt", "json")
+            }
+            R.id.menu_import_onLine -> showImportDialog()
+            R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_help -> {}
         }
         return super.onCompatOptionsItemSelected(item)
@@ -162,5 +188,36 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
         )
     }
 
-
+    @SuppressLint("InflateParams")
+    private fun showImportDialog() {
+        val aCache = ACache.get(cacheDir = false)
+        val cacheUrls: MutableList<String> = aCache
+            .getAsString(importRecordKey)
+            ?.splitNotBlank(",")
+            ?.toMutableList() ?: mutableListOf()
+        alert(titleResource = R.string.import_replace_rule_on_line) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = "url"
+                editView.setFilterValues(cacheUrls)
+                editView.delCallBack = {
+                    cacheUrls.remove(it)
+                    aCache.put(importRecordKey, cacheUrls.joinToString(","))
+                }
+            }
+            customView { alertBinding.root }
+            okButton {
+                val text = alertBinding.editView.text?.toString()
+                text?.let {
+                    if (!cacheUrls.contains(it)) {
+                        cacheUrls.add(0, it)
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
+                    }
+                    showDialogFragment(
+                        ImportDictRuleDialog(it)
+                    )
+                }
+            }
+            cancelButton()
+        }
+    }
 }

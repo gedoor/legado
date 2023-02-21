@@ -30,6 +30,8 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
                 successLive.postValue(Pair("replaceRule", json))
             json.contains("themeName") ->
                 successLive.postValue(Pair("theme", json))
+            json.contains("urlRule") && json.contains("showRule") ->
+                successLive.postValue(Pair("dictRule", json))
             json.contains("name") && json.contains("rule") ->
                 successLive.postValue(Pair("txtRule", json))
             json.contains("name") && json.contains("url") ->
