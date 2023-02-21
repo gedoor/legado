@@ -298,7 +298,7 @@ data class Book(
         if (appDb.bookDao.has(bookUrl) == true) {
             appDb.bookDao.update(this)
         } else {
-            appDb.bookDao.upsert(this)
+            appDb.bookDao.insert(this)
         }
     }
 

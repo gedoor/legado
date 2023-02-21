@@ -1,9 +1,6 @@
 package io.legado.app.data.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Query
-import androidx.room.Upsert
+import androidx.room.*
 import io.legado.app.data.entities.DictRule
 import kotlinx.coroutines.flow.Flow
 
@@ -23,8 +20,8 @@ interface DictRuleDao {
     @Query("select * from dictRules where name = :name")
     fun getByName(name: String): DictRule?
 
-    @Upsert
-    fun upsert(vararg dictRule: DictRule)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg dictRule: DictRule)
 
     @Delete
     fun delete(vararg dictRule: DictRule)

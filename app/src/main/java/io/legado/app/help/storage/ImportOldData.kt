@@ -87,7 +87,7 @@ object ImportOldData {
 
     private fun importOldBookshelf(json: String): Int {
         val books = fromOldBooks(json)
-        appDb.bookDao.upsert(*books.toTypedArray())
+        appDb.bookDao.insert(*books.toTypedArray())
         return books.size
     }
 

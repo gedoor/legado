@@ -195,7 +195,7 @@ class AudioPlayActivity :
             launch {
                 withContext(IO) {
                     AudioPlay.book?.migrateTo(book, toc)
-                    appDb.bookDao.upsert(book)
+                    appDb.bookDao.insert(book)
                 }
                 startActivity<ReadBookActivity> {
                     putExtra("bookUrl", book.bookUrl)

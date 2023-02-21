@@ -121,7 +121,7 @@ object DefaultData {
     }
 
     fun importDefaultDictRules() {
-        appDb.dictRuleDao.upsert(*dictRules.toTypedArray())
+        appDb.dictRuleDao.insert(*dictRules.toTypedArray())
     }
 
 }

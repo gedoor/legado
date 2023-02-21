@@ -51,7 +51,7 @@ class ImportDictRuleViewModel(app: Application) : BaseViewModel(app) {
                     selectSource.add(allSources[index])
                 }
             }
-            appDb.dictRuleDao.upsert(*selectSource.toTypedArray())
+            appDb.dictRuleDao.insert(*selectSource.toTypedArray())
         }.onFinally {
             finally.invoke()
         }

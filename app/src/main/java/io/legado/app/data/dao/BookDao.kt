@@ -104,8 +104,8 @@ interface BookDao {
     @Query("select 1 from books where originName = :fileName")
     fun hasFile(fileName: String): Boolean?
 
-    @Upsert
-    fun upsert(vararg book: Book)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg book: Book)
 
     @Update
     fun update(vararg book: Book)

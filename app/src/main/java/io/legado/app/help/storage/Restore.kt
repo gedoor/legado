@@ -75,7 +75,7 @@ object Restore {
                     .forEach { book ->
                         book.coverUrl = LocalBook.getCoverPath(book)
                     }
-                appDb.bookDao.upsert(*it.toTypedArray())
+                appDb.bookDao.insert(*it.toTypedArray())
             }
             fileToListT<Bookmark>(path, "bookmark.json")?.let {
                 appDb.bookmarkDao.insert(*it.toTypedArray())

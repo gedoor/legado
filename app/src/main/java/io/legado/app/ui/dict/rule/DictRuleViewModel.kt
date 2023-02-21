@@ -11,7 +11,7 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
 
     fun upsert(vararg dictRule: DictRule) {
         execute {
-            appDb.dictRuleDao.upsert(*dictRule)
+            appDb.dictRuleDao.insert(*dictRule)
         }
     }
 
@@ -27,7 +27,7 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
             for ((index, rule) in rules.withIndex()) {
                 rule.sortNumber = index + 1
             }
-            appDb.dictRuleDao.upsert(*rules.toTypedArray())
+            appDb.dictRuleDao.insert(*rules.toTypedArray())
         }
     }
 
@@ -36,7 +36,7 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
             dictRule.forEach {
                 it.enabled = true
             }
-            appDb.dictRuleDao.upsert(*dictRule)
+            appDb.dictRuleDao.insert(*dictRule)
         }
     }
 
@@ -45,7 +45,7 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
             dictRule.forEach {
                 it.enabled = false
             }
-            appDb.dictRuleDao.upsert(*dictRule)
+            appDb.dictRuleDao.insert(*dictRule)
         }
     }
 

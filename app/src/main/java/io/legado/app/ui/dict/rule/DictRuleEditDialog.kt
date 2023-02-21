@@ -91,7 +91,7 @@ class DictRuleEditDialog() : BaseDialogFragment(R.layout.dialog_dict_rule_edit, 
                 dictRule?.let {
                     appDb.dictRuleDao.delete(it)
                 }
-                appDb.dictRuleDao.upsert(newDictRule)
+                appDb.dictRuleDao.insert(newDictRule)
                 dictRule = newDictRule
             }.onFinally {
                 onFinally.invoke()
