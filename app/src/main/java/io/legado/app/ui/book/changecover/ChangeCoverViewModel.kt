@@ -29,6 +29,16 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private val tasks = CompositeCoroutine()
     private var searchSuccess: ((SearchBook) -> Unit)? = null
     private var bookSourceList = arrayListOf<BookSource>()
+    private val defaultCover by lazy {
+        listOf(
+            SearchBook(
+                originName = "默认封面",
+                name = name,
+                author = author,
+                coverUrl = "use_default_cover"
+            )
+        )
+    }
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""
     var author: String = ""
@@ -38,13 +48,13 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         searchSuccess = { searchBook ->
             if (!searchBooks.contains(searchBook)) {
                 searchBooks.add(searchBook)
-                trySend(searchBooks.sortedBy { it.originOrder })
+                trySend(defaultCover + searchBooks.sortedBy { it.originOrder })
             }
         }
 
         appDb.searchBookDao.getEnableHasCover(name, author).let {
             searchBooks.addAll(it)
-            trySend(searchBooks.toList())
+            trySend(defaultCover + searchBooks.toList())
         }
 
         if (searchBooks.size <= 1) {
