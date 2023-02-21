@@ -14,7 +14,7 @@ interface DictRuleDao {
     @get:Query("select * from dictRules where enabled = 1 order by sortNumber")
     val enabled: List<DictRule>
 
-    @Query("select * from dictRules where enabled = 1 order by sortNumber")
+    @Query("select * from dictRules order by sortNumber")
     fun flowAll(): Flow<List<DictRule>>
 
     @Query("select * from dictRules where name = :name")

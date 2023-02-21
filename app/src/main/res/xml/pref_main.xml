@@ -13,9 +13,9 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.Preference
-        android:key="txtTocRegexManage"
-        android:title="@string/txt_toc_regex"
-        android:summary="@string/config_txt_toc_regex"
+        android:key="txtTocRuleManage"
+        android:title="@string/txt_toc_rule"
+        android:summary="@string/config_txt_toc_rule"
         android:icon="@drawable/ic_cfg_source"
         app:iconSpaceReserved="false" />
 

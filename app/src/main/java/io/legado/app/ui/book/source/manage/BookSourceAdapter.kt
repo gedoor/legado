@@ -40,43 +40,42 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             }
         }
 
-    val diffItemCallback: DiffUtil.ItemCallback<BookSource>
-        get() = object : DiffUtil.ItemCallback<BookSource>() {
+    val diffItemCallback = object : DiffUtil.ItemCallback<BookSource>() {
 
-            override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
-                return oldItem.bookSourceUrl == newItem.bookSourceUrl
-            }
-
-            override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
-                return oldItem.bookSourceName == newItem.bookSourceName
-                        && oldItem.bookSourceGroup == newItem.bookSourceGroup
-                        && oldItem.enabled == newItem.enabled
-                        && oldItem.enabledExplore == newItem.enabledExplore
-                        && oldItem.exploreUrl == newItem.exploreUrl
-            }
-
-            override fun getChangePayload(oldItem: BookSource, newItem: BookSource): Any? {
-                val payload = Bundle()
-                if (oldItem.bookSourceName != newItem.bookSourceName
-                    || oldItem.bookSourceGroup != newItem.bookSourceGroup
-                ) {
-                    payload.putBoolean("upName", true)
-                }
-                if (oldItem.enabled != newItem.enabled) {
-                    payload.putBoolean("enabled", newItem.enabled)
-                }
-                if (oldItem.enabledExplore != newItem.enabledExplore ||
-                    oldItem.exploreUrl != newItem.exploreUrl
-                ) {
-                    payload.putBoolean("upExplore", true)
-                }
-                if (payload.isEmpty) {
-                    return null
-                }
-                return payload
-            }
-
+        override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
+            return oldItem.bookSourceUrl == newItem.bookSourceUrl
         }
+
+        override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
+            return oldItem.bookSourceName == newItem.bookSourceName
+                    && oldItem.bookSourceGroup == newItem.bookSourceGroup
+                    && oldItem.enabled == newItem.enabled
+                    && oldItem.enabledExplore == newItem.enabledExplore
+                    && oldItem.exploreUrl == newItem.exploreUrl
+        }
+
+        override fun getChangePayload(oldItem: BookSource, newItem: BookSource): Any? {
+            val payload = Bundle()
+            if (oldItem.bookSourceName != newItem.bookSourceName
+                || oldItem.bookSourceGroup != newItem.bookSourceGroup
+            ) {
+                payload.putBoolean("upName", true)
+            }
+            if (oldItem.enabled != newItem.enabled) {
+                payload.putBoolean("enabled", newItem.enabled)
+            }
+            if (oldItem.enabledExplore != newItem.enabledExplore ||
+                oldItem.exploreUrl != newItem.exploreUrl
+            ) {
+                payload.putBoolean("upExplore", true)
+            }
+            if (payload.isEmpty) {
+                return null
+            }
+            return payload
+        }
+
+    }
 
     override fun getViewBinding(parent: ViewGroup): ItemBookSourceBinding {
         return ItemBookSourceBinding.inflate(inflater, parent, false)
@@ -190,7 +189,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 }
                 R.id.menu_search -> callBack.searchBook(source)
                 R.id.menu_debug_source -> callBack.debug(source)
-                R.id.menu_del -> callBack.del(source)
+                R.id.menu_del -> {
+                    callBack.del(source)
+                    selected.remove(source)
+                }
                 R.id.menu_enable_explore -> {
                     callBack.update(source.copy(enabledExplore = !source.enabledExplore))
                 }

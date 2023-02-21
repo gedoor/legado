@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.ItemTxtTocRuleBinding
 import io.legado.app.lib.theme.backgroundColor
@@ -27,6 +29,43 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
         get() = getItems().filter {
             selected.contains(it)
         }
+
+    val diffItemCallBack = object : DiffUtil.ItemCallback<TxtTocRule>() {
+
+        override fun areItemsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
+            if (oldItem.name != newItem.name) {
+                return false
+            }
+            if (oldItem.enable != newItem.enable) {
+                return false
+            }
+            if (oldItem.example != newItem.example) {
+                return false
+            }
+            return true
+        }
+
+        override fun getChangePayload(oldItem: TxtTocRule, newItem: TxtTocRule): Any? {
+            val payload = Bundle()
+            if (oldItem.name != newItem.name) {
+                payload.putBoolean("upName", true)
+            }
+            if (oldItem.enable != newItem.enable) {
+                payload.putBoolean("enabled", newItem.enable)
+            }
+            if (oldItem.example != newItem.example) {
+                payload.putBoolean("upExample", true)
+            }
+            if (payload.isEmpty) {
+                return null
+            }
+            return payload
+        }
+    }
 
     override fun getViewBinding(parent: ViewGroup): ItemTxtTocRuleBinding {
         return ItemTxtTocRuleBinding.inflate(inflater, parent, false)
@@ -50,6 +89,9 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
                 bundle.keySet().map {
                     when (it) {
                         "selected" -> cbSource.isChecked = selected.contains(item)
+                        "upNmae" -> cbSource.text = item.name
+                        "upExample" -> titleExample.text = item.example
+                        "enabled" -> swtEnabled.isChecked = item.enable
                     }
                 }
             }
@@ -95,7 +137,10 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_bottom -> callBack.toBottom(source)
-                R.id.menu_del -> callBack.del(source)
+                R.id.menu_del ->  {
+                    callBack.del(source)
+                    selected.remove(source)
+                }
             }
             true
         }

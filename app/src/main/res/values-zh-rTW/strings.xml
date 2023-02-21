@@ -345,7 +345,7 @@
     <string name="pt_show_all_find">顯示所有發現</string>
     <string name="ps_show_all_find">關閉則只顯示勾選源的發現</string>
     <string name="update_toc">更新目錄</string>
-    <string name="txt_toc_regex">TXT目錄正則</string>
+    <string name="txt_toc_rule">TXT 目錄規則</string>
     <string name="set_charset">設定編碼</string>
     <string name="swap_sort">倒序-順序</string>
     <string name="sort">排序</string>
@@ -1079,5 +1079,6 @@
     <string name="create">新建</string>
     <string name="url_rule">url规则(urlRule)</string>
     <string name="show_rule">显示规则(showRule)</string>
-    <string name="config_txt_toc_regex">配置 TXT 目录正则</string>
+    <string name="config_txt_toc_rule">配置 TXT 目录规则</string>
+    <string name="import_dict_rule">导入字典规则</string>
 </resources>

@@ -24,7 +24,7 @@
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/txt_toc_regex"
+            app:title="@string/txt_toc_rule"
             app:titleTextAppearance="@style/ToolbarTitle" />
 
         <androidx.core.widget.NestedScrollView

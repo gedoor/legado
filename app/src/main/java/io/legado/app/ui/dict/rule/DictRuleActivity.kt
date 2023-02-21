@@ -21,6 +21,7 @@ import io.legado.app.ui.association.ImportDictRuleDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -120,15 +121,15 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_create -> showDialogFragment<DictRuleEditDialog>()
-            R.id.menu_import_default -> viewModel.importDefault()
+            R.id.menu_add -> showDialogFragment<DictRuleEditDialog>()
             R.id.menu_import_local -> importDoc.launch {
                 mode = HandleFileContract.FILE
                 allowExtensions = arrayOf("txt", "json")
             }
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch()
-            R.id.menu_help -> {}
+            R.id.menu_import_default -> viewModel.importDefault()
+            R.id.menu_help -> showDictRuleHelp()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -195,7 +196,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
             .getAsString(importRecordKey)
             ?.splitNotBlank(",")
             ?.toMutableList() ?: mutableListOf()
-        alert(titleResource = R.string.import_replace_rule_on_line) {
+        alert(titleResource = R.string.import_on_line) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "url"
                 editView.setFilterValues(cacheUrls)
@@ -219,5 +220,10 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
             }
             cancelButton()
         }
+    }
+
+    private fun showDictRuleHelp() {
+        val text = String(assets.open("help/dictRuleHelp.md").readBytes())
+        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 }

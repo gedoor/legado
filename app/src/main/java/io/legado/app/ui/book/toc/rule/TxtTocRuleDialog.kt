@@ -61,8 +61,8 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         durRegex = arguments?.getString("tocRegex")
-        binding.toolBar.setTitle(R.string.txt_toc_regex)
-        binding.toolBar.inflateMenu(R.menu.txt_toc_regex)
+        binding.toolBar.setTitle(R.string.txt_toc_rule)
+        binding.toolBar.inflateMenu(R.menu.txt_toc_rule)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.menu.findItem(R.id.menu_split_long_chapter)
             ?.isChecked = ReadBook.book?.getSplitLongChapter() == true
@@ -125,7 +125,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 item.isChecked = !item.isChecked
                 if (!item.isChecked) context?.longToastOnUi(R.string.need_more_time_load_content)
             }
-            R.id.menu_help -> showTxtTocRegexHelp()
+            R.id.menu_help -> showTxtTocRuleHelp()
         }
         return false
     }
@@ -170,8 +170,8 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         }
     }
 
-    private fun showTxtTocRegexHelp() {
-        val text = String(requireContext().assets.open("help/txtTocRegexHelp.md").readBytes())
+    private fun showTxtTocRuleHelp() {
+        val text = String(requireContext().assets.open("help/txtTocRuleHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

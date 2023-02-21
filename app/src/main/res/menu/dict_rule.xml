@@ -5,7 +5,7 @@
     tools:ignore="AlwaysShowAction">
 
     <item
-        android:id="@+id/menu_create"
+        android:id="@+id/menu_add"
         android:icon="@drawable/ic_add"
         android:title="@string/create"
         app:showAsAction="always" />

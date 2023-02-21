@@ -160,7 +160,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(item)
                 R.id.menu_bottom -> callBack.toBottom(item)
-                R.id.menu_del -> callBack.delete(item)
+                R.id.menu_del -> {
+                    callBack.delete(item)
+                    selected.remove(item)
+                }
             }
             true
         }

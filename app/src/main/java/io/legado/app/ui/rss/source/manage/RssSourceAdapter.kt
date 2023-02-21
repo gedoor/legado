@@ -179,7 +179,10 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_bottom -> callBack.toBottom(source)
-                R.id.menu_del -> callBack.del(source)
+                R.id.menu_del -> {
+                    callBack.del(source)
+                    selected.remove(source)
+                }
             }
             true
         }

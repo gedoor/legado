@@ -51,7 +51,7 @@ class ImportDictRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view)
     @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        binding.toolBar.setTitle(R.string.import_tts)
+        binding.toolBar.setTitle(R.string.import_dict_rule)
         binding.rotateLoading.visible()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter

@@ -11,14 +11,26 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/menu_default"
-        android:title="@string/import_default_rule"
+        android:id="@+id/menu_import_local"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_local"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_onLine"
+        android:title="@string/import_on_line"
         android:icon="@drawable/ic_import"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_import"
-        android:title="@string/import_replace_rule_on_line"
+        android:id="@+id/menu_import_qr"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_by_qr_code"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_import_default"
+        android:title="@string/import_default_rule"
         android:icon="@drawable/ic_import"
         app:showAsAction="never" />
 

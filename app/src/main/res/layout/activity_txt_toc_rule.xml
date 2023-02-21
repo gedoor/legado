@@ -9,10 +9,7 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contentInsetStartWithNavigation="0dp"
-        app:contentLayout="@layout/view_search"
-        app:displayHomeAsUp="true"
-        app:title="@string/txt_toc_regex" />
+        app:title="@string/txt_toc_rule" />
 
     <FrameLayout
         android:layout_width="match_parent"

@@ -41,19 +41,15 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
 
     fun enableSelection(vararg dictRule: DictRule) {
         execute {
-            dictRule.forEach {
-                it.enabled = true
-            }
-            appDb.dictRuleDao.insert(*dictRule)
+            val array = dictRule.map { it.copy(enabled = true) }.toTypedArray()
+            appDb.dictRuleDao.insert(*array)
         }
     }
 
     fun disableSelection(vararg dictRule: DictRule) {
         execute {
-            dictRule.forEach {
-                it.enabled = false
-            }
-            appDb.dictRuleDao.insert(*dictRule)
+            val array = dictRule.map { it.copy(enabled = false) }.toTypedArray()
+            appDb.dictRuleDao.insert(*array)
         }
     }
 

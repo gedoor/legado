@@ -346,7 +346,7 @@
     <string name="pt_show_all_find">Display all Discovery</string>
     <string name="ps_show_all_find">Display the selected origin\'s Discovery if closed</string>
     <string name="update_toc">Update chapters</string>
-    <string name="txt_toc_regex">Txt Chapters Regex</string>
+    <string name="txt_toc_rule">Txt Chapters Rule</string>
     <string name="set_charset">Text encoding</string>
     <string name="swap_sort">Ascending/Descending order</string>
     <string name="sort">Sort</string>
@@ -1080,5 +1080,6 @@
     <string name="create">新建</string>
     <string name="url_rule">url规则(urlRule)</string>
     <string name="show_rule">显示规则(showRule)</string>
-    <string name="config_txt_toc_regex">配置 TXT 目录正则</string>
+    <string name="config_txt_toc_rule">配置 TXT 目录规则</string>
+    <string name="import_dict_rule">导入字典规则</string>
 </resources>

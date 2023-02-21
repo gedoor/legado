@@ -141,6 +141,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
             ivDelete.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.delete(it)
+                    selected.remove(it)
                 }
             }
         }

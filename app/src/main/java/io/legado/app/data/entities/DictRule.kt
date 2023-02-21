@@ -21,6 +21,17 @@ data class DictRule(
     var sortNumber: Int = 0
 ) {
 
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is DictRule) {
+            return name == other.name
+        }
+        return false
+    }
+
     /**
      * 搜索字典
      */
