@@ -8,6 +8,7 @@ import io.legado.app.data.entities.Cookie
 import io.legado.app.help.CacheManager
 import io.legado.app.help.http.api.CookieManager
 import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.removeCookie
 
 object CookieStore : CookieManager {
 
@@ -61,7 +62,7 @@ object CookieStore : CookieManager {
         val domain = NetworkUtils.getSubDomain(url)
         appDb.cookieDao.delete(domain)
         CacheManager.deleteMemory("${domain}_cookie")
-        android.webkit.CookieManager.getInstance().removeAllCookies(null)
+        android.webkit.CookieManager.getInstance().removeCookie(domain)
     }
 
     override fun cookieToMap(cookie: String): MutableMap<String, String> {
