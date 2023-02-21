@@ -24,6 +24,8 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.association.ImportTxtTocRuleDialog
+import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -52,6 +54,19 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     private val adapter by lazy { TocRegexAdapter(requireContext()) }
     var selectedName: String? = null
     private var durRegex: String? = null
+    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        showDialogFragment(ImportTxtTocRuleDialog(it))
+    }
+    private val importDoc = registerForActivityResult(HandleFileContract()) {
+        kotlin.runCatching {
+            it.uri?.readText(requireContext())?.let {
+                showDialogFragment(ImportTxtTocRuleDialog(it))
+            }
+        }.onFailure {
+            toastOnUi("readTextError:${it.localizedMessage}")
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -118,8 +133,13 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> showDialogFragment(TxtTocRuleEditDialog())
-            R.id.menu_default -> viewModel.importDefault()
-            R.id.menu_import -> showImportDialog()
+            R.id.menu_import_local -> importDoc.launch {
+                mode = HandleFileContract.FILE
+                allowExtensions = arrayOf("txt", "json")
+            }
+            R.id.menu_import_onLine -> showImportDialog()
+            R.id.menu_import_qr -> qrCodeResult.launch()
+            R.id.menu_import_default -> viewModel.importDefault()
             R.id.menu_split_long_chapter -> {
                 ReadBook.book?.setSplitLongChapter(!item.isChecked)
                 item.isChecked = !item.isChecked
