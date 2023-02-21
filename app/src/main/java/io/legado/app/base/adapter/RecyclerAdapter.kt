@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.utils.buildMainHandler
+import kotlinx.coroutines.ensureActive
 import splitties.views.onLongClick
 import java.util.*
 
@@ -30,6 +33,8 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
     private var itemClickListener: ((holder: ItemViewHolder, item: ITEM) -> Unit)? = null
     private var itemLongClickListener: ((holder: ItemViewHolder, item: ITEM) -> Boolean)? = null
+
+    private var diffJob: Coroutine<*>? = null
 
     var itemAnimation: ItemAnimation? = null
 
@@ -139,15 +144,21 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
                     return itemCallback.getChangePayload(oldItem, newItem)
                 }
             }
-            val diffResult = DiffUtil.calculateDiff(callback)
-            if (this.items.isNotEmpty()) {
-                this.items.clear()
+            diffJob?.cancel()
+            diffJob = Coroutine.async {
+                val diffResult = DiffUtil.calculateDiff(callback)
+                ensureActive()
+                handler.post {
+                    if (this@RecyclerAdapter.items.isNotEmpty()) {
+                        this@RecyclerAdapter.items.clear()
+                    }
+                    if (items != null) {
+                        this@RecyclerAdapter.items.addAll(items)
+                    }
+                    diffResult.dispatchUpdatesTo(this@RecyclerAdapter)
+                    onCurrentListChanged()
+                }
             }
-            if (items != null) {
-                this.items.addAll(items)
-            }
-            diffResult.dispatchUpdatesTo(this)
-            onCurrentListChanged()
         }
     }
 
@@ -449,6 +460,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     companion object {
         private const val TYPE_HEADER_VIEW = Int.MIN_VALUE
         private const val TYPE_FOOTER_VIEW = Int.MAX_VALUE - 999
+        private val handler by lazy { buildMainHandler() }
     }
 
 }
