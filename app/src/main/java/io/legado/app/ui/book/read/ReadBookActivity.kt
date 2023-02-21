@@ -832,13 +832,17 @@ class ReadBookActivity : BaseReadBookActivity(),
         } else {
             ReadAloud.stop(this)
             launch {
-                ReadBook.book?.migrateTo(book, toc)
-                appDb.bookDao.insert(book)
+                withContext(IO) {
+                    ReadBook.book?.migrateTo(book, toc)
+                    book.removeType(BookType.updateError)
+                    ReadBook.book?.delete()
+                    appDb.bookDao.insert(book)
+                }
+                startActivity<AudioPlayActivity> {
+                    putExtra("bookUrl", book.bookUrl)
+                }
+                finish()
             }
-            startActivity<AudioPlayActivity> {
-                putExtra("bookUrl", book.bookUrl)
-            }
-            finish()
         }
     }
 

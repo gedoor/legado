@@ -216,6 +216,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.upMsg(context.getString(R.string.loading))
             ReadBook.book?.migrateTo(book, toc)
             book.removeType(BookType.updateError)
+            ReadBook.book?.delete()
             appDb.bookDao.insert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadBook.resetData(book)
