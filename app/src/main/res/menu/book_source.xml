@@ -116,12 +116,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_text_toc_rule"
-        android:icon="@drawable/ic_cfg_source"
-        android:title="@string/txt_toc_regex"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"

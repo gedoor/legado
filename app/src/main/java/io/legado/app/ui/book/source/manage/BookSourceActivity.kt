@@ -133,7 +133,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 allowExtensions = arrayOf("txt", "json")
             }
             R.id.menu_import_onLine -> showImportDialog()
-            R.id.menu_text_toc_rule -> startActivity<TxtTocRuleActivity>()
             R.id.menu_sort_manual -> {
                 item.isChecked = true
                 sortCheck(Sort.Default)

@@ -24,6 +24,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.association.ImportTxtTocRuleDialog
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
@@ -124,6 +125,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 item.isChecked = !item.isChecked
                 if (!item.isChecked) context?.longToastOnUi(R.string.need_more_time_load_content)
             }
+            R.id.menu_help -> showTxtTocRegexHelp()
         }
         return false
     }
@@ -166,6 +168,11 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             }
             cancelButton()
         }
+    }
+
+    private fun showTxtTocRegexHelp() {
+        val text = String(requireContext().assets.open("help/txtTocRegexHelp.md").readBytes())
+        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 
     inner class TocRegexAdapter(context: Context) :

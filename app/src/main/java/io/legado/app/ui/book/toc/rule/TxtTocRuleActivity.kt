@@ -15,6 +15,7 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.SelectActionBar
+import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -85,6 +86,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
             R.id.menu_add -> showDialogFragment(TxtTocRuleEditDialog())
             R.id.menu_default -> viewModel.importDefault()
             R.id.menu_import -> showImportDialog()
+            R.id.menu_help -> showTxtTocRegexHelp()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -187,6 +189,11 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
             }
             cancelButton()
         }
+    }
+
+    private fun showTxtTocRegexHelp() {
+        val text = String(assets.open("help/txtTocRegexHelp.md").readBytes())
+        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 
 }

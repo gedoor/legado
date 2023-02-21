@@ -1079,4 +1079,5 @@
     <string name="create">新建</string>
     <string name="url_rule">url规则(urlRule)</string>
     <string name="show_rule">显示规则(showRule)</string>
+    <string name="config_txt_toc_regex">配置 TXT 目录正则</string>
 </resources>

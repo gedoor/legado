@@ -13,17 +13,25 @@
     <item
         android:id="@+id/menu_default"
         android:title="@string/import_default_rule"
+        android:icon="@drawable/ic_import"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_import"
         android:title="@string/import_replace_rule_on_line"
+        android:icon="@drawable/ic_import"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_split_long_chapter"
         android:title="@string/split_long_chapter"
         android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:icon="@drawable/ic_help"
+        android:title="@string/help"
         app:showAsAction="never" />
 
 </menu>
