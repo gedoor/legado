@@ -13,7 +13,7 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
 
     fun update(vararg dictRule: DictRule) {
         execute {
-            appDb.dictRuleDao.insert(*dictRule)
+            appDb.dictRuleDao.update(*dictRule)
         }.onError {
             AppLog.put(it.localizedMessage, it)
             context.toastOnUi(it.localizedMessage)
