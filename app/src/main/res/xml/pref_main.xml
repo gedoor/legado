@@ -13,6 +13,13 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.Preference
+        android:key="txtTocRegexManage"
+        android:title="@string/txt_toc_regex"
+        android:summary="@string/config_txt_toc_regex"
+        android:icon="@drawable/ic_cfg_source"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.prefs.Preference
         android:key="replaceManage"
         android:title="@string/replace_purify"
         android:summary="@string/replace_purify_desc"
@@ -24,13 +31,6 @@
         android:title="@string/dict_rule"
         android:summary="@string/config_dict_rule"
         android:icon="@drawable/ic_translate"
-        app:iconSpaceReserved="false" />
-
-    <io.legado.app.lib.prefs.Preference
-        android:key="txtTocRegexManage"
-        android:title="@string/txt_toc_regex"
-        android:summary="@string/config_txt_toc_regex"
-        android:icon="@drawable/ic_cfg_source"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.NameListPreference

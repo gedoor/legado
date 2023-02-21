@@ -23,6 +23,9 @@ interface DictRuleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg dictRule: DictRule)
 
+    @Update
+    fun update(vararg dictRule: DictRule)
+
     @Delete
     fun delete(vararg dictRule: DictRule)
 

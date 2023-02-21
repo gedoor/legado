@@ -166,7 +166,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     }
 
     override fun update(vararg rule: DictRule) {
-        viewModel.upsert(*rule)
+        viewModel.update(*rule)
     }
 
     override fun delete(rule: DictRule) {
