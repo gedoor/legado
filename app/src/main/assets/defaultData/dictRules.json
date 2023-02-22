@@ -2,7 +2,7 @@
   {
     "name": "百度汉语",
     "urlRule": "https://dict.baidu.com/s?wd={{key}}",
-    "showRule": "@js:var jsoup = org.jsoup.Jsoup.parse(result)\njsoup.select(\"script\").remove()\njsoup.select(\"#word-header\").remove()\njsoup.select(\"#term-header\").remove()\njsoup.select(\".more-button\").remove()\njsoup.select(\".disactive\").remove()\njsoup.select(\"#download-wrapper\").remove()\njsoup.select(\"#right-panel\").remove()\njsoup.select(\"#content-panel\").html()",
+    "showRule": "@js:var jsoup = org.jsoup.Jsoup.parse(result)\njsoup.select(\"script\").remove()\njsoup.select(\"#word-header\").remove()\njsoup.select(\"#term-header\").remove()\njsoup.select(\".more-button\").remove()\njsoup.select(\".disactive\").remove()\njsoup.select(\"#download-wrapper\").remove()\njsoup.select(\"#upload-dialog\").remove()\njsoup.select(\"#right-panel\").remove()\njsoup.select(\"#content-panel\").html()",
     "enabled": true,
     "sortNumber": 0
   },

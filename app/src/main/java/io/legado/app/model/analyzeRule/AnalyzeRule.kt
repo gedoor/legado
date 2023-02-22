@@ -458,7 +458,8 @@ class AnalyzeRule(
                     mode = Mode.Json
                     ruleStr
                 }
-                ruleStr.startsWith("/") -> {//XPath特征很明显,无需配置单独的识别标头
+                ruleStr.startsWith("/") || ruleStr.startsWith("./") -> {
+                    //XPath特征很明显,无需配置单独的识别标头
                     mode = Mode.XPath
                     ruleStr
                 }
@@ -603,6 +604,7 @@ class AnalyzeRule(
                     || ruleStr.startsWith("$.")
                     || ruleStr.startsWith("$[")
                     || ruleStr.startsWith("//")
+                    || ruleStr.startsWith("./")
         }
     }
 
