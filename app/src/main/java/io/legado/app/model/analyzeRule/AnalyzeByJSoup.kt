@@ -7,6 +7,7 @@ import org.jsoup.parser.Parser
 import org.jsoup.select.Collector
 import org.jsoup.select.Elements
 import org.jsoup.select.Evaluator
+import org.seimicrawler.xpath.JXNode
 
 /**
  * Created by GKF on 2018/1/25.
@@ -20,6 +21,9 @@ class AnalyzeByJSoup(doc: Any) {
     private fun parse(doc: Any): Element {
         if (doc is Element) {
             return doc
+        }
+        if (doc is JXNode) {
+            return if (doc.isElement) doc.asElement() else Jsoup.parse(doc.toString())
         }
         if (doc.toString().startsWith("<?xml", true)) {
             return Jsoup.parse(doc.toString(), Parser.xmlParser())
