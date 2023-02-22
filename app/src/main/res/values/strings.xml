@@ -1077,9 +1077,10 @@
     <string name="source_tab_list">List</string>
     <string name="dict_rule">Dict rule</string>
     <string name="config_dict_rule">Config dict rule</string>
-    <string name="create">新建</string>
+    <string name="create">Create</string>
     <string name="url_rule">url规则(urlRule)</string>
     <string name="show_rule">显示规则(showRule)</string>
     <string name="config_txt_toc_rule">配置 TXT 目录规则</string>
-    <string name="import_dict_rule">导入字典规则</string>
+    <string name="import_dict_rule">Import dict rule</string>
+    <string name="keep_group">Keep group</string>
 </resources>

@@ -54,16 +54,19 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
         execute {
             val group = groupName?.trim()
             val keepName = AppConfig.importKeepName
+            val keepGroup = AppConfig.importKeepGroup
             val selectSource = arrayListOf<BookSource>()
             selectStatus.forEachIndexed { index, b ->
                 if (b) {
                     val source = allSources[index]
-                    if (keepName) {
-                        checkSources[index]?.let {
+                    checkSources[index]?.let {
+                        if (keepName) {
                             source.bookSourceName = it.bookSourceName
-                            source.bookSourceGroup = it.bookSourceGroup
-                            source.customOrder = it.customOrder
                         }
+                        if (keepGroup) {
+                            source.bookSourceGroup = it.bookSourceGroup
+                        }
+                        source.customOrder = it.customOrder
                     }
                     if (!group.isNullOrEmpty()) {
                         if (isAddGroup) {

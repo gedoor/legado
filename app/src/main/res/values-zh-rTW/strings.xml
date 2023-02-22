@@ -1081,4 +1081,5 @@
     <string name="show_rule">显示规则(showRule)</string>
     <string name="config_txt_toc_rule">配置 TXT 目录规则</string>
     <string name="import_dict_rule">导入字典规则</string>
+    <string name="keep_group">保留分组</string>
 </resources>

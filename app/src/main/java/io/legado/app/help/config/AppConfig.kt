@@ -331,6 +331,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     val importKeepName get() = appCtx.getPrefBoolean(PreferKey.importKeepName)
+    val importKeepGroup get() = appCtx.getPrefBoolean(PreferKey.importKeepGroup)
 
     var preDownloadNum
         get() = appCtx.getPrefInt(PreferKey.preDownloadNum, 10)

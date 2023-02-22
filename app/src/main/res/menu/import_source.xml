@@ -10,8 +10,14 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/menu_Keep_original_name"
+        android:id="@+id/menu_keep_original_name"
         android:title="@string/keep_original_name"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_keep_group"
+        android:title="@string/keep_group"
         android:checkable="true"
         app:showAsAction="never" />
 

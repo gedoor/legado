@@ -122,7 +122,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_new_group -> alertCustomGroup(item)
-            R.id.menu_Keep_original_name -> {
+            R.id.menu_keep_original_name -> {
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepName, item.isChecked)
             }
