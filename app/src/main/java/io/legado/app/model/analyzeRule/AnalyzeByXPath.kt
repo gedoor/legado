@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
+import org.jsoup.parser.Parser
 import org.jsoup.select.Elements
 
 @Keep
@@ -13,10 +14,13 @@ class AnalyzeByXPath(doc: Any) {
     private var element: Element = parse(doc)
 
     private fun parse(doc: Any): Element {
-        return when (doc) {
-            is Element -> doc
-            else -> Jsoup.parse(doc.toString())
+        if (doc is Element) {
+            return doc
         }
+        if (doc.toString().startsWith("<?xml", true)) {
+            return Jsoup.parse(doc.toString(), Parser.xmlParser())
+        }
+        return Jsoup.parse(doc.toString())
     }
 
     internal fun getElements(xPath: String): Elements? {
