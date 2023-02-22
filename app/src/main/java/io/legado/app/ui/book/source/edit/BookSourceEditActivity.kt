@@ -166,11 +166,10 @@ class BookSourceEditActivity :
             setText(R.string.source_tab_content)
         })
         if (BuildConfig.DEBUG) {
+            binding.cbIsEnableReview.visible()
             binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
                 setText(R.string.review)
             })
-        } else {
-            binding.cbIsEnableReview.gone()
         }
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
