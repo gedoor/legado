@@ -100,7 +100,7 @@ class RssSourceEditActivity :
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
-        menu.findItem(R.id.menu_login)?.isVisible = !viewModel.rssSource.loginUrl.isNullOrBlank()
+        menu.findItem(R.id.menu_login)?.isVisible = !viewModel.rssSource?.loginUrl.isNullOrBlank()
         menu.findItem(R.id.menu_auto_complete)?.isChecked = viewModel.autoComplete
         return super.onMenuOpened(featureId, menu)
     }
@@ -251,7 +251,7 @@ class RssSourceEditActivity :
     }
 
     private fun getRssSource(): RssSource {
-        val source = viewModel.rssSource
+        val source = viewModel.rssSource?.copy() ?: RssSource()
         source.enabled = binding.cbIsEnable.isChecked
         source.singleUrl = binding.cbSingleUrl.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked

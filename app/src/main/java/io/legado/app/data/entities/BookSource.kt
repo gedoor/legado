@@ -192,8 +192,9 @@ data class BookSource(
         }
     }
 
-    fun equal(source: BookSource) =
-        equal(bookSourceName, source.bookSourceName)
+    fun equal(source: BookSource?): Boolean {
+        source ?: return false
+        return equal(bookSourceName, source.bookSourceName)
                 && equal(bookSourceUrl, source.bookSourceUrl)
                 && equal(bookSourceGroup, source.bookSourceGroup)
                 && bookSourceType == source.bookSourceType
@@ -216,6 +217,7 @@ data class BookSource(
                 && getBookInfoRule() == source.getBookInfoRule()
                 && getTocRule() == source.getTocRule()
                 && getContentRule() == source.getContentRule()
+    }
 
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
 

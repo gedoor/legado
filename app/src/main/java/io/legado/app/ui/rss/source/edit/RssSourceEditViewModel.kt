@@ -17,8 +17,7 @@ import kotlinx.coroutines.Dispatchers
 
 class RssSourceEditViewModel(application: Application) : BaseViewModel(application) {
     var autoComplete = false
-    var rssSource: RssSource = RssSource()
-    private var oldSourceUrl: String = ""
+    var rssSource: RssSource? = null
 
     fun initData(intent: Intent, onFinally: () -> Unit) {
         execute {
@@ -28,7 +27,6 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
                     rssSource = it
                 }
             }
-            oldSourceUrl = rssSource.sourceUrl
         }.onFinally {
             onFinally()
         }
@@ -36,11 +34,11 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
 
     fun save(source: RssSource, success: (() -> Unit)) {
         execute {
-            if (oldSourceUrl != source.sourceUrl) {
-                appDb.rssSourceDao.delete(oldSourceUrl)
-                oldSourceUrl = source.sourceUrl
+            rssSource?.let {
+                appDb.rssSourceDao.delete(it)
             }
             appDb.rssSourceDao.insert(source)
+            rssSource = source
         }.onSuccess {
             success()
         }.onError {

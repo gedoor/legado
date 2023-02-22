@@ -103,7 +103,7 @@ class BookSourceEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> getSource().let { source ->
-                if (!source.equal(viewModel.bookSource ?: BookSource())) {
+                if (!source.equal(viewModel.bookSource)) {
                     source.lastUpdateTime = System.currentTimeMillis()
                 }
                 if (checkSource(source)) {
@@ -192,12 +192,7 @@ class BookSourceEditActivity :
 
     override fun finish() {
         val source = getSource()
-        val source2 = viewModel.bookSource ?: BookSource().apply {
-            enabledExplore = true
-            enabledCookieJar = true
-            enabledReview = true
-        }
-        if (!source.equal(source2)) {
+        if (!source.equal(viewModel.bookSource)) {
             alert(R.string.exit) {
                 setMessage(R.string.exit_no_save)
                 positiveButton(R.string.yes)
@@ -599,7 +594,7 @@ class BookSourceEditActivity :
         launch {
             val source = viewModel.bookSource
             if (source == null) {
-                toastOnUi("书源不存在")
+                toastOnUi("先保存书源")
                 return@launch
             }
             val variable = withContext(IO) { source.getVariable() }

@@ -101,7 +101,8 @@ data class RssSource(
 
     override fun hashCode() = sourceUrl.hashCode()
 
-    fun equal(source: RssSource): Boolean {
+    fun equal(source: RssSource?): Boolean {
+        source ?: return false
         return equal(sourceUrl, source.sourceUrl)
                 && equal(sourceIcon, source.sourceIcon)
                 && enabled == source.enabled
