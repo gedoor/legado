@@ -305,7 +305,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     private fun changeSource(searchBook: SearchBook, onSuccess: (() -> Unit)? = null) {
         waitDialog.setText(R.string.load_toc)
         waitDialog.show()
-        val book = searchBook.toBook()
+        val book = viewModel.bookMap[bookUrl] ?: searchBook.toBook()
         val coroutine = viewModel.getToc(book, {
             waitDialog.dismiss()
             toastOnUi(it)

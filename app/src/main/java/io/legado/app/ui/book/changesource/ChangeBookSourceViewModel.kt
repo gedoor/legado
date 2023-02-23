@@ -50,6 +50,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
     private var searchCallback: SourceCallback? = null
+    val bookMap = ConcurrentHashMap<String, Book>()
     val searchDataFlow = callbackFlow {
 
         searchCallback = object : SourceCallback {
@@ -217,7 +218,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private suspend fun loadBookToc(source: BookSource, book: Book) {
         val chapters = WebBook.getChapterListAwait(source, book).getOrThrow()
         tocMap[book.bookUrl] = chapters
-        book.latestChapterTitle = chapters.last().title
+        bookMap[book.bookUrl] = book
         val searchBook: SearchBook = book.toSearchBook()
         searchCallback?.searchSuccess(searchBook)
     }

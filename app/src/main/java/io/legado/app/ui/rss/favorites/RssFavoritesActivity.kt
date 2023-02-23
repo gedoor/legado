@@ -6,6 +6,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssStar
 import io.legado.app.databinding.ActivityRssFavoritesBinding
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.startActivity
@@ -26,6 +27,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     }
 
     private fun initView() {
+        binding.refreshLayout.setColorSchemeColors(accentColor)
         binding.recyclerView.let {
             it.layoutManager = LinearLayoutManager(this)
             it.addItemDecoration(VerticalDivider(this))
