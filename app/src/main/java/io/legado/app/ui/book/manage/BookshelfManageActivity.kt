@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.CheckBox
+import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
@@ -18,6 +20,7 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityArrangeBookBinding
 import io.legado.app.help.book.contains
+import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
@@ -29,6 +32,7 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.cnCompare
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -271,7 +275,7 @@ class BookshelfManageActivity :
 
     private fun alertDelSelection() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.deleteBook(*adapter.selection.toTypedArray()) }
+            okButton { viewModel.deleteBook(adapter.selection) }
             noButton()
         }
     }
@@ -315,8 +319,18 @@ class BookshelfManageActivity :
 
     override fun deleteBook(book: Book) {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
+            val checkBox = CheckBox(this@BookshelfManageActivity).apply {
+                setText(R.string.delete_book_file)
+            }
+            val view = LinearLayout(this@BookshelfManageActivity).apply {
+                setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                addView(checkBox)
+            }
+            if (book.isLocal) {
+                customView { view }
+            }
             okButton {
-                viewModel.deleteBook(book)
+                viewModel.deleteBook(listOf(book), checkBox.isChecked)
             }
         }
     }

@@ -10,6 +10,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.removeType
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.toastOnUi
 
@@ -36,9 +37,14 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
         }
     }
 
-    fun deleteBook(vararg book: Book) {
+    fun deleteBook(books: List<Book>, deleteOriginal: Boolean = false) {
         execute {
-            appDb.bookDao.delete(*book)
+            appDb.bookDao.delete(*books.toTypedArray())
+            books.forEach {
+                if (it.isLocal) {
+                    LocalBook.deleteBook(it, deleteOriginal)
+                }
+            }
         }
     }
 
