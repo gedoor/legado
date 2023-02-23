@@ -67,7 +67,7 @@
                 android:id="@+id/cb_is_enable_review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
+                android:checked="false"
                 android:text="@string/review"
                 android:visibility="gone" />
 

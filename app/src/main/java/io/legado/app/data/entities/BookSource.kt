@@ -38,12 +38,12 @@ data class BookSource(
     // 是否启用
     var enabled: Boolean = true,
     // 启用发现
-    var enabledExplore: Boolean = false,
+    var enabledExplore: Boolean = true,
     // 启用段评
     var enabledReview: Boolean? = false,
     // 启用okhttp CookieJAr 自动保存每次请求的cookie
     @ColumnInfo(defaultValue = "0")
-    override var enabledCookieJar: Boolean? = false,
+    override var enabledCookieJar: Boolean? = true,
     // 并发率
     override var concurrentRate: String? = null,
     // 请求头
@@ -192,8 +192,7 @@ data class BookSource(
         }
     }
 
-    fun equal(source: BookSource?): Boolean {
-        source ?: return false
+    fun equal(source: BookSource): Boolean {
         return equal(bookSourceName, source.bookSourceName)
                 && equal(bookSourceUrl, source.bookSourceUrl)
                 && equal(bookSourceGroup, source.bookSourceGroup)
