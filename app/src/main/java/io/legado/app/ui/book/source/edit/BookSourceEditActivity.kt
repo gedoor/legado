@@ -78,7 +78,7 @@ class BookSourceEditActivity :
         softKeyboardTool.attachToWindow(window)
         initView()
         viewModel.initData(intent) {
-            upSourceView()
+            upSourceView(viewModel.bookSource)
         }
     }
 
@@ -224,7 +224,7 @@ class BookSourceEditActivity :
         binding.recyclerView.scrollToPosition(0)
     }
 
-    private fun upSourceView(bookSource: BookSource? = viewModel.bookSource) {
+    private fun upSourceView(bookSource: BookSource?) {
         val bs = bookSource ?: BookSource()
         bs.let {
             binding.cbIsEnable.isChecked = it.enabled

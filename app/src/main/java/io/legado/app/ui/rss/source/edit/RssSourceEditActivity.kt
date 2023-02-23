@@ -63,7 +63,7 @@ class RssSourceEditActivity :
         softKeyboardTool.attachToWindow(window)
         initView()
         viewModel.initData(intent) {
-            upSourceView()
+            upSourceView(viewModel.rssSource)
         }
     }
 
@@ -190,7 +190,7 @@ class RssSourceEditActivity :
         binding.recyclerView.scrollToPosition(0)
     }
 
-    private fun upSourceView(rssSource: RssSource? = viewModel.rssSource) {
+    private fun upSourceView(rssSource: RssSource?) {
         val rs = rssSource ?: RssSource()
         rs.let {
             binding.cbIsEnable.isChecked = rs.enabled
