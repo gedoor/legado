@@ -180,7 +180,7 @@ interface JsEncodeUtils {
     fun aesEncodeToByteArray(
         data: String, key: String, transformation: String, iv: String
     ): ByteArray? {
-        return createSymmetricCrypto(transformation, key, iv).decrypt(data)
+        return createSymmetricCrypto(transformation, key, iv).encrypt(data)
     }
 
     /**

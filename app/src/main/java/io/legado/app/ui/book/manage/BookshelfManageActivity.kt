@@ -145,6 +145,12 @@ class BookshelfManageActivity :
                 }
 
             })
+            setOnQueryTextFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    searchView?.isIconified = true
+                    showTitle()
+                }
+            }
         }
     }
 
