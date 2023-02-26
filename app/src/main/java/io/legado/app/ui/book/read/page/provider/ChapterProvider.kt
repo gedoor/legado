@@ -266,9 +266,9 @@ object ChapterProvider {
                 }
             }
             val textLine = TextLine(isImage = true)
-            textLine.lineTop = durY
+            textLine.lineTop = durY + paddingTop
             durY += height
-            textLine.lineBottom = durY
+            textLine.lineBottom = durY + paddingTop
             val (start, end) = if (visibleWidth > width) {
                 val adjustWidth = (visibleWidth - width) / 2f
                 Pair(adjustWidth, adjustWidth + width)
