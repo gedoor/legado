@@ -21,6 +21,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
+import splitties.init.appCtx
 import java.io.File
 import java.util.*
 
@@ -108,7 +109,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 } else {
                     finish.invoke()
                 }
-            } ?: finish.invoke()
+            } ?: let {
+                appCtx.toastOnUi("订阅源不存在")
+                finish.invoke()
+            }
         } ?: finish.invoke()
     }
 
