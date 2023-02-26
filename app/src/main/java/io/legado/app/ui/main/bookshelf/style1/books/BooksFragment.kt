@@ -63,10 +63,12 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     }
     private var booksFlowJob: Job? = null
     private var savedInstanceState: Bundle? = null
-    private var position = 0
-    private var groupId = -1L
+    var position = 0
+        private set
+    var groupId = -1L
+        private set
     private var bookSort = 0
-    private var upLastUpdateTimeJob : Job? = null
+    private var upLastUpdateTimeJob: Job? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         this.savedInstanceState = savedInstanceState
