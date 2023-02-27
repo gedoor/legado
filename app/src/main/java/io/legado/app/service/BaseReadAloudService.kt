@@ -15,6 +15,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.media.AudioFocusRequestCompat
+import androidx.media.AudioManagerCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
@@ -276,8 +277,7 @@ abstract class BaseReadAloudService : BaseService(),
      * 放弃音频焦点
      */
     private fun abandonFocus() {
-        @Suppress("DEPRECATION")
-        audioManager.abandonAudioFocus(this)
+        AudioManagerCompat.abandonAudioFocusRequest(audioManager, mFocusRequest)
     }
 
     /**
