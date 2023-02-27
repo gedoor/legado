@@ -137,8 +137,8 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
         override fun getItemPosition(`object`: Any): Int {
             val fragment = `object` as BooksFragment
             val position = fragment.position
-            val group = bookGroups[position]
-            if (fragment.groupId != group.groupId) {
+            val group = bookGroups.getOrNull(position)
+            if (fragment.groupId != group?.groupId) {
                 return POSITION_NONE
             }
             return POSITION_UNCHANGED
