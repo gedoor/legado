@@ -175,8 +175,12 @@ class EpubFile(var book: Book) {
             elements.select("title").remove()
             elements.select("img").forEach {
                 val src = it.attr("src")
-                val path = chapter.url.substringBeforeLast("/") + "/"
-                val absSrc = StringUtil.collapsePathDots(path + src)
+                val path = chapter.url.substringBeforeLast("/", "")
+                val absSrc = if (path.isEmpty()) {
+                    src
+                } else {
+                    StringUtil.collapsePathDots("$path/$src")
+                }
                 it.attr("src", absSrc)
             }
             var html = elements.outerHtml()

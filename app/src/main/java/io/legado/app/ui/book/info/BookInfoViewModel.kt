@@ -326,6 +326,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun clearCache() {
         execute {
             BookHelp.clearCache(bookData.value!!)
+            if (ReadBook.book?.bookUrl == bookData.value!!.bookUrl) {
+                ReadBook.clearTextChapter()
+            }
         }.onSuccess {
             context.toastOnUi(R.string.clear_cache_success)
         }.onError {
