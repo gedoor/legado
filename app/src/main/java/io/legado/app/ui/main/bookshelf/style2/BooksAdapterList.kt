@@ -16,6 +16,7 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
+@Suppress("UNUSED_PARAMETER")
 class BooksAdapterList(context: Context, callBack: CallBack) :
     BaseBooksAdapter<RecyclerView.ViewHolder>(context, callBack) {
 
@@ -38,26 +39,49 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
         val bundle = payloads.getOrNull(0) as? Bundle
         when {
             bundle == null -> super.onBindViewHolder(holder, position, payloads)
-            holder is BookViewHolder -> onBindBook(holder.binding, position, bundle)
-            holder is GroupViewHolder -> onBindGroup(holder.binding, position, bundle)
+            holder is BookViewHolder -> (callBack.getItem(position) as? Book)?.let {
+                holder.onBind(it, bundle)
+            }
+            holder is GroupViewHolder -> (callBack.getItem(position) as? BookGroup)?.let {
+                holder.onBind(it, bundle)
+            }
         }
     }
 
-    private fun onBindGroup(
-        binding: ItemBookshelfListGroupBinding,
-        position: Int,
-        @Suppress("UNUSED_PARAMETER") bundle: Bundle
-    ) {
-        binding.run {
-            val item = callBack.getItem(position) as BookGroup
-            tvName.text = item.groupName
-            ivCover.load(item.cover)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is BookViewHolder -> (callBack.getItem(position) as? Book)?.let {
+                holder.onBind(it, position)
+            }
+            is GroupViewHolder -> (callBack.getItem(position) as? BookGroup)?.let {
+                holder.onBind(it, position)
+            }
         }
     }
 
-    private fun onBindBook(binding: ItemBookshelfListBinding, position: Int, bundle: Bundle) {
-        binding.run {
-            val item = callBack.getItem(position) as? Book ?: return
+    inner class BookViewHolder(val binding: ItemBookshelfListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun onBind(item: Book, position: Int) = binding.run{
+            tvName.text = item.name
+            tvAuthor.text = item.author
+            tvRead.text = item.durChapterTitle
+            tvLast.text = item.latestChapterTitle
+            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            flHasNew.visible()
+            ivAuthor.visible()
+            ivLast.visible()
+            ivRead.visible()
+            upRefresh(this, item)
+            root.setOnClickListener {
+                callBack.onItemClick(position)
+            }
+            root.onLongClick {
+                callBack.onItemLongClick(position)
+            }
+        }
+
+        fun onBind(item: Book, bundle: Bundle) = binding.run {
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle
             bundle.keySet().forEach {
@@ -69,81 +93,50 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                 }
             }
         }
-    }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is BookViewHolder -> onBindBook(holder.binding, position)
-            is GroupViewHolder -> onBindGroup(holder.binding, position)
-        }
-    }
-
-    private fun onBindGroup(binding: ItemBookshelfListGroupBinding, position: Int) {
-        binding.run {
-            val item = callBack.getItem(position)
-            if (item is BookGroup) {
-                tvName.text = item.groupName
-                ivCover.load(item.cover)
-                flHasNew.gone()
-                ivAuthor.gone()
-                ivLast.gone()
-                ivRead.gone()
-                tvAuthor.gone()
-                tvLast.gone()
-                tvRead.gone()
-            }
-            root.setOnClickListener {
-                callBack.onItemClick(position)
-            }
-            root.onLongClick {
-                callBack.onItemLongClick(position)
-            }
-        }
-    }
-
-    private fun onBindBook(binding: ItemBookshelfListBinding, position: Int) {
-        binding.run {
-            val item = callBack.getItem(position)
-            if (item is Book) {
-                tvName.text = item.name
-                tvAuthor.text = item.author
-                tvRead.text = item.durChapterTitle
-                tvLast.text = item.latestChapterTitle
-                ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
-                flHasNew.visible()
-                ivAuthor.visible()
-                ivLast.visible()
-                ivRead.visible()
-                upRefresh(this, item)
-            }
-            root.setOnClickListener {
-                callBack.onItemClick(position)
-            }
-            root.onLongClick {
-                callBack.onItemLongClick(position)
-            }
-        }
-    }
-
-    private fun upRefresh(binding: ItemBookshelfListBinding, item: Book) {
-        if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
-            binding.bvUnread.invisible()
-            binding.rlLoading.visible()
-        } else {
-            binding.rlLoading.gone()
-            if (AppConfig.showUnread) {
-                binding.bvUnread.setHighlight(item.lastCheckCount > 0)
-                binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
-            } else {
+        private fun upRefresh(binding: ItemBookshelfListBinding, item: Book) {
+            if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
                 binding.bvUnread.invisible()
+                binding.rlLoading.visible()
+            } else {
+                binding.rlLoading.gone()
+                if (AppConfig.showUnread) {
+                    binding.bvUnread.setHighlight(item.lastCheckCount > 0)
+                    binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
+                } else {
+                    binding.bvUnread.invisible()
+                }
             }
         }
+
     }
 
-    class BookViewHolder(val binding: ItemBookshelfListBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class GroupViewHolder(val binding: ItemBookshelfListGroupBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-    class GroupViewHolder(val binding: ItemBookshelfListGroupBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        fun onBind(item: BookGroup, position: Int) = binding.run{
+            tvName.text = item.groupName
+            ivCover.load(item.cover)
+            flHasNew.gone()
+            ivAuthor.gone()
+            ivLast.gone()
+            ivRead.gone()
+            tvAuthor.gone()
+            tvLast.gone()
+            tvRead.gone()
+            root.setOnClickListener {
+                callBack.onItemClick(position)
+            }
+            root.onLongClick {
+                callBack.onItemLongClick(position)
+            }
+        }
+
+        fun onBind(item: BookGroup, bundle: Bundle) = binding.run {
+            tvName.text = item.groupName
+            ivCover.load(item.cover)
+        }
+
+    }
 
 }

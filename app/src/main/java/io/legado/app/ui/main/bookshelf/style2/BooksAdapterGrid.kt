@@ -14,6 +14,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
+@Suppress("UNUSED_PARAMETER")
 class BooksAdapterGrid(context: Context, callBack: CallBack) :
     BaseBooksAdapter<RecyclerView.ViewHolder>(context, callBack) {
 
@@ -43,7 +44,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                 holder.onBind(it, bundle)
             }
             holder is GroupViewHolder -> (callBack.getItem(position) as? BookGroup)?.let {
-                holder.onBind(it, position)
+                holder.onBind(it, bundle)
             }
         }
     }
@@ -113,6 +114,11 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             root.onLongClick {
                 callBack.onItemLongClick(position)
             }
+        }
+
+        fun onBind(item: BookGroup, bundle: Bundle) = binding.run {
+            tvName.text = item.groupName
+            ivCover.load(item.cover)
         }
 
     }
