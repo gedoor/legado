@@ -165,13 +165,27 @@
 
             <TextView
                 android:id="@+id/tv_tts_speed"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:text="@string/read_aloud_speed"
                 android:textColor="@color/primaryText"
                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_tts_speed_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingHorizontal="3dp"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:layout_gravity="center" />
 
             <io.legado.app.lib.theme.view.ThemeSwitch
                 android:id="@+id/cb_tts_follow_sys"
@@ -279,7 +293,8 @@
             android:contentDescription="@string/read_aloud"
             android:focusable="true"
             android:orientation="vertical"
-            android:paddingBottom="7dp">
+            android:paddingBottom="7dp"
+            tools:ignore="TextSizeCheck">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_main_menu"
@@ -297,9 +312,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
-                android:text="@string/main_menu"
-                android:singleLine="true"
                 android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="@string/main_menu"
                 android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
