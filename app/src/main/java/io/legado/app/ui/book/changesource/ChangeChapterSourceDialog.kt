@@ -255,7 +255,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     private fun scrollToDurSource() {
         searchBookAdapter.getItems().forEachIndexed { index, searchBook ->
-            if (searchBook.bookUrl == bookUrl) {
+            if (searchBook.bookUrl == oldBookUrl) {
                 (binding.recyclerView.layoutManager as LinearLayoutManager)
                     .scrollToPositionWithOffset(index, 60.dpToPx())
                 return
@@ -281,7 +281,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         }
     }
 
-    override val bookUrl: String?
+    override val oldBookUrl: String?
         get() = callBack?.oldBook?.bookUrl
 
     override fun topSource(searchBook: SearchBook) {
@@ -304,7 +304,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     override fun deleteSource(searchBook: SearchBook) {
         viewModel.del(searchBook)
-        if (bookUrl == searchBook.bookUrl) {
+        if (oldBookUrl == searchBook.bookUrl) {
             viewModel.autoChangeSource(callBack?.oldBook?.type) { book, toc, source ->
                 callBack?.changeTo(source, book, toc)
             }
@@ -360,7 +360,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             searchBookAdapter.notifyItemRangeChanged(
                 0,
                 searchBookAdapter.itemCount,
-                bundleOf(Pair("upCurSource", bookUrl))
+                bundleOf(Pair("upCurSource", oldBookUrl))
             )
         }
     }

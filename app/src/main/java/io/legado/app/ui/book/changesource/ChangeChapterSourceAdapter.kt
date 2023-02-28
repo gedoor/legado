@@ -55,7 +55,7 @@ class ChangeChapterSourceAdapter(
                 tvOrigin.text = item.originName
                 tvAuthor.text = item.author
                 tvLast.text = item.getDisplayLastChapterTitle()
-                if (callBack.bookUrl == item.bookUrl) {
+                if (callBack.oldBookUrl == item.bookUrl) {
                     ivChecked.visible()
                 } else {
                     ivChecked.invisible()
@@ -65,7 +65,7 @@ class ChangeChapterSourceAdapter(
                     when (it) {
                         "name" -> tvOrigin.text = item.originName
                         "latest" -> tvLast.text = item.getDisplayLastChapterTitle()
-                        "upCurSource" -> if (callBack.bookUrl == item.bookUrl) {
+                        "upCurSource" -> if (callBack.oldBookUrl == item.bookUrl) {
                             ivChecked.visible()
                         } else {
                             ivChecked.invisible()
@@ -163,7 +163,7 @@ class ChangeChapterSourceAdapter(
     }
 
     interface CallBack {
-        val bookUrl: String?
+        val oldBookUrl: String?
         fun openToc(searchBook: SearchBook)
         fun topSource(searchBook: SearchBook)
         fun bottomSource(searchBook: SearchBook)
