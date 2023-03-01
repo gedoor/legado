@@ -92,7 +92,8 @@
 		<item>Batería</item>
 		<item>Batería%</item>
 		<item>Páginas</item>
-		<item>Avance</item>
+		<item>Avance(%)</item>
+		<item>Avance(xx/yyy)</item>
 		<item>Páginas y avance</item>
 		<item>Tiempo y Batería</item>
 		<item>Tiempo y Batería%</item>

@@ -112,7 +112,8 @@
 		<item>Battery</item>
 		<item>Battery%</item>
 		<item>Pages</item>
-		<item>Progress</item>
+		<item>Progress(%)</item>
+		<item>Progress(xx/yyy)</item>
 		<item>Pages and progress</item>
 		<item>Time and Battery</item>
 		<item>Time and Battery%</item>

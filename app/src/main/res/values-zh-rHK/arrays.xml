@@ -55,7 +55,8 @@
         <item>電量</item>
         <item>電量%</item>
         <item>頁數</item>
-        <item>進度</item>
+        <item>進度(%)</item>
+        <item>進度(xx/yyy)</item>
         <item>頁數同埋進度</item>
         <item>時間同埋電量</item>
         <item>時間同埋電量%</item>

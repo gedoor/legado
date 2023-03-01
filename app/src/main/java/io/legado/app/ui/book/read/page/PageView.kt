@@ -40,6 +40,7 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
+    private var tvTotalProgress1: BatteryView? = null
 
     val headerHeight: Int
         get() {
@@ -164,6 +165,12 @@ class PageView(context: Context) : FrameLayout(context) {
         }
         tvTotalProgress = getTipView(ReadTipConfig.totalProgress)?.apply {
             tag = ReadTipConfig.totalProgress
+            isBattery = false
+            typeface = ChapterProvider.typeface
+            textSize = 12f
+        }
+        tvTotalProgress1 = getTipView(ReadTipConfig.totalProgress1)?.apply {
+            tag = ReadTipConfig.totalProgress1
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
@@ -295,6 +302,7 @@ class PageView(context: Context) : FrameLayout(context) {
         tvTitle?.text = textPage.title
         tvPage?.text = "${index.plus(1)}/$pageSize"
         tvTotalProgress?.text = readProgress
+        tvTotalProgress1?.text = "${textPage.chapterIndex.plus(1)}/${textPage.chapterSize}"
         tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
     }
 

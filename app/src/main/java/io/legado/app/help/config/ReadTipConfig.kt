@@ -17,10 +17,11 @@ object ReadTipConfig {
     const val bookName = 7
     const val timeBattery = 8
     const val timeBatteryPercentage = 9
+    const val totalProgress1 = 10
 
     val tipValues = arrayOf(
         none, bookName, chapterTitle, time, battery, batteryPercentage, page,
-        totalProgress, pageAndTotal, timeBattery, timeBatteryPercentage
+        totalProgress, totalProgress1, pageAndTotal, timeBattery, timeBatteryPercentage
     )
     val tipNames get() = appCtx.resources.getStringArray(R.array.read_tip).toList()
 
