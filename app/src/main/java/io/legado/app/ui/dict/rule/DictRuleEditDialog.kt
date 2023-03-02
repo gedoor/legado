@@ -109,7 +109,7 @@ class DictRuleEditDialog() : BaseDialogFragment(R.layout.dialog_dict_rule_edit, 
                 return
             }
             execute {
-                GSON.fromJsonObject<DictRule>(text).getOrThrow()!!
+                GSON.fromJsonObject<DictRule>(text).getOrThrow()
             }.onSuccess {
                 success.invoke(it)
             }.onError {

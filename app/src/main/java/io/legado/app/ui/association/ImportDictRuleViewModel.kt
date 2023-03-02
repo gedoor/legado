@@ -71,11 +71,11 @@ class ImportDictRuleViewModel(app: Application) : BaseViewModel(app) {
     private suspend fun importSourceAwait(text: String) {
         when {
             text.isJsonObject() -> {
-                GSON.fromJsonObject<DictRule>(text).getOrThrow()?.let {
+                GSON.fromJsonObject<DictRule>(text).getOrThrow().let {
                     allSources.add(it)
                 }
             }
-            text.isJsonArray() -> GSON.fromJsonArray<DictRule>(text).getOrThrow()?.let { items ->
+            text.isJsonArray() -> GSON.fromJsonArray<DictRule>(text).getOrThrow().let { items ->
                 allSources.addAll(items)
             }
             text.isAbsUrl() -> {

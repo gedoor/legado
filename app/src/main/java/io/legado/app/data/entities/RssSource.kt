@@ -3,10 +3,13 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
-import com.jayway.jsonpath.DocumentContext
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import io.legado.app.constant.AppPattern
 import io.legado.app.utils.*
 import kotlinx.parcelize.Parcelize
+import java.lang.reflect.Type
 
 @Parcelize
 @Entity(tableName = "rssSources", indices = [(Index(value = ["sourceUrl"], unique = false))])
@@ -171,65 +174,35 @@ data class RssSource(
 
     @Suppress("MemberVisibilityCanBePrivate")
     companion object {
-
-        fun fromJsonDoc(doc: DocumentContext): Result<RssSource> {
-            return kotlin.runCatching {
-                val loginUi = doc.read<Any>("$.loginUi")
-                RssSource(
-                    sourceUrl = doc.readString("$.sourceUrl")!!,
-                    sourceName = doc.readString("$.sourceName")!!,
-                    sourceIcon = doc.readString("$.sourceIcon") ?: "",
-                    sourceGroup = doc.readString("$.sourceGroup"),
-                    sourceComment = doc.readString("$.sourceComment"),
-                    enabled = doc.readBool("$.enabled") ?: true,
-                    concurrentRate = doc.readString("$.concurrentRate"),
-                    header = doc.readString("$.header"),
-                    loginUrl = doc.readString("$.loginUrl"),
-                    loginUi = if (loginUi is List<*>) GSON.toJson(loginUi) else loginUi?.toString(),
-                    loginCheckJs = doc.readString("$.loginCheckJs"),
-                    sortUrl = doc.readString("$.sortUrl"),
-                    singleUrl = doc.readBool("$.singleUrl") ?: false,
-                    articleStyle = doc.readInt("$.articleStyle") ?: 0,
-                    ruleArticles = doc.readString("$.ruleArticles"),
-                    ruleNextPage = doc.readString("$.ruleNextPage"),
-                    ruleTitle = doc.readString("$.ruleTitle"),
-                    rulePubDate = doc.readString("$.rulePubDate"),
-                    ruleDescription = doc.readString("$.ruleDescription"),
-                    ruleImage = doc.readString("$.ruleImage"),
-                    ruleLink = doc.readString("$.ruleLink"),
-                    ruleContent = doc.readString("$.ruleContent"),
-                    style = doc.readString("$.style"),
-                    injectJs = doc.readString("$.injectJs"),
-                    enableJs = doc.readBool("$.enableJs") ?: true,
-                    loadWithBaseUrl = doc.readBool("$.loadWithBaseUrl") ?: true,
-                    enabledCookieJar = doc.readBool("$.enabledCookieJar") ?: false,
-                    customOrder = doc.readInt("$.customOrder") ?: 0,
-                    lastUpdateTime = doc.readLong("$.lastUpdateTime") ?: 0L,
-                    coverDecodeJs = doc.readString("$.coverDecodeJs"),
-                    variableComment = doc.readString("$.variableComment"),
-                    contentBlacklist = doc.readString("$.contentBlacklist"),
-                    contentWhitelist = doc.readString("$.contentWhitelist")
-                )
-            }
+        private val gson by lazy {
+            GSON.newBuilder()
+                .registerTypeAdapter(String::class.java, RssJsonDeserializer())
+                .create()
         }
 
         fun fromJson(json: String): Result<RssSource> {
-            return fromJsonDoc(jsonPath.parse(json))
+            return gson.fromJsonObject(json)
         }
 
-        fun fromJsonArray(jsonArray: String): Result<ArrayList<RssSource>> {
-            return kotlin.runCatching {
-                val sources = arrayListOf<RssSource>()
-                val doc = jsonPath.parse(jsonArray).read<List<*>>("$")
-                doc.forEach {
-                    val jsonItem = jsonPath.parse(it)
-                    fromJsonDoc(jsonItem).getOrThrow().let { source ->
-                        sources.add(source)
-                    }
-                }
-                sources
+        fun fromJsonArray(jsonArray: String): Result<List<RssSource>> {
+            return gson.fromJsonArray(jsonArray)
+        }
+    }
+
+    class RssJsonDeserializer : JsonDeserializer<String?> {
+
+        override fun deserialize(
+            json: JsonElement,
+            typeOfT: Type?,
+            context: JsonDeserializationContext?
+        ): String? {
+            return when {
+                json.isJsonPrimitive -> json.asString
+                json.isJsonNull -> null
+                else -> json.toString()
             }
         }
+
     }
 
 }

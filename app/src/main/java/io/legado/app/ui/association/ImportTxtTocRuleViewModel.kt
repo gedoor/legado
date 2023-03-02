@@ -71,12 +71,12 @@ class ImportTxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
     private suspend fun importSourceAwait(text: String) {
         when {
             text.isJsonObject() -> {
-                GSON.fromJsonObject<TxtTocRule>(text).getOrThrow()?.let {
+                GSON.fromJsonObject<TxtTocRule>(text).getOrThrow().let {
                     allSources.add(it)
                 }
             }
             text.isJsonArray() -> GSON.fromJsonArray<TxtTocRule>(text).getOrThrow()
-                ?.let { items ->
+                .let { items ->
                     allSources.addAll(items)
                 }
             text.isAbsUrl() -> {

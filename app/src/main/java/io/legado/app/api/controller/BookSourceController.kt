@@ -68,7 +68,7 @@ object BookSourceController {
 
     fun deleteSources(postData: String?): ReturnData {
         kotlin.runCatching {
-            GSON.fromJsonArray<BookSource>(postData).getOrThrow()?.let {
+            GSON.fromJsonArray<BookSource>(postData).getOrThrow().let {
                 it.forEach { source ->
                     appDb.bookSourceDao.delete(source)
                     SourceConfig.removeSource(source.bookSourceUrl)

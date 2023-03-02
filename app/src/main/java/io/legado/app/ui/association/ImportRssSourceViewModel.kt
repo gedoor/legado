@@ -104,12 +104,8 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                     }
                 }
                 mText.isJsonArray() -> {
-                    val items: List<Map<String, Any>> = jsonPath.parse(mText).read("$")
-                    for (item in items) {
-                        val jsonItem = jsonPath.parse(item)
-                        RssSource.fromJsonDoc(jsonItem).getOrThrow().let {
-                            allSources.add(it)
-                        }
+                    RssSource.fromJsonArray(mText).getOrThrow().let {
+                        allSources.addAll(it)
                     }
                 }
                 mText.isAbsUrl() -> {

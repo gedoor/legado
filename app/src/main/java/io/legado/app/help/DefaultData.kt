@@ -87,7 +87,7 @@ object DefaultData {
             appCtx.assets.open("defaultData${File.separator}coverRule.json")
                 .readBytes()
         )
-        GSON.fromJsonObject<BookCover.CoverRule>(json).getOrThrow()!!
+        GSON.fromJsonObject<BookCover.CoverRule>(json).getOrThrow()
     }
 
     val dictRules: List<DictRule> by lazy {
@@ -95,7 +95,7 @@ object DefaultData {
             appCtx.assets.open("defaultData${File.separator}dictRules.json")
                 .readBytes()
         )
-        GSON.fromJsonArray<DictRule>(json).getOrThrow()!!
+        GSON.fromJsonArray<DictRule>(json).getOrThrow()
     }
 
     val keyboardAssists: List<KeyboardAssist> by lazy {
@@ -103,7 +103,7 @@ object DefaultData {
             appCtx.assets.open("defaultData${File.separator}keyboardAssists.json")
                 .readBytes()
         )
-        GSON.fromJsonArray<KeyboardAssist>(json).getOrNull()!!
+        GSON.fromJsonArray<KeyboardAssist>(json).getOrThrow()
     }
 
     fun importDefaultHttpTTS() {

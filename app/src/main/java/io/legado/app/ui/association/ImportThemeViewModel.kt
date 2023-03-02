@@ -68,12 +68,12 @@ class ImportThemeViewModel(app: Application) : BaseViewModel(app) {
     private suspend fun importSourceAwait(text: String) {
         when {
             text.isJsonObject() -> {
-                GSON.fromJsonObject<ThemeConfig.Config>(text).getOrThrow()?.let {
+                GSON.fromJsonObject<ThemeConfig.Config>(text).getOrThrow().let {
                     allSources.add(it)
                 }
             }
             text.isJsonArray() -> GSON.fromJsonArray<ThemeConfig.Config>(text).getOrThrow()
-                ?.let { items ->
+                .let { items ->
                     allSources.addAll(items)
                 }
             text.isAbsUrl() -> {

@@ -218,7 +218,7 @@ object LocalBook {
                     SimpleBindings().also { it["src"] = tempFileName }
                 ).toString()
                 val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr)
-                    .getOrThrow() ?: HashMap()
+                    .getOrThrow()
                 name = bookMess["name"] ?: tempFileName
                 author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
             } catch (e: Exception) {

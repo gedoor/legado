@@ -3,7 +3,6 @@ package io.legado.app.ui.book.toc.rule
 import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.DictRule
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
 import io.legado.app.help.http.newCallResponseBody
@@ -43,7 +42,7 @@ class TxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
             okHttpClient.newCallResponseBody {
                 url(url)
             }.text("utf-8").let { json ->
-                GSON.fromJsonArray<TxtTocRule>(json).getOrThrow()?.let {
+                GSON.fromJsonArray<TxtTocRule>(json).getOrThrow().let {
                     appDb.txtTocRuleDao.insert(*it.toTypedArray())
                 }
             }

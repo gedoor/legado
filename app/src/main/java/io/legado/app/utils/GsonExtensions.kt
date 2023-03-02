@@ -27,29 +27,41 @@ val GSON: Gson by lazy {
 
 inline fun <reified T> genericType(): Type = object : TypeToken<T>() {}.type
 
-inline fun <reified T> Gson.fromJsonObject(json: String?): Result<T?> {
+inline fun <reified T> Gson.fromJsonObject(json: String?): Result<T> {
     return kotlin.runCatching {
-        fromJson(json, genericType<T>()) as? T
+        if (json == null) {
+            throw JsonSyntaxException("解析字符串为空")
+        }
+        fromJson(json, genericType<T>()) as T
     }
 }
 
-inline fun <reified T> Gson.fromJsonArray(json: String?): Result<List<T>?> {
+inline fun <reified T> Gson.fromJsonArray(json: String?): Result<List<T>> {
     return kotlin.runCatching {
-        fromJson(json, ParameterizedTypeImpl(T::class.java)) as? List<T>
+        if (json == null) {
+            throw JsonSyntaxException("解析字符串为空")
+        }
+        fromJson(json, ParameterizedTypeImpl(T::class.java)) as List<T>
     }
 }
 
-inline fun <reified T> Gson.fromJsonObject(inputStream: InputStream?): Result<T?> {
+inline fun <reified T> Gson.fromJsonObject(inputStream: InputStream?): Result<T> {
     return kotlin.runCatching {
+        if (inputStream == null) {
+            throw JsonSyntaxException("解析流为空")
+        }
         val reader = InputStreamReader(inputStream)
-        fromJson(reader, genericType<T>()) as? T
+        fromJson(reader, genericType<T>()) as T
     }
 }
 
-inline fun <reified T> Gson.fromJsonArray(inputStream: InputStream?): Result<List<T>?> {
+inline fun <reified T> Gson.fromJsonArray(inputStream: InputStream?): Result<List<T>> {
     return kotlin.runCatching {
+        if (inputStream == null) {
+            throw JsonSyntaxException("解析流为空")
+        }
         val reader = InputStreamReader(inputStream)
-        fromJson(reader, ParameterizedTypeImpl(T::class.java)) as? List<T>
+        fromJson(reader, ParameterizedTypeImpl(T::class.java)) as List<T>
     }
 }
 
