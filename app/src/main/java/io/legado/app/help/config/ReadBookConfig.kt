@@ -9,7 +9,6 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PageAnim
 import io.legado.app.constant.PreferKey
-import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.DefaultData
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
@@ -392,7 +391,6 @@ object ReadBookConfig {
                 ZipUtils.unzipFile(zipFile, configDir)
                 val configFile = configDir.getFile(configFileName)
                 val config: Config = GSON.fromJsonObject<Config>(configFile.readText()).getOrThrow()
-                    ?: throw NoStackTraceException("排版配置格式错误")
                 if (config.textFont.isNotEmpty()) {
                     val fontName = FileUtils.getName(config.textFont)
                     val fontPath =
