@@ -73,6 +73,7 @@ internal class Request : OnRequestPermissionsResultCallback {
                 toNotificationSetting()
             } else if (deniedPermissions.size > 1) {
                 appCtx.startActivity<PermissionActivity> {
+                    putExtra(PermissionActivity.KEY_RATIONALE, rationale)
                     putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)
                     putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
                     putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
@@ -139,10 +140,8 @@ internal class Request : OnRequestPermissionsResultCallback {
 
     private fun toSetting() {
         appCtx.startActivity<PermissionActivity> {
-            putExtra(
-                PermissionActivity.KEY_INPUT_REQUEST_TYPE,
-                TYPE_REQUEST_SETTING
-            )
+            putExtra(PermissionActivity.KEY_RATIONALE, rationale)
+            putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_SETTING)
         }
     }
 

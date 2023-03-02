@@ -31,7 +31,7 @@ class PermissionActivity : AppCompatActivity() {
         val permissions = intent.getStringArrayExtra(KEY_INPUT_PERMISSIONS)!!
         when (intent.getIntExtra(KEY_INPUT_REQUEST_TYPE, Request.TYPE_REQUEST_PERMISSION)) {
             //权限请求
-            Request.TYPE_REQUEST_PERMISSION -> showSettingDialog(permissions, rationale){
+            Request.TYPE_REQUEST_PERMISSION -> showSettingDialog(permissions, rationale) {
                 ActivityCompat.requestPermissions(this, permissions, requestCode)
             }
             //跳转到设置界面
@@ -119,7 +119,7 @@ class PermissionActivity : AppCompatActivity() {
     ) {
         rationaleDialog?.dismiss()
         if (rationale.isNullOrEmpty()) {
-
+            finish()
             return
         }
         rationaleDialog = AlertDialog.Builder(this)
@@ -133,6 +133,9 @@ class PermissionActivity : AppCompatActivity() {
                     permissions,
                     IntArray(0)
                 )
+                finish()
+            }.setOnCancelListener {
+                finish()
             }
             .show()
     }
