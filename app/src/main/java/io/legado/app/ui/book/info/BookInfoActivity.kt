@@ -19,6 +19,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookInfoBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalTxt
@@ -28,7 +29,6 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
-import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.association.ImportOnLineBookFileDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
@@ -210,7 +210,8 @@ class BookInfoActivity :
                         waitDialog.setText("上传中.....")
                         waitDialog.show()
                         try {
-                            RemoteBookWebDav.upload(it)
+                            AppWebDav.getDefaultRemoteBookWebDav()
+                                .upload(it)
                             //更新书籍最后更新时间,使之比远程书籍的时间新
                             it.lastCheckTime = System.currentTimeMillis()
                             viewModel.saveBook(it)
@@ -246,7 +247,7 @@ class BookInfoActivity :
 
     private fun showCover(book: Book) {
         binding.ivCover.load(book.getDisplayCover(), book.name, book.author, false, book.origin)
-        if(!AppConfig.isEInkMode) {
+        if (!AppConfig.isEInkMode) {
             BookCover.loadBlur(this, book.getDisplayCover())
                 .into(binding.bgBook)
         }

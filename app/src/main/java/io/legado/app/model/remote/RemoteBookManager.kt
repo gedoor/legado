@@ -4,7 +4,6 @@ import android.net.Uri
 import io.legado.app.data.entities.Book
 
 abstract class RemoteBookManager {
-    protected val remoteBookFolder: String = "books"
 
     /**
      * 获取书籍列表

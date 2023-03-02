@@ -5,8 +5,8 @@ import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.AppWebDav
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavFile
 import io.legado.app.model.localBook.LocalBook
@@ -17,9 +17,8 @@ import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
 
-object RemoteBookWebDav : RemoteBookManager() {
-
-    val rootBookUrl get() = "${AppWebDav.rootWebDavUrl}${remoteBookFolder}"
+class RemoteBookWebDav(val rootBookUrl: String, val authorization: Authorization) :
+    RemoteBookManager() {
 
     init {
         runBlocking {
@@ -28,69 +27,61 @@ object RemoteBookWebDav : RemoteBookManager() {
     }
 
     suspend fun initRemoteContext() {
-        AppWebDav.authorization?.let {
-            WebDav(rootBookUrl, it).makeAsDir()
-        }
+        WebDav(rootBookUrl, authorization).makeAsDir()
     }
 
     @Throws(Exception::class)
     override suspend fun getRemoteBookList(path: String): MutableList<RemoteBook> {
+        if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
         val remoteBooks = mutableListOf<RemoteBook>()
-        AppWebDav.authorization?.let {
-            //读取文件列表
-            val remoteWebDavFileList: List<WebDavFile> = WebDav(path, it).listFiles()
-            //转化远程文件信息到本地对象
-            remoteWebDavFileList.forEach { webDavFile ->
-                if (webDavFile.isDir || bookFileRegex.matches(webDavFile.displayName)) {
-                    //扩展名符合阅读的格式则认为是书籍
-                    remoteBooks.add(RemoteBook(webDavFile))
-                }
+        //读取文件列表
+        val remoteWebDavFileList: List<WebDavFile> = WebDav(path, authorization).listFiles()
+        //转化远程文件信息到本地对象
+        remoteWebDavFileList.forEach { webDavFile ->
+            if (webDavFile.isDir || bookFileRegex.matches(webDavFile.displayName)) {
+                //扩展名符合阅读的格式则认为是书籍
+                remoteBooks.add(RemoteBook(webDavFile))
             }
-        } ?: throw NoStackTraceException("webDav没有配置")
+        }
         return remoteBooks
     }
 
     override suspend fun getRemoteBook(path: String): RemoteBook? {
-        AppWebDav.authorization?.let {
-            val webDavFile = WebDav(path, it).getWebDavFile()
-                ?: return null
-            return RemoteBook(webDavFile)
-        } ?: throw NoStackTraceException("webDav没有配置")
+        if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
+        val webDavFile = WebDav(path, authorization).getWebDavFile()
+            ?: return null
+        return RemoteBook(webDavFile)
     }
 
     override suspend fun downloadRemoteBook(remoteBook: RemoteBook): Uri {
         AppConfig.defaultBookTreeUri
             ?: throw NoStackTraceException("没有设置书籍保存位置!")
-        return AppWebDav.authorization?.let {
-            val webdav = WebDav(remoteBook.path, it)
-            webdav.downloadInputStream().let { inputStream ->
-                LocalBook.saveBookFile(inputStream, remoteBook.filename)
-            }
-        } ?: throw NoStackTraceException("webDav没有配置")
+        if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
+        val webdav = WebDav(remoteBook.path, authorization)
+        return webdav.downloadInputStream().let { inputStream ->
+            LocalBook.saveBookFile(inputStream, remoteBook.filename)
+        }
     }
 
     override suspend fun upload(book: Book) {
         if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
         val localBookUri = Uri.parse(book.bookUrl)
         val putUrl = "$rootBookUrl${File.separator}${book.originName}"
-        AppWebDav.authorization?.let {
-            if (localBookUri.isContentScheme()) {
-                WebDav(putUrl, it).upload(
-                    byteArray = localBookUri.readBytes(appCtx),
-                    contentType = "application/octet-stream"
-                )
-            } else {
-                WebDav(putUrl, it).upload(localBookUri.path!!)
-            }
-        } ?: throw NoStackTraceException("webDav没有配置")
+        if (localBookUri.isContentScheme()) {
+            WebDav(putUrl, authorization).upload(
+                byteArray = localBookUri.readBytes(appCtx),
+                contentType = "application/octet-stream"
+            )
+        } else {
+            WebDav(putUrl, authorization).upload(localBookUri.path!!)
+        }
         book.origin = BookType.webDavTag + putUrl
         book.save()
     }
 
     override suspend fun delete(remoteBookUrl: String) {
-        AppWebDav.authorization?.let {
-            WebDav(remoteBookUrl, it).delete()
-        } ?: throw NoStackTraceException("webDav没有配置")
+        if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
+        WebDav(remoteBookUrl, authorization).delete()
     }
 
 }

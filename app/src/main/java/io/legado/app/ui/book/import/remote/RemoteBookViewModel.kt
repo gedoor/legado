@@ -4,6 +4,8 @@ import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
+import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.AppWebDav
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.model.remote.RemoteBookWebDav
@@ -70,17 +72,26 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
         }
     }.flowOn(Dispatchers.IO)
 
+    private var remoteBookWebDav: RemoteBookWebDav? = null
+
     init {
         execute {
-            RemoteBookWebDav.initRemoteContext()
+            val rootUrl = "${AppWebDav.rootWebDavUrl}books"
+            val authorization = AppWebDav.authorization
+                ?: throw NoStackTraceException("webDav没有配置")
+            remoteBookWebDav = RemoteBookWebDav(rootUrl, authorization)
+        }.onError {
+            context.toastOnUi("初始化webDav出错:${it.localizedMessage}")
         }
     }
 
     fun loadRemoteBookList(path: String?, loadCallback: (loading: Boolean) -> Unit) {
         execute {
+            val bookWebDav = remoteBookWebDav
+                ?: throw NoStackTraceException("没有配置webDav")
             dataCallback?.clear()
-            val url = path ?: RemoteBookWebDav.rootBookUrl
-            val bookList = RemoteBookWebDav.getRemoteBookList(url)
+            val url = path ?: bookWebDav.rootBookUrl
+            val bookList = bookWebDav.getRemoteBookList(url)
             dataCallback?.setItems(bookList)
         }.onError {
             AppLog.put("获取webDav书籍出错\n${it.localizedMessage}", it)
@@ -95,7 +106,9 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     fun addToBookshelf(remoteBooks: HashSet<RemoteBook>, finally: () -> Unit) {
         execute {
             remoteBooks.forEach { remoteBook ->
-                val downloadBookPath = RemoteBookWebDav.downloadRemoteBook(remoteBook)
+                val bookWebDav = remoteBookWebDav
+                    ?: throw NoStackTraceException("没有配置webDav")
+                val downloadBookPath = bookWebDav.downloadRemoteBook(remoteBook)
                 downloadBookPath.let {
                     val localBook = LocalBook.importFile(it)
                     localBook.origin = BookType.webDavTag + remoteBook.path
