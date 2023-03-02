@@ -79,6 +79,7 @@ object AppWebDav {
             }
         }
 
+    @Throws(NoStackTraceException::class)
     fun getDefaultRemoteBookWebDav(): RemoteBookWebDav {
         val rootUrl = "${rootWebDavUrl}books"
         val authorization = AppWebDav.authorization
@@ -205,6 +206,7 @@ object AppWebDav {
         }
     }
 
+    @Suppress("unused")
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         if (!NetworkUtils.isAvailable()) return
         try {
