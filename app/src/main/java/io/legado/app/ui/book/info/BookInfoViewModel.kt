@@ -114,7 +114,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocal) {
                 book.tocUrl = ""
                 book.getRemoteUrl()?.let {
-                    val bookWebDav = AppWebDav.getDefaultRemoteBookWebDav()
+                    val bookWebDav = AppWebDav.defaultBookWebDav
+                        ?: throw NoStackTraceException("webDav没有配置")
                     val remoteBook = bookWebDav.getRemoteBook(it)
                     if (remoteBook == null) {
                         book.origin = BookType.localTag

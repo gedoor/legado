@@ -19,6 +19,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookInfoBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isLocal
@@ -210,8 +211,9 @@ class BookInfoActivity :
                         waitDialog.setText("上传中.....")
                         waitDialog.show()
                         try {
-                            AppWebDav.getDefaultRemoteBookWebDav()
-                                .upload(it)
+                            AppWebDav.defaultBookWebDav
+                                ?.upload(it)
+                                ?: throw NoStackTraceException("未配置webDav")
                             //更新书籍最后更新时间,使之比远程书籍的时间新
                             it.lastCheckTime = System.currentTimeMillis()
                             viewModel.saveBook(it)

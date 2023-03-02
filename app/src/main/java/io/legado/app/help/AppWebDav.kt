@@ -44,6 +44,8 @@ object AppWebDav {
     var authorization: Authorization? = null
         private set
 
+    var defaultBookWebDav: RemoteBookWebDav? = null
+
     val isOk get() = authorization != null
 
     private val isJianGuoYun get() = rootWebDavUrl.startsWith(defaultWebDavUrl, true)
@@ -79,14 +81,6 @@ object AppWebDav {
             }
         }
 
-    @Throws(NoStackTraceException::class)
-    fun getDefaultRemoteBookWebDav(): RemoteBookWebDav {
-        val rootUrl = "${rootWebDavUrl}books"
-        val authorization = AppWebDav.authorization
-            ?: throw NoStackTraceException("webDav没有配置")
-        return RemoteBookWebDav(rootUrl, authorization)
-    }
-
     suspend fun upConfig() {
         kotlin.runCatching {
             authorization = null
@@ -97,6 +91,8 @@ object AppWebDav {
                 WebDav(rootWebDavUrl, mAuthorization).makeAsDir()
                 WebDav(bookProgressUrl, mAuthorization).makeAsDir()
                 WebDav(exportsWebDavUrl, mAuthorization).makeAsDir()
+                val rootBooksUrl = "${rootWebDavUrl}books"
+                defaultBookWebDav = RemoteBookWebDav(rootBooksUrl, mAuthorization)
                 authorization = mAuthorization
             }
         }
