@@ -22,12 +22,8 @@ class RemoteBookWebDav(val rootBookUrl: String, val authorization: Authorization
 
     init {
         runBlocking {
-            initRemoteContext()
+            WebDav(rootBookUrl, authorization).makeAsDir()
         }
-    }
-
-    suspend fun initRemoteContext() {
-        WebDav(rootBookUrl, authorization).makeAsDir()
     }
 
     @Throws(Exception::class)
