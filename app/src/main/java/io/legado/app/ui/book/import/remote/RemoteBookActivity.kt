@@ -44,8 +44,19 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
                 return@launch
             }
             initView()
-            initData()
             initEvent()
+            launch {
+                viewModel.dataFlow.conflate().collect { sortedRemoteBooks ->
+                    binding.refreshProgressBar.isAutoLoading = false
+                    binding.tvEmptyMsg.isGone = sortedRemoteBooks.isNotEmpty()
+                    adapter.setItems(sortedRemoteBooks)
+                    delay(500)
+                }
+            }
+            viewModel.initData {
+                binding.refreshProgressBar.isAutoLoading = true
+                upPath()
+            }
         }
     }
 
@@ -67,19 +78,6 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
             viewModel.sortAscending = true
             viewModel.sortKey = sortKey
         }
-    }
-
-    private fun initData() {
-        binding.refreshProgressBar.isAutoLoading = true
-        launch {
-            viewModel.dataFlow.conflate().collect { sortedRemoteBooks ->
-                binding.refreshProgressBar.isAutoLoading = false
-                binding.tvEmptyMsg.isGone = sortedRemoteBooks.isNotEmpty()
-                adapter.setItems(sortedRemoteBooks)
-                delay(500)
-            }
-        }
-        upPath()
     }
 
     private fun initEvent() {

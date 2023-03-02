@@ -74,7 +74,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
 
     private var remoteBookWebDav: RemoteBookWebDav? = null
 
-    init {
+    fun initData(onSuccess: () -> Unit) {
         execute {
             val rootUrl = "${AppWebDav.rootWebDavUrl}books"
             val authorization = AppWebDav.authorization
@@ -82,6 +82,8 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
             remoteBookWebDav = RemoteBookWebDav(rootUrl, authorization)
         }.onError {
             context.toastOnUi("初始化webDav出错:${it.localizedMessage}")
+        }.onSuccess {
+            onSuccess.invoke()
         }
     }
 
