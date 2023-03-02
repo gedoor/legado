@@ -34,6 +34,7 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
     override val viewModel by viewModels<RemoteBookViewModel>()
     private val adapter by lazy { RemoteBookAdapter(this, this) }
     private var groupMenu: SubMenu? = null
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setTitle(R.string.remote_book)
         launch {
