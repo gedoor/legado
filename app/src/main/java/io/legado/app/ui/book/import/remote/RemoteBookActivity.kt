@@ -17,7 +17,6 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.delay
@@ -34,7 +33,6 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
     override val binding by viewBinding(ActivityImportBookBinding::inflate)
     override val viewModel by viewModels<RemoteBookViewModel>()
     private val adapter by lazy { RemoteBookAdapter(this, this) }
-    private val waitDialog by lazy { WaitDialog(this) }
     private var groupMenu: SubMenu? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setTitle(R.string.remote_book)
@@ -54,7 +52,6 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
                 }
             }
             viewModel.initData {
-                binding.refreshProgressBar.isAutoLoading = true
                 upPath()
             }
         }
@@ -131,11 +128,11 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onClickSelectBarMainAction() {
-        waitDialog.show()
+        binding.refreshProgressBar.isAutoLoading = true
         viewModel.addToBookshelf(adapter.selected) {
             adapter.selected.clear()
             adapter.notifyDataSetChanged()
-            waitDialog.dismiss()
+            binding.refreshProgressBar.isAutoLoading = false
         }
     }
 
@@ -168,11 +165,7 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
         viewModel.loadRemoteBookList(
             viewModel.dirList.lastOrNull()?.path
         ) {
-            if (it) {
-                waitDialog.show()
-            } else {
-                waitDialog.dismiss()
-            }
+            binding.refreshProgressBar.isAutoLoading = it
         }
     }
 
