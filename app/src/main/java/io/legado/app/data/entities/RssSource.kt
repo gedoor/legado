@@ -206,7 +206,9 @@ data class RssSource(
                     customOrder = doc.readInt("$.customOrder") ?: 0,
                     lastUpdateTime = doc.readLong("$.lastUpdateTime") ?: 0L,
                     coverDecodeJs = doc.readString("$.coverDecodeJs"),
-                    variableComment = doc.readString("$.variableComment")
+                    variableComment = doc.readString("$.variableComment"),
+                    contentBlacklist = doc.readString("$.contentBlacklist"),
+                    contentWhitelist = doc.readString("$.contentWhitelist")
                 )
             }
         }
