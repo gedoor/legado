@@ -1083,4 +1083,5 @@
     <string name="config_txt_toc_rule">配置 TXT 目录规则</string>
     <string name="import_dict_rule">Import dict rule</string>
     <string name="keep_group">Keep group</string>
+    <string name="server_config">服务器配置</string>
 </resources>

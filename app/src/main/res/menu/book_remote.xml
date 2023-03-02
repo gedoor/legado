@@ -37,6 +37,12 @@
     </item>
 
     <item
+        android:id="@+id/menu_server_config"
+        android:icon="@drawable/ic_cfg_other"
+        android:title="@string/server_config"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"
