@@ -6,9 +6,11 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
+import io.legado.app.lib.webdav.Authorization
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.model.remote.RemoteBookWebDav
+import io.legado.app.utils.ACache
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -76,6 +78,17 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
 
     fun initData(onSuccess: () -> Unit) {
         execute {
+            val config = ACache.get().getAsJSONObject("remoteServerConfig")
+            if (config != null && config.has("url")) {
+                val url = config.getString("url")
+                if (url.isNotBlank()) {
+                    val user = config.getString("user")
+                    val password = config.getString("password")
+                    val authorization = Authorization(user, password)
+                    remoteBookWebDav = RemoteBookWebDav(url, authorization)
+                    return@execute
+                }
+            }
             remoteBookWebDav = AppWebDav.defaultBookWebDav
                 ?: throw NoStackTraceException("webDav没有配置")
         }.onError {

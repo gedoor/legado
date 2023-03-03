@@ -46,7 +46,11 @@ class ServerConfigDialog : BaseDialogFragment(R.layout.dialog_webdav_server, tru
         when (item.itemId) {
             R.id.menu_save -> {
                 val data = getConfigData()
-                ACache.get().put("remoteServerConfig", GSON.toJson(data))
+                if (data.isEmpty()) {
+                    ACache.get().remove("remoteServerConfig")
+                } else {
+                    ACache.get().put("remoteServerConfig", GSON.toJson(data))
+                }
                 dismissAllowingStateLoss()
             }
         }
