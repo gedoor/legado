@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.import.remote
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.MenuItem
@@ -98,4 +99,16 @@ class ServerConfigDialog : BaseDialogFragment(R.layout.dialog_webdav_server, tru
         return data
     }
 
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        ((parentFragment as? Callback) ?: (activity as? Callback))
+            ?.onDialogDismiss("serverConfig")
+    }
+
+    interface Callback {
+
+        fun onDialogDismiss(tag: String)
+
+    }
 }

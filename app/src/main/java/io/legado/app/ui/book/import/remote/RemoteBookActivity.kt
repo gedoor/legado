@@ -29,7 +29,8 @@ import java.io.File
  */
 class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, RemoteBookViewModel>(),
     RemoteBookAdapter.CallBack,
-    SelectActionBar.CallBack {
+    SelectActionBar.CallBack,
+    ServerConfigDialog.Callback {
     override val binding by viewBinding(ActivityImportBookBinding::inflate)
     override val viewModel by viewModels<RemoteBookViewModel>()
     private val adapter by lazy { RemoteBookAdapter(this, this) }
@@ -180,6 +181,11 @@ class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Rem
         binding.selectActionBar.upCountView(adapter.selected.size, adapter.checkableCount)
     }
 
+    override fun onDialogDismiss(tag: String) {
+        viewModel.initData {
+            upPath()
+        }
+    }
 
     @Suppress("SameParameterValue")
     private fun showHelp(fileName: String) {
