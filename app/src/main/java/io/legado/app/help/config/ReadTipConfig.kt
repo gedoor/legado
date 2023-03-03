@@ -17,7 +17,7 @@ object ReadTipConfig {
     const val bookName = 7
     const val timeBattery = 8
     const val timeBatteryPercentage = 9
-    const val totalProgress1 = 10
+    const val totalProgress1 = 11
 
     val tipValues = arrayOf(
         none, bookName, chapterTitle, time, battery, batteryPercentage, page,

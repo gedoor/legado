@@ -36,11 +36,11 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvBatteryP: BatteryView? = null
     private var tvPage: BatteryView? = null
     private var tvTotalProgress: BatteryView? = null
+    private var tvTotalProgress1: BatteryView? = null
     private var tvPageAndTotal: BatteryView? = null
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
-    private var tvTotalProgress1: BatteryView? = null
 
     val headerHeight: Int
         get() {
