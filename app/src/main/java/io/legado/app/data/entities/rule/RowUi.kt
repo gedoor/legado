@@ -6,6 +6,16 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RowUi(
     var name: String,
-    var type: String?,
-    var action: String?
-) : Parcelable
+    var type: String = "text",
+    var action: String? = null
+) : Parcelable {
+
+    object Type {
+
+        const val text = "text"
+        const val password = "password"
+        const val button = "button"
+
+    }
+
+}

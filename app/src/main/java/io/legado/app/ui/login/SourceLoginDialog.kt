@@ -45,24 +45,35 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         val loginUi = source.loginUi()
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
-                "text" -> ItemSourceEditBinding.inflate(layoutInflater, binding.root, false).let {
+                RowUi.Type.text -> ItemSourceEditBinding.inflate(
+                    layoutInflater,
+                    binding.root,
+                    false
+                ).let {
                     binding.flexbox.addView(it.root)
-                    it.root.id = index
+                    it.root.id = index + 1000
                     it.textInputLayout.hint = rowUi.name
                     it.editText.setText(loginInfo?.get(rowUi.name))
                 }
-                "password" -> ItemSourceEditBinding.inflate(layoutInflater, binding.root, false)
-                    .let {
-                        binding.flexbox.addView(it.root)
-                        it.root.id = index
-                        it.textInputLayout.hint = rowUi.name
-                        it.editText.inputType =
-                            InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
-                        it.editText.setText(loginInfo?.get(rowUi.name))
-                    }
-                "button" -> ItemFilletTextBinding.inflate(layoutInflater, binding.root, false).let {
+                RowUi.Type.password -> ItemSourceEditBinding.inflate(
+                    layoutInflater,
+                    binding.root,
+                    false
+                ).let {
                     binding.flexbox.addView(it.root)
-                    it.root.id = index
+                    it.root.id = index + 1000
+                    it.textInputLayout.hint = rowUi.name
+                    it.editText.inputType =
+                        InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+                    it.editText.setText(loginInfo?.get(rowUi.name))
+                }
+                RowUi.Type.button -> ItemFilletTextBinding.inflate(
+                    layoutInflater,
+                    binding.root,
+                    false
+                ).let {
+                    binding.flexbox.addView(it.root)
+                    it.root.id = index + 1000
                     it.textView.text = rowUi.name
                     it.textView.setPadding(16.dpToPx())
                     it.root.onClick {
@@ -77,8 +88,11 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                                             put("result", getLoginData(loginUi))
                                         }
                                     }
-                                }.onFailure {
-                                    AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", it)
+                                }.onFailure { e ->
+                                    AppLog.put(
+                                        "LoginUI Button ${rowUi.name} JavaScript error",
+                                        e
+                                    )
                                 }
                             }
                         }
@@ -112,7 +126,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 "text", "password" -> {
-                    val rowView = binding.root.findViewById<View>(index)
+                    val rowView = binding.root.findViewById<View>(index + 1000)
                     ItemSourceEditBinding.bind(rowView).editText.text?.let {
                         loginData[rowUi.name] = it.toString()
                     }
