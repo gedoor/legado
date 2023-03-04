@@ -43,7 +43,7 @@ class BackstageWebView(
                 destroy()
             }
         }
-        callback = object : BackstageWebView.Callback() {
+        callback = object : Callback() {
             override fun onResult(response: StrResponse) {
                 if (!block.isCompleted)
                     block.resume(response)
