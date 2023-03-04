@@ -130,11 +130,12 @@ object NetworkUtils {
      * 获取绝对地址
      */
     fun getAbsoluteURL(baseURL: URL?, relativePath: String): String {
-        if (baseURL == null) return relativePath
-        if (relativePath.isAbsUrl()) return relativePath
-        if (relativePath.isDataUrl()) return relativePath
-        if (relativePath.startsWith("javascript")) return ""
-        var relativeUrl = relativePath
+        val relativePathTrim = relativePath.trim()
+        if (baseURL == null) return relativePathTrim
+        if (relativePathTrim.isAbsUrl()) return relativePathTrim
+        if (relativePathTrim.isDataUrl()) return relativePathTrim
+        if (relativePathTrim.startsWith("javascript")) return ""
+        var relativeUrl = relativePathTrim
         try {
             val parseUrl = URL(baseURL, relativePath)
             relativeUrl = parseUrl.toString()
