@@ -106,7 +106,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         if (selectAll) {
             getItems().forEach {
                 if (!it.isDir && !bookFileNames.contains(it.name)) {
-                    selectedUris.add(it.uri.toString())
+                    selectedUris.add(it.toString())
                 }
             }
         } else {
@@ -118,11 +118,11 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
 
     fun revertSelection() {
         getItems().forEach {
-            if (!it.isDir) {
-                if (selectedUris.contains(it.uri.toString())) {
-                    selectedUris.remove(it.uri.toString())
+            if (!it.isDir && !bookFileNames.contains(it.name)) {
+                if (selectedUris.contains(it.toString())) {
+                    selectedUris.remove(it.toString())
                 } else {
-                    selectedUris.add(it.uri.toString())
+                    selectedUris.add(it.toString())
                 }
             }
         }
@@ -132,7 +132,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
 
     fun removeSelection() {
         for (i in getItems().lastIndex downTo 0) {
-            if (getItem(i)?.uri.toString() in selectedUris) {
+            if (getItem(i)?.toString() in selectedUris) {
                 removeItem(i)
             }
         }

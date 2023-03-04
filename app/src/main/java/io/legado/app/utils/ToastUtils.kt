@@ -5,13 +5,15 @@ package io.legado.app.utils
 import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import io.legado.app.BuildConfig
+import io.legado.app.help.config.AppConfig
 
 private var toast: Toast? = null
 
 fun Context.toastOnUi(message: Int) {
     runOnUI {
         kotlin.runCatching {
-            if (toast == null) {
+            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
                 toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
             } else {
                 toast?.setText(message)
@@ -25,7 +27,7 @@ fun Context.toastOnUi(message: Int) {
 fun Context.toastOnUi(message: CharSequence?) {
     runOnUI {
         kotlin.runCatching {
-            if (toast == null) {
+            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
                 toast = Toast.makeText(this, message.toString(), Toast.LENGTH_SHORT)
             } else {
                 toast?.setText(message.toString())
@@ -39,7 +41,7 @@ fun Context.toastOnUi(message: CharSequence?) {
 fun Context.longToastOnUi(message: Int) {
     runOnUI {
         kotlin.runCatching {
-            if (toast == null) {
+            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
                 toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
             } else {
                 toast?.setText(message)
@@ -53,7 +55,7 @@ fun Context.longToastOnUi(message: Int) {
 fun Context.longToastOnUi(message: CharSequence?) {
     runOnUI {
         kotlin.runCatching {
-            if (toast == null) {
+            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
                 toast = Toast.makeText(this, message.toString(), Toast.LENGTH_LONG)
             } else {
                 toast?.setText(message.toString())

@@ -151,7 +151,11 @@ open class WebDav(val path: String, val authorization: Authorization) {
      */
     private fun parseBody(s: String): List<WebDavFile> {
         val list = ArrayList<WebDavFile>()
-        val document = Jsoup.parse(s, Parser.xmlParser())
+        val document = kotlin.runCatching {
+            Jsoup.parse(s, Parser.xmlParser())
+        }.getOrElse {
+            Jsoup.parse(s)
+        }
         val ns = document.findNSPrefix("DAV:")
         val elements = document.findNS("response", ns)
         val urlStr = httpUrl ?: return list

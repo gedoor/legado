@@ -101,10 +101,13 @@ class DownloadService : BaseService() {
                 checkDownloadState()
             }
         }.onFailure {
-            when (it) {
-                is SecurityException -> toastOnUi("下载出错,没有存储权限")
-                else -> toastOnUi("下载出错,${it.localizedMessage}")
+            it.printStackTrace()
+            val msg = when (it) {
+                is SecurityException -> "下载出错,没有存储权限"
+                else -> "下载出错,${it.localizedMessage}"
             }
+            toastOnUi(msg)
+            AppLog.put(msg, it)
         }
     }
 

@@ -32,8 +32,10 @@ class AnalyzeByXPath(doc: Any) {
         if (html1.endsWith("</tr>") || html1.endsWith("</tbody>")) {
             html1 = "<table>${html1}</table>"
         }
-        if (html1.trim().startsWith("<?xml", true)) {
-            return JXDocument.create(Jsoup.parse(html1, Parser.xmlParser()))
+        kotlin.runCatching {
+            if (html1.trim().startsWith("<?xml", true)) {
+                return JXDocument.create(Jsoup.parse(html1, Parser.xmlParser()))
+            }
         }
         return JXDocument.create(html1)
     }
