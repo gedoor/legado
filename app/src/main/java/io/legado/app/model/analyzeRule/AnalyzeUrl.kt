@@ -76,6 +76,9 @@ class AnalyzeUrl(
     private var webJs: String? = null
     private val enabledCookieJar = source?.enabledCookieJar ?: false
     private val domain: String
+    // 服务器ID
+    var serverID: Long? = null
+        private set
 
     init {
         val urlMatcher = paramPattern.matcher(baseUrl)
@@ -200,6 +203,7 @@ class AnalyzeUrl(
                             url = it
                         }
                     }
+                    serverID = option.getServerID()
                 }
         }
         urlNoQuery = url
@@ -667,6 +671,10 @@ class AnalyzeUrl(
          * 执行结果会赋值给url
          */
         private var js: String? = null,
+        /**
+         * 服务器id
+         */
+        private var serverID: Long? = null
     ) {
         fun setMethod(value: String?) {
             method = if (value.isNullOrBlank()) null else value
@@ -764,6 +772,14 @@ class AnalyzeUrl(
 
         fun getJs(): String? {
             return js
+        }
+
+        fun setServerID(value: Long?) {
+            serverID = if (value.isNullOrBlank()) null else value
+        }
+
+        fun getServerID(): Long? {
+            return serverID
         }
     }
 

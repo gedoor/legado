@@ -1084,4 +1084,5 @@
     <string name="import_dict_rule">Import dict rule</string>
     <string name="keep_group">Keep group</string>
     <string name="server_config">服务器配置</string>
+    <string name="sure_upload">Remote webDav url exists, Continue?</string>
 </resources>

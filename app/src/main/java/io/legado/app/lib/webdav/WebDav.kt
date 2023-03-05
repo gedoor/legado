@@ -3,10 +3,12 @@ package io.legado.app.lib.webdav
 import android.annotation.SuppressLint
 import android.net.Uri
 import io.legado.app.constant.AppLog
+import io.legado.app.data.entities.Server
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -30,7 +32,10 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-open class WebDav(val path: String, val authorization: Authorization) {
+open class WebDav(
+    val path: String,
+    val authorization: Authorization? = Authorization(AnalyzeUrl(path).serverID)
+  ) {
     companion object {
 
         @SuppressLint("DateTimeFormatter")
@@ -61,7 +66,9 @@ open class WebDav(val path: String, val authorization: Authorization) {
             </propfind>"""
     }
 
-    private val url: URL = URL(path)
+    private val url: URL = URL(AnalyzeUrl(path).url)
+    /* 服务器id */
+    private var serverID: Long? = AnalyzeUrl(path).serverID
     private val httpUrl: String? by lazy {
         val raw = url.toString()
             .replace("davs://", "https://")
@@ -387,6 +394,12 @@ open class WebDav(val path: String, val authorization: Authorization) {
             }
             throw WebDavException(message ?: "未知错误 code:${response.code}")
         }
+    }
+
+    override fun toString(): String {
+        val url = httpUrl ?: return ""
+        serverID ?: return url
+        return  "$url,{serverID:$serverID}"
     }
 
 }
