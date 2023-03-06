@@ -392,4 +392,8 @@
 -keep class io.legado.app.lib.cronet.CronetInterceptor{*;}
 -keep class io.legado.app.lib.cronet.CronetLoader{*;}
 -keep class io.legado.app.help.AppUpdateGitHub{*;}
+# Error Exception 
+-keep class * extends java.lang.Exception
+-keep class * extends java.lang.Error
+-keep class **Exception
 
