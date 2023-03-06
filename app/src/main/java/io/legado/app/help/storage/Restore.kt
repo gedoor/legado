@@ -112,6 +112,15 @@ object Restore {
             fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
                 appDb.httpTTSDao.insert(*it.toTypedArray())
             }
+            fileToListT<DictRule>(path, "dictRule.json")?.let {
+                appDb.dictRuleDao.insert(*it.toTypedArray())
+            }
+            fileToListT<Server>(path, "servers.json")?.let {
+                appDb.serverDao.insert(*it.toTypedArray())
+            }
+            fileToListT<KeyboardAssists>(path, "keyboardAssists.json")?.let {
+                appDb.keyboardAssistsDao.insert(*it.toTypedArray())
+            }
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
                 it.forEach { readRecord ->
                     //判断是不是本机记录

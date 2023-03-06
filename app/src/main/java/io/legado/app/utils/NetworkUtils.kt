@@ -110,20 +110,14 @@ object NetworkUtils {
      * 获取绝对地址
      */
     fun getAbsoluteURL(baseURL: String?, relativePath: String): String {
-        if (baseURL.isNullOrEmpty()) return relativePath
-        if (relativePath.isAbsUrl()) return relativePath
-        if (relativePath.isDataUrl()) return relativePath
-        if (relativePath.startsWith("javascript")) return ""
-        var relativeUrl = relativePath
+        if (baseURL.isNullOrEmpty()) return relativePath.trim()
+        var absoluteUrl: URL? = null
         try {
-            val absoluteUrl = URL(baseURL.substringBefore(","))
-            val parseUrl = URL(absoluteUrl, relativePath)
-            relativeUrl = parseUrl.toString()
-            return relativeUrl
+            absoluteUrl = URL(baseURL.substringBefore(","))
         } catch (e: Exception) {
             e.printOnDebug()
         }
-        return relativeUrl
+        return getAbsoluteURL(absoluteUrl, relativePath)
     }
 
     /**

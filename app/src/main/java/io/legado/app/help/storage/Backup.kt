@@ -45,6 +45,8 @@ object Backup {
             "txtTocRule.json",
             "httpTTS.json",
             "keyboardAssists.json",
+            "dictRule.json",
+            "servers.json",
             DirectLinkUpload.ruleFileName,
             ReadBookConfig.configFileName,
             ReadBookConfig.shareConfigFileName,
@@ -86,6 +88,8 @@ object Backup {
             writeListToJson(appDb.txtTocRuleDao.all, "txtTocRule.json", backupPath)
             writeListToJson(appDb.httpTTSDao.all, "httpTTS.json", backupPath)
             writeListToJson(appDb.keyboardAssistsDao.all, "keyboardAssists.json", backupPath)
+            writeListToJson(appDb.dictRuleDao.all, "dictRule.json", backupPath)
+            writeListToJson(appDb.serverDao.all, "servers.json", backupPath)
             ensureActive()
             GSON.toJson(ReadBookConfig.configList).let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
