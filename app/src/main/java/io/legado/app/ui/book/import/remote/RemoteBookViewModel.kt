@@ -122,10 +122,10 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
             remoteBooks.forEach { remoteBook ->
                 val bookWebDav = remoteBookWebDav
                     ?: throw NoStackTraceException("没有配置webDav")
-                val downloadBookPath = bookWebDav.downloadRemoteBook(remoteBook)
-                downloadBookPath.let {
-                    val localBook = LocalBook.importFile(it)
-                    localBook.origin = BookType.webDavTag + WebDav(remoteBook.path, serverID = bookWebDav.serverID).toString()
+                bookWebDav.run {
+                    val downloadBookPath = downloadRemoteBook(remoteBook)
+                    val localBook = LocalBook.importFile(downloadBookPath)
+                    localBook.origin = BookType.webDavTag + WebDav(path, authorization, serverID).toString()
                     localBook.save()
                     remoteBook.isOnBookShelf = true
                 }
