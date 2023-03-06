@@ -340,16 +340,16 @@ object LocalBook {
             AppConfig.defaultBookTreeUri
                 ?: throw NoStackTraceException("没有设置书籍保存位置!")
             // 兼容旧版链接
-            val webdav = kotlin.runCatching {
+            val webdav: WebDav = kotlin.runCatching {
                 WebDav(webDavUrl)
             }.onFailure {
                 AppWebDav.defaultBookWebDav
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
-            }
-            val uri =  runBlocking {
+            }.getOrThrow()
+            val uri = runBlocking {
                 saveBookFile(webdav.downloadInputStream(), localBook.originName)
             }
-            return uri?.let {
+            return uri.let {
                 localBook.bookUrl = if (it.isContentScheme()) it.toString() else it.path!!
                 localBook.save()
                 localBook.cacheLocalUri(it)

@@ -3,7 +3,6 @@ package io.legado.app.lib.webdav
 import android.annotation.SuppressLint
 import android.net.Uri
 import io.legado.app.constant.AppLog
-import io.legado.app.data.entities.Server
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
 import io.legado.app.help.http.okHttpClient
@@ -34,7 +33,7 @@ import java.time.format.DateTimeFormatter
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(
     val path: String,
-    val authorization: Authorization? = Authorization(AnalyzeUrl(path).serverID)
+    val authorization: Authorization = Authorization(AnalyzeUrl(path).serverID)
   ) {
     companion object {
 

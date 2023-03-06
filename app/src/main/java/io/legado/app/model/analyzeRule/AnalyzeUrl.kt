@@ -774,8 +774,8 @@ class AnalyzeUrl(
             return js
         }
 
-        fun setServerID(value: Long?) {
-            serverID = if (value.isNullOrBlank()) null else value
+        fun setServerID(value: String?) {
+            serverID = if (value.isNullOrBlank()) null else value.toLong()
         }
 
         fun getServerID(): Long? {

@@ -1,12 +1,10 @@
 package io.legado.app.lib.webdav
 
+import io.legado.app.data.appDb
+import io.legado.app.exception.NoStackTraceException
 import okhttp3.Credentials
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import io.legado.app.data.entities.Server
-import io.legado.app.data.entities.Server.TYPE
-import io.legado.app.data.appDb
-import io.legado.app.exception.NoStackTraceException
 
 data class Authorization(
     val username: String,
@@ -26,16 +24,8 @@ data class Authorization(
 
     constructor(serverID: Long?): this("","") {
         serverID ?: throw NoStackTraceException("Unexpected server ID")
-        appDb.serverDao.get(serverID!!)?.run {
-            when (type) {
-                TYPE.WEBDAV -> data = Credentials.basic(config.username, config.password, charset)
-                TYPE.ALIYUN -> {
-                    TODO("not implemented")
-                }
-                TYPE.GOOGLEYUN -> {
-                   TODO("not implemented")
-                }
-            }
+        appDb.serverDao.get(serverID)?.getWebDavConfig().run {
+            data = Credentials.basic(username, password, charset)
         }
     }
 
