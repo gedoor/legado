@@ -33,7 +33,7 @@ import java.time.format.DateTimeFormatter
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(
     val path: String,
-    val authorization: Authorization = Authorization(serverID),
+    val authorization: Authorization = Authorization(AnalyzeUrl(path).serverID),
     private val serverID: Long? = AnalyzeUrl(path).serverID
   ) {
     companion object {
