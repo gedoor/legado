@@ -44,7 +44,7 @@ data class Server(
     }
 
     fun getWebDavConfig(): WebDavConfig? {
-        return GSON.fromJsonObject<WebDavConfig>(config).getOrNull()
+        return if (type == TYPE.WEBDAV) GSON.fromJsonObject<WebDavConfig>(config).getOrNull() else null
     }
 
     @Parcelize

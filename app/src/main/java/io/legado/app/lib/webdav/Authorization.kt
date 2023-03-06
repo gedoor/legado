@@ -26,7 +26,7 @@ data class Authorization(
         serverID ?: throw NoStackTraceException("Unexpected server ID")
         appDb.serverDao.get(serverID)?.getWebDavConfig().run {
             data = Credentials.basic(username, password, charset)
-        }
+        } ?: throw WebDavException("Unexpected WebDav Authorization")
     }
 
 }
