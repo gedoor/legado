@@ -8,6 +8,7 @@ import io.legado.app.help.http.newCallResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.analyzeRule.CustomUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -33,10 +34,16 @@ import java.time.format.DateTimeFormatter
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(
     val path: String,
-    val authorization: Authorization = Authorization(AnalyzeUrl(path).serverID),
-    private val serverID: Long? = AnalyzeUrl(path).serverID
-  ) {
+    val authorization: Authorization,
+    private val serverID: Long? = null
+) {
     companion object {
+
+        fun fromPath(path: String): WebDav {
+            val id = AnalyzeUrl(path).serverID
+            val authorization = Authorization(id)
+            return WebDav(path, authorization, id)
+        }
 
         @SuppressLint("DateTimeFormatter")
         private val dateTimeFormatter = DateTimeFormatter.RFC_1123_DATE_TIME
@@ -67,7 +74,7 @@ open class WebDav(
     }
 
 
-    private val url: URL = URL(AnalyzeUrl(path).url)
+    private val url: URL = URL(CustomUrl(path).getUrl())
     private val httpUrl: String? by lazy {
         val raw = url.toString()
             .replace("davs://", "https://")

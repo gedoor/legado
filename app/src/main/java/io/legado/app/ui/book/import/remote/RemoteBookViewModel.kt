@@ -8,7 +8,7 @@ import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.lib.webdav.Authorization
-import io.legado.app.lib.webdav.WebDav
+import io.legado.app.model.analyzeRule.CustomUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.model.remote.RemoteBookWebDav
@@ -122,10 +122,14 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
             remoteBooks.forEach { remoteBook ->
                 val bookWebDav = remoteBookWebDav
                     ?: throw NoStackTraceException("没有配置webDav")
-                bookWebDav.run {
-                    val downloadBookPath = downloadRemoteBook(remoteBook)
-                    val localBook = LocalBook.importFile(downloadBookPath)
-                    localBook.origin = BookType.webDavTag + WebDav(remoteBook.path, authorization, serverID).toString()
+                val downloadBookPath = bookWebDav.downloadRemoteBook(remoteBook)
+                downloadBookPath.let {
+                    val localBook = LocalBook.importFile(it)
+                    localBook.origin = BookType.webDavTag + CustomUrl(remoteBook.path)
+                        .putAttribute(
+                            "serverID",
+                            bookWebDav.serverID
+                        ).toString()
                     localBook.save()
                     remoteBook.isOnBookShelf = true
                 }

@@ -340,7 +340,7 @@ object LocalBook {
                 ?: throw NoStackTraceException("没有设置书籍保存位置!")
             // 兼容旧版链接
             val webdav: WebDav = kotlin.runCatching {
-                WebDav(webDavUrl)
+                WebDav.fromPath(webDavUrl)
             }.onFailure {
                 AppWebDav.defaultBookWebDav
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
