@@ -116,7 +116,7 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
 
     fun revertSelection() {
         getItems().forEach {
-            if (!it.isDir) {
+            if (!it.isDir && !it.isOnBookShelf) {
                 if (selected.contains(it)) {
                     selected.remove(it)
                 } else {
