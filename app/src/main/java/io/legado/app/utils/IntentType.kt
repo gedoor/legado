@@ -26,8 +26,10 @@ object IntentType {
     }
 
     private val appIntentType: TypeInterface? by lazy {
-        Class.forName("io.legado.app.help.AppIntentType")
-            .kotlin.objectInstance as? TypeInterface
+        kotlin.runCatching {
+            Class.forName("io.legado.app.help.AppIntentType")
+                .kotlin.objectInstance as? TypeInterface
+        }.getOrNull()
     }
 
     interface TypeInterface {
