@@ -27,7 +27,7 @@ class ServerConfigDialog : BaseDialogFragment(R.layout.dialog_webdav_server, tru
 
     private val serverUi = listOf(
         RowUi("url"),
-        RowUi("user"),
+        RowUi("username"),
         RowUi("password", RowUi.Type.password)
     )
 
