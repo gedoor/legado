@@ -34,15 +34,14 @@ import java.time.format.DateTimeFormatter
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(
     val path: String,
-    val authorization: Authorization,
-    private val serverID: Long? = null
+    val authorization: Authorization
 ) {
     companion object {
 
         fun fromPath(path: String): WebDav {
             val id = AnalyzeUrl(path).serverID
             val authorization = Authorization(id)
-            return WebDav(path, authorization, id)
+            return WebDav(path, authorization)
         }
 
         @SuppressLint("DateTimeFormatter")
@@ -400,12 +399,6 @@ open class WebDav(
             }
             throw WebDavException(message ?: "未知错误 code:${response.code}")
         }
-    }
-
-    override fun toString(): String {
-        val url = httpUrl ?: return ""
-        serverID ?: return url
-        return  "$url,{serverID:$serverID}"
     }
 
 }
