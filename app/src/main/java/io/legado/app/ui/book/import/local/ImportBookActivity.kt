@@ -257,7 +257,7 @@ class ImportBookActivity : BaseImportBookActivity<ActivityImportBookBinding, Imp
 
     private fun alertImportFileName() {
         alert(R.string.import_file_name) {
-            setMessage("""使用js处理文件名变量src返回一个json结构,{"name":"xxx", "author":"yyy"}""")
+            setMessage("""使用js处理文件名变量src，将书名作者分别赋值到变量name author""")
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "js"
                 editView.setText(AppConfig.bookImportFileName)

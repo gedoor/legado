@@ -198,36 +198,35 @@ object LocalBook {
      */
     private fun analyzeNameAuthor(fileName: String): Pair<String, String> {
         val tempFileName = fileName.substringBeforeLast(".")
-        var name: String
-        var author: String
-        for (pattern in nameAuthorPatterns) {
-            pattern.matcher(tempFileName).takeIf { it.find() }?.run {
-                name = group(2)!!
-                val group1 = group(1) ?: ""
-                val group3 = group(3) ?: ""
-                author = BookHelp.formatBookAuthor(group1 + group3)
-                return Pair(name, author)
-            }
-        }
+        var name = ""
+        var author = ""
         if (!AppConfig.bookImportFileName.isNullOrBlank()) {
             try {
                 //在脚本中定义如何分解文件名成书名、作者名
                 val jsonStr = AppConst.SCRIPT_ENGINE.eval(
                     //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
-                    //将文件名注入到脚步的src变量中
+                    //将文件名注入到脚本的src变量中
                     SimpleBindings().also { it["src"] = tempFileName }
                 ).toString()
                 val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr)
                     .getOrThrow()
-                name = bookMess["name"] ?: tempFileName
+                name = bookMess["name"] ?: ""
                 author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
             } catch (e: Exception) {
-                name = BookHelp.formatBookName(tempFileName)
-                author = BookHelp.formatBookAuthor(tempFileName.replace(name, ""))
-                    .takeIf { it.length != tempFileName.length } ?: ""
+               AppLog.put("执行导入文件名规则出错\n${e.localizedMessage}", e)
             }
-        } else {
+        }
+        if (name.isBlank()) {
+            for (pattern in nameAuthorPatterns) {
+                pattern.matcher(tempFileName).takeIf { it.find() }?.run {
+                    name = group(2)!!
+                    val group1 = group(1) ?: ""
+                    val group3 = group(3) ?: ""
+                    author = BookHelp.formatBookAuthor(group1 + group3)
+                    return Pair(name, author)
+                }
+            }
             name = BookHelp.formatBookName(tempFileName)
             author = BookHelp.formatBookAuthor(tempFileName.replace(name, ""))
                 .takeIf { it.length != tempFileName.length } ?: ""
