@@ -18,6 +18,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.WebDav
+import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
@@ -338,11 +339,15 @@ object LocalBook {
         try {
             AppConfig.defaultBookTreeUri
                 ?: throw NoStackTraceException("没有设置书籍保存位置!")
-            val uri = AppWebDav.authorization?.let {
-                val webdav = WebDav(webDavUrl, it)
-                runBlocking {
-                    saveBookFile(webdav.downloadInputStream(), localBook.originName)
-                }
+            // 兼容旧版链接
+            val webdav = kotlin.runCatching {
+                WebDav(webDavUrl)
+            }.onFailure {
+                AppWebDav.defaultBookWebDav
+                    ?: throw WebDavException("Unexpected defaultBookWebDav")
+            }
+            val uri =  runBlocking {
+                saveBookFile(webdav.downloadInputStream(), localBook.originName)
             }
             return uri?.let {
                 localBook.bookUrl = if (it.isContentScheme()) it.toString() else it.path!!

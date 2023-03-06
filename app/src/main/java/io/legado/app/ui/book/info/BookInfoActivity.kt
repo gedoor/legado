@@ -24,12 +24,14 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalTxt
+import io.legado.app.help.book.getRemoteUrl
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
+import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.association.ImportOnLineBookFileDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
@@ -205,28 +207,43 @@ class BookInfoActivity :
             }
 
             R.id.menu_upload -> {
-                launch {
-                    viewModel.bookData.value?.let {
-                        val waitDialog = WaitDialog(this@BookInfoActivity)
-                        waitDialog.setText("上传中.....")
-                        waitDialog.show()
-                        try {
-                            AppWebDav.defaultBookWebDav
-                                ?.upload(it)
-                                ?: throw NoStackTraceException("未配置webDav")
-                            //更新书籍最后更新时间,使之比远程书籍的时间新
-                            it.lastCheckTime = System.currentTimeMillis()
-                            viewModel.saveBook(it)
-                        } catch (e: Exception) {
-                            toastOnUi(e.localizedMessage)
-                        } finally {
-                            waitDialog.dismiss()
+                viewModel.bookData.value?.let { book ->
+                    book.getRemoteUrl()?.let {
+                        alert(R.string.draw, R.string.sure_upload) {
+                            okButton {
+                                upLoadBook(book)
+                            }
+                            cancelButton()
                         }
-                    }
+                    } ?: upLoadBook(book)
                 }
             }
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private fun upLoadBook(
+        book: Book,
+        bookWebDav: RemoteBookWebDav? = AppWebDav.defaultBookWebDav
+    ) {
+        launch {
+            val waitDialog = WaitDialog(this@BookInfoActivity)
+            waitDialog.setText("上传中.....")
+            waitDialog.show()
+            try {
+                
+                bookWebDav
+                    ?.upload(book)
+                    ?: throw NoStackTraceException("未配置webDav")
+                //更新书籍最后更新时间,使之比远程书籍的时间新
+                book.lastCheckTime = System.currentTimeMillis()
+                viewModel.saveBook(book)
+            } catch (e: Exception) {
+                toastOnUi(e.localizedMessage)
+            } finally {
+                waitDialog.dismiss()
+            }
+        }
     }
 
     private fun showBook(book: Book) = binding.run {

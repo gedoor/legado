@@ -4,6 +4,7 @@ import android.net.Uri
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.Server
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.Authorization
@@ -25,6 +26,8 @@ class RemoteBookWebDav(val rootBookUrl: String, val authorization: Authorization
             WebDav(rootBookUrl, authorization).makeAsDir()
         }
     }
+
+   // constructor(server: WebDavServer): this(webDavServer.url, Authorization(webDavServer))
 
     @Throws(Exception::class)
     override suspend fun getRemoteBookList(path: String): MutableList<RemoteBook> {
@@ -63,15 +66,16 @@ class RemoteBookWebDav(val rootBookUrl: String, val authorization: Authorization
         if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
         val localBookUri = Uri.parse(book.bookUrl)
         val putUrl = "$rootBookUrl${File.separator}${book.originName}"
+        val webDav =  WebDav(putUrl, authorization)
         if (localBookUri.isContentScheme()) {
-            WebDav(putUrl, authorization).upload(
+            webDav.upload(
                 byteArray = localBookUri.readBytes(appCtx),
                 contentType = "application/octet-stream"
             )
         } else {
-            WebDav(putUrl, authorization).upload(localBookUri.path!!)
+            webDav.upload(localBookUri.path!!)
         }
-        book.origin = BookType.webDavTag + putUrl
+        book.origin = BookType.webDavTag + webDav.toString()
         book.save()
     }
 
