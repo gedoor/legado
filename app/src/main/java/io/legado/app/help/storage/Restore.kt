@@ -118,7 +118,7 @@ object Restore {
             fileToListT<Server>(path, "servers.json")?.let {
                 appDb.serverDao.insert(*it.toTypedArray())
             }
-            fileToListT<KeyboardAssists>(path, "keyboardAssists.json")?.let {
+            fileToListT<KeyboardAssist>(path, "keyboardAssists.json")?.let {
                 appDb.keyboardAssistsDao.insert(*it.toTypedArray())
             }
             fileToListT<ReadRecord>(path, "readRecord.json")?.let {
