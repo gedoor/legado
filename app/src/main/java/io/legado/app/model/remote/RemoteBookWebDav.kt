@@ -4,7 +4,6 @@ import android.net.Uri
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.Server
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.Authorization
@@ -18,8 +17,11 @@ import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
 
-class RemoteBookWebDav(val rootBookUrl: String, val authorization: Authorization) :
-    RemoteBookManager() {
+class RemoteBookWebDav(
+    val rootBookUrl: String,
+    val authorization: Authorization,
+    val serverID: Long? = null
+) : RemoteBookManager() {
 
     init {
         runBlocking {
@@ -27,7 +29,6 @@ class RemoteBookWebDav(val rootBookUrl: String, val authorization: Authorization
         }
     }
 
-   // constructor(server: WebDavServer): this(webDavServer.url, Authorization(webDavServer))
 
     @Throws(Exception::class)
     override suspend fun getRemoteBookList(path: String): MutableList<RemoteBook> {
@@ -66,7 +67,7 @@ class RemoteBookWebDav(val rootBookUrl: String, val authorization: Authorization
         if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
         val localBookUri = Uri.parse(book.bookUrl)
         val putUrl = "$rootBookUrl${File.separator}${book.originName}"
-        val webDav =  WebDav(putUrl, authorization)
+        val webDav =  WebDav(putUrl, authorization, serverID)
         if (localBookUri.isContentScheme()) {
             webDav.upload(
                 byteArray = localBookUri.readBytes(appCtx),
