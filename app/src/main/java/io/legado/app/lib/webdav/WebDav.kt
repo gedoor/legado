@@ -33,7 +33,8 @@ import java.time.format.DateTimeFormatter
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(
     val path: String,
-    val authorization: Authorization = Authorization(AnalyzeUrl(path).serverID)
+    val authorization: Authorization = Authorization(AnalyzeUrl(path).serverID),
+    private val serverID: Long? = AnalyzeUrl(path).serverID
   ) {
     companion object {
 
@@ -65,9 +66,8 @@ open class WebDav(
             </propfind>"""
     }
 
+
     private val url: URL = URL(AnalyzeUrl(path).url)
-    /* 服务器id */
-    private var serverID: Long? = AnalyzeUrl(path).serverID
     private val httpUrl: String? by lazy {
         val raw = url.toString()
             .replace("davs://", "https://")

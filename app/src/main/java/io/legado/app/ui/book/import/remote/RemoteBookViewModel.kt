@@ -86,7 +86,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                     val user = config.getString("user")
                     val password = config.getString("password")
                     val authorization = Authorization(user, password)
-                    remoteBookWebDav = RemoteBookWebDav(url, authorization)
+                    remoteBookWebDav = RemoteBookWebDav(url, authorization, 10001)
                     return@execute
                 }
             }
@@ -125,7 +125,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 val downloadBookPath = bookWebDav.downloadRemoteBook(remoteBook)
                 downloadBookPath.let {
                     val localBook = LocalBook.importFile(it)
-                    localBook.origin = BookType.webDavTag + WebDav(remoteBook.path, bookWebDav.authorization).toString()
+                    localBook.origin = BookType.webDavTag + WebDav(remoteBook.path, serverID = bookWebDav.serverID).toString()
                     localBook.save()
                     remoteBook.isOnBookShelf = true
                 }
