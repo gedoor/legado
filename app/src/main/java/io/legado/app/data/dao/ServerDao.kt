@@ -25,6 +25,9 @@ interface ServerDao {
     @Delete
     fun delete(vararg server: Server)
 
+    @Query("delete from servers where id = :id")
+    fun delete(id: Long)
+
     @Query("delete from servers where id < 0")
     fun deleteDefault()
 }

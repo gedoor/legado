@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.Parcelize
+import org.json.JSONObject
 
 /**
  * 服务器
@@ -19,7 +20,7 @@ data class Server(
     var type: TYPE = TYPE.WEBDAV,
     var config: String? = null,
     var sortNumber: Int = 0
-): Parcelable {
+) : Parcelable {
 
     enum class TYPE {
         WEBDAV, ALIYUN, GOOGLEYUN
@@ -34,6 +35,12 @@ data class Server(
             return id == other.id
         }
         return false
+    }
+
+    fun getConfigJsonObject(): JSONObject? {
+        val json = config
+        json ?: return null
+        return JSONObject(json)
     }
 
     fun getWebDavConfig(): WebDavConfig? {

@@ -9,11 +9,12 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.Server
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.databinding.DialogWebdavServerBinding
 import io.legado.app.databinding.ItemSourceEditBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.ACache
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
@@ -48,9 +49,14 @@ class ServerConfigDialog : BaseDialogFragment(R.layout.dialog_webdav_server, tru
             R.id.menu_save -> {
                 val data = getConfigData()
                 if (data.isEmpty()) {
-                    ACache.get().remove("remoteServerConfig")
+                    appDb.serverDao.delete(10001)
                 } else {
-                    ACache.get().put("remoteServerConfig", GSON.toJson(data))
+                    appDb.serverDao.insert(
+                        Server(
+                            id = 10001,
+                            config = GSON.toJson(data)
+                        )
+                    )
                 }
                 dismissAllowingStateLoss()
             }
@@ -59,7 +65,7 @@ class ServerConfigDialog : BaseDialogFragment(R.layout.dialog_webdav_server, tru
     }
 
     private fun initConfigView() {
-        val data = ACache.get().getAsJSONObject("remoteServerConfig")
+        val data = appDb.serverDao.get(10001)?.getConfigJsonObject()
         serverUi.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 RowUi.Type.text -> ItemSourceEditBinding.inflate(
