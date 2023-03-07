@@ -10,6 +10,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.StringUtils
 import io.legado.app.utils.Utf8BomUtils
 import java.io.FileNotFoundException
+import java.lang.IllegalArgumentException
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -98,6 +99,7 @@ class TextFile(private val book: Book) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(bufferSize)
                 val length = bis.read(buffer)
+                if (length == -1) throw IllegalArgumentException("Unexpected Empty Txt File")
                 if (book.charset.isNullOrBlank()) {
                     book.charset = EncodingDetect.getEncode(buffer.copyOf(length))
                 }
