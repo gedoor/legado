@@ -52,7 +52,8 @@ class BookInfoActivity :
     VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
     GroupSelectDialog.CallBack,
     ChangeBookSourceDialog.CallBack,
-    ChangeCoverDialog.CallBack {
+    ChangeCoverDialog.CallBack,
+    BookInfoViewModel.CallBack {
 
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
         it?.let {
@@ -93,6 +94,7 @@ class BookInfoActivity :
         }
     }
     private var tocChanged = false
+    private val waitDialog by lazy { WaitDialog(this) }
 
     override val binding by viewBinding(ActivityBookInfoBinding::inflate)
     override val viewModel by viewModels<BookInfoViewModel>()
@@ -106,6 +108,7 @@ class BookInfoActivity :
         binding.flAction.setBackgroundColor(bottomBackground)
         binding.tvShelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
         binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
+        viewModel.callBack = this
         viewModel.bookData.observe(this) { showBook(it) }
         viewModel.chapterListData.observe(this) { upLoading(false, it) }
         //viewModel.webFileData.observe(this) { showWebFileDownloadAlert() }
@@ -223,7 +226,6 @@ class BookInfoActivity :
         bookWebDav: RemoteBookWebDav? = AppWebDav.defaultBookWebDav
     ) {
         launch {
-            val waitDialog = WaitDialog(this@BookInfoActivity)
             waitDialog.setText("上传中.....")
             waitDialog.show()
             try {
@@ -501,6 +503,7 @@ class BookInfoActivity :
             alert(titleResource = R.string.download_and_import_file) {
                 items<BookInfoViewModel.WebFile>(it) { _, webFile, _ ->
                     if (webFile.isSupported) {
+                        /* import */
                         viewModel.importOrDownloadWebFile<Book>(webFile) {
                             onClick?.invoke(it)
                         }
@@ -510,6 +513,7 @@ class BookInfoActivity :
                             message = getString(R.string.file_not_supported, webFile.name)
                         ) {
                             neutralButton(R.string.open_fun) {
+                                /* download only */
                                 viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
                                     openFileUri(uri, "*/*")
                                 }
@@ -581,6 +585,17 @@ class BookInfoActivity :
                 viewModel.inBookshelf = true
                 upTvBookshelf()
             }
+        }
+    }
+
+    override fun onWebFileProcessFinally() {
+        waitDialog.dismiss()
+    }
+
+    override fun onWebFileProcessStart() {
+        waitDialog.run {
+            setText("Loading.....")
+            show()
         }
     }
 

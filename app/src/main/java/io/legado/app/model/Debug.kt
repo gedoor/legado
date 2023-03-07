@@ -2,8 +2,8 @@ package io.legado.app.model
 
 import android.annotation.SuppressLint
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.BookType
 import io.legado.app.data.entities.*
+import io.legado.app.help.book.isWebFile
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.source.sortUrls
 import io.legado.app.model.rss.Rss
@@ -240,7 +240,7 @@ object Debug {
             .onSuccess {
                 log(debugSource, "︽详情页解析完成")
                 log(debugSource, showTime = false)
-                if (book.type and BookType.webFile == 0) {
+                if (!book.isWebFile) {
                     tocDebug(scope, bookSource, book)
                 } else {
                     log(debugSource, "≡文件类书源跳过解析目录", state = 1000)

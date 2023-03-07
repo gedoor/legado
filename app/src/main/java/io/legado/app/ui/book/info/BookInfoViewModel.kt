@@ -40,6 +40,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
+    var callBack: CallBack? = null
 
     fun initData(intent: Intent) {
         execute {
@@ -273,6 +274,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun <T> importOrDownloadWebFile(webFile: WebFile, success: ((T) -> Unit)?) {
        bookSource ?: return
        execute {
+           callBack?.onWebFileProcessStart()
            if (webFile.isSupported) {
                val book = LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
                changeToLocalBook(book)
@@ -283,7 +285,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
            success?.invoke(it as T)
        }.onError {
            context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
-       }
+       }.onFinally {
+            callBack?.onWebFileProcessFinally()
+        }
     }
 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
@@ -417,6 +421,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         override fun toString(): String {
             return name
         }
+    }
+
+    interface CallBack {
+        fun onWebFileProcessStart()
+        fun onWebFileProcessFinally()
     }
 
 }
