@@ -14,7 +14,7 @@ on:
 
 jobs:
   labelFixedIssue:
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Fixed Issues Labeler
         uses: gh-bot/fix-labeler@v2
