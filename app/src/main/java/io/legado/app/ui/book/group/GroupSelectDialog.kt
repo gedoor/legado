@@ -45,7 +45,7 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
     private var requestCode: Int = -1
     private val viewModel: GroupViewModel by viewModels()
     private val adapter by lazy { GroupAdapter(requireContext()) }
-    private var callBack: CallBack? = null
+    private var callBack = (activity as? CallBack)
     private var groupId: Long = 0
 
     override fun onStart() {
@@ -55,7 +55,6 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        callBack = activity as? CallBack
         arguments?.let {
             groupId = it.getLong("groupId")
             requestCode = it.getInt("requestCode", -1)
