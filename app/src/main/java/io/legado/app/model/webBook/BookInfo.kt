@@ -7,7 +7,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
-import io.legado.app.help.book.isWebFile
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.utils.DebugLog
@@ -138,7 +137,7 @@ object BookInfo {
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取封面出错", e)
         }
-        if (book.isWebFile) {
+        if (book.type and BookType.webFile == 0) {
             coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
             book.tocUrl = analyzeRule.getString(infoRule.tocUrl, isUrl = true)
