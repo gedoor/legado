@@ -27,7 +27,7 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
     private val binding by viewBinding(DialogBookGroupEditBinding::bind)
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
-    val selectImage = registerForActivityResult(SelectImageContract()) {
+    private val selectImage = registerForActivityResult(SelectImageContract()) {
         it ?: return@registerForActivityResult
         it.uri ?: return@registerForActivityResult
         readUri(it.uri) { fileDoc, inputStream ->
