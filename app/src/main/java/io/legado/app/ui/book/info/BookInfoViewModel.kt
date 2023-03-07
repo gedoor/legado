@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.info
 
+import android.net.Uri
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
@@ -19,6 +21,8 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
+import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
@@ -32,11 +36,10 @@ import kotlinx.coroutines.Dispatchers.IO
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
+    val webFileData: MutableList<WebFile>? = null
     var inBookshelf = false
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
-    val isImportBookOnLine: Boolean
-        get() = bookSource?.bookSourceType == BookSourceType.file
 
     fun initData(intent: Intent) {
         execute {
@@ -82,8 +85,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 appDb.bookSourceDao.getBookSource(book.origin)
             if (book.tocUrl.isEmpty() && !book.isLocal) {
                 loadBookInfo(book)
-            } else if (isImportBookOnLine) {
-                chapterListData.postValue(emptyList())
             } else {
                 val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
                 if (chapterList.isNotEmpty()) {
@@ -156,13 +157,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 inBookshelf = true
                             }
                             bookData.postValue(book)
-                            if (isImportBookOnLine) {
-                                appDb.searchBookDao.update(book.toSearchBook())
-                            }
                             if (inBookshelf) {
                                 appDb.bookDao.update(book)
                             }
-                            loadChapter(it, scope)
+                            if (it.isWebFile) {
+                                loadWebFile(book, bookSource, scope)
+                            } else {
+                                loadChapter(it, scope)
+                            }
                         }.onError {
                             AppLog.put("获取数据信息失败\n${it.localizedMessage}", it)
                             context.toastOnUi(R.string.error_get_book_info)
@@ -187,7 +189,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     chapterListData.postValue(it)
                 }
-            } else if (isImportBookOnLine) {
+            } else if (book.isWebFile) {
                 chapterListData.postValue(emptyList())
             } else {
                 bookSource?.let { bookSource ->
@@ -224,12 +226,61 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+
     fun loadGroup(groupId: Long, success: ((groupNames: String?) -> Unit)) {
         execute {
             appDb.bookGroupDao.getGroupNames(groupId).joinToString(",")
         }.onSuccess {
             success.invoke(it)
         }
+    }
+
+    private fun loadWebFile(
+        book: Book,
+        bookSource: BookSource,
+        scope: CoroutineScope = viewModelScope
+    ) {
+        execute(scope) {
+            webFileData?.clear()
+            val fileName = "${book.name} 作者：${book.author}"
+            if (book.downloadUrls.isNullOrEmpty()) {
+                val ruleDownloadUrls = bookSource.getBookInfoRule()?.downloadUrls
+                val content = AnalyzeUrl(book.bookUrl, source = bookSource).getStrResponse().body
+                val analyzeRule = AnalyzeRule(book, bookSource)
+                analyzeRule.setContent(content).setBaseUrl(book.bookUrl)
+                analyzeRule.getStringList(ruleDownloadUrls, isUrl = true)?.let {
+                    parseDownloadUrls(it, fileName)
+                } ?: throw NoStackTraceException("Unexpected ruleDownloadUrls")
+            } else {
+                parseDownloadUrls(book.downloadUrls, fileName)
+            }
+        }.onError {
+            context.toastOnUi("LoadWebFileError\n${it.localizedMessage}")
+        }
+    }
+
+    private fun parseDownloadUrls(downloadUrls: List<String>?, fileName: String) {
+        val urls = downloadUrls
+        urls?.forEach { url ->
+            val mFileName = "${fileName}.${LocalBook.parseFileSuffix(url)}"
+            val isSupportedFile = AppPattern.bookFileRegex.matches(mFileName)
+            webFileData?.add(WebFile(url, mFileName, isSupportedFile))
+        }
+    }
+
+    fun importOrDownloadWebFile(webFile: WebFile, success: ((Uri?) -> Unit)?) {
+       bookSource ?: return
+       execute {
+           if (webFile.isSupported) {
+               LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
+           } else {
+               LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
+           }
+       }.onSuccess {
+           success?.invoke(it as? Uri)
+       }.onError {
+           context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
+       }
     }
 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
@@ -353,6 +404,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 bookData.postValue(it)
                 loadChapter(it)
             }
+        }
+    }
+
+    data class WebFile(
+        val url: String,
+        val name: String,
+        val isSupported: Boolean
+    ) {
+        override fun toString(): String {
+            return name
         }
     }
 

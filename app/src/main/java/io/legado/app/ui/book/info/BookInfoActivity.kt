@@ -21,10 +21,7 @@ import io.legado.app.databinding.ActivityBookInfoBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
-import io.legado.app.help.book.isAudio
-import io.legado.app.help.book.isLocal
-import io.legado.app.help.book.isLocalTxt
-import io.legado.app.help.book.getRemoteUrl
+import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
@@ -33,7 +30,6 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
 import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.ui.about.AppLogDialog
-import io.legado.app.ui.association.ImportOnLineBookFileDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
@@ -231,7 +227,6 @@ class BookInfoActivity :
             waitDialog.setText("上传中.....")
             waitDialog.show()
             try {
-                
                 bookWebDav
                     ?.upload(book)
                     ?: throw NoStackTraceException("未配置webDav")
@@ -253,6 +248,7 @@ class BookInfoActivity :
         tvOrigin.text = getString(R.string.origin_show, book.originName)
         tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tvIntro.text = book.getDisplayIntro()
+        tvToc.visible(!book.isWebFile)
         upTvBookshelf()
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {
@@ -278,11 +274,10 @@ class BookInfoActivity :
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
             }
             chapterList.isNullOrEmpty() -> {
-                binding.tvToc.text =
-                    if (viewModel.isImportBookOnLine) getString(R.string.click_read_button_load) else getString(
-                        R.string.toc_s,
-                        getString(R.string.error_load_toc)
-                    )
+                binding.tvToc.text = getString(
+                    R.string.toc_s,
+                    getString(R.string.error_load_toc)
+                )
             }
             else -> {
                 viewModel.bookData.value?.let {
@@ -333,9 +328,9 @@ class BookInfoActivity :
         }
         tvRead.setOnClickListener {
             viewModel.bookData.value?.let { book ->
-                if (viewModel.isImportBookOnLine) {
-                    showDialogFragment<ImportOnLineBookFileDialog> {
-                        putString("bookUrl", book.bookUrl)
+                if (book.isWebFile) {
+                    showWebFileDownloadAlert {
+                        readBook(book)
                     }
                 } else {
                     readBook(book)
@@ -343,11 +338,21 @@ class BookInfoActivity :
             } ?: toastOnUi("Book is null")
         }
         tvShelf.setOnClickListener {
-            if (viewModel.inBookshelf) {
-                deleteBook()
-            } else {
-                viewModel.addToBookshelf {
-                    upTvBookshelf()
+            viewModel.bookData.value?.let { book ->
+                if (viewModel.inBookshelf) {
+                    deleteBook()
+                } else {
+                    if (book.isWebFile) {
+                        showWebFileDownloadAlert {
+                            viewModel.addToBookshelf {
+                                upTvBookshelf()
+                            }
+                        }
+                    } else {
+                        viewModel.addToBookshelf {
+                            upTvBookshelf()
+                        }
+                    }
                 }
             }
         }
@@ -490,6 +495,34 @@ class BookInfoActivity :
         }
         viewModel.bookData.value?.let {
             tocActivityResult.launch(it.bookUrl)
+        }
+    }
+
+    private fun showWebFileDownloadAlert(onClick: (() -> Unit)?) {
+        viewModel.webFileData ?: return
+        alert(titleResource = R.string.download_and_import_file) {
+            val webFileData = viewModel.webFileData
+            webFileData?.let {
+                items<BookInfoViewModel.WebFile>(it) { _, webFile, _ ->
+                    if (webFile.isSupported) {
+                        viewModel.importOrDownloadWebFile(webFile) {
+                            onClick?.invoke()
+                        }
+                    } else {
+                        alert(
+                            title = getString(R.string.draw),
+                            message = getString(R.string.file_not_supported, webFile.name)
+                        ) {
+                            neutralButton(R.string.open_fun) {
+                                viewModel.importOrDownloadWebFile(webFile) { uri ->
+                                    openFileUri(uri!!, "*/*")
+                                }
+                            }
+                            noButton()
+                        }
+                    }
+                }
+            }
         }
     }
 
