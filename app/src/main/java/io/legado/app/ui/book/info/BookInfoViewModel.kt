@@ -276,7 +276,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
            if (webFile.isSupported) {
                val book = LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
                changeToLocalBook(book)
-               book
            } else {
                LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
            }
@@ -401,11 +400,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun changeToLocalBook(localBook: Book) {
+    private fun changeToLocalBook(localBook: Book): Book {
         inBookshelf = true
-        LocalBook.mergeBook(localBook, bookData.value).let {
+        return LocalBook.mergeBook(localBook, bookData.value).let {
             bookData.postValue(it)
             loadChapter(it)
+            it
         }
     }
 

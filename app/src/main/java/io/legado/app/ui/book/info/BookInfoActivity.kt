@@ -494,7 +494,9 @@ class BookInfoActivity :
         }
     }
 
-    private fun showWebFileDownloadAlert(onClick: ((Book) -> Unit)?) {
+    private fun showWebFileDownloadAlert(
+        onClick: ((Book) -> Unit)? = null
+    ) {
         viewModel.webFileData.value?.let {
             alert(titleResource = R.string.download_and_import_file) {
                 items<BookInfoViewModel.WebFile>(it) { _, webFile, _ ->
