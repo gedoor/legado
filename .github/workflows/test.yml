@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 10
+          fetch-depth: 0
       - name: Fixed Issues Labeler
         uses: gh-bot/fix-labeler@v2
         with:
@@ -60,8 +60,6 @@ jobs:
       VERSIONL: ${{ needs.prepare.outputs.versionL }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"
@@ -133,6 +131,8 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - uses: actions/download-artifact@v3
         with:
           path: apk/
