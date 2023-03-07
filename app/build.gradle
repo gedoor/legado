@@ -191,7 +191,7 @@ dependencies {
     //规则相关
     implementation('org.jsoup:jsoup:1.15.4')
     implementation('com.jayway.jsonpath:json-path:2.7.0')
-    implementation('cn.wanghaomiao:JsoupXpath:2.5.2')
+    implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
     implementation(project(path: ':epublib'))
 
     //JS rhino
