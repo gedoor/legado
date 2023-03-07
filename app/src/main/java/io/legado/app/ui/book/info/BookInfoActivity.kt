@@ -498,9 +498,8 @@ class BookInfoActivity :
     }
 
     private fun showWebFileDownloadAlert(onClick: (() -> Unit)?) {
-        viewModel.webFileData.value ?: toastOnUi("Unexpected webFileData")
-        alert(titleResource = R.string.download_and_import_file) {
-            viewModel.webFileData.value?.let {
+        viewModel.webFileData.value?.let {
+            alert(titleResource = R.string.download_and_import_file) {
                 items<BookInfoViewModel.WebFile>(it) { _, webFile, _ ->
                     if (webFile.isSupported) {
                         viewModel.importOrDownloadWebFile(webFile) {
@@ -521,7 +520,7 @@ class BookInfoActivity :
                     }
                 }
             }
-        }
+        } ?: toastOnUi("Unexpected webFileData")
     }
 
     private fun readBook(book: Book) {
