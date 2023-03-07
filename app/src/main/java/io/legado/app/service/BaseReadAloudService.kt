@@ -268,6 +268,7 @@ abstract class BaseReadAloudService : BaseService(),
         }
         val requestFocus = MediaHelp.requestFocus(mFocusRequest)
         if (!requestFocus) {
+            pauseReadAloud(false)
             toastOnUi("未获取到音频焦点")
         }
         return requestFocus
