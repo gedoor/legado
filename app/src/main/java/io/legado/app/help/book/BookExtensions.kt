@@ -18,49 +18,39 @@ import java.util.concurrent.ConcurrentHashMap
 
 
 val Book.isAudio: Boolean
-    get() {
-        return type and BookType.audio > 0
-    }
+    get() = isType(BookType.audio)
 
 val Book.isImage: Boolean
-    get() {
-        return type and BookType.image > 0
-    }
+    get() = isType(BookType.image)
 
 val Book.isLocal: Boolean
     get() {
         if (type == 0) {
             return origin == BookType.localTag || origin.startsWith(BookType.webDavTag)
         }
-        return type and BookType.local > 0
+        return isType(BookType.local)
     }
 
 val Book.isLocalTxt: Boolean
-    get() {
-        return isLocal && originName.endsWith(".txt", true)
-    }
+    get() = isLocal && originName.endsWith(".txt", true)
 
 val Book.isEpub: Boolean
-    get() {
-        return isLocal && originName.endsWith(".epub", true)
-    }
+    get() = isLocal && originName.endsWith(".epub", true)
 
 val Book.isUmd: Boolean
-    get() {
-        return isLocal && originName.endsWith(".umd", true)
-    }
+    get() = isLocal && originName.endsWith(".umd", true)
+
 val Book.isPdf: Boolean
-    get() {
-        return isLocal && originName.endsWith(".pdf", true)
-    }
+    get() = isLocal && originName.endsWith(".pdf", true)
 
 val Book.isOnLineTxt: Boolean
-    get() {
-        return !isLocal && type and BookType.text > 0
-    }
+    get() = !isLocal && isType(BookType.text)
+
+val Book.isWebFile: Boolean
+    get() = isType(BookType.webFile)
 
 val Book.isUpError: Boolean
-    get() = type and BookType.updateError > 0
+    get() = isType(BookType.updateError)
 
 fun Book.contains(word: String?): Boolean {
     if (word.isNullOrEmpty()) {
@@ -171,6 +161,8 @@ fun Book.removeType(@BookType.Type vararg types: Int) {
 fun Book.clearType() {
     type = 0
 }
+
+fun Book.isType(@BookType.Type bookType: Int): Boolean = type and bookType > 0
 
 fun Book.upType() {
     if (type < 8) {

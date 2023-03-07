@@ -96,6 +96,7 @@ android {
     }
 
     flavorDimensions.add("mode")
+
     productFlavors {
         app {
             dimension "mode"
@@ -107,6 +108,7 @@ android {
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
         }
     }
+
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
