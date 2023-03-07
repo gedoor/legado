@@ -16,6 +16,7 @@
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.PreferenceCategory
+        android:key="lx"
         android:title="@string/contact"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
