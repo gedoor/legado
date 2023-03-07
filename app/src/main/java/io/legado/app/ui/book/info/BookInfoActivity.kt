@@ -2,6 +2,7 @@ package io.legado.app.ui.book.info
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -329,7 +330,7 @@ class BookInfoActivity :
             viewModel.bookData.value?.let { book ->
                 if (book.isWebFile) {
                     showWebFileDownloadAlert {
-                        readBook(book)
+                        readBook(it)
                     }
                 } else {
                     readBook(book)
@@ -342,11 +343,7 @@ class BookInfoActivity :
                     deleteBook()
                 } else {
                     if (book.isWebFile) {
-                        showWebFileDownloadAlert {
-                            viewModel.addToBookshelf {
-                                upTvBookshelf()
-                            }
-                        }
+                        showWebFileDownloadAlert()
                     } else {
                         viewModel.addToBookshelf {
                             upTvBookshelf()
@@ -497,13 +494,13 @@ class BookInfoActivity :
         }
     }
 
-    private fun showWebFileDownloadAlert(onClick: (() -> Unit)?) {
+    private fun showWebFileDownloadAlert(onClick: ((Book) -> Unit)?) {
         viewModel.webFileData.value?.let {
             alert(titleResource = R.string.download_and_import_file) {
                 items<BookInfoViewModel.WebFile>(it) { _, webFile, _ ->
                     if (webFile.isSupported) {
-                        viewModel.importOrDownloadWebFile(webFile) {
-                            onClick?.invoke()
+                        viewModel.importOrDownloadWebFile<Book>(webFile) {
+                            onClick?.invoke(it)
                         }
                     } else {
                         alert(
@@ -511,8 +508,8 @@ class BookInfoActivity :
                             message = getString(R.string.file_not_supported, webFile.name)
                         ) {
                             neutralButton(R.string.open_fun) {
-                                viewModel.importOrDownloadWebFile(webFile) { uri ->
-                                    openFileUri(uri!!, "*/*")
+                                viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
+                                    openFileUri(uri, "*/*")
                                 }
                             }
                             noButton()

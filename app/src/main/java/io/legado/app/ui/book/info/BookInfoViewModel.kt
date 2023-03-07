@@ -270,18 +270,18 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun importOrDownloadWebFile(webFile: WebFile, success: ((Uri?) -> Unit)?) {
+    fun <T> importOrDownloadWebFile(webFile: WebFile, success: ((T) -> Unit)?) {
        bookSource ?: return
        execute {
            if (webFile.isSupported) {
-               LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource).let {
-                   changeToLocalBook(it)
-               }
+               val book = LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
+               changeToLocalBook(book)
+               book
            } else {
                LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
            }
        }.onSuccess {
-           success?.invoke(it as? Uri)
+           success?.invoke(it as T)
        }.onError {
            context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
        }
