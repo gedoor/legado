@@ -13,6 +13,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  labelFixedIssue:
+    run-on: ubuntu-latest
+    steps:
+      - name: Fixed Issues Labeler
+        uses: gh-bot/fix-labeler@v2
+        with:
+          label: 已解决
+
   prepare:
     runs-on: ubuntu-latest
     outputs:
