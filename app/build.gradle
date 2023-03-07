@@ -96,6 +96,7 @@ android {
     }
 
     flavorDimensions.add("mode")
+
     productFlavors {
         app {
             dimension "mode"
@@ -107,12 +108,18 @@ android {
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
         }
     }
+
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
         // Sets Java compatibility to Java 11
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    packagingOptions {
+        // fix found with path 'META-INF/INDEX.LIST' from inputs
+        exclude 'META-INF/INDEX.LIST'
     }
 
     sourceSets {
