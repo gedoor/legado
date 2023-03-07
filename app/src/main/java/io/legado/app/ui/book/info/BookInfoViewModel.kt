@@ -189,8 +189,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     chapterListData.postValue(it)
                 }
-            } else if (book.isWebFile) {
-                chapterListData.postValue(emptyList())
             } else {
                 bookSource?.let { bookSource ->
                     val oldBook = book.copy()
@@ -276,7 +274,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
        bookSource ?: return
        execute {
            if (webFile.isSupported) {
-               LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
+               LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource).let {
+                   changeToLocalBook(it)
+               }
            } else {
                LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
            }
@@ -401,13 +401,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeToLocalBook(bookUrl: String) {
-        appDb.bookDao.getBook(bookUrl)?.let { localBook ->
-            inBookshelf = true
-            LocalBook.mergeBook(localBook, bookData.value).let {
-                bookData.postValue(it)
-                loadChapter(it)
-            }
+    private fun changeToLocalBook(localBook: Book) {
+        inBookshelf = true
+        LocalBook.mergeBook(localBook, bookData.value).let {
+            bookData.postValue(it)
+            loadChapter(it)
         }
     }
 

@@ -11,7 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.EventBus
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -587,9 +586,4 @@ class BookInfoActivity :
         }
     }
 
-    override fun observeLiveBus() {
-        observeEvent<String>(EventBus.FILE_SOURCE_DOWNLOAD_DONE) {
-            viewModel.changeToLocalBook(it)
-        }
-    }
 }
