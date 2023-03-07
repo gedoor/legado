@@ -13,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Server
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemServerSelectBinding
@@ -23,6 +24,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.launch
 
 class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
@@ -56,7 +58,11 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     }
 
     private fun initData() {
-
+        launch {
+            appDb.serverDao.observeAll().collect{
+                adapter.setItems(it)
+            }
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
