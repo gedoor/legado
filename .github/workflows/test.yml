@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Fixed Issues Labeler
-        uses: gh-bot/fix-labeler@v2
+        uses: gh-bot/fix-labeler@master
         with:
           label: 已解决
 
