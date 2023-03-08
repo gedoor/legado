@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.appDb
@@ -30,6 +31,7 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     }
 
     private val binding by viewBinding(DialogWebdavServerBinding::bind)
+    private val viewModel by viewModels<ServerConfigViewModel>()
 
     private val serverUi = listOf(
         RowUi("url"),
@@ -47,8 +49,9 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
         binding.toolBar.inflateMenu(R.menu.server_config)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
-
-        upConfigView(null)
+        viewModel.init(arguments?.getLong("id")) {
+            upConfigView(viewModel.server)
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {

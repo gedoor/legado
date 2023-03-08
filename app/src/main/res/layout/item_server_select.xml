@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background"
     android:padding="8dp"
     android:gravity="center_vertical"
@@ -16,12 +17,27 @@
         android:singleLine="true"
         android:textColor="@color/primaryText" />
 
-    <TextView
-        android:id="@+id/tv_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:padding="8dp"
-        android:text="@string/edit" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_edit"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/edit"
+        android:padding="6dp"
+        android:src="@drawable/ic_edit"
+        android:tint="@color/primaryText" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="6dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_outline_delete"
+        android:tint="@color/primaryText"
+        android:contentDescription="@string/delete"
+        tools:ignore="RtlHardcoded" />
 
 </LinearLayout>

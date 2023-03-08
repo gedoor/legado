@@ -221,9 +221,11 @@ object Restore {
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
         try {
-            val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
-            FileInputStream(file).use {
-                return GSON.fromJsonArray<T>(it).getOrThrow()
+            val file = File(path + File.separator + fileName)
+            if (file.exists()) {
+                FileInputStream(file).use {
+                    return GSON.fromJsonArray<T>(it).getOrThrow()
+                }
             }
         } catch (e: Exception) {
             AppLog.put("$fileName\n读取解析出错\n${e.localizedMessage}", e)

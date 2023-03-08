@@ -154,6 +154,7 @@ object AppWebDav {
         authorization?.let {
             val webDav = WebDav(rootWebDavUrl + name, it)
             webDav.downloadTo(zipFilePath, true)
+            FileUtils.delete(Backup.backupPath)
             ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
             Restore.restoreDatabase()
             Restore.restoreConfig()

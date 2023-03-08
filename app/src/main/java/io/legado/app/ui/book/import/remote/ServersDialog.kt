@@ -17,6 +17,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Server
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemServerSelectBinding
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -92,9 +93,21 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                     selectServerId = getItemByLayoutPosition(holder.layoutPosition)?.id
                 }
             }
-            binding.tvEdit.setOnClickListener {
+            binding.ivEdit.setOnClickListener {
                 getItemByLayoutPosition(holder.layoutPosition)?.let { server ->
                     showDialogFragment(ServerConfigDialog(server.id))
+                }
+            }
+            binding.ivDelete.setOnClickListener {
+                alert {
+                    setTitle(R.string.draw)
+                    setMessage(R.string.sure_del)
+                    yesButton {
+                        getItemByLayoutPosition(holder.layoutPosition)?.let { server ->
+                            viewModel.delete(server)
+                        }
+                    }
+                    noButton()
                 }
             }
         }
