@@ -30,6 +30,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -274,7 +275,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun <T> importOrDownloadWebFile(webFile: WebFile, success: ((T) -> Unit)?) {
        bookSource ?: return
        execute {
-           callBack?.onWebFileProcessStart()
+           callBack?.run {
+               runOnUI {
+                   onWebFileProcessStart()
+               }
+           }
            if (webFile.isSupported) {
                val book = LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
                changeToLocalBook(book)
@@ -286,8 +291,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
        }.onError {
            context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
        }.onFinally {
-            callBack?.onWebFileProcessFinally()
-        }
+           callBack?.run {
+               runOnUI {
+                   onWebFileProcessFinally()
+               }
+           }
+
+       }
     }
 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
