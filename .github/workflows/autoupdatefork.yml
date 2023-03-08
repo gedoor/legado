@@ -12,12 +12,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: Install git
-      run: |
-        sudo apt-get update
-        sudo apt-get -y install git
     - name: Set env
       run: |
         git config --global user.email "github-actions@github.com"

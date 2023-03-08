@@ -43,8 +43,6 @@ jobs:
       play: ${{ needs.prepare.outputs.play }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
 
       - name: Release Apk Sign
         run: |
