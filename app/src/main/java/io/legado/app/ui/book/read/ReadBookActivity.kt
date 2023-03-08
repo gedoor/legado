@@ -1319,7 +1319,6 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun observeLiveBus() = binding.run {
-        super.observeLiveBus()
         observeEvent<String>(EventBus.TIME_CHANGED) { readView.upTime() }
         observeEvent<Int>(EventBus.BATTERY_CHANGED) { readView.upBattery(it) }
         observeEvent<Boolean>(EventBus.MEDIA_BUTTON) {

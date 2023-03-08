@@ -135,6 +135,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         pageDelegate?.setViewSize(w, h)
         if (w > 0 && h > 0) {
             upBg()
+            callBack.upSystemUiVisibility()
         }
     }
 
@@ -656,5 +657,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun addBookmark()
         fun changeReplaceRuleState()
         fun openSearchActivity(searchWord: String?)
+        fun upSystemUiVisibility()
     }
 }
