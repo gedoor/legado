@@ -34,8 +34,7 @@ import java.net.URLDecoder
 /**
  * rss阅读界面
  */
-class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(false),
-    ReadRssViewModel.CallBack {
+class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(false) {
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
     override val viewModel by viewModels<ReadRssViewModel>()
@@ -50,7 +49,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel.callBack = this
+        viewModel.upStarMenuData.observe(this) { upStarMenu() }
+        viewModel.upTtsMenuData.observe(this) { upTtsMenu(it) }
         binding.titleBar.title = intent.getStringExtra("title")
         initWebView()
         initLiveData()
@@ -223,7 +223,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
     }
 
-    override fun upStarMenu() {
+    private fun upStarMenu() {
         starMenuItem?.isVisible = viewModel.rssArticle != null
         if (viewModel.rssStar != null) {
             starMenuItem?.setIcon(R.drawable.ic_star)
@@ -235,7 +235,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         starMenuItem?.icon?.setTintMutate(primaryTextColor)
     }
 
-    override fun upTtsMenu(isPlaying: Boolean) {
+    private fun upTtsMenu(isPlaying: Boolean) {
         launch {
             if (isPlaying) {
                 ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
