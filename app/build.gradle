@@ -116,10 +116,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-
     packagingOptions {
-        exclude "META-INF/INDEX.LIST"
+        resources {
+            excludes += ['META-INF/INDEX.LIST']
+        }
     }
+
     sourceSets {
         // Adds exported schema location as test app assets.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())

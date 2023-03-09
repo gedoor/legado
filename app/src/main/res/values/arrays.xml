@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
+	<string-array name="server_type">
+		<item>WEBDAV</item>
+	</string-array>
+
 	<string-array name="book_type">
 		<item>Text</item>
 		<item>Audio</item>

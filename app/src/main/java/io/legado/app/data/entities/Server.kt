@@ -23,7 +23,7 @@ data class Server(
 ) : Parcelable {
 
     enum class TYPE {
-        WEBDAV, ALIYUN, GOOGLEYUN
+        WEBDAV
     }
 
     override fun hashCode(): Int {
