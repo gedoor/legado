@@ -14,9 +14,10 @@ jobs:
       - name: Check Cronet Updates
         run: source .github/scripts/cronet.sh
 
+      - uses: gradle/gradle-build-action@v2
+        if: ${{ env.cronet == 'ok' }}
       - name: Download Cronet
         if: ${{ env.cronet == 'ok' }}
-        uses: gradle/gradle-build-action@v2
         run: |
           chmod +x gradlew
           ./gradlew app:downloadCronet
