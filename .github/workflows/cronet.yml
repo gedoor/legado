@@ -15,11 +15,11 @@ jobs:
         run: source .github/scripts/cronet.sh
 
       - name: Download Cronet
-        uses: gradle/gradle-build-action@v2
         if: ${{ env.cronet == 'ok' }}
+        uses: gradle/gradle-build-action@v2
         run: |
           chmod +x gradlew
-         ./gradlew app:downloadCronet
+          ./gradlew app:downloadCronet
 
       - name: Create Pull Request
         if: ${{ env.cronet == 'ok' }}
@@ -39,4 +39,3 @@ jobs:
             *cronet.json
             *updateLog.md
             gradle.properties
-          
