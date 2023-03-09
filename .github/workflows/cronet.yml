@@ -11,17 +11,19 @@ jobs:
     if: ${{ github.repository == 'gedoor/legado' }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
-
       - name: Check Cronet Updates
+        run: source .github/scripts/cronet.sh
+
+      - uses: gradle/gradle-build-action@v2
+        if: ${{ env.cronet == 'ok' }}
+      - name: Download Cronet
+        if: ${{ env.cronet == 'ok' }}
         run: |
-          echo "获取cronet最新版本"
-          source .github/scripts/cronet.sh
-          echo "PR_TITLE=Bump cronet from $current_cronet_version to $lastest_cronet_version " >> $GITHUB_ENV
-          echo "PR_BODY=Changes in the [Git log](https://chromium.googlesource.com/chromium/src/+log/$current_cronet_version..$lastest_cronet_version)" >> $GITHUB_ENV
+          chmod +x gradlew
+          ./gradlew app:downloadCronet
 
       - name: Create Pull Request
+        if: ${{ env.cronet == 'ok' }}
         uses: peter-evans/create-pull-request@v4
         continue-on-error: true
         with:
@@ -38,4 +40,3 @@ jobs:
             *cronet.json
             *updateLog.md
             gradle.properties
-          
