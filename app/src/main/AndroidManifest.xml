@@ -381,12 +381,20 @@
                 <data android:mimeType="*/*" />
                 <!--TXT-->
                 <data android:pathAdvancedPattern=".*\\.[tT][xX][tT]" />
+                <data android:pathPattern=".*\\.txt" />
+                <data android:pathPattern=".*\\.TXT" />
                 <!--JSON-->
                 <data android:pathAdvancedPattern=".*\\.[jJ][sS][oO][nN]" />
+                <data android:pathPattern=".*\\.json" />
+                <data android:pathPattern=".*\\.JSON" />
                 <!-- EPUB -->
                 <data android:pathAdvancedPattern=".*\\.[eE][pP][uU][bB]" />
+                <data android:pathPattern=".*\\.epub" />
+                <data android:pathPattern=".*\\.EPUB" />
                 <!-- pdf -->
                 <data android:pathAdvancedPattern=".*\\.[pP][dD][fF]" />
+                <data android:pathPattern=".*\\.pdf" />
+                <data android:pathPattern=".*\\.PDF" />
             </intent-filter>
         </activity>
 

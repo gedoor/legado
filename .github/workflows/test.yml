@@ -60,6 +60,8 @@ jobs:
       VERSIONL: ${{ needs.prepare.outputs.versionL }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Clear 18PlusList.txt
         run: |
           echo "清空18PlusList.txt"

@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.webkit.WebSettings
 import io.legado.app.constant.AppConst
 import io.legado.app.model.ReadAloud
 import io.legado.app.utils.FileUtils
@@ -65,6 +66,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 map["MODEL"] = Build.MODEL
                 map["SDK_INT"] = Build.VERSION.SDK_INT.toString()
                 map["RELEASE"] = Build.VERSION.RELEASE
+                map["WebViewUserAgent"] = WebSettings.getDefaultUserAgent(appCtx)
                 //获取app版本信息
                 AppConst.appInfo.let {
                     map["versionName"] = it.versionName

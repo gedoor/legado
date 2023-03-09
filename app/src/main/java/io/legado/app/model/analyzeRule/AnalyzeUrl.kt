@@ -585,16 +585,18 @@ class AnalyzeUrl(
 
     /**
      * 设置cookie 优先级
-     * urlOption临时cookie > 数据库cookie = okhttp CookieJar保存在内存中的cookie
+     * urlOption临时cookie > 数据库cookie
      */
     private fun setCookie() {
         val cookie = kotlin.run {
+            /* 每次调用getXX cookieJar已经保存过了
             if (enabledCookieJar) {
                 val key = "${domain}_cookieJar"
                 CacheManager.getFromMemory(key)?.let {
                     return@run it
                 }
             }
+            */
             CookieStore.getCookie(domain)
         }
         if (cookie.isNotEmpty()) {
@@ -608,7 +610,7 @@ class AnalyzeUrl(
     }
 
     /**
-     * 保存cookie在访问结束时就保存,不等到下次访问
+     * 保存cookieJar中的cookie在访问结束时就保存,不等到下次访问
      */
     private fun saveCookie() {
         //书源启用保存cookie时 添加内存中的cookie到数据库
