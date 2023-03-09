@@ -45,7 +45,7 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
     private var requestCode: Int = -1
     private val viewModel: GroupViewModel by viewModels()
     private val adapter by lazy { GroupAdapter(requireContext()) }
-    private var callBack = (activity as? CallBack)
+    private val callBack get() = (activity as? CallBack)
     private var groupId: Long = 0
 
     override fun onStart() {
