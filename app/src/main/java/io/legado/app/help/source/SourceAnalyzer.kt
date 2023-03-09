@@ -46,7 +46,7 @@ object SourceAnalyzer {
     fun jsonToBookSources(inputStream: InputStream): Result<MutableList<BookSource>> {
         return kotlin.runCatching {
             val bookSources = mutableListOf<BookSource>()
-            kotlin.runCatching {
+//            kotlin.runCatching {
                 val items: List<Map<String, Any>> = jsonPath.parse(inputStream).read("$")
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
@@ -54,13 +54,13 @@ object SourceAnalyzer {
                         bookSources.add(it)
                     }
                 }
-            }.onFailure {
-                val item: Map<String, Any> = jsonPath.parse(inputStream).read("$")
-                val jsonItem = jsonPath.parse(item)
-                jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
-                    bookSources.add(it)
-                }
-            }
+//            }.onFailure {
+//                val item: Map<String, Any> = jsonPath.parse(inputStream).read("$")
+//                val jsonItem = jsonPath.parse(item)
+//                jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
+//                    bookSources.add(it)
+//                }
+//            }
             bookSources
         }
     }
