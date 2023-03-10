@@ -148,11 +148,13 @@ class EpubFile(var book: Book) {
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
             for (res in epubBook.contents) {
                 if (!findChapterFirstSource) {
-                    if (currentChapterFirstResourceHref == res.href) findChapterFirstSource = true
+                    if (currentChapterFirstResourceHref != res.href) continue
+                    findChapterFirstSource = true
                     // 第一个xhtml文件
                     elements.add(
                         getBody(res, startFragmentId, endFragmentId)
                     )
+                    // 是否继续遍历
                     if (currentChapterFirstResourceHref == nextChapterFirstResourceHref) break
                     continue
                 }
