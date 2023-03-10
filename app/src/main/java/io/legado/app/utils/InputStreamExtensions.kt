@@ -23,3 +23,15 @@ fun InputStream?.contains(str: String): Boolean {
         return scanner.findWithinHorizon(str, 0) != null
     }
 }
+
+fun InputStream?.isEmpty(): Boolean {
+    this ?: return true
+    return if (markSupported()) {
+        mark(0)
+        val isEmpty = read(ByteArray(1)) == -1
+        reset()
+        isEmpty
+    } else {
+        available() == 0
+    }
+}

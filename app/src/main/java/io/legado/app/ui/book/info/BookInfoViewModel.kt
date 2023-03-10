@@ -17,6 +17,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.exception.EmptyFileException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
 import io.legado.app.help.coroutine.Coroutine
@@ -266,6 +267,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
            success?.invoke(it as T)
        }.onError {
            context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
+           webFiles.remove(webFile)
        }.onFinally {
            waitDialogData.postValue(false)
        }
@@ -386,10 +388,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun changeToLocalBook(localBook: Book): Book {
-        inBookshelf = true
         return LocalBook.mergeBook(localBook, bookData.value).let {
             bookData.postValue(it)
             loadChapter(it)
+            inBookshelf = true
             it
         }
     }

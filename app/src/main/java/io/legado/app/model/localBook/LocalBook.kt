@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.exception.EmptyFileException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
@@ -258,7 +259,7 @@ object LocalBook {
     ): Uri {
         AppConfig.defaultBookTreeUri
             ?: throw NoStackTraceException("没有设置书籍保存位置!")
-        val bytes = when {
+        val inputStream = when {
             str.isAbsUrl() -> AnalyzeUrl(str, source = source).getInputStream()
             str.isDataUrl() -> ByteArrayInputStream(
                 Base64.decode(
@@ -268,7 +269,7 @@ object LocalBook {
             )
             else -> throw NoStackTraceException("在线导入书籍支持http/https/DataURL")
         }
-        return saveBookFile(bytes, fileName)
+        return saveBookFile(inputStream, fileName)
     }
 
     /**
@@ -289,6 +290,7 @@ object LocalBook {
         inputStream: InputStream,
         fileName: String
     ): Uri {
+        if (inputStream.isEmpty()) throw EmptyFileException("Unexpected empty inputStream")
         val defaultBookTreeUri = AppConfig.defaultBookTreeUri
         if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
         val treeUri = Uri.parse(defaultBookTreeUri)

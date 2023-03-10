@@ -4,13 +4,13 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.TxtTocRule
+import io.legado.app.exception.EmptyFileException
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.StringUtils
 import io.legado.app.utils.Utf8BomUtils
 import java.io.FileNotFoundException
-import java.lang.IllegalArgumentException
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -99,7 +99,7 @@ class TextFile(private val book: Book) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(bufferSize)
                 val length = bis.read(buffer)
-                if (length == -1) throw IllegalArgumentException("Unexpected Empty Txt File")
+                if (length == -1) throw EmptyFileException("Unexpected Empty Txt File")
                 if (book.charset.isNullOrBlank()) {
                     book.charset = EncodingDetect.getEncode(buffer.copyOf(length))
                 }

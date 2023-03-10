@@ -24,6 +24,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -502,26 +503,27 @@ class BookInfoActivity :
             toastOnUi("Unexpected webFileData")
             return
         }
-        alert(titleResource = R.string.download_and_import_file) {
-            items<BookInfoViewModel.WebFile>(webFiles) { _, webFile, _ ->
-                if (webFile.isSupported) {
-                    /* import */
-                    viewModel.importOrDownloadWebFile<Book>(webFile) {
-                        onClick?.invoke(it)
-                    }
-                } else {
-                    alert(
-                        title = getString(R.string.draw),
-                        message = getString(R.string.file_not_supported, webFile.name)
-                    ) {
-                        neutralButton(R.string.open_fun) {
-                            /* download only */
-                            viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
-                                openFileUri(uri, "*/*")
-                            }
+        selector<BookInfoViewModel.WebFile>(
+            R.string.download_and_import_file,
+            webFiles
+        ) { _, webFile, _ ->
+            if (webFile.isSupported) {
+                /* import */
+                viewModel.importOrDownloadWebFile<Book>(webFile) {
+                    onClick?.invoke(it)
+                }
+            } else {
+                alert(
+                    title = getString(R.string.draw),
+                    message = getString(R.string.file_not_supported, webFile.name)
+                ) {
+                    neutralButton(R.string.open_fun) {
+                        /* download only */
+                        viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
+                            openFileUri(uri, "*/*")
                         }
-                        noButton()
                     }
+                    noButton()
                 }
             }
         }
