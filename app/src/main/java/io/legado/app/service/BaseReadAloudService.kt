@@ -138,7 +138,7 @@ abstract class BaseReadAloudService : BaseService(),
             IntentAction.nextParagraph -> nextP()
             IntentAction.addTimer -> addTimer()
             IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
-            else -> stopSelf()
+            IntentAction.stop -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
     }

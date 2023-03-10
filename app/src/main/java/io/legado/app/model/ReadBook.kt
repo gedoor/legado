@@ -237,7 +237,7 @@ object ReadBook : CoroutineScope by MainScope() {
     private fun curPageChanged() {
         callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
-            ReadAloud.playByEventBus(!BaseReadAloudService.pause)
+            readAloud(!BaseReadAloudService.pause)
         }
         upReadTime()
         preDownload()
