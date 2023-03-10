@@ -139,6 +139,7 @@ class EpubFile(var book: Book) {
         epubBook?.let { epubBook ->
             val nextChapterFirstResourceHref = chapter.getVariable("nextUrl")?.substringBeforeLast("#")
             val currentChapterFirstResourceHref = chapter.url.substringBeforeLast("#")
+            val isLastChapter = nextChapterFirstResourceHref.isNullOrBlank()
             val startFragmentId = chapter.startFragmentId
             val endFragmentId = chapter.endFragmentId
             val elements = Elements()
@@ -154,8 +155,8 @@ class EpubFile(var book: Book) {
                     elements.add(
                         getBody(res, startFragmentId, endFragmentId)
                     )
-                    // 是否继续遍历
-                    if (currentChapterFirstResourceHref == nextChapterFirstResourceHref) break
+                    // 不是最后章节 且 已经遍历到下一章节的内容时停止
+                    if (!isLastChapter && res.href == nextChapterFirstResourceHref) break
                     continue
                 }
                 if (nextChapterFirstResourceHref != res.href) {
