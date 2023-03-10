@@ -19,9 +19,7 @@ class ServerConfigViewModel(application: Application): BaseViewModel(application
                 null
             }
         }.onSuccess {
-            if (it != null) {
-                onSuccess.invoke()
-            }
+            onSuccess.invoke()
         }
     }
 
