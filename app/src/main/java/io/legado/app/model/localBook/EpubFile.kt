@@ -137,7 +137,8 @@ class EpubFile(var book: Book) {
         }
         /*获取当前章节文本*/
         epubBook?.let { epubBook ->
-            val nextUrl = chapter.getVariable("nextUrl")
+            val nextChapterFirstResourceHref = chapter.getVariable("nextUrl").substringBeforeLast("#")
+            val currentChapterFirstResourceHref = chapter.url.substringBeforeLast("#")
             val startFragmentId = chapter.startFragmentId
             val endFragmentId = chapter.endFragmentId
             val elements = Elements()
@@ -147,20 +148,20 @@ class EpubFile(var book: Book) {
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
             for (res in epubBook.contents) {
                 if (!findChapterFirstSource) {
-                    if (chapter.url == res.href) findChapterFirstSource = true
+                    if (currentChapterFirstResourceHref == res.href) findChapterFirstSource = true
                     // 第一个xhtml文件
                     elements.add(
                         getBody(res, startFragmentId, endFragmentId)
                     )
-                    if (chapter.url == nextUrl) break
+                    if (currentChapterFirstResourceHref == nextChapterFirstResourceHref) break
                     continue
                 }
-                if (nextUrl != res.href) {
+                if (nextChapterFirstResourceHref != res.href) {
                     // 其余部分
                     elements.add(getBody(res, null, null))
                 } else {
                     // 下一章节的第一个xhtml
-                    if (!endFragmentId.isNullOrBlank()) {
+                    if (includeNextChapterResource) {
                         //有Fragment 则添加到上一章节
                         elements.add(getBody(res, null, endFragmentId))
                     }
@@ -360,7 +361,7 @@ class EpubFile(var book: Book) {
                 val chapter = BookChapter()
                 chapter.bookUrl = book.bookUrl
                 chapter.title = ref.title
-                chapter.url = ref.completeHref.substringBeforeLast("#")
+                chapter.url = ref.completeHref
                 chapter.startFragmentId = ref.fragmentId
                 chapterList.lastOrNull()?.endFragmentId = chapter.startFragmentId
                 chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
