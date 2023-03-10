@@ -25,7 +25,7 @@ object AppConst {
 
     const val MAX_THREAD = 9
 
-    const val DEFAULT_WEBDAV_ID = -1
+    const val DEFAULT_WEBDAV_ID = -1L
 
     val SCRIPT_ENGINE: RhinoScriptEngine by lazy {
         RhinoScriptEngine()
