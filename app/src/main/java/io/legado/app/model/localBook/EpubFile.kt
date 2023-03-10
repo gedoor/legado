@@ -148,18 +148,22 @@ class EpubFile(var book: Book) {
             for (res in epubBook.contents) {
                 if (!findChapterFirstSource) {
                     if (chapter.url == res.href) findChapterFirstSource = true
-                    // add first resource to elements
+                    // 第一个xhtml文件
                     elements.add(
-                        /* pass endFragmentId if only has one resource */
                         getBody(res, startFragmentId, endFragmentId)
                     )
                     if (chapter.url == nextUrl) break
                     continue
                 }
                 if (nextUrl != res.href) {
+                    // 其余部分
                     elements.add(getBody(res, null, null))
                 } else {
-                    elements.add(getBody(res, null, endFragmentId))
+                    // 下一章节的第一个xhtml
+                    if (!endFragmentId.isNullOrBlank()) {
+                        //有Fragment 则添加到上一章节
+                        elements.add(getBody(res, null, endFragmentId))
+                    }
                     break
                 }
             }
