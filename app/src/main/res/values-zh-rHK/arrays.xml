@@ -5,7 +5,6 @@
         <item>文本</item>
         <item>音頻</item>
         <item>图片</item>
-        <item>文件</item>
     </string-array>
 
     <string-array name="group_style">
