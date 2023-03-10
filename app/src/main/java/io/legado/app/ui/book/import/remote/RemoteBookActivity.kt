@@ -30,7 +30,6 @@ import java.io.File
 class RemoteBookActivity : BaseImportBookActivity<ActivityImportBookBinding, RemoteBookViewModel>(),
     RemoteBookAdapter.CallBack,
     SelectActionBar.CallBack,
-    ServerConfigDialog.Callback,
     ServersDialog.Callback {
     override val binding by viewBinding(ActivityImportBookBinding::inflate)
     override val viewModel by viewModels<RemoteBookViewModel>()
