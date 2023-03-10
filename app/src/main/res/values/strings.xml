@@ -996,7 +996,7 @@
     <string name="download_book_success">Download Success</string>
     <string name="download_book_fail">Download Fail</string>
     <string name="upload_to_remote">Upload</string>
-    <string name="add_remote_book">WebDavBook</string>
+    <string name="add_remote_book">RemoteBook</string>
     <string name="bitmap_cache_size_summary">Current cache max size %1$s MB</string>
     <string name="bitmap_cache_size">bitmap cache size</string>
     <string name="export_pics_file">Export Picture Files</string>

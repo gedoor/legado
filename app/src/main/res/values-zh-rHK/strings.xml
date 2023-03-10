@@ -992,7 +992,7 @@
     <string name="download_book_success">Download Success</string>
     <string name="download_book_fail">Download Fail</string>
     <string name="upload_to_remote">Upload</string>
-    <string name="add_remote_book">WebDav书籍</string>
+    <string name="add_remote_book">远程书籍</string>
     <string name="bitmap_cache_size_summary">当前最大缓存 %1$s MB</string>
     <string name="bitmap_cache_size">图片绘制缓存</string>
     <string name="export_pics_file">TXT导出图片</string>

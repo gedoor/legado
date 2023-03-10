@@ -17,6 +17,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Server
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemServerSelectBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -25,6 +26,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.launch
 
 class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
@@ -56,6 +58,21 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
+        binding.tvFooterLeft.text = getString(R.string.text_default)
+        binding.tvFooterLeft.visible()
+        binding.tvFooterLeft.setOnClickListener {
+            AppConfig.remoteServerId = 0
+            dismissAllowingStateLoss()
+        }
+        binding.tvCancel.visible()
+        binding.tvCancel.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+        binding.tvOk.visible()
+        binding.tvOk.setOnClickListener {
+            AppConfig.remoteServerId = adapter.selectServerId
+            dismissAllowingStateLoss()
+        }
     }
 
     private fun initData() {
@@ -81,7 +98,7 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     inner class ServersAdapter(context: Context) :
         RecyclerAdapter<Server, ItemServerSelectBinding>(context) {
 
-        private var selectServerId: Long? = null
+        var selectServerId: Long = AppConfig.remoteServerId
 
         override fun getViewBinding(parent: ViewGroup): ItemServerSelectBinding {
             return ItemServerSelectBinding.inflate(inflater, parent, false)
@@ -90,7 +107,8 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         override fun registerListener(holder: ItemViewHolder, binding: ItemServerSelectBinding) {
             binding.rbServer.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (buttonView.isPressed && isChecked) {
-                    selectServerId = getItemByLayoutPosition(holder.layoutPosition)?.id
+                    selectServerId = getItemByLayoutPosition(holder.layoutPosition)!!.id
+                    adapter.updateItems(0, itemCount - 1, "upSelect")
                 }
             }
             binding.ivEdit.setOnClickListener {

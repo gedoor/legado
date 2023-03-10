@@ -7,6 +7,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.Authorization
 import io.legado.app.model.analyzeRule.CustomUrl
 import io.legado.app.model.localBook.LocalBook
@@ -79,12 +80,13 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
 
     fun initData(onSuccess: () -> Unit) {
         execute {
-            val config = appDb.serverDao.get(10001)?.getConfigJsonObject()
-            if (config != null && config.has("url")) {
-                val url = config.getString("url")
+            val server = appDb.serverDao.get(AppConfig.remoteServerId)
+            val serverConfig = server?.getConfigJsonObject()
+            if (serverConfig != null && serverConfig.has("url")) {
+                val url = serverConfig.getString("url")
                 if (url.isNotBlank()) {
-                    val user = config.getString("user")
-                    val password = config.getString("password")
+                    val user = serverConfig.getString("user")
+                    val password = serverConfig.getString("password")
                     val authorization = Authorization(user, password)
                     remoteBookWebDav = RemoteBookWebDav(url, authorization, 10001)
                     return@execute

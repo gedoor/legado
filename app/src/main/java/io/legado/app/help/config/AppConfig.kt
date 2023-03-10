@@ -174,6 +174,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.threadCount, value)
         }
 
+    var remoteServerId: Long
+        get() = appCtx.getPrefLong(PreferKey.remoteServerId)
+        set(value) {
+            appCtx.putPrefLong(PreferKey.remoteServerId, value)
+        }
+
     // 添加本地选择的目录
     var importBookPath: String?
         get() = appCtx.getPrefString("importBookPath")
