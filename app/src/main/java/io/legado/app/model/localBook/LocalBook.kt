@@ -290,28 +290,30 @@ object LocalBook {
         inputStream: InputStream,
         fileName: String
     ): Uri {
-        if (inputStream.isEmpty()) throw EmptyFileException("Unexpected empty inputStream")
-        val defaultBookTreeUri = AppConfig.defaultBookTreeUri
-        if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
-        val treeUri = Uri.parse(defaultBookTreeUri)
-        return if (treeUri.isContentScheme()) {
-            val treeDoc = DocumentFile.fromTreeUri(appCtx, treeUri)
-            var doc = treeDoc!!.findFile(fileName)
-            if (doc == null) {
-                doc = treeDoc.createFile(FileUtils.getMimeType(fileName), fileName)
-                    ?: throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
+        inputStream.use {
+            if (it.isEmpty()) throw EmptyFileException("Unexpected empty inputStream")
+            val defaultBookTreeUri = AppConfig.defaultBookTreeUri
+            if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
+            val treeUri = Uri.parse(defaultBookTreeUri)
+            return if (treeUri.isContentScheme()) {
+                val treeDoc = DocumentFile.fromTreeUri(appCtx, treeUri)
+                var doc = treeDoc!!.findFile(fileName)
+                if (doc == null) {
+                    doc = treeDoc.createFile(FileUtils.getMimeType(fileName), fileName)
+                        ?: throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
+                }
+                appCtx.contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
+                    it.copyTo(oStream)
+                }
+                doc.uri
+            } else {
+                val treeFile = File(treeUri.path!!)
+                val file = treeFile.getFile(fileName)
+                FileOutputStream(file).use { oStream ->
+                    it.copyTo(oStream)
+                }
+                Uri.fromFile(file)
             }
-            appCtx.contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
-                inputStream.copyTo(oStream)
-            }
-            doc.uri
-        } else {
-            val treeFile = File(treeUri.path!!)
-            val file = treeFile.getFile(fileName)
-            FileOutputStream(file).use { oStream ->
-                inputStream.copyTo(oStream)
-            }
-            Uri.fromFile(file)
         }
     }
 
