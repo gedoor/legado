@@ -137,38 +137,35 @@ class EpubFile(var book: Book) {
         }
         /*获取当前章节文本*/
         epubBook?.let { epubBook ->
-            val nextUrl = chapter.getVariable("nextUrl")
+            val nextChapterFirstResourceHref = chapter.getVariable("nextUrl")?.substringBeforeLast("#")
+            val currentChapterFirstResourceHref = chapter.url.substringBeforeLast("#")
             val startFragmentId = chapter.startFragmentId
             val endFragmentId = chapter.endFragmentId
             val elements = Elements()
-            var hasMoreResources = false
+            var findChapterFirstSource = false
             val includeNextChapterResource = !endFragmentId.isNullOrBlank()
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
             for (res in epubBook.contents) {
-                val isFirstResource = chapter.url.substringBeforeLast("#") == res.href
-                val isNextChapterResource = res.href == nextUrl?.substringBeforeLast("#")
-                if (isFirstResource) {
-                    // add first resource to elements
+                if (!findChapterFirstSource) {
+                    if (currentChapterFirstResourceHref == res.href) findChapterFirstSource = true
+                    // 第一个xhtml文件
                     elements.add(
-                        /* pass endFragmentId if only has one resource */
                         getBody(res, startFragmentId, endFragmentId)
                     )
-                    // check current resource 
-                    if (isNextChapterResource) {
-                        /* FragmentId should not be same in same resource */
-                        if (!endFragmentId.isNullOrBlank() && endFragmentId == startFragmentId)
-                            AppLog.putDebug("Epub: Resource (${res.href}) has same FragmentId, check the file: ${book.bookUrl}")
-                        break
-                    }
-                    hasMoreResources = true
-                } else if (hasMoreResources) {
-                    if (isNextChapterResource) {
-                        if (includeNextChapterResource) elements.add(getBody(res, null/* FragmentId may be same in different resources, pass null */, endFragmentId))
-                        break
-                    }
-                    // rest resource should not have fragmentId, pass null 
+                    if (currentChapterFirstResourceHref == nextChapterFirstResourceHref) break
+                    continue
+                }
+                if (nextChapterFirstResourceHref != res.href) {
+                    // 其余部分
                     elements.add(getBody(res, null, null))
+                } else {
+                    // 下一章节的第一个xhtml
+                    if (includeNextChapterResource) {
+                        //有Fragment 则添加到上一章节
+                        elements.add(getBody(res, null, endFragmentId))
+                    }
+                    break
                 }
             }
             //title标签中的内容不需要显示在正文中，去除

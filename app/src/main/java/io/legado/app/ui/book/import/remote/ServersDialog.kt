@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
+import io.legado.app.constant.AppConst.DEFAULT_WEBDAV_ID
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
@@ -61,7 +62,7 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         binding.tvFooterLeft.text = getString(R.string.text_default)
         binding.tvFooterLeft.visible()
         binding.tvFooterLeft.setOnClickListener {
-            AppConfig.remoteServerId = 0
+            AppConfig.remoteServerId = DEFAULT_WEBDAV_ID
             dismissAllowingStateLoss()
         }
         binding.tvCancel.visible()

@@ -67,7 +67,6 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     }
 
     private fun upConfigView(server: Server?) {
-        binding.etId.setText(server?.id?.toString())
         binding.etName.setText(server?.name)
         binding.spType.setSelection(
             when (server?.type) {
@@ -109,14 +108,7 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     }
 
     private fun getServer(): Server? {
-        val id = kotlin.runCatching {
-            binding.etId.text.toString().toLong()
-        }.getOrNull()
-        if (id == null) {
-            toastOnUi("id不能为空")
-            return null
-        }
-        val server = viewModel.mServer?.copy(id = id) ?: Server(id = id)
+        val server = viewModel.mServer?.copy() ?: Server()
         server.name = binding.etName.text.toString()
         server.type = when (binding.spType.selectedItemPosition) {
             else -> Server.TYPE.WEBDAV
@@ -139,15 +131,15 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     }
 
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        ((parentFragment as? Callback) ?: (activity as? Callback))
-            ?.onDialogDismiss("serverConfig")
-    }
+    // override fun onDismiss(dialog: DialogInterface) {
+        // super.onDismiss(dialog)
+       // ((parentFragment as? Callback) ?: (activity as? Callback))
+           // ?.onDialogDismiss("serverConfig")
+    // }
 
-    interface Callback {
+    // interface Callback {
 
-        fun onDialogDismiss(tag: String)
+        // fun onDialogDismiss(tag: String)
 
-    }
+    // }
 }

@@ -80,17 +80,10 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
 
     fun initData(onSuccess: () -> Unit) {
         execute {
-            val server = appDb.serverDao.get(AppConfig.remoteServerId)
-            val serverConfig = server?.getConfigJsonObject()
-            if (serverConfig != null && serverConfig.has("url")) {
-                val url = serverConfig.getString("url")
-                if (url.isNotBlank()) {
-                    val user = serverConfig.getString("user")
-                    val password = serverConfig.getString("password")
-                    val authorization = Authorization(user, password)
-                    remoteBookWebDav = RemoteBookWebDav(url, authorization, 10001)
-                    return@execute
-                }
+            appDb.serverDao.get(AppConfig.remoteServerId)?.getWebDavConfig()?.let {
+                val authorization = Authorization(it)
+                remoteBookWebDav = RemoteBookWebDav(it.url, authorization, AppConfig.remoteServerId)
+                return@execute
             }
             remoteBookWebDav = AppWebDav.defaultBookWebDav
                 ?: throw NoStackTraceException("webDav没有配置")
