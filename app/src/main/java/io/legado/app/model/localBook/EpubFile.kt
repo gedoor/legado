@@ -141,34 +141,26 @@ class EpubFile(var book: Book) {
             val startFragmentId = chapter.startFragmentId
             val endFragmentId = chapter.endFragmentId
             val elements = Elements()
-            var hasMoreResources = false
+            var findChapterFirstSource = false
             val includeNextChapterResource = !endFragmentId.isNullOrBlank()
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
             for (res in epubBook.contents) {
-                val isFirstResource = chapter.url.substringBeforeLast("#") == res.href
-                val isNextChapterResource = res.href == nextUrl?.substringBeforeLast("#")
-                if (isFirstResource) {
+                if (!findChapterFirstSource) {
+                    if (chapter.url == res.href) findChapterFirstSource = true
                     // add first resource to elements
                     elements.add(
                         /* pass endFragmentId if only has one resource */
                         getBody(res, startFragmentId, endFragmentId)
                     )
-                    // check current resource 
-                    if (isNextChapterResource) {
-                        /* FragmentId should not be same in same resource */
-                        if (!endFragmentId.isNullOrBlank() && endFragmentId == startFragmentId)
-                            AppLog.putDebug("Epub: Resource (${res.href}) has same FragmentId, check the file: ${book.bookUrl}")
-                        break
-                    }
-                    hasMoreResources = true
-                } else if (hasMoreResources) {
-                    if (isNextChapterResource) {
-                        if (includeNextChapterResource) elements.add(getBody(res, null/* FragmentId may be same in different resources, pass null */, endFragmentId))
-                        break
-                    }
-                    // rest resource should not have fragmentId, pass null 
+                    if (chapter.url == nextUrl) break
+                    continue
+                }
+                if (nextUrl != res.href) {
                     elements.add(getBody(res, null, null))
+                } else {
+                    elements.add(getBody(res, null, endFragmentId))
+                    break
                 }
             }
             //title标签中的内容不需要显示在正文中，去除
@@ -364,7 +356,7 @@ class EpubFile(var book: Book) {
                 val chapter = BookChapter()
                 chapter.bookUrl = book.bookUrl
                 chapter.title = ref.title
-                chapter.url = ref.completeHref
+                chapter.url = ref.completeHref.substringBeforeLast("#")
                 chapter.startFragmentId = ref.fragmentId
                 chapterList.lastOrNull()?.endFragmentId = chapter.startFragmentId
                 chapterList.lastOrNull()?.putVariable("nextUrl", chapter.url)
