@@ -155,12 +155,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             appDb.bookDao.getBook(book.name, book.author)?.let {
                                 inBookshelf = true
                             }
-                            bookData.postValue(book)
+                            bookData.postValue(it)
                             if (inBookshelf) {
-                                appDb.bookDao.update(book)
+                                appDb.bookDao.update(it)
                             }
                             if (it.isWebFile) {
-                                loadWebFile(book, bookSource, scope)
+                                loadWebFile(it, scope)
                             } else {
                                 loadChapter(it, scope)
                             }
@@ -234,7 +234,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     private fun loadWebFile(
         book: Book,
-        bookSource: BookSource,
         scope: CoroutineScope = viewModelScope
     ) {
         execute(scope) {
@@ -263,6 +262,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
            }
        }.onSuccess {
+           @Suppress("unchecked_cast")
            success?.invoke(it as T)
        }.onError {
            context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
