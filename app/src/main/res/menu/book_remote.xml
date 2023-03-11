@@ -5,6 +5,12 @@
     tools:ignore="AlwaysShowAction">
 
     <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_refresh"
         android:icon="@drawable/ic_refresh_black_24dp"
         android:title="@string/refresh"
