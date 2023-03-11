@@ -142,7 +142,7 @@ class EpubFile(var book: Book) {
             return "<img src=\"cover.jpeg\" />"
         }
         /*获取当前章节文本*/
-        epubBook?.let { epubBook ->
+        epubBook?.let {
             val nextChapterFirstResourceHref = chapter.getVariable("nextUrl")?.substringBeforeLast("#")
             val currentChapterFirstResourceHref = chapter.url.substringBeforeLast("#")
             val isLastChapter = nextChapterFirstResourceHref.isNullOrBlank()
@@ -201,40 +201,55 @@ class EpubFile(var book: Book) {
     }
 
     private fun getBody(res: Resource, startFragmentId: String?, endFragmentId: String?): Element {
-        val originHtml = String(res.data, mCharset)
-        var html = originHtml
-        var doc = Jsoup.parse(html)
-        var body = doc.body()
+        // Jsoup可能会修复不规范的xhtml文件 解析处理后再获取
+        var bodyElement = Jsoup.parse(String(res.data, mCharset)).body()
+        bodyElement.children().run {
+            select("script").remove()
+            select("style").remove()
+        }
+        // 获取body对应的文本
+        var bodyString = bodyElement.outerHtml()
+        val originBodyString = bodyString
+        /**
+         * 某些xhtml文件 章节标题和内容不在一个节点或者不是兄弟节点
+         * <div>
+         *    <a class="mulu1>目录1</a>
+         * </div>
+         * <p>....</p>
+         * <div>
+         *    <a class="mulu2>目录2</a>
+         * </div>
+         * <p>....</p>
+         * 先找到FragmentId对应的Element 然后直接截取之间的html
+         */
         if (!startFragmentId.isNullOrBlank()) {
-            body.getElementById(startFragmentId)?.outerHtml()?.let {
-                html = html.substringAfter(it)
+            bodyElement.getElementById(startFragmentId)?.outerHtml()?.let {
+                bodyString = bodyString.substringAfter(it)
             }
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
-            body.getElementById(endFragmentId)?.outerHtml()?.let {
-                html = html.substringBefore(it)
+            bodyElement.getElementById(endFragmentId)?.outerHtml()?.let {
+                bodyString = bodyString.substringBefore(it)
             }
         }
-        if (html != originHtml) {
-            doc = Jsoup.parse(html)
-            body = doc.body()
+        //截取过再重新解析
+        if (bodyString != originBodyString) {
+            bodyElement = Jsoup.parse(bodyString).body()
         }
         /*选择去除正文中的H标签，部分书籍标题与阅读标题重复待优化*/
         val tag = Book.hTag
         if (book.getDelTag(tag)) {
-            body.getElementsByTag("h1").remove()
-            body.getElementsByTag("h2").remove()
-            body.getElementsByTag("h3").remove()
-            body.getElementsByTag("h4").remove()
-            body.getElementsByTag("h5").remove()
-            body.getElementsByTag("h6").remove()
-            //body.getElementsMatchingOwnText(chapter.title)?.remove()
+            bodyElement.run {
+                getElementsByTag("h1").remove()
+                getElementsByTag("h2").remove()
+                getElementsByTag("h3").remove()
+                getElementsByTag("h4").remove()
+                getElementsByTag("h5").remove()
+                getElementsByTag("h6").remove()
+            //getElementsMatchingOwnText(chapter.title)?.remove()
+            }
         }
-
-        val children = body.children()
-        children.select("script").remove()
-        children.select("style").remove()
-        return doc.body()
+        return bodyElement
     }
 
     private fun getImage(href: String): InputStream? {
