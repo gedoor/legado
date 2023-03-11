@@ -398,6 +398,7 @@ public final class RhinoScriptEngine extends AbstractScriptEngine
             }
 
             Scriptable scope = getRuntimeScope(context);
+            @SuppressWarnings("deprecation")
             Script scr = cx.compileReader(scope, script, fileName, 1, null);
             ret = new RhinoCompiledScript(this, scr);
         } catch (Exception e) {

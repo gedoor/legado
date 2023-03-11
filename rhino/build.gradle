@@ -28,9 +28,11 @@ android {
     lint {
         checkDependencies true
     }
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
+    }
 }
 
 dependencies {
-    compileOnly "com.android.tools.build:gradle:$agp_version"
     api(fileTree(dir: 'lib', include: ['rhino-*.jar']))
 }
