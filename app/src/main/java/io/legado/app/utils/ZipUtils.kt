@@ -2,12 +2,9 @@ package io.legado.app.utils
 
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-
 import java.io.*
-import java.util.zip.GZIPOutputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
-import java.util.zip.ZipOutputStream
+import java.util.zip.*
+
 
 @Suppress("unused", "BlockingMethodInNonBlockingContext", "MemberVisibilityCanBePrivate")
 object ZipUtils {
@@ -175,6 +172,36 @@ object ZipUtils {
             }
         }
         return true
+    }
+
+    fun unZipToPath(inputStream: InputStream, path: String) {
+        val zipInputStream = ZipInputStream(inputStream)
+        unZipToPath(zipInputStream, path)
+    }
+
+    fun unZipToPath(zipInputStream: ZipInputStream, path: String) {
+        var entry: ZipEntry
+        while (zipInputStream.nextEntry.also { entry = it } != null) {
+            val entryFile = File(path, entry.name)
+            if (entry.isDirectory) {
+                if (!entryFile.exists()) {
+                    entryFile.mkdirs()
+                }
+                continue
+            }
+            if (entryFile.parentFile?.exists() != true) {
+                entryFile.parentFile?.mkdirs()
+            }
+            if (!entryFile.exists()) {
+                entryFile.createNewFile()
+                entryFile.setReadable(true)
+                entryFile.setExecutable(true)
+            }
+            FileOutputStream(entryFile).use {
+                zipInputStream.copyTo(it)
+            }
+        }
+        zipInputStream.close()
     }
 
     /**

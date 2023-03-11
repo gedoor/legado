@@ -27,35 +27,21 @@ import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
 
 /**
  * 恢复
  */
 object Restore {
 
-    suspend fun restore(context: Context, path: String) {
+    suspend fun restore(context: Context, uri: Uri) {
         kotlin.runCatching {
-            if (path.isContentScheme()) {
-                DocumentFile.fromTreeUri(context, Uri.parse(path))?.listFiles()?.forEach { doc ->
-                    if (Backup.backupFileNames.contains(doc.name)) {
-                        context.contentResolver.openInputStream(doc.uri)?.use { inputStream ->
-                            val file = File("${Backup.backupPath}${File.separator}${doc.name}")
-                            FileOutputStream(file).use { outputStream ->
-                                inputStream.copyTo(outputStream)
-                            }
-                        }
-                    }
+            FileUtils.delete(Backup.backupPath)
+            if (uri.isContentScheme()) {
+                DocumentFile.fromTreeUri(context, uri)?.openInputStream()!!.use {
+                    ZipUtils.unZipToPath(it, Backup.backupPath)
                 }
             } else {
-                val dir = File(path)
-                for (fileName in Backup.backupFileNames) {
-                    val file = dir.getFile(fileName)
-                    if (file.exists()) {
-                        val target = File("${Backup.backupPath}${File.separator}$fileName")
-                        file.copyTo(target, true)
-                    }
-                }
+                ZipUtils.unzipFile(uri.path!!, Backup.backupPath)
             }
         }.onFailure {
             AppLog.put("恢复复制文件出错\n${it.localizedMessage}", it)

@@ -27,8 +27,6 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.coroutineContext
 
@@ -37,7 +35,6 @@ import kotlin.coroutines.coroutineContext
  */
 object AppWebDav {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
-    private val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
     private val bookProgressUrl get() = "${rootWebDavUrl}bookProgress/"
     private val exportsWebDavUrl get() = "${rootWebDavUrl}books/"
 
@@ -67,18 +64,6 @@ object AppWebDav {
                 }
             }
             return url
-        }
-
-    private val backupFileName: String
-        get() {
-            val backupDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                .format(Date(System.currentTimeMillis()))
-            val deviceName = AppConfig.webDavDeviceName
-            return if (deviceName?.isNotBlank() == true) {
-                "backup${backupDate}-${deviceName}.zip"
-            } else {
-                "backup${backupDate}.zip"
-            }
         }
 
     suspend fun upConfig() {
@@ -153,17 +138,17 @@ object AppWebDav {
     suspend fun restoreWebDav(name: String) {
         authorization?.let {
             val webDav = WebDav(rootWebDavUrl + name, it)
-            webDav.downloadTo(zipFilePath, true)
+            webDav.downloadTo(Backup.zipFilePath, true)
             FileUtils.delete(Backup.backupPath)
-            ZipUtils.unzipFile(zipFilePath, Backup.backupPath)
+            ZipUtils.unzipFile(Backup.zipFilePath, Backup.backupPath)
             Restore.restoreDatabase()
             Restore.restoreConfig()
         }
     }
 
-    suspend fun hasBackUp(): Boolean {
+    suspend fun hasBackUp(backUpName: String): Boolean {
         authorization?.let {
-            val url = "$rootWebDavUrl$backupFileName"
+            val url = "$rootWebDavUrl${backUpName}"
             return WebDav(url, it).exists()
         }
         return false
@@ -187,19 +172,16 @@ object AppWebDav {
         }
     }
 
+    /**
+     * webDav备份
+     * @param fileName 备份文件名
+     */
     @Throws(Exception::class)
-    suspend fun backUpWebDav(path: String) {
+    suspend fun backUpWebDav(fileName: String) {
         if (!NetworkUtils.isAvailable()) return
         authorization?.let {
-            val paths = arrayListOf(*Backup.backupFileNames)
-            for (i in 0 until paths.size) {
-                paths[i] = path + File.separator + paths[i]
-            }
-            FileUtils.delete(zipFilePath)
-            if (ZipUtils.zipFiles(paths, zipFilePath)) {
-                val putUrl = "$rootWebDavUrl$backupFileName"
-                WebDav(putUrl, it).upload(zipFilePath)
-            }
+            val putUrl = "$rootWebDavUrl$fileName"
+            WebDav(putUrl, it).upload(Backup.zipFilePath)
         }
     }
 

@@ -12,6 +12,8 @@ import io.legado.app.exception.NoStackTraceException
 import splitties.init.appCtx
 import splitties.systemservices.downloadManager
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.nio.charset.Charset
 
 
@@ -234,6 +236,16 @@ fun FileDoc.exists(): Boolean {
  */
 fun DocumentFile.listFileDocs(filter: FileDocFilter? = null): ArrayList<FileDoc>? {
     return FileDoc.fromDocumentFile(this).list(filter)
+}
+
+@Throws(Exception::class)
+fun DocumentFile.openInputStream(): InputStream? {
+    return appCtx.contentResolver.openInputStream(uri)
+}
+
+@Throws(Exception::class)
+fun DocumentFile.openOutputStream(): OutputStream? {
+    return appCtx.contentResolver.openOutputStream(uri)
 }
 
 @Throws(Exception::class)

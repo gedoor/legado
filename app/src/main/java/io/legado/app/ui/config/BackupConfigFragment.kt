@@ -11,7 +11,6 @@ import android.view.View
 import androidx.core.view.MenuProvider
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -38,7 +37,6 @@ import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import kotlin.collections.set
 
@@ -87,20 +85,10 @@ class BackupConfigFragment : PreferenceFragment(),
             }
         }
     }
-    private val restoreDir = registerForActivityResult(HandleFileContract()) {
+    private val restoreDoc = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            if (uri.isContentScheme()) {
-                AppConfig.backupPath = uri.toString()
-                Coroutine.async {
-                    Restore.restore(appCtx, uri.toString())
-                }
-            } else {
-                uri.path?.let { path ->
-                    AppConfig.backupPath = path
-                    Coroutine.async {
-                        Restore.restore(appCtx, path)
-                    }
-                }
+            Coroutine.async {
+                Restore.restore(appCtx, uri)
             }
         }
     }
@@ -135,7 +123,10 @@ class BackupConfigFragment : PreferenceFragment(),
         upPreferenceSummary(PreferKey.webDavDeviceName, AppConfig.webDavDeviceName)
         upPreferenceSummary(PreferKey.backupPath, getPrefString(PreferKey.backupPath))
         findPreference<io.legado.app.lib.prefs.Preference>("web_dav_restore")
-            ?.onLongClick { restoreDir.launch(); true }
+            ?.onLongClick {
+                restoreFromLocal()
+                true
+            }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -333,7 +324,7 @@ class BackupConfigFragment : PreferenceFragment(),
             AppLog.put("恢复备份出错WebDavError\n${it.localizedMessage}", it)
             alert {
                 setTitle(R.string.restore)
-                setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。\n从WebDav手动下载备份文件需要解压才能恢复。")
+                setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。")
                 okButton {
                     restoreFromLocal()
                 }
@@ -345,38 +336,11 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     private fun restoreFromLocal() {
-        val backupPath = getPrefString(PreferKey.backupPath)
-        if (backupPath?.isNotEmpty() == true) {
-            if (backupPath.isContentScheme()) {
-                val uri = Uri.parse(backupPath)
-                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                if (doc?.canWrite() == true) {
-                    lifecycleScope.launch {
-                        Restore.restore(requireContext(), backupPath)
-                    }
-                } else {
-                    restoreDir.launch()
-                }
-            } else {
-                restoreUsePermission(backupPath)
-            }
-        } else {
-            restoreDir.launch()
+        restoreDoc.launch {
+            title = getString(R.string.select_restore_file)
+            mode = HandleFileContract.FILE
+            allowExtensions = arrayOf("zip")
         }
-    }
-
-    private fun restoreUsePermission(path: String) {
-        PermissionsCompat.Builder()
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                Coroutine.async {
-                    AppConfig.backupPath = path
-                    Restore.restoreDatabase(path)
-                    Restore.restoreConfig(path)
-                }
-            }
-            .request()
     }
 
 }
