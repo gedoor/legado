@@ -1,17 +1,22 @@
 package io.legado.app.ui.book.import
 
-import androidx.lifecycle.ViewModel
-import androidx.viewbinding.ViewBinding
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-abstract class BaseImportBookActivity<VB : ViewBinding, VM : ViewModel> : VMBaseActivity<VB, VM>() {
+abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityImportBookBinding, VM>() {
+
+    override val binding by viewBinding(ActivityImportBookBinding::inflate)
 
     private var localBookTreeSelectListener: ((Boolean) -> Unit)? = null
     private val searchView: SearchView by lazy {
@@ -55,6 +60,8 @@ abstract class BaseImportBookActivity<VB : ViewBinding, VM : ViewModel> : VMBase
         }
     }
 
+    abstract fun onSearchTextChange(newText: String?)
+
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
         searchView.onActionViewExpanded()
@@ -67,7 +74,7 @@ abstract class BaseImportBookActivity<VB : ViewBinding, VM : ViewModel> : VMBase
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.updateCallBackFlow(newText)
+                onSearchTextChange(newText)
                 return false
             }
         })
