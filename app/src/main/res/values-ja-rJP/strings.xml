@@ -621,7 +621,6 @@
     <string name="custom_page_key">Set page-turning buttons</string>
     <string name="prev_page_key">Page up button</string>
     <string name="next_page_key">Page down button</string>
-    <string name="after_add_bookshelf">Add this book to Bookshelf first</string>
     <string name="no_group">Ungrouped</string>
     <string name="prev_sentence">Prior sentence</string>
     <string name="next_sentence">Next sentence</string>
@@ -987,7 +986,6 @@
     <string name="import_theme">导入主题</string>
     <string name="import_txt_toc_rule">导入txt目录规则</string>
     <string name="auto_save_cookie">CookieJar</string>
-    <string name="click_read_button_load">点击阅读加载目录</string>
     <string name="cookie">清除cookie</string>
     <string name="download_and_import_file">导入在线书籍文件</string>
     <string name="upload_book_success">Upload Success</string>

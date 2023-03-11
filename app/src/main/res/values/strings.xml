@@ -621,7 +621,6 @@
     <string name="custom_page_key">Set page-turning buttons</string>
     <string name="prev_page_key">Page up button</string>
     <string name="next_page_key">Page down button</string>
-    <string name="after_add_bookshelf">Add this book to Bookshelf first</string>
     <string name="no_group">Ungrouped</string>
     <string name="prev_sentence">Prior sentence</string>
     <string name="next_sentence">Next sentence</string>
@@ -988,7 +987,6 @@
     <string name="import_theme">Import theme</string>
     <string name="import_txt_toc_rule">Import txt directory rules</string>
     <string name="auto_save_cookie">CookieJar</string>
-    <string name="click_read_button_load">Click to read the load directory</string>
     <string name="cookie">Clear cookie</string>
     <string name="download_and_import_file">Import online book files</string>
     <string name="upload_book_success">Upload Success</string>

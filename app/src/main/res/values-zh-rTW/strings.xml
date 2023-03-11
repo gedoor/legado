@@ -620,7 +620,6 @@
     <string name="custom_page_key">自訂翻頁按鍵</string>
     <string name="prev_page_key">上一頁按鍵</string>
     <string name="next_page_key">下一頁按鍵</string>
-    <string name="after_add_bookshelf">先將書籍加入書架</string>
     <string name="no_group">未分組</string>
     <string name="prev_sentence">上一句</string>
     <string name="next_sentence">下一句</string>
@@ -986,7 +985,6 @@
     <string name="import_theme">匯入主題</string>
     <string name="import_txt_toc_rule">匯入txt目錄規則</string>
     <string name="auto_save_cookie">CookieJar</string>
-    <string name="click_read_button_load">點擊閱讀載入目錄</string>
     <string name="cookie">清除cookie</string>
     <string name="download_and_import_file">匯入線上書籍文件</string>
     <string name="upload_book_success">上傳成功</string>
