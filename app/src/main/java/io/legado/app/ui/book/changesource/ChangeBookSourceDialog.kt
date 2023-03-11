@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle.repeatOnLifecycle
+import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -181,10 +183,12 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             }
             binding.toolBar.menu.applyTint(requireContext())
         }
-        lifecycleScope.launchWhenStarted {
-            viewModel.searchDataFlow.conflate().collect {
-                adapter.setItems(it)
-                delay(1000)
+        lifecycleScope.launch {
+            repeatOnLifecycle(STARTED) {
+                viewModel.searchDataFlow.conflate().collect {
+                    adapter.setItems(it)
+                    delay(1000)
+                }
             }
         }
         launch {
