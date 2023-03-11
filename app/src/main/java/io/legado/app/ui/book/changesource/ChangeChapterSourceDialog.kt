@@ -10,7 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.Lifecycle.repeatOnLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
