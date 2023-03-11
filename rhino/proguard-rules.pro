@@ -21,6 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 ## Rhino
+-keep class com.script.** { *; }
 -keep class javax.script.** { *; }
 -keep class com.sun.script.javascript.** { *; }
 -keep class org.mozilla.javascript.** { *; }
