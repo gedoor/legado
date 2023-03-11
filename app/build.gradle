@@ -117,9 +117,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     packagingOptions {
-        resources {
-            excludes += ['META-INF/INDEX.LIST']
-        }
+        resources.excludes.add('META-INF/*')
     }
 
     sourceSets {
@@ -203,7 +201,7 @@ dependencies {
 
     //JS rhino
     //implementation('com.github.gedoor:rhino-android:1.8')
-    implementation(fileTree(dir: 'lib', include: ['rhino-*.jar']))
+    implementation(project(path: ':rhino'))
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.10.0')
