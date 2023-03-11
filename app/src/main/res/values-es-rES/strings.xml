@@ -1080,4 +1080,5 @@
     <string name="keep_group">保留分组</string>
     <string name="server_config">服务器配置</string>
     <string name="sure_upload">Remote webDav url exists, Continue?</string>
+    <string name="after_add_bookshelf">Add this book to Bookshelf first</string>
 </resources>
