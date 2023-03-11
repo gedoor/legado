@@ -138,7 +138,7 @@ class BookInfoActivity :
         menu.findItem(R.id.menu_upload)?.isVisible =
             viewModel.bookData.value?.isLocal ?: false
         menu.findItem(R.id.menu_edit)?.isVisible =
-            !viewModel.bookData.value?.isWebFile ?: true
+            !(viewModel.bookData.value?.isWebFile ?: true)
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -505,7 +505,7 @@ class BookInfoActivity :
             toastOnUi("Unexpected webFileData")
             return
         }
-        selector<BookInfoViewModel.WebFile>(
+        selector(
             R.string.download_and_import_file,
             webFiles
         ) { _, webFile, _ ->
