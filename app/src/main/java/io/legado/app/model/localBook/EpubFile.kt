@@ -142,62 +142,59 @@ class EpubFile(var book: Book) {
             return "<img src=\"cover.jpeg\" />"
         }
         /*获取当前章节文本*/
-        epubBook?.let {
-            val nextChapterFirstResourceHref = chapter.getVariable("nextUrl")?.substringBeforeLast("#")
-            val currentChapterFirstResourceHref = chapter.url.substringBeforeLast("#")
-            val isLastChapter = nextChapterFirstResourceHref.isNullOrBlank()
-            val startFragmentId = chapter.startFragmentId
-            val endFragmentId = chapter.endFragmentId
-            val elements = Elements()
-            var findChapterFirstSource = false
-            val includeNextChapterResource = !endFragmentId.isNullOrBlank()
-            /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
-            /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
-            val contents = epubBookContents ?: return null
-            for (res in contents) {
-                if (!findChapterFirstSource) {
-                    if (currentChapterFirstResourceHref != res.href) continue
-                    findChapterFirstSource = true
-                    // 第一个xhtml文件
-                    elements.add(
-                        getBody(res, startFragmentId, endFragmentId)
-                    )
-                    // 不是最后章节 且 已经遍历到下一章节的内容时停止
-                    if (!isLastChapter && res.href == nextChapterFirstResourceHref) break
-                    continue
-                }
-                if (nextChapterFirstResourceHref != res.href) {
-                    // 其余部分
-                    elements.add(getBody(res, null, null))
-                } else {
-                    // 下一章节的第一个xhtml
-                    if (includeNextChapterResource) {
-                        //有Fragment 则添加到上一章节
-                        elements.add(getBody(res, null, endFragmentId))
-                    }
-                    break
-                }
+        val contents = epubBookContents ?: return null
+        val nextChapterFirstResourceHref = chapter.getVariable("nextUrl")?.substringBeforeLast("#")
+        val currentChapterFirstResourceHref = chapter.url.substringBeforeLast("#")
+        val isLastChapter = nextChapterFirstResourceHref.isNullOrBlank()
+        val startFragmentId = chapter.startFragmentId
+        val endFragmentId = chapter.endFragmentId
+        val elements = Elements()
+        var findChapterFirstSource = false
+        val includeNextChapterResource = !endFragmentId.isNullOrBlank()
+        /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
+        /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
+        for (res in contents) {
+            if (!findChapterFirstSource) {
+                if (currentChapterFirstResourceHref != res.href) continue
+                findChapterFirstSource = true
+                // 第一个xhtml文件
+                elements.add(
+                    getBody(res, startFragmentId, endFragmentId)
+                )
+                // 不是最后章节 且 已经遍历到下一章节的内容时停止
+                if (!isLastChapter && res.href == nextChapterFirstResourceHref) break
+                continue
             }
-            //title标签中的内容不需要显示在正文中，去除
-            elements.select("title").remove()
-            elements.select("img").forEach {
-                val src = it.attr("src")
-                val path = chapter.url.substringBeforeLast("/", "")
-                val absSrc = if (path.isEmpty()) {
-                    src
-                } else {
-                    StringUtil.collapsePathDots("$path/$src")
+            if (nextChapterFirstResourceHref != res.href) {
+                // 其余部分
+                elements.add(getBody(res, null, null))
+            } else {
+                // 下一章节的第一个xhtml
+                if (includeNextChapterResource) {
+                    //有Fragment 则添加到上一章节
+                    elements.add(getBody(res, null, endFragmentId))
                 }
-                it.attr("src", absSrc)
+                break
             }
-            var html = elements.outerHtml()
-            val tag = Book.rubyTag
-            if (book.getDelTag(tag)) {
-                html = html.replace("<ruby>\\s?([\\u4e00-\\u9fa5])\\s?.*?</ruby>".toRegex(), "$1")
-            }
-            return HtmlFormatter.formatKeepImg(html)
         }
-        return null
+        //title标签中的内容不需要显示在正文中，去除
+        elements.select("title").remove()
+        elements.select("img").forEach {
+            val src = it.attr("src")
+            val path = chapter.url.substringBeforeLast("/", "")
+            val absSrc = if (path.isEmpty()) {
+                src
+            } else {
+                StringUtil.collapsePathDots("$path/$src")
+            }
+            it.attr("src", absSrc)
+        }
+        var html = elements.outerHtml()
+        val tag = Book.rubyTag
+        if (book.getDelTag(tag)) {
+            html = html.replace("<ruby>\\s?([\\u4e00-\\u9fa5])\\s?.*?</ruby>".toRegex(), "$1")
+        }
+        return HtmlFormatter.formatKeepImg(html)
     }
 
     private fun getBody(res: Resource, startFragmentId: String?, endFragmentId: String?): Element {
