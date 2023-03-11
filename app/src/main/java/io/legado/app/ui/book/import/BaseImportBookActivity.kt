@@ -16,7 +16,7 @@ import kotlin.coroutines.suspendCoroutine
 
 abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityImportBookBinding, VM>() {
 
-    override val binding by viewBinding(ActivityImportBookBinding::inflate)
+    final override val binding by viewBinding(ActivityImportBookBinding::inflate)
 
     private var localBookTreeSelectListener: ((Boolean) -> Unit)? = null
     private val searchView: SearchView by lazy {
@@ -66,7 +66,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         searchView.applyTint(primaryTextColor)
         searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
-        searchView.queryHint = getString(R.string.screen_find)
+        searchView.queryHint = getString(R.string.screen)
         searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
