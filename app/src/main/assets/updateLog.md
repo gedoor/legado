@@ -2,6 +2,8 @@
 
 * 关注公众号 **[开源阅读]** 菜单•软件下载 提前享受新版本。
 * 关注合作公众号 **[小说拾遗]** 获取好看的小说。
+* [2021年日志](https://github.com/gedoor/legado/blob/record2021/app/src/main/assets/updateLog.md)
+* [2022年日志](https://github.com/gedoor/legado/blob/record2022/app/src/main/assets/updateLog.md)
 
 ## **必读**
 
