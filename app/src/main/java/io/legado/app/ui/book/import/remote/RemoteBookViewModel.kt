@@ -51,7 +51,14 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
             }
 
             override fun screen(key: String?) {
-                trySend(list)
+                if (key.isNullOrBlank()) {
+                    trySend(list)
+                } else {
+                    trySend(
+                        list.filter { it.filename.contains(key) }
+                    )
+                    
+                }
             }
         }
 

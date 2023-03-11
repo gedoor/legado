@@ -50,9 +50,14 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
             }
 
             override fun screen(key: String?) {
-                trySend(list)
+                if (key.isNullOrBlank()) {
+                    trySend(list)
+                } else {
+                    trySend(
+                        list.filter { it.name.contains(key) }
+                    )
+                }
             }
-
         }
 
         withContext(Main) {
