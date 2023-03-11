@@ -9,8 +9,10 @@
         android:id="@+id/titleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:attachToActivity="false"
+        app:contentLayout="@layout/view_search" />
+ 
     <!--path-->
     <LinearLayout
         android:id="@+id/lay_top"

@@ -49,6 +49,10 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 list.clear()
                 trySend(emptyList())
             }
+
+            override fun screen(key: String?) {
+                trySend(list)
+            }
         }
 
         awaitClose {
@@ -137,6 +141,10 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun updateCallBackFlow(filterKey: String?) {
+       dataCallback?.screen(filterKey)
+    }
+
     interface DataCallback {
 
         fun setItems(remoteFiles: List<RemoteBook>)
@@ -144,6 +152,8 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
         fun addItems(remoteFiles: List<RemoteBook>)
 
         fun clear()
+        
+        fun screen(key: String?)
 
     }
 }

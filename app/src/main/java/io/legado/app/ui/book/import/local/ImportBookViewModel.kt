@@ -48,6 +48,11 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                 list.clear()
                 trySend(emptyList())
             }
+
+            override fun screen(key: String?) {
+                trySend(list)
+            }
+
         }
 
         withContext(Main) {
@@ -163,6 +168,10 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun updateCallBackFlow(filterKey: String?) {
+       dataCallback?.screen(filterKey)
+    }
+
     interface DataCallback {
 
         fun setItems(fileDocs: List<FileDoc>)
@@ -170,6 +179,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         fun addItems(fileDocs: List<FileDoc>)
 
         fun clear()
+        
+        fun screen(key: String?)
 
     }
 
