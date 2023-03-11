@@ -153,8 +153,8 @@ class EpubFile(var book: Book) {
             val includeNextChapterResource = !endFragmentId.isNullOrBlank()
             /*一些书籍依靠href索引的resource会包含多个章节，需要依靠fragmentId来截取到当前章节的内容*/
             /*注:这里较大增加了内容加载的时间，所以首次获取内容后可存储到本地cache，减少重复加载*/
-            epubBookContents ?: return null
-            for (res in epubBookContents) {
+            val contents = epubBookContents ?: return null
+            for (res in contents) {
                 if (!findChapterFirstSource) {
                     if (currentChapterFirstResourceHref != res.href) continue
                     findChapterFirstSource = true
