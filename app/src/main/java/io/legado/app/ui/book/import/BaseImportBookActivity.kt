@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.import
 
+import android.os.Bundle
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
 import io.legado.app.R
@@ -28,6 +29,11 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
             AppConfig.defaultBookTreeUri = treeUri.toString()
             localBookTreeSelectListener?.invoke(true)
         } ?: localBookTreeSelectListener?.invoke(false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initSearchView()
     }
 
     /**
