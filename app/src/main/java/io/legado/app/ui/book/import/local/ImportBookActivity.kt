@@ -49,6 +49,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        searchView.queryHint = getString(R.string.screen) + "-" + getString(R.string.local_book)
         launch {
             initView()
             initEvent()

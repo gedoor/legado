@@ -35,6 +35,7 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
     private var groupMenu: SubMenu? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        searchView.queryHint = getString(R.string.screen) + "-" + getString(R.string.remote_book)
         launch {
             if (!setBookStorage()) {
                 finish()
