@@ -232,6 +232,7 @@ dependencies {
     //apache
     implementation('org.apache.commons:commons-text:1.10.0')
     implementation 'org.apache.commons:commons-compress:1.22'
+    implementation 'org.tukaani:xz:1.9'
 
     //RAR
     implementation 'com.github.junrar:junrar:7.5.4'
