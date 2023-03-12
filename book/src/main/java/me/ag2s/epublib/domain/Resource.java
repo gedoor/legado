@@ -1,14 +1,15 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.util.IOUtil;
-import me.ag2s.epublib.util.StringUtil;
-import me.ag2s.epublib.util.commons.io.XmlStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
+
+import me.ag2s.epublib.Constants;
+import me.ag2s.epublib.util.IOUtil;
+import me.ag2s.epublib.util.StringUtil;
+import me.ag2s.epublib.util.commons.io.XmlStreamReader;
 
 /**
  * Represents a resource that is part of the epub.

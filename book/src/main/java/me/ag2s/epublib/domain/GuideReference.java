@@ -1,7 +1,8 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.util.StringUtil;
 import java.io.Serializable;
+
+import me.ag2s.epublib.util.StringUtil;
 
 
 /**

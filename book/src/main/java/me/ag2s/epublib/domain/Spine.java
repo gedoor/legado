@@ -1,10 +1,11 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.util.StringUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import me.ag2s.epublib.util.StringUtil;
 
 /**
  * The spine sections are the sections of the book in the order in which the book should be read.

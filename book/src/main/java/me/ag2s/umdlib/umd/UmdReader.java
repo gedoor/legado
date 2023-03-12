@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 import me.ag2s.umdlib.domain.UmdBook;
 import me.ag2s.umdlib.domain.UmdCover;
 import me.ag2s.umdlib.domain.UmdHeader;

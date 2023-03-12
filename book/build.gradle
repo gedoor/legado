@@ -5,7 +5,7 @@ plugins {
 android {
     compileSdk = compile_sdk_version
     buildToolsVersion = build_tool_version
-    namespace 'me.ag2s.epublib'
+    namespace 'me.ag2s'
     defaultConfig {
         minSdk 21
         targetSdk 33

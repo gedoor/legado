@@ -18,13 +18,13 @@ package me.ag2s.epublib.util.commons.io;
  */
 
 
+import static me.ag2s.epublib.util.IOUtil.EOF;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import me.ag2s.epublib.util.IOUtil;
-
-import static me.ag2s.epublib.util.IOUtil.EOF;
 
 
 /**

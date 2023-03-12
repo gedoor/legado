@@ -1,7 +1,5 @@
 package me.ag2s.epublib.util;
 
-import android.util.Log;
-
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
@@ -20,7 +18,6 @@ import java.nio.CharBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 
-import me.ag2s.epublib.epub.PackageDocumentReader;
 import me.ag2s.epublib.util.commons.io.IOConsumer;
 
 /**

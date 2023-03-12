@@ -1,10 +1,9 @@
 package me.ag2s.epublib.domain;
 
 
+import java.io.Serializable;
 
 import me.ag2s.epublib.util.StringUtil;
-
-import java.io.Serializable;
 
 /**
  * Represents one of the authors of the book

@@ -1,9 +1,10 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.util.StringUtil;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
+
+import me.ag2s.epublib.util.StringUtil;
 
 /**
  * A Book's identifier.

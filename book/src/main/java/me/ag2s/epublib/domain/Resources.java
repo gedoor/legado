@@ -1,7 +1,6 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.Constants;
-import me.ag2s.epublib.util.StringUtil;
+import android.util.Base64;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import android.util.Base64;
+
+import me.ag2s.epublib.Constants;
+import me.ag2s.epublib.util.StringUtil;
 
 /**
  * All the resources that make up the book.

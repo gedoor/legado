@@ -1,7 +1,5 @@
 package me.ag2s.epublib.domain;
 
-import me.ag2s.epublib.util.StringUtil;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+
+import me.ag2s.epublib.util.StringUtil;
 
 /**
  * A Book's collection of Metadata.

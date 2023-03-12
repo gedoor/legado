@@ -2,10 +2,11 @@ package me.ag2s.epublib.domain;
 
 import android.util.Log;
 
-import me.ag2s.epublib.util.IOUtil;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import me.ag2s.epublib.util.IOUtil;
 
 /**
  * A Resource that loads its data only on-demand from a EPUB book file.

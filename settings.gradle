@@ -28,4 +28,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = 'legado'
 
-include ':app',':rhino',':epublib'
+include ':app',':rhino', ':book'

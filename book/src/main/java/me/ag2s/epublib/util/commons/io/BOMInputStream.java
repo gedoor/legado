@@ -17,6 +17,7 @@
 package me.ag2s.epublib.util.commons.io;
 
 
+import static me.ag2s.epublib.util.IOUtil.EOF;
 
 import android.os.Build;
 
@@ -27,8 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import me.ag2s.epublib.util.IOUtil;
-
-import static me.ag2s.epublib.util.IOUtil.EOF;
 
 
 /**

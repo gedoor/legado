@@ -2,7 +2,10 @@ package me.ag2s.epublib.epub;
 
 import android.util.Log;
 
-import me.ag2s.epublib.Constants;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,10 +20,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlSerializer;
+import me.ag2s.epublib.Constants;
 
 /**
  * Various low-level support methods for reading/writing epubs.
