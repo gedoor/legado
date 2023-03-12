@@ -11,12 +11,13 @@ class ServerConfigViewModel(application: Application): BaseViewModel(application
     var mServer: Server? = null
 
     fun init(id: Long?, onSuccess: () -> Unit) {
+        //mServer不为空可能是旋转屏幕界面重新创建,不用更新数据
+        if (mServer != null) return
         execute {
-            if (mServer == null && id != null) {
+            if (id != null) {
                 mServer = appDb.serverDao.get(id)
-                mServer
             } else {
-                null
+                mServer = Server()
             }
         }.onSuccess {
             onSuccess.invoke()

@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.import.remote
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.MenuItem
@@ -18,7 +17,6 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
-import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.json.JSONObject
 
@@ -57,7 +55,7 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_save -> getServer()?.let {
+            R.id.menu_save -> getServer().let {
                 viewModel.save(it) {
                     dismissAllowingStateLoss()
                 }
@@ -107,7 +105,7 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
         }
     }
 
-    private fun getServer(): Server? {
+    private fun getServer(): Server {
         val server = viewModel.mServer?.copy() ?: Server()
         server.name = binding.etName.text.toString()
         server.type = when (binding.spType.selectedItemPosition) {
@@ -130,16 +128,4 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
         return data
     }
 
-
-    // override fun onDismiss(dialog: DialogInterface) {
-        // super.onDismiss(dialog)
-       // ((parentFragment as? Callback) ?: (activity as? Callback))
-           // ?.onDialogDismiss("serverConfig")
-    // }
-
-    // interface Callback {
-
-        // fun onDialogDismiss(tag: String)
-
-    // }
 }
