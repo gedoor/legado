@@ -158,7 +158,7 @@ object LocalBook {
     fun importFile(uri: Uri): Book {
         val bookUrl: String
         //updateTime变量不要修改,否则会导致读取不到缓存
-        val (fileName, _, _, _, updateTime, _) = FileDoc.fromUri(uri, false).apply {
+        val (fileName, _, _, updateTime, _) = FileDoc.fromUri(uri, false).apply {
            if (size == 0L) throw EmptyFileException("Unexpected empty File")
             bookUrl = toString()
         }
