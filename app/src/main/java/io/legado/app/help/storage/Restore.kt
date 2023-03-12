@@ -37,7 +37,7 @@ object Restore {
         kotlin.runCatching {
             FileUtils.delete(Backup.backupPath)
             if (uri.isContentScheme()) {
-                DocumentFile.fromTreeUri(context, uri)?.openInputStream()!!.use {
+                DocumentFile.fromSingleUri(context, uri)!!.openInputStream()!!.use {
                     ZipUtils.unZipToPath(it, Backup.backupPath)
                 }
             } else {
