@@ -156,20 +156,13 @@ object LocalBook {
      * 导入本地文件
      */
     fun importFile(uri: Uri): Book {
-        val bookUrl: String
-        val updateTime: Long
+        val fileDoc = FileDoc.fromUri(uri)
+        val fileName = fileDoc.name
+        val bookUrl = fileDoc.toString()
         //这个变量不要修改,否则会导致读取不到缓存
-        val fileName = if (uri.isContentScheme()) {
-            bookUrl = uri.toString()
-            val doc = DocumentFile.fromSingleUri(appCtx, uri)!!
-            updateTime = doc.lastModified()
-            doc.name!!
-        } else {
-            bookUrl = uri.path!!
-            val file = File(bookUrl)
-            updateTime = file.lastModified()
-            file.name
-        }
+        val updateTime = fileDoc.lastModified
+        //空文件不导入
+        if (fileDoc.size == 0) throw EmptyFileException("Unexpected empty File")
         var book = appDb.bookDao.getBook(bookUrl)
         if (book == null) {
             val nameAuthor = analyzeNameAuthor(fileName)
@@ -291,7 +284,6 @@ object LocalBook {
         fileName: String
     ): Uri {
         inputStream.use {
-            if (it.isEmpty()) throw EmptyFileException("Unexpected empty inputStream")
             val defaultBookTreeUri = AppConfig.defaultBookTreeUri
             if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
             val treeUri = Uri.parse(defaultBookTreeUri)
