@@ -16,6 +16,19 @@ import java.io.FileOutputStream
  */
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
+    init {
+        execute {
+            val sameSortNumberSize = appDb.bookSourceDao.sameSortNumberSize()
+            if (sameSortNumberSize > 0) {
+                val sources = appDb.bookSourceDao.all
+                sources.forEachIndexed { index, bookSource ->
+                    bookSource.customOrder = index
+                    appDb.bookSourceDao.update(bookSource)
+                }
+            }
+        }
+    }
+
     fun topSource(vararg sources: BookSource) {
         execute {
             sources.sortBy { it.customOrder }

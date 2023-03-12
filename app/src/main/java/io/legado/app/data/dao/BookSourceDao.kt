@@ -54,9 +54,6 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
     fun flowExplore(): Flow<List<BookSource>>
 
-//    @Query("select * from book_sources where enabledReview = 1 order by customOrder asc")
-//    fun flowReview(): Flow<List<BookSource>>
-
     @Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
     fun flowLogin(): Flow<List<BookSource>>
 
@@ -160,6 +157,9 @@ interface BookSourceDao {
 
     @get:Query("select max(customOrder) from book_sources")
     val maxOrder: Int
+
+    @Query("select count(*) from (select customOrder, count(customOrder) from book_sources group by customOrder having count(customOrder) > 1)")
+    fun sameSortNumberSize(): Int
 
     private fun dealGroups(list: List<String>): List<String> {
         val groups = linkedSetOf<String>()
