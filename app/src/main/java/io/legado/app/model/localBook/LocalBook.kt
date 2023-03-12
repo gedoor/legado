@@ -157,12 +157,12 @@ object LocalBook {
      */
     fun importFile(uri: Uri): Book {
         val fileDoc = FileDoc.fromUri(uri)
-        val fileName = fileDoc.name
+        val (fileName, _, fileSize, _, updateTime, _) = FileDoc.fromUri(uri)
         val bookUrl = fileDoc.toString()
-        //这个变量不要修改,否则会导致读取不到缓存
+        //updateTime变量不要修改,否则会导致读取不到缓存
         val updateTime = fileDoc.lastModified
         //空文件不导入
-        if (fileDoc.size == 0) throw EmptyFileException("Unexpected empty File")
+        if (fileSize == 0L) throw EmptyFileException("Unexpected empty File")
         var book = appDb.bookDao.getBook(bookUrl)
         if (book == null) {
             val nameAuthor = analyzeNameAuthor(fileName)
