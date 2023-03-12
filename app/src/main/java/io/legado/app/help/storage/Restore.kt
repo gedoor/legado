@@ -127,8 +127,7 @@ object Restore {
     suspend fun restoreConfig(path: String = Backup.backupPath) {
         withContext(IO) {
             try {
-                val file =
-                    FileUtils.createFileIfNotExist("$path${File.separator}${DirectLinkUpload.ruleFileName}")
+                val file = File(path, DirectLinkUpload.ruleFileName)
                 if (file.exists()) {
                     val json = file.readText()
                     ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
@@ -137,8 +136,7 @@ object Restore {
                 AppLog.put("直链上传出错\n${e.localizedMessage}", e)
             }
             try {
-                val file =
-                    FileUtils.createFileIfNotExist("$path${File.separator}${ThemeConfig.configFileName}")
+                val file = File(path, ThemeConfig.configFileName)
                 if (file.exists()) {
                     FileUtils.delete(ThemeConfig.configFilePath)
                     file.copyTo(File(ThemeConfig.configFilePath))
@@ -150,8 +148,7 @@ object Restore {
             if (!BackupConfig.ignoreReadConfig) {
                 //恢复阅读界面配置
                 try {
-                    val file =
-                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.configFileName}")
+                    val file = File(path, ReadBookConfig.configFileName)
                     if (file.exists()) {
                         FileUtils.delete(ReadBookConfig.configFilePath)
                         file.copyTo(File(ReadBookConfig.configFilePath))
@@ -161,8 +158,7 @@ object Restore {
                     AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
                 }
                 try {
-                    val file =
-                        FileUtils.createFileIfNotExist("$path${File.separator}${ReadBookConfig.shareConfigFileName}")
+                    val file = File(path, ReadBookConfig.shareConfigFileName)
                     if (file.exists()) {
                         FileUtils.delete(ReadBookConfig.shareConfigFilePath)
                         file.copyTo(File(ReadBookConfig.shareConfigFilePath))
@@ -207,7 +203,7 @@ object Restore {
 
     private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
         try {
-            val file = File(path + File.separator + fileName)
+            val file = File(path, fileName)
             if (file.exists()) {
                 FileInputStream(file).use {
                     return GSON.fromJsonArray<T>(it).getOrThrow()
