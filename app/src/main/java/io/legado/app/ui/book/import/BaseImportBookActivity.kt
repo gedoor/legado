@@ -5,7 +5,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
@@ -72,9 +71,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
 
     abstract fun onSearchTextChange(newText: String?)
 
-    protected fun startRead(book: Book) = startRead(book.bookUrl)
-
-    protected fun startRead(bookUrl: String) {
+    protected fun startReadBook(bookUrl: String) {
         startActivity<ReadBookActivity> {
             putExtra("bookUrl", bookUrl)
         }

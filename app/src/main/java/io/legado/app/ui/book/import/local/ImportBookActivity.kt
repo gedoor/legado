@@ -300,4 +300,6 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         binding.selectActionBar.upCountView(adapter.selectedUris.size, adapter.checkableCount)
     }
 
+    override fun startRead(bookUrl: String) = startReadBook(bookUrl)
+
 }

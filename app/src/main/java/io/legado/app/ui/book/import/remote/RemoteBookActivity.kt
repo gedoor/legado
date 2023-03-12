@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
+import io.legado.app.data.entities.Book
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.remote.RemoteBook
@@ -195,4 +196,7 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
         val mdText = String(assets.open("help/${fileName}.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
     }
+
+    override fun startRead(book: Book) = startReadBook(book.bookUrl)
+
 }
