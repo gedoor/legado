@@ -1082,5 +1082,4 @@
     <string name="keep_group">保留分组</string>
     <string name="server_config">服务器配置</string>
     <string name="sure_upload">远程webDav链接已存在，是否继续</string>
-    <string name="after_add_bookshelf">先将书籍加入书架</string>
 </resources>
