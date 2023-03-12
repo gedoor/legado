@@ -57,7 +57,6 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                     trySend(
                         list.filter { it.filename.contains(key) }
                     )
-                    
                 }
             }
         }
@@ -159,7 +158,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
         fun addItems(remoteFiles: List<RemoteBook>)
 
         fun clear()
-        
+
         fun screen(key: String?)
 
     }

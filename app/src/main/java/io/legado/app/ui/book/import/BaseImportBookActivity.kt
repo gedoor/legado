@@ -9,9 +9,12 @@ import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -67,6 +70,12 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
     }
 
     abstract fun onSearchTextChange(newText: String?)
+
+    protected fun startReadBook(bookUrl: String) {
+        startActivity<ReadBookActivity> {
+            putExtra("bookUrl", bookUrl)
+        }
+    }
 
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
