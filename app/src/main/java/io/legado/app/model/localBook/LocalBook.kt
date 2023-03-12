@@ -157,10 +157,9 @@ object LocalBook {
      */
     fun importFile(uri: Uri): Book {
         val fileDoc = FileDoc.fromUri(uri, false)
+        //updateTime变量不要修改,否则会导致读取不到缓存
         val (fileName, _, fileSize, _, updateTime, _) = fileDoc
         val bookUrl = fileDoc.toString()
-        //updateTime变量不要修改,否则会导致读取不到缓存
-        val updateTime = fileDoc.lastModified
         //空文件不导入
         if (fileSize == 0L) throw EmptyFileException("Unexpected empty File")
         var book = appDb.bookDao.getBook(bookUrl)
