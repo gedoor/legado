@@ -156,8 +156,8 @@ object LocalBook {
      * 导入本地文件
      */
     fun importFile(uri: Uri): Book {
-        val fileDoc = FileDoc.fromUri(uri)
-        val (fileName, _, fileSize, _, updateTime, _) = FileDoc.fromUri(uri)
+        val fileDoc = FileDoc.fromUri(uri, false)
+        val (fileName, _, fileSize, _, updateTime, _) = fileDoc
         val bookUrl = fileDoc.toString()
         //updateTime变量不要修改,否则会导致读取不到缓存
         val updateTime = fileDoc.lastModified
