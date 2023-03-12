@@ -596,8 +596,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
-    override fun upOrder() {
-        viewModel.upOrder()
+    override fun upOrder(items: List<BookSource>) {
+        viewModel.upOrder(items)
     }
 
     override fun toTop(bookSource: BookSource) {

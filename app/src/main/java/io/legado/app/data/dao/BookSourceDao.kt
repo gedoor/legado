@@ -158,9 +158,6 @@ interface BookSourceDao {
     @get:Query("select max(customOrder) from book_sources")
     val maxOrder: Int
 
-    @Query("select count(*) from (select customOrder, count(customOrder) from book_sources group by customOrder having count(customOrder) > 1)")
-    fun sameSortNumberSize(): Int
-
     private fun dealGroups(list: List<String>): List<String> {
         val groups = linkedSetOf<String>()
         list.forEach {

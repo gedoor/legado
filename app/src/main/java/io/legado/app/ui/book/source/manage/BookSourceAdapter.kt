@@ -263,15 +263,11 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
         if (srcItem != null && targetItem != null) {
-            if (srcItem.customOrder == targetItem.customOrder) {
-                callBack.upOrder()
-            } else {
-                val srcOrder = srcItem.customOrder
-                srcItem.customOrder = targetItem.customOrder
-                targetItem.customOrder = srcOrder
-                movedItems.add(srcItem)
-                movedItems.add(targetItem)
-            }
+            val srcOrder = srcItem.customOrder
+            srcItem.customOrder = targetItem.customOrder
+            targetItem.customOrder = srcOrder
+            movedItems.add(srcItem)
+            movedItems.add(targetItem)
         }
         swapItem(srcPosition, targetPosition)
         return true
@@ -281,7 +277,15 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         if (movedItems.isNotEmpty()) {
-            callBack.update(*movedItems.toTypedArray())
+            val sortNumberSet = hashSetOf<Int>()
+            movedItems.forEach {
+                sortNumberSet.add(it.customOrder)
+            }
+            if (movedItems.size > sortNumberSet.size) {
+                callBack.upOrder(getItems())
+            } else {
+                callBack.update(*movedItems.toTypedArray())
+            }
             movedItems.clear()
         }
     }
@@ -319,7 +323,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun toBottom(bookSource: BookSource)
         fun searchBook(bookSource: BookSource)
         fun debug(bookSource: BookSource)
-        fun upOrder()
+        fun upOrder(items: List<BookSource>)
         fun upCountView()
     }
 }

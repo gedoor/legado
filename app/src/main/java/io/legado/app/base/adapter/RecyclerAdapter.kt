@@ -321,7 +321,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
     fun getItemByLayoutPosition(position: Int) = items.getOrNull(getActualPosition(position))
 
-    fun getItems(): List<ITEM> = items
+    fun getItems(): List<ITEM> = items.toList()
 
     protected open fun getItemViewType(item: ITEM, position: Int) = 0
 
