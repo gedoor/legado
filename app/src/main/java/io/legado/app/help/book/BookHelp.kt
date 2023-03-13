@@ -57,7 +57,7 @@ object BookHelp {
     }
 
     /**
-     * 清除已删除书的缓存
+     * 清除已删除书的缓存 解压缓存
      */
     suspend fun clearInvalidCache() {
         withContext(IO) {
@@ -79,6 +79,7 @@ object BookHelp {
                         FileUtils.delete(epubFile.absolutePath)
                     }
                 }
+            FileUtils.delete(ArchiveUtils.TEMP_PATH)
         }
     }
 
