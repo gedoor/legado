@@ -275,7 +275,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun deCompress(archiveFileUri: Uri, onSuccess: (List<FileDoc>) -> Unit) {
         execute {
-            ArchiveUtils.deCompress(archiveFileUri, defaultBookTreeUri).list {
+            ArchiveUtils.deCompress(archiveFileUri, defaultBookTreeUri!!).list {
                 AppPattern.bookFileRegex.matches(it.name)
             } ?: emptyList()
         }.onError {
