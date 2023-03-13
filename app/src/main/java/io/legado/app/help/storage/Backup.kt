@@ -151,13 +151,13 @@ object Backup {
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 when {
                     path.isNullOrBlank() -> {
-                        copyBackup(context.getExternalFilesDir(null)!!, zipFileName)
+                        copyBackup(context.getExternalFilesDir(null)!!, "backup.zip")
                     }
                     path.isContentScheme() -> {
-                        copyBackup(context, Uri.parse(path), zipFileName)
+                        copyBackup(context, Uri.parse(path), "backup.zip")
                     }
                     else -> {
-                        copyBackup(File(path), zipFileName)
+                        copyBackup(File(path), "backup.zip")
                     }
                 }
                 AppWebDav.backUpWebDav(zipFileName)
@@ -175,6 +175,7 @@ object Backup {
     }
 
     @Throws(Exception::class)
+    @Suppress("SameParameterValue")
     private fun copyBackup(context: Context, uri: Uri, fileName: String) {
         DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
             treeDoc.findFile(fileName)?.delete()
@@ -187,6 +188,7 @@ object Backup {
     }
 
     @Throws(Exception::class)
+    @Suppress("SameParameterValue")
     private fun copyBackup(rootFile: File, fileName: String) {
         FileInputStream(File(zipFilePath)).use { inputS ->
             val file = FileUtils.createFileIfNotExist(rootFile, fileName)
