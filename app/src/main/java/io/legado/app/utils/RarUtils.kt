@@ -1,17 +1,57 @@
 package io.legado.app.utils
 
+import androidx.annotation.Keep
 import com.github.junrar.Archive
 import com.github.junrar.rarfile.FileHeader
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-@Suppress("unused")
+
+@Keep
+@Suppress("unused","MemberVisibilityCanBePrivate")
 object RarUtils {
-    fun unRarToPath(inputStream: InputStream, path: String){
-        val archive= Archive(inputStream)
+    fun unRarToPath(inputStream: InputStream,path:String){
+        unRarToPath(inputStream, File(path))
+    }
+    fun unRarToPath(byteArray: ByteArray,path:String){
+        unRarToPath(byteArray, File(path))
+    }
+    fun unRarToPath(zipPath:String,path:String){
+        unRarToPath(zipPath, File(path))
+    }
+    fun unRarToPath(file: File,path:String){
+        unRarToPath(file, File(path))
+    }
+    fun unRarToPath(inputStream: InputStream, destDir: File?) {
+        Archive(inputStream).use {
+            unRarToPath(it, destDir)
+        }
+        inputStream.close()
+    }
+
+    fun unRarToPath(byteArray: ByteArray, destDir: File?) {
+        Archive(ByteArrayInputStream(byteArray)).use {
+            unRarToPath(it, destDir)
+        }
+    }
+
+    fun unRarToPath(filePath:String, destDir: File?) {
+        Archive(File(filePath)).use {
+            unRarToPath(it, destDir)
+        }
+    }
+
+    fun unRarToPath(file: File, destDir: File?) {
+        Archive(file).use {
+            unRarToPath(it, destDir)
+        }
+    }
+
+    fun unRarToPath(archive: Archive, destDir: File?) {
         var entry: FileHeader
-        while (archive.nextFileHeader().also { entry=it }!=null){
-            val entryFile = File(path, entry.fileName)
+        while (archive.nextFileHeader().also { entry = it } != null) {
+            val entryFile = File(destDir, entry.fileName)
             if (entry.isDirectory) {
                 if (!entryFile.exists()) {
                     entryFile.mkdirs()
@@ -31,7 +71,6 @@ object RarUtils {
             }
 
         }
-        inputStream.close()
     }
 
 }
