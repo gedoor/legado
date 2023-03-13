@@ -30,7 +30,7 @@ object ArchiveUtils {
         archivePath: String,
         path: String? = TEMP_PATH
     ): FileDoc {
-        return deCompress(Uri.parse(archivePath)), false), path)
+        return deCompress(Uri.parse(archivePath), path)
     }
 
     fun deCompress(
