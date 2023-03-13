@@ -18,6 +18,7 @@
 * 文件类书源支持zip 7z rar4解压
 * java.ajax(url: Any)自动判断是列表还是字符串
 * 修复一些bug
+* 其中一些更新由 Xwite, Horis, ag2s20150909 提供
 
 **2023/03/12**
 

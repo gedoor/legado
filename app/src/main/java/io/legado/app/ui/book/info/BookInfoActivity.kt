@@ -511,7 +511,11 @@ class BookInfoActivity :
                 /* 解压筛选后再选择导入项 */
                 viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
                     viewModel.deCompress(uri) {
-                        showDecompressFileImportAlert(it)
+                        if (it.size == 1) {
+                            viewModel.importBook(it[0])
+                        } else {
+                            showDecompressFileImportAlert(it)
+                        }
                     }
                 }
             } else {
