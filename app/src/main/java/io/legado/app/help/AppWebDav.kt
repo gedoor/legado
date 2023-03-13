@@ -28,6 +28,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import java.io.File
 import java.util.*
 import kotlin.coroutines.coroutineContext
 
@@ -141,7 +142,7 @@ object AppWebDav {
             val webDav = WebDav(rootWebDavUrl + name, it)
             webDav.downloadTo(Backup.zipFilePath, true)
             FileUtils.delete(Backup.backupPath)
-            ZipUtils.unzipFile(Backup.zipFilePath, Backup.backupPath)
+            ZipUtils.unZipToPath(File(Backup.zipFilePath), Backup.backupPath)
             Restore.restoreDatabase()
             Restore.restoreConfig()
         }

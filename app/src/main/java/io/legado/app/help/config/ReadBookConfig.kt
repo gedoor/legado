@@ -389,7 +389,7 @@ object ReadBookConfig {
                 val configDir = appCtx.externalCache.getFile("readConfig")
                 configDir.createFolderReplace()
                 @Suppress("BlockingMethodInNonBlockingContext")
-                ZipUtils.unzipFile(zipFile, configDir)
+                ZipUtils.unZipToPath(zipFile, configDir)
                 val configFile = configDir.getFile(configFileName)
                 val config: Config = GSON.fromJsonObject<Config>(configFile.readText()).getOrThrow()
                 if (config.textFont.isNotEmpty()) {

@@ -42,7 +42,7 @@ object Restore {
                     ZipUtils.unZipToPath(it, Backup.backupPath)
                 }
             } else {
-                ZipUtils.unzipFile(uri.path!!, Backup.backupPath)
+                ZipUtils.unZipToPath(File(uri.path!!), Backup.backupPath)
             }
         }.onFailure {
             AppLog.put("恢复复制文件出错\n${it.localizedMessage}", it)
