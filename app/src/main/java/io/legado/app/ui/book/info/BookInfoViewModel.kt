@@ -1,21 +1,21 @@
 package io.legado.app.ui.book.info
 
-import android.net.Uri
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
+import io.legado.app.exception.NoBooksDirException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
@@ -37,6 +37,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
     val waitDialogData = MutableLiveData<Boolean>()
+    val actionLive = MutableLiveData<String>()
 
     fun initData(intent: Intent) {
         execute {
@@ -252,24 +253,30 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     /* 导入或者下载在线文件 */
     fun <T> importOrDownloadWebFile(webFile: WebFile, success: ((T) -> Unit)?) {
-       bookSource ?: return
-       execute {
-           waitDialogData.postValue(true)
-           if (webFile.isSupported) {
-               val book = LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
-               changeToLocalBook(book)
-           } else {
-               LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
-           }
-       }.onSuccess {
-           @Suppress("unchecked_cast")
-           success?.invoke(it as T)
-       }.onError {
-           context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
-           webFiles.remove(webFile)
-       }.onFinally {
-           waitDialogData.postValue(false)
-       }
+        bookSource ?: return
+        execute {
+            waitDialogData.postValue(true)
+            if (webFile.isSupported) {
+                val book = LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
+                changeToLocalBook(book)
+            } else {
+                LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
+            }
+        }.onSuccess {
+            @Suppress("unchecked_cast")
+            success?.invoke(it as T)
+        }.onError {
+            when (it) {
+                is NoBooksDirException -> actionLive.postValue("selectBooksDir")
+                else -> {
+                    AppLog.put("ImportWebFileError\n${it.localizedMessage}", it)
+                    context.toastOnUi("ImportWebFileError\n${it.localizedMessage}")
+                    webFiles.remove(webFile)
+                }
+            }
+        }.onFinally {
+            waitDialogData.postValue(false)
+        }
     }
 
     fun deCompress(archiveFileUri: Uri, onSuccess: (List<FileDoc>) -> Unit) {
@@ -289,7 +296,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             fileDoc.uri.inputStream(context).getOrThrow(),
             fileDoc.name
         )
-        LocalBook.importFile(uri).let { changeToLocalBook(it) }
+        changeToLocalBook(LocalBook.importFile(uri))
     }
 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {

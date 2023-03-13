@@ -13,6 +13,7 @@ import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.exception.EmptyFileException
+import io.legado.app.exception.NoBooksDirException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.AppWebDav
@@ -160,7 +161,7 @@ object LocalBook {
         //updateTime变量不要修改,否则会导致读取不到缓存
         val (fileName, _, _, updateTime, _) = FileDoc.fromUri(uri, false).apply {
             if (size == 0L) throw EmptyFileException("Unexpected empty File")
-            
+
             bookUrl = toString()
         }
         var book = appDb.bookDao.getBook(bookUrl)
@@ -251,7 +252,7 @@ object LocalBook {
         source: BaseSource? = null,
     ): Uri {
         AppConfig.defaultBookTreeUri
-            ?: throw NoStackTraceException("没有设置书籍保存位置!")
+            ?: throw NoBooksDirException()
         val inputStream = when {
             str.isAbsUrl() -> AnalyzeUrl(str, source = source).getInputStream()
             str.isDataUrl() -> ByteArrayInputStream(
@@ -278,7 +279,7 @@ object LocalBook {
     ): Uri {
         inputStream.use {
             val defaultBookTreeUri = AppConfig.defaultBookTreeUri
-            if (defaultBookTreeUri.isNullOrBlank()) throw NoStackTraceException("没有设置书籍保存位置!")
+            if (defaultBookTreeUri.isNullOrBlank()) throw NoBooksDirException()
             val treeUri = Uri.parse(defaultBookTreeUri)
             return if (treeUri.isContentScheme()) {
                 val treeDoc = DocumentFile.fromTreeUri(appCtx, treeUri)
@@ -326,7 +327,7 @@ object LocalBook {
         if (webDavUrl.isNullOrBlank()) return null
         try {
             AppConfig.defaultBookTreeUri
-                ?: throw NoStackTraceException("没有设置书籍保存位置!")
+                ?: throw NoBooksDirException()
             // 兼容旧版链接
             val webdav: WebDav = kotlin.runCatching {
                 WebDav.fromPath(webDavUrl)

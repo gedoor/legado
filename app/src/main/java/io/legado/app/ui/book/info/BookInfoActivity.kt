@@ -40,6 +40,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
+import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
@@ -75,6 +76,11 @@ class BookInfoActivity :
             if (!viewModel.inBookshelf) {
                 viewModel.delBook()
             }
+        }
+    }
+    private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { treeUri ->
+            AppConfig.defaultBookTreeUri = treeUri.toString()
         }
     }
     private val readBookResult = registerForActivityResult(
@@ -213,6 +219,16 @@ class BookInfoActivity :
             }
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    override fun observeLiveBus() {
+        viewModel.actionLive.observe(this) {
+            when (it) {
+                "selectBooksDir" -> localBookTreeSelect.launch {
+                    title = getString(R.string.select_book_folder)
+                }
+            }
+        }
     }
 
     private fun upLoadBook(
