@@ -1,5 +1,6 @@
 package io.legado.app.ui.config
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.preference.Preference
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
@@ -26,6 +28,7 @@ import io.legado.app.help.storage.BackupConfig
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.help.storage.Restore
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
@@ -35,10 +38,14 @@ import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import kotlin.collections.set
+import kotlin.coroutines.coroutineContext
 
 class BackupConfigFragment : PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener,
@@ -319,7 +326,7 @@ class BackupConfigFragment : PreferenceFragment(),
         waitDialog.show()
         Coroutine.async {
             restoreJob = coroutineContext[Job]
-            AppWebDav.showRestoreDialog(requireContext())
+            showRestoreDialog(requireContext())
         }.onError {
             AppLog.put("恢复备份出错WebDavError\n${it.localizedMessage}", it)
             alert {
@@ -335,12 +342,57 @@ class BackupConfigFragment : PreferenceFragment(),
         }
     }
 
+    private suspend fun showRestoreDialog(context: Context) {
+        val names = withContext(Dispatchers.IO) { AppWebDav.getBackupNames() }
+        if (AppWebDav.isJianGuoYun && names.size > 700) {
+            context.toastOnUi("由于坚果云限制，部分备份可能未显示")
+        }
+        if (names.isNotEmpty()) {
+            coroutineContext.ensureActive()
+            withContext(Main) {
+                context.selector(
+                    title = context.getString(R.string.select_restore_file),
+                    items = names
+                ) { _, index ->
+                    if (index in 0 until names.size) {
+                        listView.post {
+                            restoreWebDav(names[index])
+                        }
+                    }
+                }
+            }
+        } else {
+            throw NoStackTraceException("Web dav no back up file")
+        }
+    }
+
+    private fun restoreWebDav(name: String) {
+        waitDialog.setText("恢复中…")
+        waitDialog.show()
+        val task = Coroutine.async {
+            AppWebDav.restoreWebDav(name)
+        }.onError {
+            AppLog.put("WebDav恢复出错\n${it.localizedMessage}", it)
+            appCtx.toastOnUi("WebDav恢复出错\n${it.localizedMessage}")
+        }.onFinally(Main) {
+            waitDialog.dismiss()
+        }
+        waitDialog.setOnCancelListener {
+            task.cancel()
+        }
+    }
+
     private fun restoreFromLocal() {
         restoreDoc.launch {
             title = getString(R.string.select_restore_file)
             mode = HandleFileContract.FILE
             allowExtensions = arrayOf("zip")
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        waitDialog.dismiss()
     }
 
 }

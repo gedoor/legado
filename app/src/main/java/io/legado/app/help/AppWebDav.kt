@@ -1,8 +1,6 @@
 package io.legado.app.help
 
-import android.content.Context
 import android.net.Uri
-import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -13,24 +11,17 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
-import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.lib.webdav.WebDavFile
 import io.legado.app.model.remote.RemoteBookWebDav
-import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.compress.ZipUtils
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.util.*
-import kotlin.coroutines.coroutineContext
 
 /**
  * webDav初始化会访问网络,不要放到主线程
@@ -47,7 +38,7 @@ object AppWebDav {
 
     val isOk get() = authorization != null
 
-    private val isJianGuoYun get() = rootWebDavUrl.startsWith(defaultWebDavUrl, true)
+    val isJianGuoYun get() = rootWebDavUrl.startsWith(defaultWebDavUrl, true)
 
     init {
         runBlocking {
@@ -55,7 +46,7 @@ object AppWebDav {
         }
     }
 
-    val rootWebDavUrl: String
+    private val rootWebDavUrl: String
         get() {
             val configUrl = appCtx.getPrefString(PreferKey.webDavUrl)?.trim()
             var url = if (configUrl.isNullOrEmpty()) defaultWebDavUrl else configUrl
@@ -86,7 +77,7 @@ object AppWebDav {
     }
 
     @Throws(Exception::class)
-    private suspend fun getBackupNames(): ArrayList<String> {
+    suspend fun getBackupNames(): ArrayList<String> {
         val names = arrayListOf<String>()
         authorization?.let {
             var files = WebDav(rootWebDavUrl, it).listFiles()
@@ -99,41 +90,6 @@ object AppWebDav {
             }
         } ?: throw NoStackTraceException("webDav没有配置")
         return names
-    }
-
-    suspend fun showRestoreDialog(context: Context) {
-        val names = withContext(IO) { getBackupNames() }
-        if (isJianGuoYun && names.size > 700) {
-            context.toastOnUi("由于坚果云限制，部分备份可能未显示")
-        }
-        if (names.isNotEmpty()) {
-            coroutineContext.ensureActive()
-            withContext(Main) {
-                context.selector(
-                    title = context.getString(R.string.select_restore_file),
-                    items = names
-                ) { _, index ->
-                    if (index in 0 until names.size) {
-                        val waitDialog = WaitDialog(context)
-                        waitDialog.setText("恢复中…")
-                        waitDialog.show()
-                        val task = Coroutine.async {
-                            restoreWebDav(names[index])
-                        }.onError {
-                            AppLog.put("WebDav恢复出错\n${it.localizedMessage}", it)
-                            appCtx.toastOnUi("WebDav恢复出错\n${it.localizedMessage}")
-                        }.onFinally(Main) {
-                            waitDialog.dismiss()
-                        }
-                        waitDialog.setOnCancelListener {
-                            task.cancel()
-                        }
-                    }
-                }
-            }
-        } else {
-            throw NoStackTraceException("Web dav no back up file")
-        }
     }
 
     @Throws(WebDavException::class)
