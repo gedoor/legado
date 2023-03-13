@@ -15,7 +15,18 @@ import java.nio.channels.FileChannel
 @Suppress("unused","MemberVisibilityCanBePrivate")
 object SevenZipUtils {
 
-
+    fun un7zToPath(inputStream: InputStream, path:String){
+        un7zToPath(inputStream,File(path))
+    }
+    fun un7zToPath(byteArray: ByteArray, path:String){
+        un7zToPath(byteArray,File(path))
+    }
+    fun un7zToPath(pfd: ParcelFileDescriptor, path:String){
+        un7zToPath(pfd,File(path))
+    }
+    fun un7zToPath(fileChannel: FileChannel, path:String){
+        un7zToPath(fileChannel,File(path))
+    }
 
     fun un7zToPath(inputStream: InputStream, destDir: File?){
         un7zToPath(SevenZFile(SeekableInMemoryByteChannel(inputStream.readBytes())),destDir)

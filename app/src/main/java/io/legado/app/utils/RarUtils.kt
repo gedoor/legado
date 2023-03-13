@@ -11,12 +11,25 @@ import java.io.InputStream
 @Keep
 @Suppress("unused","MemberVisibilityCanBePrivate")
 object RarUtils {
+    fun unRarToPath(inputStream: InputStream,path:String){
+        unRarToPath(inputStream, File(path))
+    }
+    fun unRarToPath(byteArray: ByteArray,path:String){
+        unRarToPath(byteArray, File(path))
+    }
+    fun unRarToPath(zipPath:String,path:String){
+        unRarToPath(zipPath, File(path))
+    }
+    fun unRarToPath(file: File,path:String){
+        unRarToPath(file, File(path))
+    }
     fun unRarToPath(inputStream: InputStream, destDir: File?) {
         Archive(inputStream).use {
             unRarToPath(it, destDir)
         }
         inputStream.close()
     }
+
     fun unRarToPath(byteArray: ByteArray, destDir: File?) {
         Archive(ByteArrayInputStream(byteArray)).use {
             unRarToPath(it, destDir)
