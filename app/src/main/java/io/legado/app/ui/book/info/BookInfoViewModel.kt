@@ -12,6 +12,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
+import io.legado.app.help.config.AppConfig.defaultBookTreeUri
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -274,7 +275,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun deCompress(archiveFileUri: Uri, onSuccess: (List<FileDoc>) -> Unit) {
         execute {
-            ArchiveUtils.deCompress(archiveFileUri).list {
+            ArchiveUtils.deCompress(archiveFileUri, defaultBookTreeUri).list {
                 AppPattern.bookFileRegex.matches(it.name)
             } ?: emptyList()
         }.onError {
