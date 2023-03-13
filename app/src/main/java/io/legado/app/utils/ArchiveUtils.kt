@@ -3,7 +3,6 @@ package io.legado.app.utils
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
-import java.util.regex.Pattern
 
 import splitties.init.appCtx
 
@@ -14,10 +13,6 @@ object ArchiveUtils {
     val TEMP_PATH: String by lazy {
         appCtx.externalCache.getFile("ArchiveTemp").createFolderReplace().absolutePath
     }
-
-    val ZIP_REGEX = Regex(".*\\.zip", RegexOption.IGNORE_CASE)
-    val RAR_REGEX = Regex(".*\\.rar", RegexOption.IGNORE_CASE)
-    val SERVEZ_REGEX = Regex(".*\\.7z", RegexOption.IGNORE_CASE)
 
     fun deCompress(
         archiveUri: Uri,
@@ -53,15 +48,17 @@ object ArchiveUtils {
     ): FileDoc {
         if (archiveFileDoc.isDir) throw IllegalArgumentException("Unexpected Folder input")
         val name = archiveFileDoc.name
+        val workPathFileDoc = getCacheFolderFileDoc(name, path)
+        val workPath = workPathFileDoc.toString()
         archiveFileDoc.uri.inputStream(appCtx).getOrThrow().use {
             when {
-                ZIP_REGEX.matches(name) -> ZipUtils.unZipToPath(it, path) 
-                RAR_REGEX.matches(name) -> RarUtils.unRarToPath(it, path)
-                SERVEZ_REGEX.matches(name) -> SevenZipUtils.un7zToPath(it, path)
+                name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(it, workPath) 
+                name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(it, workPath)
+                name.endsWith(".7z", ignoreCase = true) -> SevenZipUtils.un7zToPath(it, workPath)
                 else -> throw IllegalArgumentException("Unexpected archive format")
             }
         }
-        return getCacheFolderFileDoc(name, path)
+        return workPathFileDoc
     }
 
     private fun getCacheFolderFileDoc(
