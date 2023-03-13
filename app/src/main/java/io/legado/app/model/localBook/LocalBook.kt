@@ -160,6 +160,7 @@ object LocalBook {
         //updateTime变量不要修改,否则会导致读取不到缓存
         val (fileName, _, _, updateTime, _) = FileDoc.fromUri(uri, false).apply {
             if (size == 0L) throw EmptyFileException("Unexpected empty File")
+            
             bookUrl = toString()
         }
         var book = appDb.bookDao.getBook(bookUrl)
