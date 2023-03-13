@@ -266,16 +266,9 @@ object LocalBook {
 
     /**
      * 分析下载文件类书源的下载链接的文件后缀
-     * https://www.example.com/download/{fileName}.{type} 含有文件名和后缀
-     * https://www.example.com/download/?fileid=1234, {type: "txt"} 规则设置
      */
     fun parseFileSuffix(url: String): String {
-        val analyzeUrl = AnalyzeUrl(url)
-        val urlNoOption = analyzeUrl.url
-        val lastPath = urlNoOption.substringAfterLast("/")
-        val fileType = lastPath.substringAfterLast(".")
-        val type = analyzeUrl.type
-        return type ?: fileType
+        return UrlUtil.getSuffix(url, "ext")
     }
 
     fun saveBookFile(
@@ -336,10 +329,10 @@ object LocalBook {
             // 兼容旧版链接
             val webdav: WebDav = kotlin.runCatching {
                 WebDav.fromPath(webDavUrl)
-            }.onFailure {
+            }.getOrElse {
                 AppWebDav.defaultBookWebDav
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
-            }.getOrThrow()
+            }
             val uri = runBlocking {
                 saveBookFile(webdav.downloadInputStream(), localBook.originName)
             }
