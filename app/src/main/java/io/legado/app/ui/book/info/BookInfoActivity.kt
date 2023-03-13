@@ -507,6 +507,13 @@ class BookInfoActivity :
                 viewModel.importOrDownloadWebFile<Book>(webFile) {
                     onClick?.invoke(it)
                 }
+            } else if (webFile.isSupportDecompress) {
+                /* 解压筛选后再选择导入项 */
+                viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
+                    viewModel.deCompress(uri) {
+                        showDecompressFileImportAlert(it)
+                    }
+                }
             } else {
                 alert(
                     title = getString(R.string.draw),
@@ -514,13 +521,29 @@ class BookInfoActivity :
                 ) {
                     neutralButton(R.string.open_fun) {
                         /* download only */
-                        viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
-                            openFileUri(uri, "*/*")
+                        viewModel.importOrDownloadWebFile<Uri>(webFile) {
+                            openFileUri(it, "*/*")
                         }
                     }
                     noButton()
                 }
             }
+        }
+    }
+
+    private fun showDecompressFileImportAlert(
+        fileDocs: List<FileDoc>
+    ) {
+        if (fileDocs.isEmpty()) {
+            toastOnUi(R.string.unsupport_archivefile_entry)
+            return
+        }
+        val selectorNames = fileDocs.map { it.name }
+        selector(
+            R.string.import_select_book,
+            selectorNames
+        ) { _, _, index ->
+            viewModel.importBook(fileDocs[index])
         }
     }
 
