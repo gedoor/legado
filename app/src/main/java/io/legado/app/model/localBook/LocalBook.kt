@@ -329,10 +329,10 @@ object LocalBook {
             // 兼容旧版链接
             val webdav: WebDav = kotlin.runCatching {
                 WebDav.fromPath(webDavUrl)
-            }.onFailure {
+            }.getOrElse {
                 AppWebDav.defaultBookWebDav
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
-            }.getOrThrow()
+            }
             val uri = runBlocking {
                 saveBookFile(webdav.downloadInputStream(), localBook.originName)
             }
