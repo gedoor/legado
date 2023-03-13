@@ -76,6 +76,7 @@ class AnalyzeUrl(
     private var webJs: String? = null
     private val enabledCookieJar = source?.enabledCookieJar ?: false
     private val domain: String
+
     // 服务器ID
     var serverID: Long? = null
         private set
@@ -373,7 +374,15 @@ class AnalyzeUrl(
         if (type != null) {
             return StrResponse(url, HexUtil.encodeHexStr(getByteArrayAwait()))
         }
-        val concurrentRecord = fetchStart()
+        var concurrentRecord: ConcurrentRecord?
+        while (true) {
+            try {
+                concurrentRecord = fetchStart()
+                break
+            } catch (e: ConcurrentException) {
+                delay(e.waitTime.toLong())
+            }
+        }
         try {
             setCookie()
             val strResponse: StrResponse
@@ -440,24 +449,6 @@ class AnalyzeUrl(
         }
     }
 
-    /**
-     * 访问网站,返回StrResponse
-     * 并发异常自动重试
-     */
-    suspend fun getStrResponseConcurrentAwait(
-        jsStr: String? = null,
-        sourceRegex: String? = null,
-        useWebView: Boolean = true,
-    ): StrResponse {
-        while (true) {
-            try {
-                return getStrResponseAwait(jsStr, sourceRegex, useWebView)
-            } catch (e: ConcurrentException) {
-                delay(e.waitTime.toLong())
-            }
-        }
-    }
-
     @JvmOverloads
     @Throws(ConcurrentException::class)
     fun getStrResponse(
@@ -475,7 +466,15 @@ class AnalyzeUrl(
      */
     @Throws(ConcurrentException::class)
     suspend fun getResponseAwait(): Response {
-        val concurrentRecord = fetchStart()
+        var concurrentRecord: ConcurrentRecord?
+        while (true) {
+            try {
+                concurrentRecord = fetchStart()
+                break
+            } catch (e: ConcurrentException) {
+                delay(e.waitTime.toLong())
+            }
+        }
         try {
             setCookie()
             @Suppress("BlockingMethodInNonBlockingContext")

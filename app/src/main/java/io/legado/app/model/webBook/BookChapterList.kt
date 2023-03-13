@@ -66,7 +66,7 @@ object BookChapterList {
                         source = bookSource,
                         ruleData = book,
                         headerMapF = bookSource.getHeaderMap()
-                    ).getStrResponseConcurrentAwait() //控制并发访问
+                    ).getStrResponseAwait() //控制并发访问
                     res.body?.let { nextBody ->
                         chapterData = analyzeChapterList(
                             book, nextUrl, nextUrl,
@@ -89,7 +89,7 @@ object BookChapterList {
                                 source = bookSource,
                                 ruleData = book,
                                 headerMapF = bookSource.getHeaderMap()
-                            ).getStrResponseConcurrentAwait() //控制并发访问
+                            ).getStrResponseAwait() //控制并发访问
                             analyzeChapterList(
                                 book, urlStr, res.url,
                                 res.body!!, tocRule, listRule, bookSource, false
