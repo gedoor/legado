@@ -34,6 +34,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
+import io.legado.app.utils.compress.ZipUtils
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.init.appCtx
 

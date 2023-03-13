@@ -14,6 +14,7 @@ import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.*
+import io.legado.app.utils.compress.ZipUtils
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext

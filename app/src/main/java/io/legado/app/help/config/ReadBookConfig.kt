@@ -13,6 +13,7 @@ import io.legado.app.help.DefaultData
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.*
+import io.legado.app.utils.compress.ZipUtils
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx

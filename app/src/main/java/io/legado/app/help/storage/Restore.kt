@@ -20,6 +20,7 @@ import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
+import io.legado.app.utils.compress.ZipUtils
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay

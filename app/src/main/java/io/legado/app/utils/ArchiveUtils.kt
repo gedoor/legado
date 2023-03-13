@@ -2,6 +2,9 @@ package io.legado.app.utils
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.utils.compress.RarUtils
+import io.legado.app.utils.compress.SevenZipUtils
+import io.legado.app.utils.compress.ZipUtils
 import splitties.init.appCtx
 import java.io.File
 
@@ -52,7 +55,7 @@ object ArchiveUtils {
         val workPath = workPathFileDoc.toString()
         archiveFileDoc.uri.inputStream(appCtx).getOrThrow().use {
             when {
-                name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(it, workPath) 
+                name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(it, workPath)
                 name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(it, workPath)
                 name.endsWith(".7z", ignoreCase = true) -> SevenZipUtils.un7zToPath(it, workPath)
                 else -> throw IllegalArgumentException("Unexpected archive format")

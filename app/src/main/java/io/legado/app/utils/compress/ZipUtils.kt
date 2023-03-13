@@ -1,5 +1,7 @@
-package io.legado.app.utils
+package io.legado.app.utils.compress
 
+import io.legado.app.utils.DebugLog
+import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -174,15 +176,21 @@ object ZipUtils {
         return true
     }
 
+    @Throws(SecurityException::class)
     fun unZipToPath(inputStream: InputStream, path: String) {
-        val zipInputStream = ZipInputStream(inputStream)
-        unZipToPath(zipInputStream, path)
+        ZipInputStream(inputStream).use {
+            unZipToPath(it, path)
+        }
     }
 
+    @Throws(SecurityException::class)
     fun unZipToPath(zipInputStream: ZipInputStream, path: String) {
         var entry: ZipEntry?
         while (zipInputStream.nextEntry.also { entry = it } != null) {
             val entryFile = File(path, entry!!.name)
+            if (!entryFile.canonicalPath.startsWith(path)) {
+                throw SecurityException("压缩文件只能解压到指定路径")
+            }
             if (entry!!.isDirectory) {
                 if (!entryFile.exists()) {
                     entryFile.mkdirs()
@@ -201,7 +209,6 @@ object ZipUtils {
                 zipInputStream.copyTo(it)
             }
         }
-        zipInputStream.close()
     }
 
     /**
@@ -302,7 +309,7 @@ object ZipUtils {
         return files
     }
 
-    @Throws(IOException::class)
+    @Throws(IOException::class, SecurityException::class)
     private fun unzipChildFile(
         destDir: File,
         files: MutableList<File>,
@@ -311,14 +318,17 @@ object ZipUtils {
         name: String
     ): Boolean {
         val file = File(destDir, name)
+        if (!file.canonicalPath.startsWith(destDir.canonicalPath)) {
+            throw SecurityException("压缩文件只能解压到指定路径")
+        }
         files.add(file)
         if (entry.isDirectory) {
             return createOrExistsDir(file)
         } else {
             if (!createOrExistsFile(file)) return false
-            BufferedInputStream(zip.getInputStream(entry)).use { `in` ->
-                BufferedOutputStream(FileOutputStream(file)).use { out ->
-                    out.write(`in`.readBytes())
+            zip.getInputStream(entry).use { input ->
+                FileOutputStream(file).use { out ->
+                    input.copyTo(out)
                 }
             }
         }
