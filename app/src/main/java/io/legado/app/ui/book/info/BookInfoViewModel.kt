@@ -25,9 +25,7 @@ import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.isContentScheme
-import io.legado.app.utils.postEvent
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -242,7 +240,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             book.downloadUrls!!.map {
                 val mFileName = "${fileName}.${LocalBook.parseFileSuffix(it)}"
                 val isSupportedFile = AppPattern.bookFileRegex.matches(mFileName)
-                WebFile(it, mFileName, isSupportedFile)
+                val isSupportDecompress = AppPattern.archiveFileRegex.matches(mFileName)
+                WebFile(it, mFileName, isSupportedFile, isSupportDecompress)
             }
         }.onError {
             context.toastOnUi("LoadWebFileError\n${it.localizedMessage}")
@@ -251,6 +250,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    /* 导入或者下载在线文件 */
     fun <T> importOrDownloadWebFile(webFile: WebFile, success: ((T) -> Unit)?) {
        bookSource ?: return
        execute {
@@ -270,6 +270,22 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
        }.onFinally {
            waitDialogData.postValue(false)
        }
+    }
+
+    fun deCompress(archiveFileUri: Uri, onSuccess: (List<FileDoc>) -> Unit) {
+        execute {
+            ArchiveUtils.deCompress(archiveFileUri).list {
+                AppPattern.bookFileRegex.matches(it.name)
+            } ?: emptyList()
+        }.onError {
+            context.toastOnUi("DeCompress Error:\n${it.localizedMessage}")
+        }.onSuccess {
+            onSuccess.invoke(it)
+        }
+    }
+
+    fun importBook(fileDoc: FileDoc) {
+        LocalBook.importFile(fileDoc.uri).let { changeToLocalBook(it) }
     }
 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
@@ -398,7 +414,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     data class WebFile(
         val url: String,
         val name: String,
-        val isSupported: Boolean
+        // txt epub umd pdf等文件
+        val isSupported: Boolean,
+        // 压缩包形式的txt epub umd pdf文件
+        val isSupportDecompress: Boolean
     ) {
         override fun toString(): String {
             return name
