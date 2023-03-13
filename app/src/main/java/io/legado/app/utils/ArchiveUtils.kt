@@ -2,11 +2,11 @@ package io.legado.app.utils
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import splitties.init.appCtx
 import java.io.File
 
-import splitties.init.appCtx
-
 /* 自动判断压缩文件后缀 然后再调用具体的实现 */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object ArchiveUtils {
 
     // 临时目录 下次启动自动删除

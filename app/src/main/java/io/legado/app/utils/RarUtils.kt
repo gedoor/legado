@@ -49,10 +49,10 @@ object RarUtils {
     }
 
     fun unRarToPath(archive: Archive, destDir: File?) {
-        var entry: FileHeader
+        var entry: FileHeader?
         while (archive.nextFileHeader().also { entry = it } != null) {
-            val entryFile = File(destDir, entry.fileName)
-            if (entry.isDirectory) {
+            val entryFile = File(destDir, entry!!.fileName)
+            if (entry!!.isDirectory) {
                 if (!entryFile.exists()) {
                     entryFile.mkdirs()
                 }
@@ -69,7 +69,6 @@ object RarUtils {
             FileOutputStream(entryFile).use {
                 archive.getInputStream(entry).copyTo(it)
             }
-
         }
     }
 

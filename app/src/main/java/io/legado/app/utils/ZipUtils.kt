@@ -180,10 +180,10 @@ object ZipUtils {
     }
 
     fun unZipToPath(zipInputStream: ZipInputStream, path: String) {
-        var entry: ZipEntry
+        var entry: ZipEntry?
         while (zipInputStream.nextEntry.also { entry = it } != null) {
-            val entryFile = File(path, entry.name)
-            if (entry.isDirectory) {
+            val entryFile = File(path, entry!!.name)
+            if (entry!!.isDirectory) {
                 if (!entryFile.exists()) {
                     entryFile.mkdirs()
                 }

@@ -50,10 +50,10 @@ object SevenZipUtils {
 
 
     fun un7zToPath(sevenZFile:SevenZFile, destDir: File?){
-        var entry: SevenZArchiveEntry
-        while (sevenZFile.nextEntry.also { entry=it }!=null){
-            val entryFile = File(destDir, entry.name)
-            if (entry.isDirectory) {
+        var entry: SevenZArchiveEntry?
+        while (sevenZFile.nextEntry.also { entry=it }!=null) {
+            val entryFile = File(destDir, entry!!.name)
+            if (entry!!.isDirectory) {
                 if (!entryFile.exists()) {
                     entryFile.mkdirs()
                 }
