@@ -473,8 +473,13 @@ class BookInfoActivity :
                     negativeButton(R.string.no)
                 }
             } else {
-                viewModel.delBook {
-                    upTvBookshelf()
+                alert(R.string.sure, R.string.sure_del) {
+                    okButton {
+                        viewModel.delBook {
+                            upTvBookshelf()
+                        }
+                    }
+                    noButton()
                 }
             }
         }
