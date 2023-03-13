@@ -286,7 +286,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     fun importBook(fileDoc: FileDoc) {
         val uri = LocalBook.saveBookFile(
-            fileDoc.uri.inputStream(context),
+            fileDoc.uri.inputStream(context).getOrThrow()
             fileDoc.name
         )
         LocalBook.importFile(uri).let { changeToLocalBook(it) }
