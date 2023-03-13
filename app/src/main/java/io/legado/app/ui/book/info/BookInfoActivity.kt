@@ -101,6 +101,7 @@ class BookInfoActivity :
     }
     private var tocChanged = false
     private val waitDialog by lazy { WaitDialog(this) }
+    private var editMenuItem: MenuItem? = null
 
     override val binding by viewBinding(ActivityBookInfoBinding::inflate)
     override val viewModel by viewModels<BookInfoViewModel>()
@@ -123,7 +124,7 @@ class BookInfoActivity :
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_info, menu)
-        menu.findItem(R.id.menu_edit)?.isVisible = viewModel.inBookshelf
+        editMenuItem = menu.findItem(R.id.menu_edit)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -261,6 +262,7 @@ class BookInfoActivity :
         tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tvIntro.text = book.getDisplayIntro()
         llToc?.visible(!book.isWebFile)
+        editMenuItem?.visible(viewModel.inBookshelf)
         upTvBookshelf()
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {
