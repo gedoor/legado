@@ -12,8 +12,8 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.EmptyFileException
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
@@ -159,7 +159,7 @@ object LocalBook {
         val bookUrl: String
         //updateTime变量不要修改,否则会导致读取不到缓存
         val (fileName, _, _, updateTime, _) = FileDoc.fromUri(uri, false).apply {
-           if (size == 0L) throw EmptyFileException("Unexpected empty File")
+            if (size == 0L) throw EmptyFileException("Unexpected empty File")
             bookUrl = toString()
         }
         var book = appDb.bookDao.getBook(bookUrl)
@@ -207,7 +207,7 @@ object LocalBook {
                 name = bookMess["name"] ?: ""
                 author = bookMess["author"]?.takeIf { it.length != tempFileName.length } ?: ""
             } catch (e: Exception) {
-               AppLog.put("执行导入文件名规则出错\n${e.localizedMessage}", e)
+                AppLog.put("执行导入文件名规则出错\n${e.localizedMessage}", e)
             }
         }
         if (name.isBlank()) {
@@ -330,7 +330,7 @@ object LocalBook {
             val webdav: WebDav = kotlin.runCatching {
                 WebDav.fromPath(webDavUrl)
             }.getOrElse {
-                AppWebDav.defaultBookWebDav
+                AppWebDav.authorization?.let { WebDav(webDavUrl, it) }
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
             }
             val uri = runBlocking {
