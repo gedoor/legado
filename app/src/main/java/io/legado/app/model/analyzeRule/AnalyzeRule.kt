@@ -666,7 +666,12 @@ class AnalyzeRule(
     /**
      * js实现跨域访问,不能删
      */
-    override fun ajax(urlStr: String): String? {
+    override fun ajax(url: Any): String? {
+        val urlStr = if (url is List<*>) {
+            url.firstOrNull().toString()
+        } else {
+            url.toString()
+        }
         return runBlocking {
             kotlin.runCatching {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = source, ruleData = book)

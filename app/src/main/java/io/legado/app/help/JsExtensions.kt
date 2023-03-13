@@ -56,7 +56,12 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 访问网络,返回String
      */
-    fun ajax(urlStr: String): String? {
+    fun ajax(url: Any): String? {
+        val urlStr = if (url is List<*>) {
+            url.firstOrNull().toString()
+        } else {
+            url.toString()
+        }
         return runBlocking {
             kotlin.runCatching {
                 val analyzeUrl = AnalyzeUrl(urlStr, source = getSource())
