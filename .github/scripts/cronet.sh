@@ -29,7 +29,7 @@ function checkVersionExit() {
         if [[ $max_offset > $offset ]]; then
             offset=$(expr $offset + 1)
             echo "retry with offset $offset"
-            fetchVersion
+            fetchExitVersion
         else
             exit
         fi

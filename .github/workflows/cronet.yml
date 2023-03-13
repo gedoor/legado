@@ -40,3 +40,10 @@ jobs:
             *cronet.json
             *updateLog.md
             gradle.properties
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 2
+          keep_minimum_runs: 3
