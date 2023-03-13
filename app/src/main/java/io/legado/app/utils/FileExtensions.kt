@@ -17,7 +17,7 @@ fun File.exists(vararg subDirFiles: String): Boolean {
 @Throws(Exception::class)
 fun File.listFileDocs(filter: FileDocFilter? = null): ArrayList<FileDoc> {
     val docList = arrayListOf<FileDoc>()
-    listFiles {
+    listFiles()?.forEach {
         val item = FileDoc(
             it.name,
             it.isDirectory,
