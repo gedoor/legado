@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+#分支Stable Dev Beta
 branch=$1
+#api 最大偏移
+max_offset=$2
+
 [ -z $1 ] && branch=Stable
+[ -z $2 ] && branch=S3
 [ -z $GITHUB_ENV ] && echo "Error: Unexpected github workflow environment" && exit
 
 offset=0
-max_offset=3
 
 function fetchExitVersion() {
     # 获取最新cronet版本
@@ -23,9 +27,9 @@ function checkVersionExit() {
     if [ $statusCode == "404" ];then
         echo "storage.googleapis.com return 404 for cronet $lastest_cronet_version"
         if [[ $max_offset > $offset ]]; then
+            offset=$(expr $offset + 1)
             echo "retry with offset $offset"
             fetchVersion
-            offset=$(expr $offset + 1)
         else
             exist
         fi
