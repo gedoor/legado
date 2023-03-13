@@ -21,35 +21,35 @@ object ArchiveUtils {
 
     fun deCompress(
         archiveUri: Uri,
-        path: String? = TEMP_PATH
+        path: String = TEMP_PATH
     ): FileDoc {
         return deCompress(FileDoc.fromUri(archiveUri, false), path)
     }
 
     fun deCompress(
         archivePath: String,
-        path: String? = TEMP_PATH
+        path: String = TEMP_PATH
     ): FileDoc {
         return deCompress(Uri.parse(archivePath), path)
     }
 
     fun deCompress(
         archiveFile: File,
-        path: String? = TEMP_PATH
+        path: String = TEMP_PATH
     ): FileDoc {
         return deCompress(FileDoc.fromFile(archiveFile), path)
     }
 
     fun deCompress(
         archiveDoc: DocumentFile,
-        path: String? = TEMP_PATH
+        path: String = TEMP_PATH
     ): FileDoc {
         return deCompress(FileDoc.fromDocumentFile(archiveDoc), path)
     }
 
     fun deCompress(
         archiveFileDoc: FileDoc,
-        path: String? = TEMP_PATH
+        path: String = TEMP_PATH
     ): FileDoc {
         if (archiveFileDoc.isDir) throw IllegalArgumentException("Unexpected Folder input")
         val name = archiveFileDoc.name
