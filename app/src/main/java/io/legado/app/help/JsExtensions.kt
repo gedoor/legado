@@ -522,7 +522,8 @@ interface JsExtensions : JsEncodeUtils {
      */
     fun unArchiveFile(zipPath: String): String {
         if (zipPath.isEmpty()) return ""
-        return ArchiveUtils.deCompress(zipPath).toString()
+        val zipFile = getFile(zipPath)
+        return ArchiveUtils.deCompress(zipFile.absolutePath).toString()
             .substring(FileUtils.getCachePath().length)
     }
 
