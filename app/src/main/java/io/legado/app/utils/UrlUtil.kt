@@ -1,7 +1,5 @@
 package io.legado.app.utils
 
-import java.util.regex.Pattern
-
 object UrlUtil {
 
     fun replaceReservedChar(text: String): String {
@@ -27,7 +25,7 @@ object UrlUtil {
     }
 
     fun getSuffix(url: String, default: String): String {
-        val suffix = url.ubstringAfterLast(".").substringBeforeLast(",")
+        val suffix = url.substringAfterLast(".").substringBeforeLast(",")
         //检查截取的后缀字符是否合法 [a-zA-Z0-9]
         val fileSuffixRegex = Regex("^[a-z0-9]+$", RegexOption.IGNORE_CASE)
         return if (suffix.length > 5 || !suffix.matches(fileSuffixRegex)) {
