@@ -103,13 +103,6 @@ jobs:
         with:
           name: legado.${{ env.product }}.${{ env.type }}
           path: ${{ github.workspace }}/apk/*.apk
-      - name: Delete workflow runs
-        uses: Mattraks/delete-workflow-runs@v2
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 30
-          keep_minimum_runs: 30
 
   lanzou:
     needs: [ prepare, build ]
