@@ -262,7 +262,7 @@ class BookInfoActivity :
         tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tvIntro.text = book.getDisplayIntro()
         llToc?.visible(!book.isWebFile)
-        editMenuItem?.visible(viewModel.inBookshelf)
+        editMenuItem?.isVisible = viewModel.inBookshelf
         upTvBookshelf()
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {

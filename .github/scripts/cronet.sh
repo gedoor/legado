@@ -4,32 +4,47 @@ branch=$1
 [ -z $1 ] && branch=Stable
 [ -z $GITHUB_ENV ] && echo "Error: Unexpected github workflow environment" && exit
 
-# 获取最新cronet版本
-echo "fetch $branch release info from https://chromiumdash.appspot.com ..."
-lastest_cronet_version=`curl -s "https://chromiumdash.appspot.com/fetch_releases?channel=$branch&platform=Android&num=1&offset=0" | jq .[0].version -r`
-echo "lastest_cronet_version: $lastest_cronet_version"
-#lastest_cronet_version=100.0.4845.0
-lastest_cronet_main_version=${lastest_cronet_version%%\.*}.0.0.0
-# 检查版本是否存在
+offset=0
+max_offset=3
+
+function fetchExitVersion() {
+    # 获取最新cronet版本
+    echo "fetch $branch release info from https://chromiumdash.appspot.com ..."
+    lastest_cronet_version=`curl -s "https://chromiumdash.appspot.com/fetch_releases?channel=$branch&platform=Android&num=1&offset=$offset" | jq .[0].version -r`
+    echo "lastest_cronet_version: $lastest_cronet_version"
+    #lastest_cronet_version=100.0.4845.0
+    lastest_cronet_main_version=${lastest_cronet_version%%\.*}.0.0.0
+    checkVersionExit
+}
 function checkVersionExit() {
+    # 检查版本是否存在
     local jar_url="https://storage.googleapis.com/chromium-cronet/android/$lastest_cronet_version/Release/cronet/cronet_api.jar"
     statusCode=$(curl -s -I -w %{http_code} "$jar_url" -o /dev/null)
     if [ $statusCode == "404" ];then
         echo "storage.googleapis.com return 404 for cronet $lastest_cronet_version"
-        exit
+        if [[ $max_offset > $offset ]]; then
+            echo "retry with offset $offset"
+            fetchVersion
+            offset=$(expr $offset + 1)
+        else
+            exist
+        fi
     fi
 }
 # 添加变量到github env
 function writeVariableToGithubEnv() {
     echo "$1=$2" >> $GITHUB_ENV
 }
+
+##########
 # 获取本地cronet版本
 path=$GITHUB_WORKSPACE/gradle.properties
 current_cronet_version=`cat $path | grep CronetVersion | sed s/CronetVersion=//`
 echo "current_cronet_version: $current_cronet_version"
 
+fetchExitVersion
+
 if [[  $current_cronet_version < $lastest_cronet_version ]];then
-    checkVersionExit
     # 更新gradle.properties
     sed -i s/CronetVersion=.*/CronetVersion=$lastest_cronet_version/ $path
     sed -i s/CronetMainVersion=.*/CronetMainVersion=$lastest_cronet_main_version/ $path
