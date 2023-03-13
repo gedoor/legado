@@ -31,7 +31,7 @@ function checkVersionExit() {
             echo "retry with offset $offset"
             fetchVersion
         else
-            exist
+            exit
         fi
     fi
 }
