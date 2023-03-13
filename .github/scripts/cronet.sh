@@ -6,7 +6,7 @@ branch=$1
 max_offset=$2
 
 [ -z $1 ] && branch=Stable
-[ -z $2 ] && branch=S3
+[ -z $2 ] && max_offset=3
 [ -z $GITHUB_ENV ] && echo "Error: Unexpected github workflow environment" && exit
 
 offset=0
