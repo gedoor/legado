@@ -124,9 +124,14 @@ eval(String(java.cacheFile(url)))
 删除缓存文件
 cache.delete(java.md5Encode16(url))
 ```
-* 获取网络zip文件里面的数据
+* 获取网络压缩文件里面指定路径的数据 *可替换Zip Rar 7Z Archive
 ```
-java.getZipStringContent(url: String, path: String)
+java.get*StringContent(url: String, path: String): String
+
+java.get*StringContent(url: String, path: String, charsetName: String): String
+
+java.get*ByteArrayContent(url: String, path: String): ByteArray?
+
 ```
 * base64
 > flags参数可省略，默认Base64.NO_WRAP，查看[flags参数说明](https://blog.csdn.net/zcmain/article/details/97051870)
@@ -159,8 +164,12 @@ java.hexEncodeToString(utf8: String)
 ```
 //文件下载,content为十六进制字符串,url用于生成文件名，返回文件路径
 downloadFile(content: String, url: String): String
+downloadFile(url: String): String
 //文件解压,zipPath为压缩文件路径，返回解压路径
+unArchiveFile(zipPath: String): String
 unzipFile(zipPath: String): String
+unrarFile(zipPath: String): String
+un7zFile(zipPath: String): String
 //文件夹内所有文件读取
 getTxtInFolder(unzipPath: String): String
 //读取文本文件

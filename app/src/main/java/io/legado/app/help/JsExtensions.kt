@@ -497,16 +497,7 @@ interface JsExtensions : JsEncodeUtils {
      * @return 相对路径
      */
     fun unzipFile(zipPath: String): String {
-        if (zipPath.isEmpty()) return ""
-        val unzipPath = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            FileUtils.getNameExcludeExtension(zipPath)
-        )
-        val unzipFolder = File(unzipPath).createFolderReplace()
-        val zipFile = getFile(zipPath)
-        ZipUtils.unzipFile(zipFile, unzipFolder)
-        FileUtils.delete(zipFile.absolutePath)
-        return unzipPath.substring(FileUtils.getCachePath().length)
+        return unArchiveFile(zipPath)
     }
     /**
      * js实现7Zip压缩文件解压
@@ -514,16 +505,7 @@ interface JsExtensions : JsEncodeUtils {
      * @return 相对路径
      */
     fun un7zFile(zipPath: String): String {
-        if (zipPath.isEmpty()) return ""
-        val unzipPath = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            FileUtils.getNameExcludeExtension(zipPath)
-        )
-        val unzipFolder = File(unzipPath).createFolderReplace()
-        val zipFile = getFile(zipPath)
-        SevenZipUtils.un7zToPath(zipFile, unzipFolder)
-        FileUtils.delete(zipFile.absolutePath)
-        return unzipPath.substring(FileUtils.getCachePath().length)
+        return unArchiveFile(zipPath)
     }
     /**
      * js实现Rar压缩文件解压
@@ -531,16 +513,7 @@ interface JsExtensions : JsEncodeUtils {
      * @return 相对路径
      */
     fun unrarFile(zipPath: String): String {
-        if (zipPath.isEmpty()) return ""
-        val unzipPath = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            FileUtils.getNameExcludeExtension(zipPath)
-        )
-        val unzipFolder = File(unzipPath).createFolderReplace()
-        val zipFile = getFile(zipPath)
-        RarUtils.unRarToPath(zipFile, unzipFolder)
-        FileUtils.delete(zipFile.absolutePath)
-        return unzipPath.substring(FileUtils.getCachePath().length)
+        return unArchiveFile(zipPath)
     }
     /**
      * js实现压缩文件解压
@@ -549,29 +522,8 @@ interface JsExtensions : JsEncodeUtils {
      */
     fun unArchiveFile(zipPath: String): String {
         if (zipPath.isEmpty()) return ""
-        val unzipPath = FileUtils.getPath(
-            FileUtils.createFolderIfNotExist(FileUtils.getCachePath()),
-            FileUtils.getNameExcludeExtension(zipPath)
-        )
-        val unzipFolder = File(unzipPath).createFolderReplace()
-        val zipFile = getFile(zipPath)
-        when {
-            zipPath.endsWith(".zip", ignoreCase = true) -> {
-                ZipUtils.unzipFile(zipFile, unzipFolder)
-            }
-            zipPath.endsWith(".rar", ignoreCase = true) -> {
-                RarUtils.unRarToPath(zipFile, unzipFolder)
-            }
-
-            zipPath.endsWith(".7z", ignoreCase = true) -> {
-                SevenZipUtils.un7zToPath(zipFile, unzipFolder)
-            }
-            else -> {
-               log("自动解压未识别类型${zipPath}")
-            }
-        }
-        FileUtils.delete(zipFile.absolutePath)
-        return unzipPath.substring(FileUtils.getCachePath().length)
+        return ArchiveUtils.deCompress(zipPath).toString()
+            .substring(FileUtils.getCachePath().length)
     }
 
     /**
