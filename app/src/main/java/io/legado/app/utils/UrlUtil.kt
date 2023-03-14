@@ -1,5 +1,10 @@
 package io.legado.app.utils
 
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+
 object UrlUtil {
 
     fun replaceReservedChar(text: String): String {
@@ -22,6 +27,42 @@ object UrlUtil {
             .replace("@", "%40")
             .replace("\\", "%5C")
             .replace("|", "%7C")
+    }
+
+    fun getFileName(fileUrl: String): String {
+        var fileName = ""
+        try {
+            val url = URL(fileUrl)
+            val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "GET"
+            conn.connect()
+
+            // 方法一
+            val raw: String? = conn.getHeaderField("Content-Disposition")
+            if (raw != null && raw.indexOf("=") > 0) {
+                fileName = raw.split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                fileName =
+                    String(
+                        fileName.toByteArray(StandardCharsets.ISO_8859_1),
+                        StandardCharsets.UTF_8
+                    )
+            }
+
+            // 方法二
+            var newUrl: String? = conn.url.file
+            if (newUrl == null || newUrl.isEmpty()) {
+                newUrl = URLDecoder.decode(newUrl, "UTF-8")
+                var pos = newUrl.indexOf('?')
+                if (pos > 0) {
+                    newUrl = newUrl.substring(0, pos)
+                }
+                pos = newUrl!!.lastIndexOf('/')
+                fileName = newUrl.substring(pos + 1)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return fileName
     }
 
     fun getSuffix(url: String, default: String): String {
