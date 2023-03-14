@@ -183,18 +183,9 @@ readTxtFile(path: String): String
 deleteFile(path: String) 
 ```
 ****
-> [常见加密解密算法介绍](https://www.yijiyong.com/algorithm/encryption/01-intro.html)
-
-> [相关概念](https://blog.csdn.net/OrangeJack/article/details/82913804)
-
-> [Android支持的transformation](https://developer.android.google.cn/reference/kotlin/javax/crypto/Cipher?hl=en)
-
-> 其他加密方式 可在js中[调用](https://m.jb51.net/article/92138.htm)[hutool-crypto](https://www.hutool.cn/docs/#/)
-
-* 对称加密AES/DES/TripleDES
-> AES transformation默认实现AES/ECB/PKCS5Padding  
-> DES transformation默认实现DES/ECB/PKCS5Padding  
-> TripleDES tansformation默认实现DESede/ECB/PKCS5Padding  
+> 提供在JavaScript环境中快捷调用crypto算法的函数，由[hutool-crypto](https://www.hutool.cn/docs/#/crypto/概述)实现  
+> 其他没有添加的算法可在JavaScript中使用`JavaImporter`[调用](https://m.jb51.net/article/92138.htm)Java，例子可参考`朗读引擎-阿里云语音`
+* 对称加密
 > 输入参数key iv 支持ByteArray|**Utf8String**
 ```
 // 创建Cipher
@@ -210,7 +201,7 @@ cipher.encrypt(data)
 cipher.encryptBase64(data)
 cipher.encryptHex(data)
 ```
-* 非对称加密 RSA/ECIES(不支持)
+* 非对称加密
 > 输入参数密钥 支持ByteArray|**Utf8String**
 ```
 //创建cipher
@@ -228,24 +219,25 @@ cipher.encryptBase64(data, keyType)
 cipher.encryptHex(data, keyType)
 ```
 * 摘要
-> MD5 SHA-1 SHA-224 SHA-256 SHA-384 SHA-512
 ```
 java.digestHex(data: String, algorithm: String,): String?
 
 java.digestBase64Str(data: String, algorithm: String,): String?
-```
-* HMac(部分算法暂不支持)
-> DESMAC DESMAC/CFB8 DESedeMAC DESedeMAC/CFB8 DESedeMAC64 DESwithISO9797 HmacMD5 HmacSHA* ISO9797ALG3MAC PBEwithSHA*
-```
-java.HMacHex(data: String, algorithm: String, key: String): String
-
-java.HMacBase64(data: String, algorithm: String, key: String): String
 ```
 * md5
 ```
 java.md5Encode(str)
 java.md5Encode16(str)
 ```
+* HMac
+```
+java.HMacHex(data: String, algorithm: String, key: String): String
+
+java.HMacBase64(data: String, algorithm: String, key: String): String
+```
+
+https://developer.android.google.cn/reference/kotlin/java/security/Signature
+
 
 ## book对象的可用属性和方法
 ### 属性
