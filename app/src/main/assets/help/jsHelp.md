@@ -202,7 +202,7 @@ cipher.encryptBase64(data)
 cipher.encryptHex(data)
 ```
 * 非对称加密
-> 输入参数密钥 支持ByteArray|**Utf8String**
+> 输入参数密钥 支持Base64String
 ```
 //创建cipher
 java.createAsymmetricCrypto(transformation, privateKey, publicKey)
