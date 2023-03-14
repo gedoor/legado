@@ -540,7 +540,7 @@ class BookInfoActivity :
                                 onClick?.invoke(it)
                             }
                         } else {
-                            showDecompressFileImportAlert(files)
+                            showDecompressFileImportAlert(files, onClick)
                         }
                     }
                 }
