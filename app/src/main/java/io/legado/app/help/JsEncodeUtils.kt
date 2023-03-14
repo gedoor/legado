@@ -71,20 +71,20 @@ interface JsEncodeUtils {
 
     /* keys都为null时使用随机密钥 */
     fun createAsymmetricCrypto(
-        algorithm: String,
+        transformation: String,
         privateKey: ByteArray?,
         publicKey: ByteArray?
     ): AsymmetricCrypto {
-        return AsymmetricCrypto(algorithm, privateKey, publicKey)
+        return AsymmetricCrypto(transformation, privateKey, publicKey)
     }
 
     fun createAsymmetricCrypto(
-        algorithm: String,
+        transformation: String,
         privateKey: String?,
         publicKey: String?
     ): AsymmetricCrypto {
         return createAsymmetricCrypto(
-            algorithm,
+            transformation,
             privateKey?.encodeToByteArray(),
             publicKey?.encodeToByteArray()
         )

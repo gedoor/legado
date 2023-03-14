@@ -159,6 +159,11 @@ java.hexDecodeToString(hex: String)
 utf8 编码为hexString
 java.hexEncodeToString(utf8: String)
 ```
+* 标识id
+```
+java.randomUUID()
+java.androidId()
+```
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
 ```
@@ -206,11 +211,10 @@ cipher.encryptBase64(data)
 cipher.encryptHex(data)
 ```
 * 非对称加密 RSA/ECIES(不支持)
-> algorithm: RSA, RSA/ECB/PKCS1Padding, RSA/ECB/NoPadding, RSA/None/NoPadding, RSA/None/NoPadding  
 > 输入参数密钥 支持ByteArray|**Utf8String**
 ```
 //创建cipher
-java.createAsymmetricCrypto(algorithm, privateKey, publicKey)
+java.createAsymmetricCrypto(transformation, privateKey, publicKey)
 ```
 > 解密加密参数 data支持ByteArray|Base64String|HexString|InputStream  
 >  keyType: 1 使用公钥 2 使用私钥
