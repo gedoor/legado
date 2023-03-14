@@ -85,8 +85,8 @@ interface JsEncodeUtils {
     ): AsymmetricCrypto {
         return createAsymmetricCrypto(
             algorithm,
-            privateKey.encodeToByteArray(),
-            publicKey.encodeToByteArray()
+            privateKey?.encodeToByteArray(),
+            publicKey?.encodeToByteArray()
         )
     }
     //******************对称加密解密old************************//
