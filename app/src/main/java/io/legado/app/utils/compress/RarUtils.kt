@@ -61,7 +61,7 @@ object RarUtils {
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(archive: Archive, destDir: File?): List<File> {
+    private fun unRarToPath(archive: Archive, destDir: File?): List<File> {
         destDir ?: throw NullPointerException("解决路径不能为空")
         val files = arrayListOf<File>()
         var entry: FileHeader?

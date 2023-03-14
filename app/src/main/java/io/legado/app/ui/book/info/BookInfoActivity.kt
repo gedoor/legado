@@ -534,11 +534,13 @@ class BookInfoActivity :
             } else if (webFile.isSupportDecompress) {
                 /* 解压筛选后再选择导入项 */
                 viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
-                    viewModel.deCompress(uri) {
-                        if (it.size == 1) {
-                            viewModel.importBook(it[0])
+                    viewModel.deCompress(uri) { files ->
+                        if (files.size == 1) {
+                            viewModel.importBook(files[0]) {
+                                onClick?.invoke(it)
+                            }
                         } else {
-                            showDecompressFileImportAlert(it)
+                            showDecompressFileImportAlert(files)
                         }
                     }
                 }
@@ -560,7 +562,8 @@ class BookInfoActivity :
     }
 
     private fun showDecompressFileImportAlert(
-        files: List<File>
+        files: List<File>,
+        success: ((Book) -> Unit)? = null
     ) {
         if (files.isEmpty()) {
             toastOnUi(R.string.unsupport_archivefile_entry)
@@ -571,7 +574,9 @@ class BookInfoActivity :
             R.string.import_select_book,
             selectorNames
         ) { _, _, index ->
-            viewModel.importBook(files[index])
+            viewModel.importBook(files[index]) {
+                success?.invoke(it)
+            }
         }
     }
 

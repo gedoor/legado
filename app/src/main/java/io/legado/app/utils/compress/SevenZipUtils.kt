@@ -68,7 +68,7 @@ object SevenZipUtils {
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(sevenZFile: SevenZFile, destDir: File?): List<File> {
+    private fun un7zToPath(sevenZFile: SevenZFile, destDir: File?): List<File> {
         destDir ?: throw NullPointerException("解决路径不能为空")
         val files = arrayListOf<File>()
         var entry: SevenZArchiveEntry?

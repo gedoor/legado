@@ -4,6 +4,8 @@ import io.legado.app.utils.DebugLog
 import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import org.apache.commons.compress.archivers.ArchiveEntry
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
 import java.io.*
 import java.util.zip.*
 
@@ -192,22 +194,22 @@ object ZipUtils {
 
     @Throws(SecurityException::class)
     fun unZipToPath(inputStream: InputStream, path: String): List<File> {
-        return ZipInputStream(inputStream).use {
+        return ZipArchiveInputStream(inputStream).use {
             unZipToPath(it, File(path))
         }
     }
 
     @Throws(SecurityException::class)
     fun unZipToPath(inputStream: InputStream, dir: File): List<File> {
-        return ZipInputStream(inputStream).use {
+        return ZipArchiveInputStream(inputStream).use {
             unZipToPath(it, dir)
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(zipInputStream: ZipInputStream, dir: File): List<File> {
+    private fun unZipToPath(zipInputStream: ZipArchiveInputStream, dir: File): List<File> {
         val files = arrayListOf<File>()
-        var entry: ZipEntry?
+        var entry: ArchiveEntry?
         while (zipInputStream.nextEntry.also { entry = it } != null) {
             val entryFile = File(dir, entry!!.name)
             if (!entryFile.canonicalPath.startsWith(dir.canonicalPath)) {

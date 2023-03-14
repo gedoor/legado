@@ -287,18 +287,27 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 AppPattern.bookFileRegex.matches(it.name)
             }
         }.onError {
+            AppLog.put("DeCompress Error:\n${it.localizedMessage}", it)
             context.toastOnUi("DeCompress Error:\n${it.localizedMessage}")
         }.onSuccess {
             onSuccess.invoke(it)
         }
     }
 
-    fun importBook(file: File) {
-        val uri = LocalBook.saveBookFile(
-            FileInputStream(file),
-            file.name
-        )
-        changeToLocalBook(LocalBook.importFile(uri))
+    @Suppress("BlockingMethodInNonBlockingContext")
+    fun importBook(file: File, success: ((Book) -> Unit)? = null) {
+        execute {
+            LocalBook.saveBookFile(
+                FileInputStream(file),
+                bookData.value!!.getExportFileName()
+            )
+        }.onSuccess {
+            val book = changeToLocalBook(LocalBook.importFile(it))
+            success?.invoke(book)
+        }.onError {
+            AppLog.put("ImportBook Error:\n${it.localizedMessage}", it)
+            context.toastOnUi("ImportBook Error:\n${it.localizedMessage}")
+        }
     }
 
     fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {

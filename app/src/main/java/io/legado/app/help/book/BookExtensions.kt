@@ -3,6 +3,9 @@
 package io.legado.app.help.book
 
 import android.net.Uri
+import com.script.SimpleBindings
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
@@ -201,4 +204,19 @@ fun Book.isSameNameAuthor(other: Any?): Boolean {
         return name == other.name && author == other.author
     }
     return false
+}
+
+fun Book.getExportFileName(): String {
+    val jsStr = AppConfig.bookExportFileName
+    if (jsStr.isNullOrBlank()) {
+        return "${name} 作者：${getRealAuthor()}"
+    }
+    val bindings = SimpleBindings()
+    bindings["name"] = name
+    bindings["author"] = getRealAuthor()
+    return kotlin.runCatching {
+        AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+    }.onFailure {
+        AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
+    }.getOrDefault("${name} 作者：${getRealAuthor()}")
 }
