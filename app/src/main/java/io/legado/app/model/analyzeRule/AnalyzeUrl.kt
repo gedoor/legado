@@ -113,29 +113,27 @@ class AnalyzeUrl(
      */
     private fun analyzeJs() {
         var start = 0
-        var tmp: String
         val jsMatcher = JS_PATTERN.matcher(ruleUrl)
-        var hasRule = true
+        var result = ruleUrl
         while (jsMatcher.find()) {
-            if (jsMatcher.start() > start) {
-                tmp =
-                    ruleUrl.substring(start, jsMatcher.start()).trim { it <= ' ' }
-                if (tmp.isNotEmpty()) {
-                    ruleUrl = tmp.replace("@result", ruleUrl)
+            if (jsMatcher.start() > start && start > 0) {
+                ruleUrl.substring(start, jsMatcher.start()).trim().let {
+                    if (it.isNotEmpty()) {
+                        result = it.replace("@result", result)
+                    }
                 }
             }
-            ruleUrl = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), ruleUrl) as String
+            result = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), result) as String
             start = jsMatcher.end()
-            if (jsMatcher.group(0)!!.startsWith("@js:", true)) {
-                hasRule = false
+        }
+        if (ruleUrl.length > start) {
+            ruleUrl.substring(start).trim().let {
+                if (it.isNotEmpty()) {
+                    result = it.replace("@result", result)
+                }
             }
         }
-        if (ruleUrl.length > start && hasRule) {
-            tmp = ruleUrl.substring(start).trim { it <= ' ' }
-            if (tmp.isNotEmpty()) {
-                ruleUrl = tmp.replace("@result", ruleUrl)
-            }
-        }
+        ruleUrl = result
     }
 
     /**
