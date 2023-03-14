@@ -190,21 +190,38 @@ deleteFile(path: String)
 > AES transformation默认实现AES/ECB/PKCS5Padding  
 > DES transformation默认实现DES/ECB/PKCS5Padding  
 > TripleDES tansformation默认实现DESede/ECB/PKCS5Padding  
-> 内部实现为cn.hutool.crypto 解密加密接口支持ByteArray|Base64String|HexString|InputStream  
-> 输入参数key iv 支持ByteArray|Utf8String  
-> 如果key iv 为Hex Base64,且需要解码为ByteArray，自行调用java.base64DecodeToByteArray java.hexDecodeToByteArray
+> 输入参数key iv 支持ByteArray|**Utf8String**
 ```
-//解密为ByteArray 字符串
-java.createSymmetricCrypto(transformation, key, iv).decrypt(data)
-
-java.createSymmetricCrypto(transformation, key, iv).decryptStr(data)
-
+// 创建Cipher
+java.createSymmetricCrypto(transformation, key, iv)
+```
+>解密加密参数 data支持ByteArray|Base64String|HexString|InputStream
+```
+//解密为ByteArray String
+cipher.decrypt(data)
+cipher.decryptStr(data)
 //加密为ByteArray Base64字符 HEX字符
-java.createSymmetricCrypto(transformation, key, iv).encrypt(data)
-
-java.createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
-
-java.createSymmetricCrypto(transformation, key, iv).encryptHex(data)
+cipher.encrypt(data)
+cipher.encryptBase64(data)
+cipher.encryptHex(data)
+```
+* 非对称加密 RSA/ECIES(不支持)
+> algorithm: RSA, RSA/ECB/PKCS1Padding, RSA/ECB/NoPadding, RSA/None/NoPadding, RSA/None/NoPadding  
+> 输入参数密钥 支持ByteArray|**Utf8String**
+```
+//创建cipher
+java.createAsymmetricCrypto(algorithm, privateKey, publicKey)
+```
+> 解密加密参数 data支持ByteArray|Base64String|HexString|InputStream  
+>  keyType: 1 使用公钥 2 使用私钥
+```
+//解密为ByteArray String
+cipher.decrypt(data, keyType)
+cipher.decryptStr(data, keyType)
+//加密为ByteArray Base64字符 HEX字符
+cipher.encrypt(data, keyType)
+cipher.encryptBase64(data, keyType)
+cipher.encryptHex(data, keyType)
 ```
 * 摘要
 > MD5 SHA-1 SHA-224 SHA-256 SHA-384 SHA-512

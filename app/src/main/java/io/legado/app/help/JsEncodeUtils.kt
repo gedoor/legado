@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.util.Base64
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
+import cn.hutool.crypto.asymmetric.AsymmetricCrypto
 import cn.hutool.crypto.symmetric.SymmetricCrypto
 import io.legado.app.utils.MD5Utils
 
@@ -66,7 +67,28 @@ interface JsEncodeUtils {
             transformation, key.encodeToByteArray(), iv?.encodeToByteArray()
         )
     }
+    //******************非对称加密解密************************//
 
+    /* keys都为null时使用随机密钥 */
+    fun createAsymmetricCrypto(
+        algorithm: String,
+        privateKey: ByteArray?,
+        publicKey: ByteArray?
+    ): AsymmetricCrypto {
+        return AsymmetricCrypto(algorithm, privateKey, publicKey)
+    }
+
+    fun createAsymmetricCrypto(
+        algorithm: String,
+        privateKey: String?,
+        publicKey: String?
+    ): AsymmetricCrypto {
+        return createAsymmetricCrypto(
+            algorithm,
+            privateKey?.encodeToByteArray(),
+            publicKey?.encodeToByteArray()
+        )
+    }
     //******************对称加密解密old************************//
 
     /////AES
