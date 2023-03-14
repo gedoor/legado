@@ -29,9 +29,12 @@ object UrlUtil {
             .replace("|", "%7C")
     }
 
-    fun getFileName(fileUrl: String): String {
-        var fileName = ""
-        try {
+    /**
+     * 根据url获取文件名
+     */
+    fun getFileName(fileUrl: String): String? {
+        return kotlin.runCatching {
+            var fileName = ""
             val url = URL(fileUrl)
             val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
             conn.requestMethod = "GET"
@@ -46,23 +49,19 @@ object UrlUtil {
                         fileName.toByteArray(StandardCharsets.ISO_8859_1),
                         StandardCharsets.UTF_8
                     )
-            }
-
-            // 方法二
-            var newUrl: String? = conn.url.file
-            if (newUrl == null || newUrl.isEmpty()) {
+            } else {
+                // 方法二
+                var newUrl: String = conn.url.file
                 newUrl = URLDecoder.decode(newUrl, "UTF-8")
                 var pos = newUrl.indexOf('?')
                 if (pos > 0) {
                     newUrl = newUrl.substring(0, pos)
                 }
-                pos = newUrl!!.lastIndexOf('/')
+                pos = newUrl.lastIndexOf('/')
                 fileName = newUrl.substring(pos + 1)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return fileName
+            fileName
+        }.getOrNull()
     }
 
     fun getSuffix(url: String, default: String): String {

@@ -241,7 +241,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             webFiles.clear()
             val fileName = "${book.name} 作者：${book.author}"
             book.downloadUrls!!.map {
-                val mFileName = "${fileName}.${LocalBook.parseFileSuffix(it)}"
+                val mFileName = UrlUtil.getFileName(it) ?: fileName
                 val isSupportedFile = AppPattern.bookFileRegex.matches(mFileName)
                 val isSupportDecompress = AppPattern.archiveFileRegex.matches(mFileName)
                 WebFile(it, mFileName, isSupportedFile, isSupportDecompress)
