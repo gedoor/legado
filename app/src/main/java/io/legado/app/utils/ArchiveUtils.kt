@@ -12,9 +12,10 @@ import java.io.File
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ArchiveUtils {
 
+    const val TEMP_FOLDER_NAME = "ArchiveTemp"
     // 临时目录 下次启动自动删除
     val TEMP_PATH: String by lazy {
-        appCtx.externalCache.getFile("ArchiveTemp").createFolderReplace().absolutePath
+        appCtx.externalCache.getFile(TEMP_FOLDER_NAME).createFolderReplace().absolutePath
     }
 
     fun deCompress(
