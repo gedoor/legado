@@ -31,25 +31,23 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
         }
     }
 
-    private fun <T> cryptoDelegate(
+    private fun <T?> cryptoDelegate(
         data: Any,
-        keyType: Int,
-        func: (Any, KeyType) -> T
-    ): T {
-        val keyType = getKeyType(keyType)
+        func: (Any) -> T?
+    ): T? {
         return when {
-            data is ByteArray -> func.invoke(data, keyType)
-            data is String -> func.invoke(data, keyType)
-            data is InputStream -> func.invoke(data, keyType)
+            data is ByteArray -> func.invoke(data as ByteArray)
+            data is String -> func.invoke(data as String)
+            data is InputStream -> func.invoke(data as InputStream)
             else -> null
         }
     }
     
-    fun decrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data, keyType, decrypt)
-    fun decryptStr(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data, keyType, decryptStr)
+    fun decrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data) { decrypt(it, getKeyType(keyType)) }
+    fun decryptStr(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data) { decryptStr(it, getKeyType(keyType)) }
     
-    fun encrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data, keyType, encrypt)
-    fun encryptHex(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data, keyType, encryptHex)
-    fun encryptBase64(data: Any, keyType: Int): String? =cryptoDelegate<String?>(data, keyType, encryptBase64)
+    fun encrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data) { encrypt(it, getKeyType(keyType)) }
+    fun encryptHex(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data) { encryptHex(it, getKeyType(keyType)) }
+    fun encryptBase64(data: Any, keyType: Int): String? =cryptoDelegate<String?>(data) { encryptBase64(it, getKeyType(keyType)) }
 
 }
