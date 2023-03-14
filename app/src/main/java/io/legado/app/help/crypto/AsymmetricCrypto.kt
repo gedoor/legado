@@ -12,14 +12,14 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
             KeyUtil.generatePrivateKey(this.algorithm, key)
         )
     }
-    fun setPublicKey(key: String): AsymmetricCrypto = setPrivateKey(key.encodeToByteArray())
+    fun setPrivateKey(key: String): AsymmetricCrypto = setPrivateKey(key.encodeToByteArray())
 
     fun setPublicKey(key: ByteArray): AsymmetricCrypto {
         return setPublicKey(
             KeyUtil.generatePublicKey(this.algorithm, key)
         )
     }
-    fun setPrivateKey(key: String): AsymmetricCrypto = setPrivateKey(key.encodeToByteArray())
+    fun setPublicKey(key: String): AsymmetricCrypto = setPublicKey(key.encodeToByteArray())
 
     private fun getKeyType(): KeyType {
         return when {

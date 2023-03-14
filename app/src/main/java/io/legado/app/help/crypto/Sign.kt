@@ -10,14 +10,14 @@ class Sign(algorithm: String): HutoolSign(algorithm) {
             KeyUtil.generatePrivateKey(this.algorithm, key)
         )
     }
-    fun setPublicKey(key: String): Sign = setPrivateKey(key.encodeToByteArray())
+    fun setPrivateKey(key: String): Sign = setPrivateKey(key.encodeToByteArray())
 
     fun setPublicKey(key: ByteArray): Sign {
         return setPublicKey(
             KeyUtil.generatePublicKey(this.algorithm, key)
         )
     }
-    fun setPrivateKey(key: String): Sign = setPrivateKey(key.encodeToByteArray())
+    fun setPublicKey(key: String): Sign = setPublicKey(key.encodeToByteArray())
 
 }
 
