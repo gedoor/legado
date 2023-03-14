@@ -73,23 +73,12 @@ interface JsEncodeUtils {
     /* keys都为null时使用随机密钥 */
     fun createAsymmetricCrypto(
         transformation: String,
-        privateKey: ByteArray?,
-        publicKey: ByteArray?
+        privateKey: String?,
+        publicKey: String?
     ): AsymmetricCrypto {
         return AsymmetricCrypto(transformation, privateKey, publicKey)
     }
 
-    fun createAsymmetricCrypto(
-        transformation: String,
-        privateKey: String?,
-        publicKey: String?
-    ): AsymmetricCrypto {
-        return createAsymmetricCrypto(
-            transformation,
-            privateKey?.encodeToByteArray(),
-            publicKey?.encodeToByteArray()
-        )
-    }
     //******************签名************************//
     fun createSign(
         algorithm: String,
