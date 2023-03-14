@@ -218,6 +218,18 @@ cipher.encrypt(data, keyType)
 cipher.encryptBase64(data, keyType)
 cipher.encryptHex(data, keyType)
 ```
+* 签名
+> 输入参数密钥 支持ByteArray|**Utf8String**
+```
+//创建Sign
+java.createSign(algorithm, privateKey, publicKey)
+```
+> 签名参数 data支持ByteArray|inputStream|String
+```
+//签名输出 ByteArray HexString
+sign.sign(data)
+sign.signHex(data)
+```
 * 摘要
 ```
 java.digestHex(data: String, algorithm: String,): String?
@@ -235,9 +247,6 @@ java.HMacHex(data: String, algorithm: String, key: String): String
 
 java.HMacBase64(data: String, algorithm: String, key: String): String
 ```
-
-https://developer.android.google.cn/reference/kotlin/java/security/Signature
-
 
 ## book对象的可用属性和方法
 ### 属性

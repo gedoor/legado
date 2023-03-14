@@ -4,6 +4,7 @@ import android.util.Base64
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
 import cn.hutool.crypto.asymmetric.AsymmetricCrypto
+import cn.hutool.crypto.asymmetric.Sign
 import cn.hutool.crypto.symmetric.SymmetricCrypto
 import io.legado.app.utils.MD5Utils
 
@@ -88,6 +89,26 @@ interface JsEncodeUtils {
             privateKey?.encodeToByteArray(),
             publicKey?.encodeToByteArray()
         )
+    }
+    //******************签名************************//
+    fun createSign(
+        algorithm: String,
+        privateKey: String?,
+        publicKey: String?
+    ): Sign {
+        return createSign(
+            algorithm
+            privateKey?.encodeToByteArray(),
+            publicKey?.encodeToByteArray()
+        )
+    }
+
+    fun createSign(
+        algorithm: String,
+        privateKey: ByteArray?,
+        publicKey: ByteArray?
+    ): Sign {
+        return Sign(algorithm, privateKey, publicKey)
     }
     //******************对称加密解密old************************//
 
