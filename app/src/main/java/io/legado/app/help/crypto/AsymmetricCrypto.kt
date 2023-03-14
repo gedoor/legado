@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.crypto
 
 import cn.hutool.crypto.asymmetric.AsymmetricCrypto as HutoolAsymmetricCrypto
 import cn.hutool.crypto.asymmetric.KeyType
