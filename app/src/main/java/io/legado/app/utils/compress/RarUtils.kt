@@ -13,57 +13,57 @@ import java.io.InputStream
 object RarUtils {
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(inputStream: InputStream, path: String) {
-        unRarToPath(inputStream, File(path))
+    fun unRarToPath(inputStream: InputStream, path: String): List<File> {
+        return unRarToPath(inputStream, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(byteArray: ByteArray, path: String) {
-        unRarToPath(byteArray, File(path))
+    fun unRarToPath(byteArray: ByteArray, path: String): List<File> {
+        return unRarToPath(byteArray, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(zipPath: String, path: String) {
-        unRarToPath(zipPath, File(path))
+    fun unRarToPath(zipPath: String, path: String): List<File> {
+        return unRarToPath(zipPath, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(file: File, path: String) {
-        unRarToPath(file, File(path))
+    fun unRarToPath(file: File, path: String): List<File> {
+        return unRarToPath(file, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(inputStream: InputStream, destDir: File?) {
-        Archive(inputStream).use {
-            unRarToPath(it, destDir)
-        }
-        inputStream.close()
-    }
-
-    @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(byteArray: ByteArray, destDir: File?) {
-        Archive(ByteArrayInputStream(byteArray)).use {
+    fun unRarToPath(inputStream: InputStream, destDir: File?): List<File> {
+        return Archive(inputStream).use {
             unRarToPath(it, destDir)
         }
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(filePath: String, destDir: File?) {
-        Archive(File(filePath)).use {
+    fun unRarToPath(byteArray: ByteArray, destDir: File?): List<File> {
+        return Archive(ByteArrayInputStream(byteArray)).use {
             unRarToPath(it, destDir)
         }
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(file: File, destDir: File?) {
-        Archive(file).use {
+    fun unRarToPath(filePath: String, destDir: File?): List<File> {
+        return Archive(File(filePath)).use {
             unRarToPath(it, destDir)
         }
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(archive: Archive, destDir: File?) {
+    fun unRarToPath(file: File, destDir: File?): List<File> {
+        return Archive(file).use {
+            unRarToPath(it, destDir)
+        }
+    }
+
+    @Throws(NullPointerException::class, SecurityException::class)
+    fun unRarToPath(archive: Archive, destDir: File?): List<File> {
         destDir ?: throw NullPointerException("解决路径不能为空")
+        val files = arrayListOf<File>()
         var entry: FileHeader?
         while (archive.nextFileHeader().also { entry = it } != null) {
             val entryFile = File(destDir, entry!!.fileName)
@@ -86,8 +86,10 @@ object RarUtils {
             }
             FileOutputStream(entryFile).use {
                 archive.getInputStream(entry).copyTo(it)
+                files.add(entryFile)
             }
         }
+        return files
     }
 
 }

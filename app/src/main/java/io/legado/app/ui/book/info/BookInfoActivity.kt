@@ -49,6 +49,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class BookInfoActivity :
     VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
@@ -559,18 +560,18 @@ class BookInfoActivity :
     }
 
     private fun showDecompressFileImportAlert(
-        fileDocs: List<FileDoc>
+        files: List<File>
     ) {
-        if (fileDocs.isEmpty()) {
+        if (files.isEmpty()) {
             toastOnUi(R.string.unsupport_archivefile_entry)
             return
         }
-        val selectorNames = fileDocs.map { it.name }
+        val selectorNames = files.map { it.name }
         selector(
             R.string.import_select_book,
             selectorNames
         ) { _, _, index ->
-            viewModel.importBook(fileDocs[index])
+            viewModel.importBook(files[index])
         }
     }
 

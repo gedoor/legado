@@ -177,35 +177,36 @@ object ZipUtils {
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(file: File, path: String) {
-        FileInputStream(file).use {
+    fun unZipToPath(file: File, path: String): List<File> {
+        return FileInputStream(file).use {
             unZipToPath(it, path)
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(file: File, dir: File) {
-        FileInputStream(file).use {
+    fun unZipToPath(file: File, dir: File): List<File> {
+        return FileInputStream(file).use {
             unZipToPath(it, dir)
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(inputStream: InputStream, path: String) {
-        ZipInputStream(inputStream).use {
+    fun unZipToPath(inputStream: InputStream, path: String): List<File> {
+        return ZipInputStream(inputStream).use {
             unZipToPath(it, File(path))
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(inputStream: InputStream, dir: File) {
-        ZipInputStream(inputStream).use {
+    fun unZipToPath(inputStream: InputStream, dir: File): List<File> {
+        return ZipInputStream(inputStream).use {
             unZipToPath(it, dir)
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(zipInputStream: ZipInputStream, dir: File) {
+    fun unZipToPath(zipInputStream: ZipInputStream, dir: File): List<File> {
+        val files = arrayListOf<File>()
         var entry: ZipEntry?
         while (zipInputStream.nextEntry.also { entry = it } != null) {
             val entryFile = File(dir, entry!!.name)
@@ -228,8 +229,10 @@ object ZipUtils {
             }
             FileOutputStream(entryFile).use {
                 zipInputStream.copyTo(it)
+                files.add(entryFile)
             }
         }
+        return files
     }
 
 

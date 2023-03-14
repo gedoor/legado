@@ -17,59 +17,60 @@ import java.nio.channels.FileChannel
 object SevenZipUtils {
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(inputStream: InputStream, path: String) {
-        un7zToPath(inputStream, File(path))
+    fun un7zToPath(inputStream: InputStream, path: String): List<File> {
+        return un7zToPath(inputStream, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(byteArray: ByteArray, path: String) {
-        un7zToPath(byteArray, File(path))
+    fun un7zToPath(byteArray: ByteArray, path: String): List<File> {
+        return un7zToPath(byteArray, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(pfd: ParcelFileDescriptor, path: String) {
-        un7zToPath(pfd, File(path))
+    fun un7zToPath(pfd: ParcelFileDescriptor, path: String): List<File> {
+        return un7zToPath(pfd, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(fileChannel: FileChannel, path: String) {
-        un7zToPath(fileChannel, File(path))
+    fun un7zToPath(fileChannel: FileChannel, path: String): List<File> {
+        return un7zToPath(fileChannel, File(path))
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(inputStream: InputStream, destDir: File?) {
-        un7zToPath(SevenZFile(SeekableInMemoryByteChannel(inputStream.readBytes())), destDir)
+    fun un7zToPath(inputStream: InputStream, destDir: File?): List<File> {
+        return un7zToPath(SevenZFile(SeekableInMemoryByteChannel(inputStream.readBytes())), destDir)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(byteArray: ByteArray, destDir: File?) {
-        un7zToPath(SevenZFile(SeekableInMemoryByteChannel(byteArray)), destDir)
+    fun un7zToPath(byteArray: ByteArray, destDir: File?): List<File> {
+        return un7zToPath(SevenZFile(SeekableInMemoryByteChannel(byteArray)), destDir)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(pfd: ParcelFileDescriptor, destDir: File?) {
-        un7zToPath(SevenZFile(ParcelFileDescriptorChannel(pfd)), destDir)
+    fun un7zToPath(pfd: ParcelFileDescriptor, destDir: File?): List<File> {
+        return un7zToPath(SevenZFile(ParcelFileDescriptorChannel(pfd)), destDir)
     }
 
     @SuppressLint("NewApi")
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(fileChannel: FileChannel, destDir: File?) {
-        un7zToPath(SevenZFile(fileChannel), destDir)
+    fun un7zToPath(fileChannel: FileChannel, destDir: File?): List<File> {
+        return un7zToPath(SevenZFile(fileChannel), destDir)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(file: File, destDir: File?) {
-        un7zToPath(SevenZFile(file), destDir)
+    fun un7zToPath(file: File, destDir: File?): List<File> {
+        return un7zToPath(SevenZFile(file), destDir)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(filePath: String, destDir: File?) {
-        un7zToPath(SevenZFile(File(filePath)), destDir)
+    fun un7zToPath(filePath: String, destDir: File?): List<File> {
+        return un7zToPath(SevenZFile(File(filePath)), destDir)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun un7zToPath(sevenZFile: SevenZFile, destDir: File?) {
+    fun un7zToPath(sevenZFile: SevenZFile, destDir: File?): List<File> {
         destDir ?: throw NullPointerException("解决路径不能为空")
+        val files = arrayListOf<File>()
         var entry: SevenZArchiveEntry?
         while (sevenZFile.nextEntry.also { entry = it } != null) {
             val entryFile = File(destDir, entry!!.name)
@@ -92,7 +93,9 @@ object SevenZipUtils {
             }
             FileOutputStream(entryFile).use {
                 sevenZFile.getInputStream(entry).copyTo(it)
+                files.add(entryFile)
             }
         }
+        return files
     }
 }

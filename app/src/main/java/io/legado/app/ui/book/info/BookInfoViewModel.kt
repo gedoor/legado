@@ -28,6 +28,8 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import java.io.File
+import java.io.FileInputStream
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
@@ -279,11 +281,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun deCompress(archiveFileUri: Uri, onSuccess: (List<FileDoc>) -> Unit) {
+    fun deCompress(archiveFileUri: Uri, onSuccess: (List<File>) -> Unit) {
         execute {
-            ArchiveUtils.deCompress(archiveFileUri).list {
+            ArchiveUtils.deCompress(archiveFileUri).filter {
                 AppPattern.bookFileRegex.matches(it.name)
-            } ?: emptyList()
+            }
         }.onError {
             context.toastOnUi("DeCompress Error:\n${it.localizedMessage}")
         }.onSuccess {
@@ -291,10 +293,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun importBook(fileDoc: FileDoc) {
+    fun importBook(file: File) {
         val uri = LocalBook.saveBookFile(
-            fileDoc.uri.inputStream(context).getOrThrow(),
-            fileDoc.name
+            FileInputStream(file),
+            file.name
         )
         changeToLocalBook(LocalBook.importFile(uri))
     }
