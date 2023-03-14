@@ -31,10 +31,10 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
         }
     }
 
-    private fun <T?> cryptoDelegate(
+    private fun <T> cryptoDelegate(
         data: Any,
-        func: (Any) -> T?
-    ): T? {
+        func: (Any) -> T
+    ): T {
         return when {
             data is ByteArray -> func.invoke(data as ByteArray)
             data is String -> func.invoke(data as String)
