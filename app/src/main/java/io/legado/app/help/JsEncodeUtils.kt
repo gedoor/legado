@@ -3,10 +3,11 @@ package io.legado.app.help
 import android.util.Base64
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
-import cn.hutool.crypto.asymmetric.*
 import cn.hutool.crypto.symmetric.SymmetricCrypto
+import io.legado.app.help.crypto.AsymmetricCrypto
+import io.legado.app.help.crypto.Sign
 import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.*
+
 
 /**
  * js加解密扩展类, 在js中通过java变量调用
