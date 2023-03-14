@@ -8,32 +8,35 @@ import java.io.InputStream
 class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
 
     fun setPrivateKey(key: ByteArray): AsymmetricCrypto {
-        return setPrivateKey(
+        setPrivateKey(
             KeyUtil.generatePrivateKey(this.algorithm, key)
         )
+        return this
     }
     fun setPrivateKey(key: String): AsymmetricCrypto = setPrivateKey(key.encodeToByteArray())
 
     fun setPublicKey(key: ByteArray): AsymmetricCrypto {
-        return setPublicKey(
+        setPublicKey(
             KeyUtil.generatePublicKey(this.algorithm, key)
         )
+        return this
     }
     fun setPublicKey(key: String): AsymmetricCrypto = setPublicKey(key.encodeToByteArray())
 
-    private fun getKeyType(): KeyType {
+    private fun getKeyType(keyType: Int): KeyType {
         return when {
-            this.publicKey != null -> KeyType.PublicKey
-            this.privateKey != null -> KeyType.PrivateKey
+            keyType == 1 -> KeyType.PublicKey
+            keyType == 2 -> KeyType.PrivateKey
             else -> KeyType.SecretKey
         }
     }
 
     private fun <T> cryptoDelegate(
         data: Any,
+        keyType: Int,
         func: (Any, KeyType) -> T
     ): T {
-        val keyType = getKeyType()
+        val keyType = getKeyType(keyType)
         return when {
             data is ByteArray -> func.invoke(data, keyType)
             data is String -> func.invoke(data, keyType)
@@ -42,11 +45,11 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
         }
     }
     
-    fun decrypt(data: Any): ByteArray? = cryptoDelegate<ByteArray?>(data, decrypt)
-    fun decryptStr(data: Any): String? = cryptoDelegate<String?>(data, decryptStr)
+    fun decrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data, keyType, decrypt)
+    fun decryptStr(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data, keyType, decryptStr)
     
-    fun encrypt(data: Any): ByteArray? = cryptoDelegate<ByteArray?>(data, encrypt)
-    fun encryptHex(data: Any): String? = cryptoDelegate<String?>(data, encryptHex)
-    fun encryptBase64(data: Any): String? =cryptoDelegate<String?>(data, encryptBase64)
+    fun encrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data, keyType, encrypt)
+    fun encryptHex(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data, keyType, encryptHex)
+    fun encryptBase64(data: Any, keyType: Int): String? =cryptoDelegate<String?>(data, keyType, encryptBase64)
 
 }

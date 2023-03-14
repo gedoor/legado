@@ -7,7 +7,6 @@ fun setPublicKey(key: String): T
 fun setPrivateKey(key: ByteArray): T
 fun setPrivateKey(key: String): T
 
-//自动从公钥开始尝试
 fun decrypt(data: Any): ByteArray?
 fun decryptStr(data: Any): String?
 
