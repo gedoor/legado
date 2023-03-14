@@ -297,9 +297,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     @Suppress("BlockingMethodInNonBlockingContext")
     fun importBook(file: File, success: ((Book) -> Unit)? = null) {
         execute {
+            val suffix = file.name.substringAfterLast(".")
             LocalBook.saveBookFile(
                 FileInputStream(file),
-                bookData.value!!.getExportFileName()
+                bookData.value!!.getExportFileName(suffix)
             )
         }.onSuccess {
             val book = changeToLocalBook(LocalBook.importFile(it))

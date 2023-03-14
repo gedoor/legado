@@ -9,10 +9,8 @@ import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.script.SimpleBindings
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
@@ -22,6 +20,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.getExportFileName
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -78,23 +77,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun getExportFileName(book: Book): String {
-        val jsStr = AppConfig.bookExportFileName
-        if (jsStr.isNullOrBlank()) {
-            return "${book.name} 作者：${book.getRealAuthor()}"
-        }
-        val bindings = SimpleBindings()
-        bindings["name"] = book.name
-        bindings["author"] = book.getRealAuthor()
-        return kotlin.runCatching {
-            AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
-        }.onFailure {
-            context.toastOnUi("书名规则错误\n${it.localizedMessage}")
-        }.getOrDefault("${book.name} 作者：${book.getRealAuthor()}")
-    }
-
     fun exportFileExist(path: String, book: Book): Boolean {
-        val fileName = getExportFileName(book)
+        val fileName = book.getExportFileName("txt")
         return if (path.isContentScheme()) {
             val uri = Uri.parse(path)
             val doc = DocumentFile.fromTreeUri(context, uri) ?: return false
@@ -141,7 +125,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun export(doc: DocumentFile, book: Book) {
-        val filename = "${getExportFileName(book)}.txt"
+        val filename = book.getExportFileName("txt")
         DocumentUtils.delete(doc, filename)
         val bookDoc = DocumentUtils.createFileIfNotExist(doc, filename)
             ?: throw NoStackTraceException("创建文档失败，请尝试重新设置导出文件夹")
@@ -167,7 +151,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private suspend fun export(file: File, book: Book) {
-        val filename = "${getExportFileName(book)}.txt"
+        val filename = book.getExportFileName("txt")
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         getAllContents(book) { text, srcList ->
@@ -305,7 +289,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun exportEpub(doc: DocumentFile, book: Book) {
-        val filename = "${getExportFileName(book)}.epub"
+        val filename = book.getExportFileName("epub")
         DocumentUtils.delete(doc, filename)
         val epubBook = EpubBook()
         epubBook.version = "2.0"
@@ -331,7 +315,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
 
     private suspend fun exportEpub(file: File, book: Book) {
-        val filename = "${getExportFileName(book)}.epub"
+        val filename = book.getExportFileName("epub")
         val epubBook = EpubBook()
         epubBook.version = "2.0"
         //set metadata

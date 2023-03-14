@@ -206,17 +206,17 @@ fun Book.isSameNameAuthor(other: Any?): Boolean {
     return false
 }
 
-fun Book.getExportFileName(): String {
+fun Book.getExportFileName(suffix: String): String {
     val jsStr = AppConfig.bookExportFileName
     if (jsStr.isNullOrBlank()) {
-        return "${name} 作者：${getRealAuthor()}"
+        return "${name} 作者：${getRealAuthor()}.$suffix"
     }
     val bindings = SimpleBindings()
     bindings["name"] = name
     bindings["author"] = getRealAuthor()
     return kotlin.runCatching {
-        AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString()
+        AppConst.SCRIPT_ENGINE.eval(jsStr, bindings).toString() + "." + suffix
     }.onFailure {
         AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
-    }.getOrDefault("${name} 作者：${getRealAuthor()}")
+    }.getOrDefault("${name} 作者：${getRealAuthor()}.$suffix")
 }
