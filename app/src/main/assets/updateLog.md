@@ -2,8 +2,6 @@
 
 * 关注公众号 **[开源阅读]** 菜单•软件下载 提前享受新版本。
 * 关注合作公众号 **[小说拾遗]** 获取好看的小说。
-* [2021年日志](https://github.com/gedoor/legado/blob/record2021/app/src/main/assets/updateLog.md)
-* [2022年日志](https://github.com/gedoor/legado/blob/record2022/app/src/main/assets/updateLog.md)
 
 ## **必读**
 
@@ -13,8 +11,9 @@
 * 正文出现缺字漏字、内容缺失、排版错乱等情况，有可能是净化规则或简繁转换出现问题。
 * 漫画源看书显示乱码，**阅读与其他软件的源并不通用**，请导入阅读的支持的漫画源！
 
-* 更新cronet: 111.0.5563.57
 **2023/03/13**
+* 更新cronet: 111.0.5563.57
+* 优化文件型书源,解决压缩文件编码不是UTF-8报错问题
 
 * 文件类书源支持zip 7z rar4解压
 * java.ajax(url: Any)自动判断是列表还是字符串
@@ -95,3 +94,6 @@
 * 书架分组支持独立排序
 * 适配 android 13 主题图标
 * 一些优化 by Horis
+
+* [2022年日志](https://github.com/gedoor/legado/blob/record2022/app/src/main/assets/updateLog.md)
+* [2021年日志](https://github.com/gedoor/legado/blob/record2021/app/src/main/assets/updateLog.md)
