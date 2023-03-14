@@ -67,7 +67,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         private set
     var groupId = -1L
         private set
-    private var bookSort = 0
+    var bookSort = 0
+        private set
     private var upLastUpdateTimeJob: Job? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -112,6 +113,13 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             }
         })
         startLastUpdateTimeJob()
+    }
+
+    fun upBookSort(sort: Int) {
+        binding.root.post {
+            bookSort = sort
+            upRecyclerData()
+        }
     }
 
     private fun upRecyclerData() {
