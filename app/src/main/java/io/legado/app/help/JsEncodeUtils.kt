@@ -97,7 +97,7 @@ interface JsEncodeUtils {
         publicKey: String?
     ): Sign {
         return createSign(
-            algorithm
+            algorithm,
             privateKey?.encodeToByteArray(),
             publicKey?.encodeToByteArray()
         )
