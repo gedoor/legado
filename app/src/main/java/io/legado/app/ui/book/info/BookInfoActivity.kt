@@ -483,16 +483,16 @@ class BookInfoActivity :
                         addView(checkBox)
                     }
                     customView { view }
-                    positiveButton(R.string.yes) {
+                    yesButton {
                         viewModel.delBook(checkBox.isChecked) {
                             finish()
                         }
                     }
-                    negativeButton(R.string.no)
+                    noButton()
                 }
             } else {
                 alert(R.string.sure, R.string.sure_del) {
-                    okButton {
+                    yesButton {
                         viewModel.delBook {
                             upTvBookshelf()
                         }
