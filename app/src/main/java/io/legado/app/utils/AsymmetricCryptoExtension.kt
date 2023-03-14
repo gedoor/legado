@@ -55,17 +55,17 @@ fun AsymmetricCrypto.setPrivateKey(privateKey: String): AsymmetricCrypto = setPr
 fun AsymmetricCrypto.setPublicKey(publicKey: ByteArray): AsymmetricCrypto {
     return setPublicKey(KeyUtil.generatePublicKey(this.algorithm, publicKey))
 }
-fun AsymmetricCrypto.setPublicKey(publicKey: ByteArray): AsymmetricCrypto = setPublicKey(publicKey.encodeToByteArray())
+fun AsymmetricCrypto.setPublicKey(publicKey: String): AsymmetricCrypto = setPublicKey(publicKey.encodeToByteArray())
 
 fun Sign.setPrivateKey(privateKey: ByteArray): Sign {
     return setPrivateKey(KeyUtil.generatePrivateKey(this.algorithm, privateKey))
 }
 
-fun Sign.setPrivateKey(privateKey: ByteArray): Sign = setPrivateKey(privateKey.encodeToByteArray())
+fun Sign.setPrivateKey(privateKey: String): Sign = setPrivateKey(privateKey.encodeToByteArray())
 
 fun Sign.setPublicKey(publicKey: ByteArray): Sign {
     return setPublicKey(KeyUtil.generatePublicKey(this.algorithm, publicKey))
 }
 
-fun Sign.setPublicKey(publicKey: ByteArray): Sign = setPublicKey(publicKey.encodeToByteArray())
+fun Sign.setPublicKey(publicKey: String): Sign = setPublicKey(publicKey.encodeToByteArray())
 
