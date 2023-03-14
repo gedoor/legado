@@ -205,10 +205,14 @@ cipher.encryptBase64(data)
 cipher.encryptHex(data)
 ```
 * 非对称加密
-> 输入参数密钥 支持ByteArray|**Utf8String**
+> 输入参数 key支持ByteArray|**Utf8String**
 ```
 //创建cipher
-java.createAsymmetricCrypto(transformation, privateKey, publicKey)
+java.createAsymmetricCrypto(transformation)
+//设置密钥
+.setPublicKey(key)
+.setPrivateKey(key)
+
 ```
 > 解密加密参数 data支持ByteArray|Base64String|HexString|InputStream  
 >  keyType: 1 使用公钥 2 使用私钥
@@ -222,10 +226,13 @@ cipher.encryptBase64(data, keyType)
 cipher.encryptHex(data, keyType)
 ```
 * 签名
-> 输入参数密钥 支持ByteArray|**Utf8String**
+> 输入参数 key 支持ByteArray|**Utf8String**
 ```
 //创建Sign
-java.createSign(algorithm, privateKey, publicKey)
+java.createSign(algorithm)
+//设置密钥
+.setPublicKey(key)
+.setPrivateKey(key)
 ```
 > 签名参数 data支持ByteArray|inputStream|String
 ```

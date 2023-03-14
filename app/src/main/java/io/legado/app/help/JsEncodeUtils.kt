@@ -3,10 +3,10 @@ package io.legado.app.help
 import android.util.Base64
 import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.crypto.digest.HMac
-import cn.hutool.crypto.asymmetric.AsymmetricCrypto
-import cn.hutool.crypto.asymmetric.Sign
+import cn.hutool.crypto.asymmetric.*
 import cn.hutool.crypto.symmetric.SymmetricCrypto
 import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.*
 
 /**
  * js加解密扩展类, 在js中通过java变量调用
@@ -72,43 +72,16 @@ interface JsEncodeUtils {
 
     /* keys都为null时使用随机密钥 */
     fun createAsymmetricCrypto(
-        transformation: String,
-        privateKey: ByteArray?,
-        publicKey: ByteArray?
+        transformation: String
     ): AsymmetricCrypto {
-        return AsymmetricCrypto(transformation, privateKey, publicKey)
+        return AsymmetricCrypto(transformation)
     }
 
-    fun createAsymmetricCrypto(
-        transformation: String,
-        privateKey: String?,
-        publicKey: String?
-    ): AsymmetricCrypto {
-        return createAsymmetricCrypto(
-            transformation,
-            privateKey?.encodeToByteArray(),
-            publicKey?.encodeToByteArray()
-        )
-    }
     //******************签名************************//
     fun createSign(
-        algorithm: String,
-        privateKey: String?,
-        publicKey: String?
+        algorithm: String
     ): Sign {
-        return createSign(
-            algorithm,
-            privateKey?.encodeToByteArray(),
-            publicKey?.encodeToByteArray()
-        )
-    }
-
-    fun createSign(
-        algorithm: String,
-        privateKey: ByteArray?,
-        publicKey: ByteArray?
-    ): Sign {
-        return Sign(algorithm, privateKey, publicKey)
+        return Sign(algorithm)
     }
     //******************对称加密解密old************************//
 
