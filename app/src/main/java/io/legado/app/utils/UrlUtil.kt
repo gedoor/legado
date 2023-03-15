@@ -77,14 +77,14 @@ object UrlUtil {
                 // 其余情况 返回响应头
                 val headers = conn.getHeaderFields()
                 val headersString = buildString {
-                    headers.forEach( key, value ->
+                    headers.forEach { key, value ->
                         value.forEach {
                             append(key)
                             append(": ")
                             append(it)
                             append("\n")
                         }
-                    )
+                    }
                 }
                 AppLog.putDebug("Cannot obtain URL file name:\n$headersString")
             }
@@ -93,12 +93,12 @@ object UrlUtil {
     }
 
     /* 获取合法的文件后缀 */
-    fun getSuffix(url: String, default: String): String {
+    fun getSuffix(url: String, default: String? = null): String {
         val suffix = url.substringAfterLast(".").substringBeforeLast(",")
         //检查截取的后缀字符是否合法 [a-zA-Z0-9]
         val fileSuffixRegex = Regex("^[a-z\\d]+$", RegexOption.IGNORE_CASE)
         return if (suffix.length > 5 || !suffix.matches(fileSuffixRegex)) {
-            default
+            default ?: throw IllegalArgumentException("Cannot find illegal suffix")
         } else {
             suffix
         }
