@@ -219,7 +219,7 @@ java.createAsymmetricCrypto(transformation)
 //解密为ByteArray String
 cipher.decrypt(data,  usePublicKey: Boolean? = true
 )
-cipher.decryptStr(data: String!!,  usePublicKey: Boolean? = true
+cipher.decryptStr(data, usePublicKey: Boolean? = true
 )
 //加密为ByteArray Base64字符 HEX字符
 cipher.encrypt(data,  usePublicKey: Boolean? = true
