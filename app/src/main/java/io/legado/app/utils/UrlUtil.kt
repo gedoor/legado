@@ -52,7 +52,7 @@ object UrlUtil {
                     )
             } else {
                 // 方法二 截取
-                var newUrl: String = url.path ?: return null
+                var newUrl: String = conn.url.path ?: return null
                 newUrl = URLDecoder.decode(newUrl, "UTF-8")
                 fileName = newUrl.substringAfterLast("/")
             }
