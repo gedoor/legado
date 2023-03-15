@@ -39,7 +39,7 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
             data is ByteArray -> func.invoke(data as ByteArray)
             data is String -> func.invoke(data as String)
             data is InputStream -> func.invoke(data as InputStream)
-            else -> null
+            else -> throw IllegalArgumentException("Unexpected data input")
         }
     }
     
