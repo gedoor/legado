@@ -31,23 +31,24 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
         }
     }
 
-    private fun <T> cryptoDelegate(
-        data: Any,
-        func: (Any) -> T
-    ): T {
-        return when {
-            data is ByteArray -> func.invoke(data as ByteArray)
-            data is String -> func.invoke(data as String)
-            data is InputStream -> func.invoke(data as InputStream)
-            else -> throw IllegalArgumentException("Unexpected data input")
-        }
-    }
+    fun decrypt(data: ByteArray, keyType: Int): ByteArray? = decrypt(data, getKeyType(keyType))
+    fun decrypt(data: String, keyType: Int): ByteArray? = decrypt(data, getKeyType(keyType))
+    fun decrypt(data: InputStream, keyType: Int): ByteArray? = decrypt(data, getKeyType(keyType))
+
+    fun decryptStr(data: ByteArray, keyType: Int): String? = decryptStr(data, getKeyType(keyType)) }
+    fun decryptStr(data: String, keyType: Int): String? = decryptStr(data, getKeyType(keyType)) }
+    fun decryptStr(data: InputStream, keyType: Int): String? = decryptStr(data, getKeyType(keyType)) }
     
-    fun decrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data) { decrypt(it, getKeyType(keyType)) }
-    fun decryptStr(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data) { decryptStr(it, getKeyType(keyType)) }
-    
-    fun encrypt(data: Any, keyType: Int): ByteArray? = cryptoDelegate<ByteArray?>(data) { encrypt(it, getKeyType(keyType)) }
-    fun encryptHex(data: Any, keyType: Int): String? = cryptoDelegate<String?>(data) { encryptHex(it, getKeyType(keyType)) }
-    fun encryptBase64(data: Any, keyType: Int): String? =cryptoDelegate<String?>(data) { encryptBase64(it, getKeyType(keyType)) }
+    fun encrypt(data: ByteArray, keyType: Int): ByteArray? = encrypt(data, getKeyType(keyType)) }
+    fun encrypt(data: String, keyType: Int): ByteArray? = encrypt(data, getKeyType(keyType)) }
+    fun encrypt(data: InputStream, keyType: Int): ByteArray? = encrypt(data, getKeyType(keyType)) }
+
+    fun encryptHex(data: ByteArray, keyType: Int): String? = encryptHex(data, getKeyType(keyType)) }
+    fun encryptHex(data: String, keyType: Int): String? = encryptHex(data, getKeyType(keyType)) }
+    fun encryptHex(data: InputStream, keyType: Int): String? = encryptHex(data, getKeyType(keyType)) }
+
+    fun encryptBase64(data: Any, keyType: Int): String? =encryptBase64(data, getKeyType(keyType)) }
+    fun encryptBase64(data: Any, keyType: Int): String? =encryptBase64(data, getKeyType(keyType)) }
+    fun encryptBase64(data: Any, keyType: Int): String? =encryptBase64(data, getKeyType(keyType)) }
 
 }
