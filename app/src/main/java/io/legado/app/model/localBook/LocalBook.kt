@@ -266,13 +266,6 @@ object LocalBook {
         return saveBookFile(inputStream, fileName)
     }
 
-    /**
-     * 分析下载文件类书源的下载链接的文件后缀
-     */
-    fun parseFileSuffix(url: String): String {
-        return UrlUtil.getSuffix(url, "ext")
-    }
-
     fun saveBookFile(
         inputStream: InputStream,
         fileName: String
