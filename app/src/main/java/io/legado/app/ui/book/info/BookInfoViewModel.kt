@@ -242,9 +242,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val fileName = "${book.name} 作者：${book.author}"
             book.downloadUrls!!.map {
                 val mFileName = UrlUtil.getFileName(it) ?: fileName
-                val isSupportedFile = AppPattern.bookFileRegex.matches(mFileName)
-                val isSupportDecompress = AppPattern.archiveFileRegex.matches(mFileName)
-                WebFile(it, mFileName, isSupportedFile, isSupportDecompress)
+                WebFile(it, mFileName)
             }
         }.onError {
             context.toastOnUi("LoadWebFileError\n${it.localizedMessage}")
@@ -259,10 +257,18 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             waitDialogData.postValue(true)
             if (webFile.isSupported) {
-                val book = LocalBook.importFileOnLine(webFile.url, webFile.name, bookSource)
+                val book = LocalBook.importFileOnLine(
+                    webFile.url,
+                    bookData.value!!.getExportFileName(webFile.suffix),
+                    bookSource
+                )
                 changeToLocalBook(book)
             } else {
-                LocalBook.saveBookFile(webFile.url, webFile.name, bookSource)
+                LocalBook.saveBookFile(
+                    webFile.url,
+                    bookData.value!!.getExportFileName(webFile.suffix),
+                    bookSource
+                )
             }
         }.onSuccess {
             @Suppress("unchecked_cast")
@@ -437,14 +443,21 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     data class WebFile(
         val url: String,
         val name: String,
-        // txt epub umd pdf等文件
-        val isSupported: Boolean,
-        // 压缩包形式的txt epub umd pdf文件
-        val isSupportDecompress: Boolean
     ) {
+
         override fun toString(): String {
             return name
         }
+
+        // 后缀
+        val suffix: String = name.substringAfterLast(".")
+
+        // txt epub umd pdf等文件
+        val isSupported: Boolean = AppPattern.bookFileRegex.matches(name)
+
+        // 压缩包形式的txt epub umd pdf文件
+        val isSupportDecompress: Boolean = AppPattern.archiveFileRegex.matches(name)
+
     }
 
 }

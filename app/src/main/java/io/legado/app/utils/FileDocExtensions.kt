@@ -211,6 +211,10 @@ fun FileDoc.createFolderIfNotExist(
     }
 }
 
+fun FileDoc.openInputStream(): Result<InputStream> {
+    return uri.inputStream(appCtx)
+}
+
 fun FileDoc.exists(
     fileName: String,
     vararg subDirs: String

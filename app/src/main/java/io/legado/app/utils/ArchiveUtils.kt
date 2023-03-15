@@ -54,7 +54,7 @@ object ArchiveUtils {
         val name = archiveFileDoc.name
         val workPathFileDoc = getCacheFolderFileDoc(name, path)
         val workPath = workPathFileDoc.toString()
-        return archiveFileDoc.uri.inputStream(appCtx).getOrThrow().use {
+        return archiveFileDoc.openInputStream().getOrThrow().use {
             when {
                 name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(it, workPath)
                 name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(it, workPath)
