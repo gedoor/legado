@@ -197,7 +197,7 @@ java.createSymmetricCrypto(transformation, key, iv)
 >解密加密参数 data支持ByteArray|Base64String|HexString|InputStream
 ```
 //解密为ByteArray String
-cipher.decrypt(data)
+cipher.decrypt(data, charset: String? = "UTF8")
 cipher.decryptStr(data)
 //加密为ByteArray Base64字符 HEX字符
 cipher.encrypt(data)
