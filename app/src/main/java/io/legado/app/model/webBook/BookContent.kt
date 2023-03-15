@@ -150,7 +150,7 @@ object BookContent {
         val nextUrlList = arrayListOf<String>()
         analyzeRule.chapter = chapter
         //获取正文
-        var content = analyzeRule.getString(contentRule.content)
+        var content = analyzeRule.getString(contentRule.content, unescape = false)
         content = HtmlFormatter.formatKeepImg(content, rUrl)
         //获取下一页链接
         val nextUrlRule = contentRule.nextContentUrl

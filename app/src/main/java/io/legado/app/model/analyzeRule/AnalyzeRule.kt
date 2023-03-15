@@ -201,11 +201,18 @@ class AnalyzeRule(
         return getString(ruleList, mContent, isUrl)
     }
 
+    fun getString(ruleStr: String?, unescape: Boolean): String {
+        if (TextUtils.isEmpty(ruleStr)) return ""
+        val ruleList = splitSourceRule(ruleStr)
+        return getString(ruleList, unescape = unescape)
+    }
+
     @JvmOverloads
     fun getString(
         ruleList: List<SourceRule>,
         mContent: Any? = null,
-        isUrl: Boolean = false
+        isUrl: Boolean = false,
+        unescape: Boolean = true
     ): String {
         var result: Any? = null
         val content = mContent ?: this.content
@@ -239,13 +246,15 @@ class AnalyzeRule(
             }
         }
         if (result == null) result = ""
-        val str = kotlin.runCatching {
-            Entities.unescape(result.toString())
-        }.onFailure {
-            log("Entities.unescape() error\n${it.localizedMessage}")
-        }.getOrElse {
-            result.toString()
-        }
+        val str = if (unescape) {
+            kotlin.runCatching {
+                Entities.unescape(result.toString())
+            }.onFailure {
+                log("Entities.unescape() error\n${it.localizedMessage}")
+            }.getOrElse {
+                result.toString()
+            }
+        } else result.toString()
         if (isUrl) {
             return if (str.isBlank()) {
                 baseUrl ?: ""
