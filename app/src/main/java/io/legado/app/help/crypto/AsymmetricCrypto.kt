@@ -23,33 +23,32 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
     }
     fun setPublicKey(key: String): AsymmetricCrypto = setPublicKey(key.encodeToByteArray())
 
-    private fun getKeyType(keyType: Int): KeyType {
+    private fun getKeyType(usePublicKey: Boolean): KeyType {
         return when {
-            keyType == 1 -> KeyType.PublicKey
-            keyType == 2 -> KeyType.PrivateKey
-            else -> throw IllegalArgumentException("Unexpected keyType:\n 1 -> use publicKey\n 2 -> use PrivateKey")
+            usePublicKey == true -> KeyType.PublicKey
+            else -> KeyType.PrivateKey
         }
     }
 
-fun decrypt(data: ByteArray, keyType: Int): ByteArray = decrypt(data, getKeyType(keyType))
-    fun decrypt(data: String, keyType: Int): ByteArray = decrypt(data, getKeyType(keyType))
-    fun decrypt(data: InputStream, keyType: Int): ByteArray = decrypt(data, getKeyType(keyType))
+fun decrypt(data: ByteArray, usePublicKey: Boolean): ByteArray = decrypt(data, getKeyType(usePublicKey))
+    fun decrypt(data: String, usePublicKey: Boolean): ByteArray = decrypt(data, getKeyType(usePublicKeye))
+    fun decrypt(data: InputStream, usePublicKey: Boolean): ByteArray = decrypt(data, getKeyType(usePublicKey))
 
-    fun decryptStr(data: ByteArray, keyType: Int): String = decryptStr(data, getKeyType(keyType))
-    fun decryptStr(data: String, keyType: Int): String = decryptStr(data, getKeyType(keyType))
-    fun decryptStr(data: InputStream, keyType: Int): String = decryptStr(data, getKeyType(keyType))
+    fun decryptStr(data: ByteArray, usePublicKey: Boolean): String = decryptStr(data, getKeyType(usePublicKey))
+    fun decryptStr(data: String, usePublicKey: Boolean): String = decryptStr(data, getKeyType(usePublicKey))
+    fun decryptStr(data: InputStream, usePublicKey: Boolean): String = decryptStr(data, getKeyType(usePublicKey))
     
-    fun encrypt(data: ByteArray, keyType: Int): ByteArray = encrypt(data, getKeyType(keyType))
-    fun encrypt(data: String, keyType: Int): ByteArray = encrypt(data, getKeyType(keyType))
-    fun encrypt(data: InputStream, keyType: Int): ByteArray = encrypt(data, getKeyType(keyType))
+    fun encrypt(data: ByteArray, usePublicKey: Boolean): ByteArray = encrypt(data, getKeyType(usePublicKey))
+    fun encrypt(data: String, usePublicKey: Boolean): ByteArray = encrypt(data, getKeyType(usePublicKey))
+    fun encrypt(data: InputStream, usePublicKey: Boolean): ByteArray = encrypt(data, getKeyType(usePublicKey))
 
-    fun encryptHex(data: ByteArray, keyType: Int): String = encryptHex(data, getKeyType(keyType))
-    fun encryptHex(data: String, keyType: Int): String = encryptHex(data, getKeyType(keyType))
-    fun encryptHex(data: InputStream, keyType: Int): String = encryptHex(data, getKeyType(keyType))
+    fun encryptHex(data: ByteArray, usePublicKey: Boolean): String = encryptHex(data, getKeyType(usePublicKey))
+    fun encryptHex(data: String, usePublicKey: Boolean): String = encryptHex(data, getKeyType(usePublicKey))
+    fun encryptHex(data: InputStream, usePublicKey: Boolean): String = encryptHex(data, getKeyType(usePublicKey))
 
-    fun encryptBase64(data: ByteArray, keyType: Int): String =encryptBase64(data, getKeyType(keyType))
-    fun encryptBase64(data: String, keyType: Int): String =encryptBase64(data, getKeyType(keyType))
-    fun encryptBase64(data: InputStream, keyType: Int): String =encryptBase64(data, getKeyType(keyType))
+    fun encryptBase64(data: ByteArray, usePublicKey: Boolean): String =encryptBase64(data, getKeyType(usePublicKey))
+    fun encryptBase64(data: String, usePublicKey: Boolean): String =encryptBase64(data, getKeyType(usePublicKey))
+    fun encryptBase64(data: InputStream, usePublicKey: Boolean): String =encryptBase64(data, getKeyType(usePublicKey))
 
 
 

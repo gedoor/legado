@@ -197,7 +197,7 @@ java.createSymmetricCrypto(transformation, key, iv)
 >解密加密参数 data支持ByteArray|Base64String|HexString|InputStream
 ```
 //解密为ByteArray String
-cipher.decrypt(data, charset: String? = "UTF8")
+cipher.decrypt(data)
 cipher.decryptStr(data)
 //加密为ByteArray Base64字符 HEX字符
 cipher.encrypt(data)
@@ -215,15 +215,15 @@ java.createAsymmetricCrypto(transformation)
 
 ```
 > 解密加密参数 data支持ByteArray|Base64String|HexString|InputStream  
->  keyType: 1 使用公钥 2 使用私钥
+>  usePublicKey: true 使用公钥 false 使用私钥
 ```
 //解密为ByteArray String
-cipher.decrypt(data, keyType)
-cipher.decryptStr(data, keyType)
+cipher.decrypt(data, usePublicKey)
+cipher.decryptStr(data, usePublicKey)
 //加密为ByteArray Base64字符 HEX字符
-cipher.encrypt(data, keyType)
-cipher.encryptBase64(data, keyType)
-cipher.encryptHex(data, keyType)
+cipher.encrypt(data, usePublicKey)
+cipher.encryptBase64(data, usePublicKey)
+cipher.encryptHex(data, usePublicKey)
 ```
 * 签名
 > 输入参数 key 支持ByteArray|**Utf8String**
