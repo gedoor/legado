@@ -8,7 +8,7 @@ fun setPrivateKey(key: ByteArray): T
 fun setPrivateKey(key: String): T
 
 fun decrypt(data: Any, usePublicKey: Boolean? = true): ByteArray?
-fun decryptStr(data: Any, usePublicKey: Boolean? = true): String?
+fun decryptStr(data: String, usePublicKey: Boolean? = true): String?
 
 fun encrypt(data: Any, usePublicKey: Boolean? = true): ByteArray?
 fun encryptHex(data: Any, usePublicKey: Boolean? = true): String?

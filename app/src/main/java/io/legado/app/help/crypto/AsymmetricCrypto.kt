@@ -41,11 +41,9 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
     }
 
     @JvmOverloads
-    fun decryptStr(data: Any, usePublicKey: Boolean? = true): String {
+    fun decryptStr(data: String, usePublicKey: Boolean? = true): String {
         return when {
-            data is ByteArray -> decryptStr(data, getKeyType(usePublicKey))
             data is String -> decryptStr(data, getKeyType(usePublicKey))
-            data is InputStream -> decryptStr(data, getKeyType(usePublicKey))
             else -> throw IllegalArgumentException("Unexpected input type")
         }
     }
