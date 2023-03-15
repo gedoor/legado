@@ -7,10 +7,10 @@ fun setPublicKey(key: String): T
 fun setPrivateKey(key: ByteArray): T
 fun setPrivateKey(key: String): T
 
-fun decrypt(data: Any, keyType: Int): ByteArray?
-fun decryptStr(data: Any, keyType: Int): String?
+fun decrypt(data: Any, usePublicKey: Boolean? = true): ByteArray?
+fun decryptStr(data: Any, usePublicKey: Boolean? = true): String?
 
-fun encrypt(data: Any, keyType: Int): ByteArray?
-fun encryptHex(data: Any, keyType: Int): String?
-fun encryptBase64(data: Any, keyType: Int): String?
+fun encrypt(data: Any, usePublicKey: Boolean? = true): ByteArray?
+fun encryptHex(data: Any, usePublicKey: Boolean? = true): String?
+fun encryptBase64(data: Any, usePublicKey: Boolean? = true): String?
 ```

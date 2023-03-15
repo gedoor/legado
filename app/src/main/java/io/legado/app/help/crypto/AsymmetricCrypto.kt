@@ -23,33 +23,61 @@ class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
     }
     fun setPublicKey(key: String): AsymmetricCrypto = setPublicKey(key.encodeToByteArray())
 
-    private fun getKeyType(usePublicKey: Boolean): KeyType {
+    private fun getKeyType(usePublicKey: Boolean? = true): KeyType {
         return when {
             usePublicKey == true -> KeyType.PublicKey
             else -> KeyType.PrivateKey
         }
     }
 
-fun decrypt(data: ByteArray, usePublicKey: Boolean): ByteArray = decrypt(data, getKeyType(usePublicKey))
-    fun decrypt(data: String, usePublicKey: Boolean): ByteArray = decrypt(data, getKeyType(usePublicKeye))
-    fun decrypt(data: InputStream, usePublicKey: Boolean): ByteArray = decrypt(data, getKeyType(usePublicKey))
+    @JvmOverloads
+    fun decrypt(data: Any, usePublicKey: Boolean? = true): ByteArray {
+        return {
+            data is ByteArray -> decrypt(data, getKeyType(usePublicKey))
+            data is String -> decrypt(data, getKeyType(usePublicKey))
+            data is InputStream -> decrypt(data, getKeyType(usePublicKey))
+            else -> throw IllegalArgumentException("Unexpected input type")
+        }
+    }
 
-    fun decryptStr(data: ByteArray, usePublicKey: Boolean): String = decryptStr(data, getKeyType(usePublicKey))
-    fun decryptStr(data: String, usePublicKey: Boolean): String = decryptStr(data, getKeyType(usePublicKey))
-    fun decryptStr(data: InputStream, usePublicKey: Boolean): String = decryptStr(data, getKeyType(usePublicKey))
-    
-    fun encrypt(data: ByteArray, usePublicKey: Boolean): ByteArray = encrypt(data, getKeyType(usePublicKey))
-    fun encrypt(data: String, usePublicKey: Boolean): ByteArray = encrypt(data, getKeyType(usePublicKey))
-    fun encrypt(data: InputStream, usePublicKey: Boolean): ByteArray = encrypt(data, getKeyType(usePublicKey))
+    @JvmOverloads
+    fun decryptStr(data: Any, usePublicKey: Boolean? = true): String {
+        return {
+            data is ByteArray -> decryptStr(data, getKeyType(usePublicKey))
+            data is String -> decryptStr(data, getKeyType(usePublicKey))
+            data is InputStream -> decryptStr(data, getKeyType(usePublicKey))
+            else -> throw IllegalArgumentException("Unexpected input type")
+        }
+    }
 
-    fun encryptHex(data: ByteArray, usePublicKey: Boolean): String = encryptHex(data, getKeyType(usePublicKey))
-    fun encryptHex(data: String, usePublicKey: Boolean): String = encryptHex(data, getKeyType(usePublicKey))
-    fun encryptHex(data: InputStream, usePublicKey: Boolean): String = encryptHex(data, getKeyType(usePublicKey))
+    @JvmOverloads
+    fun encrypt(data: Any, usePublicKey: Boolean? = true): ByteArray {
+        return {
+            data is ByteArray -> encrypt(data, getKeyType(usePublicKey))
+            data is String -> encrypt(data, getKeyType(usePublicKey))
+            data is InputStream -> encrypt(data, getKeyType(usePublicKey))
+            else -> throw IllegalArgumentException("Unexpected input type")
+        }
+    }
 
-    fun encryptBase64(data: ByteArray, usePublicKey: Boolean): String =encryptBase64(data, getKeyType(usePublicKey))
-    fun encryptBase64(data: String, usePublicKey: Boolean): String =encryptBase64(data, getKeyType(usePublicKey))
-    fun encryptBase64(data: InputStream, usePublicKey: Boolean): String =encryptBase64(data, getKeyType(usePublicKey))
+    @JvmOverloads
+    fun encryptHex(data: Any, usePublicKey: Boolean? = true): String {
+        return {
+            data is ByteArray -> encryptHex(data, getKeyType(usePublicKey))
+            data is String -> encryptHex(data, getKeyType(usePublicKey))
+            data is InputStream -> encryptHex(data, getKeyType(usePublicKey))
+            else -> throw IllegalArgumentException("Unexpected input type")
+        }
+    }
 
-
+    @JvmOverloads
+    fun encryptBase64(data: Any, usePublicKey: Boolean? = true): String {
+        return {
+            data is ByteArray -> encryptBase64(data, getKeyType(usePublicKey))
+            data is String -> encryptBase64(data, getKeyType(usePublicKey))
+            data is InputStream -> encryptBase64(data, getKeyType(usePublicKey))
+            else -> throw IllegalArgumentException("Unexpected input type")
+        }
+    }
 
 }

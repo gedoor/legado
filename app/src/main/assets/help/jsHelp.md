@@ -215,15 +215,19 @@ java.createAsymmetricCrypto(transformation)
 
 ```
 > 解密加密参数 data支持ByteArray|Base64String|HexString|InputStream  
->  usePublicKey: true 使用公钥 false 使用私钥
 ```
 //解密为ByteArray String
-cipher.decrypt(data, usePublicKey)
-cipher.decryptStr(data, usePublicKey)
+cipher.decrypt(data,  usePublicKey: Boolean? = true
+)
+cipher.decryptStr(data,  usePublicKey: Boolean? = true
+)
 //加密为ByteArray Base64字符 HEX字符
-cipher.encrypt(data, usePublicKey)
-cipher.encryptBase64(data, usePublicKey)
-cipher.encryptHex(data, usePublicKey)
+cipher.encrypt(data,  usePublicKey: Boolean? = true
+)
+cipher.encryptBase64(data,  usePublicKey: Boolean? = true
+)
+cipher.encryptHex(data,  usePublicKey: Boolean? = true
+)
 ```
 * 签名
 > 输入参数 key 支持ByteArray|**Utf8String**
