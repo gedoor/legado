@@ -30,14 +30,15 @@ object UrlUtil {
     }
 
     /**
-     * 根据url获取文件名
+     * 根据网络url获取文件名
      */
     fun getFileName(fileUrl: String): String? {
         return kotlin.runCatching {
             var fileName = ""
             val url = URL(fileUrl)
             val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "GET"
+            // head方式
+            conn.requestMethod = "HEAD"
             conn.connect()
 
             // 方法一
@@ -47,18 +48,13 @@ object UrlUtil {
                 fileName =
                     String(
                         fileName.toByteArray(StandardCharsets.ISO_8859_1),
-                        StandardCharsets.UTF_8
+                        StandardCharsets.UTF_8 //?
                     )
             } else {
-                // 方法二
-                var newUrl: String = conn.url.file
+                // 方法二 截取
+                var newUrl: String = url.path ?: return null
                 newUrl = URLDecoder.decode(newUrl, "UTF-8")
-                var pos = newUrl.indexOf('?')
-                if (pos > 0) {
-                    newUrl = newUrl.substring(0, pos)
-                }
-                pos = newUrl.lastIndexOf('/')
-                fileName = newUrl.substring(pos + 1)
+                fileName = newUrl.substringAfterLast("/")
             }
             fileName
         }.getOrNull()
