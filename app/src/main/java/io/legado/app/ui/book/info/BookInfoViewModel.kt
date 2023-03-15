@@ -450,7 +450,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
 
         // 后缀
-        val suffix: String = name.substringAfterLast(".")
+        val suffix: String = UrlUtil.getSuffix(name)
 
         // txt epub umd pdf等文件
         val isSupported: Boolean = AppPattern.bookFileRegex.matches(name)

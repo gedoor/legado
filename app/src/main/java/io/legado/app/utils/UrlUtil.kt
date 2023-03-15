@@ -44,7 +44,7 @@ object UrlUtil {
         // 如果获取到后缀可直接截取链接
         if (getSuffix(fileUrl, "") != "") return fileUrl.substringAfterLast("/")
         return kotlin.runCatching {
-            var fileName: String
+            var fileName: String = ""
             val url = URL(fileUrl)
             val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
             // HEAD方式获取返回头信息
