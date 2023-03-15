@@ -1,6 +1,5 @@
 package io.legado.app.utils.compress
 
-import androidx.annotation.Keep
 import com.github.junrar.Archive
 import com.github.junrar.rarfile.FileHeader
 import java.io.ByteArrayInputStream
@@ -8,7 +7,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
-@Keep
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object RarUtils {
 

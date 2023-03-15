@@ -2,7 +2,6 @@ package io.legado.app.utils.compress
 
 import android.annotation.SuppressLint
 import android.os.ParcelFileDescriptor
-import androidx.annotation.Keep
 import io.legado.app.utils.ParcelFileDescriptorChannel
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry
 import org.apache.commons.compress.archivers.sevenz.SevenZFile
@@ -12,7 +11,6 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.channels.FileChannel
 
-@Keep
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object SevenZipUtils {
 
