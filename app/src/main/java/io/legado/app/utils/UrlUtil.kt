@@ -40,7 +40,7 @@ object UrlUtil {
     /**
      * 根据网络url获取文件信息 文件名
      */
-    fun getFileName(fileUrl: String, headerMap: <String, String>? = null): String? {
+    fun getFileName(fileUrl: String, headerMap: Map<String, String>? = null): String? {
         // 如果获取到后缀可直接截取链接
         if (getSuffix(fileUrl, "") != "") return fileUrl.substringAfterLast("/")
         return kotlin.runCatching {
