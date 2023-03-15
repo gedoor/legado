@@ -66,14 +66,15 @@ object UrlUtil {
                         fileName.toByteArray(StandardCharsets.ISO_8859_1),
                         StandardCharsets.UTF_8 //?
                     )
-            } else if (conn.getHeaderField("Location") != null) {
+            } else {
                 // Location跳转到实际的下载链接
                 var newUrl: String = conn.url.path ?: return null
                 newUrl = URLDecoder.decode(newUrl, "UTF-8")
                 if (getSuffix(newUrl, "") != "") {
                     fileName = newUrl.substringAfterLast("/")
                 }
-            } else {
+            }
+            if (fileName == "") {
                 // 其余情况 返回响应头
                 val headers = conn.getHeaderFields()
                 val headersString = buildString {
@@ -86,7 +87,7 @@ object UrlUtil {
                         }
                     }
                 }
-                AppLog.putDebug("Cannot obtain URL file name:\n$headersString")
+                AppLog.put("Cannot obtain URL file name:\n$headersString")
             }
             fileName
         }.getOrNull()
