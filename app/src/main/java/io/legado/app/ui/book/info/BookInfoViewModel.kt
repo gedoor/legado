@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.github.junrar.exception.UnsupportedRarV5Exception
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
@@ -293,8 +294,13 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 AppPattern.bookFileRegex.matches(it.name)
             }
         }.onError {
-            AppLog.put("DeCompress Error:\n${it.localizedMessage}", it)
-            context.toastOnUi("DeCompress Error:\n${it.localizedMessage}")
+            when (it) {
+                is UnsupportedRarV5Exception -> context.toastOnUi("暂不支持 rar v5 解压")
+                else -> {
+                    AppLog.put("DeCompress Error:\n${it.localizedMessage}", it)
+                    context.toastOnUi("DeCompress Error:\n${it.localizedMessage}")
+                }
+            }
         }.onSuccess {
             onSuccess.invoke(it)
         }
