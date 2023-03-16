@@ -58,7 +58,7 @@ object UrlUtil {
         }.getOrNull()
     }
 
-    private getFileNameFromResponseHeader(
+    private fun getFileNameFromResponseHeader(
         url: URL,
         headerMap: Map<String, String>? = null
     ): String? {
