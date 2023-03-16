@@ -338,20 +338,23 @@ class BookshelfManageActivity :
 
     override fun deleteBook(book: Book) {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            val checkBox = CheckBox(this@BookshelfManageActivity).apply {
-                setText(R.string.delete_book_file)
-                isChecked = LocalConfig.deleteBookOriginal
-            }
-            val view = LinearLayout(this@BookshelfManageActivity).apply {
-                setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
-                addView(checkBox)
-            }
+            var checkBox: CheckBox? = null
             if (book.isLocal) {
+                checkBox = CheckBox(this@BookshelfManageActivity).apply {
+                    setText(R.string.delete_book_file)
+                    isChecked = LocalConfig.deleteBookOriginal
+                }
+                val view = LinearLayout(this@BookshelfManageActivity).apply {
+                    setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                    addView(checkBox)
+                }
                 customView { view }
             }
             okButton {
-                LocalConfig.deleteBookOriginal = checkBox.isChecked
-                viewModel.deleteBook(listOf(book), checkBox.isChecked)
+                if (checkBox != null) {
+                    LocalConfig.deleteBookOriginal = checkBox.isChecked
+                }
+                viewModel.deleteBook(listOf(book), LocalConfig.deleteBookOriginal)
             }
         }
     }
