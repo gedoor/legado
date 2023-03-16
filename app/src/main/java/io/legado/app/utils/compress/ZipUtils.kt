@@ -259,13 +259,15 @@ object ZipUtils {
         zipInputStream: ZipArchiveInputStream,
         filter: ((String) -> Boolean)? = null
     ): List<String> {
-        val fileNames = mutableList<String>()
+        val fileNames = mutableListOf<String>()
         var entry: ArchiveEntry?
         while (zipInputStream.nextEntry.also { entry = it } != null) {
             if (entry!!.isDirectory) {
                 continue
             }
-            fileNames.add(entry!!.name)
+            val fileName = entry!!.name
+            if (filter != null && filter.invoke(fileName))
+            fileNames.add(fileName)
         }
         return fileNames
     }

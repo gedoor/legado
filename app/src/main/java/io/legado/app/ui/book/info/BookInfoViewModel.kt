@@ -289,7 +289,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun getArchiveEntriesName(archiveFileUri: Uri, onSuccess: (List<String>) -> Unit) {
+    fun getArchiveFilesName(archiveFileUri: Uri, onSuccess: (List<String>) -> Unit) {
         execute {
             ArchiveUtils.getArchiveFilesName(archiveFileUri) {
                 AppPattern.bookFileRegex.matches(it)

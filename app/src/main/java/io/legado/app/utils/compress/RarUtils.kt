@@ -113,13 +113,15 @@ object RarUtils {
         archive: Archive,
         filter: ((String) -> Boolean)? = null
     ): List<String> {
-        val fileNames = mutableList<String>()
+        val fileNames = mutableListOf<String>()
         var entry: FileHeader?
         while (archive.nextFileHeader().also { entry = it } != null) {
             if (entry!!.isDirectory) {
                 continue
             }
-            fileNames.add(entry!!.fileName)
+            val fileName = entry!!.fileName
+            if (filter != null && filter.invoke(fileName))
+                fileNames.add(fileName)
         }
         return fileNames
     }

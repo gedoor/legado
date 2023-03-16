@@ -71,7 +71,7 @@ object ArchiveUtils {
     }
 
     /* 遍历目录获取文件名 */
-    fun getArchiveFilesName(fileUri: Uri, filter: ((String) -> Boolean)? = null): List<String> = getArchiveEntriesName(FileDoc.fromUri(fileUri, false), filter)
+    fun getArchiveFilesName(fileUri: Uri, filter: ((String) -> Boolean)? = null): List<String> = getArchiveFilesName(FileDoc.fromUri(fileUri, false), filter)
  
     fun getArchiveFilesName(
         fileDoc: FileDoc,
@@ -82,19 +82,13 @@ object ArchiveUtils {
         return fileDoc.openInputStream().getOrThrow().use {
             when {
                 name.endsWith(".rar", ignoreCase = true) -> {
-                    RarUtils.getFilesName(it) {
-                        filter?.invoke(it)
-                    }
+                    RarUtils.getFilesName(it, filter)
                 }
                 name.endsWith(".zip", ignoreCase = true) -> {
-                    ZipUtils.getFilesName(it) {
-                        filter?.invoke(it)
-                    }
+                    ZipUtils.getFilesName(it, filter)
                 }
                 name.endsWith(".7z", ignoreCase = true) -> {
-                    SevenZipUtils.getFilesName(it) {
-                        filter?.invoke(it)
-                    }
+                    SevenZipUtils.getFilesName(it, filter)
                 }
                 else -> emptyList()
            }

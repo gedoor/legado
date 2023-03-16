@@ -534,7 +534,7 @@ class BookInfoActivity :
             } else if (webFile.isSupportDecompress) {
                 /* 解压筛选后再选择导入项 */
                 viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
-                    viewModel.getArchiveEntriesName(uri) { fileNames ->
+                    viewModel.getArchiveFilesName(uri) { fileNames ->
                         if (fileNames.size == 1) {
                             viewModel.importArchiveBook(uri, fileNames[0]) {
                                 onClick?.invoke(it)
