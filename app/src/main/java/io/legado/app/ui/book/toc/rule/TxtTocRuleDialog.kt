@@ -22,7 +22,6 @@ import io.legado.app.databinding.ItemTocRegexBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.model.ReadBook
 import io.legado.app.ui.association.ImportTxtTocRuleDialog
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
@@ -79,8 +78,6 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         binding.toolBar.setTitle(R.string.txt_toc_rule)
         binding.toolBar.inflateMenu(R.menu.txt_toc_rule)
         binding.toolBar.menu.applyTint(requireContext())
-        binding.toolBar.menu.findItem(R.id.menu_split_long_chapter)
-            ?.isChecked = ReadBook.book?.getSplitLongChapter() == true
         binding.toolBar.setOnMenuItemClickListener(this)
         initView()
         initData()
@@ -140,11 +137,6 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_import_default -> viewModel.importDefault()
-            R.id.menu_split_long_chapter -> {
-                ReadBook.book?.setSplitLongChapter(!item.isChecked)
-                item.isChecked = !item.isChecked
-                if (!item.isChecked) context?.longToastOnUi(R.string.need_more_time_load_content)
-            }
             R.id.menu_help -> showTxtTocRuleHelp()
         }
         return false

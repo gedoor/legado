@@ -262,10 +262,10 @@ class TextFile(private val book: Book) {
 
             }
             toc.lastOrNull()?.let { chapter ->
+                //章节字数太多进行拆分
                 if (chapter.end!! - chapter.start!! > maxLengthWithToc) {
                     val end = chapter.end!!
                     chapter.end = chapter.start
-                    //章节字数太多进行拆分
                     val lastTitle = chapter.title
                     val lastTitleLength = lastTitle.toByteArray(charset).size
                     val chapters = analyze(
