@@ -1,7 +1,7 @@
 package io.legado.app.utils
 
-import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.constant.AppLog
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLDecoder
@@ -47,6 +47,7 @@ object UrlUtil {
     /**
      * 根据网络url获取文件信息 文件名
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     fun getFileName(fileUrl: String, headerMap: Map<String, String>? = null): String? {
         return kotlin.runCatching {
             val url = URL(fileUrl)
@@ -58,6 +59,7 @@ object UrlUtil {
         }.getOrNull()
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     private fun getFileNameFromResponseHeader(
         url: URL,
         headerMap: Map<String, String>? = null
@@ -66,11 +68,11 @@ object UrlUtil {
         val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
         conn.requestMethod = "HEAD"
         // 下载链接可能还需要header才能成功访问
-        headerMap?.forEach { key, value ->
+        headerMap?.forEach { (key, value) ->
             conn.setRequestProperty(key, value)
         }
         // 禁止重定向 否则获取不到响应头返回的Location
-        conn.setInstanceFollowRedirects(false)
+        conn.instanceFollowRedirects = false
         conn.connect()
 
         // val fileSize = conn.getContentLengthLong() / 1024
@@ -109,9 +111,9 @@ object UrlUtil {
             getFileNameFromPath(newUrl)
         } else {
             // 其余情况 返回响应头
-            val headers = conn.getHeaderFields()
+            val headers = conn.headerFields
             val headersString = buildString {
-                headers.forEach { key, value ->
+                headers.forEach { (key, value) ->
                     value.forEach {
                         append(key)
                         append(": ")
