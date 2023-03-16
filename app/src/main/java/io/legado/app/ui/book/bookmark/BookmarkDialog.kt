@@ -61,7 +61,6 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
                     withContext(IO) {
                         appDb.bookmarkDao.insert(bookmark)
                     }
-                    getCallback()?.upBookmark(editPos, bookmark)
                     dismiss()
                 }
             }
@@ -70,24 +69,10 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
                     withContext(IO) {
                         appDb.bookmarkDao.delete(bookmark)
                     }
-                    getCallback()?.deleteBookmark(editPos)
                     dismiss()
                 }
             }
         }
-    }
-
-    private fun getCallback(): Callback? {
-        return (parentFragment as? Callback)
-            ?: activity as? Callback
-    }
-
-    interface Callback {
-
-        fun upBookmark(pos: Int, bookmark: Bookmark)
-
-        fun deleteBookmark(pos: Int)
-
     }
 
 }
