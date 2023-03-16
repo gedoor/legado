@@ -109,7 +109,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                 }.onError {
                     appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
                 }.onFinally {
-                    waitDialog.hide()
+                    waitDialog.dismiss()
                 }
         }
     }
