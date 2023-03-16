@@ -534,13 +534,13 @@ class BookInfoActivity :
             } else if (webFile.isSupportDecompress) {
                 /* 解压筛选后再选择导入项 */
                 viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
-                    viewModel.deCompress(uri) { files ->
-                        if (files.size == 1) {
-                            viewModel.importBook(files[0]) {
+                    viewModel.getArchiveEntriesName(uri) { fileNames ->
+                        if (fileNames.size == 1) {
+                            viewModel.importArchiveBook(uri, fileNames[0]) {
                                 onClick?.invoke(it)
                             }
                         } else {
-                            showDecompressFileImportAlert(files, onClick)
+                            showDecompressFileImportAlert(uri, fileNames, onClick)
                         }
                     }
                 }
@@ -562,19 +562,19 @@ class BookInfoActivity :
     }
 
     private fun showDecompressFileImportAlert(
-        files: List<File>,
+        archiveFileUri: Uri,
+        fileNames: List<String>,
         success: ((Book) -> Unit)? = null
     ) {
-        if (files.isEmpty()) {
+        if (fileNames.isEmpty()) {
             toastOnUi(R.string.unsupport_archivefile_entry)
             return
         }
-        val selectorNames = files.map { it.name }
         selector(
             R.string.import_select_book,
-            selectorNames
-        ) { _, _, index ->
-            viewModel.importBook(files[index]) {
+            fileNames
+        ) { _, name, _ ->
+            viewModel.importArchiveBook(archiveFileUri, name) {
                 success?.invoke(it)
             }
         }

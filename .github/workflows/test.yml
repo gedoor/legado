@@ -2,8 +2,6 @@ name: Test Build
 
 on:
   push:
-    branches:
-      - master
     paths:
       - '**'
       - '!**/assets/**'

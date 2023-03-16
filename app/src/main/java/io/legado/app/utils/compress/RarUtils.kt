@@ -11,60 +11,65 @@ import java.io.InputStream
 object RarUtils {
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(inputStream: InputStream, path: String): List<File> {
-        return unRarToPath(inputStream, File(path))
+    fun unRarToPath(inputStream: InputStream, path: String, filter: ((String) -> Boolean)? = null): List<File> {
+        return unRarToPath(inputStream, File(path), filter)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(byteArray: ByteArray, path: String): List<File> {
-        return unRarToPath(byteArray, File(path))
+    fun unRarToPath(byteArray: ByteArray, path: String, filter: ((String) -> Boolean)? = null): List<File> {
+        return unRarToPath(byteArray, File(path), filter)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(zipPath: String, path: String): List<File> {
-        return unRarToPath(zipPath, File(path))
+    fun unRarToPath(zipPath: String, path: String, filter: ((String) -> Boolean)? = null): List<File> {
+        return unRarToPath(zipPath, File(path), filter)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(file: File, path: String): List<File> {
-        return unRarToPath(file, File(path))
+    fun unRarToPath(file: File, path: String, filter: ((String) -> Boolean)? = null): List<File> {
+        return unRarToPath(file, File(path), filter)
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(inputStream: InputStream, destDir: File?): List<File> {
+    fun unRarToPath(inputStream: InputStream, destDir: File?, filter: ((String) -> Boolean)? = null): List<File> {
         return Archive(inputStream).use {
-            unRarToPath(it, destDir)
+            unRarToPath(it, destDir, filter)
         }
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(byteArray: ByteArray, destDir: File?): List<File> {
+    fun unRarToPath(byteArray: ByteArray, destDir: File?, filter: ((String) -> Boolean)? = null): List<File> {
         return Archive(ByteArrayInputStream(byteArray)).use {
-            unRarToPath(it, destDir)
+            unRarToPath(it, destDir, filter)
         }
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(filePath: String, destDir: File?): List<File> {
+    fun unRarToPath(filePath: String, destDir: File?, filter: ((String) -> Boolean)? = null): List<File> {
         return Archive(File(filePath)).use {
-            unRarToPath(it, destDir)
+            unRarToPath(it, destDir, filter)
         }
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    fun unRarToPath(file: File, destDir: File?): List<File> {
+    fun unRarToPath(file: File, destDir: File?, filter: ((String) -> Boolean)? = null): List<File> {
         return Archive(file).use {
-            unRarToPath(it, destDir)
+            unRarToPath(it, destDir, filter)
         }
     }
 
     @Throws(NullPointerException::class, SecurityException::class)
-    private fun unRarToPath(archive: Archive, destDir: File?): List<File> {
+    private fun unRarToPath(
+        archive: Archive, 
+        destDir: File?,
+        filter: ((String) -> Boolean)? = null
+    ): List<File> {
         destDir ?: throw NullPointerException("解决路径不能为空")
         val files = arrayListOf<File>()
         var entry: FileHeader?
         while (archive.nextFileHeader().also { entry = it } != null) {
-            val entryFile = File(destDir, entry!!.fileName)
+            val entryName = entry!!.fileName
+            val entryFile = File(destDir, entryName)
             if (!entryFile.canonicalPath.startsWith(destDir.canonicalPath)) {
                 throw SecurityException("压缩文件只能解压到指定路径")
             }
@@ -77,6 +82,7 @@ object RarUtils {
             if (entryFile.parentFile?.exists() != true) {
                 entryFile.parentFile?.mkdirs()
             }
+            if (filter != null && !filter.invoke(entryName)) continue
             if (!entryFile.exists()) {
                 entryFile.createNewFile()
                 entryFile.setReadable(true)
@@ -88,6 +94,34 @@ object RarUtils {
             }
         }
         return files
+    }
+
+
+    /* 遍历目录获取所有文件名 */
+    @Throws(NullPointerException::class, SecurityException::class)
+    fun getFilesName(
+        inputStream: InputStream,
+        filter: ((String) -> Boolean)? = null
+    ): List<String> {
+        return Archive(inputStream).use {
+            getFilesName(it, filter)
+        }
+    }
+
+    @Throws(NullPointerException::class, SecurityException::class)
+    private fun getFilesName(
+        archive: Archive,
+        filter: ((String) -> Boolean)? = null
+    ): List<String> {
+        val fileNames = mutableList<String>()
+        var entry: FileHeader?
+        while (archive.nextFileHeader().also { entry = it } != null) {
+            if (entry!!.isDirectory) {
+                continue
+            }
+            fileNames.add(entry!!.fileName)
+        }
+        return fileNames
     }
 
 }

@@ -179,39 +179,44 @@ object ZipUtils {
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(file: File, path: String): List<File> {
+    fun unZipToPath(file: File, path: String, filter: ((String) -> Boolean)? = null): List<File> {
         return FileInputStream(file).use {
-            unZipToPath(it, path)
+            unZipToPath(it, path, filter)
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(file: File, dir: File): List<File> {
+    fun unZipToPath(file: File, dir: File, filter: ((String) -> Boolean)? = null): List<File> {
         return FileInputStream(file).use {
-            unZipToPath(it, dir)
+            unZipToPath(it, dir, filter)
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(inputStream: InputStream, path: String): List<File> {
+    fun unZipToPath(inputStream: InputStream, path: String, filter: ((String) -> Boolean)? = null): List<File> {
         return ZipArchiveInputStream(inputStream).use {
-            unZipToPath(it, File(path))
+            unZipToPath(it, File(path), filter)
         }
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(inputStream: InputStream, dir: File): List<File> {
+    fun unZipToPath(inputStream: InputStream, dir: File, filter: ((String) -> Boolean)? = null): List<File> {
         return ZipArchiveInputStream(inputStream).use {
-            unZipToPath(it, dir)
+            unZipToPath(it, dir, filter)
         }
     }
 
     @Throws(SecurityException::class)
-    private fun unZipToPath(zipInputStream: ZipArchiveInputStream, dir: File): List<File> {
+    private fun unZipToPath(
+        zipInputStream: ZipArchiveInputStream,
+        dir: File,
+        filter: ((String) -> Boolean)? = null
+    ): List<File> {
         val files = arrayListOf<File>()
         var entry: ArchiveEntry?
         while (zipInputStream.nextEntry.also { entry = it } != null) {
-            val entryFile = File(dir, entry!!.name)
+            val entryName = entry!!.name
+            val entryFile = File(dir, entryName)
             if (!entryFile.canonicalPath.startsWith(dir.canonicalPath)) {
                 throw SecurityException("压缩文件只能解压到指定路径")
             }
@@ -224,6 +229,7 @@ object ZipUtils {
             if (entryFile.parentFile?.exists() != true) {
                 entryFile.parentFile?.mkdirs()
             }
+            if (filter != null && !filter.invoke(entryName)) continue
             if (!entryFile.exists()) {
                 entryFile.createNewFile()
                 entryFile.setReadable(true)
@@ -237,6 +243,32 @@ object ZipUtils {
         return files
     }
 
+    /* 遍历目录获取所有文件名 */
+    @Throws(SecurityException::class)
+    fun getFilesName(
+        inputStream: InputStream,
+        filter: ((String) -> Boolean)? = null
+    ): List<String> {
+        return ZipArchiveInputStream(inputStream).use {
+            getFilesName(it, filter)
+        }
+    }
+
+    @Throws(SecurityException::class)
+    private fun getFilesName(
+        zipInputStream: ZipArchiveInputStream,
+        filter: ((String) -> Boolean)? = null
+    ): List<String> {
+        val fileNames = mutableList<String>()
+        var entry: ArchiveEntry?
+        while (zipInputStream.nextEntry.also { entry = it } != null) {
+            if (entry!!.isDirectory) {
+                continue
+            }
+            fileNames.add(entry!!.name)
+        }
+        return fileNames
+    }
 
     /**
      * Return the files' path in ZIP file.

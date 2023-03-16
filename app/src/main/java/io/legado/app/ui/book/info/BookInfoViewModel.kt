@@ -289,17 +289,17 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun deCompress(archiveFileUri: Uri, onSuccess: (List<File>) -> Unit) {
+    fun getArchiveEntriesName(archiveFileUri: Uri, onSuccess: (List<String>) -> Unit) {
         execute {
-            ArchiveUtils.deCompress(archiveFileUri).filter {
-                AppPattern.bookFileRegex.matches(it.name)
+            ArchiveUtils.getArchiveFilesName(archiveFileUri) {
+                AppPattern.bookFileRegex.matches(it)
             }
         }.onError {
             when (it) {
                 is UnsupportedRarV5Exception -> context.toastOnUi("暂不支持 rar v5 解压")
                 else -> {
-                    AppLog.put("DeCompress Error:\n${it.localizedMessage}", it)
-                    context.toastOnUi("DeCompress Error:\n${it.localizedMessage}")
+                    AppLog.put("getArchiveEntriesName Error:\n${it.localizedMessage}", it)
+                    context.toastOnUi("getArchiveEntriesName Error:\n${it.localizedMessage}")
                 }
             }
         }.onSuccess {
@@ -308,19 +308,25 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun importBook(file: File, success: ((Book) -> Unit)? = null) {
+    fun importArchiveBook(
+        archiveFileUri: Uri,
+        archiveEntryName: String,
+        success: ((Book) -> Unit)? = null
+    ) {
         execute {
-            val suffix = file.name.substringAfterLast(".")
-            LocalBook.saveBookFile(
-                FileInputStream(file),
+            val suffix = archiveEntryName.substringAfterLast(".")
+            LocalBook.importArchiveFile(
+                archiveFileUri,
                 bookData.value!!.getExportFileName(suffix)
-            )
+            ) {
+                it.contains(archiveEntryName)
+            }.first()
         }.onSuccess {
-            val book = changeToLocalBook(LocalBook.importFile(it))
+            val book = changeToLocalBook(it)
             success?.invoke(book)
         }.onError {
-            AppLog.put("ImportBook Error:\n${it.localizedMessage}", it)
-            context.toastOnUi("ImportBook Error:\n${it.localizedMessage}")
+            AppLog.put("importArchiveBook Error:\n${it.localizedMessage}", it)
+            context.toastOnUi("importArchiveBook Error:\n${it.localizedMessage}")
         }
     }
 

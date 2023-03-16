@@ -20,48 +20,94 @@ object ArchiveUtils {
 
     fun deCompress(
         archiveUri: Uri,
-        path: String = TEMP_PATH
+        path: String = TEMP_PATH,
+        filter: ((String) -> Boolean)? = null
     ): List<File> {
-        return deCompress(FileDoc.fromUri(archiveUri, false), path)
+        return deCompress(FileDoc.fromUri(archiveUri, false), path, filter)
     }
 
     fun deCompress(
         archivePath: String,
-        path: String = TEMP_PATH
+        path: String = TEMP_PATH,
+        filter: ((String) -> Boolean)? = null
     ): List<File> {
-        return deCompress(Uri.parse(archivePath), path)
+        return deCompress(Uri.parse(archivePath), path, filter)
     }
 
     fun deCompress(
         archiveFile: File,
-        path: String = TEMP_PATH
+        path: String = TEMP_PATH,
+        filter: ((String) -> Boolean)? = null
     ): List<File> {
-        return deCompress(FileDoc.fromFile(archiveFile), path)
+        return deCompress(FileDoc.fromFile(archiveFile), path, filter)
     }
 
     fun deCompress(
         archiveDoc: DocumentFile,
-        path: String = TEMP_PATH
+        path: String = TEMP_PATH,
+        filter: ((String) -> Boolean)? = null
     ): List<File> {
-        return deCompress(FileDoc.fromDocumentFile(archiveDoc), path)
+        return deCompress(FileDoc.fromDocumentFile(archiveDoc), path, filter)
     }
 
     fun deCompress(
         archiveFileDoc: FileDoc,
-        path: String = TEMP_PATH
+        path: String = TEMP_PATH,
+        filter: ((String) -> Boolean)? = null
     ): List<File> {
         if (archiveFileDoc.isDir) throw IllegalArgumentException("Unexpected Folder input")
         val name = archiveFileDoc.name
+        checkAchieve(name)
         val workPathFileDoc = getCacheFolderFileDoc(name, path)
         val workPath = workPathFileDoc.toString()
         return archiveFileDoc.openInputStream().getOrThrow().use {
             when {
-                name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(it, workPath)
-                name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(it, workPath)
-                name.endsWith(".7z", ignoreCase = true) -> SevenZipUtils.un7zToPath(it, workPath)
+                name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(it, workPath, filter)
+                name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(it, workPath, filter)
+                name.endsWith(".7z", ignoreCase = true) -> SevenZipUtils.un7zToPath(it, workPath, filter)
                 else -> throw IllegalArgumentException("Unexpected archive format")
             }
         }
+    }
+
+    /* 遍历目录获取文件名 */
+    fun getArchiveFilesName(fileUri: Uri, filter: ((String) -> Boolean)? = null): List<String> = getArchiveEntriesName(FileDoc.fromUri(fileUri, false), filter)
+ 
+    fun getArchiveFilesName(
+        fileDoc: FileDoc,
+        filter: ((String) -> Boolean)? = null
+    ): List<String> {
+        val name = fileDoc.name
+        checkAchieve(name)
+        return fileDoc.openInputStream().getOrThrow().use {
+            when {
+                name.endsWith(".rar", ignoreCase = true) -> {
+                    RarUtils.getFilesName(it) {
+                        filter?.invoke(it)
+                    }
+                }
+                name.endsWith(".zip", ignoreCase = true) -> {
+                    ZipUtils.getFilesName(it) {
+                        filter?.invoke(it)
+                    }
+                }
+                name.endsWith(".7z", ignoreCase = true) -> {
+                    SevenZipUtils.getFilesName(it) {
+                        filter?.invoke(it)
+                    }
+                }
+                else -> emptyList()
+           }
+        }
+    }
+
+    fun checkAchieve(name: String) {
+        if (
+            name.endsWith(".zip", ignoreCase = true) ||
+            name.endsWith(".rar", ignoreCase = true) ||
+            name.endsWith(".7z", ignoreCase = true)
+        ) return
+        throw IllegalArgumentException("Unexpected file suffix: Only 7z rar zip Accepted")
     }
 
     private fun getCacheFolderFileDoc(

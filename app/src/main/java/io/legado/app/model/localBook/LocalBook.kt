@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import com.script.SimpleBindings
 import io.legado.app.R
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
@@ -31,7 +32,7 @@ import java.util.regex.Pattern
 
 /**
  * 书籍文件导入 目录正文解析
- * 支持在线文件(txt epub umd 压缩文件需要用户解压) 本地文件
+ * 支持在线文件(txt epub umd 压缩文件 本地文件
  */
 object LocalBook {
 
@@ -143,7 +144,6 @@ object LocalBook {
 
     /**
      * 下载在线的文件并自动导入到阅读（txt umd epub)
-     * 压缩文件请先提示用户解压
      */
     fun importFileOnLine(
         str: String,
@@ -186,6 +186,23 @@ object LocalBook {
             appDb.bookChapterDao.delByBook(bookUrl)
         }
         return book
+    }
+
+    fun importArchiveFile(
+        uri: Uri,
+        saveFileName: String,
+        filter: ((String) -> Boolean)? = null
+    ): List<Book> {
+        val files = ArchiveUtils.deCompress(uri, filter = filter)
+        if (files.isEmpty()) throw NoStackTraceException(appCtx.getString(R.string.unsupport_archivefile_entry))
+        return files.map {
+            saveBookFile(
+                    FileInputStream(it),
+                    saveFileName
+            ).let {
+                importFile(it)
+            }
+        }
     }
 
     /**
