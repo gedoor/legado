@@ -87,9 +87,9 @@ object UrlUtil {
             val fileNames = raw.split(";".toRegex()).filter { it.contains("filename") }
             val names = hashSetOf<String>()
             fileNames.forEach {
-                var filename = it.substringAfter("=")
+                var fileName = it.substringAfter("=")
                 if (it.contains("filename*")) {
-                    val data = filename.split("''")
+                    val data = fileName.split("''")
                     names.add(URLDecoder.decode(data[1], data[0]))
                 } else {
                     fileName = fileName
