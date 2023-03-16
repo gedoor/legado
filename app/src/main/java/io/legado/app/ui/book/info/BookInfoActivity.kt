@@ -49,7 +49,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class BookInfoActivity :
     VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
@@ -492,13 +491,9 @@ class BookInfoActivity :
                     noButton()
                 }
             } else {
-                alert(R.string.sure, R.string.sure_del) {
-                    yesButton {
-                        viewModel.delBook {
-                            upTvBookshelf()
-                        }
-                    }
-                    noButton()
+                //网络书籍删除了在退出详情页之前可以重新加入书架,不需要确认,实在不行还有阅读记录,不会找不到
+                viewModel.delBook {
+                    upTvBookshelf()
                 }
             }
         }
