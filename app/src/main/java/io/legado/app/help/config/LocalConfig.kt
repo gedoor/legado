@@ -88,4 +88,11 @@ object LocalConfig :
         return true
     }
 
+    var deleteBookOriginal: Boolean
+        get() = getBoolean("deleteBookOriginal")
+        set(value) {
+            putBoolean("deleteBookOriginal", value)
+        }
+
+
 }

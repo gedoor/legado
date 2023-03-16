@@ -22,6 +22,7 @@ import io.legado.app.databinding.ActivityArrangeBookBinding
 import io.legado.app.help.book.contains
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.group.GroupManageDialog
@@ -283,13 +284,17 @@ class BookshelfManageActivity :
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             val checkBox = CheckBox(this@BookshelfManageActivity).apply {
                 setText(R.string.delete_book_file)
+                isChecked = LocalConfig.deleteBookOriginal
             }
             val view = LinearLayout(this@BookshelfManageActivity).apply {
                 setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
                 addView(checkBox)
             }
             customView { view }
-            okButton { viewModel.deleteBook(adapter.selection, checkBox.isChecked) }
+            okButton {
+                LocalConfig.deleteBookOriginal = checkBox.isChecked
+                viewModel.deleteBook(adapter.selection, checkBox.isChecked)
+            }
             noButton()
         }
     }
@@ -335,6 +340,7 @@ class BookshelfManageActivity :
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             val checkBox = CheckBox(this@BookshelfManageActivity).apply {
                 setText(R.string.delete_book_file)
+                isChecked = LocalConfig.deleteBookOriginal
             }
             val view = LinearLayout(this@BookshelfManageActivity).apply {
                 setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
@@ -344,6 +350,7 @@ class BookshelfManageActivity :
                 customView { view }
             }
             okButton {
+                LocalConfig.deleteBookOriginal = checkBox.isChecked
                 viewModel.deleteBook(listOf(book), checkBox.isChecked)
             }
         }

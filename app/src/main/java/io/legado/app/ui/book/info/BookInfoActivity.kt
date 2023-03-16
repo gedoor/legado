@@ -23,6 +23,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.backgroundColor
@@ -477,6 +478,7 @@ class BookInfoActivity :
                 ) {
                     val checkBox = CheckBox(this@BookInfoActivity).apply {
                         setText(R.string.delete_book_file)
+                        isChecked = LocalConfig.deleteBookOriginal
                     }
                     val view = LinearLayout(this@BookInfoActivity).apply {
                         setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
@@ -484,6 +486,7 @@ class BookInfoActivity :
                     }
                     customView { view }
                     yesButton {
+                        LocalConfig.deleteBookOriginal = checkBox.isChecked
                         viewModel.delBook(checkBox.isChecked) {
                             finish()
                         }
