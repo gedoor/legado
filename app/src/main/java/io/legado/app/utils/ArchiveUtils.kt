@@ -96,9 +96,12 @@ object ArchiveUtils {
         }
     }
 
-    fun checkAchieve(name: String): Boolean {
-        if (archiveFileRegex.matches(name)) return true
-        throw IllegalArgumentException("Unexpected file suffix: Only 7z rar zip Accepted")
+    fun isArchive(name: String): Boolean {
+        return if (archiveFileRegex.matches(name)) true else false
+    }
+    private fun checkAchieve(name: String) {
+        if (!isArchive(name))
+            throw IllegalArgumentException("Unexpected file suffix: Only 7z rar zip Accepted")
     }
 
     private fun getCacheFolderFileDoc(
