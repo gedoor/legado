@@ -50,9 +50,9 @@ object UrlUtil {
     fun getFileName(fileUrl: String, headerMap: Map<String, String>? = null): String? {
         return kotlin.runCatching {
             val url = URL(fileUrl)
-            var fileName: String? = getFileNameFromPath(url, headerMap)
+            var fileName: String? = getFileNameFromPath(url)
             if (fileName == null) {
-                fileName = getFileNameFromResponseHeader(url)
+                fileName = getFileNameFromResponseHeader(url, headerMap)
             }
             fileName
         }.getOrNull()
