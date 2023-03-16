@@ -72,7 +72,7 @@ class ContentProcessor private constructor(
         return contentReplaceRules
     }
 
-    suspend fun getContent(
+    fun getContent(
         book: Book,
         chapter: BookChapter,
         content: String,
@@ -153,7 +153,7 @@ class ContentProcessor private constructor(
         return BookContent(sameTitleRemoved, contents)
     }
 
-    private suspend fun replaceContent(content: String): String {
+    private fun replaceContent(content: String): String {
         var mContent = content
         mContent = mContent.lines().joinToString("\n") { it.trim() }
         getContentReplaceRules().forEach { item ->

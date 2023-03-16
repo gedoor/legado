@@ -83,7 +83,7 @@ data class BookChapter(
         return false
     }
 
-    suspend fun getDisplayTitle(
+    fun getDisplayTitle(
         replaceRules: List<ReplaceRule>? = null,
         useReplace: Boolean = true,
         chineseConvert: Boolean = true,
