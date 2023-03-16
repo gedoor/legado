@@ -62,67 +62,66 @@ object UrlUtil {
         url: URL,
         headerMap: Map<String, String>? = null
     ): String? {
-            // HEAD方式获取链接响应头信息
-            val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "HEAD"
-            // 下载链接可能还需要header才能成功访问
-            headerMap?.forEach { key, value ->
-                conn.setRequestProperty(key, value)
-            }
-            // 禁止重定向 否则获取不到响应头返回的Location
-            conn.setInstanceFollowRedirects(false)
-            conn.connect()
+        // HEAD方式获取链接响应头信息
+        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
+        conn.requestMethod = "HEAD"
+        // 下载链接可能还需要header才能成功访问
+        headerMap?.forEach { key, value ->
+            conn.setRequestProperty(key, value)
+        }
+        // 禁止重定向 否则获取不到响应头返回的Location
+        conn.setInstanceFollowRedirects(false)
+        conn.connect()
 
-            // val fileSize = conn.getContentLengthLong() / 1024
-            /** Content-Disposition 存在三种情况
-             * filename="filename"
-             * filename=filename
-             * filename*=charset''filename
-             */
-            val raw: String? = conn.getHeaderField("Content-Disposition")
-            // Location跳转到实际链接
-            val redirectUrl: String? = conn.getHeaderField("Location")
+        // val fileSize = conn.getContentLengthLong() / 1024
+        /** Content-Disposition 存在三种情况
+         * filename="filename"
+         * filename=filename
+         * filename*=charset''filename
+         */
+        val raw: String? = conn.getHeaderField("Content-Disposition")
+        // Location跳转到实际链接
+        val redirectUrl: String? = conn.getHeaderField("Location")
 
-            return if (raw != null) {
-                val fileNames = raw.split(";".toRegex()).filter { it.contains("filename") }
-                val names = hashSetOf<String>()
-                fileNames.forEach {
-                    var filename = it.substringAfter("=")
-                    if (it.contains("filename*")) {
-                        val data = filename.split("''")
-                        names.add(URLDecoder.decode(data[1], data[0]))
-                    } else {
-                        fileName = fileName
-                            .replace("^\"".toRegex(), "")
-                            .replace("\"$".toRegex(), "")
-                        names.add(
-                                String(
-                                fileName.toByteArray(StandardCharsets.ISO_8859_1),
-                                StandardCharsets.UTF_8
-                            )
+        return if (raw != null) {
+            val fileNames = raw.split(";".toRegex()).filter { it.contains("filename") }
+            val names = hashSetOf<String>()
+            fileNames.forEach {
+                var filename = it.substringAfter("=")
+                if (it.contains("filename*")) {
+                    val data = filename.split("''")
+                    names.add(URLDecoder.decode(data[1], data[0]))
+                } else {
+                    fileName = fileName
+                        .replace("^\"".toRegex(), "")
+                        .replace("\"$".toRegex(), "")
+                    names.add(
+                            String(
+                            fileName.toByteArray(StandardCharsets.ISO_8859_1),
+                            StandardCharsets.UTF_8
                         )
-                    }
-               }
-               names.firstOrNull()
-            } else if (redirectUrl != null) {
-                val newUrl= URL(URLDecoder.decode(redirectUrl, "UTF-8"))
-                getFileNameFromPath(newUrl)
-            } else {
-                // 其余情况 返回响应头
-                val headers = conn.getHeaderFields()
-                val headersString = buildString {
-                    headers.forEach { key, value ->
-                        value.forEach {
-                            append(key)
-                            append(": ")
-                            append(it)
-                            append("\n")
-                        }
+                    )
+                }
+           }
+           names.firstOrNull()
+        } else if (redirectUrl != null) {
+            val newUrl= URL(URLDecoder.decode(redirectUrl, "UTF-8"))
+            getFileNameFromPath(newUrl)
+        } else {
+            // 其余情况 返回响应头
+            val headers = conn.getHeaderFields()
+            val headersString = buildString {
+                headers.forEach { key, value ->
+                    value.forEach {
+                        append(key)
+                        append(": ")
+                        append(it)
+                        append("\n")
                     }
                 }
-                AppLog.put("Cannot obtain URL file name:\n$headersString")
-                null
             }
+            AppLog.put("Cannot obtain URL file name:\n$headersString")
+            null
         }
     }
     
