@@ -259,6 +259,24 @@ class TextFile(private val book: Book) {
                 curOffset += length.toLong()
                 //设置上一章的结尾
                 toc.lastOrNull()?.end = curOffset
+
+            }
+            toc.lastOrNull()?.let { chapter ->
+                if (chapter.end!! - chapter.start!! > maxLengthWithToc) {
+                    val end = chapter.end!!
+                    chapter.end = chapter.start
+                    //章节字数太多进行拆分
+                    val lastTitle = chapter.title
+                    val lastTitleLength = lastTitle.toByteArray(charset).size
+                    val chapters = analyze(
+                        chapter.start!! + lastTitleLength,
+                        end
+                    )
+                    chapters.forEachIndexed { index, bookChapter ->
+                        bookChapter.title = "$lastTitle(${index + 1})"
+                    }
+                    toc.addAll(chapters)
+                }
             }
         }
         System.gc()
