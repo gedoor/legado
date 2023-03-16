@@ -146,6 +146,8 @@ class BookInfoActivity :
             viewModel.bookData.value?.isLocalTxt ?: false
         menu.findItem(R.id.menu_upload)?.isVisible =
             viewModel.bookData.value?.isLocal ?: false
+        menu.findItem(R.id.menu_delete_alert)?.isChecked =
+            LocalConfig.bookInfoDeleteAlert
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -206,7 +208,7 @@ class BookInfoActivity :
                 item.isChecked = !item.isChecked
                 if (!item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
             }
-
+            R.id.menu_delete_alert -> LocalConfig.bookInfoDeleteAlert = !item.isChecked
             R.id.menu_upload -> {
                 viewModel.bookData.value?.let { book ->
                     book.getRemoteUrl()?.let {
@@ -471,32 +473,36 @@ class BookInfoActivity :
     @SuppressLint("InflateParams")
     private fun deleteBook() {
         viewModel.bookData.value?.let {
-            if (it.isLocal) {
+            if (LocalConfig.bookInfoDeleteAlert) {
                 alert(
-                    titleResource = R.string.sure,
+                    titleResource = R.string.draw,
                     messageResource = R.string.sure_del
                 ) {
-                    val checkBox = CheckBox(this@BookInfoActivity).apply {
-                        setText(R.string.delete_book_file)
-                        isChecked = LocalConfig.deleteBookOriginal
+                    var checkBox: CheckBox? = null
+                    if (it.isLocal) {
+                        checkBox = CheckBox(this@BookInfoActivity).apply {
+                            setText(R.string.delete_book_file)
+                            isChecked = LocalConfig.deleteBookOriginal
+                        }
+                        val view = LinearLayout(this@BookInfoActivity).apply {
+                            setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                            addView(checkBox)
+                        }
+                        customView { view }
                     }
-                    val view = LinearLayout(this@BookInfoActivity).apply {
-                        setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
-                        addView(checkBox)
-                    }
-                    customView { view }
                     yesButton {
-                        LocalConfig.deleteBookOriginal = checkBox.isChecked
-                        viewModel.delBook(checkBox.isChecked) {
+                        if (checkBox != null) {
+                            LocalConfig.deleteBookOriginal = checkBox.isChecked
+                        }
+                        viewModel.delBook(LocalConfig.deleteBookOriginal) {
                             finish()
                         }
                     }
                     noButton()
                 }
             } else {
-                //网络书籍删除了在退出详情页之前可以重新加入书架,不需要确认,实在不行还有阅读记录,不会找不到
-                viewModel.delBook {
-                    upTvBookshelf()
+                viewModel.delBook(LocalConfig.deleteBookOriginal) {
+                    finish()
                 }
             }
         }
