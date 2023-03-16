@@ -22,16 +22,14 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.*
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
-import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadBook
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import java.io.File
-import java.io.FileInputStream
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
