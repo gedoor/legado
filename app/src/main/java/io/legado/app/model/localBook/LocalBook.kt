@@ -188,9 +188,10 @@ object LocalBook {
         return book
     }
 
+    /* 导入压缩包内的书籍 */
     fun importArchiveFile(
         uri: Uri,
-        saveFileName: String,
+        saveFileName: String? = null
         filter: ((String) -> Boolean)? = null
     ): List<Book> {
         val files = ArchiveUtils.deCompress(uri, filter = filter)
@@ -198,11 +199,32 @@ object LocalBook {
         return files.map {
             saveBookFile(
                     FileInputStream(it),
-                    saveFileName
+                    saveFileName ?: it.name
             ).let {
                 importFile(it)
             }
         }
+    }
+
+   /* 批量导入 支持自动导入压缩包的支持书籍 */
+    fun importFiles(uris: List<Uri>) {
+        var errorCount = 0
+        uris.forEach { uri ->
+            val fileDoc = FileDoc.fromUri(uri, false)
+            kotlin.runCatching {
+               if (ArchiveUtils.isArchive(fileDoc.name)) {
+                    importArchiveFile(uri) {
+                        it.matches(AppPattern.bookFileRegex)
+                    }
+                } else {
+                    importFile(uri)
+                }
+            }.onFailure {
+                AppLog.put("ImportFile Error:\nFile ${fileDoc.toString()}\n${it.localizedMessage}", it)
+                errorCount = errorCount + 1
+            }
+        }
+        if (errorCount == uris.size) throw NoStackTraceException("ImportFiles Error:\nAll input files occur error")
     }
 
     /**

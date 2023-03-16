@@ -2,6 +2,7 @@ package io.legado.app.utils
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import io.legado.app.constant.AppPattern.archiveFileRegex
 import io.legado.app.utils.compress.RarUtils
 import io.legado.app.utils.compress.SevenZipUtils
 import io.legado.app.utils.compress.ZipUtils
@@ -95,12 +96,8 @@ object ArchiveUtils {
         }
     }
 
-    fun checkAchieve(name: String) {
-        if (
-            name.endsWith(".zip", ignoreCase = true) ||
-            name.endsWith(".rar", ignoreCase = true) ||
-            name.endsWith(".7z", ignoreCase = true)
-        ) return
+    fun checkAchieve(name: String): Boolean {
+        if (archiveFileRegex.matches(name)) return true
         throw IllegalArgumentException("Unexpected file suffix: Only 7z rar zip Accepted")
     }
 

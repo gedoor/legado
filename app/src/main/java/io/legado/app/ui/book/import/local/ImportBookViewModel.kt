@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern.archiveFileRegex
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.PreferKey
 import io.legado.app.model.localBook.LocalBook
@@ -84,9 +85,11 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
 
     fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
         execute {
+            val fileUris = mutableListOf<Uri>()
             uriList.forEach {
-                LocalBook.importFile(Uri.parse(it))
+                fileUris.add(Uri.parse(it))
             }
+            LocalBook.importFiles(fileUris)
         }.onError {
             context.toastOnUi("添加书架失败，请尝试重新选择文件夹")
             AppLog.put("添加书架失败\n${it.localizedMessage}", it)
@@ -118,7 +121,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                 when {
                     item.name.startsWith(".") -> false
                     item.isDir -> true
-                    else -> item.name.matches(bookFileRegex)
+                    else -> item.name.matches(bookFileRegex) || item.name.matches(archiveFileRegex)
                 }
             }
             dataCallback?.setItems(docList!!)
@@ -149,7 +152,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                 }
                 if (docItem.isDir) {
                     scanDoc(docItem, false, scope)
-                } else if (docItem.name.matches(bookFileRegex)) {
+                } else if (docItem.name.matches(bookFileRegex) || docItem.name.matches(archiveFileRegex)
+                ) {
                     list.add(docItem)
                 }
             }
