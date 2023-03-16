@@ -110,6 +110,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            binding.root.hideSoftInput()
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_source, menu)
         return super.onCompatCreateOptionsMenu(menu)

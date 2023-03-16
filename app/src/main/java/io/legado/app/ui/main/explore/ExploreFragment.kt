@@ -23,7 +23,10 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -48,7 +51,6 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private val groups = linkedSetOf<String>()
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
-    private val softKeyBoardChangeListener = SoftKeyBoardChangeListener()
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(binding.titleBar.toolbar)
@@ -56,14 +58,6 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         initRecyclerView()
         initGroupData()
         upExploreData()
-        softKeyBoardChangeListener.attach(requireActivity().window) {
-            binding.root.setPaddingBottom(softKeyBoardChangeListener.keyBoardHeight)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        softKeyBoardChangeListener.unAttach()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
