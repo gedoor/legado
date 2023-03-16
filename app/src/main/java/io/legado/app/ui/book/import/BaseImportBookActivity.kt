@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.import
 
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
 import io.legado.app.R
@@ -12,6 +13,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -37,6 +39,13 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSearchView()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            binding.root.hideSoftInput()
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     /**
