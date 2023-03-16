@@ -167,7 +167,7 @@
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <!-- 书源编辑 -->
+        <!-- 替换规则编辑 -->
         <activity
             android:name=".ui.replace.edit.ReplaceEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"

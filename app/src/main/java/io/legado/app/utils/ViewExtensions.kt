@@ -140,6 +140,10 @@ fun View.screenshot(): Bitmap? {
     }
 }
 
+fun View.setPaddingBottom(bottom: Int) {
+    setPadding(paddingLeft, paddingTop, paddingRight, bottom)
+}
+
 fun SeekBar.progressAdd(int: Int) {
     progress += int
 }
