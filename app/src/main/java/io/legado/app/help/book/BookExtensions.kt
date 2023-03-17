@@ -55,6 +55,19 @@ val Book.isWebFile: Boolean
 val Book.isUpError: Boolean
     get() = isType(BookType.updateError)
 
+val Book.isArchive: Boolean
+    get() = isType(BookType.archive)
+
+val Book.archiveName: String?
+    get() {
+        return if (isArchive) {
+            // local_book::archive.rar
+            origin.substring(BookType.localTag.length + 2)
+        } else {
+            null
+        }
+    }
+
 fun Book.contains(word: String?): Boolean {
     if (word.isNullOrEmpty()) {
         return true
@@ -139,7 +152,7 @@ fun Book.removeLocalUriCache() {
 
 fun Book.getRemoteUrl(): String? {
     if (origin.startsWith(BookType.webDavTag)) {
-        return origin.substring(8)
+        return origin.substring(BookType.webDavTag.length)
     }
     return null
 }
@@ -175,7 +188,7 @@ fun Book.upType() {
             BookSourceType.file -> BookType.webFile
             else -> BookType.text
         }
-        if (origin == "loc_book" || origin.startsWith(BookType.webDavTag)) {
+        if (origin == BookType.localTag || origin.startsWith(BookType.webDavTag)) {
             type = type or BookType.local
         }
     }

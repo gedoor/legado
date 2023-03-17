@@ -190,18 +190,24 @@ object LocalBook {
 
     /* 导入压缩包内的书籍 */
     fun importArchiveFile(
-        uri: Uri,
+        archiveFileUri: Uri,
         saveFileName: String? = null,
         filter: ((String) -> Boolean)? = null
     ): List<Book> {
-        val files = ArchiveUtils.deCompress(uri, filter = filter)
+        val archiveFileDoc = FileDoc.fromUri(archiveFileUri, false)
+        val files = ArchiveUtils.deCompress(archiveFileDoc, filter = filter)
         if (files.isEmpty()) throw NoStackTraceException(appCtx.getString(R.string.unsupport_archivefile_entry))
         return files.map {
             saveBookFile(
                     FileInputStream(it),
                     saveFileName ?: it.name
             ).let {
-                importFile(it)
+                importFile(it).apply {
+                    //附加压缩包文件名 以便判断书籍导入界面压缩包是否导入
+                    origin = "${BookType.localTag}::${archiveFileDoc.name}"
+                    addType(BookType.archive)
+                    save()
+                }
             }
         }
     }
