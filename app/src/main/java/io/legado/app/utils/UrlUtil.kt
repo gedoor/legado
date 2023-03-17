@@ -89,6 +89,7 @@ object UrlUtil {
                     }
                 }
             }
+            AppLog.put("${url.toString()} response header:\n$headersString")
         }
 
         // val fileSize = conn.getContentLengthLong() / 1024
@@ -125,7 +126,7 @@ object UrlUtil {
             val newUrl= URL(URLDecoder.decode(redirectUrl, "UTF-8"))
             getFileNameFromPath(newUrl)
         } else {
-            AppLog.put("Cannot obtain URL file name, enable recordLog fo rdetail")
+            AppLog.put("Cannot obtain URL file name, enable recordLog for detail")
             null
         }
     }
