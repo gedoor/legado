@@ -97,18 +97,6 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun addArchiveToBookShelf(
-        fileDoc: FileDoc,
-        fileName: String,
-        onSuccess: (String) -> Unit
-    ) {
-        LocalBook.importArchiveFile(fileDoc.uri, fileName) {
-            it.contains(fileName)
-        }.firstOrNull()?.run {
-            onSuccess.invoke(bookUrl)
-        }
-    }
-
     fun deleteDoc(uriList: HashSet<String>, finally: () -> Unit) {
         execute {
             uriList.forEach {

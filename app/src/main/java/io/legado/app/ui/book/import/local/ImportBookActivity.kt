@@ -303,11 +303,4 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         }
     }
 
-    override fun addArchiveToBookShelf(
-        fileDoc: FileDoc,
-        fileName: String,
-        onSuccess: (String) -> Unit
-    ) {
-        viewModel.addArchiveToBookShelf(fileDoc, fileName, onSuccess)
-    }
 }

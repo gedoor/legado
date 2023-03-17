@@ -14,6 +14,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.utils.*
@@ -93,7 +94,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         }
     }
 
-    open fun onArchiveFileClick(fileDoc: FileDoc) {
+    protected fun onArchiveFileClick(fileDoc: FileDoc) {
         val fileNames = ArchiveUtils.getArchiveFilesName(fileDoc) {
             it.matches(AppPattern.bookFileRegex)
         }
@@ -122,11 +123,17 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         }
     }
 
-    open fun addArchiveToBookShelf(
+    /* 添加压缩包内指定文件到书架 */
+    private inline fun addArchiveToBookShelf(
         fileDoc: FileDoc,
         fileName: String,
         onSuccess: (String) -> Unit
     ) {
+        LocalBook.importArchiveFile(fileDoc.uri, fileName) {
+            it.contains(fileName)
+        }.firstOrNull()?.run {
+            onSuccess.invoke(bookUrl)
+        }
     }
 
     /* 提示是否重新导入所点击的压缩文件 */
