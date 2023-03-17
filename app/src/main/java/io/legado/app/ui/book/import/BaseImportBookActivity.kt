@@ -112,7 +112,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
             return
         }
         selector(
-            R.string.start_read
+            R.string.start_read,
             fileNames
         ) { _, name, _ ->
             appDb.bookDao.getBookByFileName(name)?.let {
