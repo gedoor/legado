@@ -50,6 +50,7 @@ object LocalBook {
             ?: let {
                 book.removeLocalUriCache()
                 val localArchiveUri = book.getArchiveUri()
+                val webDavUrl = book.getRemoteUrl()
                 if (localArchiveUri != null) {
                     // 重新导入对应的压缩包
                     importArchiveFile(localArchiveUri, book.originName) {
@@ -57,10 +58,12 @@ object LocalBook {
                     }.firstOrNull()?.let {
                         getBookInputStream(it)
                     }
-                } else {
+                } else if (webDavUrl != null) {
                     // 下载远程链接
                     downloadRemoteBook(book)
                     getBookInputStream(book)
+                } else {
+                    null
                 }
             }
         if (inputStream != null) return inputStream
