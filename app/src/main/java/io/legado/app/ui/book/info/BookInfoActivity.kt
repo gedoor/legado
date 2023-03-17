@@ -44,6 +44,7 @@ import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.document.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.dialog.PhotoDialog
+import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -419,22 +420,8 @@ class BookInfoActivity :
                 toastOnUi("书源不存在")
                 return@launch
             }
-            val variable = withContext(IO) { source.getVariable() }
-            alert(R.string.set_source_variable) {
-                setMessage(source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取"))
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = "source variable"
-                    editView.setText(variable)
-                }
-                customView { alertBinding.root }
-                okButton {
-                    viewModel.bookSource?.setVariable(alertBinding.editView.text?.toString())
-                }
-                cancelButton()
-                neutralButton(R.string.delete) {
-                    viewModel.bookSource?.setVariable(null)
-                }
-            }
+            val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+            showDialogFragment(VariableDialog(source.getKey(), comment))
         }
     }
 
