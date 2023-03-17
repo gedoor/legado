@@ -420,7 +420,6 @@ object LocalBook {
             e.printOnDebug()
             AppLog.put("自动下载webDav书籍失败", e)
         }
-        return null
     }
 
 }
