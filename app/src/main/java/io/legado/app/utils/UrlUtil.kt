@@ -82,7 +82,7 @@ object UrlUtil {
             val headersString = buildString {
                 headers.forEach { (key, value) ->
                    value.forEach {
-                       append(key ? "HEAD ${url.toString}")
+                       append(key ?: "HEAD ${url.toString}")
                        append(": ")
                        append(it)
                        append("\n")
