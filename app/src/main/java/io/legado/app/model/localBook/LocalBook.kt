@@ -405,8 +405,8 @@ object LocalBook {
             inputStream.use {
                 if (localBook.isArchive) {
                     // 压缩包
-                    val fileUri = saveBookFile(it, localBook.archiveName)
-                    localBook = importArchiveFile(fileUri, localBook.originName) {
+                    val archiveUri = saveBookFile(it, localBook.archiveName)
+                    localBook = importArchiveFile(archiveUri, localBook.originName) {
                         it.contains(localBook.originName)
                     }.first()
                 } else {
