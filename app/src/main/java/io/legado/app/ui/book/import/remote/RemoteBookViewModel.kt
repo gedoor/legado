@@ -135,8 +135,8 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                             bookWebDav.serverID
                         ).toString()
                     book.save()
-                    remoteBook.isOnBookShelf = true
                 }
+                remoteBook.isOnBookShelf = true
             }
         }.onError {
             AppLog.put("导入出错\n${it.localizedMessage}", it)
