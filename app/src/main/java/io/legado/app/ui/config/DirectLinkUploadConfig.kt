@@ -11,9 +11,7 @@ import io.legado.app.databinding.DialogDirectLinkUploadConfigBinding
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.applyTint
-import io.legado.app.utils.setLayout
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
@@ -51,6 +49,17 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_import_default -> importDefault()
+            R.id.menu_copy_rule -> getRule()?.let { rule ->
+                requireContext().sendToClip(GSON.toJson(rule))
+            }
+            R.id.menu_paste_rule -> runCatching {
+                requireContext().getClipText()!!.let {
+                    val rule = GSON.fromJsonObject<DirectLinkUpload.Rule>(it).getOrThrow()
+                    upView(rule)
+                }
+            }.onFailure {
+                toastOnUi("剪贴板为空或格式不对")
+            }
         }
         return true
     }
