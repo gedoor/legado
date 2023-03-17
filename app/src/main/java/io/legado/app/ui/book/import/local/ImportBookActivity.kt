@@ -11,7 +11,6 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.AppPattern
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
@@ -305,16 +304,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         if (!ArchiveUtils.isArchive(fileDoc.name)) {
             startReadBook(fileDoc.toString())
         } else {
-            val fileNames = ArchiveUtils.getArchiveFilesName(fileDoc) {
-                it.matches(AppPattern.bookFileRegex)
-            }
-            if (fileNames.size == 1) {
-                appDb.bookDao.getBookByFileName(fileNames[0])?.let {
-                    startReadBook(it.bookUrl)
-                }
-            } else {
-                //onArchiveFileClick(fileNames)
-            }
+            onArchiveFileClick(fileDoc)
         }
     }
 
