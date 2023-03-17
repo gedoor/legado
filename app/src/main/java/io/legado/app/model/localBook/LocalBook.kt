@@ -402,8 +402,8 @@ object LocalBook {
             val fileUri = runBlocking {
                 saveBookFile(webdav.downloadInputStream(), localBook.originName)
             if (localBook.isArchive) {
-                importArchiveFile(fileUri, book.originName) {
-                    it.contains(book.originName)
+                importArchiveFile(fileUri, localBook.originName) {
+                    it.contains(localBook.originName)
                 }
             } else {
                 localBook.bookUrl = FileDoc.fromUri(fileUr, false).toString()
