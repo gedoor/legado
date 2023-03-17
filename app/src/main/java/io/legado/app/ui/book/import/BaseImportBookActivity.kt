@@ -8,8 +8,11 @@ import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityImportBookBinding
+import io.legado.app.data.appDb
+import io.legado.app.constant.AppPattern
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.document.HandleFileContract
@@ -87,6 +90,34 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
     protected fun startReadBook(bookUrl: String) {
         startActivity<ReadBookActivity> {
             putExtra("bookUrl", bookUrl)
+        }
+    }
+
+    protected fun onArchiveFileClick(fileDoc: FileDoc) {
+        val fileNames = ArchiveUtils.getArchiveFilesName(fileDoc) {
+            it.matches(AppPattern.bookFileRegex)
+        }
+        if (fileNames.size == 1) {
+            appDb.bookDao.getBookByFileName(fileNames[0])?.let {
+                startReadBook(it.bookUrl)
+            } ?: toastOnUi(R.string.no_book_found_bookshelf)
+        } else {
+            showSelectBookReadAlert(fileNames)
+        }
+    }
+
+    private fun showSelectBookReadAlert(fileNames: List<String>) {
+        if (fileNames.isEmpty()) {
+            toastOnUi(R.string.unsupport_archivefile_entry)
+            return
+        }
+        selector(
+            R.string.start_read,
+            fileNames
+        ) { _, name, _ ->
+            appDb.bookDao.getBookByFileName(name)?.let {
+                startReadBook(it.bookUrl)
+            } ?: toastOnUi(R.string.no_book_found_bookshelf)
         }
     }
 
