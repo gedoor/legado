@@ -98,15 +98,16 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
             it.matches(AppPattern.bookFileRegex)
         }
         if (fileNames.size == 1) {
-            appDb.bookDao.getBookByFileName(fileNames[0])?.let {
+            val name = fileNames[0]
+            appDb.bookDao.getBookByFileName(name)?.let {
                 startReadBook(it.bookUrl)
-            } ?: toastOnUi(R.string.no_book_found_bookshelf)
+            } ?: showImportAlert(fileDoc, name)
         } else {
-            showSelectBookReadAlert(fileNames)
+            showSelectBookReadAlert(fileDoc, fileNames)
         }
     }
 
-    private fun showSelectBookReadAlert(fileNames: List<String>) {
+    private fun showSelectBookReadAlert(fileDoc: FileDoc, fileNames: List<String>) {
         if (fileNames.isEmpty()) {
             toastOnUi(R.string.unsupport_archivefile_entry)
             return
@@ -117,7 +118,29 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         ) { _, name, _ ->
             appDb.bookDao.getBookByFileName(name)?.let {
                 startReadBook(it.bookUrl)
-            } ?: toastOnUi(R.string.no_book_found_bookshelf)
+            } ?: showImportAlert(fileDoc, name)
+        }
+    }
+
+    open fun addArchiveToBookShelf(
+        fileDoc: FileDoc,
+        fileName: String,
+        onSuccess: (String) -> Unit
+    ) {
+    }
+
+    /* 提示是否重新导入所点击的压缩文件 */
+    private fun showImportAlert(fileDoc: FileDoc, fileName: String) {
+        alert(
+            R.string.draw,
+            R.string.no_book_found_bookshelf
+        ) {
+            okButton {
+                addArchiveToBookShelf(fileDoc, fileName) {
+                    startReadBook(it)
+                }
+            }
+            noButton()
         }
     }
 
