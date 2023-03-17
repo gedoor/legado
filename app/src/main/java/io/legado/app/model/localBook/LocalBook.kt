@@ -406,9 +406,9 @@ object LocalBook {
                 if (localBook.isArchive) {
                     // 压缩包
                     val fileUri = saveBookFile(it, localBook.archiveName)
-                    importArchiveFile(fileUri, localBook.originName) {
+                    localBook = importArchiveFile(fileUri, localBook.originName) {
                         it.contains(localBook.originName)
-                    }
+                    }.first()
                 } else {
                     // txt epub pdf umd
                     val fileUri = saveBookFile(it, localBook.originName)
