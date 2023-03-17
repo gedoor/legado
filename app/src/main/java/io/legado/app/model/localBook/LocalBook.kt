@@ -388,7 +388,7 @@ object LocalBook {
     //下载book对应的远程文件 并更新Book
     private fun downloadRemoteBook(localBook: Book) {
         val webDavUrl = localBook.getRemoteUrl()
-        if (webDavUrl.isNullOrBlank()) return null
+        if (webDavUrl.isNullOrBlank()) throw NoStackTraceException("Book file is not webDav File")
         try {
             AppConfig.defaultBookTreeUri
                 ?: throw NoBooksDirException()
