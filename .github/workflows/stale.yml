@@ -13,7 +13,7 @@ jobs:
   stale:
 
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'gedoor' }}
+    if: ${{ github.repository == 'gedoor/legado' }}
     permissions:
       issues: write
 
