@@ -355,7 +355,7 @@ object DatabaseMigrations {
             db.execSQL(
                 """
                 update books set type = type | ${BookType.local}
-                where origin = '${BookType.localTag}' or origin like '${BookType.webDavTag}%'
+                where origin like '${BookType.localTag}%' or origin like '${BookType.webDavTag}%'
             """.trimIndent()
             )
         }
