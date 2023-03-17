@@ -37,7 +37,7 @@ object DirectLinkUpload {
         return downloadUrl
     }
 
-    private val defaultRules: List<Rule> by lazy {
+    val defaultRules: List<Rule> by lazy {
         val json = String(
             appCtx.assets.open("defaultData${File.separator}directLinkUpload.json")
                 .readBytes()
@@ -54,8 +54,7 @@ object DirectLinkUpload {
         return GSON.fromJsonObject<Rule>(json).getOrNull()
     }
 
-    fun putConfig(uploadUrl: String, downloadUrlRule: String, summary: String?) {
-        val rule = Rule(uploadUrl, downloadUrlRule, summary)
+    fun putConfig(rule: Rule) {
         ACache.get(cacheDir = false).put(ruleFileName, GSON.toJson(rule))
     }
 
@@ -63,7 +62,7 @@ object DirectLinkUpload {
         ACache.get(cacheDir = false).remove(ruleFileName)
     }
 
-    fun getSummary(): String? {
+    fun getSummary(): String {
         return getRule().summary
     }
 
@@ -71,7 +70,13 @@ object DirectLinkUpload {
     data class Rule(
         var uploadUrl: String,
         var downloadUrlRule: String,
-        var summary: String?
-    )
+        var summary: String
+    ) {
+
+        override fun toString(): String {
+            return summary
+        }
+
+    }
 
 }

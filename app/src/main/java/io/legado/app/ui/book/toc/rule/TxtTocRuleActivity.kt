@@ -58,9 +58,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
         it.uri?.let { uri ->
             alert(R.string.export_success) {
                 if (uri.toString().isAbsUrl()) {
-                    DirectLinkUpload.getSummary()?.let { summary ->
-                        setMessage(summary)
-                    }
+                    setMessage(DirectLinkUpload.getSummary())
                 }
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                     editView.hint = getString(R.string.path)
