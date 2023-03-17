@@ -77,6 +77,21 @@ object UrlUtil {
         conn.instanceFollowRedirects = false
         conn.connect()
 
+        if (AppConfig.recordLog || BuildConfig.DEBUG) {
+            val headers = conn.headerFields
+            val headersString = buildString {
+                headers.forEach { (key, value) ->
+                   value.forEach {
+                       append(key ? "HEAD ${url.toString}")
+                       append(": ")
+                       append(it)
+                       append("\n")
+                   }
+               }
+            }
+            AppLog.put("${url.toString()} response header:\n$headersString")
+        }
+
         // val fileSize = conn.getContentLengthLong() / 1024
         /** Content-Disposition 存在三种情况 文件名应该用引号 有些用空格
          * filename="filename"
@@ -114,21 +129,7 @@ object UrlUtil {
             val newUrl= URL(URLDecoder.decode(redirectUrl, "UTF-8"))
             getFileNameFromPath(newUrl)
         } else {
-            AppLog.put("Cannot obtain URL file name, enable recordLog for detail")
-            if (AppConfig.recordLog || BuildConfig.DEBUG) {
-                val headers = conn.headerFields
-                val headersString = buildString {
-                    headers.forEach { (key, value) ->
-                       value.forEach {
-                           append(key)
-                           append(": ")
-                           append(it)
-                           append("\n")
-                       }
-                   }
-                }
-                AppLog.put("${url.toString()} response header:\n$headersString")
-            }
+            AppLog.put("Cannot obtain URL file name, enable recordLog for response header")
             null
         }
     }
