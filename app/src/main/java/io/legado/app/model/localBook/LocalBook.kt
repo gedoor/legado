@@ -399,16 +399,22 @@ object LocalBook {
                 AppWebDav.authorization?.let { WebDav(webDavUrl, it) }
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
             }
-            val fileUri = runBlocking {
-                saveBookFile(webdav.downloadInputStream(), localBook.originName)
+            val InputStream = runBlocking {
+                webdav.downloadInputStream()
             }
-            if (localBook.isArchive) {
-                importArchiveFile(fileUri, localBook.originName) {
-                    it.contains(localBook.originName)
+            InputStream.use {
+                if (localBook.isArchive) {
+                    // 压缩包
+                    val fileUri = saveBookFile(it, localBook.archiveName)
+                    importArchiveFile(fileUri, localBook.originName) {
+                        it.contains(localBook.originName)
+                    }
+                } else {
+                    // txt epub pdf umd
+                    val fileUri = saveBookFile(it, localBook.originName)
+                    localBook.bookUrl = FileDoc.fromUri(fileUri, false).toString()
+                    localBook.save()
                 }
-            } else {
-                localBook.bookUrl = FileDoc.fromUri(fileUr, false).toString()
-                localBook.save()
             }
         } catch (e: Exception) {
             e.printOnDebug()

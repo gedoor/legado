@@ -58,6 +58,14 @@ val Book.isUpError: Boolean
 val Book.isArchive: Boolean
     get() = isType(BookType.archive)
 
+val Book.archiveName: String
+    get() {
+        if (!isArchive) throw NoStackTraceException("Book is not deCompressed from archive")
+        // local_book::archive.rar
+        // webDav::https://...../archive.rar
+        return origin.substringAfter("::").substringAfterLast("/")
+    }
+
 fun Book.contains(word: String?): Boolean {
     if (word.isNullOrEmpty()) {
         return true
@@ -132,13 +140,12 @@ fun Book.getLocalUri(): Uri {
     return uri
 }
 
+
 fun Book.getArchiveUri(): Uri? {
     val defaultBookDir = AppConfig.defaultBookTreeUri
     return if (isArchive && !defaultBookDir.isNullOrBlank()) {
-        // local_book::archive.rar
-        // webDav::https://...../archive.rar
-        val archiveFileName = origin.substringAfter("::").substringAfterLast("/")
-        FileDoc.fromUri(Uri.parse(defaultBookDir), true).find(archiveFileName)?.uri
+        FileDoc.fromUri(Uri.parse(defaultBookDir), true)
+            .find(archiveName)?.uri
     } else {
         null
     }
