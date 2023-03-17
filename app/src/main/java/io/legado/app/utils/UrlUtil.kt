@@ -1,5 +1,7 @@
 package io.legado.app.utils
 
+import io.legado.app.BuildConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.constant.AppLog
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import java.net.HttpURLConnection
@@ -75,11 +77,24 @@ object UrlUtil {
         conn.instanceFollowRedirects = false
         conn.connect()
 
+        if (AppConfig.recordLog || BuildConfig.DEBUG) {
+            val headers = conn.headerFields
+            val headersString = buildString {
+                headers.forEach { (key, value) ->
+                    value.forEach {
+                        append(key)
+                        append(": ")
+                        append(it)
+                        append("\n")
+                    }
+                }
+            }
+        }
+
         // val fileSize = conn.getContentLengthLong() / 1024
-        /** Content-Disposition 存在三种情况
+        /** Content-Disposition 存在三种情况 文件名应该用引号 有些用空格
          * filename="filename"
-         * filename=filename
-         * filename*=charset''filename
+         * filename*="charset''filename"
          */
         val raw: String? = conn.getHeaderField("Content-Disposition")
         // Location跳转到实际链接
@@ -90,13 +105,13 @@ object UrlUtil {
             val names = hashSetOf<String>()
             fileNames.forEach {
                 var fileName = it.substringAfter("=")
+                    .trim()
+                    .replace("^\"".toRegex(), "")
+                    .replace("\"$".toRegex(), "")
                 if (it.contains("filename*")) {
                     val data = fileName.split("''")
                     names.add(URLDecoder.decode(data[1], data[0]))
                 } else {
-                    fileName = fileName
-                        .replace("^\"".toRegex(), "")
-                        .replace("\"$".toRegex(), "")
                     names.add(
                             String(
                             fileName.toByteArray(StandardCharsets.ISO_8859_1),
@@ -110,19 +125,7 @@ object UrlUtil {
             val newUrl= URL(URLDecoder.decode(redirectUrl, "UTF-8"))
             getFileNameFromPath(newUrl)
         } else {
-            // 其余情况 返回响应头
-            val headers = conn.headerFields
-            val headersString = buildString {
-                headers.forEach { (key, value) ->
-                    value.forEach {
-                        append(key)
-                        append(": ")
-                        append(it)
-                        append("\n")
-                    }
-                }
-            }
-            AppLog.put("Cannot obtain URL file name:\n$headersString")
+            AppLog.put("Cannot obtain URL file name, enable recordLog fo rdetail")
             null
         }
     }

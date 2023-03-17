@@ -93,7 +93,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         }
     }
 
-    protected fun onArchiveFileClick(fileDoc: FileDoc) {
+    open fun onArchiveFileClick(fileDoc: FileDoc) {
         val fileNames = ArchiveUtils.getArchiveFilesName(fileDoc) {
             it.matches(AppPattern.bookFileRegex)
         }
