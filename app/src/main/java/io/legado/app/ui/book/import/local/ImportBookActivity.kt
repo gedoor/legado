@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
-import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
@@ -49,7 +48,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        searchView.queryHint = getString(R.string.screen) + "-" + getString(R.string.local_book)
+        searchView.queryHint = getString(R.string.screen) + " • " + getString(R.string.local_book)
         launch {
             initView()
             initEvent()
