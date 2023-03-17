@@ -132,11 +132,6 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
             initRootDoc()
         }
         launch {
-            appDb.bookDao.flowLocal().conflate().collect {
-                adapter.upBookHas(it)
-            }
-        }
-        launch {
             viewModel.dataFlow.conflate().collect { docs ->
                 adapter.setItems(docs)
             }

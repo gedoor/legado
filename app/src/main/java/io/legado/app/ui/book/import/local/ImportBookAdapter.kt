@@ -12,6 +12,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.help.book.archiveName
 import io.legado.app.help.book.isArchive
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
 
 
@@ -19,7 +20,6 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     RecyclerAdapter<FileDoc, ItemImportBookBinding>(context) {
     val selectedUris = hashSetOf<String>()
     var checkableCount = 0
-    private val bookOrArchiveNamesOnBookShelf = arrayListOf<String>()
 
     override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding {
         return ItemImportBookBinding.inflate(inflater, parent, false)
@@ -87,26 +87,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
     }
 
     private fun isOnBookShelf(fileDoc: FileDoc): Boolean {
-        return bookOrArchiveNamesOnBookShelf.contains(fileDoc.name)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun upBookHas(books: List<Book>) {
-        bookOrArchiveNamesOnBookShelf.clear()
-        books.forEach {
-            if (it.isArchive) {
-                bookOrArchiveNamesOnBookShelf.add(
-                    it.archiveName!!
-                )
-            } else {
-                val path = Uri.decode(it.bookUrl)
-                bookOrArchiveNamesOnBookShelf.add(
-                    FileUtils.getName(path)
-                )
-            }
-        }
-        notifyDataSetChanged()
-        upCheckableCount()
+        return LocalBook.isOnBookShelf(fileDoc.name)
     }
 
     private fun upCheckableCount() {
