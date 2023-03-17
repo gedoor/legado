@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.import.remote
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,15 +11,16 @@ import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.Book
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.ArchiveUtils
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.find
 import io.legado.app.utils.showDialogFragment
@@ -210,7 +212,7 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
             R.string.archive_not_found
         ) {
             okButton {
-                viewModel.addToBookshelf(hashSetOf<RemoteBook>(remoteBook)) {
+                viewModel.addToBookshelf(hashSetOf(remoteBook)) {
                     onDownloadFinish?.invoke()
                 }
             }
