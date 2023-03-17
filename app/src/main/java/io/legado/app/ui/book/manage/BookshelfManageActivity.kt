@@ -27,6 +27,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.widget.SelectActionBar
@@ -62,7 +63,9 @@ class BookshelfManageActivity :
     private val itemTouchCallback by lazy { ItemTouchCallback(adapter) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
-    private var searchView: SearchView? = null
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private var books: List<Book>? = null
     private val waitDialog by lazy { WaitDialog(this) }
 
@@ -73,8 +76,9 @@ class BookshelfManageActivity :
                 appDb.bookGroupDao.getByID(viewModel.groupId)?.groupName
                     ?: getString(R.string.no_group)
             }
-            binding.titleBar.subtitle = viewModel.groupName
+            upTitle()
         }
+        initSearchView()
         initRecyclerView()
         initOtherView()
         initGroupData()
@@ -109,7 +113,6 @@ class BookshelfManageActivity :
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.bookshelf_manage, menu)
-        initSearchView(menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -131,40 +134,26 @@ class BookshelfManageActivity :
         selectGroup(groupRequestCode, 0)
     }
 
-    private fun showTitle() {
-        binding.titleBar.title = getString(R.string.bookshelf_management)
-        binding.titleBar.subtitle = viewModel.groupName
+    private fun upTitle() {
+        searchView.queryHint = getString(R.string.screen) + " • " + viewModel.groupName
     }
 
-    private fun initSearchView(menu: Menu) {
-        searchView = menu.findItem(R.id.menu_screen).actionView as SearchView
-        searchView?.run {
-            setOnCloseListener {
-                showTitle()
-                false
+    private fun initSearchView() {
+        searchView.applyTint(primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
             }
-            setOnSearchClickListener {
-                binding.titleBar.title = ""
-                binding.titleBar.subtitle = ""
-            }
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    upBookData()
-                    return false
-                }
-
-            })
-            setOnQueryTextFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    searchView?.isIconified = true
-                    showTitle()
-                }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                upBookData()
+                return false
             }
-        }
+
+        })
     }
 
     private fun initRecyclerView() {
@@ -241,7 +230,7 @@ class BookshelfManageActivity :
 
     private fun upBookData() {
         books?.let { books ->
-            val searchKey = searchView?.query
+            val searchKey = searchView.query
             if (searchKey.isNullOrEmpty()) {
                 adapter.setItems(books)
             } else {
@@ -259,7 +248,7 @@ class BookshelfManageActivity :
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             else -> if (item.groupId == R.id.menu_group) {
                 viewModel.groupName = item.title.toString()
-                binding.titleBar.subtitle = item.title
+                upTitle()
                 viewModel.groupId =
                     appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
                 upBookDataByGroupId()

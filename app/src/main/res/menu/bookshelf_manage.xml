@@ -5,13 +5,6 @@
     tools:ignore="AlwaysShowAction">
 
     <item
-        android:id="@+id/menu_screen"
-        android:icon="@drawable/ic_screen"
-        android:title="@string/screen"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/menu_book_group"
         android:icon="@drawable/ic_groups"
         android:title="@string/group"
