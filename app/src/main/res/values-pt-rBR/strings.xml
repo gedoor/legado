@@ -1086,5 +1086,5 @@
     <string name="unsupport_archivefile_entry">Cannot find supported files in archive</string>
     <string name="no_books_dir">没有设置书籍保存位置!</string>
     <string name="delete_alert">删除提醒</string>
-    <string name="no_book_found_bookshelf">No book found in bookshelf</string>
+    <string name="no_book_found_bookshelf">No book found in bookshelf, import again ?</string>
 </resources>

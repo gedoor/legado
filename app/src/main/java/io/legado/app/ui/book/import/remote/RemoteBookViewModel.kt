@@ -124,18 +124,17 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
 
     fun addToBookshelf(remoteBooks: HashSet<RemoteBook>, finally: () -> Unit) {
         execute {
+            val bookWebDav = remoteBookWebDav
+                ?: throw NoStackTraceException("没有配置webDav")
             remoteBooks.forEach { remoteBook ->
-                val bookWebDav = remoteBookWebDav
-                    ?: throw NoStackTraceException("没有配置webDav")
-                val downloadBookPath = bookWebDav.downloadRemoteBook(remoteBook)
-                downloadBookPath.let {
-                    val localBook = LocalBook.importFile(it)
-                    localBook.origin = BookType.webDavTag + CustomUrl(remoteBook.path)
+                val downloadBookUri = bookWebDav.downloadRemoteBook(remoteBook)
+                LocalBook.importFiles(downloadBookUri).forEach { book ->
+                    book.origin = BookType.webDavTag + CustomUrl(remoteBook.path)
                         .putAttribute(
                             "serverID",
                             bookWebDav.serverID
                         ).toString()
-                    localBook.save()
+                    book.save()
                     remoteBook.isOnBookShelf = true
                 }
             }

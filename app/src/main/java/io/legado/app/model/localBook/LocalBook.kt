@@ -213,12 +213,27 @@ object LocalBook {
     }
 
    /* 批量导入 支持自动导入压缩包的支持书籍 */
+    fun importFiles(uri: Uri): List<Book> {
+        val books = mutableListOf<Book>()
+        val fileDoc = FileDoc.fromUri(uri, false)
+        if (ArchiveUtils.isArchive(fileDoc.name)) {
+            books.addAll(
+                importArchiveFile(uri) {
+                    it.matches(AppPattern.bookFileRegex)
+                }
+            )
+        } else {
+            books.add(importFile(uri))
+        }
+        return books
+    }
+
     fun importFiles(uris: List<Uri>) {
         var errorCount = 0
         uris.forEach { uri ->
             val fileDoc = FileDoc.fromUri(uri, false)
             kotlin.runCatching {
-               if (ArchiveUtils.isArchive(fileDoc.name)) {
+                if (ArchiveUtils.isArchive(fileDoc.name)) {
                     importArchiveFile(uri) {
                         it.matches(AppPattern.bookFileRegex)
                     }

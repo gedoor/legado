@@ -1083,5 +1083,5 @@
     <string name="unsupport_archivefile_entry">压缩文件内没有支持的文件</string>
     <string name="no_books_dir">没有设置书籍保存位置!</string>
     <string name="delete_alert">删除提醒</string>
-    <string name="no_book_found_bookshelf">未在书架上找到所选书籍</string>
+    <string name="no_book_found_bookshelf">未在书架上找到所选书籍, 是否重新导入？</string>
 </resources>
