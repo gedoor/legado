@@ -2,6 +2,7 @@ package io.legado.app.ui.book.import
 
 import android.os.Bundle
 import android.view.MotionEvent
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
 import io.legado.app.R
@@ -43,7 +44,12 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            binding.root.hideSoftInput()
+            currentFocus?.let {
+                if (it is EditText) {
+                    it.clearFocus()
+                    it.hideSoftInput()
+                }
+            }
         }
         return super.dispatchTouchEvent(ev)
     }

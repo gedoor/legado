@@ -3,6 +3,7 @@ package io.legado.app.ui.book.source.manage
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
@@ -112,7 +113,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            binding.root.hideSoftInput()
+            currentFocus?.let {
+                if (it is EditText) {
+                    it.clearFocus()
+                    it.hideSoftInput()
+                }
+            }
         }
         return super.dispatchTouchEvent(ev)
     }
