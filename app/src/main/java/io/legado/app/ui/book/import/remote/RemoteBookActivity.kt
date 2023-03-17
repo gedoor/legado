@@ -210,7 +210,7 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
             R.string.archive_not_found
         ) {
             okButton {
-                viewModel.addToBookshelf(hashSetOf<RemoteBook>(remoteBook) {
+                viewModel.addToBookshelf(hashSetOf<RemoteBook>(remoteBook)) {
                     onDownloadFinish?.invoke()
                 }
             }
