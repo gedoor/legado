@@ -61,7 +61,6 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
         if (ev.action == MotionEvent.ACTION_DOWN) {
             currentFocus?.let {
                 if (it is EditText) {
-                    it.clearFocus()
                     it.hideSoftInput()
                 }
             }
