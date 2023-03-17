@@ -58,17 +58,6 @@ val Book.isUpError: Boolean
 val Book.isArchive: Boolean
     get() = isType(BookType.archive)
 
-val Book.archiveName: String?
-    get() {
-        return if (isArchive) {
-            // local_book::archive.rar
-            // webDav::https://...../archive.rar
-            origin.substringAfter("::").substringAfterLast("/")
-        } else {
-            null
-        }
-    }
-
 fun Book.contains(word: String?): Boolean {
     if (word.isNullOrEmpty()) {
         return true
@@ -141,6 +130,18 @@ fun Book.getLocalUri(): Uri {
 
     localUriCache[bookUrl] = uri
     return uri
+}
+
+fun Book.getArchiveUri(): Uri? {
+    val defaultBookDir = AppConfig.defaultBookTreeUri
+    return if (isArchive && !defaultBookDir.isNullOrBlank()) {
+        // local_book::archive.rar
+        // webDav::https://...../archive.rar
+        val archiveFileName = origin.substringAfter("::").substringAfterLast("/")
+        FileDoc.fromUri(Uri.parse(defaultBookDir), true).find(archiveFileName)?.uri
+    } else {
+        null
+    }
 }
 
 fun Book.cacheLocalUri(uri: Uri) {

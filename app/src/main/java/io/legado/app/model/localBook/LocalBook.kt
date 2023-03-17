@@ -46,11 +46,22 @@ object LocalBook {
     @Throws(FileNotFoundException::class, SecurityException::class)
     fun getBookInputStream(book: Book): InputStream {
         val uri = book.getLocalUri()
-        //文件不存在 尝试下载webDav文件
         val inputStream = uri.inputStream(appCtx).getOrNull()
             ?: let {
                 book.removeLocalUriCache()
-                downloadRemoteBook(book)
+                val localArchiveUri = book.getArchiveUri()
+                if (localArchiveUri != null) {
+                    // 重新导入对应的压缩包
+                    importArchiveFile(localArchiveUri, book.originName) {
+                        it.contains(book.originName)
+                    }.firstOrNull()?.let {
+                        getBookInputStream(it)
+                    }
+                } else {
+                    // 下载远程链接
+                    downloadRemoteBook(book)
+                    getBookInputStream(book)
+                }
             }
         if (inputStream != null) return inputStream
         book.removeLocalUriCache()
@@ -203,7 +214,7 @@ object LocalBook {
                     saveFileName ?: it.name
             ).let {
                 importFile(it).apply {
-                    //附加压缩包文件名 以便判断书籍导入界面压缩包是否导入
+                    //附加压缩包名称 以便解压文件被删后再解压
                     origin = "${BookType.localTag}::${archiveFileDoc.name}"
                     addType(BookType.archive)
                     save()
@@ -374,8 +385,8 @@ object LocalBook {
         return localBook
     }
 
-    //下载book对应的远程文件并更新bookUrl 返回inputStream
-    private fun downloadRemoteBook(localBook: Book): InputStream? {
+    //下载book对应的远程文件 并更新Book
+    private fun downloadRemoteBook(localBook: Book):  {
         val webDavUrl = localBook.getRemoteUrl()
         if (webDavUrl.isNullOrBlank()) return null
         try {
@@ -388,14 +399,15 @@ object LocalBook {
                 AppWebDav.authorization?.let { WebDav(webDavUrl, it) }
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
             }
-            val uri = runBlocking {
+            val fileUri = runBlocking {
                 saveBookFile(webdav.downloadInputStream(), localBook.originName)
-            }
-            return uri.let {
-                localBook.bookUrl = if (it.isContentScheme()) it.toString() else it.path!!
+            if (localBook.isArchive) {
+                importArchiveFile(fileUri, book.originName) {
+                    it.contains(book.originName)
+                }
+            } else {
+                localBook.bookUrl = FileDoc.fromUri(fileUr, false).toString()
                 localBook.save()
-                localBook.cacheLocalUri(it)
-                it.inputStream(appCtx).getOrThrow()
             }
         } catch (e: Exception) {
             e.printOnDebug()
