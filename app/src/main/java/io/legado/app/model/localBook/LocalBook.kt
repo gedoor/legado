@@ -399,10 +399,10 @@ object LocalBook {
                 AppWebDav.authorization?.let { WebDav(webDavUrl, it) }
                     ?: throw WebDavException("Unexpected defaultBookWebDav")
             }
-            val InputStream = runBlocking {
+            val inputStream = runBlocking {
                 webdav.downloadInputStream()
             }
-            InputStream.use {
+            inputStream.use {
                 if (localBook.isArchive) {
                     // 压缩包
                     val fileUri = saveBookFile(it, localBook.archiveName)
