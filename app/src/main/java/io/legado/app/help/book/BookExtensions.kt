@@ -62,7 +62,8 @@ val Book.archiveName: String?
     get() {
         return if (isArchive) {
             // local_book::archive.rar
-            origin.substring(BookType.localTag.length + 2)
+            // webDav::https://...../archive.rar
+            origin.substringAfter("::").substringAfterLast("/")
         } else {
             null
         }

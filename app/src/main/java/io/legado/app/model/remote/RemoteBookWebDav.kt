@@ -1,6 +1,7 @@
 package io.legado.app.model.remote
 
 import android.net.Uri
+import io.legado.app.constant.AppPattern.archiveFileRegex
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
@@ -39,7 +40,8 @@ class RemoteBookWebDav(
         val remoteWebDavFileList: List<WebDavFile> = WebDav(path, authorization).listFiles()
         //转化远程文件信息到本地对象
         remoteWebDavFileList.forEach { webDavFile ->
-            if (webDavFile.isDir || bookFileRegex.matches(webDavFile.displayName)) {
+            if (webDavFile.isDir || bookFileRegex.matches(webDavFile.displayName) || archiveFileRegex.matches(webDavFile.displayName)
+            ) {
                 //扩展名符合阅读的格式则认为是书籍
                 remoteBooks.add(RemoteBook(webDavFile))
             }
