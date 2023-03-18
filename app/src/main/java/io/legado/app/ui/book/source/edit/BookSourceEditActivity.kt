@@ -103,20 +103,14 @@ class BookSourceEditActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_save -> getSource().let { source ->
-                if (!source.equal(viewModel.bookSource ?: BookSource())) {
-                    source.lastUpdateTime = System.currentTimeMillis()
-                }
-                if (checkSource(source)) {
-                    viewModel.save(source) { setResult(Activity.RESULT_OK); finish() }
-                }
+            R.id.menu_save -> viewModel.save(getSource()) {
+                setResult(Activity.RESULT_OK)
+                finish()
             }
-            R.id.menu_debug_source -> getSource().let { source ->
-                if (checkSource(source)) {
-                    viewModel.save(source) {
-                        startActivity<BookSourceDebugActivity> {
-                            putExtra("key", source.bookSourceUrl)
-                        }
+            R.id.menu_debug_source -> viewModel.save(getSource()) { source ->
+                viewModel.save(source) {
+                    startActivity<BookSourceDebugActivity> {
+                        putExtra("key", source.bookSourceUrl)
                     }
                 }
             }
@@ -132,14 +126,10 @@ class BookSourceEditActivity :
                 ErrorCorrectionLevel.L
             )
             R.id.menu_help -> showHelp("ruleHelp")
-            R.id.menu_login -> getSource().let { source ->
-                if (checkSource(source)) {
-                    viewModel.save(source) {
-                        startActivity<SourceLoginActivity> {
-                            putExtra("type", "bookSource")
-                            putExtra("key", source.bookSourceUrl)
-                        }
-                    }
+            R.id.menu_login -> viewModel.save(getSource()) { source ->
+                startActivity<SourceLoginActivity> {
+                    putExtra("type", "bookSource")
+                    putExtra("key", source.bookSourceUrl)
                 }
             }
             R.id.menu_set_source_variable -> setSourceVariable()
@@ -515,14 +505,6 @@ class BookSourceEditActivity :
         return source
     }
 
-    private fun checkSource(source: BookSource): Boolean {
-        if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
-            toastOnUi(R.string.non_null_name_url)
-            return false
-        }
-        return true
-    }
-
     private fun alertGroups() {
         launch {
             val groups = withContext(IO) {
@@ -594,22 +576,19 @@ class BookSourceEditActivity :
     }
 
     private fun setSourceVariable() {
-        launch {
-            val source = viewModel.bookSource
-            if (source == null) {
-                toastOnUi("先保存书源")
-                return@launch
-            }
-            val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
-            val variable = withContext(IO) { source.getVariable() }
-            showDialogFragment(
-                VariableDialog(
-                    getString(R.string.set_source_variable),
-                    source.getKey(),
-                    variable,
-                    comment
+        viewModel.save(getSource()) { source ->
+            launch {
+                val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+                val variable = withContext(IO) { source.getVariable() }
+                showDialogFragment(
+                    VariableDialog(
+                        getString(R.string.set_source_variable),
+                        source.getKey(),
+                        variable,
+                        comment
+                    )
                 )
-            )
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package io.legado.app.ui.book.source.edit
 
 import android.app.Application
 import android.content.Intent
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -34,8 +35,14 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         }
     }
 
-    fun save(source: BookSource, success: (() -> Unit)? = null) {
+    fun save(source: BookSource, success: ((BookSource) -> Unit)? = null) {
         execute {
+            if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
+                throw NoStackTraceException(context.getString(R.string.non_null_name_url))
+            }
+            if (!source.equal(bookSource ?: BookSource())) {
+                source.lastUpdateTime = System.currentTimeMillis()
+            }
             bookSource?.let {
                 appDb.bookSourceDao.delete(it)
                 SourceConfig.removeSource(it.bookSourceUrl)
@@ -43,8 +50,9 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             source.lastUpdateTime = System.currentTimeMillis()
             appDb.bookSourceDao.insert(source)
             bookSource = source
+            source
         }.onSuccess {
-            success?.invoke()
+            success?.invoke(it)
         }.onError {
             context.toastOnUi(it.localizedMessage)
             it.printOnDebug()

@@ -24,14 +24,19 @@ import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.debug.RssSourceDebugActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.UrlOptionDialog
+import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.ui.widget.text.EditEntity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RssSourceEditActivity :
     VMBaseActivity<ActivityRssSourceEditBinding, RssSourceEditViewModel>(false),
-    KeyboardToolPop.CallBack {
+    KeyboardToolPop.CallBack,
+    VariableDialog.Callback {
 
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
@@ -107,35 +112,22 @@ class RssSourceEditActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_save -> {
-                val source = getRssSource()
-                if (checkSource(source)) {
-                    viewModel.save(source) {
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                    }
+            R.id.menu_save -> viewModel.save(getRssSource()) {
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+            R.id.menu_debug_source -> viewModel.save(getRssSource()) { source ->
+                startActivity<RssSourceDebugActivity> {
+                    putExtra("key", source.sourceUrl)
                 }
             }
-            R.id.menu_debug_source -> {
-                val source = getRssSource()
-                if (checkSource(source)) {
-                    viewModel.save(source) {
-                        startActivity<RssSourceDebugActivity> {
-                            putExtra("key", source.sourceUrl)
-                        }
-                    }
+            R.id.menu_login -> viewModel.save(getRssSource()) {
+                startActivity<SourceLoginActivity> {
+                    putExtra("type", "rssSource")
+                    putExtra("key", it.sourceUrl)
                 }
             }
-            R.id.menu_login -> getRssSource().let {
-                if (checkSource(it)) {
-                    viewModel.save(it) {
-                        startActivity<SourceLoginActivity> {
-                            putExtra("type", "rssSource")
-                            putExtra("key", it.sourceUrl)
-                        }
-                    }
-                }
-            }
+            R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_clear_cookie -> viewModel.clearCookie(getRssSource().sourceUrl)
             R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getRssSource()))
@@ -305,12 +297,25 @@ class RssSourceEditActivity :
         return source
     }
 
-    private fun checkSource(source: RssSource): Boolean {
-        if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
-            toastOnUi("名称或url不能为空")
-            return false
+    private fun setSourceVariable() {
+        viewModel.save(getRssSource()) { source ->
+            launch {
+                val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+                val variable = withContext(Dispatchers.IO) { source.getVariable() }
+                showDialogFragment(
+                    VariableDialog(
+                        getString(R.string.set_source_variable),
+                        source.getKey(),
+                        variable,
+                        comment
+                    )
+                )
+            }
         }
-        return true
+    }
+
+    override fun setVariable(key: String, variable: String?) {
+        viewModel.rssSource?.setVariable(variable)
     }
 
     override fun helpActions(): List<SelectItem<String>> {

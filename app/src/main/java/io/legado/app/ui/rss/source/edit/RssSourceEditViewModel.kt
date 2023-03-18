@@ -2,9 +2,11 @@ package io.legado.app.ui.rss.source.edit
 
 import android.app.Application
 import android.content.Intent
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.RuleComplete
 import io.legado.app.help.http.CookieStore
 import io.legado.app.utils.getClipText
@@ -32,15 +34,19 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }
     }
 
-    fun save(source: RssSource, success: (() -> Unit)) {
+    fun save(source: RssSource, success: ((RssSource) -> Unit)) {
         execute {
+            if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
+                throw NoStackTraceException(context.getString(R.string.non_null_name_url))
+            }
             rssSource?.let {
                 appDb.rssSourceDao.delete(it)
             }
             appDb.rssSourceDao.insert(source)
             rssSource = source
+            source
         }.onSuccess {
-            success()
+            success(it)
         }.onError {
             context.toastOnUi(it.localizedMessage)
             it.printOnDebug()
