@@ -58,13 +58,13 @@ object SourceAnalyzer {
                         bookSources.add(it)
                     }
                 }
-            } catch {
+            } catch (_: Exception) {
                 val item: Map<String, Any> = documentContext.read("$")
                 val jsonItem = jsonPath.parse(item)
                 jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
                      bookSources.add(it)
                 }
-            } catch {
+            } catch (_: Exception) {
                 throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
             }
             bookSources
