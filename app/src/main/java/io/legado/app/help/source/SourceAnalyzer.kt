@@ -52,22 +52,19 @@ object SourceAnalyzer {
             val documentContext = jsonPath.parse(inputStream)
             try {
                 val items: List<Map<String, Any>> = documentContext.read("$")
-                for (item in items) {
-                    val jsonItem = jsonPath.parse(item)
-                    jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
-                        bookSources.add(it)
-                    }
+                items.map {
+                    val jsonItem = jsonPath.parse(it)
+                    jsonToBookSource(jsonItem.jsonString()).getOrThrow()
                 }
             } catch (_: Exception) {
                 val item: Map<String, Any> = documentContext.read("$")
                 val jsonItem = jsonPath.parse(item)
-                jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
-                     bookSources.add(it)
-                }
-            } catch (_: Exception) {
-                throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
+                mutableListOf(
+                    jsonToBookSource(jsonItem.jsonString()).getOrThrow()
+                )
             }
-            bookSources
+        }.onFailure {
+             throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
         }
     }
 
