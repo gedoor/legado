@@ -376,7 +376,6 @@
     <string name="page_anim_simulation">Simulation</string>
     <string name="page_anim_scroll">Scroll</string>
     <string name="page_anim_none">None</string>
-    <string name="donate_s">This book source uses advanced features, please go to the Donations and tap the Alipay red envelope search code to receive the red envelope,then you can use it.</string>
     <string name="up_change_source_last_chapter_t">Update the latest chapter after changed origin in the background</string>
     <string name="up_change_source_last_chapter_s">if enabled,the update will start 1 minute later when the software is run</string>
     <string name="behavior_main_t">Auto hide ToolBar</string>

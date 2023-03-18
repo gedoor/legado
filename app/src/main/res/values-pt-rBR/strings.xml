@@ -374,7 +374,6 @@
     <string name="page_anim_simulation">Simulação</string>
     <string name="page_anim_scroll">Deslizar</string>
     <string name="page_anim_none">Nenhum</string>
-    <string name="donate_s">Esta fonte de livro usa recursos avançados, por favor vá até Doações e toque no código de busca do envelope vermelho Alipay para receber o envelope vermelho, depois você pode usá-lo.</string>
     <string name="up_change_source_last_chapter_t">Atualizar o último capítulo após a alteração de origem em segundo plano</string>
     <string name="up_change_source_last_chapter_s">se ativado, a atualização será iniciada 1 minuto depois o App for aberto</string>
     <string name="behavior_main_t">Auto esconder a barra de ferramentas</string>

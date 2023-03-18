@@ -375,7 +375,6 @@
     <string name="page_anim_simulation">仿真</string>
     <string name="page_anim_scroll">滚动</string>
     <string name="page_anim_none">无动画</string>
-    <string name="donate_s">此书源使用了高级功能，请到捐赠里点击支付宝红包搜索码领取红包开启。</string>
     <string name="up_change_source_last_chapter_t">后台更新换源最新章节</string>
     <string name="up_change_source_last_chapter_s">开启则会在软件打开 1 分钟后开始更新</string>
     <string name="behavior_main_t">书架工具栏自动隐藏</string>

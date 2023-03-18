@@ -2,6 +2,7 @@ package io.legado.app.help.source
 
 import androidx.annotation.Keep
 import com.jayway.jsonpath.JsonPath
+import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookSourceType
@@ -11,6 +12,8 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.*
 import java.io.InputStream
 import java.util.regex.Pattern
+import splitties.init.appCtx
+
 
 @Suppress("RegExpRedundantEscape")
 object SourceAnalyzer {
@@ -36,7 +39,7 @@ object SourceAnalyzer {
                     }
                 }
                 else -> {
-                    throw NoStackTraceException("格式不对")
+                    throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
                 }
             }
             bookSources
@@ -46,22 +49,25 @@ object SourceAnalyzer {
     fun jsonToBookSources(inputStream: InputStream): Result<MutableList<BookSource>> {
         return kotlin.runCatching {
             val bookSources = mutableListOf<BookSource>()
-//            kotlin.runCatching {
-                val items: List<Map<String, Any>> = jsonPath.parse(inputStream).read("$")
-                for (item in items) {
-                    val jsonItem = jsonPath.parse(item)
+            val documentContext = jsonPath.parse(inputStream)
+            try {
+                val items: List<Map<String, Any>> = documentContext.read("$")
+                items.forEach {
+                    val jsonItem = jsonPath.parse(it)
                     jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
                         bookSources.add(it)
                     }
                 }
-//            }.onFailure {
-//                val item: Map<String, Any> = jsonPath.parse(inputStream).read("$")
-//                val jsonItem = jsonPath.parse(item)
-//                jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
-//                    bookSources.add(it)
-//                }
-//            }
+            } catch (_: Exception) {
+                val item: Map<String, Any> = documentContext.read("$")
+                val jsonItem = jsonPath.parse(item)
+                jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
+                    bookSources.add(it)
+                }
+            }
             bookSources
+        }.onFailure {
+             throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
         }
     }
 
@@ -69,14 +75,14 @@ object SourceAnalyzer {
         val source = BookSource()
         val sourceAny = GSON.fromJsonObject<BookSourceAny>(json.trim())
             .onFailure {
-                AppLog.put("转化书源出错", it)
+                AppLog.put(appCtx.getString(R.string.wrong_format), it)
             }.getOrNull()
         return kotlin.runCatching {
             if (sourceAny?.ruleToc == null) {
                 source.apply {
                     val jsonItem = jsonPath.parse(json.trim())
                     bookSourceUrl = jsonItem.readString("bookSourceUrl")
-                        ?: throw NoStackTraceException("格式不对")
+                        ?: throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
                     bookSourceName = jsonItem.readString("bookSourceName") ?: ""
                     bookSourceGroup = jsonItem.readString("bookSourceGroup")
                     loginUrl = jsonItem.readString("loginUrl")
