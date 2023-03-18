@@ -51,7 +51,7 @@ object SourceAnalyzer {
             val bookSources = mutableListOf<BookSource>()
             val documentContext = jsonPath.parse(inputStream)
             kotlin.runCatching {
-                val items: List<Map<String, Any> = documentContext.read("$")
+                val items: List<Map<String, Any>> = documentContext.read("$")
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
                     jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
