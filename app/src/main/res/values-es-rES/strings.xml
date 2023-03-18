@@ -372,7 +372,6 @@
     <string name="page_anim_simulation">Simulación</string>
     <string name="page_anim_scroll">Desplazado</string>
     <string name="page_anim_none">Ninguno</string>
-    <string name="donate_s">La fuente de este libro utiliza funciones avanzadas, para desbloquear diríjase a Donaciones y toque el código de búsqueda del sobre rojo de Alipay para recibir ese sobre.</string>
     <string name="up_change_source_last_chapter_t">Actualiza el último capítulo después del cambio de fuente en segundo plano</string>
     <string name="up_change_source_last_chapter_s">si está habilitado, la actualización comenzará 1 minuto después de que se abra la aplicación</string>
     <string name="behavior_main_t">Ocultar automáticamente la barra de herramientas</string>
