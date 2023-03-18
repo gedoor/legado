@@ -50,7 +50,7 @@ object SourceAnalyzer {
         return kotlin.runCatching {
             val bookSources = mutableListOf<BookSource>()
             val documentContext = jsonPath.parse(inputStream)
-            kotlin.runCatching {
+            try {
                 val items: List<Map<String, Any>> = documentContext.read("$")
                 for (item in items) {
                     val jsonItem = jsonPath.parse(item)
@@ -58,13 +58,13 @@ object SourceAnalyzer {
                         bookSources.add(it)
                     }
                 }
-            }.onFailure {
+            } catch {
                 val item: Map<String, Any> = documentContext.read("$")
                 val jsonItem = jsonPath.parse(item)
                 jsonToBookSource(jsonItem.jsonString()).getOrThrow().let {
                      bookSources.add(it)
                 }
-            }.onFailure {
+            } catch {
                 throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
             }
             bookSources
