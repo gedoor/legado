@@ -407,6 +407,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun getBook(toastNull: Boolean = true): Book? {
+        val book = bookData.value
+        if (toastNull && book == null) {
+            context.toastOnUi("book is null")
+        }
+        return book
+    }
+
     fun delBook(deleteOriginal: Boolean = false, success: (() -> Unit)? = null) {
         execute {
             bookData.value?.let {

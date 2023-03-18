@@ -60,7 +60,7 @@ class BookInfoActivity :
 
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
         it?.let {
-            viewModel.bookData.value?.let { book ->
+            viewModel.getBook(false)?.let { book ->
                 launch {
                     withContext(IO) {
                         book.durChapterIndex = it.first
@@ -155,14 +155,14 @@ class BookInfoActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_edit -> {
-                viewModel.bookData.value?.let {
+                viewModel.getBook()?.let {
                     infoEditResult.launch {
                         putExtra("bookUrl", it.bookUrl)
                     }
                 }
             }
             R.id.menu_share_it -> {
-                viewModel.bookData.value?.let {
+                viewModel.getBook()?.let {
                     val bookJson = GSON.toJson(it)
                     val shareStr = "${it.bookUrl}#$bookJson"
                     shareWithQr(shareStr, it.name)
@@ -170,7 +170,7 @@ class BookInfoActivity :
             }
             R.id.menu_refresh -> {
                 upLoading(true)
-                viewModel.bookData.value?.let {
+                viewModel.getBook()?.let {
                     viewModel.refreshBook(it)
                 }
             }
@@ -183,14 +183,14 @@ class BookInfoActivity :
             R.id.menu_top -> viewModel.topBook()
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_set_book_variable -> setBookVariable()
-            R.id.menu_copy_book_url -> viewModel.bookData.value?.bookUrl?.let {
+            R.id.menu_copy_book_url -> viewModel.getBook()?.bookUrl?.let {
                 sendToClip(it)
-            } ?: toastOnUi(R.string.no_book)
-            R.id.menu_copy_toc_url -> viewModel.bookData.value?.tocUrl?.let {
+            }
+            R.id.menu_copy_toc_url -> viewModel.getBook()?.tocUrl?.let {
                 sendToClip(it)
-            } ?: toastOnUi(R.string.no_book)
+            }
             R.id.menu_can_update -> {
-                viewModel.bookData.value?.let {
+                viewModel.getBook()?.let {
                     it.canUpdate = !it.canUpdate
                     if (viewModel.inBookshelf) {
                         viewModel.saveBook(it)
@@ -202,7 +202,7 @@ class BookInfoActivity :
             R.id.menu_split_long_chapter -> {
                 upLoading(true)
                 tocChanged = true
-                viewModel.bookData.value?.let {
+                viewModel.getBook()?.let {
                     it.setSplitLongChapter(!item.isChecked)
                     viewModel.loadBookInfo(it, false)
                 }
@@ -211,7 +211,7 @@ class BookInfoActivity :
             }
             R.id.menu_delete_alert -> LocalConfig.bookInfoDeleteAlert = !item.isChecked
             R.id.menu_upload -> {
-                viewModel.bookData.value?.let { book ->
+                viewModel.getBook()?.let { book ->
                     book.getRemoteUrl()?.let {
                         alert(R.string.draw, R.string.sure_upload) {
                             okButton {
@@ -332,20 +332,20 @@ class BookInfoActivity :
 
     private fun initViewEvent() = binding.run {
         ivCover.setOnClickListener {
-            viewModel.bookData.value?.let {
+            viewModel.getBook()?.let {
                 showDialogFragment(
                     ChangeCoverDialog(it.name, it.author)
                 )
-            } ?: toastOnUi("Book is null")
+            }
         }
         ivCover.setOnLongClickListener {
-            viewModel.bookData.value?.getDisplayCover()?.let { path ->
+            viewModel.getBook()?.getDisplayCover()?.let { path ->
                 showDialogFragment(PhotoDialog(path))
             }
             true
         }
         tvRead.setOnClickListener {
-            viewModel.bookData.value?.let { book ->
+            viewModel.getBook()?.let { book ->
                 if (book.isWebFile) {
                     showWebFileDownloadAlert {
                         readBook(it)
@@ -353,10 +353,10 @@ class BookInfoActivity :
                 } else {
                     readBook(book)
                 }
-            } ?: toastOnUi("Book is null")
+            }
         }
         tvShelf.setOnClickListener {
-            viewModel.bookData.value?.let { book ->
+            viewModel.getBook()?.let { book ->
                 if (viewModel.inBookshelf) {
                     deleteBook()
                 } else {
@@ -371,44 +371,50 @@ class BookInfoActivity :
             }
         }
         tvOrigin.setOnClickListener {
-            viewModel.bookData.value?.let { book ->
+            viewModel.getBook()?.let { book ->
                 if (book.isLocal) return@let
                 startActivity<BookSourceEditActivity> {
                     putExtra("sourceUrl", book.origin)
                 }
-            } ?: toastOnUi("Book is null")
+            }
         }
         tvChangeSource.setOnClickListener {
-            viewModel.bookData.value?.let { book ->
+            viewModel.getBook()?.let { book ->
                 showDialogFragment(ChangeBookSourceDialog(book.name, book.author))
-            } ?: toastOnUi("Book is null")
+            }
         }
         tvTocView.setOnClickListener {
-            if (!viewModel.inBookshelf) {
-                viewModel.saveBook(viewModel.bookData.value) {
-                    viewModel.saveChapterList {
-                        openChapterList()
+            viewModel.getBook()?.let { book ->
+                if (!viewModel.inBookshelf) {
+                    viewModel.saveBook(book) {
+                        viewModel.saveChapterList {
+                            openChapterList()
+                        }
                     }
+                } else {
+                    openChapterList()
                 }
-            } else {
-                openChapterList()
             }
         }
         tvChangeGroup.setOnClickListener {
-            viewModel.bookData.value?.let {
+            viewModel.getBook()?.let {
                 showDialogFragment(
                     GroupSelectDialog(it.group)
                 )
-            } ?: toastOnUi("Book is null")
+            }
         }
         tvAuthor.setOnClickListener {
-            startActivity<SearchActivity> {
-                putExtra("key", viewModel.bookData.value?.author)
+            viewModel.getBook(false)?.let { book ->
+                startActivity<SearchActivity> {
+                    putExtra("key", book.author)
+                }
             }
         }
         tvName.setOnClickListener {
-            startActivity<SearchActivity> {
-                putExtra("key", viewModel.bookData.value?.name)
+            viewModel.getBook(false)?.let { book ->
+                startActivity<SearchActivity> {
+                    putExtra("key", book.name)
+                }
             }
         }
     }
@@ -440,24 +446,23 @@ class BookInfoActivity :
                 toastOnUi("书源不存在")
                 return@launch
             }
-            val book = viewModel.bookData.value
-            if (book == null) {
-                toastOnUi("书籍不存在")
-                return@launch
-            }
+            val book = viewModel.getBook() ?: return@launch
             val variable = withContext(IO) { book.getCustomVariable() }
-            val comment = source.getDisplayVariableComment("""书籍变量可在js中通过book.getVariable("custom")获取""")
-            showDialogFragment(VariableDialog(
-                getString(R.string.set_book_variable),
-                book.bookUrl,
-                variable,
-                comment
-            ))
+            val comment =
+                source.getDisplayVariableComment("""书籍变量可在js中通过book.getVariable("custom")获取""")
+            showDialogFragment(
+                VariableDialog(
+                    getString(R.string.set_book_variable),
+                    book.bookUrl,
+                    variable,
+                    comment
+                )
+            )
         }
     }
 
     override fun setVariable(key: String, variable: String?) {
-        when(key) {
+        when (key) {
             viewModel.bookSource?.getKey() -> viewModel.bookSource?.setVariable(variable)
             viewModel.bookData.value?.bookUrl -> viewModel.bookData.value?.let {
                 it.putCustomVariable(variable)
@@ -468,7 +473,7 @@ class BookInfoActivity :
 
     @SuppressLint("InflateParams")
     private fun deleteBook() {
-        viewModel.bookData.value?.let {
+        viewModel.getBook()?.let {
             if (LocalConfig.bookInfoDeleteAlert) {
                 alert(
                     titleResource = R.string.draw,
@@ -509,7 +514,7 @@ class BookInfoActivity :
             toastOnUi(R.string.chapter_list_empty)
             return
         }
-        viewModel.bookData.value?.let {
+        viewModel.getBook()?.let {
             tocActivityResult.launch(it.bookUrl)
         }
     }
@@ -630,7 +635,7 @@ class BookInfoActivity :
 
     override fun upGroup(requestCode: Int, groupId: Long) {
         upGroup(groupId)
-        viewModel.bookData.value?.let { book ->
+        viewModel.getBook()?.let { book ->
             book.group = groupId
             if (viewModel.inBookshelf) {
                 viewModel.saveBook(book)
