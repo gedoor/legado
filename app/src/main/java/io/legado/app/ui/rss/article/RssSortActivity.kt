@@ -19,9 +19,12 @@ import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
+class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>(),
+    VariableDialog.Callback {
 
     override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
     override val viewModel by viewModels<RssSortViewModel>()
@@ -103,13 +106,27 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     private fun setSourceVariable() {
-        val source = viewModel.rssSource
-        if (source == null) {
-            toastOnUi("源不存在")
-            return
+        launch {
+            val source = viewModel.rssSource
+            if (source == null) {
+                toastOnUi("源不存在")
+                return@launch
+            }
+            val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+            val variable = withContext(Dispatchers.IO) { source.getVariable() }
+            showDialogFragment(
+                VariableDialog(
+                    getString(R.string.set_source_variable),
+                    source.getKey(),
+                    variable,
+                    comment
+                )
+            )
         }
-        val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
-        showDialogFragment(VariableDialog(source.getKey(), comment))
+    }
+
+    override fun setVariable(key: String, variable: String?) {
+        viewModel.rssSource?.setVariable(variable)
     }
 
     private inner class TabFragmentPageAdapter :

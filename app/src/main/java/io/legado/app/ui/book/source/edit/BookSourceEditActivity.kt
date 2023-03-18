@@ -41,7 +41,8 @@ import kotlinx.coroutines.withContext
 
 class BookSourceEditActivity :
     VMBaseActivity<ActivityBookSourceEditBinding, BookSourceEditViewModel>(false),
-    KeyboardToolPop.CallBack {
+    KeyboardToolPop.CallBack,
+    VariableDialog.Callback {
 
     override val binding by viewBinding(ActivityBookSourceEditBinding::inflate)
     override val viewModel by viewModels<BookSourceEditViewModel>()
@@ -593,13 +594,27 @@ class BookSourceEditActivity :
     }
 
     private fun setSourceVariable() {
-        val source = viewModel.bookSource
-        if (source == null) {
-            toastOnUi("先保存书源")
-            return
+        launch {
+            val source = viewModel.bookSource
+            if (source == null) {
+                toastOnUi("先保存书源")
+                return@launch
+            }
+            val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+            val variable = withContext(IO) { source.getVariable() }
+            showDialogFragment(
+                VariableDialog(
+                    getString(R.string.set_source_variable),
+                    source.getKey(),
+                    variable,
+                    comment
+                )
+            )
         }
-        val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
-        showDialogFragment(VariableDialog(source.getKey(), comment))
+    }
+
+    override fun setVariable(key: String, variable: String?) {
+        viewModel.bookSource?.setVariable(variable)
     }
 
 }

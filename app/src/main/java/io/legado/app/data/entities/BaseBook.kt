@@ -23,6 +23,14 @@ interface BaseBook : RuleDataInterface {
         return true
     }
 
+    fun putCustomVariable(value: String?) {
+        putVariable("custom", value)
+    }
+
+    fun getCustomVariable(): String? {
+        return getVariable("custom")
+    }
+
     override fun putBigVariable(key: String, value: String?) {
         RuleBigDataHelp.putBookVariable(bookUrl, key, value)
     }

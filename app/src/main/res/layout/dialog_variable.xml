@@ -23,34 +23,33 @@
             android:theme="?attr/actionBarStyle"
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
+            app:title="Set variable"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/set_source_variable"
             app:titleTextAppearance="@style/ToolbarTitle" />
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="variable"
+            tools:ignore="HardcodedText" />
+
+        <io.legado.app.lib.theme.view.ThemeEditText
+            android:id="@+id/tv_variable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="6dp"
+
             android:overScrollMode="ifContentScrolls">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="source variable"
-                    tools:ignore="HardcodedText">
-
-                    <io.legado.app.lib.theme.view.ThemeEditText
-                        android:id="@+id/tv_variable"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-                </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.AccentTextView
                     android:layout_width="match_parent"
@@ -63,8 +62,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="3dp"
-                    android:textIsSelectable="true"
-                    android:textColor="@color/secondaryText"/>
+                    android:textColor="@color/secondaryText"
+                    android:textIsSelectable="true" />
 
             </LinearLayout>
 
