@@ -28,7 +28,7 @@ interface BaseBook : RuleDataInterface {
     }
 
     fun getCustomVariable(): String {
-        return getVariable("custom") ?: ""
+        return getVariable("custom")
     }
 
     override fun putBigVariable(key: String, value: String?) {
