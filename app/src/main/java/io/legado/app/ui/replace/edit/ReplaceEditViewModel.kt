@@ -54,12 +54,15 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
 
     fun save(replaceRule: ReplaceRule, success: () -> Unit) {
         execute {
+            replaceRule.checkValid()
             if (replaceRule.order == Int.MIN_VALUE) {
                 replaceRule.order = appDb.replaceRuleDao.maxOrder + 1
             }
             appDb.replaceRuleDao.insert(replaceRule)
         }.onSuccess {
             success()
+        }.onError {
+            context.toastOnUi("save error, ${it.localizedMessage}")
         }
     }
 

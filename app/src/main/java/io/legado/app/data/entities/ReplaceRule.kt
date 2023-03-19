@@ -6,7 +6,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import io.legado.app.R
+import io.legado.app.exception.NoStackTraceException
 import kotlinx.parcelize.Parcelize
+import splitties.init.appCtx
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -83,6 +86,12 @@ data class ReplaceRule(
             }
         }
         return true
+    }
+
+    fun checkValid() {
+        if (!isValid()) {
+            throw NoStackTraceException(appCtx.getString(R.string.replace_rule_invalid))
+        }
     }
 
     fun getValidTimeoutMillisecond(): Long {
