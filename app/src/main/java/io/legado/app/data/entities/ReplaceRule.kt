@@ -88,6 +88,7 @@ data class ReplaceRule(
         return true
     }
 
+    @Throws(NoStackTraceException::class)
     fun checkValid() {
         if (!isValid()) {
             throw NoStackTraceException(appCtx.getString(R.string.replace_rule_invalid))

@@ -80,7 +80,8 @@ object ReplaceRuleController {
                 if (rule.isRegex) {
                     text.replace(
                         rule.pattern.toRegex(),
-                        rule.replacement, rule.timeoutMillisecond
+                        rule.replacement,
+                        rule.getValidTimeoutMillisecond()
                     )
                 } else {
                     text.replace(rule.pattern, rule.replacement)

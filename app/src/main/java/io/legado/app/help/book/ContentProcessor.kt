@@ -163,7 +163,7 @@ class ContentProcessor private constructor(
                         mContent.replace(
                             item.pattern.toRegex(),
                             item.replacement,
-                            item.timeoutMillisecond
+                            item.getValidTimeoutMillisecond()
                         )
                     } else {
                         mContent.replace(item.pattern, item.replacement)
