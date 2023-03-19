@@ -196,8 +196,8 @@ interface BaseSource : JsExtensions {
     /**
      * 获取自定义变量
      */
-    fun getVariable(): String? {
-        return CacheManager.get("sourceVariable_${getKey()}")
+    fun getVariable(): String {
+        return CacheManager.get("sourceVariable_${getKey()}") ?: ""
     }
 
     /**
