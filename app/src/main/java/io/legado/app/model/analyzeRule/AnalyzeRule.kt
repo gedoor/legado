@@ -642,10 +642,10 @@ class AnalyzeRule(
                 return it.title
             }
         }
-        return chapter?.getVariable(key)
-            ?: book?.getVariable(key)
-            ?: ruleData?.getVariable(key)
-            ?: source?.get(key)
+        return chapter?.getVariable(key)?.takeIf { it.isNotEmpty() }
+            ?: book?.getVariable(key)?.takeIf { it.isNotEmpty() }
+            ?: ruleData?.getVariable(key)?.takeIf { it.isNotEmpty() }
+            ?: source?.get(key)?.takeIf { it.isNotEmpty() }
             ?: ""
     }
 
