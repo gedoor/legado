@@ -22,24 +22,14 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-import com.script.Bindings;
-import com.script.ScriptContext;
-import com.script.SimpleScriptContext;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.ImporterTopLevel;
-import org.mozilla.javascript.LazilyLoadedCtor;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.Synchronizer;
-import org.mozilla.javascript.Wrapper;
-
-import java.security.AccessControlContext;
-
+import com.script.Bindings
+import com.script.ScriptContext
+import com.script.SimpleScriptContext
+import org.mozilla.javascript.*
+import org.mozilla.javascript.Function
+import java.security.AccessControlContext
 
 /**
  * This class serves as top level scope for Rhino. This class adds
@@ -49,129 +39,69 @@ import java.security.AccessControlContext;
  * @author A. Sundararajan
  * @since 1.6
  */
-public final class RhinoTopLevel extends ImporterTopLevel {
-    RhinoTopLevel(Context cx, RhinoScriptEngine engine) {
-        // second boolean parameter to super constructor tells whether
-        // to seal standard JavaScript objects or not. If security manager
-        // is present, we seal the standard objects.
-        super(cx, System.getSecurityManager() != null);
-        this.engine = engine;
+@Suppress("UNUSED_PARAMETER")
+class RhinoTopLevel internal constructor(cx: Context?, val scriptEngine: RhinoScriptEngine) :
+    ImporterTopLevel(cx, System.getSecurityManager() != null) {
 
-        // initialize JSAdapter lazily. Reduces footprint & startup time.
-        new LazilyLoadedCtor(this, "JSAdapter",
-                "com.sun.script.javascript.JSAdapter",
-                false);
-
-        /*
-         * initialize JavaAdapter. We can't lazy initialize this because
-         * lazy initializer attempts to define a new property. But, JavaAdapter
-         * is an exisiting property that we overwrite.
-         */
-        com.script.rhino.JavaAdapter.init(cx, this, false);
-
-        // add top level functions
-        String names[] = { "bindings", "scope", "sync"  };
-        defineFunctionProperties(names, RhinoTopLevel.class,
-                ScriptableObject.DONTENUM);
+    init {
+        LazilyLoadedCtor(this, "JSAdapter", "com.sun.script.javascript.JSAdapter", false)
+        JavaAdapter.init(cx, this, false)
+        val names = arrayOf("bindings", "scope", "sync")
+        defineFunctionProperties(names, RhinoTopLevel::class.java, 2)
     }
 
-    /**
-     * The bindings function takes a JavaScript scope object
-     * of type ExternalScriptable and returns the underlying Bindings
-     * instance.
-     *
-     *    var page = scope(pageBindings);
-     *    with (page) {
-     *       // code that uses page scope
-     *    }
-     *    var b = bindings(page);
-     *    // operate on bindings here.
-     */
-    public static Object bindings(Context cx, Scriptable thisObj, Object[] args,
-            Function funObj) {
-        if (args.length == 1) {
-            Object arg = args[0];
-            if (arg instanceof Wrapper) {
-                arg = ((Wrapper)arg).unwrap();
+    val accessContext: AccessControlContext?
+        get() = scriptEngine.accessContext
+
+    companion object {
+
+        @JvmStatic
+        fun bindings(
+            cx: Context?,
+            thisObj: Scriptable?,
+            args: Array<Any?>,
+            funObj: Function?
+        ): Any {
+            if (args.size == 1) {
+                var arg = args[0]
+                if (arg is Wrapper) {
+                    arg = arg.unwrap()
+                }
+                if (arg is ExternalScriptable) {
+                    val ctx = arg.context
+                    val bind = ctx.getBindings(100)
+                    return Context.javaToJS(bind, getTopLevelScope(thisObj))
+                }
             }
-            if (arg instanceof com.script.rhino.ExternalScriptable) {
-                ScriptContext ctx = ((com.script.rhino.ExternalScriptable)arg).getContext();
-                Bindings bind = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
-                return Context.javaToJS(bind,
-                           ScriptableObject.getTopLevelScope(thisObj));
+            return Context.getUndefinedValue()
+        }
+
+        @JvmStatic
+        fun scope(cx: Context?, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any {
+            if (args.size == 1) {
+                var arg = args[0]
+                if (arg is Wrapper) {
+                    arg = arg.unwrap()
+                }
+                if (arg is Bindings) {
+                    val ctx: ScriptContext = SimpleScriptContext()
+                    ctx.setBindings(arg as Bindings?, 100)
+                    val res: Scriptable = ExternalScriptable(ctx)
+                    res.prototype = getObjectPrototype(thisObj)
+                    res.parentScope = getTopLevelScope(thisObj)
+                    return res
+                }
+            }
+            return Context.getUndefinedValue()
+        }
+
+        @JvmStatic
+        fun sync(cx: Context?, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any {
+            return if (args.size == 1 && args[0] is Function) {
+                Synchronizer(args[0] as Function?)
+            } else {
+                throw Context.reportRuntimeError("wrong argument(s) for sync")
             }
         }
-        return cx.getUndefinedValue();
     }
-
-    /**
-     * The scope function creates a new JavaScript scope object
-     * with given Bindings object as backing store. This can be used
-     * to create a script scope based on arbitrary Bindings instance.
-     * For example, in webapp scenario, a 'page' level Bindings instance
-     * may be wrapped as a scope and code can be run in JavaScripe 'with'
-     * statement:
-     *
-     *    var page = scope(pageBindings);
-     *    with (page) {
-     *       // code that uses page scope
-     *    }
-     */
-    public static Object scope(Context cx, Scriptable thisObj, Object[] args,
-            Function funObj) {
-        if (args.length == 1) {
-            Object arg = args[0];
-            if (arg instanceof Wrapper) {
-                arg = ((Wrapper)arg).unwrap();
-            }
-            if (arg instanceof Bindings) {
-                ScriptContext ctx = new SimpleScriptContext();
-                ctx.setBindings((Bindings)arg, ScriptContext.ENGINE_SCOPE);
-                Scriptable res = new com.script.rhino.ExternalScriptable(ctx);
-                res.setPrototype(ScriptableObject.getObjectPrototype(thisObj));
-                res.setParentScope(ScriptableObject.getTopLevelScope(thisObj));
-                return res;
-            }
-        }
-        return cx.getUndefinedValue();
-    }
-
-    /**
-     * The sync function creates a synchronized function (in the sense
-     * of a Java synchronized method) from an existing function. The
-     * new function synchronizes on the <code>this</code> object of
-     * its invocation.
-     * {@code
-     * js> var o = { f : sync(function(x) {
-     *       print("entry");
-     *       Packages.java.lang.Thread.sleep(x*1000);
-     *       print("exit");
-     *     })};
-     * js> thread(function() {o.f(5);});
-     * entry
-     * js> thread(function() {o.f(5);});
-     * js>
-     * exit
-     * entry
-     * exit
-     * }
-     */
-    public static Object sync(Context cx, Scriptable thisObj, Object[] args,
-            Function funObj) {
-        if (args.length == 1 && args[0] instanceof Function) {
-            return new Synchronizer((Function)args[0]);
-        } else {
-            throw Context.reportRuntimeError("wrong argument(s) for sync");
-        }
-    }
-
-    RhinoScriptEngine getScriptEngine() {
-        return engine;
-    }
-
-    AccessControlContext getAccessContext() {
-        return engine.getAccessContext();
-    }
-
-    private RhinoScriptEngine engine;
 }

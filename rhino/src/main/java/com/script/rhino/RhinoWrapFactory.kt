@@ -22,18 +22,14 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-import org.mozilla.javascript.ClassShutter;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeJavaObject;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.WrapFactory;
-
-import java.lang.reflect.Member;
-import java.lang.reflect.Modifier;
-
+import org.mozilla.javascript.Context
+import org.mozilla.javascript.NativeJavaObject
+import org.mozilla.javascript.Scriptable
+import org.mozilla.javascript.WrapFactory
+import java.lang.reflect.Member
+import java.lang.reflect.Modifier
 
 /**
  * This wrap factory is used for security reasons. JSR 223 script
@@ -48,118 +44,88 @@ import java.lang.reflect.Modifier;
  * @author A. Sundararajan
  * @since 1.6
  */
-final class RhinoWrapFactory extends WrapFactory {
-    private RhinoWrapFactory() {}
-    private static RhinoWrapFactory theInstance;
+internal class RhinoWrapFactory private constructor() : WrapFactory() {
 
-    static synchronized WrapFactory getInstance() {
-        if (theInstance == null) {
-            theInstance = new RhinoWrapFactory();
-        }
-        return theInstance;
-    }
-
-    // We use instance of this class to wrap security sensitive
-    // Java object. Please refer below.
-    private static class RhinoJavaObject extends NativeJavaObject {
-        RhinoJavaObject(Scriptable scope, Object obj, Class type) {
-            // we pass 'null' to object. NativeJavaObject uses
-            // passed 'type' to reflect fields and methods when
-            // object is null.
-            super(scope, null, type);
-
-            // Now, we set actual object. 'javaObject' is protected
-            // field of NativeJavaObject.
-            javaObject = obj;
-        }
-
-        @Override
-        public Object get(String name, Scriptable start) {
-            if (name.equals("getClass") || name.equals("exec")) {
-                return NOT_FOUND;
-            }
-            return super.get(name, start);
-        }
-    }
-
-    public Scriptable wrapAsJavaObject(Context cx, Scriptable scope,
-            Object javaObject, Class staticType) {
-        if (scope != null) {
-            scope.delete("Packages");
-        }
-        SecurityManager sm = System.getSecurityManager();
-        ClassShutter classShutter = RhinoClassShutter.getInstance();
-        if (javaObject instanceof ClassLoader) {
-            // Check with Security Manager whether we can expose a
-            // ClassLoader...
-            if (sm != null) {
-                sm.checkPermission(new RuntimePermission("getClassLoader"));
-            }
-            // if we fall through here, check permission succeeded.
-            return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
+    override fun wrapAsJavaObject(
+        cx: Context,
+        scope: Scriptable?,
+        javaObject: Any,
+        staticType: Class<*>?
+    ): Scriptable? {
+        scope?.delete("Packages")
+        val sm = System.getSecurityManager()
+        val classShutter = RhinoClassShutter.instance
+        return if (javaObject is ClassLoader) {
+            sm?.checkPermission(RuntimePermission("getClassLoader"))
+            super.wrapAsJavaObject(cx, scope, javaObject, staticType)
         } else {
-            String name = null;
-            if (javaObject instanceof Class) {
-                name = ((Class)javaObject).getName();
-            } else if (javaObject instanceof Member) {
-                Member member = (Member) javaObject;
-                // Check member access. Don't allow reflective access to
-                // non-public members. Note that we can't call checkMemberAccess
-                // because that expects exact stack depth!
-                if (sm != null && !Modifier.isPublic(member.getModifiers())) {
-                    return null;
+            var name: String? = null
+            if (javaObject is Class<*>) {
+                name = javaObject.name
+            } else if (javaObject is Member) {
+                if (sm != null && !Modifier.isPublic(javaObject.modifiers)) {
+                    return null
                 }
-                name = member.getDeclaringClass().getName();
+                name = javaObject.declaringClass.name
             }
-            // Now, make sure that no ClassShutter prevented Class or Member
-            // of it is accessed reflectively. Note that ClassShutter may
-            // prevent access to a class, even though SecurityManager permit.
             if (name != null) {
-                if (!classShutter.visibleToScripts(name)) {
-                    return null;
-                } else {
-                    return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
-                }
-            }
-        }
-
-        // we have got some non-reflective object.
-        Class dynamicType = javaObject.getClass();
-        String name = dynamicType.getName();
-        if (!classShutter.visibleToScripts(name)) {
-            // Object of some sensitive class (such as sun.net.www.*
-            // objects returned from public method of java.net.URL class.
-            // We expose this object as though it is an object of some
-            // super class that is safe for access.
-
-            Class type = null;
-
-            // Whenever a Java Object is wrapped, we are passed with a
-            // staticType which is the type found from environment. For
-            // example, method return type known from signature. The dynamic
-            // type would be the actual Class of the actual returned object.
-            // If the staticType is an interface, we just use that type.
-            if (staticType != null && staticType.isInterface()) {
-                type = staticType;
+                if (!classShutter.visibleToScripts(name)) null else super.wrapAsJavaObject(
+                    cx,
+                    scope,
+                    javaObject,
+                    staticType
+                )
             } else {
-                // dynamicType is always a class type and never an interface.
-                // find an accessible super class of the dynamic type.
-                while (dynamicType != null) {
-                    dynamicType = dynamicType.getSuperclass();
-                    name = dynamicType.getName();
-                    if (classShutter.visibleToScripts(name)) {
-                         type = dynamicType; break;
+                var dynamicType: Class<*>? = javaObject.javaClass
+                name = dynamicType!!.name
+                if (classShutter.visibleToScripts(name)) {
+                    super.wrapAsJavaObject(cx, scope, javaObject, staticType)
+                } else {
+                    var type: Class<*>? = null
+                    if (staticType != null && staticType.isInterface) {
+                        type = staticType
+                    } else {
+                        while (dynamicType != null) {
+                            dynamicType = dynamicType.superclass
+                            name = dynamicType.name
+                            if (classShutter.visibleToScripts(name)) {
+                                type = dynamicType
+                                break
+                            }
+                        }
+                        assert(type != null) { "java.lang.Object 不可访问" }
                     }
+                    RhinoJavaObject(scope, javaObject, type)
                 }
-                // atleast java.lang.Object has to be accessible. So, when
-                // we reach here, type variable should not be null.
-                assert type != null:
-                       "even java.lang.Object is not accessible?";
             }
-            // create custom wrapper with the 'safe' type.
-            return new RhinoJavaObject(scope, javaObject, type);
-        } else {
-            return super.wrapAsJavaObject(cx, scope, javaObject, staticType);
         }
+    }
+
+    private class RhinoJavaObject(
+        scope: Scriptable?,
+        obj: Any?,
+        type: Class<*>?
+    ) : NativeJavaObject(scope, null as Any?, type) {
+        init {
+            javaObject = obj
+        }
+
+        override fun get(name: String, start: Scriptable): Any {
+            return if (name != "getClass" && name != "exec") super.get(name, start) else NOT_FOUND
+        }
+    }
+
+    companion object {
+        private var theInstance: RhinoWrapFactory? = null
+
+        @JvmStatic
+        @get:Synchronized
+        val instance: WrapFactory?
+            get() {
+                if (theInstance == null) {
+                    theInstance = RhinoWrapFactory()
+                }
+                return theInstance
+            }
     }
 }

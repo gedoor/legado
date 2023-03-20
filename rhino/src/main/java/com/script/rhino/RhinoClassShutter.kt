@@ -22,13 +22,9 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-import org.mozilla.javascript.ClassShutter;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.mozilla.javascript.ClassShutter
 
 /**
  * This class prevents script access to certain sensitive classes.
@@ -38,43 +34,38 @@ import java.util.Map;
  * @author A. Sundararajan
  * @since 1.6
  */
-final class RhinoClassShutter implements ClassShutter {
-    private static Map<String, Boolean> protectedClasses;
-    private static RhinoClassShutter theInstance;
-
-    private RhinoClassShutter() {
-    }
-
-    static synchronized ClassShutter getInstance() {
-        if (theInstance == null) {
-            theInstance = new RhinoClassShutter();
-            protectedClasses = new HashMap<String, Boolean>();
-
-            // For now, we just have AccessController. Allowing scripts
-            // to this class will allow it to execute doPrivileged in
-            // bootstrap context. We can add more classes for other reasons.
-            protectedClasses.put("java.lang.Class", Boolean.TRUE);
-            protectedClasses.put("java.lang.Runtime", Boolean.TRUE);
-            protectedClasses.put("java.io.File", Boolean.TRUE);
-            protectedClasses.put("java.security.AccessController", Boolean.TRUE);
-        }
-        return theInstance;
-    }
-
-    public boolean visibleToScripts(String fullClassName) {
-        // first do the security check.
-        SecurityManager sm = System.getSecurityManager();
+internal class RhinoClassShutter private constructor() : ClassShutter {
+    override fun visibleToScripts(fullClassName: String): Boolean {
+        val sm = System.getSecurityManager()
         if (sm != null) {
-            int i = fullClassName.lastIndexOf(".");
+            val i = fullClassName.lastIndexOf(".")
             if (i != -1) {
                 try {
-                    sm.checkPackageAccess(fullClassName.substring(0, i));
-                } catch (SecurityException se) {
-                    return false;
+                    sm.checkPackageAccess(fullClassName.substring(0, i))
+                } catch (var5: SecurityException) {
+                    return false
                 }
             }
         }
-        // now, check is it a protected class.
-        return protectedClasses.get(fullClassName) == null;
+        return protectedClasses[fullClassName] == null
+    }
+
+    companion object {
+
+        @JvmStatic
+        val protectedClasses by lazy {
+            val protectedClasses = HashMap<Any, Any>()
+            protectedClasses["java.lang.Runtime"] = java.lang.Boolean.TRUE
+            protectedClasses["java.io.File"] = java.lang.Boolean.TRUE
+            protectedClasses["java.security.AccessController"] = java.lang.Boolean.TRUE
+            protectedClasses
+        }
+
+        @JvmStatic
+        val instance: ClassShutter by lazy {
+            val theInstance = RhinoClassShutter()
+            theInstance
+        }
+
     }
 }

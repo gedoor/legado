@@ -22,31 +22,26 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-import com.script.Invocable;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.Wrapper;
-
-
+import com.script.Invocable
+import org.mozilla.javascript.*
+import org.mozilla.javascript.Function
 
 /**
  * This class implements Rhino-like JavaAdapter to help implement a Java
  * interface in JavaScript. We support this using Invocable.getInterface.
  * Using this JavaAdapter, script author could write:
  *
- *    var r = new java.lang.Runnable() {
- *                run: function() { script... }
- *            };
  *
- *    r.run();
- *    new java.lang.Thread(r).start();
+ * var r = new java.lang.Runnable() {
+ * run: function() { script... }
+ * };
+ *
+ *
+ * r.run();
+ * new java.lang.Thread(r).start();
+ *
  *
  * Note that Rhino's JavaAdapter support allows extending a Java class and/or
  * implementing one or more interfaces. This JavaAdapter implementation does
@@ -55,60 +50,54 @@ import org.mozilla.javascript.Wrapper;
  * @author A. Sundararajan
  * @since 1.6
  */
-final class JavaAdapter extends ScriptableObject implements Function {
-    private JavaAdapter(Invocable engine) {
-        this.engine = engine;
+internal class JavaAdapter private constructor(private val engine: Invocable) : ScriptableObject(),
+    Function {
+    override fun getClassName(): String {
+        return "JavaAdapter"
     }
 
-    static void init(Context cx, Scriptable scope, boolean sealed)
-    throws RhinoException {
-        RhinoTopLevel topLevel = (RhinoTopLevel) scope;
-        Invocable engine = topLevel.getScriptEngine();
-        JavaAdapter obj = new JavaAdapter(engine);
-        obj.setParentScope(scope);
-        obj.setPrototype(getFunctionPrototype(scope));
-        /*
-         * Note that we can't use defineProperty. A property of this
-         * name is already defined in Context.initStandardObjects. We
-         * simply overwrite the property value!
-         */
-        ScriptableObject.putProperty(topLevel, "JavaAdapter", obj);
+    @Throws(RhinoException::class)
+    override fun call(cx: Context, scope: Scriptable, thisObj: Scriptable, args: Array<Any>): Any {
+        return construct(cx, scope, args)
     }
 
-    public String getClassName() {
-        return "JavaAdapter";
-    }
-
-    public Object call(Context cx, Scriptable scope, Scriptable thisObj,
-            Object[] args) throws RhinoException {
-        return construct(cx, scope, args);
-    }
-
-    public Scriptable construct(Context cx, Scriptable scope, Object[] args)
-    throws RhinoException {
-        if (args.length == 2) {
-            Class<?> clazz = null;
-            Object obj1 = args[0];
-            if (obj1 instanceof Wrapper) {
-                Object o = ((Wrapper)obj1).unwrap();
-                if (o instanceof Class && ((Class)o).isInterface()) {
-                    clazz = (Class) o;
+    @Throws(RhinoException::class)
+    override fun construct(cx: Context, scope: Scriptable, args: Array<Any>): Scriptable {
+        return if (args.size == 2) {
+            var clazz: Class<*>? = null
+            val obj1 = args[0]
+            if (obj1 is Wrapper) {
+                val o = obj1.unwrap()
+                if (o is Class<*> && o.isInterface) {
+                    clazz = o
                 }
-            } else if (obj1 instanceof Class) {
-                if (((Class)obj1).isInterface()) {
-                    clazz = (Class) obj1;
-                }
+            } else if (obj1 is Class<*> && obj1.isInterface) {
+                clazz = obj1
             }
             if (clazz == null) {
-                throw Context.reportRuntimeError("JavaAdapter: first arg should be interface Class");
+                throw Context.reportRuntimeError("JavaAdapter: first arg should be interface Class")
+            } else {
+                val topLevel = getTopLevelScope(scope)
+                Context.toObject(
+                    engine.getInterface(args[1], clazz),
+                    topLevel
+                )
             }
-
-            Scriptable topLevel = ScriptableObject.getTopLevelScope(scope);
-            return cx.toObject(engine.getInterface(args[1],  clazz), topLevel);
         } else {
-            throw Context.reportRuntimeError("JavaAdapter requires two arguments");
+            throw Context.reportRuntimeError("JavaAdapter requires two arguments")
         }
     }
 
-    private Invocable engine;
+    companion object {
+        @JvmStatic
+        @Throws(RhinoException::class)
+        fun init(cx: Context?, scope: Scriptable, sealed: Boolean) {
+            val topLevel = scope as RhinoTopLevel
+            val engine: Invocable = topLevel.scriptEngine
+            val obj = JavaAdapter(engine)
+            obj.parentScope = scope
+            obj.prototype = getFunctionPrototype(scope)
+            putProperty(topLevel, "JavaAdapter", obj)
+        }
+    }
 }

@@ -22,16 +22,10 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeArray;
-import org.mozilla.javascript.NativeJavaArray;
-import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.*
+import org.mozilla.javascript.Function
 
 /**
  * JSAdapter is java.lang.reflect.Proxy equivalent for JavaScript. JSAdapter
@@ -40,21 +34,21 @@ import org.mozilla.javascript.ScriptableObject;
  *
  * Example:
  *
- *    var y = {
- *                __get__    : function (name) { ... }
- *                __has__    : function (name) { ... }
- *                __put__    : function (name, value) {...}
- *                __delete__ : function (name) { ... }
- *                __getIds__ : function () { ... }
- *            };
+ * var y = {
+ * __get__    : function (name) { ... }
+ * __has__    : function (name) { ... }
+ * __put__    : function (name, value) {...}
+ * __delete__ : function (name) { ... }
+ * __getIds__ : function () { ... }
+ * };
  *
- *    var x = new JSAdapter(y);
+ * var x = new JSAdapter(y);
  *
- *    x.i;                        // calls y.__get__
- *    i in x;                     // calls y.__has__
- *    x.p = 10;                   // calls y.__put__
- *    delete x.p;                 // calls y.__delete__
- *    for (i in x) { print(i); }  // calls y.__getIds__
+ * x.i;                        // calls y.__get__
+ * i in x;                     // calls y.__has__
+ * x.p = 10;                   // calls y.__put__
+ * delete x.p;                 // calls y.__delete__
+ * for (i in x) { print(i); }  // calls y.__getIds__
  *
  * If a special JavaScript method is not found in the adaptee, then JSAdapter
  * forwards the property access to the adaptee itself.
@@ -74,270 +68,239 @@ import org.mozilla.javascript.ScriptableObject;
  * @author A. Sundararajan
  * @since 1.6
  */
-public final class JSAdapter implements Scriptable, Function {
-    private JSAdapter(Scriptable obj) {
-        setAdaptee(obj);
+class JSAdapter private constructor(val adaptee: Scriptable) : Scriptable, Function {
+    private var prototype: Scriptable? = null
+    private var parent: Scriptable? = null
+    private var isPrototype = false
+
+    override fun getClassName(): String {
+        return "JSAdapter"
     }
 
-    // initializer to setup JSAdapter prototype in the given scope
-    public static void init(Context cx, Scriptable scope, boolean sealed)
-    throws RhinoException {
-        JSAdapter obj = new JSAdapter(cx.newObject(scope));
-        obj.setParentScope(scope);
-        obj.setPrototype(getFunctionPrototype(scope));
-        obj.isPrototype = true;
-        ScriptableObject.defineProperty(scope, "JSAdapter",  obj,
-                ScriptableObject.DONTENUM);
-    }
-
-    public String getClassName() {
-        return "JSAdapter";
-    }
-
-    public Object get(String name, Scriptable start) {
-        Function func = getAdapteeFunction(GET_PROP);
-        if (func != null) {
-            return call(func, new Object[] { name });
+    override fun get(name: String, start: Scriptable): Any {
+        val func = getAdapteeFunction(GET_PROP)
+        return if (func != null) {
+            this.call(func, arrayOf(name))
         } else {
-            start = getAdaptee();
-            return start.get(name, start);
+            adaptee[name, adaptee]
         }
     }
 
-    public Object get(int index, Scriptable start) {
-        Function func = getAdapteeFunction(GET_PROP);
-        if (func != null) {
-            return call(func, new Object[] {index});
+    override fun get(index: Int, start: Scriptable): Any {
+        val func = getAdapteeFunction(GET_PROP)
+        return if (func != null) {
+            this.call(func, arrayOf(index))
         } else {
-            start = getAdaptee();
-            return start.get(index, start);
+            adaptee[index, adaptee]
         }
     }
 
-    public boolean has(String name, Scriptable start) {
-        Function func = getAdapteeFunction(HAS_PROP);
-        if (func != null) {
-            Object res = call(func, new Object[] { name });
-            return Context.toBoolean(res);
+    override fun has(name: String, start: Scriptable): Boolean {
+        val func = getAdapteeFunction(HAS_PROP)
+        return if (func != null) {
+            val res = this.call(func, arrayOf(name))
+            Context.toBoolean(res)
         } else {
-            start = getAdaptee();
-            return start.has(name, start);
+            adaptee.has(name, adaptee)
         }
     }
 
-    public boolean has(int index, Scriptable start) {
-        Function func = getAdapteeFunction(HAS_PROP);
-        if (func != null) {
-            Object res = call(func, new Object[] {index});
-            return Context.toBoolean(res);
+    override fun has(index: Int, start: Scriptable): Boolean {
+        val func = getAdapteeFunction(HAS_PROP)
+        return if (func != null) {
+            val res = this.call(func, arrayOf(index))
+            Context.toBoolean(res)
         } else {
-            start = getAdaptee();
-            return start.has(index, start);
+            adaptee.has(index, adaptee)
         }
     }
 
-    public void put(String name, Scriptable start, Object value) {
-        if (start == this) {
-            Function func = getAdapteeFunction(PUT_PROP);
+    override fun put(name: String, start: Scriptable, value: Any) {
+        if (start === this) {
+            val func = getAdapteeFunction(PUT_PROP)
             if (func != null) {
-                call(func, new Object[] { name, value });
+                this.call(func, arrayOf(name, value))
             } else {
-                start = getAdaptee();
-                start.put(name, start, value);
+                adaptee.put(name, adaptee, value)
             }
         } else {
-            start.put(name, start, value);
+            start.put(name, start, value)
         }
     }
 
-    public void put(int index, Scriptable start, Object value) {
-        if (start == this) {
-            Function func = getAdapteeFunction(PUT_PROP);
-            if( func != null) {
-                call(func, new Object[] {index, value });
+    override fun put(index: Int, start: Scriptable, value: Any) {
+        if (start === this) {
+            val func = getAdapteeFunction(PUT_PROP)
+            if (func != null) {
+                this.call(func, arrayOf(index, value))
             } else {
-                start = getAdaptee();
-                start.put(index, start, value);
+                adaptee.put(index, adaptee, value)
             }
         } else {
-            start.put(index, start, value);
+            start.put(index, start, value)
         }
     }
 
-    public void delete(String name) {
-        Function func = getAdapteeFunction(DEL_PROP);
+    override fun delete(name: String) {
+        val func = getAdapteeFunction(DEL_PROP)
         if (func != null) {
-            call(func, new Object[] { name });
+            this.call(func, arrayOf(name))
         } else {
-            getAdaptee().delete(name);
+            adaptee.delete(name)
         }
     }
 
-    public void delete(int index) {
-        Function func = getAdapteeFunction(DEL_PROP);
+    override fun delete(index: Int) {
+        val func = getAdapteeFunction(DEL_PROP)
         if (func != null) {
-            call(func, new Object[] {index});
+            this.call(func, arrayOf(index))
         } else {
-            getAdaptee().delete(index);
+            adaptee.delete(index)
         }
     }
 
-    public Scriptable getPrototype() {
-        return prototype;
+    override fun getPrototype(): Scriptable? {
+        return prototype
     }
 
-    public void setPrototype(Scriptable prototype) {
-        this.prototype = prototype;
+    override fun setPrototype(prototype: Scriptable?) {
+        this.prototype = prototype
     }
 
-    public Scriptable getParentScope() {
-        return parent;
+    override fun getParentScope(): Scriptable? {
+        return parent
     }
 
-    public void setParentScope(Scriptable parent) {
-        this.parent = parent;
+    override fun setParentScope(parent: Scriptable?) {
+        this.parent = parent
     }
 
-    public Object[] getIds() {
-        Function func = getAdapteeFunction(GET_PROPIDS);
-        if (func != null) {
-            Object val = call(func, new Object[0]);
-            // in most cases, adaptee would return native JS array
-            if (val instanceof NativeArray) {
-                NativeArray array = (NativeArray) val;
-                Object[] res = new Object[(int)array.getLength()];
-                for (int index = 0; index < res.length; index++) {
-                    res[index] = mapToId(array.get(index, array));
-                }
-                return res;
-            } else if (val instanceof NativeJavaArray) {
-                // may be attempt wrapped Java array
-                Object tmp = ((NativeJavaArray)val).unwrap();
-                Object[] res;
-                if (tmp.getClass() == Object[].class) {
-                    Object[]  array = (Object[]) tmp;
-                    res = new Object[array.length];
-                    for (int index = 0; index < array.length; index++) {
-                        res[index] = mapToId(array[index]);
+    override fun getIds(): Array<Any?> {
+        val func = getAdapteeFunction(GET_PROPIDS)
+        return if (func == null) {
+            adaptee.ids
+        } else {
+            val val1 = this.call(func, arrayOfNulls(0))
+            val res: Array<Any?>
+            when (val1) {
+                is NativeArray -> {
+                    res = arrayOfNulls(val1.length.toInt())
+                    for (index in res.indices) {
+                        res[index] = mapToId(val1[index, val1])
                     }
-                } else {
-                    // just return an empty array
-                    res = Context.emptyArgs;
+                    res
                 }
-                return res;
-            } else {
-                // some other return type, just return empty array
-                return Context.emptyArgs;
+                !is NativeJavaArray -> {
+                    Context.emptyArgs
+                }
+                else -> {
+                    val tmp = val1.unwrap()
+                    if (tmp.javaClass == Array<Any>::class.java) {
+                        val array = tmp as Array<*>
+                        res = arrayOfNulls(array.size)
+                        for (index in array.indices) {
+                            res[index] = mapToId(array[index])
+                        }
+                    } else {
+                        res = Context.emptyArgs
+                    }
+                    res
+                }
             }
-        } else {
-            return getAdaptee().getIds();
         }
     }
 
-    public boolean hasInstance(Scriptable scriptable) {
-        if (scriptable instanceof JSAdapter) {
-            return true;
+    override fun hasInstance(scriptable: Scriptable): Boolean {
+        return if (scriptable is JSAdapter) {
+            true
         } else {
-            Scriptable proto = scriptable.getPrototype();
+            var proto = scriptable.prototype
             while (proto != null) {
-                if (proto.equals(this)) return true;
-                proto = proto.getPrototype();
+                if (proto == this) {
+                    return true
+                }
+                proto = proto.prototype
             }
-            return false;
+            false
         }
     }
 
-    public Object getDefaultValue(Class hint) {
-        return getAdaptee().getDefaultValue(hint);
+    override fun getDefaultValue(hint: Class<*>?): Any {
+        return adaptee.getDefaultValue(hint)
     }
 
-    public Object call(Context cx, Scriptable scope, Scriptable thisObj,
-            Object[] args)
-            throws RhinoException {
-        if (isPrototype) {
-            return construct(cx, scope, args);
+    @Throws(RhinoException::class)
+    override fun call(cx: Context, scope: Scriptable, thisObj: Scriptable, args: Array<Any>): Any {
+        return if (isPrototype) {
+            construct(cx, scope, args)
         } else {
-            Scriptable tmp = getAdaptee();
-            if (tmp instanceof Function) {
-                return ((Function)tmp).call(cx, scope, tmp, args);
+            val tmp = adaptee
+            if (tmp is Function) {
+                tmp.call(cx, scope, tmp, args)
             } else {
-                throw Context.reportRuntimeError("TypeError: not a function");
+                throw Context.reportRuntimeError("TypeError: not a function")
             }
         }
     }
 
-    public Scriptable construct(Context cx, Scriptable scope, Object[] args)
-    throws RhinoException {
-        if (isPrototype) {
-            Scriptable topLevel = ScriptableObject.getTopLevelScope(scope);
-            JSAdapter newObj;
-            if (args.length > 0) {
-                newObj = new JSAdapter(Context.toObject(args[0], topLevel));
+    @Throws(RhinoException::class)
+    override fun construct(cx: Context, scope: Scriptable, args: Array<Any>): Scriptable {
+        val tmp: Scriptable?
+        return if (isPrototype) {
+            tmp = ScriptableObject.getTopLevelScope(scope)
+            if (args.size > 0) {
+                JSAdapter(Context.toObject(args[0], tmp))
             } else {
-                throw Context.reportRuntimeError("JSAdapter requires adaptee");
+                throw Context.reportRuntimeError("JSAdapter requires adaptee")
             }
-            return newObj;
         } else {
-            Scriptable tmp = getAdaptee();
-            if (tmp instanceof Function) {
-                return ((Function)tmp).construct(cx, scope, args);
+            tmp = adaptee
+            if (tmp is Function) {
+                tmp.construct(cx, scope, args)
             } else {
-                throw Context.reportRuntimeError("TypeError: not a constructor");
+                throw Context.reportRuntimeError("TypeError: not a constructor")
             }
         }
     }
 
-    public Scriptable getAdaptee() {
-        return adaptee;
+    private fun mapToId(tmp: Any?): Any {
+        return if (tmp is Double) tmp.toInt() else Context.toString(tmp)
     }
 
-    public void setAdaptee(Scriptable adaptee) {
-        if (adaptee == null) {
-            throw new NullPointerException("adaptee can not be null");
-        }
-        this.adaptee = adaptee;
+    private fun getAdapteeFunction(name: String): Function? {
+        val o = ScriptableObject.getProperty(adaptee, name)
+        return if (o is Function) o else null
     }
 
-    //-- internals only below this point
-
-    // map a property id. Property id can only be an Integer or String
-    private Object mapToId(Object tmp) {
-        if (tmp instanceof Double) {
-            return ((Double) tmp).intValue();
-        } else {
-            return Context.toString(tmp);
+    private fun call(func: Function, args: Array<Any?>): Any {
+        val cx = Context.getCurrentContext()
+        val thisObj = adaptee
+        val scope = func.parentScope
+        return try {
+            func.call(cx, scope, thisObj, args)
+        } catch (var7: RhinoException) {
+            throw Context.reportRuntimeError(var7.message)
         }
     }
 
-    private static Scriptable getFunctionPrototype(Scriptable scope) {
-        return ScriptableObject.getFunctionPrototype(scope);
-    }
+    companion object {
+        private const val GET_PROP = "__get__"
+        private const val HAS_PROP = "__has__"
+        private const val PUT_PROP = "__put__"
+        private const val DEL_PROP = "__delete__"
+        private const val GET_PROPIDS = "__getIds__"
 
-    private Function getAdapteeFunction(String name) {
-        Object o = ScriptableObject.getProperty(getAdaptee(), name);
-        return (o instanceof Function)? (Function)o : null;
-    }
+        @Throws(RhinoException::class)
+        fun init(cx: Context, scope: Scriptable, sealed: Boolean) {
+            val obj = JSAdapter(cx.newObject(scope))
+            obj.parentScope = scope
+            obj.setPrototype(getFunctionPrototype(scope))
+            obj.isPrototype = true
+            ScriptableObject.defineProperty(scope, "JSAdapter", obj, 2)
+        }
 
-    private Object call(Function func, Object[] args) {
-        Context cx = Context.getCurrentContext();
-        Scriptable thisObj = getAdaptee();
-        Scriptable scope = func.getParentScope();
-        try {
-            return func.call(cx, scope, thisObj, args);
-        } catch (RhinoException re) {
-            throw Context.reportRuntimeError(re.getMessage());
+        private fun getFunctionPrototype(scope: Scriptable): Scriptable {
+            return ScriptableObject.getFunctionPrototype(scope)
         }
     }
-
-    private Scriptable prototype;
-    private Scriptable parent;
-    private Scriptable adaptee;
-    private boolean isPrototype;
-
-    // names of adaptee JavaScript functions
-    private static final String GET_PROP = "__get__";
-    private static final String HAS_PROP = "__has__";
-    private static final String PUT_PROP = "__put__";
-    private static final String DEL_PROP = "__delete__";
-    private static final String GET_PROPIDS = "__getIds__";
 }

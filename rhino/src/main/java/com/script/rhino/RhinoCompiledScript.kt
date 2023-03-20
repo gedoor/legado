@@ -22,20 +22,13 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-import com.script.CompiledScript;
-import com.script.ScriptContext;
-import com.script.ScriptEngine;
-import com.script.ScriptException;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.JavaScriptException;
-import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Script;
-import org.mozilla.javascript.Scriptable;
-
+import com.script.CompiledScript
+import com.script.ScriptContext
+import com.script.ScriptEngine
+import com.script.ScriptException
+import org.mozilla.javascript.*
 
 /**
  * Represents compiled JavaScript code.
@@ -43,46 +36,36 @@ import org.mozilla.javascript.Scriptable;
  * @author Mike Grogan
  * @since 1.6
  */
-final class RhinoCompiledScript extends CompiledScript {
+internal class RhinoCompiledScript(
+    private val engine: RhinoScriptEngine,
+    private val script: Script
+) : CompiledScript() {
 
-    private com.script.rhino.RhinoScriptEngine engine;
-    private Script script;
-
-
-    RhinoCompiledScript(com.script.rhino.RhinoScriptEngine engine, Script script) {
-        this.engine = engine;
-        this.script = script;
-    }
-
-    public Object eval(ScriptContext context) throws ScriptException {
-
-        Object result = null;
-        Context cx = RhinoScriptEngine.enterContext();
+    @Throws(ScriptException::class)
+    override fun eval(context: ScriptContext): Any? {
+        val cx = Context.enter()
+        val result: Any?
         try {
-
-            Scriptable scope = engine.getRuntimeScope(context);
-            Object ret = script.exec(cx, scope);
-            result = engine.unwrapReturnValue(ret);
-        } catch (RhinoException re) {
-            int line = (line = re.lineNumber()) == 0 ? -1 : line;
-            String msg;
-            if (re instanceof JavaScriptException) {
-                msg = String.valueOf(((JavaScriptException)re).getValue());
+            val scope = engine.getRuntimeScope(context)
+            val ret = script.exec(cx, scope)
+            result = engine.unwrapReturnValue(ret)
+        } catch (re: RhinoException) {
+            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
+            val msg: String = if (re is JavaScriptException) {
+                re.value.toString()
             } else {
-                msg = re.toString();
+                re.toString()
             }
-            ScriptException se = new ScriptException(msg, re.sourceName(), line);
-            se.initCause(re);
-            throw se;
+            val se = ScriptException(msg, re.sourceName(), line)
+            se.initCause(re)
+            throw se
         } finally {
-            Context.exit();
+            Context.exit()
         }
-
-        return result;
+        return result
     }
 
-    public ScriptEngine getEngine() {
-        return engine;
+    override fun getEngine(): ScriptEngine {
+        return engine
     }
-
 }

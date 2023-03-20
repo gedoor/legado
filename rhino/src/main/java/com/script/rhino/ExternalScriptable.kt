@@ -22,24 +22,11 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-import com.script.Bindings;
-import com.script.ScriptContext;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeJavaClass;
-import org.mozilla.javascript.ScriptRuntime;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.Wrapper;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.script.ScriptContext
+import org.mozilla.javascript.*
+import org.mozilla.javascript.Function
 
 /**
  * ExternalScriptable is an implementation of Scriptable
@@ -49,430 +36,252 @@ import java.util.Map;
  * @author A. Sundararajan
  * @since 1.6
  */
+internal class ExternalScriptable @JvmOverloads constructor(
+    context: ScriptContext?,
+    indexedProps: MutableMap<Any, Any> = HashMap()
+) : Scriptable {
+    val context: ScriptContext
+    private val indexedProps: MutableMap<Any, Any>
+    private var prototype: Scriptable? = null
+    private var parent: Scriptable? = null
 
-final class ExternalScriptable implements Scriptable {
-    /* Underlying ScriptContext that we use to store
-     * named variables of this scope.
-     */
-    private ScriptContext context;
-
-    /* JavaScript allows variables to be named as numbers (indexed
-     * properties). This way arrays, objects (scopes) are treated uniformly.
-     * Note that JSR 223 API supports only String named variables and
-     * so we can't store these in Bindings. Also, JavaScript allows name
-     * of the property name to be even empty String! Again, JSR 223 API
-     * does not support empty name. So, we use the following fallback map
-     * to store such variables of this scope. This map is not exposed to
-     * JSR 223 API. We can just script objects "as is" and need not convert.
-     */
-    private Map<Object, Object> indexedProps;
-
-    // my prototype
-    private Scriptable prototype;
-    // my parent scope, if any
-    private Scriptable parent;
-
-    ExternalScriptable(ScriptContext context) {
-        this(context, new HashMap<Object, Object>());
-    }
-
-    ExternalScriptable(ScriptContext context, Map<Object, Object> indexedProps) {
+    init {
         if (context == null) {
-            throw new NullPointerException("context is null");
-        }
-        this.context = context;
-        this.indexedProps = indexedProps;
-    }
-
-    ScriptContext getContext() {
-        return context;
-    }
-
-    private boolean isEmpty(String name) {
-        return name.equals("");
-    }
-
-    /**
-     * Return the name of the class.
-     */
-    public String getClassName() {
-        return "Global";
-    }
-
-    /**
-     * Returns the value of the named property or NOT_FOUND.
-     *
-     * If the property was created using defineProperty, the
-     * appropriate getter method is called.
-     *
-     * @param name the name of the property
-     * @param start the object in which the lookup began
-     * @return the value of the property (may be null), or NOT_FOUND
-     */
-    public synchronized Object get(String name, Scriptable start) {
-        if (isEmpty(name)) {
-            if (indexedProps.containsKey(name)) {
-                return indexedProps.get(name);
-            } else {
-                return NOT_FOUND;
-            }
+            throw NullPointerException("context is null")
         } else {
-            synchronized (context) {
-                int scope = context.getAttributesScope(name);
-                if (scope != -1) {
-                    Object value = context.getAttribute(name, scope);
-                    return Context.javaToJS(value, this);
+            this.context = context
+            this.indexedProps = indexedProps
+        }
+    }
+
+    private fun isEmpty(name: String): Boolean {
+        return name == ""
+    }
+
+    override fun getClassName(): String {
+        return "Global"
+    }
+
+    @Synchronized
+    override fun get(name: String, start: Scriptable): Any {
+        return if (this.isEmpty(name)) {
+            indexedProps.getOrElse(name) { Scriptable.NOT_FOUND }
+        } else {
+            synchronized(context) {
+                val scope = context.getAttributesScope(name)
+                return if (scope != -1) {
+                    val value = context.getAttribute(name, scope)
+                    Context.javaToJS(value, this)
                 } else {
-                    return NOT_FOUND;
+                    Scriptable.NOT_FOUND
                 }
             }
         }
     }
 
-    /**
-     * Returns the value of the indexed property or NOT_FOUND.
-     *
-     * @param index the numeric index for the property
-     * @param start the object in which the lookup began
-     * @return the value of the property (may be null), or NOT_FOUND
-     */
-    public synchronized Object get(int index, Scriptable start) {
-        if (indexedProps.containsKey(index)) {
-            return indexedProps.get(index);
+    @Synchronized
+    override fun get(index: Int, start: Scriptable): Any {
+        return indexedProps.getOrElse(index) { Scriptable.NOT_FOUND }
+    }
+
+    @Synchronized
+    override fun has(name: String, start: Scriptable): Boolean {
+        return if (this.isEmpty(name)) {
+            indexedProps.containsKey(name)
         } else {
-            return NOT_FOUND;
+            synchronized(context) { return context.getAttributesScope(name) != -1 }
         }
     }
 
-    /**
-     * Returns true if the named property is defined.
-     *
-     * @param name the name of the property
-     * @param start the object in which the lookup began
-     * @return true if and only if the property was found in the object
-     */
-    public synchronized boolean has(String name, Scriptable start) {
-        if (isEmpty(name)) {
-            return indexedProps.containsKey(name);
-        } else {
-            synchronized (context) {
-                return context.getAttributesScope(name) != -1;
-            }
-        }
+    @Synchronized
+    override fun has(index: Int, start: Scriptable): Boolean {
+        return indexedProps.containsKey(index)
     }
 
-    /**
-     * Returns true if the property index is defined.
-     *
-     * @param index the numeric index for the property
-     * @param start the object in which the lookup began
-     * @return true if and only if the property was found in the object
-     */
-    public synchronized boolean has(int index, Scriptable start) {
-        return indexedProps.containsKey(index);
-    }
-
-    /**
-     * Sets the value of the named property, creating it if need be.
-     *
-     * @param name the name of the property
-     * @param start the object whose property is being set
-     * @param value value to set the property to
-     */
-    public void put(String name, Scriptable start, Object value) {
-        if (start == this) {
-            synchronized (this) {
-                if (isEmpty(name)) {
-                    indexedProps.put(name, value);
+    override fun put(name: String, start: Scriptable, value: Any) {
+        if (start === this) {
+            synchronized(this) {
+                if (this.isEmpty(name)) {
+                    indexedProps.put(name, value)
                 } else {
-                    synchronized (context) {
-                        int scope = context.getAttributesScope(name);
+                    synchronized(context) {
+                        var scope = context.getAttributesScope(name)
                         if (scope == -1) {
-                            scope = ScriptContext.ENGINE_SCOPE;
+                            scope = 100
                         }
-                        context.setAttribute(name, jsToJava(value), scope);
+                        context.setAttribute(name, jsToJava(value), scope)
                     }
                 }
             }
         } else {
-            start.put(name, start, value);
+            start.put(name, start, value)
         }
     }
 
-    /**
-     * Sets the value of the indexed property, creating it if need be.
-     *
-     * @param index the numeric index for the property
-     * @param start the object whose property is being set
-     * @param value value to set the property to
-     */
-    public void put(int index, Scriptable start, Object value) {
-        if (start == this) {
-            synchronized (this) {
-                indexedProps.put(index, value);
-            }
+    override fun put(index: Int, start: Scriptable, value: Any) {
+        if (start === this) {
+            synchronized(this) { indexedProps.put(index, value) }
         } else {
-            start.put(index, start, value);
+            start.put(index, start, value)
         }
     }
 
-    /**
-     * Removes a named property from the object.
-     *
-     * If the property is not found, no action is taken.
-     *
-     * @param name the name of the property
-     */
-    public synchronized void delete(String name) {
-        if (isEmpty(name)) {
-            indexedProps.remove(name);
+    @Synchronized
+    override fun delete(name: String) {
+        if (this.isEmpty(name)) {
+            indexedProps.remove(name)
         } else {
-            synchronized (context) {
-                int scope = context.getAttributesScope(name);
+            synchronized(context) {
+                val scope = context.getAttributesScope(name)
                 if (scope != -1) {
-                    context.removeAttribute(name, scope);
+                    context.removeAttribute(name, scope)
                 }
             }
         }
     }
 
-    /**
-     * Removes the indexed property from the object.
-     *
-     * If the property is not found, no action is taken.
-     *
-     * @param index the numeric index for the property
-     */
-    public void delete(int index) {
-        indexedProps.remove(index);
+    override fun delete(index: Int) {
+        indexedProps.remove(index)
     }
 
-    /**
-     * Get the prototype of the object.
-     * @return the prototype
-     */
-    public Scriptable getPrototype() {
-        return prototype;
+    override fun getPrototype(): Scriptable? {
+        return prototype
     }
 
-    /**
-     * Set the prototype of the object.
-     * @param prototype the prototype to set
-     */
-    public void setPrototype(Scriptable prototype) {
-        this.prototype = prototype;
+    override fun setPrototype(prototype: Scriptable?) {
+        this.prototype = prototype
     }
 
-    /**
-     * Get the parent scope of the object.
-     * @return the parent scope
-     */
-    public Scriptable getParentScope() {
-        return parent;
+    override fun getParentScope(): Scriptable? {
+        return parent
     }
 
-    /**
-     * Set the parent scope of the object.
-     * @param parent the parent scope to set
-     */
-    public void setParentScope(Scriptable parent) {
-        this.parent = parent;
+    override fun setParentScope(parent: Scriptable?) {
+        this.parent = parent
     }
 
-     /**
-     * Get an array of property ids.
-     *
-     * Not all property ids need be returned. Those properties
-     * whose ids are not returned are considered non-enumerable.
-     *
-     * @return an array of Objects. Each entry in the array is either
-     *         a java.lang.String or a java.lang.Number
-     */
-    public synchronized Object[] getIds() {
-        String[] keys = getAllKeys();
-        int size = keys.length + indexedProps.size();
-        Object[] res = new Object[size];
-        System.arraycopy(keys, 0, res, 0, keys.length);
-        int i = keys.length;
-        // now add all indexed properties
-        for (Object index : indexedProps.keySet()) {
-            res[i++] = index;
+    @Synchronized
+    override fun getIds(): Array<Any> {
+        val keys = allKeys
+        val size = keys.size + indexedProps.size
+        val res = arrayOfNulls<Any>(size)
+        System.arraycopy(keys, 0, res, 0, keys.size)
+        var i = keys.size
+        var index: Any
+        val var5: Iterator<*> = indexedProps.keys.iterator()
+        while (var5.hasNext()) {
+            index = var5.next()!!
+            res[i++] = index
         }
-        return res;
+        @Suppress("UNCHECKED_CAST")
+        return res as Array<Any>
     }
 
-    /**
-     * Get the default value of the object with a given hint.
-     * The hints are String.class for type String, Number.class for type
-     * Number, Scriptable.class for type Object, and Boolean.class for
-     * type Boolean. <p>
-     *
-     * A <code>hint</code> of null means "no hint".
-     *
-     * See ECMA 8.6.2.6.
-     *
-     * @param typeHint the type hint
-     * @return the default value
-     */
-    public Object getDefaultValue(Class typeHint) {
-        for (int i=0; i < 2; i++) {
-            boolean tryToString;
-            if (typeHint == ScriptRuntime.StringClass) {
-                tryToString = (i == 0);
-            } else {
-                tryToString = (i == 1);
-            }
-
-            String methodName;
-            Object[] args;
-            if (tryToString) {
-                methodName = "toString";
-                args = ScriptRuntime.emptyArgs;
-            } else {
-                methodName = "valueOf";
-                args = new Object[1];
-                String hint;
-                if (typeHint == null) {
-                    hint = "undefined";
-                } else if (typeHint == ScriptRuntime.StringClass) {
-                    hint = "string";
-                } else if (typeHint == ScriptRuntime.ScriptableClass) {
-                    hint = "object";
-                } else if (typeHint == ScriptRuntime.FunctionClass) {
-                    hint = "function";
-                } else if (typeHint == ScriptRuntime.BooleanClass
-                           || typeHint == Boolean.TYPE)
-                {
-                    hint = "boolean";
-                } else if (typeHint == ScriptRuntime.NumberClass ||
-                         typeHint == ScriptRuntime.ByteClass ||
-                         typeHint == Byte.TYPE ||
-                         typeHint == ScriptRuntime.ShortClass ||
-                         typeHint == Short.TYPE ||
-                         typeHint == ScriptRuntime.IntegerClass ||
-                         typeHint == Integer.TYPE ||
-                         typeHint == ScriptRuntime.FloatClass ||
-                         typeHint == Float.TYPE ||
-                         typeHint == ScriptRuntime.DoubleClass ||
-                         typeHint == Double.TYPE)
-                {
-                    hint = "number";
+    override fun getDefaultValue(typeHint: Class<*>?): Any {
+        for (i in 0..1) {
+            val tryToString: Boolean =
+                if (typeHint == ScriptRuntime.StringClass) {
+                    i == 0
                 } else {
-                    throw Context.reportRuntimeError(
-                        "Invalid JavaScript value of type " +
-                                typeHint);
+                    i == 1
                 }
-                args[0] = hint;
+            var methodName: String
+            var args: Array<Any?>
+            if (tryToString) {
+                methodName = "toString"
+                args = ScriptRuntime.emptyArgs
+            } else {
+                methodName = "valueOf"
+                args = arrayOfNulls(1)
+                val hint: String = if (typeHint == null) {
+                    "undefined"
+                } else if (typeHint == ScriptRuntime.StringClass) {
+                    "string"
+                } else if (typeHint == ScriptRuntime.ScriptableClass) {
+                    "object"
+                } else if (typeHint == ScriptRuntime.FunctionClass) {
+                    "function"
+                } else if (typeHint != ScriptRuntime.BooleanClass && typeHint != java.lang.Boolean.TYPE) {
+                    if (typeHint != ScriptRuntime.NumberClass && typeHint != ScriptRuntime.ByteClass && typeHint != java.lang.Byte.TYPE && typeHint != ScriptRuntime.ShortClass && typeHint != java.lang.Short.TYPE && typeHint != ScriptRuntime.IntegerClass && typeHint != Integer.TYPE && typeHint != ScriptRuntime.FloatClass && typeHint != java.lang.Float.TYPE && typeHint != ScriptRuntime.DoubleClass && typeHint != java.lang.Double.TYPE) {
+                        throw Context.reportRuntimeError("Invalid JavaScript value of type $typeHint")
+                    }
+                    "number"
+                } else {
+                    "boolean"
+                }
+                args[0] = hint
             }
-            Object v = ScriptableObject.getProperty(this, methodName);
-            if (!(v instanceof Function))
-                continue;
-            Function fun = (Function) v;
-            Context cx = RhinoScriptEngine.enterContext();
-            try {
-                v = fun.call(cx, fun.getParentScope(), this, args);
-            } finally {
-                cx.exit();
-            }
-            if (v != null) {
-                if (!(v instanceof Scriptable)) {
-                    return v;
+            var v = ScriptableObject.getProperty(this, methodName)
+            if (v is Function) {
+                val `fun` = v
+                val cx = Context.enter()
+                v = try {
+                    `fun`.call(cx, `fun`.parentScope, this, args)
+                } finally {
+                    Context.exit()
                 }
-                if (typeHint == ScriptRuntime.ScriptableClass
-                    || typeHint == ScriptRuntime.FunctionClass)
-                {
-                    return v;
-                }
-                if (tryToString && v instanceof Wrapper) {
-                    // Let a wrapped java.lang.String pass for a primitive
-                    // string.
-                    Object u = ((Wrapper)v).unwrap();
-                    if (u instanceof String)
-                        return u;
-                }
-            }
-        }
-        // fall through to error
-        String arg = (typeHint == null) ? "undefined" : typeHint.getName();
-        throw Context.reportRuntimeError(
-                  "Cannot find default value for object " + arg);
-    }
-
-    /**
-     * Implements the instanceof operator.
-     *
-     * @param instance The value that appeared on the LHS of the instanceof
-     *              operator
-     * @return true if "this" appears in value's prototype chain
-     *
-     */
-    public boolean hasInstance(Scriptable instance) {
-        // Default for JS objects (other than Function) is to do prototype
-        // chasing.
-        Scriptable proto = instance.getPrototype();
-        while (proto != null) {
-            if (proto.equals(this)) return true;
-            proto = proto.getPrototype();
-        }
-        return false;
-    }
-
-    private String[] getAllKeys() {
-        ArrayList<String> list = new ArrayList<String>();
-        synchronized (context) {
-            for (int scope : context.getScopes()) {
-                Bindings bindings = context.getBindings(scope);
-                if (bindings != null) {
-                    list.ensureCapacity(bindings.size());
-                    for (String key : bindings.keySet()) {
-                        list.add(key);
+                if (v != null) {
+                    if (v !is Scriptable) {
+                        return v
+                    }
+                    if (typeHint == ScriptRuntime.ScriptableClass || typeHint == ScriptRuntime.FunctionClass) {
+                        return v
+                    }
+                    if (tryToString && v is Wrapper) {
+                        val u = (v as Wrapper).unwrap()
+                        if (u is String) {
+                            return u
+                        }
                     }
                 }
             }
         }
-        String[] res = new String[list.size()];
-        list.toArray(res);
-        return res;
+        val arg = if (typeHint == null) "undefined" else typeHint.name
+        throw Context.reportRuntimeError("找不到对象的默认值 $arg")
     }
 
-   /**
-    * We convert script values to the nearest Java value.
-    * We unwrap wrapped Java objects so that access from
-    * Bindings.get() would return "workable" value for Java.
-    * But, at the same time, we need to make few special cases
-    * and hence the following function is used.
-    */
-    private Object jsToJava(Object jsObj) {
-        if (jsObj instanceof Wrapper) {
-            Wrapper njb = (Wrapper) jsObj;
-            /* importClass feature of ImporterTopLevel puts
-             * NativeJavaClass in global scope. If we unwrap
-             * it, importClass won't work.
-             */
-            if (njb instanceof NativeJavaClass) {
-                return njb;
+    override fun hasInstance(instance: Scriptable): Boolean {
+        var proto = instance.prototype
+        while (proto != null) {
+            if (proto == this) {
+                return true
             }
+            proto = proto.prototype
+        }
+        return false
+    }
 
-            /* script may use Java primitive wrapper type objects
-             * (such as java.lang.Integer, java.lang.Boolean etc)
-             * explicitly. If we unwrap, then these script objects
-             * will become script primitive types. For example,
-             *
-             *    var x = new java.lang.Double(3.0); print(typeof x);
-             *
-             * will print 'number'. We don't want that to happen.
-             */
-            Object obj = njb.unwrap();
-            if (obj instanceof Number || obj instanceof String ||
-                obj instanceof Boolean || obj instanceof Character) {
-                // special type wrapped -- we just leave it as is.
-                return njb;
-            } else {
-                // return unwrapped object for any other object.
-                return obj;
+    private val allKeys: Array<String>
+        get() {
+            val list = ArrayList<String>()
+            synchronized(context) {
+                val var3: Iterator<*> = context.scopes.iterator()
+                while (var3.hasNext()) {
+                    val scope = var3.next() as Int
+                    val bindings = context.getBindings(scope)
+                    if (bindings != null) {
+                        list.ensureCapacity(bindings.size)
+                        val var6: Iterator<*> = bindings.keys.iterator()
+                        while (var6.hasNext()) {
+                            val key = var6.next() as String
+                            list.add(key)
+                        }
+                    }
+                }
             }
-        } else { // not-a-Java-wrapper
-            return jsObj;
+            return list.toTypedArray()
+        }
+
+    private fun jsToJava(jsObj: Any): Any {
+        return if (jsObj is Wrapper) {
+            if (jsObj is NativeJavaClass) {
+                jsObj
+            } else {
+                val obj = jsObj.unwrap()
+                if (obj !is Number && obj !is String && obj !is Boolean && obj !is Char) obj else jsObj
+            }
+        } else {
+            jsObj
         }
     }
 }

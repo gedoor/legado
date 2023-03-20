@@ -22,440 +22,358 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package com.script.rhino
 
-package com.script.rhino;
-
-
-import com.script.AbstractScriptEngine;
-import com.script.Bindings;
-import com.script.Compilable;
-import com.script.CompiledScript;
-import com.script.Invocable;
-import com.script.ScriptContext;
-import com.script.ScriptEngine;
-import com.script.ScriptException;
-import com.script.SimpleBindings;
-
-import org.mozilla.javascript.Callable;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.JavaScriptException;
-import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Script;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.Undefined;
-import org.mozilla.javascript.Wrapper;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.lang.reflect.Method;
-import java.security.AccessControlContext;
-import java.security.AccessControlException;
-import java.security.AccessController;
-import java.security.AllPermission;
-import java.security.PrivilegedAction;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.script.*
+import com.script.rhino.RhinoClassShutter.Companion.instance
+import org.intellij.lang.annotations.Language
+import org.mozilla.javascript.*
+import org.mozilla.javascript.Function
+import java.io.IOException
+import java.io.Reader
+import java.io.StringReader
+import java.lang.reflect.Method
+import java.security.*
 
 /**
- * Implementation of <code>ScriptEngine</code> using the Mozilla Rhino
+ * Implementation of `ScriptEngine` using the Mozilla Rhino
  * interpreter.
  *
  * @author Mike Grogan
  * @author A. Sundararajan
  * @since 1.6
  */
-public final class RhinoScriptEngine extends AbstractScriptEngine
-        implements Invocable, Compilable {
+class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
+    var accessContext: AccessControlContext? = null
+    private var topLevel: RhinoTopLevel? = null
+    private val indexedProps: MutableMap<Any, Any>
+    private val implementor: InterfaceImplementor
 
-    private static final boolean DEBUG = false;
-
-    private AccessControlContext accCtxt;
-
-    /* Scope where standard JavaScript objects and our
-     * extensions to it are stored. Note that these are not
-     * user defined engine level global variables. These are
-     * variables have to be there on all compliant ECMAScript
-     * scopes. We put these standard objects in this top level.
-     */
-    private com.script.rhino.RhinoTopLevel topLevel;
-
-    /* map used to store indexed properties in engine scope
-     * refer to comment on 'indexedProps' in ExternalScriptable.java.
-     */
-    private Map<Object, Object> indexedProps;
-
-    private InterfaceImplementor implementor;
-
-    private static final int languageVersion = getLanguageVersion();
-    private static final int optimizationLevel = getOptimizationLevel();
-
-    static {
-        ContextFactory.initGlobal(new ContextFactory() {
-            /**
-             * Create new Context instance to be associated with the current thread.
-             */
-            @Override
-            protected Context makeContext() {
-                Context cx = super.makeContext();
-                cx.setLanguageVersion(languageVersion);
-                cx.setOptimizationLevel(optimizationLevel);
-                cx.setClassShutter(com.script.rhino.RhinoClassShutter.getInstance());
-                cx.setWrapFactory(com.script.rhino.RhinoWrapFactory.getInstance());
-                return cx;
-            }
-
-            /**
-             * Execute top call to script or function. When the runtime is about to
-             * execute a script or function that will create the first stack frame
-             * with scriptable code, it calls this method to perform the real call.
-             * In this way execution of any script happens inside this function.
-             */
-            @Override
-            protected Object doTopCall(final Callable callable,
-                                       final Context cx, final Scriptable scope,
-                                       final Scriptable thisObj, final Object[] args) {
-                AccessControlContext accCtxt = null;
-                Scriptable global = ScriptableObject.getTopLevelScope(scope);
-                Scriptable globalProto = global.getPrototype();
-                if (globalProto instanceof com.script.rhino.RhinoTopLevel) {
-                    accCtxt = ((com.script.rhino.RhinoTopLevel) globalProto).getAccessContext();
-                }
-
-                if (accCtxt != null) {
-                    return AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                        public Object run() {
-                            return superDoTopCall(callable, cx, scope, thisObj, args);
-                        }
-                    }, accCtxt);
-                } else {
-                    return superDoTopCall(callable, cx, scope, thisObj, args);
-                }
-            }
-
-            private Object superDoTopCall(Callable callable,
-                                          Context cx, Scriptable scope,
-                                          Scriptable thisObj, Object[] args) {
-                return super.doTopCall(callable, cx, scope, thisObj, args);
-            }
-        });
-    }
-
-    private static final String RHINO_JS_VERSION = "rhino.js.version";
-
-    private static int getLanguageVersion() {
-        return Context.VERSION_1_8;
-    }
-
-    private static final String RHINO_OPT_LEVEL = "rhino.opt.level";
-
-    private static int getOptimizationLevel() {
-        int optLevel = -1;
-        // disable optimizer under security manager, for now.
-        if (System.getSecurityManager() == null) {
-            optLevel = Integer.getInteger(RHINO_OPT_LEVEL, -1);
-        }
-        return optLevel;
-    }
-
-    /**
-     * Creates a new instance of RhinoScriptEngine
-     */
-    public RhinoScriptEngine() {
-        if (System.getSecurityManager() != null) {
-            try {
-                AccessController.checkPermission(new AllPermission());
-            } catch (AccessControlException ace) {
-                accCtxt = AccessController.getContext();
-            }
-        }
-
-        Context cx = enterContext();
+    @Throws(ScriptException::class)
+    override fun eval(reader: Reader, ctxt: ScriptContext): Any {
+        val cx = Context.enter()
+        val ret: Any
         try {
-            topLevel = new RhinoTopLevel(cx, this);
-        } finally {
-            cx.exit();
-        }
-
-        indexedProps = new HashMap<Object, Object>();
-
-        //construct object used to implement getInterface
-        implementor = new InterfaceImplementor(this) {
-            protected boolean isImplemented(Object thiz, Class<?> iface) {
-                Context cx = enterContext();
-                try {
-                    if (thiz != null && !(thiz instanceof Scriptable)) {
-                        thiz = cx.toObject(thiz, topLevel);
-                    }
-                    Scriptable engineScope = getRuntimeScope(context);
-                    Scriptable localScope = (thiz != null) ? (Scriptable) thiz :
-                            engineScope;
-                    for (Method method : iface.getMethods()) {
-                        // ignore methods of java.lang.Object class
-                        if (method.getDeclaringClass() == Object.class) {
-                            continue;
-                        }
-                        Object obj = ScriptableObject.getProperty(localScope, method.getName());
-                        if (!(obj instanceof Function)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } finally {
-                    cx.exit();
-                }
-            }
-
-            protected Object convertResult(Method method, Object res)
-                    throws ScriptException {
-                Class desiredType = method.getReturnType();
-                if (desiredType == Void.TYPE) {
-                    return null;
-                } else {
-                    return Context.jsToJava(res, desiredType);
-                }
-            }
-        };
-    }
-
-    public Object eval(Reader reader, ScriptContext ctxt)
-            throws ScriptException {
-        Object ret;
-
-        Context cx = enterContext();
-        try {
-            Scriptable scope = getRuntimeScope(ctxt);
-            String filename = (String) get(ScriptEngine.FILENAME);
-            filename = filename == null ? "<Unknown source>" : filename;
-
-            ret = cx.evaluateReader(scope, reader, filename, 1, null);
-        } catch (RhinoException re) {
-            if (DEBUG) re.printStackTrace();
-            int line = (line = re.lineNumber()) == 0 ? -1 : line;
-            String msg;
-            if (re instanceof JavaScriptException) {
-                msg = String.valueOf(((JavaScriptException) re).getValue());
+            val scope = getRuntimeScope(ctxt)
+            var filename = this["javax.script.filename"] as? String
+            filename = filename ?: "<Unknown source>"
+            ret = cx.evaluateReader(scope, reader, filename, 1, null as Any?)
+        } catch (re: RhinoException) {
+            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
+            val msg: String = if (re is JavaScriptException) {
+                re.value.toString()
             } else {
-                msg = re.toString();
+                re.toString()
             }
-            ScriptException se = new ScriptException(msg, re.sourceName(), line);
-            se.initCause(re);
-            throw se;
-        } catch (IOException ee) {
-            throw new ScriptException(ee);
+            val se = ScriptException(msg, re.sourceName(), line)
+            se.initCause(re)
+            throw se
+        } catch (var14: IOException) {
+            throw ScriptException(var14)
         } finally {
-            cx.exit();
+            Context.exit()
         }
-
-        return unwrapReturnValue(ret);
+        return unwrapReturnValue(ret)!!
     }
 
-    public Object eval(String script, ScriptContext ctxt) throws ScriptException {
-        if (script == null) {
-            throw new NullPointerException("null script");
+    @Throws(ScriptException::class)
+    override fun eval(script: String?, ctxt: ScriptContext): Any {
+        return if (script == null) {
+            throw NullPointerException("null script")
+        } else {
+            this.eval(StringReader(script) as Reader, ctxt)
         }
-        return eval(new StringReader(script), ctxt);
     }
 
-    public Bindings createBindings() {
-        return new SimpleBindings();
+    override fun createBindings(): Bindings {
+        return SimpleBindings()
     }
 
-    //Invocable methods
-    public Object invokeFunction(String name, Object... args)
-            throws ScriptException, NoSuchMethodException {
-        return invoke(null, name, args);
+    @Throws(ScriptException::class, NoSuchMethodException::class)
+    override fun invokeFunction(name: String, vararg args: Any): Any {
+        return this.invoke(null as Any?, name, *args)
     }
 
-    public Object invokeMethod(Object thiz, String name, Object... args)
-            throws ScriptException, NoSuchMethodException {
-        if (thiz == null) {
-            throw new IllegalArgumentException("script object can not be null");
+    @Throws(ScriptException::class, NoSuchMethodException::class)
+    override fun invokeMethod(thiz: Any?, name: String, vararg args: Any): Any {
+        return if (thiz == null) {
+            throw IllegalArgumentException("脚本对象不能为空")
+        } else {
+            this.invoke(thiz, name, *args)
         }
-        return invoke(thiz, name, args);
     }
 
-    private Object invoke(Object thiz, String name, Object... args)
-            throws ScriptException, NoSuchMethodException {
-        Context cx = enterContext();
+    @Suppress("UNCHECKED_CAST")
+    @Throws(ScriptException::class, NoSuchMethodException::class)
+    private operator fun invoke(thiz: Any?, name: String?, vararg args: Any?): Any {
+        var thiz1 = thiz
+        val cx = Context.enter()
+        val var11: Any
         try {
             if (name == null) {
-                throw new NullPointerException("method name is null");
+                throw NullPointerException("方法名为空")
             }
-
-            if (thiz != null && !(thiz instanceof Scriptable)) {
-                thiz = cx.toObject(thiz, topLevel);
+            if (thiz1 != null && thiz1 !is Scriptable) {
+                thiz1 = Context.toObject(thiz1, topLevel)
             }
-
-            Scriptable engineScope = getRuntimeScope(context);
-            Scriptable localScope = (thiz != null) ? (Scriptable) thiz :
-                    engineScope;
-            Object obj = ScriptableObject.getProperty(localScope, name);
-            if (!(obj instanceof Function)) {
-                throw new NoSuchMethodException("no such method: " + name);
-            }
-
-            Function func = (Function) obj;
-            Scriptable scope = func.getParentScope();
+            val engineScope = getRuntimeScope(context)
+            val localScope = if (thiz1 != null) thiz1 as Scriptable else engineScope
+            val obj = ScriptableObject.getProperty(localScope, name) as? Function
+                ?: throw NoSuchMethodException("no such method: $name")
+            val func = obj
+            var scope = func.parentScope
             if (scope == null) {
-                scope = engineScope;
+                scope = engineScope
             }
-            Object result = func.call(cx, scope, localScope,
-                    wrapArguments(args));
-            return unwrapReturnValue(result);
-        } catch (RhinoException re) {
-            if (DEBUG) re.printStackTrace();
-            int line = (line = re.lineNumber()) == 0 ? -1 : line;
-            ScriptException se = new ScriptException(re.toString(), re.sourceName(), line);
-            se.initCause(re);
-            throw se;
+            val result = func.call(cx, scope, localScope, wrapArguments(args as? Array<Any?>))
+            var11 = unwrapReturnValue(result)!!
+        } catch (re: RhinoException) {
+            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
+            val se = ScriptException(re.toString(), re.sourceName(), line)
+            se.initCause(re)
+            throw se
         } finally {
-            cx.exit();
+            Context.exit()
+        }
+        return var11
+    }
+
+    override fun <T> getInterface(clasz: Class<T>): T? {
+        return try {
+            implementor.getInterface(null as Any?, clasz)
+        } catch (var3: ScriptException) {
+            null
         }
     }
 
-    public <T> T getInterface(Class<T> clasz) {
+    override fun <T> getInterface(thiz: Any?, clasz: Class<T>): T? {
+        return if (thiz == null) {
+            throw IllegalArgumentException("脚本对象不能为空")
+        } else {
+            try {
+                implementor.getInterface(thiz, clasz)
+            } catch (var4: ScriptException) {
+                null
+            }
+        }
+    }
+
+    fun getRuntimeScope(ctxt: ScriptContext?): Scriptable {
+        return if (ctxt == null) {
+            throw NullPointerException("脚本context为空")
+        } else {
+            val newScope: Scriptable = ExternalScriptable(ctxt, indexedProps)
+            newScope.prototype = topLevel
+            newScope.put("context", newScope, ctxt)
+            val cx = Context.enter()
+            try {
+                @Language("js")
+                val js = """
+                        function print(str, newline) {
+                            if (typeof(str) == 'undefined') {
+                                str = 'undefined';
+                            } else if (str == null) {
+                                str = 'null';
+                            } 
+                            var out = context.getWriter();
+                            if (!(out instanceof java.io.PrintWriter))
+                                out = new java.io.PrintWriter(out);
+                            out.print(String(str));
+                            if (newline) out.print('\\n');
+                                out.flush();
+                        }
+                        function println(str) { 
+                            print(str, true);
+                        }
+                    """.trimIndent()
+                cx.evaluateString(
+                    newScope,
+                    js,
+                    "print",
+                    1,
+                    null as Any?
+                )
+            } finally {
+                Context.exit()
+            }
+            newScope
+        }
+    }
+
+    @Throws(ScriptException::class)
+    override fun compile(script: String): CompiledScript {
+        return this.compile(StringReader(script) as Reader)
+    }
+
+    @Throws(ScriptException::class)
+    override fun compile(script: Reader): CompiledScript {
+        val cx = Context.enter()
+        val ret: RhinoCompiledScript
         try {
-            return implementor.getInterface(null, clasz);
-        } catch (ScriptException e) {
-            return null;
-        }
-    }
-
-    public <T> T getInterface(Object thiz, Class<T> clasz) {
-        if (thiz == null) {
-            throw new IllegalArgumentException("script object can not be null");
-        }
-
-        try {
-            return implementor.getInterface(thiz, clasz);
-        } catch (ScriptException e) {
-            return null;
-        }
-    }
-
-    private static final String printSource =
-            "function print(str, newline) {                \n" +
-                    "    if (typeof(str) == 'undefined') {         \n" +
-                    "        str = 'undefined';                    \n" +
-                    "    } else if (str == null) {                 \n" +
-                    "        str = 'null';                         \n" +
-                    "    }                                         \n" +
-                    "    var out = context.getWriter();            \n" +
-                    "    if (!(out instanceof java.io.PrintWriter))\n" +
-                    "        out = new java.io.PrintWriter(out);   \n" +
-                    "    out.print(String(str));                   \n" +
-                    "    if (newline) out.print('\\n');            \n" +
-                    "    out.flush();                              \n" +
-                    "}\n" +
-                    "function println(str) {                       \n" +
-                    "    print(str, true);                         \n" +
-                    "}";
-
-    Scriptable getRuntimeScope(ScriptContext ctxt) {
-        if (ctxt == null) {
-            throw new NullPointerException("null script context");
-        }
-
-        // we create a scope for the given ScriptContext
-        Scriptable newScope = new com.script.rhino.ExternalScriptable(ctxt, indexedProps);
-
-        // Set the prototype of newScope to be 'topLevel' so that
-        // JavaScript standard objects are visible from the scope.
-        newScope.setPrototype(topLevel);
-
-        // define "context" variable in the new scope
-        newScope.put("context", newScope, ctxt);
-
-        // define "print", "println" functions in the new scope
-        Context cx = enterContext();
-        try {
-            cx.evaluateString(newScope, printSource, "print", 1, null);
-        } finally {
-            cx.exit();
-        }
-        return newScope;
-    }
-
-
-    //Compilable methods
-    public CompiledScript compile(String script) throws ScriptException {
-        return compile(new StringReader(script));
-    }
-
-    public CompiledScript compile(java.io.Reader script) throws ScriptException {
-        CompiledScript ret = null;
-        Context cx = enterContext();
-
-        try {
-            String fileName = (String) get(ScriptEngine.FILENAME);
+            var fileName = this["javax.script.filename"] as? String
             if (fileName == null) {
-                fileName = "<Unknown Source>";
+                fileName = "<Unknown Source>"
+            }
+            val scr = cx.compileReader(script, fileName, 1, null as Any?)
+            ret = RhinoCompiledScript(this, scr)
+        } catch (var9: Exception) {
+            throw ScriptException(var9)
+        } finally {
+            Context.exit()
+        }
+        return ret
+    }
+
+    fun wrapArguments(args: Array<Any?>?): Array<Any?> {
+        return if (args == null) {
+            Context.emptyArgs
+        } else {
+            val res = arrayOfNulls<Any>(args.size)
+            for (i in res.indices) {
+                res[i] = Context.javaToJS(args[i], topLevel)
+            }
+            res
+        }
+    }
+
+    fun unwrapReturnValue(result: Any?): Any? {
+        var result1 = result
+        if (result1 is Wrapper) {
+            result1 = result1.unwrap()
+        }
+        return if (result1 is Undefined) null else result1
+    }
+
+    init {
+        if (System.getSecurityManager() != null) {
+            try {
+                AccessController.checkPermission(AllPermission())
+            } catch (var6: AccessControlException) {
+                accessContext = AccessController.getContext()
+            }
+        }
+        val cx = Context.enter()
+        try {
+            topLevel = RhinoTopLevel(cx, this)
+        } finally {
+            Context.exit()
+        }
+        indexedProps = HashMap()
+        implementor = object : InterfaceImplementor(this) {
+            override fun isImplemented(thiz: Any?, iface: Class<*>): Boolean {
+                var thiz1 = thiz
+                return try {
+                    if (thiz1 != null && thiz1 !is Scriptable) {
+                        thiz1 = Context.toObject(
+                            thiz1,
+                            topLevel
+                        )
+                    }
+                    val engineScope =
+                        getRuntimeScope(context)
+                    val localScope =
+                        if (thiz1 != null) thiz1 as Scriptable else engineScope
+                    val var5 = iface.methods
+                    val var6 = var5.size
+                    for (var7 in 0 until var6) {
+                        val method = var5[var7]
+                        if (method.declaringClass != Any::class.java) {
+                            val obj =
+                                ScriptableObject.getProperty(localScope, method.name) as? Function
+                            obj ?: return false
+                        }
+                    }
+                    true
+                } finally {
+                    Context.exit()
+                }
             }
 
-            Scriptable scope = getRuntimeScope(context);
-            @SuppressWarnings("deprecation")
-            Script scr = cx.compileReader(scope, script, fileName, 1, null);
-            ret = new RhinoCompiledScript(this, scr);
-        } catch (Exception e) {
-            if (DEBUG) e.printStackTrace();
-            throw new ScriptException(e);
-        } finally {
-            cx.exit();
+            override fun convertResult(method: Method?, res: Any): Any {
+                val desiredType = method!!.returnType
+                return (if (desiredType == Void.TYPE) null else Context.jsToJava(
+                    res,
+                    desiredType
+                ))!!
+            }
         }
-        return ret;
     }
 
+    companion object {
+        private const val DEBUG = false
 
-    //package-private helpers
+        @Language("js")
+        private val printSource = """
+            function print(str, newline) {
+              if (typeof str == "undefined") {
+                str = "undefined";
+              } else if (str == null) {
+                str = "null";
+              }
+              var out = context.getWriter();
+              if (!(out instanceof java.io.PrintWriter))
+                out = new java.io.PrintWriter(out);
+              out.print(String(str));
+              if (newline) out.print("\\n");
+              out.flush();
+            }
+            function println(str) {
+              print(str, true);
+            }
+        """.trimIndent()
 
-    static Context enterContext() {
-        // call this always so that initializer of this class runs
-        // and initializes custom wrap factory and class shutter.
-        return Context.enter();
-    }
+        init {
+            ContextFactory.initGlobal(object : ContextFactory() {
+                override fun makeContext(): Context {
+                    val cx = super.makeContext()
+                    cx.languageVersion = 200
+                    cx.optimizationLevel = -1
+                    cx.setClassShutter(instance)
+                    cx.wrapFactory = RhinoWrapFactory.instance
+                    return cx
+                }
 
-    AccessControlContext getAccessContext() {
-        return accCtxt;
-    }
+                override fun doTopCall(
+                    callable: Callable,
+                    cx: Context,
+                    scope: Scriptable,
+                    thisObj: Scriptable,
+                    args: Array<Any>
+                ): Any {
+                    var accCtxt: AccessControlContext? = null
+                    val global = ScriptableObject.getTopLevelScope(scope)
+                    val globalProto = global.prototype
+                    if (globalProto is RhinoTopLevel) {
+                        accCtxt = globalProto.accessContext
+                    }
+                    return if (accCtxt != null) AccessController.doPrivileged(
+                        PrivilegedAction {
+                            superDoTopCall(
+                                callable,
+                                cx,
+                                scope,
+                                thisObj,
+                                args
+                            )
+                        } as PrivilegedAction<Any>, accCtxt) else superDoTopCall(
+                        callable,
+                        cx,
+                        scope,
+                        thisObj,
+                        args
+                    )
+                }
 
-    Object[] wrapArguments(Object[] args) {
-        if (args == null) {
-            return Context.emptyArgs;
+                private fun superDoTopCall(
+                    callable: Callable,
+                    cx: Context,
+                    scope: Scriptable,
+                    thisObj: Scriptable,
+                    args: Array<Any>
+                ): Any {
+                    return super.doTopCall(callable, cx, scope, thisObj, args)
+                }
+            })
         }
-        Object[] res = new Object[args.length];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = Context.javaToJS(args[i], topLevel);
-        }
-        return res;
     }
-
-    Object unwrapReturnValue(Object result) {
-        if (result instanceof Wrapper) {
-            result = ((Wrapper) result).unwrap();
-        }
-
-        return result instanceof Undefined ? null : result;
-    }
-
-    /*
-    public static void main(String[] args) throws Exception {
-        if (args.length == 0) {
-            System.out.println("No file specified");
-            return;
-        }
-
-        InputStreamReader r = new InputStreamReader(new FileInputStream(args[0]));
-        ScriptEngine engine = new RhinoScriptEngine();
-
-        engine.put("x", "y");
-        engine.put(ScriptEngine.FILENAME, args[0]);
-        engine.eval(r);
-        System.out.println(engine.get("x"));
-    }
-    */
 }
