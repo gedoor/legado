@@ -283,8 +283,8 @@ class AnalyzeUrl(
                 return it.title
             }
         }
-        return chapter?.getVariable(key)
-            ?: ruleData?.getVariable(key)
+        return chapter?.getVariable(key)?.takeIf { it.isNotEmpty() }
+            ?: ruleData?.getVariable(key)?.takeIf { it.isNotEmpty() }
             ?: ""
     }
 
