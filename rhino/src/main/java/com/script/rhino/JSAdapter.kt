@@ -69,7 +69,7 @@ import org.mozilla.javascript.Function
  * @since 1.6
  */
 @Suppress("unused", "UNUSED_PARAMETER")
-class JSAdapter private constructor(val adaptee: Scriptable) : Scriptable, Function {
+class JSAdapter private constructor(var adaptee: Scriptable) : Scriptable, Function {
     private var prototype: Scriptable? = null
     private var parent: Scriptable? = null
     private var isPrototype = false
@@ -249,7 +249,7 @@ class JSAdapter private constructor(val adaptee: Scriptable) : Scriptable, Funct
         val tmp: Scriptable?
         return if (isPrototype) {
             tmp = ScriptableObject.getTopLevelScope(scope)
-            if (args.size > 0) {
+            if (args.isNotEmpty()) {
                 JSAdapter(Context.toObject(args[0], tmp))
             } else {
                 throw Context.reportRuntimeError("JSAdapter requires adaptee")
@@ -270,7 +270,7 @@ class JSAdapter private constructor(val adaptee: Scriptable) : Scriptable, Funct
 
     private fun getAdapteeFunction(name: String): Function? {
         val o = ScriptableObject.getProperty(adaptee, name)
-        return if (o is Function) o else null
+        return o as? Function
     }
 
     private fun call(func: Function, args: Array<Any?>): Any {
@@ -279,8 +279,8 @@ class JSAdapter private constructor(val adaptee: Scriptable) : Scriptable, Funct
         val scope = func.parentScope
         return try {
             func.call(cx, scope, thisObj, args)
-        } catch (var7: RhinoException) {
-            throw Context.reportRuntimeError(var7.message)
+        } catch (re: RhinoException) {
+            throw Context.reportRuntimeError(re.message)
         }
     }
 

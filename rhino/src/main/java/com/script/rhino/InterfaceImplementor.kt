@@ -40,6 +40,7 @@ import java.security.PrivilegedExceptionAction
  * @author Mike Grogan
  * @since 1.6
  */
+@Suppress("UNUSED_PARAMETER")
 open class InterfaceImplementor(private val engine: Invocable) {
     @Throws(ScriptException::class)
     fun <T> getInterface(thiz: Any?, iface: Class<T>?): T? {
