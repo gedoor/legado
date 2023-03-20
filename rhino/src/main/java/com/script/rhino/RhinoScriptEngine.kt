@@ -43,6 +43,7 @@ import java.security.*
  * @author A. Sundararajan
  * @since 1.6
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     var accessContext: AccessControlContext? = null
     private var topLevel: RhinoTopLevel? = null
@@ -120,12 +121,11 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             val localScope = if (thiz1 != null) thiz1 as Scriptable else engineScope
             val obj = ScriptableObject.getProperty(localScope, name) as? Function
                 ?: throw NoSuchMethodException("no such method: $name")
-            val func = obj
-            var scope = func.parentScope
+            var scope = obj.parentScope
             if (scope == null) {
                 scope = engineScope
             }
-            val result = func.call(cx, scope, localScope, wrapArguments(args as? Array<Any?>))
+            val result = obj.call(cx, scope, localScope, wrapArguments(args as? Array<Any?>))
             var11 = unwrapReturnValue(result)!!
         } catch (re: RhinoException) {
             val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
@@ -299,7 +299,9 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         }
     }
 
+    @Suppress("unused")
     companion object {
+
         private const val DEBUG = false
 
         @Language("js")
@@ -324,6 +326,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
         init {
             ContextFactory.initGlobal(object : ContextFactory() {
+
                 override fun makeContext(): Context {
                     val cx = super.makeContext()
                     cx.languageVersion = 200

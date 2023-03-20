@@ -50,6 +50,7 @@ import org.mozilla.javascript.Function
  * @author A. Sundararajan
  * @since 1.6
  */
+@Suppress("UNUSED_PARAMETER")
 internal class JavaAdapter private constructor(private val engine: Invocable) : ScriptableObject(),
     Function {
     override fun getClassName(): String {
