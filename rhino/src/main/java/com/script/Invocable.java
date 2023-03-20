@@ -3,6 +3,7 @@
  */
 package com.script;
 
+@SuppressWarnings({"unused", "UnnecessaryModifier"})
 public interface Invocable {
     public <T> T getInterface(Class<T> var1);
 

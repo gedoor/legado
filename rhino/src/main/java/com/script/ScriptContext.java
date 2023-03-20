@@ -7,7 +7,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 
+@SuppressWarnings({"unused", "UnnecessaryModifier"})
 public interface ScriptContext {
+
     public static final int ENGINE_SCOPE = 100;
     public static final int GLOBAL_SCOPE = 200;
 

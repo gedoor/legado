@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SimpleScriptContext
-        implements ScriptContext {
+public class SimpleScriptContext implements ScriptContext {
     private static List<Integer> scopes = new ArrayList<Integer>(2);
     protected Bindings engineScope = new SimpleBindings();
     protected Writer errorWriter = new PrintWriter(System.err, true);

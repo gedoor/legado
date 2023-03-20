@@ -5,6 +5,7 @@ package com.script;
 
 import java.io.Reader;
 
+@SuppressWarnings({"unused", "UnnecessaryModifier"})
 public interface ScriptEngine {
     public static final String FILENAME = "javax.script.filename";
 

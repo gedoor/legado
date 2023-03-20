@@ -3,8 +3,8 @@
  */
 package com.script;
 
-public class ScriptException
-        extends Exception {
+@SuppressWarnings("unused")
+public class ScriptException extends Exception {
     private int columnNumber;
     private String fileName;
     private int lineNumber;

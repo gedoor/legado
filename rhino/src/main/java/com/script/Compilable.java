@@ -5,6 +5,7 @@ package com.script;
 
 import java.io.Reader;
 
+@SuppressWarnings("UnnecessaryModifier")
 public interface Compilable {
     public CompiledScript compile(Reader var1) throws ScriptException;
 

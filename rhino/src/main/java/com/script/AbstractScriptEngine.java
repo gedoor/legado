@@ -5,8 +5,9 @@ package com.script;
 
 import java.io.Reader;
 
-public abstract class AbstractScriptEngine
-        implements ScriptEngine {
+@SuppressWarnings("unused")
+public abstract class AbstractScriptEngine implements ScriptEngine {
+
     protected ScriptContext context = new SimpleScriptContext();
 
     public AbstractScriptEngine() {

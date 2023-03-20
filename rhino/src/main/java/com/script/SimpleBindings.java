@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class SimpleBindings
-        implements Bindings {
+public class SimpleBindings implements Bindings {
     private Map<String, Object> map;
 
     public SimpleBindings(Map<String, Object> m) {
