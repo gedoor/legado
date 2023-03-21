@@ -1,6 +1,8 @@
 package io.legado.app.data.entities.rule
 
 import android.os.Parcelable
+import com.google.gson.JsonDeserializer
+import io.legado.app.utils.GSON
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -18,4 +20,18 @@ data class ExploreRule(
     override var bookUrl: String? = null,
     override var coverUrl: String? = null,
     override var wordCount: String? = null
-) : BookListRule, Parcelable
+) : BookListRule, Parcelable {
+
+    companion object {
+
+        val jsonDeserializer = JsonDeserializer<ExploreRule?> { json, _, _ ->
+            when {
+                json.isJsonObject -> GSON.fromJson(json, ExploreRule::class.java)
+                json.isJsonPrimitive -> GSON.fromJson(json.asString, ExploreRule::class.java)
+                else -> null
+            }
+        }
+
+    }
+
+}

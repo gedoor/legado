@@ -3,15 +3,19 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookSourceType
 import io.legado.app.data.entities.rule.*
-import io.legado.app.help.source.SourceAnalyzer
 import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.splitNotBlank
 import kotlinx.parcelize.Parcelize
 import java.io.InputStream
+import java.lang.reflect.Type
 
 @Suppress("unused")
 @Parcelize
@@ -222,17 +226,46 @@ data class BookSource(
 
     companion object {
 
+        private val gson by lazy {
+            GSON.newBuilder()
+                .registerTypeAdapter(String::class.java, StringJsonDeserializer())
+                .registerTypeAdapter(ExploreRule::class.java, ExploreRule.jsonDeserializer)
+                .registerTypeAdapter(SearchRule::class.java, SearchRule.jsonDeserializer)
+                .registerTypeAdapter(BookInfoRule::class.java, BookInfoRule.jsonDeserializer)
+                .registerTypeAdapter(TocRule::class.java, TocRule.jsonDeserializer)
+                .registerTypeAdapter(ContentRule::class.java, ContentRule.jsonDeserializer)
+                .registerTypeAdapter(ReviewRule::class.java, ReviewRule.jsonDeserializer)
+                .create()
+        }
+
         fun fromJson(json: String): Result<BookSource> {
-            return SourceAnalyzer.jsonToBookSource(json)
+            return gson.fromJsonObject(json)
         }
 
-        fun fromJsonArray(json: String): Result<MutableList<BookSource>> {
-            return SourceAnalyzer.jsonToBookSources(json)
+        fun fromJsonArray(json: String): Result<List<BookSource>> {
+            return gson.fromJsonArray(json)
         }
 
-        fun fromJsonArray(inputStream: InputStream): Result<MutableList<BookSource>> {
-            return SourceAnalyzer.jsonToBookSources(inputStream)
+        fun fromJsonArray(inputStream: InputStream): Result<List<BookSource>> {
+            return gson.fromJsonArray(inputStream)
         }
+
+        class StringJsonDeserializer : JsonDeserializer<String?> {
+
+            override fun deserialize(
+                json: JsonElement,
+                typeOfT: Type,
+                context: JsonDeserializationContext?
+            ): String? {
+                return when {
+                    json.isJsonPrimitive -> json.asString
+                    json.isJsonNull -> null
+                    else -> json.toString()
+                }
+            }
+
+        }
+
     }
 
     class Converters {

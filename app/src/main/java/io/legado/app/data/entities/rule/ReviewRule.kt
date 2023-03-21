@@ -1,6 +1,8 @@
 package io.legado.app.data.entities.rule
 
 import android.os.Parcelable
+import com.google.gson.JsonDeserializer
+import io.legado.app.utils.GSON
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -17,4 +19,18 @@ data class ReviewRule(
     var postReviewUrl: String? = null,      // 发送回复URL
     var postQuoteUrl: String? = null,       // 发送回复段评URL
     var deleteUrl: String? = null,          // 删除段评URL
-): Parcelable
+) : Parcelable {
+
+    companion object {
+
+        val jsonDeserializer = JsonDeserializer<ReviewRule?> { json, _, _ ->
+            when {
+                json.isJsonObject -> GSON.fromJson(json, ReviewRule::class.java)
+                json.isJsonPrimitive -> GSON.fromJson(json.asString, ReviewRule::class.java)
+                else -> null
+            }
+        }
+
+    }
+
+}

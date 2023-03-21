@@ -176,7 +176,7 @@ data class RssSource(
     companion object {
         private val gson by lazy {
             GSON.newBuilder()
-                .registerTypeAdapter(String::class.java, RssJsonDeserializer())
+                .registerTypeAdapter(String::class.java, StringJsonDeserializer())
                 .create()
         }
 
@@ -187,20 +187,21 @@ data class RssSource(
         fun fromJsonArray(jsonArray: String): Result<List<RssSource>> {
             return gson.fromJsonArray(jsonArray)
         }
-    }
 
-    class RssJsonDeserializer : JsonDeserializer<String?> {
+        class StringJsonDeserializer : JsonDeserializer<String?> {
 
-        override fun deserialize(
-            json: JsonElement,
-            typeOfT: Type?,
-            context: JsonDeserializationContext?
-        ): String? {
-            return when {
-                json.isJsonPrimitive -> json.asString
-                json.isJsonNull -> null
-                else -> json.toString()
+            override fun deserialize(
+                json: JsonElement,
+                typeOfT: Type?,
+                context: JsonDeserializationContext?
+            ): String? {
+                return when {
+                    json.isJsonPrimitive -> json.asString
+                    json.isJsonNull -> null
+                    else -> json.toString()
+                }
             }
+
         }
 
     }
