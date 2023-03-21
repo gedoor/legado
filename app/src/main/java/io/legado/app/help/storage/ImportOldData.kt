@@ -3,6 +3,7 @@ package io.legado.app.help.storage
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import com.jayway.jsonpath.DocumentContext
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookSourceType
@@ -20,7 +21,9 @@ import java.util.regex.Pattern
 
 object ImportOldData {
 
+    @Suppress("RegExpRedundantEscape")
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
+    @Suppress("RegExpRedundantEscape")
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
 
     fun importUri(context: Context, uri: Uri) {
@@ -162,77 +165,81 @@ object ImportOldData {
         val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
         for (item in items) {
             val jsonItem = jsonPath.parse(item)
-            val source = BookSource()
-            source.apply {
-                bookSourceUrl = jsonItem.readString("bookSourceUrl")
-                    ?: throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
-                bookSourceName = jsonItem.readString("bookSourceName") ?: ""
-                bookSourceGroup = jsonItem.readString("bookSourceGroup")
-                loginUrl = jsonItem.readString("loginUrl")
-                loginUi = jsonItem.readString("loginUi")
-                loginCheckJs = jsonItem.readString("loginCheckJs")
-                coverDecodeJs = jsonItem.readString("coverDecodeJs")
-                bookSourceComment = jsonItem.readString("bookSourceComment") ?: ""
-                bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
-                customOrder = jsonItem.readInt("serialNumber") ?: 0
-                header = uaToHeader(jsonItem.readString("httpUserAgent"))
-                searchUrl = toNewUrl(jsonItem.readString("ruleSearchUrl"))
-                exploreUrl = toNewUrls(jsonItem.readString("ruleFindUrl"))
-                bookSourceType =
-                    if (jsonItem.readString("bookSourceType") == "AUDIO") BookSourceType.audio else BookSourceType.default
-                enabled = jsonItem.readBool("enable") ?: true
-                if (exploreUrl.isNullOrBlank()) {
-                    enabledExplore = false
-                }
-                ruleSearch = SearchRule(
-                    bookList = toNewRule(jsonItem.readString("ruleSearchList")),
-                    name = toNewRule(jsonItem.readString("ruleSearchName")),
-                    author = toNewRule(jsonItem.readString("ruleSearchAuthor")),
-                    intro = toNewRule(jsonItem.readString("ruleSearchIntroduce")),
-                    kind = toNewRule(jsonItem.readString("ruleSearchKind")),
-                    bookUrl = toNewRule(jsonItem.readString("ruleSearchNoteUrl")),
-                    coverUrl = toNewRule(jsonItem.readString("ruleSearchCoverUrl")),
-                    lastChapter = toNewRule(jsonItem.readString("ruleSearchLastChapter"))
-                )
-                ruleExplore = ExploreRule(
-                    bookList = toNewRule(jsonItem.readString("ruleFindList")),
-                    name = toNewRule(jsonItem.readString("ruleFindName")),
-                    author = toNewRule(jsonItem.readString("ruleFindAuthor")),
-                    intro = toNewRule(jsonItem.readString("ruleFindIntroduce")),
-                    kind = toNewRule(jsonItem.readString("ruleFindKind")),
-                    bookUrl = toNewRule(jsonItem.readString("ruleFindNoteUrl")),
-                    coverUrl = toNewRule(jsonItem.readString("ruleFindCoverUrl")),
-                    lastChapter = toNewRule(jsonItem.readString("ruleFindLastChapter"))
-                )
-                ruleBookInfo = BookInfoRule(
-                    init = toNewRule(jsonItem.readString("ruleBookInfoInit")),
-                    name = toNewRule(jsonItem.readString("ruleBookName")),
-                    author = toNewRule(jsonItem.readString("ruleBookAuthor")),
-                    intro = toNewRule(jsonItem.readString("ruleIntroduce")),
-                    kind = toNewRule(jsonItem.readString("ruleBookKind")),
-                    coverUrl = toNewRule(jsonItem.readString("ruleCoverUrl")),
-                    lastChapter = toNewRule(jsonItem.readString("ruleBookLastChapter")),
-                    tocUrl = toNewRule(jsonItem.readString("ruleChapterUrl"))
-                )
-                ruleToc = TocRule(
-                    chapterList = toNewRule(jsonItem.readString("ruleChapterList")),
-                    chapterName = toNewRule(jsonItem.readString("ruleChapterName")),
-                    chapterUrl = toNewRule(jsonItem.readString("ruleContentUrl")),
-                    nextTocUrl = toNewRule(jsonItem.readString("ruleChapterUrlNext"))
-                )
-                var content = toNewRule(jsonItem.readString("ruleBookContent")) ?: ""
-                if (content.startsWith("$") && !content.startsWith("$.")) {
-                    content = content.substring(1)
-                }
-                ruleContent = ContentRule(
-                    content = content,
-                    replaceRegex = toNewRule(jsonItem.readString("ruleBookContentReplace")),
-                    nextContentUrl = toNewRule(jsonItem.readString("ruleContentUrlNext"))
-                )
-            }
+            val source = fromOldBookSource(jsonItem)
             sources.add(source)
         }
         return sources
+    }
+
+    fun fromOldBookSource(jsonItem: DocumentContext): BookSource {
+        val source = BookSource()
+        return source.apply {
+            bookSourceUrl = jsonItem.readString("bookSourceUrl")
+                ?: throw NoStackTraceException(appCtx.getString(R.string.wrong_format))
+            bookSourceName = jsonItem.readString("bookSourceName") ?: ""
+            bookSourceGroup = jsonItem.readString("bookSourceGroup")
+            loginUrl = jsonItem.readString("loginUrl")
+            loginUi = jsonItem.readString("loginUi")
+            loginCheckJs = jsonItem.readString("loginCheckJs")
+            coverDecodeJs = jsonItem.readString("coverDecodeJs")
+            bookSourceComment = jsonItem.readString("bookSourceComment") ?: ""
+            bookUrlPattern = jsonItem.readString("ruleBookUrlPattern")
+            customOrder = jsonItem.readInt("serialNumber") ?: 0
+            header = uaToHeader(jsonItem.readString("httpUserAgent"))
+            searchUrl = toNewUrl(jsonItem.readString("ruleSearchUrl"))
+            exploreUrl = toNewUrls(jsonItem.readString("ruleFindUrl"))
+            bookSourceType =
+                if (jsonItem.readString("bookSourceType") == "AUDIO") BookSourceType.audio else BookSourceType.default
+            enabled = jsonItem.readBool("enable") ?: true
+            if (exploreUrl.isNullOrBlank()) {
+                enabledExplore = false
+            }
+            ruleSearch = SearchRule(
+                bookList = toNewRule(jsonItem.readString("ruleSearchList")),
+                name = toNewRule(jsonItem.readString("ruleSearchName")),
+                author = toNewRule(jsonItem.readString("ruleSearchAuthor")),
+                intro = toNewRule(jsonItem.readString("ruleSearchIntroduce")),
+                kind = toNewRule(jsonItem.readString("ruleSearchKind")),
+                bookUrl = toNewRule(jsonItem.readString("ruleSearchNoteUrl")),
+                coverUrl = toNewRule(jsonItem.readString("ruleSearchCoverUrl")),
+                lastChapter = toNewRule(jsonItem.readString("ruleSearchLastChapter"))
+            )
+            ruleExplore = ExploreRule(
+                bookList = toNewRule(jsonItem.readString("ruleFindList")),
+                name = toNewRule(jsonItem.readString("ruleFindName")),
+                author = toNewRule(jsonItem.readString("ruleFindAuthor")),
+                intro = toNewRule(jsonItem.readString("ruleFindIntroduce")),
+                kind = toNewRule(jsonItem.readString("ruleFindKind")),
+                bookUrl = toNewRule(jsonItem.readString("ruleFindNoteUrl")),
+                coverUrl = toNewRule(jsonItem.readString("ruleFindCoverUrl")),
+                lastChapter = toNewRule(jsonItem.readString("ruleFindLastChapter"))
+            )
+            ruleBookInfo = BookInfoRule(
+                init = toNewRule(jsonItem.readString("ruleBookInfoInit")),
+                name = toNewRule(jsonItem.readString("ruleBookName")),
+                author = toNewRule(jsonItem.readString("ruleBookAuthor")),
+                intro = toNewRule(jsonItem.readString("ruleIntroduce")),
+                kind = toNewRule(jsonItem.readString("ruleBookKind")),
+                coverUrl = toNewRule(jsonItem.readString("ruleCoverUrl")),
+                lastChapter = toNewRule(jsonItem.readString("ruleBookLastChapter")),
+                tocUrl = toNewRule(jsonItem.readString("ruleChapterUrl"))
+            )
+            ruleToc = TocRule(
+                chapterList = toNewRule(jsonItem.readString("ruleChapterList")),
+                chapterName = toNewRule(jsonItem.readString("ruleChapterName")),
+                chapterUrl = toNewRule(jsonItem.readString("ruleContentUrl")),
+                nextTocUrl = toNewRule(jsonItem.readString("ruleChapterUrlNext"))
+            )
+            var content = toNewRule(jsonItem.readString("ruleBookContent")) ?: ""
+            if (content.startsWith("$") && !content.startsWith("$.")) {
+                content = content.substring(1)
+            }
+            ruleContent = ContentRule(
+                content = content,
+                replaceRegex = toNewRule(jsonItem.readString("ruleBookContentReplace")),
+                nextContentUrl = toNewRule(jsonItem.readString("ruleContentUrlNext"))
+            )
+        }
     }
 
 

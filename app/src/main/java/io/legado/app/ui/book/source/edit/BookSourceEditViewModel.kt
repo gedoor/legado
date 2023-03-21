@@ -12,6 +12,7 @@ import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.storage.ImportOldData
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
 
@@ -92,10 +93,15 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             text.isJsonArray() -> {
                 val items: List<Map<String, Any>> = jsonPath.parse(text).read("$")
                 val jsonItem = jsonPath.parse(items[0])
-                BookSource.fromJson(jsonItem.jsonString()).getOrThrow()
+                BookSource.fromJson(jsonItem.jsonString()).getOrElse {
+                    ImportOldData.fromOldBookSource(jsonItem)
+                }
             }
             text.isJsonObject() -> {
-                BookSource.fromJson(text).getOrThrow()
+                BookSource.fromJson(text).getOrElse {
+                    val jsonItem = jsonPath.parse(text)
+                    ImportOldData.fromOldBookSource(jsonItem)
+                }
             }
             else -> throw NoStackTraceException("格式不对")
         }
