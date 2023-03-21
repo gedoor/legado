@@ -47,7 +47,7 @@ import java.security.*
 class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     var accessContext: AccessControlContext? = null
     private var topLevel: RhinoTopLevel? = null
-    private val indexedProps: MutableMap<Any, Any>
+    private val indexedProps: MutableMap<Any, Any?>
     private val implementor: InterfaceImplementor
 
     @Throws(ScriptException::class)
@@ -58,7 +58,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             val scope = getRuntimeScope(ctxt)
             var filename = this["javax.script.filename"] as? String
             filename = filename ?: "<Unknown source>"
-            ret = cx.evaluateReader(scope, reader, filename, 1, null as Any?)
+            ret = cx.evaluateReader(scope, reader, filename, 1, null)
         } catch (re: RhinoException) {
             val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
             val msg: String = if (re is JavaScriptException) {
@@ -92,7 +92,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     @Throws(ScriptException::class, NoSuchMethodException::class)
     override fun invokeFunction(name: String, vararg args: Any): Any? {
-        return this.invoke(null as Any?, name, *args)
+        return this.invoke(null, name, *args)
     }
 
     @Throws(ScriptException::class, NoSuchMethodException::class)
@@ -140,7 +140,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     override fun <T> getInterface(clasz: Class<T>): T? {
         return try {
-            implementor.getInterface(null as Any?, clasz)
+            implementor.getInterface(null, clasz)
         } catch (var3: ScriptException) {
             null
         }
@@ -191,7 +191,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                     js,
                     "print",
                     1,
-                    null as Any?
+                    null
                 )
             } finally {
                 Context.exit()
@@ -214,7 +214,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             if (fileName == null) {
                 fileName = "<Unknown Source>"
             }
-            val scr = cx.compileReader(script, fileName, 1, null as Any?)
+            val scr = cx.compileReader(script, fileName, 1, null)
             ret = RhinoCompiledScript(this, scr)
         } catch (var9: Exception) {
             throw ScriptException(var9)

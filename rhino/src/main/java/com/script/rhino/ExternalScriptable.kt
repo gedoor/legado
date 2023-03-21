@@ -38,10 +38,10 @@ import org.mozilla.javascript.Function
  */
 internal class ExternalScriptable @JvmOverloads constructor(
     context: ScriptContext?,
-    indexedProps: MutableMap<Any, Any> = HashMap()
+    indexedProps: MutableMap<Any, Any?> = HashMap()
 ) : Scriptable {
     val context: ScriptContext
-    private val indexedProps: MutableMap<Any, Any>
+    private val indexedProps: MutableMap<Any, Any?>
     private var prototype: Scriptable? = null
     private var parent: Scriptable? = null
 
@@ -63,7 +63,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
     }
 
     @Synchronized
-    override fun get(name: String, start: Scriptable): Any {
+    override fun get(name: String, start: Scriptable): Any? {
         return if (this.isEmpty(name)) {
             indexedProps.getOrElse(name) { Scriptable.NOT_FOUND }
         } else {
@@ -80,7 +80,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
     }
 
     @Synchronized
-    override fun get(index: Int, start: Scriptable): Any {
+    override fun get(index: Int, start: Scriptable): Any? {
         return indexedProps.getOrElse(index) { Scriptable.NOT_FOUND }
     }
 
@@ -98,7 +98,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
         return indexedProps.containsKey(index)
     }
 
-    override fun put(name: String, start: Scriptable, value: Any) {
+    override fun put(name: String, start: Scriptable, value: Any?) {
         if (start === this) {
             synchronized(this) {
                 if (this.isEmpty(name)) {
@@ -272,7 +272,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
             return list.toTypedArray()
         }
 
-    private fun jsToJava(jsObj: Any): Any {
+    private fun jsToJava(jsObj: Any?): Any? {
         return if (jsObj is Wrapper) {
             if (jsObj is NativeJavaClass) {
                 jsObj

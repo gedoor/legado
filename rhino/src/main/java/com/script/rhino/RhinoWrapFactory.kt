@@ -105,7 +105,7 @@ internal class RhinoWrapFactory private constructor() : WrapFactory() {
         scope: Scriptable?,
         obj: Any?,
         type: Class<*>?
-    ) : NativeJavaObject(scope, null as Any?, type) {
+    ) : NativeJavaObject(scope, null, type) {
         init {
             javaObject = obj
         }
