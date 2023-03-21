@@ -1,5 +1,5 @@
 name: BUG提交 / BUG Report
-description: 提交BUG / Report bugs to developers
+description: Report bugs to developers
 labels: ["BUG"]
 body:
   - type: checkboxes
@@ -24,6 +24,11 @@ body:
       label: 复现步骤 / How to reproduce
     validations:
       required: true
+  - type: checkboxes
+    attributes:
+      options:
+        - label: 已经提交复现所需要的附加资料 / Submit additions related with bugs
+          required: true
   - type: textarea
     attributes:
       label: 日志提交 / Relevant log output
