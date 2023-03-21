@@ -26,7 +26,7 @@ body:
       required: true
   - type: checkboxes
     attributes:
-      label: 确认 / Assignments
+      label: 确认 / Assignment
       options:
         - label: 已经提交复现所需要的附加资料 / Submit additions related with bugs
           required: true
