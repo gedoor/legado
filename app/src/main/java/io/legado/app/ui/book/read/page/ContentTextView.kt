@@ -530,7 +530,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textPos = TextPos(0, 0, 0)
         for (relativePos in 0..last) {
             textPos.relativePagePos = relativePos
-            for ((lineIndex, textLine) in relativePage(relativePos).lines.withIndex()) {
+            val textPage = relativePage(relativePos)
+            for ((lineIndex, textLine) in textPage.lines.withIndex()) {
                 textPos.lineIndex = lineIndex
                 for ((charIndex, column) in textLine.columns.withIndex()) {
                     textPos.columnIndex = charIndex
@@ -539,6 +540,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             textPos.compare(selectStart) >= 0 && textPos.compare(selectEnd) <= 0
                         column.isSearchResult =
                             column.selected && callBack.isSelectingSearchResult
+                        if (column.isSearchResult) {
+                            textPage.searchResult.add(column)
+                        }
                     }
                 }
             }
@@ -558,14 +562,18 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    fun cancelSelect(fromSearchExit: Boolean = false) {
+    fun cancelSelect(clearSearchResult: Boolean = false) {
         val last = if (callBack.isScroll) 2 else 0
         for (relativePos in 0..last) {
-            relativePage(relativePos).lines.forEach { textLine ->
+            val textPage = relativePage(relativePos)
+            textPage.lines.forEach { textLine ->
                 textLine.columns.forEach {
                     if (it is TextColumn) {
                         it.selected = false
-                        if (fromSearchExit) it.isSearchResult = false
+                        if (clearSearchResult) {
+                            it.isSearchResult = false
+                            textPage.searchResult.remove(it)
+                        }
                     }
                 }
             }

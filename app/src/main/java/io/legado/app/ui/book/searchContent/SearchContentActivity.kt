@@ -52,11 +52,11 @@ class SearchContentActivity :
         binding.tvCurrentSearchInfo.setTextColor(btc)
         binding.ivSearchContentTop.setColorFilter(btc)
         binding.ivSearchContentBottom.setColorFilter(btc)
-        initSearchView()
+        val searchResultList = IntentData.get<List<SearchResult>>("searchResultList")
+        val noSearchResult = searchResultList == null
+        initSearchView(!noSearchResult)
         initRecyclerView()
         initView()
-        val searchResultList = IntentData.get<List<SearchResult>>("searchResultList")
-        val submit = searchResultList == null
         intent.getStringExtra("bookUrl")?.let { bookUrl ->
             viewModel.initBook(bookUrl) {
                 searchResultList?.let {
@@ -66,16 +66,17 @@ class SearchContentActivity :
                     val position = intent.getIntExtra("searchResultIndex", 0)
                     binding.recyclerView.scrollToPosition(position)
                 }
-                initBook(submit)
+                initBook(noSearchResult)
             }
         }
     }
 
-    private fun initSearchView() {
+    private fun initSearchView(clearFocus: Boolean) {
         searchView.applyTint(primaryTextColor)
         searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.search)
+        if (clearFocus) searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 startContentSearch(query.trim())
@@ -197,6 +198,7 @@ class SearchContentActivity :
         get() = viewModel.book?.isLocal == true
 
     override fun openSearchResult(searchResult: SearchResult, index: Int) {
+        searchJob?.cancel()
         postEvent(EventBus.SEARCH_RESULT, viewModel.searchResultList as List<SearchResult>)
         val searchData = Intent()
         val key = System.currentTimeMillis()

@@ -1014,6 +1014,9 @@ class ReadBookActivity : BaseReadBookActivity(),
             binding.searchMenu.invalidate()
             binding.searchMenu.invisible()
             binding.readView.isTextSelected = false
+            ReadBook.curTextChapter?.clearSearchResult()
+            ReadBook.prevTextChapter?.clearSearchResult()
+            ReadBook.nextTextChapter?.clearSearchResult()
             binding.readView.curPage.cancelSelect(true)
         }
     }

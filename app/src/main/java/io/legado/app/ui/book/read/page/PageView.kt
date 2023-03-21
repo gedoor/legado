@@ -372,8 +372,8 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.selectEndMoveIndex(relativePagePos, lineIndex, charIndex)
     }
 
-    fun cancelSelect(fromSearchExit: Boolean = false) {
-        binding.contentTextView.cancelSelect(fromSearchExit)
+    fun cancelSelect(clearSearchResult: Boolean = false) {
+        binding.contentTextView.cancelSelect(clearSearchResult)
     }
 
     fun createBookmark(): Bookmark? {
