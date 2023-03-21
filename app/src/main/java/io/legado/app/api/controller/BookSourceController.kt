@@ -8,7 +8,6 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
-import io.legado.app.utils.fromJsonObject
 
 object BookSourceController {
 
@@ -24,7 +23,7 @@ object BookSourceController {
     fun saveSource(postData: String?): ReturnData {
         val returnData = ReturnData()
         postData ?: return returnData.setErrorMsg("数据不能为空")
-        val bookSource = GSON.fromJsonObject<BookSource>(postData).getOrNull()
+        val bookSource = BookSource.fromJson(postData).getOrNull()
         if (bookSource != null) {
             if (TextUtils.isEmpty(bookSource.bookSourceName) || TextUtils.isEmpty(bookSource.bookSourceUrl)) {
                 returnData.setErrorMsg("源名称和URL不能为空")
@@ -41,7 +40,7 @@ object BookSourceController {
     fun saveSources(postData: String?): ReturnData {
         postData ?: return ReturnData().setErrorMsg("数据为空")
         val okSources = arrayListOf<BookSource>()
-        val bookSources = GSON.fromJsonArray<BookSource>(postData).getOrNull()
+        val bookSources = BookSource.fromJsonArray(postData).getOrNull()
         if (bookSources.isNullOrEmpty()) {
             return ReturnData().setErrorMsg("转换源失败")
         }

@@ -79,7 +79,7 @@ object DefaultData {
             appCtx.assets.open("defaultData${File.separator}rssSources.json")
                 .readBytes()
         )
-        GSON.fromJsonArray<RssSource>(json).getOrDefault(emptyList())
+        RssSource.fromJsonArray(json).getOrDefault(emptyList())
     }
 
     val coverRule: BookCover.CoverRule by lazy {

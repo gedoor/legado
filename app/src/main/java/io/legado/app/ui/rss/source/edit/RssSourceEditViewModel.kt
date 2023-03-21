@@ -9,8 +9,11 @@ import io.legado.app.data.entities.RssSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.RuleComplete
 import io.legado.app.help.http.CookieStore
-import io.legado.app.utils.*
+import io.legado.app.utils.getClipText
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.stackTraceStr
 
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 
 
@@ -54,7 +57,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         execute(context = Dispatchers.Main) {
             var source: RssSource? = null
             context.getClipText()?.let { json ->
-                source = GSON.fromJsonObject<RssSource>(json).getOrThrow()
+                source = RssSource.fromJson(json).getOrThrow()
             }
             source
         }.onError {
@@ -71,7 +74,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     fun importSource(text: String, finally: (source: RssSource) -> Unit) {
         execute {
             val text1 = text.trim()
-            GSON.fromJsonObject<RssSource>(text1).getOrThrow().let {
+            RssSource.fromJson(text1).getOrThrow().let {
                 finally.invoke(it)
             }
         }.onError {

@@ -7,7 +7,6 @@ import com.jayway.jsonpath.JsonPath
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
-import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -100,35 +99,31 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         val json = JsonPath.parse(mText)
                         json.read<List<String>>("$.sourceUrls")
                     }.onSuccess {
-                        it.forEach { url ->
-                            importSourceUrl(url)
+                        it.forEach {
+                            importSourceUrl(it)
                         }
                     }.onFailure {
-                        GSON.fromJsonObject<BookSource>(mText).getOrThrow().let {
+                        BookSource.fromJson(mText).getOrThrow().let {
                             allSources.add(it)
                         }
                     }
                 }
-                mText.isJsonArray() -> {
-                    GSON.fromJsonArray<BookSource>(mText).getOrThrow().let { items ->
-                        allSources.addAll(items)
-                    }
+                mText.isJsonArray() -> BookSource.fromJsonArray(mText).getOrThrow().let { items ->
+                    allSources.addAll(items)
                 }
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
                 }
                 mText.isUri() -> {
                     val uri = Uri.parse(mText)
-                    uri.inputStream(context).getOrThrow().use {
-                        GSON.fromJsonArray<BookSource>(it).getOrThrow().let {bookSources ->
-                            allSources.addAll(bookSources)
-                        }
+                    uri.inputStream(context).getOrThrow().let {
+                        allSources.addAll(BookSource.fromJsonArray(it).getOrThrow())
                     }
                 }
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
-            AppLog.put("读取书源出错", it)
+            it.printOnDebug()
             errorLiveData.postValue(it.localizedMessage ?: "")
         }.onSuccess {
             comparisonSource()
@@ -144,7 +139,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 url(url)
             }
         }.byteStream().let {
-            allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
+            allSources.addAll(BookSource.fromJsonArray(it).getOrThrow())
         }
     }
 

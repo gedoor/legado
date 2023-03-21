@@ -2,12 +2,9 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import android.text.TextUtils
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import io.legado.app.constant.AppPattern
-import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.*
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -169,6 +166,19 @@ data class RssSource(
         } else {
             "${variableComment}\n$otherComment"
         }
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    companion object {
+
+        fun fromJson(json: String): Result<RssSource> {
+            return GSON.fromJsonObject(json)
+        }
+
+        fun fromJsonArray(jsonArray: String): Result<List<RssSource>> {
+            return GSON.fromJsonArray(jsonArray)
+        }
+
     }
 
 }

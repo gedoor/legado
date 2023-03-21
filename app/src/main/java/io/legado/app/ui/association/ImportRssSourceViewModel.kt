@@ -98,13 +98,13 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                             importSourceUrl(it)
                         }
                     } else {
-                        GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
+                        RssSource.fromJsonArray(mText).getOrThrow().let {
                             allSources.addAll(it)
                         }
                     }
                 }
                 mText.isJsonArray() -> {
-                    GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
+                    RssSource.fromJsonArray(mText).getOrThrow().let {
                         allSources.addAll(it)
                     }
                 }
@@ -132,7 +132,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
                 val jsonItem = jsonPath.parse(item)
-                GSON.fromJsonObject<RssSource>(jsonItem.jsonString()).getOrThrow().let { source ->
+                RssSource.fromJson(jsonItem.jsonString()).getOrThrow().let { source ->
                     allSources.add(source)
                 }
             }
