@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.webkit.MimeTypeMap
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -104,24 +105,32 @@ class HandleFileActivity :
                     }.onFailure {
                         AppLog.put(getString(R.string.open_sys_dir_picker_error), it)
                         toastOnUi(R.string.open_sys_dir_picker_error)
-                        FilePickerDialog.show(
-                            supportFragmentManager,
-                            mode = HandleFileContract.FILE,
-                            allowExtensions = allowExtensions
-                        )
+                        checkPermissions {
+                            FilePickerDialog.show(
+                                supportFragmentManager,
+                                mode = HandleFileContract.FILE,
+                                allowExtensions = allowExtensions
+                            )
+                        }
                     }
                     10 -> checkPermissions {
-                        FilePickerDialog.show(
-                            supportFragmentManager,
-                            mode = HandleFileContract.DIR
-                        )
+                        @Suppress("DEPRECATION")
+                        lifecycleScope.launchWhenResumed {
+                            FilePickerDialog.show(
+                                supportFragmentManager,
+                                mode = HandleFileContract.DIR
+                            )
+                        }
                     }
                     11 -> checkPermissions {
-                        FilePickerDialog.show(
-                            supportFragmentManager,
-                            mode = HandleFileContract.FILE,
-                            allowExtensions = allowExtensions
-                        )
+                        @Suppress("DEPRECATION")
+                        lifecycleScope.launchWhenResumed {
+                            FilePickerDialog.show(
+                                supportFragmentManager,
+                                mode = HandleFileContract.FILE,
+                                allowExtensions = allowExtensions
+                            )
+                        }
                     }
                     111 -> getFileData()?.let {
                         viewModel.upload(it.first, it.second, it.third) { url ->
