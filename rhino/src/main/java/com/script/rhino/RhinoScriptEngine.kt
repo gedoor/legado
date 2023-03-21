@@ -51,9 +51,9 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     private val implementor: InterfaceImplementor
 
     @Throws(ScriptException::class)
-    override fun eval(reader: Reader, ctxt: ScriptContext): Any {
+    override fun eval(reader: Reader, ctxt: ScriptContext): Any? {
         val cx = Context.enter()
-        val ret: Any
+        val ret: Any?
         try {
             val scope = getRuntimeScope(ctxt)
             var filename = this["javax.script.filename"] as? String
@@ -74,11 +74,11 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         } finally {
             Context.exit()
         }
-        return unwrapReturnValue(ret)!!
+        return unwrapReturnValue(ret)
     }
 
     @Throws(ScriptException::class)
-    override fun eval(script: String?, ctxt: ScriptContext): Any {
+    override fun eval(script: String?, ctxt: ScriptContext): Any? {
         return if (script == null) {
             throw NullPointerException("null script")
         } else {
@@ -91,12 +91,12 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     }
 
     @Throws(ScriptException::class, NoSuchMethodException::class)
-    override fun invokeFunction(name: String, vararg args: Any): Any {
+    override fun invokeFunction(name: String, vararg args: Any): Any? {
         return this.invoke(null as Any?, name, *args)
     }
 
     @Throws(ScriptException::class, NoSuchMethodException::class)
-    override fun invokeMethod(thiz: Any?, name: String, vararg args: Any): Any {
+    override fun invokeMethod(thiz: Any?, name: String, vararg args: Any): Any? {
         return if (thiz == null) {
             throw IllegalArgumentException("脚本对象不能为空")
         } else {
@@ -106,10 +106,10 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     @Suppress("UNCHECKED_CAST")
     @Throws(ScriptException::class, NoSuchMethodException::class)
-    private operator fun invoke(thiz: Any?, name: String?, vararg args: Any?): Any {
+    private operator fun invoke(thiz: Any?, name: String?, vararg args: Any?): Any? {
         var thiz1 = thiz
         val cx = Context.enter()
-        val var11: Any
+        val var11: Any?
         try {
             if (name == null) {
                 throw NullPointerException("方法名为空")
@@ -126,7 +126,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 scope = engineScope
             }
             val result = obj.call(cx, scope, localScope, wrapArguments(args as? Array<Any?>))
-            var11 = unwrapReturnValue(result)!!
+            var11 = unwrapReturnValue(result)
         } catch (re: RhinoException) {
             val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
             val se = ScriptException(re.toString(), re.sourceName(), line)
