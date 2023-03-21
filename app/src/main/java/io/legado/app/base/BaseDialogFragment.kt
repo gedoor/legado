@@ -8,6 +8,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +55,8 @@ abstract class BaseDialogFragment(
             //在每个add事务前增加一个remove事务，防止连续的add
             manager.beginTransaction().remove(this).commit()
             super.show(manager, tag)
+        }.onFailure {
+            AppLog.put("显示对话框失败 tag:$tag", it)
         }
     }
 
