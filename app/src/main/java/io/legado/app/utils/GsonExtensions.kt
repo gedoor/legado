@@ -4,6 +4,7 @@ import com.google.gson.*
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonWriter
+import io.legado.app.data.entities.rule.*
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -21,6 +22,12 @@ val GSON: Gson by lazy {
         )
         .registerTypeAdapter(Int::class.java, IntJsonDeserializer())
         .registerTypeAdapter(String::class.java, StringJsonDeserializer())
+        .registerTypeAdapter(ExploreRule::class.java, ExploreRule.jsonDeserializer)
+        .registerTypeAdapter(SearchRule::class.java, SearchRule.jsonDeserializer)
+        .registerTypeAdapter(BookInfoRule::class.java, BookInfoRule.jsonDeserializer)
+        .registerTypeAdapter(TocRule::class.java, TocRule.jsonDeserializer)
+        .registerTypeAdapter(ContentRule::class.java, ContentRule.jsonDeserializer)
+        .registerTypeAdapter(ReviewRule::class.java, ReviewRule.jsonDeserializer)
         .disableHtmlEscaping()
         .setPrettyPrinting()
         .create()
