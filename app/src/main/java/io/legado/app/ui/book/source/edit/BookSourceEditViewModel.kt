@@ -93,12 +93,12 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             text.isJsonArray() -> {
                 val items: List<Map<String, Any>> = jsonPath.parse(text).read("$")
                 val jsonItem = jsonPath.parse(items[0])
-                BookSource.fromJson(jsonItem.jsonString()).getOrElse {
+                GSON.fromJsonObject<BookSource>(jsonItem.jsonString()).getOrElse {
                     ImportOldData.fromOldBookSource(jsonItem)
                 }
             }
             text.isJsonObject() -> {
-                BookSource.fromJson(text).getOrElse {
+                GSON.fromJsonObject<BookSource>(text).getOrElse {
                     val jsonItem = jsonPath.parse(text)
                     ImportOldData.fromOldBookSource(jsonItem)
                 }

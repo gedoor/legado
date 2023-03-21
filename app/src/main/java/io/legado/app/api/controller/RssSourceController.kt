@@ -5,6 +5,9 @@ import android.text.TextUtils
 import io.legado.app.api.ReturnData
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
 
 object RssSourceController {
 
@@ -20,7 +23,7 @@ object RssSourceController {
     fun saveSource(postData: String?): ReturnData {
         val returnData = ReturnData()
         postData ?: return returnData.setErrorMsg("数据不能为空")
-        RssSource.fromJson(postData).onFailure {
+        GSON.fromJsonObject<RssSource>(postData).onFailure {
             returnData.setErrorMsg("转换源失败${it.localizedMessage}")
         }.onSuccess { source ->
             if (TextUtils.isEmpty(source.sourceName) || TextUtils.isEmpty(source.sourceUrl)) {
@@ -36,7 +39,7 @@ object RssSourceController {
     fun saveSources(postData: String?): ReturnData {
         postData ?: return ReturnData().setErrorMsg("数据不能为空")
         val okSources = arrayListOf<RssSource>()
-        val source = RssSource.fromJsonArray(postData).getOrNull()
+        val source = GSON.fromJsonArray<RssSource>(postData).getOrNull()
         if (source.isNullOrEmpty()) {
             return ReturnData().setErrorMsg("转换源失败")
         }
@@ -63,7 +66,7 @@ object RssSourceController {
 
     fun deleteSources(postData: String?): ReturnData {
         postData ?: return ReturnData().setErrorMsg("没有传递数据")
-        RssSource.fromJsonArray(postData).onFailure {
+        GSON.fromJsonArray<RssSource>(postData).onFailure {
             return ReturnData().setErrorMsg("格式不对")
         }.onSuccess {
             it.forEach { source ->
