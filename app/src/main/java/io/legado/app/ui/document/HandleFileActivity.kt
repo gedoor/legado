@@ -26,9 +26,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
 class HandleFileActivity :
-    VMBaseActivity<ActivityTranslucenceBinding, HandleFileViewModel>(
-        theme = Theme.Transparent
-    ), FilePickerDialog.CallBack {
+    VMBaseActivity<ActivityTranslucenceBinding, HandleFileViewModel>(),
+    FilePickerDialog.CallBack {
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
     override val viewModel by viewModels<HandleFileViewModel>()
