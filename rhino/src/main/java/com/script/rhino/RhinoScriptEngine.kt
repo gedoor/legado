@@ -342,7 +342,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                     scope: Scriptable,
                     thisObj: Scriptable,
                     args: Array<Any>
-                ): Any {
+                ): Any? {
                     var accCtxt: AccessControlContext? = null
                     val global = ScriptableObject.getTopLevelScope(scope)
                     val globalProto = global.prototype
@@ -358,7 +358,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                                 thisObj,
                                 args
                             )
-                        } as PrivilegedAction<Any>, accCtxt) else superDoTopCall(
+                        } as PrivilegedAction<*>, accCtxt) else superDoTopCall(
                         callable,
                         cx,
                         scope,
@@ -373,7 +373,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                     scope: Scriptable,
                     thisObj: Scriptable,
                     args: Array<Any>
-                ): Any {
+                ): Any? {
                     return super.doTopCall(callable, cx, scope, thisObj, args)
                 }
             })

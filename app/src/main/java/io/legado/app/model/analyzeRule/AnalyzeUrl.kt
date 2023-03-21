@@ -123,7 +123,7 @@ class AnalyzeUrl(
                     }
                 }
             }
-            result = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), result) as String
+            result = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), result).toString()
             start = jsMatcher.end()
         }
         if (ruleUrl.length > start) {
