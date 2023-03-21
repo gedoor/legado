@@ -20,6 +20,7 @@ val GSON: Gson by lazy {
             MapDeserializerDoubleAsIntFix()
         )
         .registerTypeAdapter(Int::class.java, IntJsonDeserializer())
+        .registerTypeAdapter(String::class.java, StringJsonDeserializer())
         .disableHtmlEscaping()
         .setPrettyPrinting()
         .create()
@@ -91,6 +92,25 @@ class ParameterizedTypeImpl(private val clazz: Class<*>) : ParameterizedType {
 }
 
 /**
+ *
+ */
+class StringJsonDeserializer : JsonDeserializer<String?> {
+
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext?
+    ): String? {
+        return when {
+            json.isJsonPrimitive -> json.asString
+            json.isJsonNull -> null
+            else -> json.toString()
+        }
+    }
+
+}
+
+/**
  * int类型转化失败时跳过
  */
 class IntJsonDeserializer : JsonDeserializer<Int?> {
@@ -114,7 +134,6 @@ class IntJsonDeserializer : JsonDeserializer<Int?> {
     }
 
 }
-
 
 /**
  * 修复Int变为Double的问题

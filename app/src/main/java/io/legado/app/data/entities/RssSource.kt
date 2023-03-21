@@ -3,13 +3,9 @@ package io.legado.app.data.entities
 import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.*
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
 import io.legado.app.constant.AppPattern
 import io.legado.app.utils.*
 import kotlinx.parcelize.Parcelize
-import java.lang.reflect.Type
 
 @Parcelize
 @Entity(tableName = "rssSources", indices = [(Index(value = ["sourceUrl"], unique = false))])
@@ -174,34 +170,13 @@ data class RssSource(
 
     @Suppress("MemberVisibilityCanBePrivate")
     companion object {
-        private val gson by lazy {
-            GSON.newBuilder()
-                .registerTypeAdapter(String::class.java, StringJsonDeserializer())
-                .create()
-        }
 
         fun fromJson(json: String): Result<RssSource> {
-            return gson.fromJsonObject(json)
+            return GSON.fromJsonObject(json)
         }
 
         fun fromJsonArray(jsonArray: String): Result<List<RssSource>> {
-            return gson.fromJsonArray(jsonArray)
-        }
-
-        class StringJsonDeserializer : JsonDeserializer<String?> {
-
-            override fun deserialize(
-                json: JsonElement,
-                typeOfT: Type?,
-                context: JsonDeserializationContext?
-            ): String? {
-                return when {
-                    json.isJsonPrimitive -> json.asString
-                    json.isJsonNull -> null
-                    else -> json.toString()
-                }
-            }
-
+            return GSON.fromJsonArray(jsonArray)
         }
 
     }
