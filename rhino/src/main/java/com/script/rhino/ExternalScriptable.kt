@@ -118,7 +118,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
         }
     }
 
-    override fun put(index: Int, start: Scriptable, value: Any) {
+    override fun put(index: Int, start: Scriptable, value: Any?) {
         if (start === this) {
             synchronized(this) { indexedProps.put(index, value) }
         } else {
@@ -213,10 +213,10 @@ internal class ExternalScriptable @JvmOverloads constructor(
             }
             var v = ScriptableObject.getProperty(this, methodName)
             if (v is Function) {
-                val `fun` = v
+                val function = v
                 val cx = Context.enter()
                 v = try {
-                    `fun`.call(cx, `fun`.parentScope, this, args)
+                    function.call(cx, function.parentScope, this, args)
                 } finally {
                     Context.exit()
                 }
