@@ -7,6 +7,7 @@ import com.jayway.jsonpath.JsonPath
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -108,22 +109,26 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                     }
                 }
-                mText.isJsonArray() -> GSON.fromJsonArray<BookSource>(mText).getOrThrow().let { items ->
-                    allSources.addAll(items)
+                mText.isJsonArray() -> {
+                    GSON.fromJsonArray<BookSource>(mText).getOrThrow().let { items ->
+                        allSources.addAll(items)
+                    }
                 }
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
                 }
                 mText.isUri() -> {
                     val uri = Uri.parse(mText)
-                    uri.inputStream(context).getOrThrow().let {
-                        allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
+                    uri.inputStream(context).getOrThrow().use {
+                        GSON.fromJsonArray<BookSource>(it).getOrThrow().let {bookSources ->
+                            allSources.addAll(bookSources)
+                        }
                     }
                 }
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
-            it.printOnDebug()
+            AppLog.put("读取书源出错", it)
             errorLiveData.postValue(it.localizedMessage ?: "")
         }.onSuccess {
             comparisonSource()
