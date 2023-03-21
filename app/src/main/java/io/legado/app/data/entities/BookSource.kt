@@ -222,16 +222,25 @@ data class BookSource(
 
     companion object {
 
+        private val gson = GSON.newBuilder()
+            .registerTypeAdapter(ExploreRule::class.java, ExploreRule.jsonDeserializer)
+            .registerTypeAdapter(SearchRule::class.java, SearchRule.jsonDeserializer)
+            .registerTypeAdapter(BookInfoRule::class.java, BookInfoRule.jsonDeserializer)
+            .registerTypeAdapter(TocRule::class.java, TocRule.jsonDeserializer)
+            .registerTypeAdapter(ContentRule::class.java, ContentRule.jsonDeserializer)
+            .registerTypeAdapter(ReviewRule::class.java, ReviewRule.jsonDeserializer)
+            .create()
+
         fun fromJson(json: String): Result<BookSource> {
-            return GSON.fromJsonObject(json)
+            return gson.fromJsonObject(json)
         }
 
         fun fromJsonArray(json: String): Result<List<BookSource>> {
-            return GSON.fromJsonArray(json)
+            return gson.fromJsonArray(json)
         }
 
         fun fromJsonArray(inputStream: InputStream): Result<List<BookSource>> {
-            return GSON.fromJsonArray(inputStream)
+            return gson.fromJsonArray(inputStream)
         }
 
     }
