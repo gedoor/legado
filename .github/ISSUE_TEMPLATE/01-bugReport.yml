@@ -26,9 +26,14 @@ body:
       required: true
   - type: checkboxes
     attributes:
+      label: 确认 / Assignments
       options:
         - label: 已经提交复现所需要的附加资料 / Submit additions related with bugs
           required: true
+  - type: textarea
+    attributes:
+      label: 其他信息 / Additions
+
   - type: textarea
     attributes:
       label: 日志提交 / Relevant log output
@@ -52,7 +57,3 @@ body:
       placeholder: "Redmi K30 Pro"
     validations:
       required: true
-
-  - type: textarea
-    attributes:
-      label: 其他信息 / Additions
