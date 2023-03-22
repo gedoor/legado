@@ -3,6 +3,8 @@ package io.legado.app.ui.book.searchContent
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import io.legado.app.R
@@ -69,6 +71,18 @@ class SearchContentActivity :
                 initBook(noSearchResult)
             }
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let {
+                if (it is EditText) {
+                    it.clearFocus()
+                    it.hideSoftInput()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun initSearchView(clearFocus: Boolean) {
