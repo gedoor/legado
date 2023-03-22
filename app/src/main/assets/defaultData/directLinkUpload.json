@@ -7,6 +7,6 @@
   {
     "uploadUrl": "http://v2.jt12.de/up-v2.php,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
     "downloadUrlRule": "$.msg",
-    "summary": "橘途网盘(永久有效)"
+    "summary": "橘涂网盘(永久有效)"
   }
 ]
