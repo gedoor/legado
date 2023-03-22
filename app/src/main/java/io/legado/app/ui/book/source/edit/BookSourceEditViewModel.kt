@@ -91,16 +91,20 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 text1?.let { importSource(text1) }
             }
             text.isJsonArray() -> {
-                val items: List<Map<String, Any>> = jsonPath.parse(text).read("$")
-                val jsonItem = jsonPath.parse(items[0])
-                BookSource.fromJson(jsonItem.jsonString()).getOrElse {
+                if (text.contains("ruleSearchUrl") || text.contains("ruleFindUrl")) {
+                    val items: List<Map<String, Any>> = jsonPath.parse(text).read("$")
+                    val jsonItem = jsonPath.parse(items[0])
                     ImportOldData.fromOldBookSource(jsonItem)
+                } else {
+                    BookSource.fromJsonArray(text).getOrThrow()[0]
                 }
             }
             text.isJsonObject() -> {
-                BookSource.fromJson(text).getOrElse {
+                if (text.contains("ruleSearchUrl") || text.contains("ruleFindUrl")) {
                     val jsonItem = jsonPath.parse(text)
                     ImportOldData.fromOldBookSource(jsonItem)
+                } else {
+                    BookSource.fromJson(text).getOrThrow()
                 }
             }
             else -> throw NoStackTraceException("格式不对")
