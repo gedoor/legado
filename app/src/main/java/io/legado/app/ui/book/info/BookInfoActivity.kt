@@ -266,7 +266,6 @@ class BookInfoActivity :
         tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tvIntro.text = book.getDisplayIntro()
         llToc?.visible(!book.isWebFile)
-        editMenuItem?.isVisible = viewModel.inBookshelf
         upTvBookshelf()
         val kinds = book.getKindList()
         if (kinds.isEmpty()) {
@@ -318,6 +317,7 @@ class BookInfoActivity :
         } else {
             binding.tvShelf.text = getString(R.string.add_to_bookshelf)
         }
+        editMenuItem?.isVisible = viewModel.inBookshelf
     }
 
     private fun upGroup(groupId: Long) {
