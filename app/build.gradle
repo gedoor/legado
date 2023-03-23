@@ -111,7 +111,7 @@ android {
 
     compileOptions {
         // Flag to enable support for the new language APIs
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled false
         // Sets Java compatibility to Java 11
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -135,7 +135,7 @@ android {
 dependencies {
     compileOnly "com.android.tools.build:gradle:$agp_version"
     //noinspection GradleDependency,GradlePackageUpdate
-    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.2')
+    //coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.2')
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.5.2')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1')

@@ -35,5 +35,5 @@ android {
 }
 
 dependencies {
-    api(fileTree(dir: 'lib', include: ['rhino-*.jar']))
+    api(fileTree(dir: 'lib', include: ['rhino-1.7.14-1.jar']))
 }
