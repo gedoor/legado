@@ -23,9 +23,8 @@ object CheckSource {
     val summary get() = upSummary()
 
     fun start(context: Context, sources: List<BookSource>) {
-        val selectedIds: ArrayList<String> = arrayListOf()
-        sources.map {
-            selectedIds.add(it.bookSourceUrl)
+        val selectedIds = sources.map {
+            it.bookSourceUrl
         }
         IntentData.put("checkSourceSelectedIds", selectedIds)
         context.startService<CheckSourceService> {

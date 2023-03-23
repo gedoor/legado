@@ -66,7 +66,7 @@ class CheckSourceService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            IntentAction.start -> IntentData.get<ArrayList<String>>("checkSourceSelectedIds")?.let {
+            IntentAction.start -> IntentData.get<List<String>>("checkSourceSelectedIds")?.let {
                 check(it)
             }
 
