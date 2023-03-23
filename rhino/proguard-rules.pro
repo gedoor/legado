@@ -23,5 +23,7 @@
 ## Rhino
 -keep class com.script.** { *; }
 -keep class javax.script.** { *; }
+-keep class java.lang.** { *; }
+-keep class java.util.function.** { *; }
 -keep class com.sun.script.javascript.** { *; }
 -keep class org.mozilla.javascript.** { *; }
