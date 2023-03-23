@@ -62,6 +62,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun play() {
+        pageChanged = false
         exoPlayer.stop()
         if (contentList.isEmpty()) {
             AppLog.putDebug("朗读列表为空")
@@ -285,8 +286,12 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun resumeReadAloud() {
         super.resumeReadAloud()
         kotlin.runCatching {
-            exoPlayer.play()
-            upPlayPos()
+            if (pageChanged) {
+                play()
+            } else {
+                exoPlayer.play()
+                upPlayPos()
+            }
         }
     }
 

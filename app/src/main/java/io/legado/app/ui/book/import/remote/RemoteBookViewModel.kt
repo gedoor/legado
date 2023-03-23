@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.import.remote
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
@@ -25,6 +26,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     var sortKey = RemoteBookSort.Default
     var sortAscending = false
     val dirList = arrayListOf<RemoteBook>()
+    val permissionDenialLiveData = MutableLiveData<Int>()
 
     var dataCallback: DataCallback? = null
 
@@ -141,6 +143,9 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
         }.onError {
             AppLog.put("导入出错\n${it.localizedMessage}", it)
             context.toastOnUi("导入出错\n${it.localizedMessage}")
+            if (it is SecurityException) {
+                permissionDenialLiveData.postValue(1)
+            }
         }.onFinally {
             finally.invoke()
         }

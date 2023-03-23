@@ -7,7 +7,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -30,7 +32,6 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
@@ -108,7 +109,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         launch {
             appDb.txtTocRuleDao.observeAll().conflate().collect { tocRules ->
                 initSelectedName(tocRules)
-                adapter.setItems(tocRules)
+                adapter.setItems(tocRules, adapter.diffItemCallBack)
             }
         }
     }
@@ -191,6 +192,43 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         RecyclerAdapter<TxtTocRule, ItemTocRegexBinding>(context),
         ItemTouchCallback.Callback {
 
+        val diffItemCallBack = object : DiffUtil.ItemCallback<TxtTocRule>() {
+
+            override fun areItemsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
+                if (oldItem.name != newItem.name) {
+                    return false
+                }
+                if (oldItem.enable != newItem.enable) {
+                    return false
+                }
+                if (oldItem.example != newItem.example) {
+                    return false
+                }
+                return true
+            }
+
+            override fun getChangePayload(oldItem: TxtTocRule, newItem: TxtTocRule): Any? {
+                val payload = Bundle()
+                if (oldItem.name != newItem.name) {
+                    payload.putBoolean("upName", true)
+                }
+                if (oldItem.enable != newItem.enable) {
+                    payload.putBoolean("enabled", newItem.enable)
+                }
+                if (oldItem.example != newItem.example) {
+                    payload.putBoolean("upExample", true)
+                }
+                if (payload.isEmpty) {
+                    return null
+                }
+                return payload
+            }
+        }
+
         override fun getViewBinding(parent: ViewGroup): ItemTocRegexBinding {
             return ItemTocRegexBinding.inflate(inflater, parent, false)
         }
@@ -202,14 +240,22 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             payloads: MutableList<Any>
         ) {
             binding.apply {
-                if (payloads.isEmpty()) {
+                val bundle = payloads.getOrNull(0) as? Bundle
+                if (bundle == null) {
                     root.setBackgroundColor(context.backgroundColor)
                     rbRegexName.text = item.name
                     titleExample.text = item.example
                     rbRegexName.isChecked = item.name == selectedName
                     swtEnabled.isChecked = item.enable
                 } else {
-                    rbRegexName.isChecked = item.name == selectedName
+                    bundle.keySet().map {
+                        when (it) {
+                            "upNmae" -> rbRegexName.text = item.name
+                            "upExample" -> titleExample.text = item.example
+                            "enabled" -> swtEnabled.isChecked = item.enable
+                            "upSelect" -> rbRegexName.isChecked = item.name == selectedName
+                        }
+                    }
                 }
             }
         }
@@ -219,16 +265,14 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 rbRegexName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed && isChecked) {
                         selectedName = getItem(holder.layoutPosition)?.name
-                        updateItems(0, itemCount - 1, true)
+                        updateItems(0, itemCount - 1, bundleOf("upSelect" to null))
                     }
                 }
                 swtEnabled.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
                         getItem(holder.layoutPosition)?.let {
                             it.enable = isChecked
-                            launch(IO) {
-                                appDb.txtTocRuleDao.update(it)
-                            }
+                            viewModel.update(it)
                         }
                     }
                 }
@@ -237,9 +281,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 }
                 ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
-                        launch(IO) {
-                            appDb.txtTocRuleDao.delete(item)
-                        }
+                        viewModel.del(item)
                     }
                 }
             }
@@ -259,9 +301,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 for ((index, item) in getItems().withIndex()) {
                     item.serialNumber = index + 1
                 }
-                launch(IO) {
-                    appDb.txtTocRuleDao.update(*getItems().toTypedArray())
-                }
+                viewModel.update(*getItems().toTypedArray())
             }
             isMoved = false
         }

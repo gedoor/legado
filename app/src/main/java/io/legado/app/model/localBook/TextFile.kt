@@ -407,7 +407,7 @@ class TextFile(private val book: Book) {
      */
     private fun getTocRules(): List<TxtTocRule> {
         var rules = appDb.txtTocRuleDao.enabled
-        if (rules.isEmpty()) {
+        if (appDb.txtTocRuleDao.count == 0) {
             rules = DefaultData.txtTocRules.apply {
                 appDb.txtTocRuleDao.insert(*this.toTypedArray())
             }.filter {

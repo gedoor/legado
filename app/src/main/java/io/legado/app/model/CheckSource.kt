@@ -5,6 +5,7 @@ import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.CacheManager
+import io.legado.app.help.IntentData
 import io.legado.app.service.CheckSourceService
 import io.legado.app.utils.startService
 import splitties.init.appCtx
@@ -26,9 +27,9 @@ object CheckSource {
         sources.map {
             selectedIds.add(it.bookSourceUrl)
         }
+        IntentData.put("checkSourceSelectedIds", selectedIds)
         context.startService<CheckSourceService> {
             action = IntentAction.start
-            putExtra("selectIds", selectedIds)
         }
     }
 

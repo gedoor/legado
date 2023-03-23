@@ -32,6 +32,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<BookSource>()
+    private val finalMessageRegex = Regex("成功|失败")
 
     val selection: List<BookSource>
         get() {
@@ -94,9 +95,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 cbBookSource.text = item.getDisPlayNameGroup()
                 swtEnabled.isChecked = item.enabled
                 cbBookSource.isChecked = selected.contains(item)
-                ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
-                ivDebugText.visibility =
-                    if (ivDebugText.text.toString().isNotBlank()) View.VISIBLE else View.GONE
+                upCheckSourceMessage(binding, item)
                 upShowExplore(ivExplore, item)
             } else {
                 payload.keySet().map {
@@ -105,21 +104,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                         "upName" -> cbBookSource.text = item.getDisPlayNameGroup()
                         "upExplore" -> upShowExplore(ivExplore, item)
                         "selected" -> cbBookSource.isChecked = selected.contains(item)
-                        "checkSourceMessage" -> {
-                            ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
-                            val isEmpty = ivDebugText.text.toString().isEmpty()
-                            var isFinalMessage =
-                                ivDebugText.text.toString().contains(Regex("成功|失败"))
-                            if (!Debug.isChecking && !isFinalMessage) {
-                                Debug.updateFinalMessage(item.bookSourceUrl, "校验失败")
-                                ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
-                                isFinalMessage = true
-                            }
-                            ivDebugText.visibility =
-                                if (!isEmpty) View.VISIBLE else View.GONE
-                            ivProgressBar.visibility =
-                                if (isFinalMessage || isEmpty || !Debug.isChecking) View.GONE else View.VISIBLE
-                        }
+                        "checkSourceMessage" -> upCheckSourceMessage(binding, item)
                     }
                 }
             }
@@ -218,6 +203,22 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 iv.contentDescription = context.getString(R.string.tag_explore_disabled)
             }
         }
+    }
+
+    private fun upCheckSourceMessage(binding: ItemBookSourceBinding, item: BookSource) = binding.run {
+        val msg = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+        ivDebugText.text = msg
+        val isEmpty = msg.isEmpty()
+        var isFinalMessage = msg.contains(finalMessageRegex)
+        if (!Debug.isChecking && !isFinalMessage) {
+            Debug.updateFinalMessage(item.bookSourceUrl, "校验失败")
+            ivDebugText.text = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
+            isFinalMessage = true
+        }
+        ivDebugText.visibility =
+            if (!isEmpty) View.VISIBLE else View.GONE
+        ivProgressBar.visibility =
+            if (isFinalMessage || isEmpty || !Debug.isChecking) View.GONE else View.VISIBLE
     }
 
     fun selectAll() {

@@ -44,7 +44,7 @@ object BookType {
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(text, updateError, audio, image, webFile, local)
+    @IntDef(text, updateError, audio, image, webFile, local, archive)
     annotation class Type
 
 

@@ -64,6 +64,14 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
         }
     }
 
+    override fun observeLiveBus() {
+        viewModel.permissionDenialLiveData.observe(this) {
+            localBookTreeSelect.launch {
+                title = getString(R.string.select_book_folder)
+            }
+        }
+    }
+
     private fun initView() {
         binding.layTop.setBackgroundColor(backgroundColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)

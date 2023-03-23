@@ -32,7 +32,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         binding.titleBar.findViewById(R.id.search_view)
     }
 
-    private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
+    val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { treeUri ->
             AppConfig.defaultBookTreeUri = treeUri.toString()
             localBookTreeSelectListener?.invoke(true)
@@ -61,10 +61,12 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
      */
     protected suspend fun setBookStorage() = suspendCoroutine { block ->
         localBookTreeSelectListener = {
+            localBookTreeSelectListener = null
             block.resume(it)
         }
         //测试书籍保存位置是否设置
         if (!AppConfig.defaultBookTreeUri.isNullOrBlank()) {
+            localBookTreeSelectListener = null
             block.resume(true)
             return@suspendCoroutine
         }
@@ -78,9 +80,11 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
                 }
             }
             noButton {
+                localBookTreeSelectListener = null
                 block.resume(false)
             }
             onCancelled {
+                localBookTreeSelectListener = null
                 block.resume(false)
             }
         }

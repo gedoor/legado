@@ -212,11 +212,8 @@ object LocalBook {
         val files = ArchiveUtils.deCompress(archiveFileDoc, filter = filter)
         if (files.isEmpty()) throw NoStackTraceException(appCtx.getString(R.string.unsupport_archivefile_entry))
         return files.map {
-            saveBookFile(
-                    FileInputStream(it),
-                    saveFileName ?: it.name
-            ).let {
-                importFile(it).apply {
+            saveBookFile(FileInputStream(it), saveFileName ?: it.name).let { uri ->
+                importFile(uri).apply {
                     //附加压缩包名称 以便解压文件被删后再解压
                     origin = "${BookType.localTag}::${archiveFileDoc.name}"
                     addType(BookType.archive)
@@ -255,8 +252,8 @@ object LocalBook {
                     importFile(uri)
                 }
             }.onFailure {
-                AppLog.put("ImportFile Error:\nFile ${fileDoc.toString()}\n${it.localizedMessage}", it)
-                errorCount = errorCount + 1
+                AppLog.put("ImportFile Error:\nFile $fileDoc\n${it.localizedMessage}", it)
+                errorCount += 1
             }
         }
         if (errorCount == uris.size) throw NoStackTraceException("ImportFiles Error:\nAll input files occur error")
@@ -409,8 +406,8 @@ object LocalBook {
                 if (localBook.isArchive) {
                     // 压缩包
                     val archiveUri = saveBookFile(it, localBook.archiveName)
-                    val newBook = importArchiveFile(archiveUri, localBook.originName) {
-                        it.contains(localBook.originName)
+                    val newBook = importArchiveFile(archiveUri, localBook.originName) { name ->
+                        name.contains(localBook.originName)
                     }.first()
                     localBook.origin = newBook.origin
                     localBook.bookUrl = newBook.bookUrl
