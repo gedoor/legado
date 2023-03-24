@@ -198,7 +198,7 @@ dependencies {
     implementation('org.jsoup:jsoup:1.15.4')
     implementation('com.jayway.jsonpath:json-path:2.7.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
-    implementation implementation(project(path: ':book'))
+    implementation(project(path: ':book'))
 
     //JS rhino
     implementation(project(path: ':rhino'))
