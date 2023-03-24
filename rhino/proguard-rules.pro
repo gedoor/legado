@@ -26,5 +26,4 @@
 -keep class java.lang.** { *; }
 -keep class java.util.function.** { *; }
 -keep class com.sun.script.javascript.** { *; }
--keep class org.mozilla.classfile.** { *; }
--keep class org.mozilla.javascript.** { *; }
+-keep class org.mozilla.** { *; }
