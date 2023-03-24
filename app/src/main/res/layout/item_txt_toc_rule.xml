@@ -1,64 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical">
+    <io.legado.app.lib.theme.view.ThemeCheckBox
+        android:id="@+id/cb_source"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:textColor="@color/primaryText"
+        app:layout_constraintBottom_toTopOf="@id/title_example"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/swt_enabled"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
 
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_source"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:textColor="@color/primaryText"
-            tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
+    <io.legado.app.lib.theme.view.ThemeSwitch
+        android:id="@+id/swt_enabled"
+        android:name="@string/enable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        app:layout_constraintBottom_toTopOf="@id/title_example"
+        app:layout_constraintRight_toLeftOf="@id/iv_edit"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
 
-        <io.legado.app.lib.theme.view.ThemeSwitch
-            android:id="@+id/swt_enabled"
-            android:name="@string/enable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_edit"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/edit"
+        android:padding="6dp"
+        android:src="@drawable/ic_edit"
+        android:tint="@color/primaryText"
+        app:layout_constraintBottom_toTopOf="@id/title_example"
+        app:layout_constraintRight_toLeftOf="@id/iv_menu_more"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_edit"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/edit"
-            android:padding="6dp"
-            android:src="@drawable/ic_edit"
-            android:tint="@color/primaryText" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_menu_more"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="6dp"
-            android:src="@drawable/ic_more_vert"
-            android:tint="@color/primaryText"
-            android:contentDescription="@string/more_menu"
-            tools:ignore="RtlHardcoded" />
-
-    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu_more"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/more_menu"
+        android:padding="6dp"
+        android:src="@drawable/ic_more_vert"
+        android:tint="@color/primaryText"
+        app:layout_constraintBottom_toTopOf="@id/title_example"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardcoded" />
 
     <TextView
         android:id="@+id/title_example"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
