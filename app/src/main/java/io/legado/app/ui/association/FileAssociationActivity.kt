@@ -116,11 +116,13 @@ class FileAssociationActivity :
                         viewModel.dispatchIndent(data)
                     }.onDenied {
                         toastOnUi("请求存储权限失败。")
+                        finish()
                     }.request()
             } else {
                 toastOnUi("由于安卓系统限制，请使用系统文件管理重新打开。")
+                finish()
             }
-        }
+        } ?: finish()
     }
 
     private fun importBook(uri: Uri) {
