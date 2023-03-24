@@ -111,6 +111,7 @@ android {
 
     compileOptions {
         // Flag to enable support for the new language APIs
+        // 开启后rhino1.4.1会报错,rhino1.4.1已经脱糖处理
         coreLibraryDesugaringEnabled false
         // Sets Java compatibility to Java 11
         sourceCompatibility JavaVersion.VERSION_11
@@ -134,7 +135,7 @@ android {
 
 dependencies {
     compileOnly "com.android.tools.build:gradle:$agp_version"
-    //noinspection GradleDependency,GradlePackageUpdate
+    //noinspection GradleDependency,GradlePackageUpdate,脱糖库和rhino冲突,rhino1.4.1已经脱糖处理
     //coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.2')
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.5.2')
@@ -200,7 +201,6 @@ dependencies {
     implementation implementation(project(path: ':book'))
 
     //JS rhino
-    //implementation('com.github.gedoor:rhino-android:1.8')
     implementation(project(path: ':rhino'))
 
     //网络
