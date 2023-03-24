@@ -86,7 +86,11 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
         execute {
             val fileUris = uriList.map {
-                Uri.parse(it)
+                if (it.isContentScheme()) {
+                    Uri.parse(it)
+                } else {
+                    Uri.fromFile(File(it))
+                }
             }
             LocalBook.importFiles(fileUris)
         }.onError {
