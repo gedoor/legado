@@ -395,6 +395,18 @@
                 <data android:pathAdvancedPattern=".*\\.[pP][dD][fF]" />
                 <data android:pathPattern=".*\\.pdf" />
                 <data android:pathPattern=".*\\.PDF" />
+                <!-- zip -->
+                <data android:pathAdvancedPattern=".*\\.[zZ][iI][pP]" />
+                <data android:pathPattern=".*\\.zip" />
+                <data android:pathPattern=".*\\.ZIP" />
+                <!-- rar -->
+                <data android:pathAdvancedPattern=".*\\.[rR][aA][rR]" />
+                <data android:pathPattern=".*\\.rar" />
+                <data android:pathPattern=".*\\.RAR" />
+                <!-- 7z -->
+                <data android:pathAdvancedPattern=".*\\.7[zZ]" />
+                <data android:pathPattern=".*\\.7z" />
+                <data android:pathPattern=".*\\.7Z" />
             </intent-filter>
         </activity>
 
