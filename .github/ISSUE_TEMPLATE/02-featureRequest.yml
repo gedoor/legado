@@ -1,32 +1,32 @@
-name: 功能请求
-description: 提交你希望能够在阅读中增加的功能
+name: 功能请求 / Features
+description: Request new features
 labels: ["需求"]
 body:
   - type: checkboxes
     attributes:
-      label: 确认
-      description: 提交issue请确保完成以下前提，否则该issue可能被忽略
+      label: 确认 / Assignments
+      description: 提交issue请确保完成以下前提，否则该issue可能被忽略 / Make sure you read checkbox below 
       options:
-        - label: 搜索现有issues，不存在相似或相关的issue
+        - label: 搜索现有issues，不存在相似或相关的issue / No related requests
           required: true
 
   - type: textarea
     attributes:
-      label: 功能描述
+      label: 功能描述 / Features
       placeholder: 请清晰的、详细的描述你想要的功能
     validations:
       required: true
   - type: textarea
     attributes:
-      label: 期望实现方式
+      label: 期望实现方式 / How to implement
       placeholder: 阅读应该如何实现该功能
     validations:
       required: true
   - type: textarea
     attributes:
-      label: 附加信息
+      label: 附加信息 / Additions
       placeholder: 其他的与功能相关的附加信息
   - type: textarea
     attributes:
-      label: 效果演示
+      label: 效果演示 / Demo
       placeholder: 可以手绘一些草图，或者提供可借鉴的图片
