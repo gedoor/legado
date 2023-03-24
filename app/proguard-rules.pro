@@ -218,6 +218,7 @@
 -keep class com.sun.script.javascript.** { *; }
 -keep class org.mozilla.classfile.** { *; }
 -keep class org.mozilla.javascript.** { *; }
+-dontwarn org.mozilla.javascript.engine.RhinoScriptEngineFactory
 
 ###EPUB
 -dontwarn nl.siegmann.epublib.**
