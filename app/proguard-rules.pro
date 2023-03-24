@@ -211,8 +211,12 @@
 -dontwarn sun.reflect.**
 
 ## Rhino
+-keep class com.script.** { *; }
 -keep class javax.script.** { *; }
+-keep class java.lang.** { *; }
+-keep class java.util.function.** { *; }
 -keep class com.sun.script.javascript.** { *; }
+-keep class org.mozilla.classfile.** { *; }
 -keep class org.mozilla.javascript.** { *; }
 
 ###EPUB
