@@ -173,7 +173,7 @@ interface JsExtensions : JsEncodeUtils {
      */
     fun importScript(path: String): String {
         val result = when {
-            path.startsWith("http") -> cacheFile(path) ?: ""
+            path.startsWith("http") -> cacheFile(path)
             path.isUri() -> Uri.parse(path).readText(appCtx)
             path.startsWith("/storage") -> FileUtils.readText(path)
             else -> readTxtFile(path)
@@ -187,7 +187,7 @@ interface JsExtensions : JsEncodeUtils {
      * @param urlStr 网络文件的链接
      * @return 返回缓存后的文件内容
      */
-    fun cacheFile(urlStr: String): String? {
+    fun cacheFile(urlStr: String): String {
         return cacheFile(urlStr, 0)
     }
 
