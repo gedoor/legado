@@ -198,7 +198,10 @@ interface JsExtensions : JsEncodeUtils {
     fun cacheFile(urlStr: String, saveTime: Int): String {
         val key = md5Encode16(urlStr)
         val cahcePath = CacheManager.get(key)
-        return if (cahcePath.isNullOrBlank()) {
+        return if (
+            cahcePath.isNullOrBlank() ||
+                !getFile(cahcePath).exists()
+        ) {
             val path = downloadFile(urlStr)
             log("首次下载 $urlStr >> $path")
             CacheManager.put(key, path, saveTime)
