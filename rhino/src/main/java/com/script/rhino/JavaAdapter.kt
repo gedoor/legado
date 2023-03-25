@@ -92,7 +92,7 @@ internal class JavaAdapter private constructor(private val engine: Invocable) : 
     companion object {
         @JvmStatic
         @Throws(RhinoException::class)
-        fun init(cx: Context?, scope: Scriptable, sealed: Boolean) {
+        fun init(cx: Context, scope: Scriptable, sealed: Boolean) {
             val topLevel = scope as RhinoTopLevel
             val engine: Invocable = topLevel.scriptEngine
             val obj = JavaAdapter(engine)

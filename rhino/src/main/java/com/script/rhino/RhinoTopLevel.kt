@@ -40,7 +40,7 @@ import java.security.AccessControlContext
  * @since 1.6
  */
 @Suppress("UNUSED_PARAMETER")
-class RhinoTopLevel internal constructor(cx: Context?, val scriptEngine: RhinoScriptEngine) :
+class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
     ImporterTopLevel(cx, System.getSecurityManager() != null) {
 
     init {
