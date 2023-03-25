@@ -142,6 +142,7 @@ object UrlUtil {
         ) {
             path.substringAfterLast("/")
         } else {
+            AppLog.put("getFileNameFromPath: Unexpected file suffix: $suffix")
             null
         }
     }
