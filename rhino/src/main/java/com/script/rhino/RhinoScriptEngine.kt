@@ -49,6 +49,32 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     private val implementor: InterfaceImplementor
 
     @Throws(ScriptException::class)
+    override fun eval(reader: Reader, scope: Scriptable): Any? {
+        val cx = Context.enter()
+        val ret: Any?
+        try {
+            var filename = this["javax.script.filename"] as? String
+            filename = filename ?: "<Unknown source>"
+            ret = cx.evaluateReader(scope, reader, filename, 1, null)
+        } catch (re: RhinoException) {
+            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
+            val msg: String = if (re is JavaScriptException) {
+                re.value.toString()
+            } else {
+                re.toString()
+            }
+            val se = ScriptException(msg, re.sourceName(), line)
+            se.initCause(re)
+            throw se
+        } catch (var14: IOException) {
+            throw ScriptException(var14)
+        } finally {
+            Context.exit()
+        }
+        return unwrapReturnValue(ret)
+    }
+
+    @Throws(ScriptException::class)
     override fun eval(reader: Reader, context: ScriptContext): Any? {
         val cx = Context.enter()
         val ret: Any?
@@ -73,11 +99,6 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             Context.exit()
         }
         return unwrapReturnValue(ret)
-    }
-
-    @Throws(ScriptException::class)
-    override fun eval(script: String, context: ScriptContext): Any? {
-        return this.eval(StringReader(script) as Reader, context)
     }
 
     override fun createBindings(): Bindings {
@@ -152,7 +173,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         }
     }
 
-    fun getRuntimeScope(context: ScriptContext): Scriptable {
+    override fun getRuntimeScope(context: ScriptContext): Scriptable {
         val newScope: Scriptable = ExternalScriptable(context, indexedProps)
         newScope.prototype = topLevel
         newScope.put("context", newScope, context)

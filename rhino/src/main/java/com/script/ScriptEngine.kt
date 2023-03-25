@@ -3,12 +3,19 @@
  */
 package com.script
 
+import org.mozilla.javascript.Scriptable
 import java.io.Reader
 
 interface ScriptEngine {
     var context: ScriptContext
 
     fun createBindings(): Bindings?
+
+    @Throws(ScriptException::class)
+    fun eval(reader: Reader, scope: Scriptable): Any?
+
+    @Throws(ScriptException::class)
+    fun eval(script: String, scope: Scriptable): Any?
 
     @Throws(ScriptException::class)
     fun eval(reader: Reader): Any?
@@ -27,6 +34,10 @@ interface ScriptEngine {
 
     @Throws(ScriptException::class)
     fun eval(script: String, context: ScriptContext): Any?
+
+    fun getRuntimeScope(context: ScriptContext): Scriptable
+
+    fun getScriptContext(bindings: Bindings): ScriptContext
 
     operator fun get(key: String): Any?
 

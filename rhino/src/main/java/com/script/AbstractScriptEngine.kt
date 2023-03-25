@@ -3,7 +3,9 @@
  */
 package com.script
 
+import org.mozilla.javascript.Scriptable
 import java.io.Reader
+import java.io.StringReader
 
 abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngine {
 
@@ -51,6 +53,15 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
         return nn?.get(key)
     }
 
+    override fun eval(script: String, scope: Scriptable): Any? {
+        return this.eval(StringReader(script), scope)
+    }
+
+    @Throws(ScriptException::class)
+    override fun eval(reader: Reader, context: ScriptContext): Any? {
+        return this.eval(reader, getRuntimeScope(context))
+    }
+
     @Throws(ScriptException::class)
     override fun eval(reader: Reader, bindings: Bindings): Any? {
         return this.eval(reader, getScriptContext(bindings))
@@ -71,13 +82,18 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
         return this.eval(script, context)
     }
 
-    protected fun getScriptContext(nn: Bindings): ScriptContext {
+    @Throws(ScriptException::class)
+    override fun eval(script: String, context: ScriptContext): Any? {
+        return this.eval(StringReader(script), context)
+    }
+
+    override fun getScriptContext(bindings: Bindings): ScriptContext {
         val ctx = SimpleScriptContext()
         val gs = getBindings(200)
         if (gs != null) {
             ctx.setBindings(gs, 200)
         }
-        ctx.setBindings(nn, 100)
+        ctx.setBindings(bindings, 100)
         ctx.reader = context.reader
         ctx.writer = context.writer
         ctx.errorWriter = context.errorWriter
