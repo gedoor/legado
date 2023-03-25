@@ -124,7 +124,7 @@ eval(String(java.cacheFile(url)))
 删除缓存文件
 cache.delete(java.md5Encode16(url))
 ```
-* 获取网络压缩文件里面指定路径的数据 *可替换Zip Rar 7Z Archive
+* 获取网络压缩文件里面指定路径的数据 *可替换Zip Rar 7Z
 ```
 java.get*StringContent(url: String, path: String): String
 
@@ -167,8 +167,7 @@ java.androidId()
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
 ```
-//文件下载,content为十六进制字符串,url用于生成文件名，返回文件路径
-downloadFile(content: String, url: String): String
+//文件下载 url用于生成文件名，返回文件路径
 downloadFile(url: String): String
 //文件解压,zipPath为压缩文件路径，返回解压路径
 unArchiveFile(zipPath: String): String
