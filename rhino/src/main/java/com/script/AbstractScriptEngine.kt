@@ -42,15 +42,11 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
     }
 
     override fun put(key: String, value: Any?) {
-        val nn = getBindings(100)
-        if (nn != null) {
-            nn[key] = value
-        }
+        getBindings(100)?.put(key, value)
     }
 
     override fun get(key: String): Any? {
-        val nn = getBindings(100)
-        return nn?.get(key)
+        return getBindings(100)?.get(key)
     }
 
     override fun eval(script: String, scope: Scriptable): Any? {

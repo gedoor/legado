@@ -43,12 +43,12 @@ class ScriptException : Exception {
             if (fileName == null) {
                 return ret!!
             }
-            var ret2 = ret + " in " + fileName
+            var ret2 = "$ret in $fileName"
             if (lineNumber != -1) {
-                ret2 = ret2 + " at line number " + lineNumber
+                ret2 = "$ret2 at line number $lineNumber"
             }
             return if (columnNumber != -1) {
-                ret2 + " at column number " + columnNumber
+                "$ret2 at column number $columnNumber"
             } else ret2
         }
 }

@@ -36,7 +36,7 @@ open class SimpleScriptContext : ScriptContext {
         if (engineScope.containsKey(name)) {
             return this.getAttribute(name, 100)
         }
-        return if (globalScope == null || !globalScope!!.containsKey(name)) {
+        return if (globalScope?.containsKey(name) != true) {
             null
         } else this.getAttribute(name, 200)
     }
@@ -47,9 +47,7 @@ open class SimpleScriptContext : ScriptContext {
                 return engineScope[name]
             }
             200 -> {
-                return if (globalScope != null) {
-                    globalScope!![name]
-                } else null
+                return globalScope?.get(name)
             }
         }
         throw IllegalArgumentException("Illegal scope value.")
@@ -58,14 +56,10 @@ open class SimpleScriptContext : ScriptContext {
     override fun removeAttribute(name: String, scope: Int): Any? {
         when (scope) {
             100 -> {
-                return if (getBindings(100) != null) {
-                    getBindings(100)!!.remove(name)
-                } else null
+                return getBindings(100)?.remove(name)
             }
             200 -> {
-                return if (getBindings(200) != null) {
-                    getBindings(200)!!.remove(name)
-                } else null
+                return getBindings(200)?.remove(name)
             }
         }
         throw IllegalArgumentException("Illegal scope value.")
@@ -89,7 +83,7 @@ open class SimpleScriptContext : ScriptContext {
         if (engineScope.containsKey(name)) {
             return 100
         }
-        return if (globalScope == null || !globalScope!!.containsKey(name)) {
+        return if (globalScope?.containsKey(name) != true) {
             -1
         } else 200
     }

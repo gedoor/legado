@@ -8,15 +8,11 @@ class SimpleBindings @JvmOverloads constructor(
 ) : Bindings {
 
     override fun put(key: String, value: Any?): Any? {
-        checkKey(key)
         return map.put(key, value)
     }
 
     override fun putAll(from: Map<out String, Any?>) {
-        for ((key, value) in from) {
-            checkKey(key)
-            this[key] = value
-        }
+        map.putAll(from)
     }
 
     override fun clear() {
@@ -24,7 +20,6 @@ class SimpleBindings @JvmOverloads constructor(
     }
 
     override fun containsKey(key: String): Boolean {
-        checkKey(key)
         return map.containsKey(key)
     }
 
@@ -36,7 +31,6 @@ class SimpleBindings @JvmOverloads constructor(
         get() = map.entries
 
     override operator fun get(key: String): Any? {
-        checkKey(key)
         return map[key]
     }
 
@@ -48,7 +42,6 @@ class SimpleBindings @JvmOverloads constructor(
         get() = map.keys
 
     override fun remove(key: String): Any? {
-        checkKey(key)
         return map.remove(key)
     }
 
@@ -58,13 +51,4 @@ class SimpleBindings @JvmOverloads constructor(
     override val values: MutableCollection<Any?>
         get() = map.values
 
-    private fun checkKey(key: Any?) {
-        if (key == null) {
-            throw NullPointerException("key can not be null")
-        }
-        if (key !is String) {
-            throw ClassCastException("key should be a String")
-        }
-        require(key != "") { "key can not be empty" }
-    }
 }
