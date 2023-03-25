@@ -32,11 +32,6 @@ updates:
     schedule:
       interval: "weekly"
     registries: "*"
-  - package-ecosystem: gradle
-    directory: "rhino"
-    schedule:
-      interval: "weekly"
-    registries: "*"
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
