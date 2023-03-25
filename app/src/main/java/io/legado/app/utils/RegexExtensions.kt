@@ -2,7 +2,7 @@ package io.legado.app.utils
 
 import androidx.core.os.postDelayed
 import com.script.SimpleBindings
-import io.legado.app.constant.AppConst
+import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.coroutine.Coroutine
@@ -33,7 +33,7 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): Stri
                             val bindings = SimpleBindings()
                             bindings["result"] = matcher.group()
                             val jsResult =
-                                AppConst.SCRIPT_ENGINE.eval(replacement1, bindings).toString()
+                                SCRIPT_ENGINE.eval(replacement1, bindings).toString()
                             matcher.appendReplacement(stringBuffer, jsResult)
                         } else {
                             matcher.appendReplacement(stringBuffer, replacement1)

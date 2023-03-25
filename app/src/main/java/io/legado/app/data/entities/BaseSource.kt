@@ -4,6 +4,7 @@ import cn.hutool.crypto.symmetric.AES
 import com.script.SimpleBindings
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
@@ -227,6 +228,6 @@ interface BaseSource : JsExtensions {
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
+        return SCRIPT_ENGINE.eval(jsStr, bindings)
     }
 }

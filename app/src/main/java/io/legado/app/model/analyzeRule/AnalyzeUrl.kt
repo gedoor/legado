@@ -6,11 +6,11 @@ import androidx.annotation.Keep
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
 import com.script.SimpleBindings
-import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.constant.AppPattern.dataUriRegex
+import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter

@@ -1,8 +1,8 @@
 package io.legado.app.utils
 
 import com.script.SimpleBindings
-import io.legado.app.constant.AppConst.SCRIPT_ENGINE
 import io.legado.app.constant.AppPattern.EXP_PATTERN
+import io.legado.app.constant.SCRIPT_ENGINE
 
 object JsUtils {
 

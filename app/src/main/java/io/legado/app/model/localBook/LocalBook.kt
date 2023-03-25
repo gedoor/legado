@@ -5,10 +5,7 @@ import android.util.Base64
 import androidx.documentfile.provider.DocumentFile
 import com.script.SimpleBindings
 import io.legado.app.R
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.AppPattern
-import io.legado.app.constant.AppLog
-import io.legado.app.constant.BookType
+import io.legado.app.constant.*
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
@@ -269,7 +266,7 @@ object LocalBook {
         if (!AppConfig.bookImportFileName.isNullOrBlank()) {
             try {
                 //在脚本中定义如何分解文件名成书名、作者名
-                val jsonStr = AppConst.SCRIPT_ENGINE.eval(
+                val jsonStr = SCRIPT_ENGINE.eval(
                     //在用户脚本后添加捕获author、name的代码，只要脚本中author、name有值就会被捕获
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})",
                     //将文件名注入到脚本的src变量中
