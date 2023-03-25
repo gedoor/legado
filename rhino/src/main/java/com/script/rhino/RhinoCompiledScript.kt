@@ -41,6 +41,10 @@ internal class RhinoCompiledScript(
     private val script: Script
 ) : CompiledScript() {
 
+    override fun getEngine(): ScriptEngine {
+        return engine
+    }
+
     @Throws(ScriptException::class)
     override fun eval(context: ScriptContext): Any? {
         val cx = Context.enter()
@@ -65,7 +69,4 @@ internal class RhinoCompiledScript(
         return result
     }
 
-    override fun getEngine(): ScriptEngine {
-        return engine
-    }
 }

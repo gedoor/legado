@@ -1,13 +1,15 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-import java.io.Reader;
+import java.io.Reader
 
-@SuppressWarnings("UnnecessaryModifier")
-public interface Compilable {
-    public CompiledScript compile(Reader var1) throws ScriptException;
+interface Compilable {
 
-    public CompiledScript compile(String var1) throws ScriptException;
+    @Throws(ScriptException::class)
+    fun compile(script: Reader): CompiledScript
+
+    @Throws(ScriptException::class)
+    fun compile(script: String): CompiledScript
 }

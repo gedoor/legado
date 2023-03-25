@@ -1,37 +1,42 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-import java.io.Reader;
+import java.io.Reader
 
-@SuppressWarnings({"unused", "UnnecessaryModifier"})
-public interface ScriptEngine {
-    public static final String FILENAME = "javax.script.filename";
+interface ScriptEngine {
+    var context: ScriptContext
 
-    public Bindings createBindings();
+    fun createBindings(): Bindings?
 
-    public Object eval(Reader var1) throws ScriptException;
+    @Throws(ScriptException::class)
+    fun eval(reader: Reader): Any?
 
-    public Object eval(Reader var1, Bindings var2) throws ScriptException;
+    @Throws(ScriptException::class)
+    fun eval(reader: Reader, bindings: Bindings): Any?
 
-    public Object eval(Reader var1, ScriptContext var2) throws ScriptException;
+    @Throws(ScriptException::class)
+    fun eval(reader: Reader, context: ScriptContext): Any?
 
-    public Object eval(String var1) throws ScriptException;
+    @Throws(ScriptException::class)
+    fun eval(script: String): Any?
 
-    public Object eval(String var1, Bindings var2) throws ScriptException;
+    @Throws(ScriptException::class)
+    fun eval(script: String, bindings: Bindings): Any?
 
-    public Object eval(String var1, ScriptContext var2) throws ScriptException;
+    @Throws(ScriptException::class)
+    fun eval(script: String, context: ScriptContext): Any?
 
-    public Object get(String var1);
+    operator fun get(key: String): Any?
 
-    public Bindings getBindings(int var1);
+    fun getBindings(scope: Int): Bindings?
 
-    public ScriptContext getContext();
+    fun put(key: String, value: Any?)
 
-    public void put(String var1, Object var2);
+    fun setBindings(bindings: Bindings?, scope: Int)
 
-    public void setBindings(Bindings var1, int var2);
-
-    public void setContext(ScriptContext var1);
+    companion object {
+        const val FILENAME = "javax.script.filename"
+    }
 }

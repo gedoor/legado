@@ -1,111 +1,86 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-import java.io.Reader;
+import java.io.Reader
 
-@SuppressWarnings("unused")
-public abstract class AbstractScriptEngine implements ScriptEngine {
+abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngine {
 
-    protected ScriptContext context = new SimpleScriptContext();
+    override var context: ScriptContext = SimpleScriptContext()
 
-    public AbstractScriptEngine() {
-    }
-
-    public AbstractScriptEngine(Bindings n) {
-        this();
-        if (n == null) {
-            throw new NullPointerException("n is null");
+    init {
+        bindings?.let {
+            context.setBindings(bindings, 100)
         }
-        this.context.setBindings(n, 100);
     }
 
-    @Override
-    public void setContext(ScriptContext ctxt) {
-        if (ctxt == null) {
-            throw new NullPointerException("null context");
-        }
-        this.context = ctxt;
-    }
-
-    @Override
-    public ScriptContext getContext() {
-        return this.context;
-    }
-
-    @Override
-    public Bindings getBindings(int scope) {
+    override fun getBindings(scope: Int): Bindings? {
         if (scope == 200) {
-            return this.context.getBindings(200);
+            return context.getBindings(200)
         }
         if (scope == 100) {
-            return this.context.getBindings(100);
+            return context.getBindings(100)
         }
-        throw new IllegalArgumentException("Invalid scope value.");
+        throw IllegalArgumentException("Invalid scope value.")
     }
 
-    @Override
-    public void setBindings(Bindings bindings, int scope) {
-        if (scope == 200) {
-            this.context.setBindings(bindings, 200);
-        } else if (scope == 100) {
-            this.context.setBindings(bindings, 100);
-        } else {
-            throw new IllegalArgumentException("Invalid scope value.");
+    override fun setBindings(bindings: Bindings?, scope: Int) {
+        when (scope) {
+            200 -> {
+                context.setBindings(bindings, 200)
+            }
+            100 -> {
+                context.setBindings(bindings, 100)
+            }
+            else -> {
+                throw IllegalArgumentException("Invalid scope value.")
+            }
         }
     }
 
-    @Override
-    public void put(String key, Object value) {
-        Bindings nn = this.getBindings(100);
+    override fun put(key: String, value: Any?) {
+        val nn = getBindings(100)
         if (nn != null) {
-            nn.put(key, value);
+            nn[key] = value
         }
     }
 
-    @Override
-    public Object get(String key) {
-        Bindings nn = this.getBindings(100);
-        if (nn != null) {
-            return nn.get(key);
-        }
-        return null;
+    override fun get(key: String): Any? {
+        val nn = getBindings(100)
+        return nn?.get(key)
     }
 
-    @Override
-    public Object eval(Reader reader, Bindings bindings) throws ScriptException {
-        return this.eval(reader, this.getScriptContext(bindings));
+    @Throws(ScriptException::class)
+    override fun eval(reader: Reader, bindings: Bindings): Any? {
+        return this.eval(reader, getScriptContext(bindings))
     }
 
-    @Override
-    public Object eval(String script, Bindings bindings) throws ScriptException {
-        return this.eval(script, this.getScriptContext(bindings));
+    @Throws(ScriptException::class)
+    override fun eval(script: String, bindings: Bindings): Any? {
+        return this.eval(script, getScriptContext(bindings))
     }
 
-    @Override
-    public Object eval(Reader reader) throws ScriptException {
-        return this.eval(reader, this.context);
+    @Throws(ScriptException::class)
+    override fun eval(reader: Reader): Any? {
+        return this.eval(reader, context)
     }
 
-    @Override
-    public Object eval(String script) throws ScriptException {
-        return this.eval(script, this.context);
+    @Throws(ScriptException::class)
+    override fun eval(script: String): Any? {
+        return this.eval(script, context)
     }
 
-    protected ScriptContext getScriptContext(Bindings nn) {
-        SimpleScriptContext ctxt = new SimpleScriptContext();
-        Bindings gs = this.getBindings(200);
+    protected fun getScriptContext(nn: Bindings): ScriptContext {
+        val ctx = SimpleScriptContext()
+        val gs = getBindings(200)
         if (gs != null) {
-            ctxt.setBindings(gs, 200);
+            ctx.setBindings(gs, 200)
         }
-        if (nn != null) {
-            ctxt.setBindings(nn, 100);
-            ctxt.setReader(this.context.getReader());
-            ctxt.setWriter(this.context.getWriter());
-            ctxt.setErrorWriter(this.context.getErrorWriter());
-            return ctxt;
-        }
-        throw new NullPointerException("Engine scope Bindings may not be null.");
+        ctx.setBindings(nn, 100)
+        ctx.reader = context.reader
+        ctx.writer = context.writer
+        ctx.errorWriter = context.errorWriter
+        return ctx
     }
 }

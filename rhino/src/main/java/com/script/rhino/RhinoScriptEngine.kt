@@ -49,11 +49,11 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     private val implementor: InterfaceImplementor
 
     @Throws(ScriptException::class)
-    override fun eval(reader: Reader, ctxt: ScriptContext): Any? {
+    override fun eval(reader: Reader, context: ScriptContext): Any? {
         val cx = Context.enter()
         val ret: Any?
         try {
-            val scope = getRuntimeScope(ctxt)
+            val scope = getRuntimeScope(context)
             var filename = this["javax.script.filename"] as? String
             filename = filename ?: "<Unknown source>"
             ret = cx.evaluateReader(scope, reader, filename, 1, null)
@@ -76,12 +76,8 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     }
 
     @Throws(ScriptException::class)
-    override fun eval(script: String?, ctxt: ScriptContext): Any? {
-        return if (script == null) {
-            throw NullPointerException("null script")
-        } else {
-            this.eval(StringReader(script) as Reader, ctxt)
-        }
+    override fun eval(script: String, context: ScriptContext): Any? {
+        return this.eval(StringReader(script) as Reader, context)
     }
 
     override fun createBindings(): Bindings {
@@ -94,11 +90,11 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     }
 
     @Throws(ScriptException::class, NoSuchMethodException::class)
-    override fun invokeMethod(thiz: Any?, name: String, vararg args: Any): Any? {
-        return if (thiz == null) {
+    override fun invokeMethod(obj: Any?, name: String, vararg args: Any): Any? {
+        return if (obj == null) {
             throw IllegalArgumentException("脚本对象不能为空")
         } else {
-            this.invoke(thiz, name, *args)
+            this.invoke(obj, name, *args)
         }
     }
 
@@ -136,20 +132,20 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         return var11
     }
 
-    override fun <T> getInterface(clasz: Class<T>): T? {
+    override fun <T> getInterface(clazz: Class<T>): T? {
         return try {
-            implementor.getInterface(null, clasz)
+            implementor.getInterface(null, clazz)
         } catch (var3: ScriptException) {
             null
         }
     }
 
-    override fun <T> getInterface(thiz: Any?, clasz: Class<T>): T? {
-        return if (thiz == null) {
+    override fun <T> getInterface(obj: Any?, paramClass: Class<T>): T? {
+        return if (obj == null) {
             throw IllegalArgumentException("脚本对象不能为空")
         } else {
             try {
-                implementor.getInterface(thiz, clasz)
+                implementor.getInterface(obj, paramClass)
             } catch (var4: ScriptException) {
                 null
             }
@@ -224,27 +220,26 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         indexedProps = HashMap()
         implementor = object : InterfaceImplementor(this) {
 
-            override fun isImplemented(thiz: Any?, iface: Class<*>): Boolean {
-                var thiz1 = thiz
+            override fun isImplemented(obj: Any?, clazz: Class<*>): Boolean {
+                var obj1 = obj
                 return try {
-                    if (thiz1 != null && thiz1 !is Scriptable) {
-                        thiz1 = Context.toObject(
-                            thiz1,
-                            topLevel
-                        )
+                    if (obj1 != null && obj1 !is Scriptable) {
+                        obj1 = Context.toObject(obj1, topLevel)
                     }
-                    val engineScope =
-                        getRuntimeScope(context)
-                    val localScope =
-                        if (thiz1 != null) thiz1 as Scriptable else engineScope
-                    val var5 = iface.methods
-                    val var6 = var5.size
-                    for (var7 in 0 until var6) {
-                        val method = var5[var7]
+                    val engineScope = getRuntimeScope(context)
+                    val localScope = if (obj1 != null) obj1 as Scriptable else engineScope
+                    val methods = clazz.methods
+                    val methodsSize = methods.size
+                    for (index in 0 until methodsSize) {
+                        val method = methods[index]
                         if (method.declaringClass != Any::class.java) {
-                            val obj =
-                                ScriptableObject.getProperty(localScope, method.name) as? Function
-                            obj ?: return false
+                            if (ScriptableObject.getProperty(
+                                    localScope,
+                                    method.name
+                                ) !is Function
+                            ) {
+                                return false
+                            }
                         }
                     }
                     true
@@ -253,7 +248,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 }
             }
 
-            override fun convertResult(method: Method?, res: Any): Any? {
+            override fun convertResult(method: Method?, res: Any?): Any? {
                 method ?: return null
                 val desiredType = method.returnType
                 if (desiredType == Void.TYPE) return null

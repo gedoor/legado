@@ -1,166 +1,119 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.InputStreamReader
+import java.io.PrintWriter
+import java.io.Reader
+import java.io.Writer
+import java.util.*
 
-public class SimpleScriptContext implements ScriptContext {
-    private static List<Integer> scopes = new ArrayList<Integer>(2);
-    protected Bindings engineScope = new SimpleBindings();
-    protected Writer errorWriter = new PrintWriter(System.err, true);
-    protected Bindings globalScope = null;
-    protected Reader reader = new InputStreamReader(System.in);
-    protected Writer writer = new PrintWriter(System.out, true);
-
-    @Override
-    public void setBindings(Bindings bindings, int scope) {
-        switch (scope) {
-            case 100: {
+open class SimpleScriptContext : ScriptContext {
+    private var engineScope: Bindings = SimpleBindings()
+    override var errorWriter: Writer = PrintWriter(System.err, true)
+    private var globalScope: Bindings? = null
+    override var reader: Reader = InputStreamReader(System.`in`)
+    override var writer: Writer = PrintWriter(System.out, true)
+    override fun setBindings(bindings: Bindings?, scope: Int) {
+        when (scope) {
+            100 -> {
                 if (bindings == null) {
-                    throw new NullPointerException("Engine scope cannot be null.");
+                    throw NullPointerException("Engine scope cannot be null.")
                 }
-                this.engineScope = bindings;
-                return;
+                engineScope = bindings
+                return
             }
-            case 200: {
-                this.globalScope = bindings;
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Invalid scope value.");
-    }
-
-    @Override
-    public Object getAttribute(String name) {
-        if (this.engineScope.containsKey(name)) {
-            return this.getAttribute(name, 100);
-        }
-        if (this.globalScope == null || !this.globalScope.containsKey(name)) {
-            return null;
-        }
-        return this.getAttribute(name, 200);
-    }
-
-    @Override
-    public Object getAttribute(String name, int scope) {
-        switch (scope) {
-            case 100: {
-                return this.engineScope.get(name);
-            }
-            case 200: {
-                if (this.globalScope != null) {
-                    return this.globalScope.get(name);
-                }
-                return null;
+            200 -> {
+                globalScope = bindings
+                return
             }
         }
-        throw new IllegalArgumentException("Illegal scope value.");
+        throw IllegalArgumentException("Invalid scope value.")
     }
 
-    @Override
-    public Object removeAttribute(String name, int scope) {
-        switch (scope) {
-            case 100: {
-                if (this.getBindings(100) != null) {
-                    return this.getBindings(100).remove(name);
-                }
-                return null;
-            }
-            case 200: {
-                if (this.getBindings(200) != null) {
-                    return this.getBindings(200).remove(name);
-                }
-                return null;
-            }
+    override fun getAttribute(name: String): Any? {
+        if (engineScope.containsKey(name)) {
+            return this.getAttribute(name, 100)
         }
-        throw new IllegalArgumentException("Illegal scope value.");
+        return if (globalScope == null || !globalScope!!.containsKey(name)) {
+            null
+        } else this.getAttribute(name, 200)
     }
 
-    @Override
-    public void setAttribute(String name, Object value, int scope) {
-        switch (scope) {
-            case 100: {
-                this.engineScope.put(name, value);
-                return;
+    override fun getAttribute(name: String, scope: Int): Any? {
+        when (scope) {
+            100 -> {
+                return engineScope[name]
             }
-            case 200: {
-                if (this.globalScope != null) {
-                    this.globalScope.put(name, value);
-                    return;
-                }
-                return;
+            200 -> {
+                return if (globalScope != null) {
+                    globalScope!![name]
+                } else null
             }
         }
-        throw new IllegalArgumentException("Illegal scope value.");
+        throw IllegalArgumentException("Illegal scope value.")
     }
 
-    @Override
-    public Writer getWriter() {
-        return this.writer;
-    }
-
-    @Override
-    public Reader getReader() {
-        return this.reader;
-    }
-
-    @Override
-    public void setReader(Reader reader2) {
-        this.reader = reader2;
-    }
-
-    @Override
-    public void setWriter(Writer writer2) {
-        this.writer = writer2;
-    }
-
-    @Override
-    public Writer getErrorWriter() {
-        return this.errorWriter;
-    }
-
-    @Override
-    public void setErrorWriter(Writer writer2) {
-        this.errorWriter = writer2;
-    }
-
-    @Override
-    public int getAttributesScope(String name) {
-        if (this.engineScope.containsKey(name)) {
-            return 100;
+    override fun removeAttribute(name: String, scope: Int): Any? {
+        when (scope) {
+            100 -> {
+                return if (getBindings(100) != null) {
+                    getBindings(100)!!.remove(name)
+                } else null
+            }
+            200 -> {
+                return if (getBindings(200) != null) {
+                    getBindings(200)!!.remove(name)
+                } else null
+            }
         }
-        if (this.globalScope == null || !this.globalScope.containsKey(name)) {
-            return -1;
-        }
-        return 200;
+        throw IllegalArgumentException("Illegal scope value.")
     }
 
-    @Override
-    public Bindings getBindings(int scope) {
+    override fun setAttribute(name: String, value: Any?, scope: Int) {
+        when (scope) {
+            100 -> {
+                engineScope[name] = value
+                return
+            }
+            200 -> {
+                globalScope?.put(name, value)
+                return
+            }
+        }
+        throw IllegalArgumentException("Illegal scope value.")
+    }
+
+    override fun getAttributesScope(name: String): Int {
+        if (engineScope.containsKey(name)) {
+            return 100
+        }
+        return if (globalScope == null || !globalScope!!.containsKey(name)) {
+            -1
+        } else 200
+    }
+
+    override fun getBindings(scope: Int): Bindings? {
         if (scope == 100) {
-            return this.engineScope;
+            return engineScope
         }
         if (scope == 200) {
-            return this.globalScope;
+            return globalScope
         }
-        throw new IllegalArgumentException("Illegal scope value.");
+        throw IllegalArgumentException("Illegal scope value.")
     }
 
-    @Override
-    public List<Integer> getScopes() {
-        return scopes;
-    }
+    override val scopes: List<Int>
+        get() = Companion.scopes
 
-    static {
-        scopes.add(100);
-        scopes.add(200);
-        scopes = Collections.unmodifiableList(scopes);
+    companion object {
+        private var scopes: MutableList<Int> = ArrayList(2)
+
+        init {
+            scopes.add(100)
+            scopes.add(200)
+            scopes = Collections.unmodifiableList(scopes)
+        }
     }
 }

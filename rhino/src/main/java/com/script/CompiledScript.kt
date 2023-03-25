@@ -1,28 +1,32 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-public abstract class CompiledScript {
-    public abstract Object eval(ScriptContext var1) throws ScriptException;
+abstract class CompiledScript {
 
-    public abstract ScriptEngine getEngine();
+    abstract fun getEngine(): ScriptEngine
 
-    public Object eval(Bindings bindings) throws ScriptException {
-        ScriptContext ctxt = this.getEngine().getContext();
+    @Throws(ScriptException::class)
+    abstract fun eval(context: ScriptContext): Any?
+
+    @Throws(ScriptException::class)
+    fun eval(bindings: Bindings?): Any? {
+        var ctxt = getEngine().context
         if (bindings != null) {
-            SimpleScriptContext tempctxt = new SimpleScriptContext();
-            tempctxt.setBindings(bindings, 100);
-            tempctxt.setBindings(ctxt.getBindings(200), 200);
-            tempctxt.setWriter(ctxt.getWriter());
-            tempctxt.setReader(ctxt.getReader());
-            tempctxt.setErrorWriter(ctxt.getErrorWriter());
-            ctxt = tempctxt;
+            val tempContext = SimpleScriptContext()
+            tempContext.setBindings(bindings, 100)
+            tempContext.setBindings(ctxt.getBindings(200), 200)
+            tempContext.writer = ctxt.writer
+            tempContext.reader = ctxt.reader
+            tempContext.errorWriter = ctxt.errorWriter
+            ctxt = tempContext
         }
-        return this.eval(ctxt);
+        return this.eval(ctxt)
     }
 
-    public Object eval() throws ScriptException {
-        return this.eval(this.getEngine().getContext());
+    @Throws(ScriptException::class)
+    fun eval(): Any? {
+        return this.eval(getEngine().context)
     }
 }

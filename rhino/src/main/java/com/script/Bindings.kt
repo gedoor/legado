@@ -1,24 +1,18 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-import java.util.Map;
+interface Bindings : MutableMap<String, Any?> {
 
-@SuppressWarnings("UnnecessaryModifier")
-public interface Bindings extends Map<String, Object> {
-    @Override
-    public boolean containsKey(Object var1);
+    override fun containsKey(key: String): Boolean
 
-    @Override
-    public Object get(Object var1);
+    override operator fun get(key: String): Any?
 
-    @Override
-    public Object put(String var1, Object var2);
+    override fun put(key: String, value: Any?): Any?
 
-    @Override
-    public void putAll(Map<? extends String, ?> var1);
+    override fun putAll(from: Map<out String, *>)
 
-    @Override
-    public Object remove(Object var1);
+    override fun remove(key: String): Any?
+
 }

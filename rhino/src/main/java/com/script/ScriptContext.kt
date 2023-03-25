@@ -1,43 +1,37 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-import java.io.Reader;
-import java.io.Writer;
-import java.util.List;
+import java.io.Reader
+import java.io.Writer
 
-@SuppressWarnings({"unused", "UnnecessaryModifier"})
-public interface ScriptContext {
+interface ScriptContext {
 
-    public static final int ENGINE_SCOPE = 100;
-    public static final int GLOBAL_SCOPE = 200;
+    var errorWriter: Writer
 
-    public Object getAttribute(String var1);
+    var reader: Reader
 
-    public Object getAttribute(String var1, int var2);
+    val scopes: List<Int>
 
-    public int getAttributesScope(String var1);
+    var writer: Writer
 
-    public Bindings getBindings(int var1);
+    fun getAttribute(name: String): Any?
 
-    public Writer getErrorWriter();
+    fun getAttribute(name: String, scope: Int): Any?
 
-    public Reader getReader();
+    fun getAttributesScope(name: String): Int
 
-    public List<Integer> getScopes();
+    fun getBindings(scope: Int): Bindings?
 
-    public Writer getWriter();
+    fun removeAttribute(name: String, scope: Int): Any?
 
-    public Object removeAttribute(String var1, int var2);
+    fun setAttribute(name: String, value: Any?, scope: Int)
 
-    public void setAttribute(String var1, Object var2, int var3);
+    fun setBindings(bindings: Bindings?, scope: Int)
 
-    public void setBindings(Bindings var1, int var2);
-
-    public void setErrorWriter(Writer var1);
-
-    public void setReader(Reader var1);
-
-    public void setWriter(Writer var1);
+    companion object {
+        const val ENGINE_SCOPE = 100
+        const val GLOBAL_SCOPE = 200
+    }
 }

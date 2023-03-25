@@ -1,15 +1,16 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-@SuppressWarnings({"unused", "UnnecessaryModifier"})
-public interface Invocable {
-    public <T> T getInterface(Class<T> var1);
+interface Invocable {
+    fun <T> getInterface(clazz: Class<T>): T?
 
-    public <T> T getInterface(Object var1, Class<T> var2);
+    fun <T> getInterface(obj: Any?, paramClass: Class<T>): T?
 
-    public Object invokeFunction(String var1, Object ... var2) throws ScriptException, NoSuchMethodException;
+    @Throws(ScriptException::class, NoSuchMethodException::class)
+    fun invokeFunction(name: String, vararg args: Any): Any?
 
-    public Object invokeMethod(Object var1, String var2, Object ... var3) throws ScriptException, NoSuchMethodException;
+    @Throws(ScriptException::class, NoSuchMethodException::class)
+    fun invokeMethod(obj: Any?, name: String, vararg args: Any): Any?
 }

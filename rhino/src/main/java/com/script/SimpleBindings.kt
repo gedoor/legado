@@ -1,107 +1,70 @@
 /*
  * Decompiled with CFR 0.152.
  */
-package com.script;
+package com.script
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+class SimpleBindings @JvmOverloads constructor(
+    private val map: MutableMap<String, Any?> = HashMap()
+) : Bindings {
 
-public class SimpleBindings implements Bindings {
-    private Map<String, Object> map;
-
-    public SimpleBindings(Map<String, Object> m) {
-        if (m == null) {
-            throw new NullPointerException();
-        }
-        this.map = m;
+    override fun put(key: String, value: Any?): Any? {
+        checkKey(key)
+        return map.put(key, value)
     }
 
-    public SimpleBindings() {
-        this(new HashMap<String, Object>());
-    }
-
-    @Override
-    public Object put(String name, Object value) {
-        this.checkKey(name);
-        return this.map.put(name, value);
-    }
-
-    @Override
-    public void putAll(Map<? extends String, ? extends Object> toMerge) {
-        if (toMerge == null) {
-            throw new NullPointerException("toMerge map is null");
-        }
-        for (Map.Entry<? extends String, ? extends Object> entry : toMerge.entrySet()) {
-            String key = entry.getKey();
-            this.checkKey(key);
-            this.put(key, entry.getValue());
+    override fun putAll(from: Map<out String, Any?>) {
+        for ((key, value) in from) {
+            checkKey(key)
+            this[key] = value
         }
     }
 
-    @Override
-    public void clear() {
-        this.map.clear();
+    override fun clear() {
+        map.clear()
     }
 
-    @Override
-    public boolean containsKey(Object key) {
-        this.checkKey(key);
-        return this.map.containsKey(key);
+    override fun containsKey(key: String): Boolean {
+        checkKey(key)
+        return map.containsKey(key)
     }
 
-    @Override
-    public boolean containsValue(Object value) {
-        return this.map.containsValue(value);
+    override fun containsValue(value: Any?): Boolean {
+        return map.containsValue(value)
     }
 
-    @Override
-    public Set<Map.Entry<String, Object>> entrySet() {
-        return this.map.entrySet();
+    override val entries: MutableSet<MutableMap.MutableEntry<String, Any?>>
+        get() = map.entries
+
+    override operator fun get(key: String): Any? {
+        checkKey(key)
+        return map[key]
     }
 
-    @Override
-    public Object get(Object key) {
-        this.checkKey(key);
-        return this.map.get(key);
+    override fun isEmpty(): Boolean {
+        return map.isEmpty()
     }
 
-    @Override
-    public boolean isEmpty() {
-        return this.map.isEmpty();
+    override val keys: MutableSet<String>
+        get() = map.keys
+
+    override fun remove(key: String): Any? {
+        checkKey(key)
+        return map.remove(key)
     }
 
-    @Override
-    public Set<String> keySet() {
-        return this.map.keySet();
-    }
+    override val size: Int
+        get() = map.size
 
-    @Override
-    public Object remove(Object key) {
-        this.checkKey(key);
-        return this.map.remove(key);
-    }
+    override val values: MutableCollection<Any?>
+        get() = map.values
 
-    @Override
-    public int size() {
-        return this.map.size();
-    }
-
-    @Override
-    public Collection<Object> values() {
-        return this.map.values();
-    }
-
-    private void checkKey(Object key) {
+    private fun checkKey(key: Any?) {
         if (key == null) {
-            throw new NullPointerException("key can not be null");
+            throw NullPointerException("key can not be null")
         }
-        if (!(key instanceof String)) {
-            throw new ClassCastException("key should be a String");
+        if (key !is String) {
+            throw ClassCastException("key should be a String")
         }
-        if (key.equals("")) {
-            throw new IllegalArgumentException("key can not be empty");
-        }
+        require(key != "") { "key can not be empty" }
     }
 }
