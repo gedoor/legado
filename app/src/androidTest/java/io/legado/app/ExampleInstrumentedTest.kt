@@ -1,9 +1,10 @@
 package io.legado.app
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.test.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -17,10 +18,17 @@ class ExampleInstrumentedTest {
     @Test
     fun testContentProvider() {
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getTargetContext()
-        Log.d("test",
-            appContext.contentResolver.query(Uri.parse("content://io.legado.app.api.ReaderProvider/sources/query"),null,null,null,null)
-                !!.getString(0)
+        val appContext = ApplicationProvider.getApplicationContext<Context>()
+        Log.d(
+            "test",
+            appContext.contentResolver.query(
+                Uri.parse("content://io.legado.app.api.ReaderProvider/sources/query"),
+                null,
+                null,
+                null,
+                null
+            )
+            !!.getString(0)
         )
-          }
+    }
 }
