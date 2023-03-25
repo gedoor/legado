@@ -48,12 +48,12 @@ open class InterfaceImplementor(private val engine: Invocable) {
             if (!isImplemented(thiz, iface)) {
                 null
             } else {
-                val accCtxt = AccessController.getContext()
+                val accContext = AccessController.getContext()
                 iface.cast(
                     Proxy.newProxyInstance(
                         iface.classLoader,
                         arrayOf<Class<*>>(iface),
-                        InterfaceImplementorInvocationHandler(thiz, accCtxt)
+                        InterfaceImplementorInvocationHandler(thiz, accContext)
                     )
                 )
             }
@@ -67,7 +67,7 @@ open class InterfaceImplementor(private val engine: Invocable) {
     }
 
     @Throws(ScriptException::class)
-    protected open fun convertResult(method: Method?, res: Any): Any {
+    protected open fun convertResult(method: Method?, res: Any): Any? {
         return res
     }
 
@@ -78,10 +78,11 @@ open class InterfaceImplementor(private val engine: Invocable) {
 
     private inner class InterfaceImplementorInvocationHandler(
         private val thiz: Any?,
-        private val accCtxt: AccessControlContext
+        private val accContext: AccessControlContext
     ) : InvocationHandler {
+
         @Throws(Throwable::class)
-        override fun invoke(proxy: Any, method: Method, args: Array<Any>): Any {
+        override fun invoke(proxy: Any, method: Method, args: Array<Any>): Any? {
             val finalArgs = convertArguments(method, args)
             val result = AccessController.doPrivileged(PrivilegedExceptionAction {
                 if (thiz == null) engine.invokeFunction(
@@ -90,8 +91,9 @@ open class InterfaceImplementor(private val engine: Invocable) {
                 ) else engine.invokeMethod(
                     thiz, method.name, *finalArgs
                 )
-            } as PrivilegedExceptionAction<Any>, accCtxt)
+            } as PrivilegedExceptionAction<Any>, accContext)
             return convertResult(method, result)
         }
+
     }
 }
