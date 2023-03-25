@@ -32,7 +32,7 @@ updates:
     schedule:
       interval: "weekly"
     registries: "*"
-    - package-ecosystem: gradle
+  - package-ecosystem: gradle
     directory: "rhino"
     schedule:
       interval: "weekly"
