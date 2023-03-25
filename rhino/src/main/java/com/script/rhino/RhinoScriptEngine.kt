@@ -165,6 +165,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             val newScope: Scriptable = ExternalScriptable(ctxt, indexedProps)
             newScope.prototype = topLevel
             newScope.put("context", newScope, ctxt)
+            /*
             val cx = Context.enter()
             try {
                 @Language("js")
@@ -196,6 +197,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             } finally {
                 Context.exit()
             }
+            */
             newScope
         }
     }
@@ -304,6 +306,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
         private const val DEBUG = false
 
+        /*
         @Language("js")
         private val printSource = """
             function print(str, newline) {
@@ -323,6 +326,7 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
               print(str, true);
             }
         """.trimIndent()
+        */
 
         init {
             ContextFactory.initGlobal(object : ContextFactory() {
