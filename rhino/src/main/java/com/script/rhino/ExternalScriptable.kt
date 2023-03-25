@@ -193,21 +193,39 @@ internal class ExternalScriptable @JvmOverloads constructor(
             } else {
                 methodName = "valueOf"
                 args = arrayOfNulls(1)
-                val hint: String = if (typeHint == null) {
-                    "undefined"
-                } else if (typeHint == ScriptRuntime.StringClass) {
-                    "string"
-                } else if (typeHint == ScriptRuntime.ScriptableClass) {
-                    "object"
-                } else if (typeHint == ScriptRuntime.FunctionClass) {
-                    "function"
-                } else if (typeHint != ScriptRuntime.BooleanClass && typeHint != java.lang.Boolean.TYPE) {
-                    if (typeHint != ScriptRuntime.NumberClass && typeHint != ScriptRuntime.ByteClass && typeHint != java.lang.Byte.TYPE && typeHint != ScriptRuntime.ShortClass && typeHint != java.lang.Short.TYPE && typeHint != ScriptRuntime.IntegerClass && typeHint != Integer.TYPE && typeHint != ScriptRuntime.FloatClass && typeHint != java.lang.Float.TYPE && typeHint != ScriptRuntime.DoubleClass && typeHint != java.lang.Double.TYPE) {
-                        throw Context.reportRuntimeError("Invalid JavaScript value of type $typeHint")
+                val hint: String = when {
+                    typeHint == null -> {
+                        "undefined"
                     }
-                    "number"
-                } else {
-                    "boolean"
+                    typeHint == ScriptRuntime.StringClass -> {
+                        "string"
+                    }
+                    typeHint == ScriptRuntime.ScriptableClass -> {
+                        "object"
+                    }
+                    typeHint == ScriptRuntime.FunctionClass -> {
+                        "function"
+                    }
+                    typeHint != ScriptRuntime.BooleanClass && typeHint != java.lang.Boolean.TYPE -> {
+                        if (typeHint != ScriptRuntime.NumberClass
+                            && typeHint != ScriptRuntime.ByteClass
+                            && typeHint != java.lang.Byte.TYPE
+                            && typeHint != ScriptRuntime.ShortClass
+                            && typeHint != java.lang.Short.TYPE
+                            && typeHint != ScriptRuntime.IntegerClass
+                            && typeHint != Integer.TYPE
+                            && typeHint != ScriptRuntime.FloatClass
+                            && typeHint != java.lang.Float.TYPE
+                            && typeHint != ScriptRuntime.DoubleClass
+                            && typeHint != java.lang.Double.TYPE
+                        ) {
+                            throw Context.reportRuntimeError("Invalid JavaScript value of type $typeHint")
+                        }
+                        "number"
+                    }
+                    else -> {
+                        "boolean"
+                    }
                 }
                 args[0] = hint
             }
@@ -255,15 +273,15 @@ internal class ExternalScriptable @JvmOverloads constructor(
         get() {
             val list = ArrayList<String>()
             synchronized(context) {
-                val var3: Iterator<*> = context.scopes.iterator()
-                while (var3.hasNext()) {
-                    val scope = var3.next() as Int
+                val iterator: Iterator<*> = context.scopes.iterator()
+                while (iterator.hasNext()) {
+                    val scope = iterator.next() as Int
                     val bindings = context.getBindings(scope)
                     if (bindings != null) {
                         list.ensureCapacity(bindings.size)
-                        val var6: Iterator<*> = bindings.keys.iterator()
-                        while (var6.hasNext()) {
-                            val key = var6.next() as String
+                        val iterator1: Iterator<*> = bindings.keys.iterator()
+                        while (iterator1.hasNext()) {
+                            val key = iterator1.next() as String
                             list.add(key)
                         }
                     }

@@ -66,14 +66,14 @@ internal class JavaAdapter private constructor(private val engine: Invocable) : 
     override fun construct(cx: Context, scope: Scriptable, args: Array<Any>): Scriptable {
         return if (args.size == 2) {
             var clazz: Class<*>? = null
-            val obj1 = args[0]
-            if (obj1 is Wrapper) {
-                val o = obj1.unwrap()
+            val obj = args[0]
+            if (obj is Wrapper) {
+                val o = obj.unwrap()
                 if (o is Class<*> && o.isInterface) {
                     clazz = o
                 }
-            } else if (obj1 is Class<*> && obj1.isInterface) {
-                clazz = obj1
+            } else if (obj is Class<*> && obj.isInterface) {
+                clazz = obj
             }
             if (clazz == null) {
                 throw Context.reportRuntimeError("JavaAdapter: first arg should be interface Class")

@@ -289,7 +289,8 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                     return if (accContext != null) AccessController.doPrivileged(
                         PrivilegedAction {
                             superDoTopCall(callable, cx, scope, thisObj, args)
-                        } as PrivilegedAction<*>, accContext) else superDoTopCall(
+                        }, accContext
+                    ) else superDoTopCall(
                         callable,
                         cx,
                         scope,
