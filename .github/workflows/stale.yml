@@ -7,7 +7,8 @@ name: closeStaleIssue
 
 on:
   schedule:
-  - cron: '30 1 * * *'
+  # 每5天北京时间9点
+  - cron: '30 1 1/5 * *'
 
 jobs:
   stale:

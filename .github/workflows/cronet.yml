@@ -2,7 +2,8 @@ name: Update Cronet
 
 on:
   schedule:
-    - cron: 0 0 * * *
+  # 周一北京时间9点
+    - cron: 0 1 * * 1
   workflow_dispatch:
 
 jobs:
