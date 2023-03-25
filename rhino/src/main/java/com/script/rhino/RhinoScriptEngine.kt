@@ -25,7 +25,6 @@
 package com.script.rhino
 
 import com.script.*
-import com.script.rhino.RhinoClassShutter.Companion.instance
 import org.intellij.lang.annotations.Language
 import org.mozilla.javascript.*
 import org.mozilla.javascript.Function
@@ -331,9 +330,16 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                     val cx = super.makeContext()
                     cx.languageVersion = 200
                     cx.optimizationLevel = -1
-                    cx.setClassShutter(instance)
-                    cx.wrapFactory = RhinoWrapFactory.instance
+                    cx.setClassShutter(RhinoClassShutter)
+                    cx.wrapFactory = RhinoWrapFactory
                     return cx
+                }
+
+                override fun hasFeature(cx: Context?, featureIndex: Int): Boolean {
+                    if (featureIndex == Context.FEATURE_ENABLE_JAVA_MAP_ACCESS) {
+                        return true
+                    }
+                    return super.hasFeature(cx, featureIndex)
                 }
 
                 override fun doTopCall(

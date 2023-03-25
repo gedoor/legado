@@ -44,7 +44,7 @@ import java.lang.reflect.Modifier
  * @author A. Sundararajan
  * @since 1.6
  */
-internal class RhinoWrapFactory private constructor() : WrapFactory() {
+object RhinoWrapFactory : WrapFactory() {
 
     override fun wrapAsJavaObject(
         cx: Context,
@@ -54,7 +54,7 @@ internal class RhinoWrapFactory private constructor() : WrapFactory() {
     ): Scriptable? {
         scope?.delete("Packages")
         val sm = System.getSecurityManager()
-        val classShutter = RhinoClassShutter.instance
+        val classShutter = RhinoClassShutter
         return if (javaObject is ClassLoader) {
             sm?.checkPermission(RuntimePermission("getClassLoader"))
             super.wrapAsJavaObject(cx, scope, javaObject, staticType)
@@ -115,17 +115,4 @@ internal class RhinoWrapFactory private constructor() : WrapFactory() {
         }
     }
 
-    companion object {
-        private var theInstance: RhinoWrapFactory? = null
-
-        @JvmStatic
-        @get:Synchronized
-        val instance: WrapFactory?
-            get() {
-                if (theInstance == null) {
-                    theInstance = RhinoWrapFactory()
-                }
-                return theInstance
-            }
-    }
 }

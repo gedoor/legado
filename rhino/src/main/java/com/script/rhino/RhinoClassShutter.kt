@@ -34,7 +34,16 @@ import org.mozilla.javascript.ClassShutter
  * @author A. Sundararajan
  * @since 1.6
  */
-internal class RhinoClassShutter private constructor() : ClassShutter {
+object RhinoClassShutter : ClassShutter {
+
+    private val protectedClasses by lazy {
+        val protectedClasses = HashMap<Any, Any>()
+        protectedClasses["java.lang.Runtime"] = java.lang.Boolean.TRUE
+        protectedClasses["java.io.File"] = java.lang.Boolean.TRUE
+        protectedClasses["java.security.AccessController"] = java.lang.Boolean.TRUE
+        protectedClasses
+    }
+
     override fun visibleToScripts(fullClassName: String): Boolean {
         val sm = System.getSecurityManager()
         if (sm != null) {
@@ -50,22 +59,4 @@ internal class RhinoClassShutter private constructor() : ClassShutter {
         return protectedClasses[fullClassName] == null
     }
 
-    companion object {
-
-        @JvmStatic
-        val protectedClasses by lazy {
-            val protectedClasses = HashMap<Any, Any>()
-            protectedClasses["java.lang.Runtime"] = java.lang.Boolean.TRUE
-            protectedClasses["java.io.File"] = java.lang.Boolean.TRUE
-            protectedClasses["java.security.AccessController"] = java.lang.Boolean.TRUE
-            protectedClasses
-        }
-
-        @JvmStatic
-        val instance: ClassShutter by lazy {
-            val theInstance = RhinoClassShutter()
-            theInstance
-        }
-
-    }
 }
