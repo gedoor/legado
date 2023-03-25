@@ -24,7 +24,9 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
                 val fileDoc = FileDoc.fromUri(uri, false)
                 fileName = fileDoc.name
                 if (fileName.matches(AppPattern.archiveFileRegex)) {
-                    ArchiveUtils.deCompress(fileDoc).forEach {
+                    ArchiveUtils.deCompress(fileDoc, ArchiveUtils.TEMP_PATH) {
+                        it.matches(bookFileRegex)
+                    }.forEach {
                         dispatch(FileDoc.fromFile(it))
                     }
                 } else {

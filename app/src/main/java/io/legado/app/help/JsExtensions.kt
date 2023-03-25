@@ -173,7 +173,7 @@ interface JsExtensions : JsEncodeUtils {
      */
     fun importScript(path: String): String {
         val result = when {
-            path.startsWith("http") -> cacheFile(path) ?: ""
+            path.startsWith("http") -> cacheFile(path)
             path.isUri() -> Uri.parse(path).readText(appCtx)
             path.startsWith("/storage") -> FileUtils.readText(path)
             else -> readTxtFile(path)
@@ -187,7 +187,7 @@ interface JsExtensions : JsEncodeUtils {
      * @param urlStr 网络文件的链接
      * @return 返回缓存后的文件内容
      */
-    fun cacheFile(urlStr: String): String? {
+    fun cacheFile(urlStr: String): String {
         return cacheFile(urlStr, 0)
     }
 
@@ -195,16 +195,17 @@ interface JsExtensions : JsEncodeUtils {
      * 缓存以文本方式保存的文件 如.js .txt等
      * @param saveTime 缓存时间，单位：秒
      */
-    fun cacheFile(urlStr: String, saveTime: Int): String? {
+    fun cacheFile(urlStr: String, saveTime: Int): String {
         val key = md5Encode16(urlStr)
-        val cache = CacheManager.getFile(key)
-        if (cache.isNullOrBlank()) {
-            log("首次下载 $urlStr")
-            val value = ajax(urlStr) ?: return null
-            CacheManager.putFile(key, value, saveTime)
-            return value
+        val cahcePath = CacheManager.get(key)
+        return if (cahcePath.isNullOrBlank()) {
+            val path = downloadFile(urlStr)
+            log("首次下载 $urlStr >> $path")
+            CacheManager.put(key, path, saveTime)
+            readTxtFile(path)
+        } else {
+            readTxtFile(cahcePath)
         }
-        return cache
     }
 
     /**
@@ -224,12 +225,12 @@ interface JsExtensions : JsEncodeUtils {
 
     /**
      * 下载文件
-     * @param url 下载地址:可带参数type,文件后缀,不带默认zip
+     * @param url 下载地址:可带参数type
      * @return 下载的文件相对路径
      */
     fun downloadFile(url: String): String {
         val analyzeUrl = AnalyzeUrl(url, source = getSource())
-        val type = analyzeUrl.type ?: "zip"
+        val type = UrlUtil.getSuffix(url, analyzeUrl.type)
         val path = FileUtils.getPath(
             File(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"
@@ -250,6 +251,10 @@ interface JsExtensions : JsEncodeUtils {
      * @param url 通过url里的参数来判断文件类型
      * @return 相对路径
      */
+    @Deprecated(
+        "Depreted",
+        ReplaceWith("downloadFile(url: String)")
+    )
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url, source = getSource()).type ?: return ""
         val path = FileUtils.getPath(
