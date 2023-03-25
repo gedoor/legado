@@ -25,7 +25,6 @@
 package com.script.rhino
 
 import com.script.*
-import org.intellij.lang.annotations.Language
 import org.mozilla.javascript.*
 import org.mozilla.javascript.Function
 import java.io.IOException
