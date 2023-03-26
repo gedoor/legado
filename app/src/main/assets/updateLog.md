@@ -121,6 +121,6 @@ https://www.example.com/book/{{result.bookId}}
 * 书架分组支持独立排序
 * 适配 android 13 主题图标
 * 一些优化 by Horis
-
+----
 * [2022年日志](https://github.com/gedoor/legado/blob/record2022/app/src/main/assets/updateLog.md)
 * [2021年日志](https://github.com/gedoor/legado/blob/record2021/app/src/main/assets/updateLog.md)
