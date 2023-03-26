@@ -15,6 +15,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import java.util.*
 
 open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
 
@@ -27,7 +28,12 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
             finish()
         } else {
-            binding.root.postDelayed(600) { startMainActivity() }
+            Timer().schedule(object : TimerTask() {
+                override fun run() {
+                    //需要执行的任务
+                    binding.root.postDelayed(600) { startMainActivity() }
+                }
+            }, 2000)
         }
     }
 
