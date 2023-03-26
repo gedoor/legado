@@ -423,9 +423,13 @@ class BookInfoActivity :
                 }
             }
         }
+
         refreshLayout?.setOnRefreshListener {
-            refreshLayout.isRefreshing = false
-            refreshBook()
+            // scrollView 顶部
+            if (scrollView.scrollY <= 0) {
+                refreshLayout.isRefreshing = false
+                refreshBook()
+            }
         }
     }
 
