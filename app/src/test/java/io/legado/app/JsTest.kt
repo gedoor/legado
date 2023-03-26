@@ -41,7 +41,11 @@ class JsTest {
     fun testFor() {
         val context = SCRIPT_ENGINE.getScriptContext(SimpleBindings())
         val scope = SCRIPT_ENGINE.getRuntimeScope(context)
-        Context.enter().evaluateString(scope, printJs, "print", 1, null)
+        try {
+            Context.enter().evaluateString(scope, printJs, "print", 1, null)
+        } finally {
+            Context.exit()
+        }
         @Language("js")
         val jsFor = """
             let result = 0
