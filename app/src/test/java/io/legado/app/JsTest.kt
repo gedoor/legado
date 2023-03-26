@@ -75,4 +75,22 @@ class JsTest {
         Assert.assertEquals(null, result)
     }
 
+    @Test
+    fun testReplace() {
+        @Language("js")
+        val js = """
+          result.replace(/\,/g,"，")
+            .replace(/\./g,"。")
+            .replace(/\!/g,"！")
+            .replace(/\?/g,"？")
+            .replace(/\…/g,"……")
+            .replace(/\;/g,"；")
+            .replace(/\:/g,"：")
+        """.trimIndent()
+        val bindings = SimpleBindings()
+        bindings["result"] = ",.!?…;:"
+        val result = SCRIPT_ENGINE.eval(js, bindings).toString()
+        Assert.assertEquals(result, "，。！？……；：")
+    }
+
 }
