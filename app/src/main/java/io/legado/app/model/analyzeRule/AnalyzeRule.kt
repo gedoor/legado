@@ -142,8 +142,14 @@ class AnalyzeRule(
         val content = mContent ?: this.content
         if (content != null && ruleList.isNotEmpty()) {
             result = content
-            if (content is NativeObject) {
-                result = content[ruleList[0].rule]?.toString()
+            if (result is NativeObject) {
+                val sourceRule = ruleList.first()
+                result = if (sourceRule.getParamSize() > 1) {
+                    sourceRule.makeUpRule(result)
+                    sourceRule.rule
+                } else {
+                    result[sourceRule.rule]?.toString()
+                }
             } else {
                 for (sourceRule in ruleList) {
                     putRule(sourceRule.putMap)
@@ -219,7 +225,13 @@ class AnalyzeRule(
         if (content != null && ruleList.isNotEmpty()) {
             result = content
             if (result is NativeObject) {
-                result = result[ruleList[0].rule]?.toString()
+                val sourceRule = ruleList.first()
+                result = if (sourceRule.getParamSize() > 1) {
+                    sourceRule.makeUpRule(result)
+                    sourceRule.rule
+                } else {
+                    result[sourceRule.rule]?.toString()
+                }
             } else {
                 for (sourceRule in ruleList) {
                     putRule(sourceRule.putMap)
@@ -612,6 +624,10 @@ class AnalyzeRule(
                     || ruleStr.startsWith("$.")
                     || ruleStr.startsWith("$[")
                     || ruleStr.startsWith("//")
+        }
+
+        fun getParamSize(): Int {
+            return ruleParam.size
         }
     }
 
