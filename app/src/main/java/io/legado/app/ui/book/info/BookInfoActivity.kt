@@ -113,10 +113,6 @@ class BookInfoActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setBackgroundResource(R.color.transparent)
         binding.refreshLayout.setColorSchemeColors(accentColor)
-        binding.refreshLayout.setOnRefreshListener {
-            binding.refreshLayout.isRefreshing = false
-            refreshBook()
-        }
         binding.arcView.setBgColor(backgroundColor)
         binding.llInfo.setBackgroundColor(backgroundColor)
         binding.scrollView.setBackgroundColor(backgroundColor)
@@ -426,6 +422,10 @@ class BookInfoActivity :
                     putExtra("key", book.name)
                 }
             }
+        }
+        refreshLayout?.setOnRefreshListener {
+            refreshLayout?.isRefreshing = false
+            refreshBook()
         }
     }
 
