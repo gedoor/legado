@@ -222,6 +222,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             val content1 = contentProcessor
                 .getContent(
                     book,
+                    // 不导出vip标识
                     chapter.apply { isVip = false },
                     content ?: if (chapter.isVolume) "" else "null",
                     includeTitle = !AppConfig.exportNoChapterName,
@@ -511,10 +512,14 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                         chineseConvert = false,
                         reSegment = false
                     ).toString()
-                val title = chapter.getDisplayTitle(
-                    contentProcessor.getTitleReplaceRules(),
-                    useReplace = useReplace
-                )
+                val title = chapter.run {
+                    // 不导出vip标识
+                    isVip = false
+                    getDisplayTitle(
+                        contentProcessor.getTitleReplaceRules(),
+                        useReplace = useReplace
+                    )
+                }
                 epubBook.addSection(
                     title,
                     ResourceUtil.createChapterResource(
