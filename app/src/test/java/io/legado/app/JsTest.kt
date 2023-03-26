@@ -28,13 +28,12 @@ class JsTest {
     @Test
     fun testMap() {
         val map = hashMapOf("id" to "3242532321")
-        map["id"] = "12314123"
         val bindings = SimpleBindings()
         bindings["result"] = map
         @Language("js")
         val jsMap = "$=result;id=$.id;id"
         val result = SCRIPT_ENGINE.eval(jsMap, bindings)?.toString()
-        Assert.assertEquals("12314123", result)
+        Assert.assertEquals("3242532321", result)
     }
 
     @Test
