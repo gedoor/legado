@@ -34,6 +34,9 @@ class JsTest {
         val jsMap = "$=result;id=$.id;id"
         val result = SCRIPT_ENGINE.eval(jsMap, bindings)?.toString()
         Assert.assertEquals("3242532321", result)
+        val jsMap1 = """result.get("id")"""
+        val result1 = SCRIPT_ENGINE.eval(jsMap1, bindings)?.toString()
+        Assert.assertEquals("3242532321", result1)
     }
 
     @Test

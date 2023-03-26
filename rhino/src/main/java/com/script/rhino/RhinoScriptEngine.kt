@@ -269,7 +269,6 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 override fun hasFeature(cx: Context, featureIndex: Int): Boolean {
                     return when (featureIndex) {
                         Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true
-                        Context.FEATURE_ENHANCED_JAVA_ACCESS -> true
                         else -> super.hasFeature(cx, featureIndex)
                     }
                 }
