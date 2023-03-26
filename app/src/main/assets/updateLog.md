@@ -18,6 +18,11 @@
 * 修复bug
 * 详情页下拉刷新
 * 导出为本地文件时不保留vip标识
+* 列表结果为NativeObject时支持{{}}@get@put##规则
+```
+{bookId: 1}
+https://www.example.com/book/{{result.bookId}}
+```
 * 其中一些更新由 Xwite, Horis提供
 
 **2023/03/21**
@@ -116,6 +121,6 @@
 * 书架分组支持独立排序
 * 适配 android 13 主题图标
 * 一些优化 by Horis
-
+----
 * [2022年日志](https://github.com/gedoor/legado/blob/record2022/app/src/main/assets/updateLog.md)
 * [2021年日志](https://github.com/gedoor/legado/blob/record2021/app/src/main/assets/updateLog.md)
