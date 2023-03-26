@@ -222,7 +222,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             val content1 = contentProcessor
                 .getContent(
                     book,
-                    chapter,
+                    chapter.apply { isVip = false },
                     content ?: if (chapter.isVolume) "" else "null",
                     includeTitle = !AppConfig.exportNoChapterName,
                     useReplace = useReplace,
