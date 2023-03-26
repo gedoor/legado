@@ -18,6 +18,11 @@
 * 修复bug
 * 详情页下拉刷新
 * 导出为本地文件时不保留vip标识
+* 列表结果为NativeObject时支持{{}}规则
+```
+{bookId: 1}
+https://www.example.com/book/{{result.bookId}}
+```
 * 其中一些更新由 Xwite, Horis提供
 
 **2023/03/21**
