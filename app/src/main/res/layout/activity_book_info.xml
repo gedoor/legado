@@ -14,27 +14,26 @@
         android:contentDescription="@string/bg_image"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/vw_bg"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#50000000"
-        android:orientation="vertical">
+        app:layout_constraintTop_toBottomOf="parent">
 
-        <io.legado.app.ui.widget.TitleBar
-            android:id="@+id/title_bar"
+        <LinearLayout
+            android:id="@+id/vw_bg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/book_info"
-            app:themeMode="dark" />
+            android:layout_height="match_parent"
+            android:background="#50000000"
+            android:orientation="vertical">
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/title_bar"
-            app:layout_constraintBottom_toBottomOf="parent">
+            <io.legado.app.ui.widget.TitleBar
+                android:id="@+id/title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="@string/book_info"
+                app:themeMode="dark" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -398,8 +397,8 @@
 
             </LinearLayout>
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </LinearLayout>
 
-    </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
