@@ -18,7 +18,7 @@
 * 修复bug
 * 详情页下拉刷新
 * 导出为本地文件时不保留vip标识
-* 列表结果为NativeObject时支持{{}}@get@put规则
+* 列表结果为NativeObject时支持{{}}@get@put##规则
 ```
 {bookId: 1}
 https://www.example.com/book/{{result.bookId}}
