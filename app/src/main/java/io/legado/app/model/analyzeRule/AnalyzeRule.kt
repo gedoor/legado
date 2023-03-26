@@ -147,8 +147,10 @@ class AnalyzeRule(
                 putRule(sourceRule.putMap)
                 sourceRule.makeUpRule(result)
                 result = if (sourceRule.getParamSize() > 1) {
-                    result[sourceRule.rule]?.toString() ?: sourceRule.rule
+                    // get {{}}
+                    sourceRule.rule
                 } else {
+                    // 键值直接访问
                     result[sourceRule.rule]?.toString()
                 }?.let {
                     replaceRegex(it.toString(), sourceRule)
@@ -232,8 +234,10 @@ class AnalyzeRule(
                 putRule(sourceRule.putMap)
                 sourceRule.makeUpRule(result)
                 result = if (sourceRule.getParamSize() > 1) {
-                    result[sourceRule.rule]?.toString() ?: sourceRule.rule
+                    // get {{}}
+                    sourceRule.rule
                 } else {
+                    // 键值直接访问
                     result[sourceRule.rule]?.toString()
                 }?.let {
                     replaceRegex(it.toString(), sourceRule)
