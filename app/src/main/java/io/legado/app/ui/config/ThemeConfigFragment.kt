@@ -59,9 +59,10 @@ class ThemeConfigFragment : PreferenceFragment(),
         if (Build.VERSION.SDK_INT < 26) {
             preferenceScreen.removePreferenceRecursively(PreferKey.launcherIcon)
         }
+        /*启动界面样式
         if (!AppConst.isPlayChannel) {
             preferenceScreen.removePreferenceRecursively("welcomeStyle")
-        }
+        }*/
         upPreferenceSummary(PreferKey.bgImage, getPrefString(PreferKey.bgImage))
         upPreferenceSummary(PreferKey.bgImageN, getPrefString(PreferKey.bgImageN))
         upPreferenceSummary(PreferKey.barElevation, AppConfig.elevation.toString())
