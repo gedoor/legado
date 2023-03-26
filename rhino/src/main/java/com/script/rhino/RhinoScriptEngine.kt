@@ -266,11 +266,11 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                     return cx
                 }
 
-                override fun hasFeature(cx: Context?, featureIndex: Int): Boolean {
-                    if (featureIndex == Context.FEATURE_ENABLE_JAVA_MAP_ACCESS) {
-                        return true
+                override fun hasFeature(cx: Context, featureIndex: Int): Boolean {
+                    return when (featureIndex) {
+                        Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true
+                        else -> super.hasFeature(cx, featureIndex)
                     }
-                    return super.hasFeature(cx, featureIndex)
                 }
 
                 override fun doTopCall(
