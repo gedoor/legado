@@ -153,7 +153,7 @@ class AnalyzeRule(
                     // 键值直接访问
                     result[sourceRule.rule]?.toString()
                 }?.let {
-                    replaceRegex(it.toString(), sourceRule)
+                    replaceRegex(it, sourceRule)
                 }
             } else {
                 for (sourceRule in ruleList) {
@@ -240,7 +240,7 @@ class AnalyzeRule(
                     // 键值直接访问
                     result[sourceRule.rule]?.toString()
                 }?.let {
-                    replaceRegex(it.toString(), sourceRule)
+                    replaceRegex(it, sourceRule)
                 }
             } else {
                 for (sourceRule in ruleList) {
