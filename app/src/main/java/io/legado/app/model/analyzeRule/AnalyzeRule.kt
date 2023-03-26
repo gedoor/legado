@@ -145,8 +145,9 @@ class AnalyzeRule(
             if (result is NativeObject) {
                 val sourceRule = ruleList.first()
                 result = if (sourceRule.getParamSize() > 1) {
+                    putRule(sourceRule.putMap)
                     sourceRule.makeUpRule(result)
-                    sourceRule.rule
+                    result[sourceRule.rule]?.toString() ?: sourceRule.rule
                 } else {
                     result[sourceRule.rule]?.toString()
                 }
@@ -227,8 +228,9 @@ class AnalyzeRule(
             if (result is NativeObject) {
                 val sourceRule = ruleList.first()
                 result = if (sourceRule.getParamSize() > 1) {
+                    putRule(sourceRule.putMap)
                     sourceRule.makeUpRule(result)
-                    sourceRule.rule
+                    result[sourceRule.rule]?.toString() ?: sourceRule.rule
                 } else {
                     result[sourceRule.rule]?.toString()
                 }
