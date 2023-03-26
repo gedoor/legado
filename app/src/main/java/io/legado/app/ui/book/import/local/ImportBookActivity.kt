@@ -85,10 +85,9 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_del_selection ->
-                viewModel.deleteDoc(adapter.selectedUris) {
-                    adapter.removeSelection()
-                }
+            R.id.menu_del_selection -> viewModel.deleteDoc(adapter.selectedUris) {
+                adapter.removeSelection()
+            }
         }
         return false
     }

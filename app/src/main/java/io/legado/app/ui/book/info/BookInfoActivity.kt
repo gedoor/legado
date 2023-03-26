@@ -115,7 +115,6 @@ class BookInfoActivity :
         binding.refreshLayout?.setColorSchemeColors(accentColor)
         binding.arcView.setBgColor(backgroundColor)
         binding.llInfo.setBackgroundColor(backgroundColor)
-        binding.scrollView.setBackgroundColor(backgroundColor)
         binding.flAction.setBackgroundColor(bottomBackground)
         binding.tvShelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
         binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
@@ -422,9 +421,6 @@ class BookInfoActivity :
                     putExtra("key", book.name)
                 }
             }
-        }
-        scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            refreshLayout?.isEnabled = (scrollY <= 0)
         }
         refreshLayout?.setOnRefreshListener {
             refreshLayout.isRefreshing = false
