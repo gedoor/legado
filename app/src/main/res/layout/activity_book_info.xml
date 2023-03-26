@@ -29,39 +29,48 @@
             app:title="@string/book_info"
             app:themeMode="dark" />
 
-        <RelativeLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/title_bar"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <io.legado.app.ui.widget.image.ArcView
-                android:id="@+id/arc_view"
-                android:layout_marginTop="90dp"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="78dp"
-                app:arcDirectionTop="true"
-                app:arcHeight="36dp"
-                app:bgColor="@color/background" />
-
-            <androidx.cardview.widget.CardView
-                android:layout_margin="3dp"
-                android:layout_centerHorizontal="true"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="8dp">
+                android:layout_marginTop="8dp">
 
-                <io.legado.app.ui.widget.image.CoverImageView
-                    android:id="@+id/iv_cover"
-                    android:layout_width="110dp"
-                    android:layout_height="160dp"
-                    android:contentDescription="@string/img_cover"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/image_cover_default" />
+                <io.legado.app.ui.widget.image.ArcView
+                    android:id="@+id/arc_view"
+                    android:layout_marginTop="90dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="78dp"
+                    app:arcDirectionTop="true"
+                    app:arcHeight="36dp"
+                    app:bgColor="@color/background" />
 
-            </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_margin="3dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="8dp">
 
-        </RelativeLayout>
+                    <io.legado.app.ui.widget.image.CoverImageView
+                        android:id="@+id/iv_cover"
+                        android:layout_width="110dp"
+                        android:layout_height="160dp"
+                        android:contentDescription="@string/img_cover"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/image_cover_default" />
+
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <ScrollView
             android:id="@+id/scroll_view"

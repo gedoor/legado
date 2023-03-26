@@ -25,6 +25,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -111,6 +112,11 @@ class BookInfoActivity :
     @SuppressLint("PrivateResource")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setBackgroundResource(R.color.transparent)
+        binding.refreshLayout.setColorSchemeColors(accentColor)
+        binding.refreshLayout.setOnRefreshListener {
+            binding.refreshLayout.isRefreshing = false
+            refreshBook()
+        }
         binding.arcView.setBgColor(backgroundColor)
         binding.llInfo.setBackgroundColor(backgroundColor)
         binding.scrollView.setBackgroundColor(backgroundColor)
@@ -169,10 +175,7 @@ class BookInfoActivity :
                 }
             }
             R.id.menu_refresh -> {
-                upLoading(true)
-                viewModel.getBook()?.let {
-                    viewModel.refreshBook(it)
-                }
+                refreshBook()
             }
             R.id.menu_login -> viewModel.bookSource?.let {
                 startActivity<SourceLoginActivity> {
@@ -233,6 +236,13 @@ class BookInfoActivity :
                     title = getString(R.string.select_book_folder)
                 }
             }
+        }
+    }
+
+    private fun refreshBook() {
+        upLoading(true)
+        viewModel.getBook()?.let {
+            viewModel.refreshBook(it)
         }
     }
 
