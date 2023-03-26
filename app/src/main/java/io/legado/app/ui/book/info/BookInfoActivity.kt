@@ -424,7 +424,7 @@ class BookInfoActivity :
             }
         }
         refreshLayout?.setOnRefreshListener {
-            refreshLayout?.isRefreshing = false
+            refreshLayout.isRefreshing = false
             refreshBook()
         }
     }
