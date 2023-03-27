@@ -22,7 +22,7 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     private val normalClosure = NanoWSD.WebSocketFrame.CloseCode.NormalClosure
     private val searchModel = SearchModel(this, this)
 
-    private const val SEARCH_FINISH = "Search finish"
+    private val SEARCH_FINISH = "Search finish"
 
     override fun onOpen() {
         launch(IO) {
@@ -61,7 +61,7 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                         close(normalClosure, SEARCH_FINISH, false)
                         return@launch
                     }
-                    viewModel.search(System.currentTimeMillis(), key)
+                    searchModel.search(System.currentTimeMillis(), key)
                 }
             }
         }
@@ -87,6 +87,6 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
 
     override fun onSearchFinish(isEmpty: Boolean) = close(normalClosure, SEARCH_FINISH, false)
 
-    override fun onSearchCancel(exception: Exception? = null) = close(normalClosure, exception?.toString() ?: SEARCH_FINISH, false)
+    override fun onSearchCancel(exception: Exception?) = close(normalClosure, exception?.toString() ?: SEARCH_FINISH, false)
 
 }
