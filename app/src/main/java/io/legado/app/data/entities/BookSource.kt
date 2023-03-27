@@ -7,11 +7,9 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookSourceType
 import io.legado.app.data.entities.rule.*
 import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.splitNotBlank
 import kotlinx.parcelize.Parcelize
-import java.io.InputStream
 
 @Suppress("unused")
 @Parcelize
@@ -219,31 +217,6 @@ data class BookSource(
     }
 
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
-
-    companion object {
-
-        private val gson = GSON.newBuilder()
-            .registerTypeAdapter(ExploreRule::class.java, ExploreRule.jsonDeserializer)
-            .registerTypeAdapter(SearchRule::class.java, SearchRule.jsonDeserializer)
-            .registerTypeAdapter(BookInfoRule::class.java, BookInfoRule.jsonDeserializer)
-            .registerTypeAdapter(TocRule::class.java, TocRule.jsonDeserializer)
-            .registerTypeAdapter(ContentRule::class.java, ContentRule.jsonDeserializer)
-            .registerTypeAdapter(ReviewRule::class.java, ReviewRule.jsonDeserializer)
-            .create()
-
-        fun fromJson(json: String): Result<BookSource> {
-            return gson.fromJsonObject(json)
-        }
-
-        fun fromJsonArray(json: String): Result<List<BookSource>> {
-            return gson.fromJsonArray(json)
-        }
-
-        fun fromJsonArray(inputStream: InputStream): Result<List<BookSource>> {
-            return gson.fromJsonArray(inputStream)
-        }
-
-    }
 
     class Converters {
 

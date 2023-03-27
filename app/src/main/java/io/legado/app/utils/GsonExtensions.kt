@@ -13,8 +13,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.math.ceil
 
-
-val GSON: Gson by lazy {
+val INITIAL_GSON by lazy {
     GsonBuilder()
         .registerTypeAdapter(
             object : TypeToken<Map<String?, Any?>?>() {}.type,
@@ -24,6 +23,17 @@ val GSON: Gson by lazy {
         .registerTypeAdapter(String::class.java, StringJsonDeserializer())
         .disableHtmlEscaping()
         .setPrettyPrinting()
+        .create()
+}
+
+val GSON: Gson by lazy {
+    INITIAL_GSON.newBuilder()
+        .registerTypeAdapter(ExploreRule::class.java, ExploreRule.jsonDeserializer)
+        .registerTypeAdapter(SearchRule::class.java, SearchRule.jsonDeserializer)
+        .registerTypeAdapter(BookInfoRule::class.java, BookInfoRule.jsonDeserializer)
+        .registerTypeAdapter(TocRule::class.java, TocRule.jsonDeserializer)
+        .registerTypeAdapter(ContentRule::class.java, ContentRule.jsonDeserializer)
+        .registerTypeAdapter(ReviewRule::class.java, ReviewRule.jsonDeserializer)
         .create()
 }
 

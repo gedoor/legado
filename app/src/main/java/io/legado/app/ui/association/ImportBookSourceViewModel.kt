@@ -98,26 +98,27 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                     kotlin.runCatching {
                         val json = JsonPath.parse(mText)
                         json.read<List<String>>("$.sourceUrls")
-                    }.onSuccess {
-                        it.forEach {
+                    }.onSuccess { listUrl ->
+                        listUrl.forEach {
                             importSourceUrl(it)
                         }
                     }.onFailure {
-                        BookSource.fromJson(mText).getOrThrow().let {
+                        GSON.fromJsonObject<BookSource>(mText).getOrThrow().let {
                             allSources.add(it)
                         }
                     }
                 }
-                mText.isJsonArray() -> BookSource.fromJsonArray(mText).getOrThrow().let { items ->
-                    allSources.addAll(items)
-                }
+                mText.isJsonArray() -> GSON.fromJsonArray<BookSource>(mText).getOrThrow()
+                    .let { items ->
+                        allSources.addAll(items)
+                    }
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
                 }
                 mText.isUri() -> {
                     val uri = Uri.parse(mText)
                     uri.inputStream(context).getOrThrow().let {
-                        allSources.addAll(BookSource.fromJsonArray(it).getOrThrow())
+                        allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
                     }
                 }
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
@@ -139,7 +140,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 url(url)
             }
         }.byteStream().let {
-            allSources.addAll(BookSource.fromJsonArray(it).getOrThrow())
+            allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
         }
     }
 
