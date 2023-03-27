@@ -99,9 +99,8 @@ Body = { rule: [ReplaceRule], text: [String] }
 #### 搜索在线书籍
 
 ```
-URL = http://127.0.0.1:1234/searchBook
-Method = POST
-Body = { key: [String], page: [Number] }
+URL = ws://127.0.0.1:1234/searchBook
+Message = { key: [String] }
 ```
 
 #### 插入书籍
