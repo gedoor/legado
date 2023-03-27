@@ -200,7 +200,7 @@ object BookController {
     fun saveBook(postData: String?): ReturnData {
         val returnData = ReturnData()
         GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
-            appDb.bookDao.insert(book)
+            book.save()
             AppWebDav.uploadBookProgress(book)
             return returnData.setData("")
         }
