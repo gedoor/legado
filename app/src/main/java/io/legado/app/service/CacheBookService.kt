@@ -91,13 +91,15 @@ class CacheBookService : BaseService() {
             val cacheBook = CacheBook.getOrCreate(bookUrl) ?: return@execute
             val chapterCount = appDb.bookChapterDao.getChapterCount(bookUrl)
             if (chapterCount == 0) {
-                WebBook.getChapterListAwait(cacheBook.bookSource, cacheBook.book)
-                    .onFailure {
-                        AppLog.put("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}", it)
-                        appCtx.toastOnUi("缓存书籍没有目录且加载目录失败\n${it.localizedMessage}")
-                    }.getOrNull()?.let { toc ->
-                        appDb.bookChapterDao.insert(*toc.toTypedArray())
-                    }
+                val name = cacheBook.book.name
+                WebBook.getChapterListAwait(cacheBook.bookSource, cacheBook.book).onFailure {
+                    cacheBook.book.totalChapterNum = 0
+                    AppLog.put("《$name》目录为空且加载目录失败\n${it.localizedMessage}", it)
+                    appCtx.toastOnUi("《$name》目录为空且加载目录失败\n${it.localizedMessage}")
+                }.getOrNull()?.let { toc ->
+                    appDb.bookChapterDao.insert(*toc.toTypedArray())
+                }
+                cacheBook.book.save()
             }
             val end2 = if (end == 0) {
                 appDb.bookChapterDao.getChapterCount(bookUrl)

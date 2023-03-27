@@ -62,7 +62,17 @@ object Restore {
                     .forEach { book ->
                         book.coverUrl = LocalBook.getCoverPath(book)
                     }
-                appDb.bookDao.insert(*it.toTypedArray())
+                val updateBooks = arrayListOf<Book>()
+                val newBooks = arrayListOf<Book>()
+                it.forEach { book ->
+                    if (appDb.bookDao.has(book.bookUrl) == true) {
+                        updateBooks.add(book)
+                    } else {
+                        newBooks.add(book)
+                    }
+                }
+                appDb.bookDao.update(*updateBooks.toTypedArray())
+                appDb.bookDao.insert(*newBooks.toTypedArray())
             }
             fileToListT<Bookmark>(path, "bookmark.json")?.let {
                 appDb.bookmarkDao.insert(*it.toTypedArray())
