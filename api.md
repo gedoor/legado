@@ -59,6 +59,16 @@ URL = http://127.0.0.1:1234/deleteRssSources
 Method = POST
 ```
 
+#### 调试源
+
+key为书源搜索关键词，tag为源链接
+
+```
+URL = ws://127.0.0.1:1235/bookSourceDebug
+URL = ws://127.0.0.1:1235/rssSourceDebug
+Message = { key: [String], tag: [String] }
+```
+
 #### 获取替换规则
 
 ```
@@ -99,7 +109,7 @@ Body = { rule: [ReplaceRule], text: [String] }
 #### 搜索在线书籍
 
 ```
-URL = ws://127.0.0.1:1234/searchBook
+URL = ws://127.0.0.1:1235/searchBook
 Message = { key: [String] }
 ```
 
