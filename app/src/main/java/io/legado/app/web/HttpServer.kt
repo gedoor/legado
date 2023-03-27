@@ -1,7 +1,6 @@
 package io.legado.app.web
 
 import android.graphics.Bitmap
-import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
 import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
@@ -9,12 +8,10 @@ import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.ReplaceRuleController
 import io.legado.app.api.controller.RssSourceController
 import io.legado.app.service.WebService
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.externalFiles
+import io.legado.app.utils.*
 import io.legado.app.web.utils.AssetsWeb
 import splitties.init.appCtx
 import java.io.*
-
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
@@ -100,7 +97,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 )
             } else {
                 try {
-                    newFixedLengthResponse(Gson().toJson(returnData))
+                    newFixedLengthResponse(GSON.toJson(returnData))
                 } catch (e: OutOfMemoryError) {
                     val path = FileUtils.getPath(
                         appCtx.externalFiles,
@@ -109,7 +106,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     )
                     val file = FileUtils.createFileIfNotExist(path)
                     BufferedWriter(FileWriter(file)).use {
-                        Gson().toJson(returnData, it)
+                        GSON.toJson(returnData, it)
                     }
                     val fis = FileInputStream(file)
                     newFixedLengthResponse(
