@@ -96,7 +96,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                     val jsonItem = jsonPath.parse(items[0])
                     ImportOldData.fromOldBookSource(jsonItem)
                 } else {
-                    BookSource.fromJsonArray(text).getOrThrow()[0]
+                    GSON.fromJsonArray<BookSource>(text).getOrThrow()[0]
                 }
             }
             text.isJsonObject() -> {
@@ -104,7 +104,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                     val jsonItem = jsonPath.parse(text)
                     ImportOldData.fromOldBookSource(jsonItem)
                 } else {
-                    BookSource.fromJson(text).getOrThrow()
+                    GSON.fromJsonObject<BookSource>(text).getOrThrow()
                 }
             }
             else -> throw NoStackTraceException("格式不对")

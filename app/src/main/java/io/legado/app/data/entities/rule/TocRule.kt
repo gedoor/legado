@@ -2,7 +2,7 @@ package io.legado.app.data.entities.rule
 
 import android.os.Parcelable
 import com.google.gson.JsonDeserializer
-import io.legado.app.utils.GSON
+import io.legado.app.utils.INITIAL_GSON
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -22,8 +22,8 @@ data class TocRule(
 
         val jsonDeserializer = JsonDeserializer<TocRule?> { json, _, _ ->
             when {
-                json.isJsonObject -> GSON.fromJson(json, TocRule::class.java)
-                json.isJsonPrimitive -> GSON.fromJson(json.asString, TocRule::class.java)
+                json.isJsonObject -> INITIAL_GSON.fromJson(json, TocRule::class.java)
+                json.isJsonPrimitive -> INITIAL_GSON.fromJson(json.asString, TocRule::class.java)
                 else -> null
             }
         }
