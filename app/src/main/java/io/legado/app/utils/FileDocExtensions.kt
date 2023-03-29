@@ -183,12 +183,11 @@ fun FileDoc.find(name: String, depth: Int = 0): FileDoc? {
 
 fun FileDoc.createFileIfNotExist(
     fileName: String,
-    mimeType: String = "",
     vararg subDirs: String
 ): FileDoc {
     return if (uri.isContentScheme()) {
         val documentFile = DocumentFile.fromTreeUri(appCtx, uri)!!
-        val tmp = DocumentUtils.createFileIfNotExist(documentFile, fileName, mimeType, *subDirs)!!
+        val tmp = DocumentUtils.createFileIfNotExist(documentFile, fileName, *subDirs)!!
         FileDoc.fromDocumentFile(tmp)
     } else {
         val path = FileUtils.getPath(uri.path!!, *subDirs) + File.separator + fileName
@@ -232,6 +231,14 @@ fun FileDoc.exists(): Boolean {
         DocumentFile.fromTreeUri(appCtx, uri)!!.exists()
     } else {
         FileUtils.exist(uri.path!!)
+    }
+}
+
+fun FileDoc.writeText(text: String) {
+    if (uri.isContentScheme()) {
+        uri.writeText(appCtx, text)
+    } else {
+        File(uri.path!!).writeText(text)
     }
 }
 
