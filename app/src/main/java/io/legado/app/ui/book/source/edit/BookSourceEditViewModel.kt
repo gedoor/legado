@@ -78,17 +78,18 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
         execute {
             importSource(text)
         }.onSuccess {
-            it?.let(finally) ?: context.toastOnUi("格式不对")
+            finally.invoke(it)
         }.onError {
             context.toastOnUi(it.localizedMessage ?: "Error")
+            it.printOnDebug()
         }
     }
 
-    suspend fun importSource(text: String): BookSource? {
+    suspend fun importSource(text: String): BookSource {
         return when {
             text.isAbsUrl() -> {
                 val text1 = okHttpClient.newCallStrResponse { url(text) }.body
-                text1?.let { importSource(text1) }
+                importSource(text1!!)
             }
             text.isJsonArray() -> {
                 if (text.contains("ruleSearchUrl") || text.contains("ruleFindUrl")) {

@@ -44,12 +44,13 @@ object Restore {
             } else {
                 ZipUtils.unZipToPath(File(uri.path!!), Backup.backupPath)
             }
+        }.onSuccess {
+            restoreDatabase()
+            restoreConfig()
+            LocalConfig.lastBackup = System.currentTimeMillis()
         }.onFailure {
-            AppLog.put("恢复复制文件出错\n${it.localizedMessage}", it)
+            AppLog.put("复制解压文件出错\n${it.localizedMessage}", it)
         }
-        restoreDatabase()
-        restoreConfig()
-        LocalConfig.lastBackup = System.currentTimeMillis()
     }
 
     suspend fun restoreDatabase(path: String = Backup.backupPath) {
