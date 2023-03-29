@@ -1,6 +1,7 @@
 package io.legado.app.utils.compress
 
 import android.os.Build
+import androidx.annotation.RequiresApi
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.Dispatchers.IO
@@ -227,6 +228,7 @@ object ZipUtils {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @Throws(SecurityException::class)
     private fun unZipToPath(
         zipInputStream: ZipArchiveInputStream,
@@ -308,11 +310,18 @@ object ZipUtils {
         inputStream: InputStream,
         filter: ((String) -> Boolean)? = null
     ): List<String> {
-        return ZipArchiveInputStream(inputStream).use {
-            getFilesName(it, filter)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ZipArchiveInputStream(inputStream).use {
+                getFilesName(it, filter)
+            }
+        } else {
+            ZipInputStream(inputStream).use {
+                getFilesName(it, filter)
+            }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @Throws(SecurityException::class)
     private fun getFilesName(
         zipInputStream: ZipArchiveInputStream,
@@ -320,6 +329,24 @@ object ZipUtils {
     ): List<String> {
         val fileNames = mutableListOf<String>()
         var entry: ArchiveEntry?
+        while (zipInputStream.nextEntry.also { entry = it } != null) {
+            if (entry!!.isDirectory) {
+                continue
+            }
+            val fileName = entry!!.name
+            if (filter != null && filter.invoke(fileName))
+                fileNames.add(fileName)
+        }
+        return fileNames
+    }
+
+    @Throws(SecurityException::class)
+    private fun getFilesName(
+        zipInputStream: ZipInputStream,
+        filter: ((String) -> Boolean)? = null
+    ): List<String> {
+        val fileNames = mutableListOf<String>()
+        var entry: ZipEntry?
         while (zipInputStream.nextEntry.also { entry = it } != null) {
             if (entry!!.isDirectory) {
                 continue
