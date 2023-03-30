@@ -5,9 +5,9 @@
     android:id="@+id/cv_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_item_focused_on_tv"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/bg_item_focused_on_tv"
     tools:ignore="UnusedAttribute">
 
     <io.legado.app.ui.widget.image.CoverImageView
@@ -60,8 +60,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="12dp"
         android:includeFontPadding="false"
-        android:paddingBottom="4dp"
         android:paddingLeft="2dp"
+        android:paddingBottom="4dp"
         android:singleLine="true"
         android:text="@string/book_name"
         android:textColor="@color/primaryText"
@@ -93,6 +93,7 @@
         android:includeFontPadding="false"
         android:maxLines="1"
         android:paddingEnd="6dp"
+        android:singleLine="true"
         android:text="@string/author"
         android:textColor="@color/tv_text_summary"
         android:textSize="13sp"
@@ -109,6 +110,7 @@
         android:includeFontPadding="false"
         android:maxLines="1"
         android:paddingEnd="6dp"
+        android:singleLine="true"
         android:text=""
         android:textColor="@color/tv_text_summary"
         android:textSize="13sp"
