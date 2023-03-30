@@ -1087,4 +1087,5 @@
     <string name="privacy_policy">用户隐私与协议</string>
     <string name="agree">同意</string>
     <string name="refuse">拒绝</string>
+    <string name="file_manage">文件管理</string>
 </resources>

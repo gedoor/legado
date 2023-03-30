@@ -5,7 +5,7 @@ import android.content.Context
 import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.databinding.ItemFileFilepickerBinding
+import io.legado.app.databinding.ItemFilePickerBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.getPrimaryDisabledTextColor
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -17,7 +17,7 @@ import java.io.File
 
 
 class FileAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<FileItem, ItemFileFilepickerBinding>(context) {
+    RecyclerAdapter<FileItem, ItemFilePickerBinding>(context) {
     private var rootPath: String? = null
     var currentPath: String? = null
         private set
@@ -84,13 +84,13 @@ class FileAdapter(context: Context, val callBack: CallBack) :
 
     }
 
-    override fun getViewBinding(parent: ViewGroup): ItemFileFilepickerBinding {
-        return ItemFileFilepickerBinding.inflate(inflater, parent, false)
+    override fun getViewBinding(parent: ViewGroup): ItemFilePickerBinding {
+        return ItemFilePickerBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(
         holder: ItemViewHolder,
-        binding: ItemFileFilepickerBinding,
+        binding: ItemFilePickerBinding,
         item: FileItem,
         payloads: MutableList<Any>
     ) {
@@ -115,7 +115,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemFileFilepickerBinding) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemFilePickerBinding) {
         holder.itemView.setOnClickListener {
             callBack.onFileClick(holder.layoutPosition)
         }

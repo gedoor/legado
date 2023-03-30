@@ -5,14 +5,14 @@ import android.os.Environment
 import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.databinding.ItemPathFilepickerBinding
+import io.legado.app.databinding.ItemPathPickerBinding
 import io.legado.app.ui.document.utils.FilePickerIcon
 import io.legado.app.utils.ConvertUtils
 import java.util.*
 
 
 class PathAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<String, ItemPathFilepickerBinding>(context) {
+    RecyclerAdapter<String, ItemPathPickerBinding>(context) {
     private val paths = LinkedList<String>()
     private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getArrow())
 
@@ -43,13 +43,13 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         setItems(paths)
     }
 
-    override fun getViewBinding(parent: ViewGroup): ItemPathFilepickerBinding {
-        return ItemPathFilepickerBinding.inflate(inflater, parent, false)
+    override fun getViewBinding(parent: ViewGroup): ItemPathPickerBinding {
+        return ItemPathPickerBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(
         holder: ItemViewHolder,
-        binding: ItemPathFilepickerBinding,
+        binding: ItemPathPickerBinding,
         item: String,
         payloads: MutableList<Any>
     ) {
@@ -59,7 +59,7 @@ class PathAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemPathFilepickerBinding) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemPathPickerBinding) {
         holder.itemView.setOnClickListener {
             callBack.onPathClick(holder.layoutPosition)
         }
