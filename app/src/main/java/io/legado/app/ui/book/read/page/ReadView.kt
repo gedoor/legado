@@ -182,13 +182,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
 
         //在多点触控时，事件不走ACTION_DOWN分支而产生的特殊事件处理
-        if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN){
-            //当多个手指同时按下的情况，将最后一个按下的手指的坐标设置为起始坐标，所以只有最后一个手指的滑动事件被处理
-            setStartPoint(event.getX(event.pointerCount - 1), event.getY(event.pointerCount - 1), false)
-        } else if(event.actionMasked == MotionEvent.ACTION_POINTER_UP){
-            //当多个手指同时按下的情况，当抬起一个手指时，起始坐标恢复为第一次按下的手指的坐标
-            setStartPoint(event.x, event.y, false)
-            return true
+        if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN || event.actionMasked == MotionEvent.ACTION_POINTER_UP){
+            pageDelegate?.onTouch(event)
         }
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
