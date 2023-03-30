@@ -41,7 +41,7 @@ android {
     }
     defaultConfig {
         applicationId "io.legado.app"
-        minSdk 21
+        minSdk 24
         targetSdk 33
         versionCode 10000 + gitCommits
         versionName version
@@ -106,6 +106,11 @@ android {
             dimension "mode"
             applicationId "io.legado.play"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
+        }
+        lollipop {
+            dimension "mode"
+            minSdk 21
+            manifestPlaceholders.put("APP_CHANNEL_VALUE", "lollipop")
         }
     }
 
@@ -198,10 +203,12 @@ dependencies {
     implementation('org.jsoup:jsoup:1.15.4')
     implementation('com.jayway.jsonpath:json-path:2.8.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
-    implementation(project(path: ':book'))
+    implementation(project(path: ':modules:book'))
 
     //JS rhino
-    implementation(project(path: ':rhino'))
+    appImplementation(project(path: ':modules:rhino1.4'))
+    googleImplementation(project(path: ':modules:rhino1.4'))
+    lollipopImplementation(project(path: ':modules:rhino1.3'))
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.10.0')
