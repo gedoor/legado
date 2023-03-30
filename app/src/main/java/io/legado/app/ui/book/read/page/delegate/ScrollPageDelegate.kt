@@ -58,10 +58,14 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     private fun onScroll(event: MotionEvent) {
         mVelocity.addMovement(event)
         mVelocity.computeCurrentVelocity(velocityDuration)
-        readView.setTouchPoint(event.getX(0), event.getY(0))
+        //取最后添加(即最新的)一个触摸点来计算滚动位置
+        //多点触控时即最后按下的手指产生的事件点
+        val pointX = event.getX(event.pointerCount - 1)
+        val pointY = event.getY(event.pointerCount - 1)
+        readView.setTouchPoint(pointX, pointY)
         if (!isMoved) {
-            val deltaX = (event.getX(0) - startX).toInt()
-            val deltaY = (event.getY(0) - startY).toInt()
+            val deltaX = (pointX - startX).toInt()
+            val deltaY = (pointY - startY).toInt()
             val distance = deltaX * deltaX + deltaY * deltaY
             isMoved = distance > readView.slopSquare
         }

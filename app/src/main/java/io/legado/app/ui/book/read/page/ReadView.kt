@@ -27,10 +27,7 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
-import io.legado.app.utils.activity
-import io.legado.app.utils.invisible
-import io.legado.app.utils.screenshot
-import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.*
 import java.text.BreakIterator
 import java.util.*
 import kotlin.math.abs
@@ -184,6 +181,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
             }
         }
 
+        //在多点触控时，事件不走ACTION_DOWN分支而产生的特殊事件处理
+        if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN){
+            //当多个手指同时按下的情况，将最后一个按下的手指的坐标设置为起始坐标，所以只有最后一个手指的滑动事件被处理
+            setStartPoint(event.getX(event.pointerCount - 1), event.getY(event.pointerCount - 1), false)
+        } else if(event.actionMasked == MotionEvent.ACTION_POINTER_UP){
+            //当多个手指同时按下的情况，当抬起一个手指时，起始坐标恢复为第一次按下的手指的坐标
+            setStartPoint(event.x, event.y, false)
+            return true
+        }
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 callBack.screenOffTimerStart()
