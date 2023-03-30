@@ -206,9 +206,9 @@ dependencies {
     implementation(project(path: ':modules:book'))
 
     //JS rhino
-    appImplementation(project(path: ':modules:rhino1.4'))
-    googleImplementation(project(path: ':modules:rhino1.4'))
-    lollipopImplementation(project(path: ':modules:rhino1.3'))
+    appImplementation(project(path: ':modules:rhino1.7.4'))
+    googleImplementation(project(path: ':modules:rhino1.7.4'))
+    lollipopImplementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.10.0')
