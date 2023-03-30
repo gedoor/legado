@@ -8,7 +8,7 @@ android {
     buildToolsVersion = build_tool_version
     namespace 'com.script'
     defaultConfig {
-        minSdk 21
+        minSdk 24
         targetSdk 33
 
         consumerProguardFiles "consumer-rules.pro"
