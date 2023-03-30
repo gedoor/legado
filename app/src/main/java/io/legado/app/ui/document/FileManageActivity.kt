@@ -18,6 +18,7 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ConvertUtils
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.list
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageViewModel>(),
@@ -38,6 +39,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         initSearchView()
+        initData()
     }
 
     private fun initView() {
@@ -66,15 +68,17 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         })
     }
 
+    private fun initData() {
+        viewModel.rootDoc?.list()?.let {
+            fileAdapter.setItems(it)
+        }
+    }
+
     override fun onPathClick(position: Int) {
 
     }
 
     inner class FileAdapter : RecyclerAdapter<FileDoc, ItemFileBinding>(this@FileManageActivity) {
-        private var rootPath: String? = null
-        var currentPath: String? = null
-            private set
-        private val homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHome())!!
         private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!
         private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
         private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!
@@ -93,7 +97,14 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             item: FileDoc,
             payloads: MutableList<Any>
         ) {
-            binding.imageView
+            if (!item.isDir) {
+                binding.imageView.setImageDrawable(fileIcon)
+            } else if (holder.layoutPosition == 0 && viewModel.subDocs.isNotEmpty()) {
+                binding.imageView.setImageDrawable(upIcon)
+            } else {
+                binding.imageView.setImageDrawable(folderIcon)
+            }
+            binding.textView.text = item.name
         }
 
 

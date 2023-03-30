@@ -1091,4 +1091,5 @@
     <string name="agree">同意</string>
     <string name="refuse">拒绝</string>
     <string name="file_manage">文件管理</string>
+    <string name="file_manage_summary">管理私有文件夹的文件</string>
 </resources>
