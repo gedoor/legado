@@ -104,11 +104,6 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="license"
-            android:title="@string/license"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
             android:key="disclaimer"
             android:title="@string/disclaimer"
             app:iconSpaceReserved="false" />
