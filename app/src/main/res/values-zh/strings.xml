@@ -1086,4 +1086,7 @@
     <string name="delete_alert">删除提醒</string>
     <string name="no_book_found_bookshelf">未在书架上找到所选书籍, 是否重新导入？</string>
     <string name="archive_not_found">未能在书籍保存目录找到压缩文件，是否重新导入？</string>
+    <string name="privacy_policy">用户隐私与协议</string>
+    <string name="agree">同意</string>
+    <string name="refuse">拒绝</string>
 </resources>

@@ -160,16 +160,16 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return@suspendCoroutine
         }
         val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
-        alert("用户隐私与协议", privacyPolicy) {
+        alert(getString(R.string.privacy_policy), privacyPolicy) {
             noButton {
                 finish()
                 block.resume(false)
             }
-            yesButton {
+            positiveButton(R.string.agree) {
                 LocalConfig.privacyPolicyOk = true
                 block.resume(true)
             }
-            onCancelled {
+            negativeButton(R.string.refuse) {
                 finish()
                 block.resume(false)
             }

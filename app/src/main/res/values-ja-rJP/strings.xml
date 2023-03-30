@@ -1087,4 +1087,7 @@
     <string name="delete_alert">删除提醒</string>
     <string name="no_book_found_bookshelf">No book found in bookshelf, import again ?</string>
     <string name="archive_not_found">Can not find archive selected, continue to download ?</string>
+    <string name="privacy_policy">用户隐私与协议</string>
+    <string name="agree">同意</string>
+    <string name="refuse">拒绝</string>
 </resources>

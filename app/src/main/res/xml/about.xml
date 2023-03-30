@@ -89,8 +89,18 @@
         app:layout="@layout/view_preference_category">
 
         <io.legado.app.lib.prefs.Preference
+            android:key="privacyPolicy"
+            android:title="@string/privacy_policy"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="crashLog"
             android:title="@string/crash_log"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="license"
+            android:title="@string/license"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
