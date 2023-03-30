@@ -11,21 +11,27 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ActivityFileManageBinding
 import io.legado.app.databinding.ItemFileBinding
-import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.document.adapter.PathAdapter
+import io.legado.app.ui.document.utils.FilePickerIcon
+import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.ConvertUtils
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageViewModel>() {
-
+class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageViewModel>(),
+    PathAdapter.CallBack {
 
     override val binding by viewBinding(ActivityFileManageBinding::inflate)
     override val viewModel by viewModels<FileManageViewModel>()
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
-    private val adapter by lazy {
+    private val pathAdapter by lazy {
+        PathAdapter(this, this)
+    }
+    private val fileAdapter by lazy {
         FileAdapter()
     }
 
@@ -35,9 +41,11 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
     }
 
     private fun initView() {
-        binding.layTop.setBackgroundColor(backgroundColor)
+        binding.rvPath.layoutManager = LinearLayoutManager(this)
+        binding.rvPath.addItemDecoration(VerticalDivider(this))
+        binding.rvPath.adapter = pathAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = fileAdapter
     }
 
     private fun initSearchView() {
@@ -58,16 +66,25 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         })
     }
 
+    override fun onPathClick(position: Int) {
+
+    }
 
     inner class FileAdapter : RecyclerAdapter<FileDoc, ItemFileBinding>(this@FileManageActivity) {
-
+        private var rootPath: String? = null
+        var currentPath: String? = null
+            private set
+        private val homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHome())!!
+        private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!
+        private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
+        private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!
 
         override fun getViewBinding(parent: ViewGroup): ItemFileBinding {
-            TODO("Not yet implemented")
+            return ItemFileBinding.inflate(inflater, parent, false)
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemFileBinding) {
-            TODO("Not yet implemented")
+
         }
 
         override fun convert(
@@ -76,7 +93,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             item: FileDoc,
             payloads: MutableList<Any>
         ) {
-            TODO("Not yet implemented")
+            binding.imageView
         }
 
 

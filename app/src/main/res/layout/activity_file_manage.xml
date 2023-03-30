@@ -14,51 +14,21 @@
         app:contentLayout="@layout/view_search" />
 
     <!--path-->
-    <LinearLayout
-        android:id="@+id/lay_top"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_path"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background"
-        android:elevation="1dp"
-        android:gravity="center_vertical"
-        android:minHeight="36dp"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/titleBar">
-
-        <TextView
-            android:id="@+id/tv_path"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:textColor="@color/secondaryText"
-            android:textSize="13sp"
-            tools:text="/" />
-
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_go_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="4dp"
-            android:gravity="center"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="@string/go_back"
-            android:textFontWeight="800"
-            android:textSize="14sp"
-            app:cornerRadius="5dp"
-            tools:ignore="UnusedAttribute" />
-    </LinearLayout>
+        android:layout_height="24dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@color/background_card"
+        android:elevation="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/titleBar" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
         android:id="@+id/refresh_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        app:layout_constraintTop_toBottomOf="@id/lay_top" />
+        app:layout_constraintTop_toBottomOf="@id/rv_path" />
 
     <FrameLayout
         android:layout_width="match_parent"

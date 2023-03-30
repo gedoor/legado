@@ -21,10 +21,10 @@ class FileAdapter(context: Context, val callBack: CallBack) :
     private var rootPath: String? = null
     var currentPath: String? = null
         private set
-    private val homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHome())
-    private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())
-    private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())
-    private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())
+    private val homeIcon = ConvertUtils.toDrawable(FilePickerIcon.getHome())!!
+    private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!
+    private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
+    private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!
     private val primaryTextColor = context.getPrimaryTextColor(!AppConfig.isNightTheme)
     private val disabledTextColor = context.getPrimaryDisabledTextColor(!AppConfig.isNightTheme)
 
@@ -39,22 +39,22 @@ class FileAdapter(context: Context, val callBack: CallBack) :
         currentPath = path
         if (callBack.isShowHomeDir) {
             //添加“返回主目录”
-            val fileRoot = FileItem()
-            fileRoot.isDirectory = true
-            fileRoot.icon = homeIcon
-            fileRoot.name = DIR_ROOT
-            fileRoot.size = 0
-            fileRoot.path = rootPath ?: path
+            val fileRoot = FileItem(
+                isDirectory = true,
+                icon = homeIcon,
+                name = DIR_ROOT,
+                path = rootPath ?: path
+            )
             data.add(fileRoot)
         }
         if (callBack.isShowUpDir && path != PathAdapter.sdCardDirectory) {
             //添加“返回上一级目录”
-            val fileParent = FileItem()
-            fileParent.isDirectory = true
-            fileParent.icon = upIcon
-            fileParent.name = DIR_PARENT
-            fileParent.size = 0
-            fileParent.path = File(path).parent ?: ""
+            val fileParent = FileItem(
+                isDirectory = true,
+                icon = upIcon,
+                name = DIR_PARENT,
+                path = File(path).parent ?: ""
+            )
             data.add(fileParent)
         }
         currentPath?.let { currentPath ->
@@ -64,18 +64,22 @@ class FileAdapter(context: Context, val callBack: CallBack) :
                     if (!callBack.isShowHideDir && file.name.startsWith(".")) {
                         continue
                     }
-                    val fileItem = FileItem()
-                    val isDirectory = file.isDirectory
-                    fileItem.isDirectory = isDirectory
-                    if (isDirectory) {
-                        fileItem.icon = folderIcon
-                        fileItem.size = 0
+                    val fileItem = if (file.isDirectory) {
+                        FileItem(
+                            name = file.name,
+                            icon = folderIcon,
+                            path = file.absolutePath,
+                            isDirectory = true
+                        )
                     } else {
-                        fileItem.icon = fileIcon
-                        fileItem.size = file.length()
+                        FileItem(
+                            name = file.name,
+                            icon = fileIcon,
+                            path = file.absolutePath,
+                            size = file.length(),
+                            isDirectory = true
+                        )
                     }
-                    fileItem.name = file.name
-                    fileItem.path = file.absolutePath
                     data.add(fileItem)
                 }
             }
