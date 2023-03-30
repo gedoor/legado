@@ -58,26 +58,10 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     private fun onScroll(event: MotionEvent) {
         mVelocity.addMovement(event)
         mVelocity.computeCurrentVelocity(velocityDuration)
-        val action: Int = event.action
-        val pointerUp =
-            action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_POINTER_UP
-        val skipIndex = if (pointerUp) event.actionIndex else -1
-        // Determine focal point
-        var sumX = 0f
-        var sumY = 0f
-        val count: Int = event.pointerCount
-        for (i in 0 until count) {
-            if (skipIndex == i) continue
-            sumX += event.getX(i)
-            sumY += event.getY(i)
-        }
-        val div = if (pointerUp) count - 1 else count
-        val focusX = sumX / div
-        val focusY = sumY / div
-        readView.setTouchPoint(sumX, sumY)
+        readView.setTouchPoint(event.getX(0), event.getY(0))
         if (!isMoved) {
-            val deltaX = (focusX - startX).toInt()
-            val deltaY = (focusY - startY).toInt()
+            val deltaX = (event.getX(0) - startX).toInt()
+            val deltaY = (event.getY(0) - startY).toInt()
             val distance = deltaX * deltaX + deltaY * deltaY
             isMoved = distance > readView.slopSquare
         }
