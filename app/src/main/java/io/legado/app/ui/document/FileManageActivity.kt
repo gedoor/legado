@@ -29,6 +29,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
 
     override val binding by viewBinding(ActivityFileManageBinding::inflate)
     override val viewModel by viewModels<FileManageViewModel>()
+    private val dirParent = ".."
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
@@ -38,6 +39,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
     private val fileAdapter by lazy {
         FileAdapter()
     }
+    private val currentFiles = arrayListOf<File>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -65,15 +67,30 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
+                updateFiles()
                 return false
             }
         })
     }
 
+    private fun updateFiles() {
+        if (searchView.query.isNotEmpty()) {
+            currentFiles.filter {
+                it.name == dirParent || it.name.contains(searchView.query)
+            }.let {
+                fileAdapter.setItems(it)
+            }
+        } else {
+            fileAdapter.setItems(currentFiles)
+        }
+    }
+
     override fun observeLiveBus() {
         viewModel.filesLiveData.observe(this) {
-            fileAdapter.setItems(it)
+            searchView.setQuery("", false)
+            currentFiles.clear()
+            currentFiles.addAll(it)
+            updateFiles()
         }
     }
 
@@ -126,7 +143,6 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!
         private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
         private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!
-        private val dirParent = ".."
 
         override fun getViewBinding(parent: ViewGroup): ItemFileBinding {
             return ItemFileBinding.inflate(inflater, parent, false)
