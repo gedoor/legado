@@ -1,4 +1,4 @@
-package io.legado.app.ui.document
+package io.legado.app.ui.file
 
 import android.content.Intent
 import android.net.Uri

@@ -7,19 +7,18 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.databinding.ActivityImportBookBinding
-import io.legado.app.data.appDb
 import io.legado.app.constant.AppPattern
+import io.legado.app.data.appDb
+import io.legado.app.databinding.ActivityImportBookBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 

@@ -1,4 +1,4 @@
-package io.legado.app.ui.document
+package io.legado.app.ui.file
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
@@ -12,13 +12,20 @@ class FileManageViewModel(application: Application) : BaseViewModel(application)
     var subDocs = mutableListOf<File>()
     val filesLiveData = MutableLiveData<List<File>>()
 
+    val lastDir: File? get() = subDocs.lastOrNull() ?: rootDoc
+
     fun upFiles(parentFile: File?) {
         execute {
+            parentFile ?: return@execute emptyList()
             if (parentFile == rootDoc) {
-                parentFile?.listFiles()?.toList()
+                parentFile.listFiles()?.sortedWith(
+                    compareBy({ it.isFile }, { it.name })
+                )
             } else {
                 val list = arrayListOf(parentFile)
-                parentFile?.listFiles()?.let {
+                parentFile.listFiles()?.sortedWith(
+                    compareBy({ it.isFile }, { it.name })
+                )?.let {
                     list.addAll(it)
                 }
                 list
@@ -32,5 +39,14 @@ class FileManageViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun delFile(file: File) {
+        execute {
+            file.delete()
+        }.onSuccess {
+            upFiles(lastDir)
+        }.onError {
+            context.toastOnUi(it.localizedMessage)
+        }
+    }
 
 }

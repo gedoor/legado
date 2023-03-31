@@ -1,4 +1,4 @@
-package io.legado.app.ui.document.adapter
+package io.legado.app.ui.file.adapter
 
 import android.content.Context
 import android.os.Environment
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.ItemPathPickerBinding
-import io.legado.app.ui.document.utils.FilePickerIcon
+import io.legado.app.ui.file.utils.FilePickerIcon
 import io.legado.app.utils.ConvertUtils
 import java.util.*
 

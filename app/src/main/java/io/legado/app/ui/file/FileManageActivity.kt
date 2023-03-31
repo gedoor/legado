@@ -1,8 +1,10 @@
-package io.legado.app.ui.document
+package io.legado.app.ui.file
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.FileProvider
@@ -17,7 +19,7 @@ import io.legado.app.databinding.ActivityFileManageBinding
 import io.legado.app.databinding.ItemFileBinding
 import io.legado.app.databinding.ItemPathPickerBinding
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.document.utils.FilePickerIcon
+import io.legado.app.ui.file.utils.FilePickerIcon
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ConvertUtils
 import io.legado.app.utils.applyTint
@@ -152,7 +154,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             binding.root.setOnClickListener {
                 val item = getItemByLayoutPosition(holder.layoutPosition)
                 item?.let {
-                    if (item == (viewModel.subDocs.lastOrNull() ?: viewModel.rootDoc)) {
+                    if (item == viewModel.lastDir) {
                         viewModel.subDocs.removeLastOrNull()
                         pathAdapter.setItems(viewModel.subDocs)
                         viewModel.upFiles(viewModel.subDocs.lastOrNull() ?: viewModel.rootDoc)
@@ -171,6 +173,16 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
                     }
                 }
             }
+            binding.root.setOnLongClickListener { view ->
+                val item = getItemByLayoutPosition(holder.layoutPosition)
+                if (item == viewModel.lastDir) {
+                    return@setOnLongClickListener true
+                }
+                item?.let {
+                    showFileMenu(view, item)
+                }
+                return@setOnLongClickListener true
+            }
         }
 
         override fun convert(
@@ -179,7 +191,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             item: File,
             payloads: MutableList<Any>
         ) {
-            if (item == (viewModel.subDocs.lastOrNull() ?: viewModel.rootDoc)) {
+            if (item == viewModel.lastDir) {
                 binding.imageView.setImageDrawable(upIcon)
                 binding.textView.text = dirParent
             } else if (item.isDirectory) {
@@ -191,6 +203,17 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             }
         }
 
+        private fun showFileMenu(view: View, file: File) {
+            val popupMenu = PopupMenu(context, view)
+            popupMenu.inflate(R.menu.file_long_click)
+            popupMenu.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_del -> viewModel.delFile(file)
+                }
+                true
+            }
+            popupMenu.show()
+        }
 
     }
 

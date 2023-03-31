@@ -1,4 +1,4 @@
-package io.legado.app.ui.document
+package io.legado.app.ui.file
 
 import android.app.Activity.RESULT_OK
 import android.content.Context

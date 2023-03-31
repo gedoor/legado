@@ -1,4 +1,4 @@
-package io.legado.app.ui.document.entity
+package io.legado.app.ui.file.entity
 
 import android.graphics.drawable.Drawable
 

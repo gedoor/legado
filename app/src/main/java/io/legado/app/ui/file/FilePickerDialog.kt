@@ -1,4 +1,4 @@
-package io.legado.app.ui.document
+package io.legado.app.ui.file
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -14,10 +14,10 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogFileChooserBinding
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.document.HandleFileContract.Companion.DIR
-import io.legado.app.ui.document.HandleFileContract.Companion.FILE
-import io.legado.app.ui.document.adapter.FileAdapter
-import io.legado.app.ui.document.adapter.PathAdapter
+import io.legado.app.ui.file.HandleFileContract.Companion.DIR
+import io.legado.app.ui.file.HandleFileContract.Companion.FILE
+import io.legado.app.ui.file.adapter.FileAdapter
+import io.legado.app.ui.file.adapter.PathAdapter
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
