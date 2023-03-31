@@ -27,6 +27,8 @@ class FileAdapter(context: Context, val callBack: CallBack) :
     private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!
     private val primaryTextColor = context.getPrimaryTextColor(!AppConfig.isNightTheme)
     private val disabledTextColor = context.getPrimaryDisabledTextColor(!AppConfig.isNightTheme)
+    private val dirRoot = "."
+    private val dirParent = ".."
 
     fun loadData(path: String?) {
         if (path == null) {
@@ -42,7 +44,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             val fileRoot = FileItem(
                 isDirectory = true,
                 icon = homeIcon,
-                name = DIR_ROOT,
+                name = dirRoot,
                 path = rootPath ?: path
             )
             data.add(fileRoot)
@@ -52,7 +54,7 @@ class FileAdapter(context: Context, val callBack: CallBack) :
             val fileParent = FileItem(
                 isDirectory = true,
                 icon = upIcon,
-                name = DIR_PARENT,
+                name = dirParent,
                 path = File(path).parent ?: ""
             )
             data.add(fileParent)
@@ -150,11 +152,6 @@ class FileAdapter(context: Context, val callBack: CallBack) :
          * 是否显示隐藏的目录（以“.”开头）
          */
         var isShowHideDir: Boolean
-    }
-
-    companion object {
-        const val DIR_ROOT = "."
-        const val DIR_PARENT = ".."
     }
 
 }
