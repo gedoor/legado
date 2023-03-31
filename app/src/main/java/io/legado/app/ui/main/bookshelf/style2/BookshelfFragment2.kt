@@ -114,11 +114,13 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     private fun initBooksData() {
         if (groupId == -100L) {
             binding.titleBar.title = getString(R.string.bookshelf)
+            binding.refreshLayout.isEnabled = true
         } else {
-            bookGroups.forEach {
-                if (groupId == it.groupId) {
-                    binding.titleBar.title = "${getString(R.string.bookshelf)}(${it.groupName})"
-                }
+            bookGroups.firstOrNull {
+                groupId == it.groupId
+            }?.let {
+                binding.titleBar.title = "${getString(R.string.bookshelf)}(${it.groupName})"
+                binding.refreshLayout.isEnabled = it.enableRefresh
             }
         }
         booksFlowJob?.cancel()

@@ -12,6 +12,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
 import io.legado.app.help.DefaultData
+import org.intellij.lang.annotations.Language
 import splitties.init.appCtx
 import java.util.*
 
@@ -20,7 +21,7 @@ val appDb by lazy {
 }
 
 @Database(
-    version = 62,
+    version = 63,
     exportSchema = true,
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
@@ -46,7 +47,8 @@ val appDb by lazy {
         AutoMigration(from = 58, to = 59),
         AutoMigration(from = 59, to = 60),
         AutoMigration(from = 60, to = 61),
-        AutoMigration(from = 61, to = 62)
+        AutoMigration(from = 61, to = 62),
+        AutoMigration(from = 62, to = 63)
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -91,40 +93,64 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
             override fun onOpen(db: SupportSQLiteDatabase) {
-                db.execSQL(
-                    """insert into book_groups(groupId, groupName, 'order', show) 
+                @Language("sql")
+                val insertBookGroupAllSql = """
+                    insert into book_groups(groupId, groupName, 'order', show) 
                     select ${AppConst.bookGroupAllId}, '全部', -10, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAllId})"""
-                )
-                db.execSQL(
-                    """insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${AppConst.bookGroupLocalId}, '本地', -9, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalId})"""
-                )
-                db.execSQL(
-                    """insert into book_groups(groupId, groupName, 'order', show) 
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAllId})
+                """.trimIndent()
+                db.execSQL(insertBookGroupAllSql)
+                @Language("sql")
+                val insertBookGroupLocalSql = """
+                    insert into book_groups(groupId, groupName, 'order', enableRefresh, show) 
+                    select ${AppConst.bookGroupLocalId}, '本地', -9, 0, 1
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalId})
+                """.trimIndent()
+                db.execSQL(insertBookGroupLocalSql)
+                @Language("sql")
+                val insertBookGroupMusicSql = """
+                    insert into book_groups(groupId, groupName, 'order', show) 
                     select ${AppConst.bookGroupAudioId}, '音频', -8, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAudioId})"""
-                )
-                db.execSQL(
-                    """insert into book_groups(groupId, groupName, 'order', show) 
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAudioId})
+                """.trimIndent()
+                db.execSQL(insertBookGroupMusicSql)
+                @Language("sql")
+                val insertBookGroupNetNoneGroupSql = """
+                    insert into book_groups(groupId, groupName, 'order', show) 
                     select ${AppConst.bookGroupNetNoneId}, '网络未分组', -7, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupNetNoneId})"""
-                )
-                db.execSQL(
-                    """insert into book_groups(groupId, groupName, 'order', show) 
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupNetNoneId})
+                """.trimIndent()
+                db.execSQL(insertBookGroupNetNoneGroupSql)
+                @Language("sql")
+                val insertBookGroupLocalNoneGroupSql = """
+                    insert into book_groups(groupId, groupName, 'order', show) 
                     select ${AppConst.bookGroupLocalNoneId}, '本地未分组', -6, 0
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalNoneId})"""
-                )
-                db.execSQL(
-                    """insert into book_groups(groupId, groupName, 'order', show) 
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalNoneId})
+                """.trimIndent()
+                db.execSQL(insertBookGroupLocalNoneGroupSql)
+                @Language("sql")
+                val insertBookGroupErrorSql = """
+                    insert into book_groups(groupId, groupName, 'order', show) 
                     select ${AppConst.bookGroupErrorId}, '更新失败', -1, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupErrorId})"""
-                )
-                db.execSQL("update book_sources set loginUi = null where loginUi = 'null'")
-                db.execSQL("update rssSources set loginUi = null where loginUi = 'null'")
-                db.execSQL("update httpTTS set loginUi = null where loginUi = 'null'")
-                db.execSQL("update httpTTS set concurrentRate = '0' where loginUi is null")
+                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupErrorId})
+                """.trimIndent()
+                db.execSQL(insertBookGroupErrorSql)
+                @Language("sql")
+                val upBookSourceLoginUiSql =
+                    "update book_sources set loginUi = null where loginUi = 'null'"
+                db.execSQL(upBookSourceLoginUiSql)
+                @Language("sql")
+                val upRssSourceLoginUiSql =
+                    "update rssSources set loginUi = null where loginUi = 'null'"
+                db.execSQL(upRssSourceLoginUiSql)
+                @Language("sql")
+                val upHttpTtsLoginUiSql =
+                    "update httpTTS set loginUi = null where loginUi = 'null'"
+                db.execSQL(upHttpTtsLoginUiSql)
+                @Language("sql")
+                val upHttpTtsConcurrentRateSql =
+                    "update httpTTS set concurrentRate = '0' where concurrentRate is null"
+                db.execSQL(upHttpTtsConcurrentRateSql)
                 db.query("select * from keyboardAssists order by serialNo").use {
                     if (it.count == 0) {
                         DefaultData.keyboardAssists.forEach { keyboardAssist ->

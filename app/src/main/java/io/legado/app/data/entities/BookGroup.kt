@@ -18,6 +18,9 @@ data class BookGroup(
     var groupName: String,
     var cover: String? = null,
     var order: Int = 0,
+    @ColumnInfo(defaultValue = "1")
+    var enableRefresh: Boolean = true,
+    @ColumnInfo(defaultValue = "1")
     var show: Boolean = true,
     @ColumnInfo(defaultValue = "-1")
     var bookSort: Int = -1
@@ -51,9 +54,10 @@ data class BookGroup(
             return other.groupId == groupId
                     && other.groupName == groupName
                     && other.cover == cover
-                    && other.order == order
-                    && other.show == show
                     && other.bookSort == bookSort
+                    && other.enableRefresh == enableRefresh
+                    && other.show == show
+                    && other.order == order
         }
         return false
     }
