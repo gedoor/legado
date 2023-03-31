@@ -32,19 +32,21 @@ class SelectActionBar @JvmOverloads constructor(
         .inflate(LayoutInflater.from(context), this, true)
 
     init {
-        setBackgroundColor(context.bottomBackground)
-        elevation = context.elevation
-        binding.cbSelectedAll.setTextColor(primaryTextColor)
-        TintHelper.setTint(binding.cbSelectedAll, context.accentColor, !bgIsLight)
-        binding.ivMenuMore.setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN)
-        binding.cbSelectedAll.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) {
-                callBack?.selectAll(isChecked)
+        if (!isInEditMode) {
+            setBackgroundColor(context.bottomBackground)
+            elevation = context.elevation
+            binding.cbSelectedAll.setTextColor(primaryTextColor)
+            TintHelper.setTint(binding.cbSelectedAll, context.accentColor, !bgIsLight)
+            binding.ivMenuMore.setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN)
+            binding.cbSelectedAll.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (buttonView.isPressed) {
+                    callBack?.selectAll(isChecked)
+                }
             }
+            binding.btnRevertSelection.setOnClickListener { callBack?.revertSelection() }
+            binding.btnSelectActionMain.setOnClickListener { callBack?.onClickSelectBarMainAction() }
+            binding.ivMenuMore.setOnClickListener { selMenu?.show() }
         }
-        binding.btnRevertSelection.setOnClickListener { callBack?.revertSelection() }
-        binding.btnSelectActionMain.setOnClickListener { callBack?.onClickSelectBarMainAction() }
-        binding.ivMenuMore.setOnClickListener { selMenu?.show() }
     }
 
     fun setMainActionText(text: String) = binding.run {

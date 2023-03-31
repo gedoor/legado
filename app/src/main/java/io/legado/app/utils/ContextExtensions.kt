@@ -304,6 +304,7 @@ fun Context.openUrl(url: String) {
         startActivity(IntentHelp.getBrowserIntent(url))
     } catch (e: Exception) {
         toastOnUi(e.localizedMessage ?: "open url error")
+        e.printOnDebug()
     }
 }
 
@@ -312,6 +313,7 @@ fun Context.openUrl(uri: Uri) {
         startActivity(IntentHelp.getBrowserIntent(uri))
     } catch (e: Exception) {
         toastOnUi(e.localizedMessage ?: "open url error")
+        e.printOnDebug()
     }
 }
 
@@ -328,6 +330,7 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
         startActivity(intent)
     } catch (e: Exception) {
         toastOnUi(e.stackTraceStr)
+        e.printOnDebug()
     }
 }
 

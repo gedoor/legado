@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:contentInsetStartWithNavigation="0dp"
+        app:contentInsetRight="24dp"
         app:contentLayout="@layout/view_search" />
 
     <!--path-->
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layout_constraintBottom_toTopOf="@id/select_action_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_path">
 
         <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
@@ -49,11 +49,5 @@
             tools:text="TextView" />
 
     </FrameLayout>
-
-    <io.legado.app.ui.widget.SelectActionBar
-        android:id="@+id/select_action_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

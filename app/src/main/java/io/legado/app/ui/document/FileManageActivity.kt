@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityFileManageBinding
 import io.legado.app.databinding.ItemFileBinding
 import io.legado.app.databinding.ItemPathPickerBinding
@@ -19,6 +21,7 @@ import io.legado.app.ui.document.utils.FilePickerIcon
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ConvertUtils
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.openFileUri
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
@@ -141,6 +144,14 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
                         viewModel.subDocs.add(item)
                         pathAdapter.setItems(viewModel.subDocs)
                         viewModel.upFiles(item)
+                    } else {
+                        openFileUri(
+                            FileProvider.getUriForFile(
+                                this@FileManageActivity,
+                                AppConst.authority,
+                                item
+                            )
+                        )
                     }
                 }
             }
