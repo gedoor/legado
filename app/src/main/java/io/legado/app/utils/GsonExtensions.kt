@@ -9,7 +9,6 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
 import java.io.OutputStreamWriter
-import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.math.ceil
 
@@ -53,7 +52,10 @@ inline fun <reified T> Gson.fromJsonArray(json: String?): Result<List<T>> {
         if (json == null) {
             throw JsonSyntaxException("解析字符串为空")
         }
-        fromJson(json, ParameterizedTypeImpl(T::class.java)) as List<T>
+        fromJson(
+            json,
+            TypeToken.getParameterized(List::class.java, T::class.java).type
+        ) as List<T>
     }
 }
 
@@ -73,7 +75,10 @@ inline fun <reified T> Gson.fromJsonArray(inputStream: InputStream?): Result<Lis
             throw JsonSyntaxException("解析流为空")
         }
         val reader = InputStreamReader(inputStream)
-        fromJson(reader, ParameterizedTypeImpl(T::class.java)) as List<T>
+        fromJson(
+            reader,
+            TypeToken.getParameterized(List::class.java, T::class.java).type
+        ) as List<T>
     }
 }
 
@@ -92,14 +97,6 @@ fun Gson.writeToOutputStream(out: OutputStream, any: Any) {
         toJson(any, any::class.java, writer)
     }
     writer.close()
-}
-
-class ParameterizedTypeImpl(private val clazz: Class<*>) : ParameterizedType {
-    override fun getRawType(): Type = List::class.java
-
-    override fun getOwnerType(): Type? = null
-
-    override fun getActualTypeArguments(): Array<Type> = arrayOf(clazz)
 }
 
 /**
