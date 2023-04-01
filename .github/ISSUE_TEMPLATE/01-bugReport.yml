@@ -33,11 +33,13 @@ body:
   - type: textarea
     attributes:
       label: 其他信息 / Additions
+      placeholder: "请用```将提交的内容包裹"
 
   - type: textarea
     attributes:
       label: 日志提交 / Relevant log output
       description: 阅读日志位于我的-关于-崩溃日志、书架-右上角-日志，或者自行使用log工具抓取日志
+      placeholder: "请用```将日志内容包裹"
 
   - type: input
     attributes:
