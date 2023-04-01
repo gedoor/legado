@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.exception.NoStackTraceException
@@ -14,7 +15,6 @@ import io.legado.app.help.http.text
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
-import io.legado.app.utils.printOnDebug
 
 class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
 
@@ -64,8 +64,8 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
         execute {
             importSourceAwait(text.trim())
         }.onError {
-            it.printOnDebug()
-            errorLiveData.postValue(it.localizedMessage ?: "")
+            errorLiveData.postValue("ImportError:${it.localizedMessage}")
+            AppLog.put("ImportError:${it.localizedMessage}", it)
         }.onSuccess {
             comparisonSource()
         }

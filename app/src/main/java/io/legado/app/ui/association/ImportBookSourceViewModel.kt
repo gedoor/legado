@@ -7,6 +7,7 @@ import com.jayway.jsonpath.JsonPath
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
@@ -124,8 +125,8 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
-            it.printOnDebug()
-            errorLiveData.postValue(it.localizedMessage ?: "")
+            errorLiveData.postValue("ImportError:${it.localizedMessage}")
+            AppLog.put("ImportError:${it.localizedMessage}", it)
         }.onSuccess {
             comparisonSource()
         }

@@ -174,8 +174,9 @@
 -dontwarn com.jeremyliao.liveeventbus.**
 -dontwarn org.commonmark.ext.gfm.**
 
--keep class com.google.gson.** { *; }
--keep class com.ke.gson.** { *; }
+-keep,allowobfuscation,allowshrinking class com.google.gson.** { *; }
+-keep,allowobfuscation,allowshrinking class com.ke.gson.** { *; }
+-keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
 -keep class com.jeremyliao.liveeventbus.** { *; }
 -keep class okhttp3.**{*;}
 -keep class okio.**{*;}
