@@ -6,13 +6,15 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.utils.channel
 import io.legado.app.utils.jsonPath
 import io.legado.app.utils.readString
 import kotlinx.coroutines.CoroutineScope
+import splitties.init.appCtx
 
 @Keep
 @Suppress("unused")
-object AppUpdateGitHub: AppUpdate.AppUpdateInterface {
+object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
 
     override fun check(
         scope: CoroutineScope,
@@ -31,9 +33,12 @@ object AppUpdateGitHub: AppUpdate.AppUpdateInterface {
             if (tagName > AppConst.appInfo.versionName) {
                 val updateBody = rootDoc.readString("$.body")
                     ?: throw NoStackTraceException("获取新版本出错")
-                val downloadUrl = rootDoc.readString("$.assets[0].browser_download_url")
+                val path = "\$.assets[?(@.name =~ /legado_${appCtx.channel}_.*?apk\$/)]"
+                val downloadUrl = rootDoc.read<List<String>>("${path}.browser_download_url")
+                    .firstOrNull()
                     ?: throw NoStackTraceException("获取新版本出错")
-                val fileName = rootDoc.readString("$.assets[0].name")
+                val fileName = rootDoc.read<List<String>>("${path}.name")
+                    .firstOrNull()
                     ?: throw NoStackTraceException("获取新版本出错")
                 return@async AppUpdate.UpdateInfo(tagName, updateBody, downloadUrl, fileName)
             } else {
