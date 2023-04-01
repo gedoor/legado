@@ -104,7 +104,6 @@ android {
         }
         google {
             dimension "mode"
-            minSdk 26
             applicationId "io.legado.play"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
         }
