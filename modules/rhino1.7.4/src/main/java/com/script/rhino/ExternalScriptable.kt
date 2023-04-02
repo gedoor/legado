@@ -54,17 +54,13 @@ internal class ExternalScriptable @JvmOverloads constructor(
         }
     }
 
-    private fun isEmpty(name: String): Boolean {
-        return name == ""
-    }
-
     override fun getClassName(): String {
         return "Global"
     }
 
     @Synchronized
     override fun get(name: String, start: Scriptable): Any? {
-        return if (this.isEmpty(name)) {
+        return if (name.isEmpty()) {
             indexedProps.getOrElse(name) { Scriptable.NOT_FOUND }
         } else {
             synchronized(context) {
@@ -86,7 +82,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
 
     @Synchronized
     override fun has(name: String, start: Scriptable): Boolean {
-        return if (this.isEmpty(name)) {
+        return if (name.isEmpty()) {
             indexedProps.containsKey(name)
         } else {
             synchronized(context) { return context.getAttributesScope(name) != -1 }
@@ -101,7 +97,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
     override fun put(name: String, start: Scriptable, value: Any?) {
         if (start === this) {
             synchronized(this) {
-                if (this.isEmpty(name)) {
+                if (name.isEmpty()) {
                     indexedProps.put(name, value)
                 } else {
                     synchronized(context) {
@@ -128,7 +124,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
 
     @Synchronized
     override fun delete(name: String) {
-        if (this.isEmpty(name)) {
+        if (name.isEmpty()) {
             indexedProps.remove(name)
         } else {
             synchronized(context) {
