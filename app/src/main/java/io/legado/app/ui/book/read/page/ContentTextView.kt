@@ -11,6 +11,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
+import io.legado.app.help.book.isImage
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
@@ -147,7 +148,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val lineBase = textLine.lineBase + relativeOffset
         val lineBottom = textLine.lineBottom + relativeOffset
         drawChars(canvas, textPage, textLine, lineTop, lineBase, lineBottom)
-        if (ReadBookConfig.underline) {
+        if (ReadBookConfig.underline && ReadBook.book?.isImage != true) {
             drawUnderline(canvas, textLine, lineBottom)
         }
     }
