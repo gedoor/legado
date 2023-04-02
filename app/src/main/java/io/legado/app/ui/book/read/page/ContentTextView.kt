@@ -44,7 +44,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var callBack: CallBack
     private val visibleRect = RectF()
     val selectStart = TextPos(0, 0, 0)
-    val selectEnd = TextPos(0, 0, 0)
+    private val selectEnd = TextPos(0, 0, 0)
     var textPage: TextPage = TextPage()
         private set
     var isMainView = false
