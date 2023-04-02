@@ -675,12 +675,12 @@ object ChapterProvider {
     }
 
     /**
-     * 更新View尺寸
+     * 更新View尺寸,height减去1dp防止下划线无法画全
      */
     fun upViewSize(width: Int, height: Int) {
         if (width > 0 && height > 0 && (width != viewWidth || height != viewHeight)) {
             viewWidth = width
-            viewHeight = height
+            viewHeight = height - 1.dpToPx()
             upLayout()
             postEvent(EventBus.UP_CONFIG, true)
         }
