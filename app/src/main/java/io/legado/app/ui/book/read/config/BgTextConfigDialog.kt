@@ -112,6 +112,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         ivEdit.setColorFilter(secondaryTextColor, PorterDuff.Mode.SRC_IN)
         tvRestore.setTextColor(primaryTextColor)
         swDarkStatusIcon.setTextColor(primaryTextColor)
+        swUnderline.setTextColor(primaryTextColor)
         ivImport.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
         ivExport.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
         ivDelete.setColorFilter(primaryTextColor, PorterDuff.Mode.SRC_IN)
@@ -138,6 +139,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     private fun initData() = with(ReadBookConfig.durConfig) {
         binding.tvName.text = name.ifBlank { "文字" }
         binding.swDarkStatusIcon.isChecked = curStatusIconDark()
+        binding.swUnderline.isChecked = underline
         binding.sbBgAlpha.progress = bgAlpha
     }
 
@@ -173,6 +175,10 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         binding.swDarkStatusIcon.setOnCheckedChangeListener { _, isChecked ->
             setCurStatusIconDark(isChecked)
             (activity as? ReadBookActivity)?.upSystemUiVisibility()
+        }
+        binding.swUnderline.setOnCheckedChangeListener { _, isChecked ->
+            underline = isChecked
+            postEvent(EventBus.UP_CONFIG, true)
         }
         binding.tvTextColor.setOnClickListener {
             ColorPickerDialog.newBuilder()

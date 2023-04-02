@@ -114,7 +114,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private fun drawPage(canvas: Canvas) {
         var relativeOffset = relativeOffset(0)
         textPage.lines.forEach { textLine ->
-            draw(canvas, textPage, textLine, relativeOffset)
+            drawLine(canvas, textPage, textLine, relativeOffset)
         }
         if (!callBack.isScroll) return
         //滚动翻页
@@ -122,14 +122,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textPage1 = relativePage(1)
         relativeOffset = relativeOffset(1)
         textPage1.lines.forEach { textLine ->
-            draw(canvas, textPage1, textLine, relativeOffset)
+            drawLine(canvas, textPage1, textLine, relativeOffset)
         }
         if (!pageFactory.hasNextPlus()) return
         relativeOffset = relativeOffset(2)
         if (relativeOffset < ChapterProvider.visibleHeight) {
             val textPage2 = relativePage(2)
             textPage2.lines.forEach { textLine ->
-                draw(canvas, textPage2, textLine, relativeOffset)
+                drawLine(canvas, textPage2, textLine, relativeOffset)
             }
         }
     }
@@ -137,7 +137,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 绘制页面
      */
-    private fun draw(
+    private fun drawLine(
         canvas: Canvas,
         textPage: TextPage,
         textLine: TextLine,
@@ -147,6 +147,22 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val lineBase = textLine.lineBase + relativeOffset
         val lineBottom = textLine.lineBottom + relativeOffset
         drawChars(canvas, textPage, textLine, lineTop, lineBase, lineBottom)
+        if (ReadBookConfig.underline) {
+            drawUnderline(canvas, textLine, lineBottom)
+        }
+    }
+
+    /**
+     * 绘制下划线
+     */
+    private fun drawUnderline(canvas: Canvas, textLine: TextLine, lineY: Float) {
+        canvas.drawLine(
+            textLine.lineStart,
+            lineY,
+            textLine.lineEnd,
+            lineY,
+            ChapterProvider.contentPaint
+        )
     }
 
     /**
