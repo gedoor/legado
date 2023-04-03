@@ -141,9 +141,9 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 val backupPath = AppConfig.backupPath
                 if (!backupPath.isNullOrEmpty()) {
                     val uri = Uri.parse(backupPath)
-                    FileDoc.fromUri(uri, true).list()?.let {
-
-                    }
+                    FileDoc.fromUri(uri, true)
+                        .find("crash")
+                        ?.delete()
                 }
             }.onError {
                 context.toastOnUi(it.localizedMessage)

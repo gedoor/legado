@@ -35,6 +35,24 @@ data class FileDoc(
         return uri.readBytes(appCtx)
     }
 
+    fun asDocumentFile(): DocumentFile? {
+        if (isContentScheme) {
+            return if (isDir) {
+                DocumentFile.fromTreeUri(appCtx, uri)
+            } else {
+                DocumentFile.fromSingleUri(appCtx, uri)
+            }
+        }
+        return null
+    }
+
+    fun asFile(): File? {
+        if (isContentScheme) {
+            return null
+        }
+        return File(uri.path!!)
+    }
+
     companion object {
 
         fun fromUri(uri: Uri, isDir: Boolean): FileDoc {
@@ -240,6 +258,13 @@ fun FileDoc.writeText(text: String) {
     } else {
         File(uri.path!!).writeText(text)
     }
+}
+
+fun FileDoc.delete() {
+    asFile()?.let {
+        FileUtils.delete(it, true)
+    }
+    asDocumentFile()?.delete()
 }
 
 /**
