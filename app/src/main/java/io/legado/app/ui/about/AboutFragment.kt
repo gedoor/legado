@@ -13,7 +13,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.help.AppUpdate
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.prefs.PreferenceCategory
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
@@ -75,7 +74,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "privacyPolicy" -> showMdFile(getString(R.string.privacy_policy), "privacyPolicy.md")
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
-            "crashLog" -> showCrashLogs()
+            "crashLog" -> showDialogFragment<CrashLogsDialog>()
             "qqChannel" -> context?.openUrl(qqChannel)
             "tg" -> openUrl(R.string.tg_url)
             "discord" -> openUrl(R.string.discord_url)
@@ -150,22 +149,6 @@ class AboutFragment : PreferenceFragmentCompat() {
             toastOnUi("添加失败,请手动添加")
         }
         return false
-    }
-
-    private fun showCrashLogs() {
-        context?.externalCacheDir?.let { exCacheDir ->
-            val crashDir = exCacheDir.getFile("crash")
-            val crashLogs = crashDir.listFiles()
-            val crashLogNames = arrayListOf<String>()
-            crashLogs?.forEach {
-                crashLogNames.add(it.name)
-            }
-            context?.selector(R.string.crash_log, crashLogNames) { _, select ->
-                crashLogs?.getOrNull(select)?.let { logFile ->
-                    showDialogFragment(TextDialog("Crash log", logFile.readText()))
-                }
-            }
-        }
     }
 
 }
