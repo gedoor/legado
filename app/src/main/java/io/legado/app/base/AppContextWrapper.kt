@@ -1,5 +1,6 @@
 package io.legado.app.base
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -15,8 +16,8 @@ import java.util.*
 @Suppress("unused")
 object AppContextWrapper {
 
+    @SuppressLint("ObsoleteSdkInt")
     fun wrap(context: Context): Context {
-
         val resources: Resources = context.resources
         val configuration: Configuration = resources.configuration
         val targetLocale = getSetLocale(context)
@@ -42,6 +43,7 @@ object AppContextWrapper {
     /**
      * 当前系统语言
      */
+    @SuppressLint("ObsoleteSdkInt")
     private fun getSystemLocale(): Locale {
         val locale: Locale
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //7.0有多语言设置获取顶部的语言
@@ -56,6 +58,7 @@ object AppContextWrapper {
     /**
      * 当前App语言
      */
+    @SuppressLint("ObsoleteSdkInt")
     private fun getAppLocale(context: Context): Locale {
         val locale: Locale
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

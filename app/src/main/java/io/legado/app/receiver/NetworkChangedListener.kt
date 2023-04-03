@@ -13,6 +13,7 @@ import splitties.systemservices.connectivityManager
 /**
  * 监测网络变化
  */
+@SuppressLint("ObsoleteSdkInt")
 class NetworkChangedListener(private val context: Context) {
 
     var onNetworkChanged: (() -> Unit)? = null

@@ -1,5 +1,6 @@
 package io.legado.app.service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -161,6 +162,7 @@ class WebService : BaseService() {
         startForeground(AppConst.notificationIdWeb, notification)
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private fun upTile(active: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             kotlin.runCatching {
