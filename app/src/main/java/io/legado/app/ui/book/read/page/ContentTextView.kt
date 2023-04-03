@@ -23,10 +23,7 @@ import io.legado.app.ui.book.read.page.entities.column.*
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
-import io.legado.app.utils.activity
-import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import kotlin.math.min
 
 /**
@@ -149,14 +146,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val lineBottom = textLine.lineBottom + relativeOffset
         drawChars(canvas, textPage, textLine, lineTop, lineBase, lineBottom)
         if (ReadBookConfig.underline && ReadBook.book?.isImage != true) {
-            drawUnderline(canvas, textLine, lineBottom)
+            drawUnderline(canvas, textLine, relativeOffset)
         }
     }
 
     /**
      * 绘制下划线
      */
-    private fun drawUnderline(canvas: Canvas, textLine: TextLine, lineY: Float) {
+    private fun drawUnderline(canvas: Canvas, textLine: TextLine, relativeOffset: Float) {
+        val lineY = relativeOffset + textLine.lineBottom - 1.dpToPx()
         canvas.drawLine(
             textLine.lineStart,
             lineY,

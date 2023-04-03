@@ -675,12 +675,12 @@ object ChapterProvider {
     }
 
     /**
-     * 更新View尺寸,height减去1dp防止下划线无法画全
+     * 更新View尺寸
      */
     fun upViewSize(width: Int, height: Int) {
         if (width > 0 && height > 0 && (width != viewWidth || height != viewHeight)) {
             viewWidth = width
-            viewHeight = height - 1.dpToPx()
+            viewHeight = height
             upLayout()
             postEvent(EventBus.UP_CONFIG, true)
         }
@@ -713,6 +713,7 @@ object ChapterProvider {
             } else {
                 viewWidth - paddingLeft - paddingRight
             }
+            //留1dp画最后一行下划线
             visibleHeight = viewHeight - paddingTop - paddingBottom
             visibleRight = viewWidth - paddingRight
             visibleBottom = paddingTop + visibleHeight
