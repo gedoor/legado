@@ -32,6 +32,11 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     private val viewModel by viewModels<CrashViewModel>()
     private val adapter by lazy { LogAdapter() }
 
+    override fun onStart() {
+        super.onStart()
+        setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.crash_log)
