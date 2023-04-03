@@ -2,6 +2,7 @@
 
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.icu.text.Collator
 import android.icu.util.ULocale
 import android.net.Uri
@@ -84,6 +85,7 @@ fun String.splitNotBlank(regex: Regex, limit: Int = 0): Array<String> = run {
     this.split(regex, limit).map { it.trim() }.filterNot { it.isBlank() }.toTypedArray()
 }
 
+@SuppressLint("ObsoleteSdkInt")
 fun String.cnCompare(other: String): Int {
     return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
         Collator.getInstance(ULocale.SIMPLIFIED_CHINESE).compare(this, other)

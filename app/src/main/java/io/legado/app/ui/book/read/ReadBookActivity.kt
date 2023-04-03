@@ -1082,6 +1082,13 @@ class ReadBookActivity : BaseReadBookActivity(),
                                 putExtra("url", it)
                                 IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
                             }
+                        } else if (it.isTrue()) {
+                            //购买成功后刷新目录
+                            ReadBook.book?.let {
+                                ReadBook.curTextChapter = null
+                                BookHelp.delContent(book, chapter)
+                                viewModel.loadChapterList(book)
+                            }
                         }
                     }.onError {
                         AppLog.putDebug(it.localizedMessage)
