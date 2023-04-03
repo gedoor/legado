@@ -239,7 +239,7 @@ dependencies {
     //apache
     implementation('org.apache.commons:commons-text:1.10.0')
     //noinspection GradleDependency,1.23.0对安卓支持不好
-    implementation 'org.apache.commons:commons-compress:1.22'
+    implementation 'org.apache.commons:commons-compress:1.23.0'
     implementation 'org.tukaani:xz:1.9'
 
     //RAR
