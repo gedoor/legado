@@ -107,7 +107,7 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 val backupPath = AppConfig.backupPath
                 if (!backupPath.isNullOrEmpty()) {
                     val uri = Uri.parse(backupPath)
-                    FileDoc.fromUri(uri, true).list {
+                    FileDoc.fromUri(uri, true).find("crash")?.list {
                         !it.isDir
                     }?.let {
                         list.addAll(it)
