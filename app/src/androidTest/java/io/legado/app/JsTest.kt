@@ -2,6 +2,7 @@ package io.legado.app
 
 import com.script.SimpleBindings
 import io.legado.app.constant.SCRIPT_ENGINE
+import io.legado.app.data.entities.BookChapter
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 import org.junit.Test
@@ -132,6 +133,16 @@ class JsTest {
         """.trimIndent()
         val result1 = SCRIPT_ENGINE.eval(js1)
         Assert.assertEquals(result1, "未知错误,请联系开发者!")
+    }
+
+    @Test
+    fun chapterText() {
+        val chapter = BookChapter(title = "xxxyyy")
+        val bindings = SimpleBindings()
+        bindings["chapter"] = chapter
+        val js = "chapter.title"
+        val result = SCRIPT_ENGINE.eval(js, bindings)
+        Assert.assertEquals(result, "xxxyyy")
     }
 
 }
