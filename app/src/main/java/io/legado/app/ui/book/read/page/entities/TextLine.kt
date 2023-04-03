@@ -17,6 +17,7 @@ data class TextLine(
     var lineTop: Float = 0f,
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
+    var indentWidth: Float = 0f,
     val isTitle: Boolean = false,
     var isParagraphEnd: Boolean = false,
     var isReadAloud: Boolean = false,

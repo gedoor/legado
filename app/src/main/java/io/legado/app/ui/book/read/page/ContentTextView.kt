@@ -156,7 +156,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private fun drawUnderline(canvas: Canvas, textLine: TextLine, relativeOffset: Float) {
         val lineY = relativeOffset + textLine.lineBottom - 1.dpToPx()
         canvas.drawLine(
-            textLine.lineStart,
+            textLine.lineStart + textLine.indentWidth,
             lineY,
             textLine.lineEnd,
             lineY,
