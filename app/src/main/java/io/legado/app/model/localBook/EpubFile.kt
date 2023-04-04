@@ -229,7 +229,7 @@ class EpubFile(var book: Book) {
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
             bodyElement.getElementById(endFragmentId)?.outerHtml()?.let {
-                bodyString = bodyString.substringBefore(it).ifBlank { bodyString }
+                bodyString = bodyString.substringBefore(it)
             }
         }
         //截取过再重新解析
