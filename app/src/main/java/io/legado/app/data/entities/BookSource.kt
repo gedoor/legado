@@ -32,10 +32,13 @@ data class BookSource(
     // 详情页url正则
     var bookUrlPattern: String? = null,
     // 手动排序编号
+    @ColumnInfo(defaultValue = "0")
     var customOrder: Int = 0,
     // 是否启用
+    @ColumnInfo(defaultValue = "1")
     var enabled: Boolean = true,
     // 启用发现
+    @ColumnInfo(defaultValue = "1")
     var enabledExplore: Boolean = true,
     // 启用段评
     var enabledReview: Boolean? = false,
@@ -66,6 +69,8 @@ data class BookSource(
     var weight: Int = 0,
     // 发现url
     var exploreUrl: String? = null,
+    // 发现筛选规则
+    var exploreScreen: String? = null,
     // 发现规则
     var ruleExplore: ExploreRule? = null,
     // 搜索url
