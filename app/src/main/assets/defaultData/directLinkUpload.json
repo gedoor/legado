@@ -2,7 +2,7 @@
   {
     "uploadUrl": "https://sy.mgz6.cc/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
     "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.mgz6.cc/shuyuan/' + result",
-    "summary": "喵公子网盘(有效期2天)"
+    "summary": "喵公子网盘(有效期7天)"
   },
   {
     "uploadUrl": "http://v2.jt12.de/up-v2.php,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
