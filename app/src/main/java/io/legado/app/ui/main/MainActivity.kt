@@ -36,7 +36,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.BookshelfFragment1
 import io.legado.app.ui.main.bookshelf.style2.BookshelfFragment2
-import io.legado.app.ui.main.explore.ExploreFragment
+import io.legado.app.ui.main.explore.style2.ExploreFragment2
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -145,7 +145,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 if (System.currentTimeMillis() - exploreReselected > 300) {
                     exploreReselected = System.currentTimeMillis()
                 } else {
-                    (fragmentMap[1] as? ExploreFragment)?.compressExplore()
+                    (fragmentMap[1] as? ExploreFragment2)?.compressExplore()
                 }
             }
         }
@@ -343,7 +343,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return when (getId(position)) {
                 idBookshelf1 -> BookshelfFragment1()
                 idBookshelf2 -> BookshelfFragment2()
-                idExplore -> ExploreFragment()
+                idExplore -> ExploreFragment2()
                 idRss -> RssFragment()
                 else -> MyFragment()
             }

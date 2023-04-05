@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.explore
+package io.legado.app.ui.main.explore.style2
 
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.data.entities.BookSource

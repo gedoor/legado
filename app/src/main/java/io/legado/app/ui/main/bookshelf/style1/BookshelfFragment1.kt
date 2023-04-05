@@ -16,7 +16,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.databinding.FragmentBookshelfBinding
+import io.legado.app.databinding.FragmentBookshelf1Binding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.group.GroupEditDialog
@@ -30,11 +30,11 @@ import kotlin.collections.set
 /**
  * 书架界面
  */
-class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf),
+class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener {
 
-    private val binding by viewBinding(FragmentBookshelfBinding::bind)
+    private val binding by viewBinding(FragmentBookshelf1Binding::bind)
     private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager) }
     private val tabLayout: TabLayout by lazy {
         binding.titleBar.findViewById(R.id.tab_layout)

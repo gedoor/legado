@@ -31,7 +31,7 @@ import io.legado.app.utils.*
 
 abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId) {
 
-    val activityViewModel by activityViewModels<MainViewModel>()
+    protected val activityViewModel by activityViewModels<MainViewModel>()
     override val viewModel by viewModels<BookshelfViewModel>()
 
     private val importBookshelf = registerForActivityResult(HandleFileContract()) {
