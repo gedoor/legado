@@ -67,9 +67,6 @@ class JsTest {
             	result = result + o
                 println(o)
             }
-            var b=[]
-            b.push(4,5,6)
-            b.forEach(c => {println(c)})
             result
         """.trimIndent()
         val result = SCRIPT_ENGINE.eval(jsFor, scope).toString()

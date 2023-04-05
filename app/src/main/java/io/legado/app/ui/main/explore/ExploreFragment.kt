@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.explore.style2
+package io.legado.app.ui.main.explore
 
 import android.os.Bundle
 import android.view.Menu
@@ -12,18 +12,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
+import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
-import io.legado.app.databinding.FragmentExplore2Binding
+import io.legado.app.databinding.FragmentExploreBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.main.explore.BaseExploreFragment
-import io.legado.app.ui.main.explore.ExploreViewModel
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.setEdgeEffectColor
@@ -38,14 +37,14 @@ import kotlinx.coroutines.launch
 /**
  * 发现界面
  */
-class ExploreFragment2 : BaseExploreFragment(R.layout.fragment_explore2),
+class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     ExploreAdapter.CallBack {
 
     override val viewModel by viewModels<ExploreViewModel>()
-    private val binding by viewBinding(FragmentExplore2Binding::bind)
+    private val binding by viewBinding(FragmentExploreBinding::bind)
     private val adapter by lazy { ExploreAdapter(requireContext(), this) }
     private val linearLayoutManager by lazy { LinearLayoutManager(context) }
-    override val searchView: SearchView by lazy {
+    private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
     private val diffItemCallBack = ExploreDiffItemCallBack()

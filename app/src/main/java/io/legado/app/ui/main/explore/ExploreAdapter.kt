@@ -1,4 +1,4 @@
-package io.legado.app.ui.main.explore.style2
+package io.legado.app.ui.main.explore
 
 import android.content.Context
 import android.view.View
