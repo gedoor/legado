@@ -1,13 +1,13 @@
 package io.legado.app.utils
 
 import io.legado.app.BuildConfig
-import io.legado.app.help.config.AppConfig
 import io.legado.app.constant.AppLog
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.model.analyzeRule.CustomUrl
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 object UrlUtil {
 
@@ -89,7 +89,7 @@ object UrlUtil {
                    }
                }
             }
-            AppLog.put("${url.toString()} response header:\n$headersString")
+            AppLog.put("$url response header:\n$headersString")
         }
 
         // val fileSize = conn.getContentLengthLong() / 1024
@@ -105,7 +105,7 @@ object UrlUtil {
             val fileNames = raw.split(";".toRegex()).filter { it.contains("filename") }
             val names = hashSetOf<String>()
             fileNames.forEach {
-                var fileName = it.substringAfter("=")
+                val fileName = it.substringAfter("=")
                     .trim()
                     .replace("^\"".toRegex(), "")
                     .replace("\"$".toRegex(), "")
@@ -149,7 +149,7 @@ object UrlUtil {
 
     /* 获取合法的文件后缀 */
     fun getSuffix(str: String, default: String? = null): String {
-        val suffix = str.substringAfterLast(".").substringBeforeLast(",")
+        val suffix = CustomUrl(str).getUrl().substringAfterLast(".")
         //检查截取的后缀字符是否合法 [a-zA-Z0-9]
         val fileSuffixRegex = Regex("^[a-z\\d]+$", RegexOption.IGNORE_CASE)
         return if (suffix.length > 5 || !suffix.matches(fileSuffixRegex)) {
