@@ -37,22 +37,11 @@ import org.mozilla.javascript.Function
  * @since 1.6
  */
 internal class ExternalScriptable @JvmOverloads constructor(
-    context: ScriptContext?,
-    indexedProps: MutableMap<Any, Any?> = HashMap()
+    val context: ScriptContext,
+    private val indexedProps: MutableMap<Any, Any?> = HashMap()
 ) : Scriptable {
-    val context: ScriptContext
-    private val indexedProps: MutableMap<Any, Any?>
     private var prototype: Scriptable? = null
     private var parent: Scriptable? = null
-
-    init {
-        if (context == null) {
-            throw NullPointerException("context is null")
-        } else {
-            this.context = context
-            this.indexedProps = indexedProps
-        }
-    }
 
     private fun isEmpty(name: String): Boolean {
         return name == ""

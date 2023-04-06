@@ -39,7 +39,7 @@ import java.security.AccessControlContext
  * @author A. Sundararajan
  * @since 1.6
  */
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "unused")
 class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
     ImporterTopLevel(cx, System.getSecurityManager() != null) {
 
@@ -57,7 +57,7 @@ class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
 
         @JvmStatic
         fun bindings(
-            cx: Context?,
+            cx: Context,
             thisObj: Scriptable?,
             args: Array<Any?>,
             funObj: Function?
@@ -77,7 +77,7 @@ class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
         }
 
         @JvmStatic
-        fun scope(cx: Context?, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any {
+        fun scope(cx: Context, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any {
             if (args.size == 1) {
                 var arg = args[0]
                 if (arg is Wrapper) {
@@ -86,7 +86,7 @@ class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
                 if (arg is Bindings) {
                     val ctx: ScriptContext = SimpleScriptContext()
                     ctx.setBindings(arg as Bindings?, 100)
-                    val res: Scriptable = ExternalScriptable(ctx)
+                    val res: Scriptable = cx.initSafeStandardObjects()
                     res.prototype = getObjectPrototype(thisObj)
                     res.parentScope = getTopLevelScope(thisObj)
                     return res
@@ -96,7 +96,7 @@ class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
         }
 
         @JvmStatic
-        fun sync(cx: Context?, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any {
+        fun sync(cx: Context, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any {
             return if (args.size == 1 && args[0] is Function) {
                 Synchronizer(args[0] as Function?)
             } else {
