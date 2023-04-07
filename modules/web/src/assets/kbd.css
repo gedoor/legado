@@ -1,0 +1,7 @@
+kbd {
+  background-color: hsl(0deg, 0%, 99%);
+  border-radius: 3px;
+  border: 1px solid hsl(0deg, 0%, 80%);
+  padding: 4px 5px;
+  font-weight: bold;
+}
