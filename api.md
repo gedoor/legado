@@ -108,6 +108,8 @@ Body = { rule: [ReplaceRule], text: [String] }
 
 #### 搜索在线书籍
 
+若想获取对应的书籍的目录正文 请先**插入书籍**以启用缓存，如果试读后决定不添加到书籍，请**删除书籍**
+
 ```
 URL = ws://127.0.0.1:1235/searchBook
 Message = { key: [String] }
@@ -123,6 +125,14 @@ URL = http://127.0.0.1:1234/saveBook
 Method = POST
 ```
 
+#### 删除书籍
+
+```
+URL = http://127.0.0.1:1234/deleteBook
+Method = POST
+```
+
+```
 #### 获取所有书籍
 
 ```
