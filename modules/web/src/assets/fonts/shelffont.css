@@ -1,0 +1,7 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "FZZCYSK";
+  src: local("☺"), url("./shelffont.ttf");
+  font-style: normal;
+  font-weight: normal;
+}

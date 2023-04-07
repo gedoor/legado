@@ -1,0 +1,40 @@
+name: Release
+
+on: [workflow_dispatch]
+
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+          
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Set Env
+        shell: bash
+        run: |
+          version="v$(date -d "8 hour" -u +3.%y.%m%d%H)"
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: Build
+        run: |
+          npm install
+          npm run-script build
+          zip -q -r ${{github.ref_name}}_${{env.VERSION}}.zip ./dist
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ env.VERSION }}
+          tag_name: ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          files: ${{ github.workspace }}/*.zip
+
