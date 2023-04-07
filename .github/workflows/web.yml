@@ -1,0 +1,48 @@
+name: Build Web
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**/modules/web/**'
+  workflow_dispatch:
+
+env:
+  UPSTREAM_REPOSITORY: gedoor/legado
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Build
+        run: |
+          cd $GITHUB_WORKSPACE/modules/web
+          pnpm i
+          pnpm build
+          rm -rf legado/app/src/main/assets/web/source
+          rm -rf legado/app/src/main/assets/web/bookshelf
+          rm -rf legado/app/src/main/assets/web/vue
+          mkdir legado/app/src/main/assets/web/vue
+          mv -f ./dist/*  $GITHUB_WORKSPACE/app/src/main/assets/web/vue/
+          version="v$(date -d "8 hour" -u +3.%y.%m%d%H)"
+          echo "APP_VER=$version" >> $GITHUB_ENV
+
+      - name: push changes
+        if: ${{ github.repository == env.UPSTREAM_REPOSITORY }}
+        uses: stefanzweifel/git-auto-commit-action@v4.16.0
+        with:
+          commit_message: Bump web v${{ env.APP_VER}}
+          file_pattern: app/src/main/assets/web/vue/
+
