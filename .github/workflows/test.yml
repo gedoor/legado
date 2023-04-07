@@ -9,6 +9,7 @@ on:
       - '!**/assets/**'
       - '!**.md'
       - '!**/ISSUE_TEMPLATE/**'
+      - '!**/modules/web/**'
   pull_request:
   workflow_dispatch:
 
