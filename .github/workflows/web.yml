@@ -43,6 +43,6 @@ jobs:
         if: ${{ github.repository == env.UPSTREAM_REPOSITORY }}
         uses: stefanzweifel/git-auto-commit-action@v4.16.0
         with:
-          commit_message: Bump web v${{ env.APP_VER}}
+          commit_message: Bump web ${{ env.APP_VER}}
           file_pattern: app/src/main/assets/web/vue/
 
