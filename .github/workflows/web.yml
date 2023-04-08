@@ -16,25 +16,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Project
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: actions/cache@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 16
 
-      - name: Build
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/web/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build and move files
         run: |
           rm -rf $GITHUB_WORKSPACE/app/src/main/assets/web/source
           rm -rf $GITHUB_WORKSPACE/app/src/main/assets/web/bookshelf
           rm -rf $GITHUB_WORKSPACE/app/src/main/assets/web/vue
           mkdir $GITHUB_WORKSPACE/app/src/main/assets/web/vue
           cd $GITHUB_WORKSPACE/modules/web
-          npm install
-          npm run-script build
+          pnpm build
           mv -f ./dist/*  $GITHUB_WORKSPACE/app/src/main/assets/web/vue/
           version="v$(date -d "8 hour" -u +3.%y.%m%d%H)"
           echo "APP_VER=$version" >> $GITHUB_ENV

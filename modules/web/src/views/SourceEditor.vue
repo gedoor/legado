@@ -9,7 +9,6 @@
 import bookSourceConfig from "@/utils/bookSourceEditConfig.js";
 import rssSourceConfig from "@/utils/rssSourceEditConfig.js";
 import "@/assets/main.css";
-import "element-plus/theme-chalk/dark/css-vars.css";
 
 const config = ref({});
 
