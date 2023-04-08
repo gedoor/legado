@@ -45,9 +45,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Build and move files
         run: |
           rm -rf $GITHUB_WORKSPACE/app/src/main/assets/web/source
@@ -55,6 +52,7 @@ jobs:
           rm -rf $GITHUB_WORKSPACE/app/src/main/assets/web/vue
           mkdir $GITHUB_WORKSPACE/app/src/main/assets/web/vue
           cd $GITHUB_WORKSPACE/modules/web
+          pnpm i
           pnpm build
           mv -f ./dist/*  $GITHUB_WORKSPACE/app/src/main/assets/web/vue/
           version="v$(date -d "8 hour" -u +3.%y.%m%d%H)"
