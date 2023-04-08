@@ -101,7 +101,6 @@ watch(showLoading, (loading) => {
     target: shelfWrapper.value,
     spinner: loadingSvg,
     text: "正在获取书籍信息",
-    backgroud: "rgb(247,247,247)",
     lock: true,
   });
 });
@@ -326,7 +325,9 @@ const fetchBookShelfData = () => {
     width: 100%;
     display: flex;
     flex-direction: column;
-
+    :deep(.el-loading-mask) {
+      background-color: rgba(0, 0, 0, 0);
+    }
     :deep(.el-loading-spinner) {
       font-size: 36px;
       color: #b5b5b5;

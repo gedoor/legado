@@ -82,10 +82,10 @@
       <div class="content">
         <div class="top-bar" ref="top"></div>
         <div v-for="data in chapterData" :key="data.index" ref="chapter">
-          <div class="title" :index="data.index">
+          <div class="title" :index="data.index" v-if="show">
             {{ data.title }}
           </div>
-          <chapter-content :carray="data.content" />
+          <chapter-content :carray="data.content" v-if="show"/>
         </div>
         <div class="loading" ref="loading"></div>
         <div class="bottom-bar" ref="bottom"></div>
@@ -102,13 +102,14 @@ import loadingSvg from "@element-plus/icons-svg/loading.svg?raw";
 
 const showLoading = ref(false);
 const loadingSerive = ref(null);
+const content = ref();
+
 watch(showLoading, (loading) => {
-  if (!loading) return loadingSerive.value?.close();
+ if (!loading) return loadingSerive.value?.close();
   loadingSerive.value = ElLoading.service({
     target: content.value,
     spinner: loadingSvg,
     text: "正在获取信息",
-    backgroud: "rgb(0,0,0,0)",
     lock: true,
   });
 });
@@ -121,7 +122,6 @@ try {
 } catch {
   localStorage.removeItem("config");
 }
-const content = ref();
 const loading = ref();
 
 const noPoint = ref(true);
@@ -141,10 +141,10 @@ const {
   popCataVisible,
   readSettingsVisible,
   config,
-  showContent: show,
-  miniInterface,
+  miniInterface
 } = storeToRefs(store);
 
+const show = computed(()=>store.showContent)
 const theme = computed(() => config.value.theme);
 
 const bodyColor = computed(() => settings.themes[config.value.theme].body);
@@ -212,8 +212,7 @@ watchEffect(() => {
 });
 
 watchEffect(() => {
-  document.title = catalog.value[chapterIndex.value]?.title;
-  console.log(chapterIndex.value, store.readingBook.index);
+  document.title = catalog.value[chapterIndex.value]?.title || document.title;
   store.saveBookProcess();
 });
 const isNight = ref(false);
@@ -652,15 +651,6 @@ onUnmounted(() => {
     }
   }
 
-  .chapter-bar {
-    .el-breadcrumb {
-      .item {
-        font-size: 14px;
-        color: #606266;
-      }
-    }
-  }
-
   .chapter {
     font-family: "Microsoft YaHei", PingFangSC-Regular, HelveticaNeue-Light,
       "Helvetica Neue Light", sans-serif;
@@ -670,6 +660,9 @@ onUnmounted(() => {
     width: 670px;
     margin: 0 auto;
 
+    :deep(.el-loading-mask) {
+      background-color: rgba(0, 0, 0, 0);
+    }
     :deep(.el-loading-spinner) {
       font-size: 36px;
       color: #b5b5b5;
