@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookSourceType
@@ -156,12 +155,6 @@ class BookSourceEditActivity :
         binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
             setText(R.string.source_tab_content)
         })
-        if (BuildConfig.DEBUG) {
-            binding.cbIsEnableReview.visible()
-            binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
-                setText(R.string.review)
-            })
-        }
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
@@ -221,7 +214,6 @@ class BookSourceEditActivity :
             binding.cbIsEnable.isChecked = it.enabled
             binding.cbIsEnableExplore.isChecked = it.enabledExplore
             binding.cbIsEnableCookie.isChecked = it.enabledCookieJar ?: false
-            binding.cbIsEnableReview.isChecked = it.enabledReview ?: false
             binding.spType.setSelection(
                 when (it.bookSourceType) {
                     BookSourceType.file -> 3
@@ -246,6 +238,7 @@ class BookSourceEditActivity :
             add(EditEntity("header", bs.header, R.string.source_http_header))
             add(EditEntity("variableComment", bs.variableComment, R.string.variable_comment))
             add(EditEntity("concurrentRate", bs.concurrentRate, R.string.concurrent_rate))
+            add(EditEntity("jsLib", bs.jsLib, "jsLib"))
         }
         // 搜索
         val sr = bs.getSearchRule()
@@ -345,7 +338,6 @@ class BookSourceEditActivity :
         source.enabled = binding.cbIsEnable.isChecked
         source.enabledExplore = binding.cbIsEnableExplore.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
-        source.enabledReview = binding.cbIsEnableReview.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
             3 -> BookSourceType.file
             2 -> BookSourceType.image
@@ -372,6 +364,7 @@ class BookSourceEditActivity :
                 "bookSourceComment" -> source.bookSourceComment = it.value
                 "concurrentRate" -> source.concurrentRate = it.value
                 "variableComment" -> source.variableComment = it.value
+                "jsLib" -> source.jsLib = it.value
             }
         }
         searchEntities.forEach {

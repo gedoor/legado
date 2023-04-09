@@ -48,6 +48,15 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     private val indexedProps: MutableMap<Any, Any?>
     private val implementor: InterfaceImplementor
 
+    fun run(function: (Context) -> Any?): Any? {
+        return try {
+            val context = Context.enter()
+            function.invoke(context)
+        } finally {
+            Context.exit()
+        }
+    }
+
     @Throws(ScriptException::class)
     override fun eval(reader: Reader, scope: Scriptable): Any? {
         val cx = Context.enter()

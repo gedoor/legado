@@ -204,6 +204,7 @@ class RssSourceEditActivity :
             add(EditEntity("header", rs.header, R.string.source_http_header))
             add(EditEntity("variableComment", rs.variableComment, R.string.variable_comment))
             add(EditEntity("concurrentRate", rs.concurrentRate, R.string.concurrent_rate))
+            add(EditEntity("jsLib", rs.jsLib, "jsLib"))
         }
         listEntities.clear()
         listEntities.apply {
@@ -263,6 +264,7 @@ class RssSourceEditActivity :
                 "variableComment" -> source.variableComment = it.value
                 "concurrentRate" -> source.concurrentRate = it.value
                 "sortUrl" -> source.sortUrl = it.value
+                "jsLib" -> source.jsLib = it.value
             }
         }
         listEntities.forEach {
