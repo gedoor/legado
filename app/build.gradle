@@ -253,7 +253,7 @@ dependencies {
     implementation("io.noties.markwon:html:$markwonVersion")
 
     //转换繁体
-    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.12')
+    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.13')
 
     //加解密类库,有些书源使用
     //noinspection GradleDependency,GradlePackageUpdate
