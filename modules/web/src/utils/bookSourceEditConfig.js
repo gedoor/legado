@@ -72,6 +72,12 @@ export default {
         hint: "并发率",
       },
       {
+        title: "js库",
+        id: "jsLib",
+        type: "String",
+        hint: "js库",
+      },
+      {
         title: "请求头",
         id: "header",
         type: "String",
@@ -174,6 +180,12 @@ export default {
         id: "exploreUrl",
         type: "String",
         hint: "内容能显示在发现菜单\n每行一条发现分类(网址域名可省略)，例：\n名称1::网址(Url)1\n名称2::网址(Url)2\n...",
+      },
+      {
+        title: "发现筛选",
+        id: "exploreScreen",
+        type: "String",
+        hint: "发现筛选规则",
       },
       {
         title: "列表规则",
