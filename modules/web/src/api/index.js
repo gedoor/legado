@@ -48,7 +48,6 @@ const search = (
 ) => {
   // webSocket
   const url = `ws://${hostname}:${Number(port) + 1}/searchBook`;
-
   const socket = new WebSocket(url);
 
   socket.onopen = () => {

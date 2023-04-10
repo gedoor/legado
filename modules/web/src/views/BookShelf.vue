@@ -140,11 +140,16 @@ const searchBook = () => {
         store.setSearchBooks(JSON.parse(data));
         store.searchBooks.forEach((item) => books.value.push(item));
       } catch (e) {
-        ElMessage({ message: "后端数据错误", type: "error" });
+        ElMessage.error("后端数据错误");
         throw e;
       }
     },
-    () => (showLoading.value = false)
+    () => {
+      showLoading.value = false;
+      if (books.value.length == 0) {
+        ElMessage.info("搜索结果为空")
+      }
+    }
   );
 };
 
@@ -209,7 +214,8 @@ const fetchBookShelfData = () => {
           })
         );
       } else {
-        ElMessage({ message: response.data.errorMsg, type: "error" });
+        ElMessage.error(response.data.errorMsg);
+        showLoading.value = false;
       }
       store.setConnectStatus("已连接 ");
       store.setNewConnect(false);
@@ -218,7 +224,7 @@ const fetchBookShelfData = () => {
       showLoading.value = false;
       store.setConnectType("danger");
       store.setConnectStatus("连接失败");
-      ElMessage({ message: "后端连接失败", type: "error" });
+      ElMessage.error("后端连接失败")
       store.setNewConnect(false);
       throw error;
     });

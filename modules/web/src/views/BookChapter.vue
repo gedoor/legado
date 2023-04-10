@@ -82,10 +82,10 @@
       <div class="content">
         <div class="top-bar" ref="top"></div>
         <div v-for="data in chapterData" :key="data.index" ref="chapter">
-          <div class="title" :index="data.index" v-if="show">
+          <div class="title" :index="data.index" v-if="showContent">
             {{ data.title }}
           </div>
-          <chapter-content :carray="data.content" v-if="show"/>
+          <chapter-content :carray="data.content" v-if="showContent"/>
         </div>
         <div class="loading" ref="loading"></div>
         <div class="bottom-bar" ref="bottom"></div>
@@ -115,7 +115,7 @@ watch(showLoading, (loading) => {
 });
 
 const store = useBookStore();
-
+// 读取阅读配置
 try {
   const browerConfig = JSON.parse(localStorage.getItem("config"));
   if (browerConfig != null) store.setConfig(browerConfig);
@@ -131,77 +131,90 @@ const chapterData = ref([]);
 const scrollObserve = ref(null);
 const readingObserve = ref(null);
 
-const { chapterPos } = toRefs(store.readingBook);
-const chapterIndex = computed({
-  get: () => store.readingBook.index,
-  set: (index) => (store.readingBook.index = index),
-});
 const {
   catalog,
   popCataVisible,
   readSettingsVisible,
-  config,
-  miniInterface
+  miniInterface,
+  showContent,
 } = storeToRefs(store);
 
-const show = computed(()=>store.showContent)
-const theme = computed(() => config.value.theme);
+const { chapterPos, index: chapterIndex} = toRefs(store.readingBook);
 
-const bodyColor = computed(() => settings.themes[config.value.theme].body);
+const { theme, infiniteLoading } = toRefs(store.config);
+
+// 主题部分
+const bodyColor = computed(() => settings.themes[theme.value].body);
 const chapterColor = computed(
-  () => settings.themes[config.value.theme].content
+  () => settings.themes[theme.value].content
 );
-const popupColor = computed(() => settings.themes[config.value.theme].popup);
+const popupColor = computed(() => settings.themes[theme.value].popup);
 
 const readWidth = computed(() => {
-  if (!store.miniInterface) {
+  if (!miniInterface.value) {
     return store.config.readWidth - 130 + "px";
   } else {
     return window.innerWidth + "px";
   }
 });
 const popupWidth = computed(() => {
-  if (!store.miniInterface) {
+  if (!miniInterface.value) {
     return store.config.readWidth - 33;
   } else {
     return window.innerWidth - 33;
   }
 });
-
 const bodyTheme = computed(() => {
   return {
-    background: settings.themes[store.config.theme].body,
+    background: settings.themes[theme.value].body,
   };
 });
 const chapterTheme = computed(() => {
   return {
-    background: settings.themes[store.config.theme].content,
+    background: settings.themes[theme.value].content,
     width: readWidth.value,
   };
 });
-
 const leftBarTheme = computed(() => {
   return {
-    background: settings.themes[store.config.theme].popup,
-    marginLeft: store.miniInterface
+    background: settings.themes[theme.value].popup,
+    marginLeft: miniInterface.value
       ? 0
       : -(store.config.readWidth / 2 + 68) + "px",
-    display: store.miniInterface && !showToolBar.value ? "none" : "block",
+    display: miniInterface.value && !showToolBar.value ? "none" : "block",
   };
 });
 const rightBarTheme = computed(() => {
   return {
-    background: settings.themes[store.config.theme].popup,
-    marginRight: store.miniInterface
+    background: settings.themes[theme.value].popup,
+    marginRight: miniInterface.value
       ? 0
       : -(store.config.readWidth / 2 + 52) + "px",
-    display: store.miniInterface && !showToolBar.value ? "none" : "block",
+    display: miniInterface.value && !showToolBar.value ? "none" : "block",
   };
 });
-
-const enableInfiniteLoading = computed(() => {
-  return config.value.infiniteLoading;
+const isNight = ref(false);
+watchEffect(() => {
+  isNight.value = theme.value == 6;
 });
+watch(bodyColor, (color) => {
+  bodyTheme.value.background = color;
+});
+watch(chapterColor, (color) => {
+  chapterTheme.value.background = color;
+});
+watch(readWidth, (width) => {
+  chapterTheme.value.width = width;
+  let leftToolMargin = -((parseInt(width) + 130) / 2 + 68) + "px";
+  let rightToolMargin = -((parseInt(width) + 130) / 2 + 52) + "px";
+  leftBarTheme.value.marginLeft = leftToolMargin;
+  rightBarTheme.value.marginRight = rightToolMargin;
+});
+watch(popupColor, (color) => {
+  leftBarTheme.value.background = color;
+  rightBarTheme.value.background = color;
+});
+
 
 watchEffect(() => {
   if (chapterData.value.length > 0) {
@@ -215,32 +228,9 @@ watchEffect(() => {
   document.title = catalog.value[chapterIndex.value]?.title || document.title;
   store.saveBookProcess();
 });
-const isNight = ref(false);
+
 watchEffect(() => {
-  isNight.value = theme.value == 6;
-});
-
-watch(bodyColor, (color) => {
-  bodyTheme.value.background = color;
-});
-watch(chapterColor, (color) => {
-  chapterTheme.value.background = color;
-});
-
-watch(readWidth, (width) => {
-  chapterTheme.value.width = width;
-  let leftToolMargin = -((parseInt(width) + 130) / 2 + 68) + "px";
-  let rightToolMargin = -((parseInt(width) + 130) / 2 + 52) + "px";
-  leftBarTheme.value.marginLeft = leftToolMargin;
-  rightBarTheme.value.marginRight = rightToolMargin;
-});
-
-watch(popupColor, (color) => {
-  leftBarTheme.value.background = color;
-  rightBarTheme.value.background = color;
-});
-watchEffect(() => {
-  if (!enableInfiniteLoading.value) {
+  if (!infiniteLoading.value) {
     scrollObserve.value?.disconnect();
   } else {
     scrollObserve.value?.observe(loading.value);
@@ -542,7 +532,7 @@ onMounted(() => {
       scrollObserve.value = new IntersectionObserver(handleIScrollObserve, {
         rootMargin: "-100% 0% 20% 0%",
       });
-      enableInfiniteLoading.value && scrollObserve.value.observe(loading.value);
+      infiniteLoading.value && scrollObserve.value.observe(loading.value);
       //监听当前阅读章节
       readingObserve.value = new IntersectionObserver(handleIReadingObserve);
       //第二次点击同一本书 页面标题不会变化
