@@ -25,7 +25,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ env.cronet == 'ok' }}
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v5
         continue-on-error: true
         with:
           token: ${{ secrets.ACTIONS_TOKEN }}
