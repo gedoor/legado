@@ -35,6 +35,7 @@ object ReadBook : CoroutineScope by MainScope() {
     var durChapterIndex = 0
     var durChapterPos = 0
     var isLocalBook = true
+    var chapterChanged = false
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
