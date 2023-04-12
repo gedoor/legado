@@ -66,6 +66,7 @@ class BookInfoActivity :
                     withContext(IO) {
                         book.durChapterIndex = it.first
                         book.durChapterPos = it.second
+                        chapterChanged = it.third
                         appDb.bookDao.update(book)
                     }
                     viewModel.chapterListData.value?.let { chapterList ->
@@ -103,6 +104,7 @@ class BookInfoActivity :
         }
     }
     private var tocChanged = false
+    private var chapterChanged = false
     private val waitDialog by lazy { WaitDialog(this) }
     private var editMenuItem: MenuItem? = null
 
@@ -620,6 +622,7 @@ class BookInfoActivity :
                     .putExtra("bookUrl", book.bookUrl)
                     .putExtra("inBookshelf", viewModel.inBookshelf)
                     .putExtra("tocChanged", tocChanged)
+                    .putExtra("chapterChanged", chapterChanged)
             )
         }
         tocChanged = false
