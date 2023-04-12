@@ -60,6 +60,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             ReadBook.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             ReadBook.tocChanged = intent.getBooleanExtra("tocChanged", false)
+            ReadBook.chapterChanged = intent.getBooleanExtra("chapterChanged", false)
             val bookUrl = intent.getStringExtra("bookUrl")
             val book = when {
                 bookUrl.isNullOrEmpty() -> appDb.bookDao.lastReadBook
@@ -104,7 +105,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             }
             ReadBook.loadContent(resetPageOffset = false)
         }
-        if (!isSameBook || !BaseReadAloudService.isRun) {
+        if (ReadBook.chapterChanged) {
+            // 有章节跳转不同步阅读进度
+            ReadBook.chapterChanged = false
+        } else if (!isSameBook || !BaseReadAloudService.isRun) {
             syncBookProgress(book)
         }
         if (!book.isLocal && ReadBook.bookSource == null) {
