@@ -392,7 +392,7 @@ class AnalyzeRule(
                 val pattern = Pattern.compile(rule.replaceRegex)
                 val matcher = pattern.matcher(vResult)
                 if (matcher.find()) {
-                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+                    vResult.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
                 } else {
                     ""
                 }
