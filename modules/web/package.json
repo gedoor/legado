@@ -21,7 +21,8 @@
     "hotkeys-js": "^3.10.2",
     "pinia": "^2.0.34",
     "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "vue3-virtual-scroll-list": "^0.2.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",

@@ -39,7 +39,7 @@ open class WebDav(
     companion object {
 
         fun fromPath(path: String): WebDav {
-            val id = AnalyzeUrl(path).serverID
+            val id = AnalyzeUrl(path).serverID ?: throw WebDavException("没有serverID")
             val authorization = Authorization(id)
             return WebDav(path, authorization)
         }
@@ -386,6 +386,16 @@ open class WebDav(
     private fun checkResult(response: Response) {
         if (!response.isSuccessful) {
             val body = response.body?.string()
+            if (response.code == 401) {
+                val headers = response.headers("WWW-Authenticate")
+                val supportBasicAuth = headers.any {
+                    it.startsWith("Basic", ignoreCase = true)
+                }
+                if (!supportBasicAuth) {
+                    AppLog.put("服务器不支持BasicAuth认证")
+                }
+            }
+
             if (response.message.isNotBlank() || body.isNullOrBlank()) {
                 throw WebDavException("${url}\n${response.code}:${response.message}")
             }

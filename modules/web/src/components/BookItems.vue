@@ -4,7 +4,7 @@
       <div
         class="book"
         v-for="book in props.books"
-        :key="book.noteUrl"
+        :key="book.bookUrl"
         @click="handleClick(book)"
       >
         <div class="cover-img">
@@ -24,7 +24,7 @@
             </div>
             <div class="tags" v-show="props.isSearch">
               <el-tag
-                v-for="tag in book.kind.split(',').slice(0, 2)"
+                v-for="tag in book.kind?.split(',').slice(0, 2)"
                 :key="tag"
               >
                 {{ tag }}

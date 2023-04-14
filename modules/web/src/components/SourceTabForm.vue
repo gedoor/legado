@@ -69,7 +69,12 @@ const { currentSource } = storeToRefs(store);
 
 <style lang="scss" scoped>
 :deep(.el-tab-pane) {
-  height: calc(100vh - 40px);
+  height: calc(100vh - 55px);
+  padding-top: 15px;
+  padding-right: 5px;
   overflow-y: auto;
+}
+:deep(.el-tabs__header) {
+  margin: 0;
 }
 </style>

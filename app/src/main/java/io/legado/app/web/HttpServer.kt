@@ -98,6 +98,10 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 )
             } else {
                 try {
+                    val data = returnData.data
+                    if (data is List<*> && data.size > 3000) {
+                        throw OutOfMemoryError()
+                    }
                     newFixedLengthResponse(GSON.toJson(returnData))
                 } catch (e: OutOfMemoryError) {
                     val path = FileUtils.getPath(
@@ -106,7 +110,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                         "bookSources.json"
                     )
                     val file = FileUtils.createFileIfNotExist(path)
-                    BufferedWriter(FileWriter(file)).use {
+                    BufferedWriter(FileWriter(file), 128 * 1024).use {
                         GSON.toJson(returnData, it)
                     }
                     val fis = FileInputStream(file)

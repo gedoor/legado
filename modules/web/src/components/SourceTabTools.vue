@@ -29,4 +29,8 @@ const tabData = ref([
 ]);
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.el-tabs__header) {
+  margin-bottom: 5px;
+}
+</style>

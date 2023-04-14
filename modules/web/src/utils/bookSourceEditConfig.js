@@ -552,11 +552,11 @@ id: "deleteUrl",
         id: "enabledExplore",
         type: "Boolean",
       },
-      {
-        title: "启用段评",
-        id: "enabledReview",
-        type: "Boolean",
-      },
+      // {
+      //   title: "启用段评",
+      //   id: "enabledReview",
+      //   type: "Boolean",
+      // },
       {
         title: "Cookie",
         id: "enabledCookieJar",

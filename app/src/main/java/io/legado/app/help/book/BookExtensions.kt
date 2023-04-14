@@ -232,7 +232,7 @@ fun Book.isSameNameAuthor(other: Any?): Boolean {
 fun Book.getExportFileName(suffix: String): String {
     val jsStr = AppConfig.bookExportFileName
     if (jsStr.isNullOrBlank()) {
-        return "${name} 作者：${getRealAuthor()}.$suffix"
+        return "$name 作者：${getRealAuthor()}.$suffix"
     }
     val bindings = SimpleBindings()
     bindings["name"] = name

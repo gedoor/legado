@@ -72,6 +72,11 @@ import { isInvaildSource } from "../utils/souce";
 
 const store = useSourceStore();
 const pull = () => {
+  const loadingMsg = ElMessage({
+    message: '加载中……',
+    showClose: true,
+    duration: 0
+  })
   API.getSources().then(({ data }) => {
     if (data.isSuccess) {
       store.changeTabName("editList");
@@ -86,7 +91,7 @@ const pull = () => {
         type: "error",
       });
     }
-  });
+  }).finally(() => loadingMsg.close());
 };
 
 const push = () => {

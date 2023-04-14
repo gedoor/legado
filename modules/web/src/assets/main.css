@@ -1,10 +1,6 @@
 @import './kbd.css';
 @import './code.css';
 
-::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
 body {
     padding: 0;
     margin: 0;
