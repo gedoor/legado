@@ -37,3 +37,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: npm
+    directory: "modules/web"
+    schedule:
+      interval: "weekly"
