@@ -388,6 +388,7 @@ class AnalyzeRule(
         if (rule.replaceRegex.isEmpty()) return result
         var vResult = result
         vResult = if (rule.replaceFirst) {
+        /* ##match##replace### 获取第一个匹配到的结果并进行替换 */
             kotlin.runCatching {
                 val pattern = Pattern.compile(rule.replaceRegex)
                 val matcher = pattern.matcher(vResult)
@@ -397,9 +398,10 @@ class AnalyzeRule(
                     ""
                 }
             }.getOrElse {
-                vResult.replaceFirst(rule.replaceRegex, rule.replacement)
+                rule.replacement
             }
         } else {
+        /* ##match##replace 替换*/
             kotlin.runCatching {
                 vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
             }.getOrElse {
