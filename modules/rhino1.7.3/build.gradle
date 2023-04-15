@@ -5,8 +5,12 @@ plugins {
 
 android {
     compileSdk = compile_sdk_version
-    buildToolsVersion = build_tool_version
     namespace 'com.script'
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
     defaultConfig {
         minSdk 21
         targetSdk 33
@@ -15,8 +19,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     lint {
         checkDependencies true
