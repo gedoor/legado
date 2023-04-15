@@ -86,6 +86,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    //noinspection GrDeprecatedAPIUsage
     flavorDimensions = ['mode']
     productFlavors {
         app {
