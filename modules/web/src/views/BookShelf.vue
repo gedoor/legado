@@ -147,7 +147,7 @@ const searchBook = () => {
     () => {
       showLoading.value = false;
       if (books.value.length == 0) {
-        ElMessage.info("搜索结果为空")
+        ElMessage.info("搜索结果为空");
       }
     }
   );
@@ -224,7 +224,7 @@ const fetchBookShelfData = () => {
       showLoading.value = false;
       store.setConnectType("danger");
       store.setConnectStatus("连接失败");
-      ElMessage.error("后端连接失败")
+      ElMessage.error("后端连接失败");
       store.setNewConnect(false);
       throw error;
     });

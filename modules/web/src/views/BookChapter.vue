@@ -85,7 +85,7 @@
           <div class="title" :index="data.index" v-if="showContent">
             {{ data.title }}
           </div>
-          <chapter-content :carray="data.content" v-if="showContent"/>
+          <chapter-content :carray="data.content" v-if="showContent" />
         </div>
         <div class="loading" ref="loading"></div>
         <div class="bottom-bar" ref="bottom"></div>
@@ -105,7 +105,7 @@ const loadingSerive = ref(null);
 const content = ref();
 
 watch(showLoading, (loading) => {
- if (!loading) return loadingSerive.value?.close();
+  if (!loading) return loadingSerive.value?.close();
   loadingSerive.value = ElLoading.service({
     target: content.value,
     spinner: loadingSvg,
@@ -139,15 +139,13 @@ const {
   showContent,
 } = storeToRefs(store);
 
-const { chapterPos, index: chapterIndex} = toRefs(store.readingBook);
+const { chapterPos, index: chapterIndex } = toRefs(store.readingBook);
 
 const { theme, infiniteLoading } = toRefs(store.config);
 
 // 主题部分
 const bodyColor = computed(() => settings.themes[theme.value].body);
-const chapterColor = computed(
-  () => settings.themes[theme.value].content
-);
+const chapterColor = computed(() => settings.themes[theme.value].content);
 const popupColor = computed(() => settings.themes[theme.value].popup);
 
 const readWidth = computed(() => {
@@ -214,7 +212,6 @@ watch(popupColor, (color) => {
   leftBarTheme.value.background = color;
   rightBarTheme.value.background = color;
 });
-
 
 watchEffect(() => {
   if (chapterData.value.length > 0) {

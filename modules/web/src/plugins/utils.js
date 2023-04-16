@@ -1,7 +1,7 @@
 import { formatDate } from "@vueuse/shared";
 
 export const isLegadoUrl = (/** @type {string} */ url) =>
-  /,\s*\s*\{/.test(url) ||
+  /,\s*\{/.test(url) ||
   !(
     url.startsWith("http") ||
     url.startsWith("data:") ||
@@ -11,10 +11,6 @@ export const isLegadoUrl = (/** @type {string} */ url) =>
  * @param {string} src
  */
 export function getImageFromLegado(src) {
-  //返回阅读代理的图片链接 已经代理的或者dataurl返回传入值
-  if (!isLegadoUrl(src)) {
-    return src;
-  }
   return (
     (import.meta.env.VITE_API || location.origin) +
     "/image?path=" +

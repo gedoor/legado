@@ -11,12 +11,12 @@
 </template>
 
 <script setup>
-const { source } = defineProps(['source'])
-const store = useSourceStore()
-const { errorPushSources } = storeToRefs(store)
-const handleSourceClick = source => {
-  store.changeCurrentSource(source)
-}
+defineProps(["source"]);
+const store = useSourceStore();
+const { errorPushSources } = storeToRefs(store);
+const handleSourceClick = (source) => {
+  store.changeCurrentSource(source);
+};
 </script>
 <style lang="scss" scoped>
 .error {

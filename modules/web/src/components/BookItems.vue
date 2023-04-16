@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div
         class="book"
-        v-for="book in props.books"
+        v-for="book in books"
         :key="book.bookUrl"
         @click="handleClick(book)"
       >
@@ -22,7 +22,7 @@
             <div class="author">
               {{ book.author }}
             </div>
-            <div class="tags" v-show="props.isSearch">
+            <div class="tags" v-show="isSearch">
               <el-tag
                 v-for="tag in book.kind?.split(',').slice(0, 2)"
                 :key="tag"
@@ -30,16 +30,16 @@
                 {{ tag }}
               </el-tag>
             </div>
-            <div class="update-info" v-show="!props.isSearch">
+            <div class="update-info" v-show="!isSearch">
               <div class="dot">•</div>
               <div class="size">共{{ book.totalChapterNum }}章</div>
               <div class="dot">•</div>
               <div class="date">{{ dateFormat(book.lastCheckTime) }}</div>
             </div>
           </div>
-          <div class="intro" v-show="props.isSearch">{{ book.intro }}</div>
+          <div class="intro" v-show="isSearch">{{ book.intro }}</div>
 
-          <div class="dur-chapter" v-show="!props.isSearch">
+          <div class="dur-chapter" v-show="!isSearch">
             已读：{{ book.durChapterTitle }}
           </div>
           <div class="last-chapter">最新：{{ book.latestChapterTitle }}</div>
