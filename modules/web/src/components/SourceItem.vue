@@ -5,7 +5,6 @@
     :label="source"
     :class="{ error: errorPushSources.includes(source) }"
     @change="handleSourceClick(source)"
-    :key="source.bookSourceUrl"
   >
     {{ source.bookSourceName || source.sourceName }}
   </el-checkbox>
@@ -19,3 +18,12 @@ const handleSourceClick = source => {
   store.changeCurrentSource(source)
 }
 </script>
+<style lang="scss" scoped>
+.error {
+  border-color: var(--el-color-error) !important;
+  color: var(--el-color-error) !important;
+  --el-checkbox-checked-text-color: var(--el-color-error);
+  --el-checkbox-checked-bg-color: var(--el-color-error);
+  --el-checkbox-checked-input-border-color: var(--el-color-error);
+}
+</style>
