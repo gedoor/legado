@@ -3,22 +3,22 @@ package io.legado.app.model
 import com.google.gson.reflect.TypeToken
 import com.script.SimpleBindings
 import io.legado.app.constant.SCRIPT_ENGINE
-import io.legado.app.help.rhino.RhinoScriptEngine
+import io.legado.app.help.http.newCallStrResponse
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonObject
+import org.mozilla.javascript.Context
 import org.mozilla.javascript.Scriptable
 import java.lang.ref.WeakReference
-import kotlin.collections.Map
-import kotlin.collections.forEach
-import kotlin.collections.hashMapOf
 import kotlin.collections.set
 
 object SharedJsScope {
 
     private val scopeMap = hashMapOf<String, WeakReference<Scriptable>>()
 
-    fun getScope(jsLib: String?): Scriptable? {
+    suspend fun getScope(jsLib: String?): Scriptable? {
         if (jsLib.isNullOrBlank()) {
             return null
         }
@@ -27,7 +27,7 @@ object SharedJsScope {
         if (scope == null) {
             val context = SCRIPT_ENGINE.getScriptContext(SimpleBindings())
             scope = SCRIPT_ENGINE.getRuntimeScope(context)
-            RhinoScriptEngine.run {
+            Context.enter().use {
                 if (jsLib.isJsonObject()) {
                     val jsMap: Map<String, String> = GSON.fromJson(
                         jsLib,
@@ -37,8 +37,13 @@ object SharedJsScope {
                             String::class.java
                         ).type
                     )
-                    jsMap.values.forEach { url ->
-
+                    jsMap.values.forEach { value ->
+                        if (value.isAbsUrl()) {
+                            val js = okHttpClient.newCallStrResponse {
+                                url(value)
+                            }.body
+                            it.evaluateString(scope, js, "jsLib", 1, null)
+                        }
                     }
                 } else {
                     it.evaluateString(scope, jsLib, "jsLib", 1, null)
