@@ -6,7 +6,7 @@ buildscript {
         build_tool_version = '33.0.1'
         kotlin_version = '1.8.0'
         agp_version = '8.0.0'
-        exoplayer_version = '2.18.4'
+        exoplayer_version = '2.18.5'
         splitties_version = '3.0.0'
         room_version = '2.5.0'
     }
