@@ -1,9 +1,10 @@
 <template>
-  <div v-for="(para, index) in props.carray" :key="index">
+  <div v-for="(para, index) in carray" :key="index">
     <img
       class="full"
       v-if="/^\s*<img[^>]*src[^>]+>$/.test(para)"
       :src="getImageSrc(para)"
+      @error.once="proxyImage"
       loading="lazy"
     />
     <p v-else :style="style" v-html="para" />
@@ -12,8 +13,10 @@
 
 <script setup>
 import config from "../plugins/config";
+import { getImageFromLegado, isLegadoUrl } from "../plugins/utils";
+
 const store = useBookStore();
-const props = defineProps(["carray"]);
+defineProps(["carray"]);
 
 const fontFamily = computed(() => {
   if (store.config.font >= 0) {
@@ -30,10 +33,15 @@ const style = computed(() => {
   return style;
 });
 
-function getImageSrc(content) {
+const getImageSrc = (content) => {
   const imgPattern = /<img[^>]*src="([^"]*(?:"[^>]+\})?)"[^>]*>/;
-  return content.match(imgPattern)[1];
-}
+  const src = content.match(imgPattern)[1];
+  if (isLegadoUrl(src)) return getImageFromLegado(src);
+  return src;
+};
+const proxyImage = (event) => {
+  event.target.src = getImageFromLegado(event.target.src);
+};
 
 watch(fontSize, () => {
   store.setShowContent(false);

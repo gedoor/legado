@@ -73,25 +73,27 @@ import { isInvaildSource } from "../utils/souce";
 const store = useSourceStore();
 const pull = () => {
   const loadingMsg = ElMessage({
-    message: '加载中……',
+    message: "加载中……",
     showClose: true,
-    duration: 0
-  })
-  API.getSources().then(({ data }) => {
-    if (data.isSuccess) {
-      store.changeTabName("editList");
-      store.saveSources(data.data);
-      ElMessage({
-        message: `成功拉取${data.data.length}条源`,
-        type: "success",
-      });
-    } else {
-      ElMessage({
-        message: data.errorMsg ?? "后端错误",
-        type: "error",
-      });
-    }
-  }).finally(() => loadingMsg.close());
+    duration: 0,
+  });
+  API.getSources()
+    .then(({ data }) => {
+      if (data.isSuccess) {
+        store.changeTabName("editList");
+        store.saveSources(data.data);
+        ElMessage({
+          message: `成功拉取${data.data.length}条源`,
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          message: data.errorMsg ?? "后端错误",
+          type: "error",
+        });
+      }
+    })
+    .finally(() => loadingMsg.close());
 };
 
 const push = () => {

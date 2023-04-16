@@ -30,7 +30,7 @@
   </div>
   <el-checkbox-group id="source-list" v-model="sourceSelect">
     <virtual-list
-      style="height: 100%; overflow-y: auto; overflow-x: hidden;"
+      style="height: 100%; overflow-y: auto; overflow-x: hidden"
       :data-key="(source) => source.bookSourceUrl || source.sourceUrl"
       :data-sources="sourcesFiltered"
       :data-component="SourceItem"
@@ -42,7 +42,7 @@
 <script setup>
 import { Folder, Delete, Download, Search } from "@element-plus/icons-vue";
 import { isSourceContains } from "../utils/souce";
-import VirtualList from 'vue3-virtual-scroll-list';
+import VirtualList from "vue3-virtual-scroll-list";
 import SourceItem from "./SourceItem.vue";
 
 const store = useSourceStore();
@@ -98,7 +98,10 @@ const importSourceFile = () => {
 };
 const outExport = () => {
   const exportFile = document.createElement("a");
-  let sources = sourceSelect.value.length === 0 ? sourcesFiltered.value : sourceSelect.value,
+  let sources =
+      sourceSelect.value.length === 0
+        ? sourcesFiltered.value
+        : sourceSelect.value,
     sourceType = isBookSource.value ? "BookSource" : "RssSource";
 
   exportFile.download = `${sourceType}_${Date()
@@ -129,5 +132,4 @@ const outExport = () => {
     width: 100%;
   }
 }
-
 </style>
