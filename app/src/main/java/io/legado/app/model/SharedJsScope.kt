@@ -27,7 +27,8 @@ object SharedJsScope {
         if (scope == null) {
             val context = SCRIPT_ENGINE.getScriptContext(SimpleBindings())
             scope = SCRIPT_ENGINE.getRuntimeScope(context)
-            Context.enter().use {
+            Context.use {
+                val context = Context.enter()
                 if (jsLib.isJsonObject()) {
                     val jsMap: Map<String, String> = GSON.fromJson(
                         jsLib,
@@ -42,11 +43,11 @@ object SharedJsScope {
                             val js = okHttpClient.newCallStrResponse {
                                 url(value)
                             }.body
-                            it.evaluateString(scope, js, "jsLib", 1, null)
+                            context.evaluateString(scope, js, "jsLib", 1, null)
                         }
                     }
                 } else {
-                    it.evaluateString(scope, jsLib, "jsLib", 1, null)
+                    context.evaluateString(scope, jsLib, "jsLib", 1, null)
                 }
             }
             scopeMap[key] = WeakReference(scope)
