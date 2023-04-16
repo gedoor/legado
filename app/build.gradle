@@ -76,7 +76,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
             }
@@ -115,7 +114,7 @@ android {
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 11
+        // Sets Java compatibility
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
