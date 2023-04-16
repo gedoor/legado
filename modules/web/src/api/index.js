@@ -98,7 +98,7 @@ const debug = (
   const socket = new WebSocket(url);
 
   socket.onopen = () => {
-    socket.send(`{"tag":"${sourceUrl}", "key":"${searchKey}"}`);
+    socket.send(JSON.stringify({ tag: sourceUrl, key: searchKey }));
   };
   socket.onmessage = ({ data }) => onReceive(data);
 

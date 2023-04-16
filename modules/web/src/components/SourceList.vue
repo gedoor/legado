@@ -31,7 +31,7 @@
   <el-checkbox-group id="source-list" v-model="sourceSelect">
     <virtual-list
       style="height: 100%; overflow-y: auto; overflow-x: hidden;"
-      :data-key="'bookSourceUrl'"
+      :data-key="(source) => source.bookSourceUrl || source.sourceUrl"
       :data-sources="sourcesFiltered"
       :data-component="SourceItem"
       :estimate-size="45"
@@ -44,6 +44,7 @@ import { Folder, Delete, Download, Search } from "@element-plus/icons-vue";
 import { isSourceContains } from "../utils/souce";
 import VirtualList from 'vue3-virtual-scroll-list';
 import SourceItem from "./SourceItem.vue";
+
 const store = useSourceStore();
 const sourceSelect = ref([]);
 const searchKey = ref("");
@@ -129,11 +130,4 @@ const outExport = () => {
   }
 }
 
-.error {
-  border-color: var(--el-color-error) !important;
-  color: var(--el-color-error) !important;
-  --el-checkbox-checked-text-color: var(--el-color-error);
-  --el-checkbox-checked-bg-color: var(--el-color-error);
-  --el-checkbox-checked-input-border-color: var(--el-color-error);
-}
 </style>
