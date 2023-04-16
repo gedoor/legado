@@ -11,6 +11,8 @@ on:
       - '!**/ISSUE_TEMPLATE/**'
       - '!**/modules/web/**'
   pull_request:
+    paths-ignore:
+      - '**/modules/web/**'
   workflow_dispatch:
 
 jobs:

@@ -6,6 +6,9 @@ on:
       - master
     paths:
       - '**/modules/web/**'
+  pull_request:
+    paths:
+      - '**/modules/web/**'
   workflow_dispatch:
 
 env:
@@ -59,7 +62,7 @@ jobs:
           echo "APP_VER=$version" >> $GITHUB_ENV
 
       - name: push changes
-        if: ${{ github.repository == env.UPSTREAM_REPOSITORY }}
+        if: ${{ github.event_name != 'pull_request' && github.repository == env.UPSTREAM_REPOSITORY }}
         uses: stefanzweifel/git-auto-commit-action@v4.16.0
         with:
           commit_message: Bump web ${{ env.APP_VER}}
