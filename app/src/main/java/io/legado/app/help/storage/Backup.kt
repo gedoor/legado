@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -153,9 +154,11 @@ object Backup {
                     path.isNullOrBlank() -> {
                         copyBackup(context.getExternalFilesDir(null)!!, "backup.zip")
                     }
+
                     path.isContentScheme() -> {
                         copyBackup(context, Uri.parse(path), "backup.zip")
                     }
+
                     else -> {
                         copyBackup(File(path), "backup.zip")
                     }
@@ -168,8 +171,10 @@ object Backup {
     private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
         if (list.isNotEmpty()) {
             val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
-            FileOutputStream(file).use {
-                GSON.writeToOutputStream(it, list)
+            FileOutputStream(file).use { fos ->
+                BufferedOutputStream(fos, 64 * 1024).use {
+                    GSON.writeToOutputStream(it, list)
+                }
             }
         }
     }

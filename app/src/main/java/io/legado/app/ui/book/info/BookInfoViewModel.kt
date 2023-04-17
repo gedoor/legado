@@ -166,7 +166,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                                 loadChapter(it, scope)
                             }
                         }.onError {
-                            AppLog.put("获取数据信息失败\n${it.localizedMessage}", it)
+                            AppLog.put("获取书籍信息失败\n${it.localizedMessage}", it)
                             context.toastOnUi(R.string.error_get_book_info)
                         }
                 } ?: let {
@@ -305,7 +305,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     fun importArchiveBook(
         archiveFileUri: Uri,
         archiveEntryName: String,
