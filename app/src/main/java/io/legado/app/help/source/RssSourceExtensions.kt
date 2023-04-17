@@ -1,11 +1,13 @@
 package io.legado.app.help.source
 
 import io.legado.app.data.entities.RssSource
+import io.legado.app.model.SharedJsScope
 import io.legado.app.utils.ACache
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.mozilla.javascript.Scriptable
 
 private val aCache by lazy { ACache.get("rssSortUrl") }
 
@@ -56,4 +58,8 @@ suspend fun RssSource.removeSortCache() {
     withContext(Dispatchers.IO) {
         aCache.remove(getSortUrlsKey())
     }
+}
+
+suspend fun RssSource.getShareScope(): Scriptable? {
+    return SharedJsScope.getScope(jsLib)
 }

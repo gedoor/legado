@@ -2,12 +2,28 @@ package io.legado.app.help.source
 
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ExploreKind
-import io.legado.app.utils.*
+import io.legado.app.model.SharedJsScope
+import io.legado.app.utils.ACache
+import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.mozilla.javascript.Scriptable
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.List
+import kotlin.collections.arrayListOf
+import kotlin.collections.emptyList
+import kotlin.collections.filterNotNull
+import kotlin.collections.first
+import kotlin.collections.forEach
+import kotlin.collections.getOrNull
+import kotlin.collections.hashMapOf
+import kotlin.collections.set
 
 /**
  * 采用md5作为key可以在分类修改后自动重新计算,不需要手动刷新
@@ -75,6 +91,10 @@ suspend fun BookSource.clearExploreKindsCache() {
         aCache.remove(exploreKindsKey)
         exploreKindsMap.remove(getExploreKindsKey())
     }
+}
+
+suspend fun BookSource.getShareScope(): Scriptable? {
+    return SharedJsScope.getScope(jsLib)
 }
 
 fun BookSource.contains(word: String?): Boolean {
