@@ -614,8 +614,10 @@ class AnalyzeUrl(
         if (enabledCookieJar) {
             val key = "${domain}_cookieJar"
             CacheManager.getFromMemory(key)?.let {
-                CookieStore.replaceCookie(domain, it)
-                CacheManager.deleteMemory(key)
+                if (it is String) {
+                    CookieStore.replaceCookie(domain, it)
+                    CacheManager.deleteMemory(key)
+                }
             }
         }
     }
