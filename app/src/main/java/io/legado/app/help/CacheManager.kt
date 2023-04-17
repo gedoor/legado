@@ -35,7 +35,7 @@ object CacheManager {
             is ByteArray -> ACache.get().put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
-                putMemory(key, value.toString())
+                putMemory(key, value)
                 appDb.cacheDao.insert(cache)
             }
         }
