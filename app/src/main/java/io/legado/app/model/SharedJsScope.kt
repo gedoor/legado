@@ -42,11 +42,11 @@ object SharedJsScope {
                             val js = okHttpClient.newCallStrResponse {
                                 url(value)
                             }.body
-                            it.evaluateString(scope, js, "jsLib", 1, null)
+                            evaluateString(scope, js, "jsLib", 1, null)
                         }
                     }
                 } else {
-                    it.evaluateString(scope, jsLib, "jsLib", 1, null)
+                    evaluateString(scope, jsLib, "jsLib", 1, null)
                 }
             }
             scopeMap[key] = WeakReference(scope)
