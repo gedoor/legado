@@ -5,9 +5,8 @@ import org.mozilla.javascript.Context
 object Rhino {
 
     inline fun <R> use(block: Context.() -> R): R {
-        val context = Context.enter()
         return try {
-            block.invoke(context)
+            block.invoke(Context.enter())
         } finally {
             Context.exit()
         }
