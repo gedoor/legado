@@ -7,9 +7,9 @@ import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.Rhino
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonObject
-import org.mozilla.javascript.Context
 import org.mozilla.javascript.Scriptable
 import java.lang.ref.WeakReference
 import kotlin.collections.set
@@ -27,8 +27,7 @@ object SharedJsScope {
         if (scope == null) {
             val context = SCRIPT_ENGINE.getScriptContext(SimpleBindings())
             scope = SCRIPT_ENGINE.getRuntimeScope(context)
-            val rhino = Context.enter()
-            rhino.runCatching {
+            Rhino.use {
                 if (jsLib.isJsonObject()) {
                     val jsMap: Map<String, String> = GSON.fromJson(
                         jsLib,
@@ -43,14 +42,13 @@ object SharedJsScope {
                             val js = okHttpClient.newCallStrResponse {
                                 url(value)
                             }.body
-                            evaluateString(scope, js, "jsLib", 1, null)
+                            it.evaluateString(scope, js, "jsLib", 1, null)
                         }
                     }
                 } else {
-                    evaluateString(scope, jsLib, "jsLib", 1, null)
+                    it.evaluateString(scope, jsLib, "jsLib", 1, null)
                 }
             }
-            Context.exit()
             scopeMap[key] = WeakReference(scope)
         }
         return scope
