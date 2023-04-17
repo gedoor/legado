@@ -6,6 +6,7 @@ import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
 import com.github.junrar.Archive
 import com.github.junrar.rarfile.FileHeader
+import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -447,6 +448,14 @@ interface JsExtensions : JsEncodeUtils {
 
     fun htmlFormat(str: String): String {
         return HtmlFormatter.formatKeepImg(str)
+    }
+
+    fun t2s(text: String): String {
+        return ChineseUtils.t2s(text)
+    }
+
+    fun s2t(text: String): String {
+        return ChineseUtils.s2t(text)
     }
 
 //****************文件操作******************//

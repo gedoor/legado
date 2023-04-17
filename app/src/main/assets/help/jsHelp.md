@@ -164,6 +164,13 @@ java.hexEncodeToString(utf8: String)
 java.randomUUID()
 java.androidId()
 ```
+* 繁简转换
+```
+将文本转换为简体
+java.t2s(text: String): String
+将文本转换为繁体
+java.s2t(text: String): String
+```
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
 ```
