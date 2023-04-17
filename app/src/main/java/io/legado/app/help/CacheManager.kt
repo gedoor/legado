@@ -15,10 +15,10 @@ object CacheManager {
     /**
      * 最多只缓存50M的数据,防止OOM
      */
-    private val memoryLruCache = object : LruCache<String, String>(1024 * 1024 * 50) {
+    private val memoryLruCache = object : LruCache<String, Any>(1024 * 1024 * 50) {
 
-        override fun sizeOf(key: String, value: String): Int {
-            return value.memorySize()
+        override fun sizeOf(key: String, value: Any): Int {
+            return value.toString().memorySize()
         }
 
     }
@@ -41,12 +41,12 @@ object CacheManager {
         }
     }
 
-    fun putMemory(key: String, value: String) {
+    fun putMemory(key: String, value: Any) {
         memoryLruCache.put(key, value)
     }
 
     //从内存中获取数据 使用lruCache
-    fun getFromMemory(key: String): String? {
+    fun getFromMemory(key: String): Any? {
         return memoryLruCache.get(key)
     }
 
@@ -56,7 +56,7 @@ object CacheManager {
 
     fun get(key: String): String? {
         getFromMemory(key)?.let {
-            return it
+            if (it is String) return it
         }
         val cache = appDb.cacheDao.get(key)
         if (cache != null && (cache.deadline == 0L || cache.deadline > System.currentTimeMillis())) {
