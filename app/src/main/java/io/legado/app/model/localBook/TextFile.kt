@@ -34,11 +34,7 @@ class TextFile(private val book: Book) {
         @Synchronized
         @Throws(FileNotFoundException::class)
         fun getContent(book: Book, bookChapter: BookChapter): String {
-            if (txtBuffer == null
-                || bookUrl != book.bookUrl
-                || bookChapter.start!! > bufferEnd
-                || bookChapter.end!! < bufferStart
-            ) {
+            if (txtBuffer == null || bookUrl != book.bookUrl || bookChapter.start!! > bufferEnd || bookChapter.end!! < bufferStart) {
                 bookUrl = book.bookUrl
                 LocalBook.getBookInputStream(book).use { bis ->
                     bufferStart = bufferSize * (bookChapter.start!! / bufferSize).toInt()
@@ -52,9 +48,7 @@ class TextFile(private val book: Book) {
             val count = (bookChapter.end!! - bookChapter.start!!).toInt()
             val buffer = ByteArray(count)
 
-            if (bookChapter.start!! < bufferEnd && bookChapter.end!! > bufferEnd
-                || bookChapter.start!! < bufferStart && bookChapter.end!! > bufferStart
-            ) {
+            if (bookChapter.start!! < bufferEnd && bookChapter.end!! > bufferEnd || bookChapter.start!! < bufferStart && bookChapter.end!! > bufferStart) {
                 /** 章节内容在缓冲区交界处 */
                 LocalBook.getBookInputStream(book).use { bis ->
                     bis.skip(bookChapter.start!!)
@@ -70,8 +64,7 @@ class TextFile(private val book: Book) {
                 )
             }
 
-            return String(buffer, book.fileCharset())
-                .substringAfter(bookChapter.title)
+            return String(buffer, book.fileCharset()).substringAfter(bookChapter.title)
                 .replace(padRegex, "　　")
         }
 
@@ -142,11 +135,8 @@ class TextFile(private val book: Book) {
                 curOffset = 3
             }
             //获取文件中的数据到buffer，直到没有数据为止
-            while (
-                bis.read(
-                    buffer,
-                    bufferStart,
-                    bufferSize - bufferStart
+            while (bis.read(
+                    buffer, bufferStart, bufferSize - bufferStart
                 ).also { length = it } > 0
             ) {
                 var end = bufferStart + length
@@ -174,9 +164,7 @@ class TextFile(private val book: Book) {
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
-                    if (book.getSplitLongChapter()
-                        && curOffset + chapterLength - lastStart > maxLengthWithToc
-                    ) {
+                    if (book.getSplitLongChapter() && curOffset + chapterLength - lastStart > maxLengthWithToc) {
                         toc.lastOrNull()?.let {
                             it.end = it.start
                         }
@@ -184,8 +172,7 @@ class TextFile(private val book: Book) {
                         val lastTitle = toc.lastOrNull()?.title
                         val lastTitleLength = lastTitle?.toByteArray(charset)?.size ?: 0
                         val chapters = analyze(
-                            lastStart + lastTitleLength,
-                            curOffset + chapterLength
+                            lastStart + lastTitleLength, curOffset + chapterLength
                         )
                         lastTitle?.let {
                             chapters.forEachIndexed { index, bookChapter ->
@@ -223,8 +210,7 @@ class TextFile(private val book: Book) {
                             lastChapter.isVolume =
                                 chapterContent.substringAfter(lastChapter.title).isBlank()
                             //将当前段落添加上一章去
-                            lastChapter.end =
-                                lastChapter.end!! + chapterLength.toLong()
+                            lastChapter.end = lastChapter.end!! + chapterLength.toLong()
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
@@ -263,14 +249,13 @@ class TextFile(private val book: Book) {
             }
             toc.lastOrNull()?.let { chapter ->
                 //章节字数太多进行拆分
-                if (chapter.end!! - chapter.start!! > maxLengthWithToc) {
+                if (book.getSplitLongChapter() && chapter.end!! - chapter.start!! > maxLengthWithToc) {
                     val end = chapter.end!!
                     chapter.end = chapter.start
                     val lastTitle = chapter.title
                     val lastTitleLength = lastTitle.toByteArray(charset).size
                     val chapters = analyze(
-                        chapter.start!! + lastTitleLength,
-                        end
+                        chapter.start!! + lastTitleLength, end
                     )
                     chapters.forEachIndexed { index, bookChapter ->
                         bookChapter.title = "$lastTitle(${index + 1})"
@@ -288,8 +273,7 @@ class TextFile(private val book: Book) {
      * 无规则拆分目录
      */
     private fun analyze(
-        fileStart: Long = 0L,
-        fileEnd: Long = Long.MAX_VALUE
+        fileStart: Long = 0L, fileEnd: Long = Long.MAX_VALUE
     ): ArrayList<BookChapter> {
         val toc = arrayListOf<BookChapter>()
         LocalBook.getBookInputStream(book).use { bis ->
@@ -314,14 +298,9 @@ class TextFile(private val book: Book) {
                 bufferStart = 0
             }
             //获取文件中的数据到buffer，直到没有数据为止
-            while (
-                fileEnd - curOffset - bufferStart > 0 &&
-                bis.read(
-                    buffer,
-                    bufferStart,
-                    min(
-                        (bufferSize - bufferStart).toLong(),
-                        fileEnd - curOffset - bufferStart
+            while (fileEnd - curOffset - bufferStart > 0 && bis.read(
+                    buffer, bufferStart, min(
+                        (bufferSize - bufferStart).toLong(), fileEnd - curOffset - bufferStart
                     ).toInt()
                 ).also { length = it } > 0
             ) {
