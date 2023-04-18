@@ -10,6 +10,11 @@
 @Json: json规则,直接写时以$.开头可省略@Json
 : regex规则,不可省略,只可以用在书籍列表和目录列表
 ```
+* jsLib
+> 注入JavaScript到RhinoJs引擎中，支持两种格式  
+> `JavaScript Code` 直接填写JavaScript片段
+> `{"example":"https://www.example.com/js/example.js", ...}` 自动复用已经下载的js文件
+
 * 并发率
 > 并发限制，单位ms，可填写两种格式  
 > `1000` 访问间隔1s  

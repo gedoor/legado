@@ -188,7 +188,9 @@ readTxtFile(path: String): String
 //删除文件
 deleteFile(path: String) 
 ```
-****
+
+### [js加解密类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsEncodeUtils.kt) 部分函数
+
 > 提供在JavaScript环境中快捷调用crypto算法的函数，由[hutool-crypto](https://www.hutool.cn/docs/#/crypto/概述)实现  
 
 > 其他没有添加的算法可在JavaScript中使用`JavaImporter`[调用](https://m.jb51.net/article/92138.htm)Java，例子可参考`朗读引擎-阿里云语音`  
@@ -268,7 +270,7 @@ java.HMacHex(data: String, algorithm: String, key: String): String
 java.HMacBase64(data: String, algorithm: String, key: String): String
 ```
 
-## book对象的可用属性和方法
+## book对象的可用属性
 ### 属性
 > 使用方法: 在js中或{{}}中使用book.属性的方式即可获取.如在正文内容后加上 ##{{book.name+"正文卷"+title}} 可以净化 书名+正文卷+章节名称（如 我是大明星正文卷第二章我爸是豪门总裁） 这一类的字符.
 ```
@@ -301,11 +303,6 @@ order // 手动排序
 originOrder //书源排序
 variable // 自定义书籍变量信息(用于书源规则检索书籍信息)
  ```
-### 方法
-```
-//可在正文js中关闭净化 对于漫画源有用
-book.setUseReplaceRule(boolean)
-```
 
 ## chapter对象的部分可用属性
 > 使用方法: 在js中或{{}}中使用chapter.属性的方式即可获取.如在正文内容后加上 ##{{chapter.title+chapter.index}} 可以净化 章节标题+序号(如 第二章 天仙下凡2) 这一类的字符.
@@ -362,13 +359,18 @@ cookie.removeCookie(url)
 > 保存至数据库和缓存文件(50M)，保存的内容较大时请使用`getFile putFile`
 ```
 保存
-cache.put(key, value , saveTime)
+cache.put(key: String, value: Any , saveTime: Int)
 读取数据库
-cache.get(key)
+cache.get(key: String): String?
 删除
-cache.delete(key)
+cache.delete(key: String)
 缓存文件内容
-cache.putFile(key, value, saveTime)
+cache.putFile(key: String, value: String, saveTime: Int)
 读取文件内容
-cache.getFile(key)
+cache.getFile(key: String): String?
+保存到内存
+cache.deleteMemory(key: String)
+cache.getFromMemory(key: String): Any?
+cache.putMemory(key: String, value: Any)
+
 ```
