@@ -235,7 +235,9 @@ interface BaseSource : JsExtensions {
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
+        val scope = SCRIPT_ENGINE.getRuntimeScope(SCRIPT_ENGINE.getScriptContext(bindings))
+        scope.prototype = getShareScope()
+        return SCRIPT_ENGINE.eval(jsStr, scope)
     }
 
     fun getShareScope(): Scriptable? {
