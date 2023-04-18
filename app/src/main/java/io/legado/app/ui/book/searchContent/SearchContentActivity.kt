@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.allViews
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
@@ -117,6 +118,13 @@ class SearchContentActivity :
         binding.ivSearchContentBottom.setOnClickListener {
             if (adapter.itemCount > 0) {
                 mLayoutManager.scrollToPositionWithOffset(adapter.itemCount - 1, 0)
+            }
+        }
+        binding.tvCurrentSearchInfo.setOnClickListener {
+            searchView.allViews.forEach { view ->
+                if (view is EditText) {
+                    view.showSoftInput()
+                }
             }
         }
         binding.fbStop.setOnClickListener {

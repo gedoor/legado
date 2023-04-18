@@ -77,8 +77,8 @@ abstract class BaseActivity<VB : ViewBinding>(
             findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
         }
-        onActivityCreated(savedInstanceState)
         observeLiveBus()
+        onActivityCreated(savedInstanceState)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

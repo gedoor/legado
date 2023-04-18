@@ -10,6 +10,7 @@ import android.os.Build
 import android.text.Html
 import android.view.View
 import android.view.View.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +40,11 @@ val View.activity: AppCompatActivity?
 
 fun View.hideSoftInput() = run {
     inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
+}
+
+fun View.showSoftInput() = run {
+    requestFocus()
+    inputMethodManager.showSoftInput(this, InputMethodManager.RESULT_SHOWN)
 }
 
 fun View.disableAutoFill() = run {
