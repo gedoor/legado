@@ -42,7 +42,7 @@ fun View.hideSoftInput() = run {
     inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
 }
 
-fun View.showSoftInput() = run {
+fun EditText.showSoftInput() = run {
     requestFocus()
     inputMethodManager.showSoftInput(this, InputMethodManager.RESULT_SHOWN)
 }
