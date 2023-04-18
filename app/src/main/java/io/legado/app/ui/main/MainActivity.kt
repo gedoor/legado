@@ -23,6 +23,7 @@ import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ActivityMainBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
@@ -103,6 +104,8 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             if (!privacyPolicy()) return@launch
             //版本更新
             upVersion()
+            //设置本地密码
+            setLocalPassword()
             //备份同步
             backupSync()
             //自动更新书籍
@@ -181,7 +184,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
      */
     private suspend fun upVersion() = suspendCoroutine { block ->
         if (LocalConfig.versionCode == appInfo.versionCode) {
-            block.resume(Unit)
+            block.resume(null)
             return@suspendCoroutine
         }
         LocalConfig.versionCode = appInfo.versionCode
@@ -189,18 +192,43 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             val help = String(assets.open("help/appHelp.md").readBytes())
             val dialog = TextDialog(getString(R.string.help), help, TextDialog.Mode.MD)
             dialog.setOnDismissListener {
-                block.resume(Unit)
+                block.resume(null)
             }
             showDialogFragment(dialog)
         } else if (!BuildConfig.DEBUG) {
             val log = String(assets.open("updateLog.md").readBytes())
             val dialog = TextDialog(getString(R.string.update_log), log, TextDialog.Mode.MD)
             dialog.setOnDismissListener {
-                block.resume(Unit)
+                block.resume(null)
             }
             showDialogFragment(dialog)
         } else {
-            block.resume(Unit)
+            block.resume(null)
+        }
+    }
+
+    /**
+     * 设置本地密码
+     */
+    private suspend fun setLocalPassword() = suspendCoroutine { block ->
+        if (LocalConfig.password.isNotBlank()) {
+            block.resume(null)
+            return@suspendCoroutine
+        }
+        alert(R.string.set_local_password, R.string.set_local_password_summary) {
+            val editTextBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = "password"
+            }
+            customView {
+                editTextBinding.root
+            }
+            onDismiss {
+                block.resume(null)
+            }
+            okButton {
+                LocalConfig.password = editTextBinding.editView.text.toString()
+            }
+            cancelButton()
         }
     }
 
