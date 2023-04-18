@@ -144,14 +144,37 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
             ?.isChecked = AppConfig.importKeepGroup
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "NotifyDataSetChanged")
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_new_group -> alertCustomGroup(item)
+            R.id.menu_select_new_source -> {
+                val selectAllNew = viewModel.isSelectAllNew
+                viewModel.newSourceStatus.forEachIndexed { index, b ->
+                    if (b) {
+                        viewModel.selectStatus[index] = !selectAllNew
+                    }
+                }
+                adapter.notifyDataSetChanged()
+                upSelectText()
+            }
+
+            R.id.menu_select_update_source -> {
+                val selectAllUpdate = viewModel.isSelectAllUpdate
+                viewModel.updateSourceStatus.forEachIndexed { index, b ->
+                    if (b) {
+                        viewModel.selectStatus[index] = !selectAllUpdate
+                    }
+                }
+                adapter.notifyDataSetChanged()
+                upSelectText()
+            }
+
             R.id.menu_keep_original_name -> {
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepName, item.isChecked)
             }
+
             R.id.menu_keep_group -> {
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepGroup, item.isChecked)

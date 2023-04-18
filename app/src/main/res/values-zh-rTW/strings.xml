@@ -1094,4 +1094,6 @@
     <string name="create_folder">创建文件夹</string>
     <string name="allow_drop_down_refresh">允许下拉刷新</string>
     <string name="text_underline">文字下划线</string>
+    <string name="select_new_source">选中新增源</string>
+    <string name="select_update_source">选中更新源</string>
 </resources>

@@ -29,11 +29,33 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     val allSources = arrayListOf<BookSource>()
     val checkSources = arrayListOf<BookSource?>()
     val selectStatus = arrayListOf<Boolean>()
+    val newSourceStatus = arrayListOf<Boolean>()
+    val updateSourceStatus = arrayListOf<Boolean>()
 
     val isSelectAll: Boolean
         get() {
             selectStatus.forEach {
                 if (!it) {
+                    return false
+                }
+            }
+            return true
+        }
+
+    val isSelectAllNew: Boolean
+        get() {
+            newSourceStatus.forEachIndexed { index, b ->
+                if (b && !selectStatus[index]) {
+                    return false
+                }
+            }
+            return true
+        }
+
+    val isSelectAllUpdate: Boolean
+        get() {
+            updateSourceStatus.forEachIndexed { index, b ->
+                if (b && !selectStatus[index]) {
                     return false
                 }
             }
@@ -109,19 +131,23 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                     }
                 }
+
                 mText.isJsonArray() -> GSON.fromJsonArray<BookSource>(mText).getOrThrow()
                     .let { items ->
                         allSources.addAll(items)
                     }
+
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
                 }
+
                 mText.isUri() -> {
                     val uri = Uri.parse(mText)
                     uri.inputStream(context).getOrThrow().let {
                         allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
                     }
                 }
+
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
@@ -151,6 +177,8 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                 val source = appDb.bookSourceDao.getBookSource(it.bookSourceUrl)
                 checkSources.add(source)
                 selectStatus.add(source == null || source.lastUpdateTime < it.lastUpdateTime)
+                newSourceStatus.add(source == null)
+                updateSourceStatus.add(source != null && source.lastUpdateTime < it.lastUpdateTime)
             }
             successLiveData.postValue(allSources.size)
         }
