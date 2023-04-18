@@ -28,7 +28,7 @@ data class RssSource(
     // 自定义变量说明
     var variableComment: String? = null,
     // js库
-    var jsLib: String? = null,
+    override var jsLib: String? = null,
     // 启用okhttp CookieJAr 自动保存每次请求的cookie
     @ColumnInfo(defaultValue = "0")
     override var enabledCookieJar: Boolean? = true,

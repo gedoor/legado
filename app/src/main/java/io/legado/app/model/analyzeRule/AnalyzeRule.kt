@@ -693,7 +693,12 @@ class AnalyzeRule(
         bindings["title"] = chapter?.title
         bindings["src"] = content
         bindings["nextChapterUrl"] = nextChapterUrl
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
+        val context = SCRIPT_ENGINE.getScriptContext(bindings)
+        val scope = SCRIPT_ENGINE.getRuntimeScope(context)
+        source?.getShareScope()?.let {
+            scope.prototype = it
+        }
+        return SCRIPT_ENGINE.eval(jsStr, scope)
     }
 
     override fun getSource(): BaseSource? {

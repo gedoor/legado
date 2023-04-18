@@ -12,6 +12,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.Rhino
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonObject
+import kotlinx.coroutines.runBlocking
 import org.mozilla.javascript.Scriptable
 import splitties.init.appCtx
 import java.io.File
@@ -25,7 +26,7 @@ object SharedJsScope {
 
     private val scopeMap = hashMapOf<String, WeakReference<Scriptable>>()
 
-    suspend fun getScope(jsLib: String?): Scriptable? {
+    fun getScope(jsLib: String?): Scriptable? {
         if (jsLib.isNullOrBlank()) {
             return null
         }
@@ -49,9 +50,11 @@ object SharedJsScope {
                             val fileName = MD5Utils.md5Encode(value)
                             var js = aCache.getAsString(fileName)
                             if (js == null) {
-                                js = okHttpClient.newCallStrResponse {
-                                    url(value)
-                                }.body
+                                js = runBlocking {
+                                    okHttpClient.newCallStrResponse {
+                                        url(value)
+                                    }.body
+                                }
                                 if (js !== null) {
                                     aCache.put(fileName, js)
                                 } else {

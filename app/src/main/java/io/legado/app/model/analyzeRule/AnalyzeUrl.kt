@@ -265,7 +265,12 @@ class AnalyzeUrl(
         bindings["book"] = ruleData as? Book
         bindings["source"] = source
         bindings["result"] = result
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
+        val context = SCRIPT_ENGINE.getScriptContext(bindings)
+        val scope = SCRIPT_ENGINE.getRuntimeScope(context)
+        source?.getShareScope()?.let {
+            scope.prototype = it
+        }
+        return SCRIPT_ENGINE.eval(jsStr, scope)
     }
 
     fun put(key: String, value: String): String {
@@ -475,7 +480,6 @@ class AnalyzeUrl(
         }
         try {
             setCookie()
-            @Suppress("BlockingMethodInNonBlockingContext")
             val response = getProxyClient(proxy).newCallResponse(retry) {
                 addHeaders(headerMap)
                 when (method) {
@@ -514,7 +518,6 @@ class AnalyzeUrl(
     private fun getByteArrayIfDataUri(): ByteArray? {
         @Suppress("RegExpRedundantEscape")
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
-        @Suppress("BlockingMethodInNonBlockingContext")
         if (dataUriFindResult != null) {
             val dataUriBase64 = dataUriFindResult.groupValues[1]
             val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
@@ -526,7 +529,6 @@ class AnalyzeUrl(
     /**
      * 访问网站,返回ByteArray
      */
-    @Suppress("UnnecessaryVariable", "LiftReturnOrAssignment")
     @Throws(ConcurrentException::class)
     suspend fun getByteArrayAwait(): ByteArray {
         getByteArrayIfDataUri()?.let {
@@ -544,7 +546,6 @@ class AnalyzeUrl(
     /**
      * 访问网站,返回InputStream
      */
-    @Suppress("LiftReturnOrAssignment")
     @Throws(ConcurrentException::class)
     suspend fun getInputStreamAwait(): InputStream {
         getByteArrayIfDataUri()?.let {

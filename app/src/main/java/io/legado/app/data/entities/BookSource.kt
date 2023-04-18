@@ -41,7 +41,7 @@ data class BookSource(
     @ColumnInfo(defaultValue = "1")
     var enabledExplore: Boolean = true,
     // js库
-    var jsLib: String? = null,
+    override var jsLib: String? = null,
     // 启用okhttp CookieJAr 自动保存每次请求的cookie
     @ColumnInfo(defaultValue = "0")
     override var enabledCookieJar: Boolean? = true,
