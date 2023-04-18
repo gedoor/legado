@@ -124,6 +124,7 @@ class SearchContentActivity :
             searchView.allViews.forEach { view ->
                 if (view is EditText) {
                     view.showSoftInput()
+                    return@setOnClickListener
                 }
             }
         }
