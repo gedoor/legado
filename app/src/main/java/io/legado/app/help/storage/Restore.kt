@@ -48,7 +48,6 @@ import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.openInputStream
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -81,165 +80,168 @@ object Restore {
 
     suspend fun restore(path: String) {
         val aes = BackupAES()
-        withContext(IO) {
-            fileToListT<Book>(path, "bookshelf.json")?.let {
-                it.forEach { book ->
-                    book.upType()
+        fileToListT<Book>(path, "bookshelf.json")?.let {
+            it.forEach { book ->
+                book.upType()
+            }
+            it.filter { book -> book.isLocal }
+                .forEach { book ->
+                    book.coverUrl = LocalBook.getCoverPath(book)
                 }
-                it.filter { book -> book.isLocal }
-                    .forEach { book ->
-                        book.coverUrl = LocalBook.getCoverPath(book)
-                    }
-                val updateBooks = arrayListOf<Book>()
-                val newBooks = arrayListOf<Book>()
-                it.forEach { book ->
-                    if (appDb.bookDao.has(book.bookUrl) == true) {
-                        updateBooks.add(book)
-                    } else {
-                        newBooks.add(book)
-                    }
-                }
-                appDb.bookDao.update(*updateBooks.toTypedArray())
-                appDb.bookDao.insert(*newBooks.toTypedArray())
-            }
-            fileToListT<Bookmark>(path, "bookmark.json")?.let {
-                appDb.bookmarkDao.insert(*it.toTypedArray())
-            }
-            fileToListT<BookGroup>(path, "bookGroup.json")?.let {
-                appDb.bookGroupDao.insert(*it.toTypedArray())
-            }
-            fileToListT<BookSource>(path, "bookSource.json")?.let {
-                appDb.bookSourceDao.insert(*it.toTypedArray())
-            } ?: run {
-                val bookSourceFile = File(path, "bookSource.json")
-                if (bookSourceFile.exists()) {
-                    val json = bookSourceFile.readText()
-                    ImportOldData.importOldSource(json)
+            val updateBooks = arrayListOf<Book>()
+            val newBooks = arrayListOf<Book>()
+            it.forEach { book ->
+                if (appDb.bookDao.has(book.bookUrl) == true) {
+                    updateBooks.add(book)
+                } else {
+                    newBooks.add(book)
                 }
             }
-            fileToListT<RssSource>(path, "rssSources.json")?.let {
-                appDb.rssSourceDao.insert(*it.toTypedArray())
+            appDb.bookDao.update(*updateBooks.toTypedArray())
+            appDb.bookDao.insert(*newBooks.toTypedArray())
+        }
+        fileToListT<Bookmark>(path, "bookmark.json")?.let {
+            appDb.bookmarkDao.insert(*it.toTypedArray())
+        }
+        fileToListT<BookGroup>(path, "bookGroup.json")?.let {
+            appDb.bookGroupDao.insert(*it.toTypedArray())
+        }
+        fileToListT<BookSource>(path, "bookSource.json")?.let {
+            appDb.bookSourceDao.insert(*it.toTypedArray())
+        } ?: run {
+            val bookSourceFile = File(path, "bookSource.json")
+            if (bookSourceFile.exists()) {
+                val json = bookSourceFile.readText()
+                ImportOldData.importOldSource(json)
             }
-            fileToListT<RssStar>(path, "rssStar.json")?.let {
-                appDb.rssStarDao.insert(*it.toTypedArray())
-            }
-            fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
-                appDb.replaceRuleDao.insert(*it.toTypedArray())
-            }
-            fileToListT<SearchKeyword>(path, "searchHistory.json")?.let {
-                appDb.searchKeywordDao.insert(*it.toTypedArray())
-            }
-            fileToListT<RuleSub>(path, "sourceSub.json")?.let {
-                appDb.ruleSubDao.insert(*it.toTypedArray())
-            }
-            fileToListT<TxtTocRule>(path, "txtTocRule.json")?.let {
-                appDb.txtTocRuleDao.insert(*it.toTypedArray())
-            }
-            fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
-                appDb.httpTTSDao.insert(*it.toTypedArray())
-            }
-            fileToListT<DictRule>(path, "dictRule.json")?.let {
-                appDb.dictRuleDao.insert(*it.toTypedArray())
-            }
-            fileToListT<KeyboardAssist>(path, "keyboardAssists.json")?.let {
-                appDb.keyboardAssistsDao.insert(*it.toTypedArray())
-            }
-            fileToListT<ReadRecord>(path, "readRecord.json")?.let {
-                it.forEach { readRecord ->
-                    //判断是不是本机记录
-                    if (readRecord.deviceId != androidId) {
+        }
+        fileToListT<RssSource>(path, "rssSources.json")?.let {
+            appDb.rssSourceDao.insert(*it.toTypedArray())
+        }
+        fileToListT<RssStar>(path, "rssStar.json")?.let {
+            appDb.rssStarDao.insert(*it.toTypedArray())
+        }
+        fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
+            appDb.replaceRuleDao.insert(*it.toTypedArray())
+        }
+        fileToListT<SearchKeyword>(path, "searchHistory.json")?.let {
+            appDb.searchKeywordDao.insert(*it.toTypedArray())
+        }
+        fileToListT<RuleSub>(path, "sourceSub.json")?.let {
+            appDb.ruleSubDao.insert(*it.toTypedArray())
+        }
+        fileToListT<TxtTocRule>(path, "txtTocRule.json")?.let {
+            appDb.txtTocRuleDao.insert(*it.toTypedArray())
+        }
+        fileToListT<HttpTTS>(path, "httpTTS.json")?.let {
+            appDb.httpTTSDao.insert(*it.toTypedArray())
+        }
+        fileToListT<DictRule>(path, "dictRule.json")?.let {
+            appDb.dictRuleDao.insert(*it.toTypedArray())
+        }
+        fileToListT<KeyboardAssist>(path, "keyboardAssists.json")?.let {
+            appDb.keyboardAssistsDao.insert(*it.toTypedArray())
+        }
+        fileToListT<ReadRecord>(path, "readRecord.json")?.let {
+            it.forEach { readRecord ->
+                //判断是不是本机记录
+                if (readRecord.deviceId != androidId) {
+                    appDb.readRecordDao.insert(readRecord)
+                } else {
+                    val time = appDb.readRecordDao
+                        .getReadTime(readRecord.deviceId, readRecord.bookName)
+                    if (time == null || time < readRecord.readTime) {
                         appDb.readRecordDao.insert(readRecord)
-                    } else {
-                        val time = appDb.readRecordDao
-                            .getReadTime(readRecord.deviceId, readRecord.bookName)
-                        if (time == null || time < readRecord.readTime) {
-                            appDb.readRecordDao.insert(readRecord)
+                    }
+                }
+            }
+        }
+        File(path, "servers.json").takeIf {
+            it.exists()
+        }?.run {
+            var json = readText()
+            if (!json.isJsonArray()) {
+                json = aes.decryptStr(json)
+            }
+            GSON.fromJsonArray<Server>(json).getOrNull()?.let {
+                appDb.serverDao.insert(*it.toTypedArray())
+            }
+        }
+        try {
+            val file = File(path, DirectLinkUpload.ruleFileName)
+            if (file.exists()) {
+                val json = file.readText()
+                ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
+            }
+        } catch (e: Exception) {
+            AppLog.put("直链上传出错\n${e.localizedMessage}", e)
+        }
+        try {
+            val file = File(path, ThemeConfig.configFileName)
+            if (file.exists()) {
+                FileUtils.delete(ThemeConfig.configFilePath)
+                file.copyTo(File(ThemeConfig.configFilePath))
+                ThemeConfig.upConfig()
+            }
+        } catch (e: Exception) {
+            AppLog.put("恢复主题出错\n${e.localizedMessage}", e)
+        }
+        if (!BackupConfig.ignoreReadConfig) {
+            //恢复阅读界面配置
+            try {
+                val file = File(path, ReadBookConfig.configFileName)
+                if (file.exists()) {
+                    FileUtils.delete(ReadBookConfig.configFilePath)
+                    file.copyTo(File(ReadBookConfig.configFilePath))
+                    ReadBookConfig.initConfigs()
+                }
+            } catch (e: Exception) {
+                AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
+            }
+            try {
+                val file = File(path, ReadBookConfig.shareConfigFileName)
+                if (file.exists()) {
+                    FileUtils.delete(ReadBookConfig.shareConfigFilePath)
+                    file.copyTo(File(ReadBookConfig.shareConfigFilePath))
+                    ReadBookConfig.initShareConfig()
+                }
+            } catch (e: Exception) {
+                AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
+            }
+        }
+        appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
+            val edit = appCtx.defaultSharedPreferences.edit()
+
+            map.forEach { (key, value) ->
+                if (BackupConfig.keyIsNotIgnore(key)) {
+                    when (key) {
+                        PreferKey.webDavPassword -> {
+                            edit.putString(
+                                key,
+                                kotlin.runCatching {
+                                    aes.decryptStr(value.toString())
+                                }.getOrDefault(value.toString())
+                            )
+                        }
+
+                        else -> when (value) {
+                            is Int -> edit.putInt(key, value)
+                            is Boolean -> edit.putBoolean(key, value)
+                            is Long -> edit.putLong(key, value)
+                            is Float -> edit.putFloat(key, value)
+                            is String -> edit.putString(key, value)
                         }
                     }
                 }
             }
-            File(path, "servers.json").takeIf {
-                it.exists()
-            }?.run {
-                var json = readText()
-                if (!json.isJsonArray()) {
-                    json = aes.decryptStr(json)
-                }
-                GSON.fromJsonArray<Server>(json).getOrNull()?.let {
-                    appDb.serverDao.insert(*it.toTypedArray())
-                }
-            }
-            try {
-                val file = File(path, DirectLinkUpload.ruleFileName)
-                if (file.exists()) {
-                    val json = file.readText()
-                    ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
-                }
-            } catch (e: Exception) {
-                AppLog.put("直链上传出错\n${e.localizedMessage}", e)
-            }
-            try {
-                val file = File(path, ThemeConfig.configFileName)
-                if (file.exists()) {
-                    FileUtils.delete(ThemeConfig.configFilePath)
-                    file.copyTo(File(ThemeConfig.configFilePath))
-                    ThemeConfig.upConfig()
-                }
-            } catch (e: Exception) {
-                AppLog.put("恢复主题出错\n${e.localizedMessage}", e)
-            }
-            if (!BackupConfig.ignoreReadConfig) {
-                //恢复阅读界面配置
-                try {
-                    val file = File(path, ReadBookConfig.configFileName)
-                    if (file.exists()) {
-                        FileUtils.delete(ReadBookConfig.configFilePath)
-                        file.copyTo(File(ReadBookConfig.configFilePath))
-                        ReadBookConfig.initConfigs()
-                    }
-                } catch (e: Exception) {
-                    AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
-                }
-                try {
-                    val file = File(path, ReadBookConfig.shareConfigFileName)
-                    if (file.exists()) {
-                        FileUtils.delete(ReadBookConfig.shareConfigFilePath)
-                        file.copyTo(File(ReadBookConfig.shareConfigFilePath))
-                        ReadBookConfig.initShareConfig()
-                    }
-                } catch (e: Exception) {
-                    AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
-                }
-            }
-            appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
-                val edit = appCtx.defaultSharedPreferences.edit()
-
-                map.forEach { (key, value) ->
-                    if (BackupConfig.keyIsNotIgnore(key)) {
-                        when (key) {
-                            PreferKey.webDavPassword -> {
-                                edit.putString(key, aes.decryptStr(value.toString()))
-                            }
-
-                            else -> when (value) {
-                                is Int -> edit.putInt(key, value)
-                                is Boolean -> edit.putBoolean(key, value)
-                                is Long -> edit.putLong(key, value)
-                                is Float -> edit.putFloat(key, value)
-                                is String -> edit.putString(key, value)
-                            }
-                        }
-                    }
-                }
-                edit.apply()
-            }
-            ReadBookConfig.apply {
-                styleSelect = appCtx.getPrefInt(PreferKey.readStyleSelect)
-                shareLayout = appCtx.getPrefBoolean(PreferKey.shareLayout)
-                hideStatusBar = appCtx.getPrefBoolean(PreferKey.hideStatusBar)
-                hideNavigationBar = appCtx.getPrefBoolean(PreferKey.hideNavigationBar)
-                autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
-            }
+            edit.apply()
+        }
+        ReadBookConfig.apply {
+            styleSelect = appCtx.getPrefInt(PreferKey.readStyleSelect)
+            shareLayout = appCtx.getPrefBoolean(PreferKey.shareLayout)
+            hideStatusBar = appCtx.getPrefBoolean(PreferKey.hideStatusBar)
+            hideNavigationBar = appCtx.getPrefBoolean(PreferKey.hideNavigationBar)
+            autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 46)
         }
         appCtx.toastOnUi(R.string.restore_success)
         withContext(Main) {
