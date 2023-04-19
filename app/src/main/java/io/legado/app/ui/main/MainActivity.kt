@@ -19,6 +19,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -228,7 +229,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             okButton {
                 LocalConfig.password = editTextBinding.editView.text.toString()
             }
-            cancelButton()
+            cancelButton {
+                LocalConfig.password = AppConst.androidId
+            }
         }
     }
 

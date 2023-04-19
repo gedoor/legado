@@ -129,14 +129,21 @@ object Backup {
             ensureActive()
             appCtx.getSharedPreferences(backupPath, "config")?.let { sp ->
                 val edit = sp.edit()
+                val aes = BackupAES()
                 appCtx.defaultSharedPreferences.all.forEach { (key, value) ->
                     if (BackupConfig.keyIsNotIgnore(key)) {
-                        when (value) {
-                            is Int -> edit.putInt(key, value)
-                            is Boolean -> edit.putBoolean(key, value)
-                            is Long -> edit.putLong(key, value)
-                            is Float -> edit.putFloat(key, value)
-                            is String -> edit.putString(key, value)
+                        when (key) {
+                            PreferKey.webDavPassword -> {
+                                edit.putString(key, aes.encryptBase64(value.toString()))
+                            }
+
+                            else -> when (value) {
+                                is Int -> edit.putInt(key, value)
+                                is Boolean -> edit.putBoolean(key, value)
+                                is Long -> edit.putLong(key, value)
+                                is Float -> edit.putFloat(key, value)
+                                is String -> edit.putString(key, value)
+                            }
                         }
                     }
                 }

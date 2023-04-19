@@ -10,7 +10,21 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.*
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookGroup
+import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.Bookmark
+import io.legado.app.data.entities.DictRule
+import io.legado.app.data.entities.HttpTTS
+import io.legado.app.data.entities.KeyboardAssist
+import io.legado.app.data.entities.ReadRecord
+import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.data.entities.RssSource
+import io.legado.app.data.entities.RssStar
+import io.legado.app.data.entities.RuleSub
+import io.legado.app.data.entities.SearchKeyword
+import io.legado.app.data.entities.Server
+import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.book.isLocal
@@ -19,8 +33,20 @@ import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
 import io.legado.app.utils.compress.ZipUtils
+import io.legado.app.utils.defaultSharedPreferences
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.getSharedPreferences
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.openInputStream
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -183,14 +209,21 @@ object Restore {
             }
             appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
                 val edit = appCtx.defaultSharedPreferences.edit()
+                val aes = BackupAES()
                 map.forEach { (key, value) ->
                     if (BackupConfig.keyIsNotIgnore(key)) {
-                        when (value) {
-                            is Int -> edit.putInt(key, value)
-                            is Boolean -> edit.putBoolean(key, value)
-                            is Long -> edit.putLong(key, value)
-                            is Float -> edit.putFloat(key, value)
-                            is String -> edit.putString(key, value)
+                        when (key) {
+                            PreferKey.webDavPassword -> {
+                                edit.putString(key, aes.decryptStr(value.toString()))
+                            }
+
+                            else -> when (value) {
+                                is Int -> edit.putInt(key, value)
+                                is Boolean -> edit.putBoolean(key, value)
+                                is Long -> edit.putLong(key, value)
+                                is Float -> edit.putFloat(key, value)
+                                is String -> edit.putString(key, value)
+                            }
                         }
                     }
                 }
