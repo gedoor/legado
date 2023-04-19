@@ -167,46 +167,43 @@ object Restore {
                 appDb.serverDao.insert(*it.toTypedArray())
             }
         }
-        try {
-            val file = File(path, DirectLinkUpload.ruleFileName)
-            if (file.exists()) {
-                val json = file.readText()
-                ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
-            }
-        } catch (e: Exception) {
-            AppLog.put("直链上传出错\n${e.localizedMessage}", e)
+        File(path, DirectLinkUpload.ruleFileName).takeIf {
+            it.exists()
+        }?.runCatching {
+            val json = readText()
+            ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
+        }?.onFailure {
+            AppLog.put("直链上传恢复出错\n${it.localizedMessage}", it)
         }
-        try {
-            val file = File(path, ThemeConfig.configFileName)
-            if (file.exists()) {
-                FileUtils.delete(ThemeConfig.configFilePath)
-                file.copyTo(File(ThemeConfig.configFilePath))
-                ThemeConfig.upConfig()
-            }
-        } catch (e: Exception) {
-            AppLog.put("恢复主题出错\n${e.localizedMessage}", e)
+        //恢复主题配置
+        File(path, ThemeConfig.configFileName).takeIf {
+            it.exists()
+        }?.runCatching {
+            FileUtils.delete(ThemeConfig.configFilePath)
+            copyTo(File(ThemeConfig.configFilePath))
+            ThemeConfig.upConfig()
+        }?.onFailure {
+            AppLog.put("恢复主题出错\n${it.localizedMessage}", it)
         }
         if (!BackupConfig.ignoreReadConfig) {
             //恢复阅读界面配置
-            try {
-                val file = File(path, ReadBookConfig.configFileName)
-                if (file.exists()) {
-                    FileUtils.delete(ReadBookConfig.configFilePath)
-                    file.copyTo(File(ReadBookConfig.configFilePath))
-                    ReadBookConfig.initConfigs()
-                }
-            } catch (e: Exception) {
-                AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
+            File(path, ReadBookConfig.configFileName).takeIf {
+                it.exists()
+            }?.runCatching {
+                FileUtils.delete(ReadBookConfig.configFilePath)
+                copyTo(File(ReadBookConfig.configFilePath))
+                ReadBookConfig.initConfigs()
+            }?.onFailure {
+                AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
             }
-            try {
-                val file = File(path, ReadBookConfig.shareConfigFileName)
-                if (file.exists()) {
-                    FileUtils.delete(ReadBookConfig.shareConfigFilePath)
-                    file.copyTo(File(ReadBookConfig.shareConfigFilePath))
-                    ReadBookConfig.initShareConfig()
-                }
-            } catch (e: Exception) {
-                AppLog.put("恢复阅读界面出错\n${e.localizedMessage}", e)
+            File(path, ReadBookConfig.shareConfigFileName).takeIf {
+                it.exists()
+            }?.runCatching {
+                FileUtils.delete(ReadBookConfig.shareConfigFilePath)
+                copyTo(File(ReadBookConfig.shareConfigFilePath))
+                ReadBookConfig.initShareConfig()
+            }?.onFailure {
+                AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
             }
         }
         appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
