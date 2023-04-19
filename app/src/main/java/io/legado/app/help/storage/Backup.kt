@@ -92,6 +92,7 @@ object Backup {
     suspend fun backup(context: Context, path: String?) {
         LocalConfig.lastBackup = System.currentTimeMillis()
         withContext(IO) {
+            val aes = BackupAES()
             FileUtils.delete(backupPath)
             writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
             writeListToJson(appDb.bookmarkDao.all, "bookmark.json", backupPath)
@@ -108,7 +109,10 @@ object Backup {
             writeListToJson(appDb.httpTTSDao.all, "httpTTS.json", backupPath)
             writeListToJson(appDb.keyboardAssistsDao.all, "keyboardAssists.json", backupPath)
             writeListToJson(appDb.dictRuleDao.all, "dictRule.json", backupPath)
-            writeListToJson(appDb.serverDao.all, "servers.json", backupPath)
+            aes.encryptBase64(GSON.toJson(appDb.serverDao.all)).let {
+                FileUtils.createFileIfNotExist(backupPath + File.separator + "servers.json")
+                    .writeText(it)
+            }
             ensureActive()
             GSON.toJson(ReadBookConfig.configList).let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
@@ -129,7 +133,6 @@ object Backup {
             ensureActive()
             appCtx.getSharedPreferences(backupPath, "config")?.let { sp ->
                 val edit = sp.edit()
-                val aes = BackupAES()
                 appCtx.defaultSharedPreferences.all.forEach { (key, value) ->
                     if (BackupConfig.keyIsNotIgnore(key)) {
                         when (key) {
@@ -159,15 +162,15 @@ object Backup {
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 when {
                     path.isNullOrBlank() -> {
-                        copyBackup(context.getExternalFilesDir(null)!!, "backup.zip")
+                        copyBackup(context.getExternalFilesDir(null)!!, zipFileName)
                     }
 
                     path.isContentScheme() -> {
-                        copyBackup(context, Uri.parse(path), "backup.zip")
+                        copyBackup(context, Uri.parse(path), zipFileName)
                     }
 
                     else -> {
-                        copyBackup(File(path), "backup.zip")
+                        copyBackup(File(path), zipFileName)
                     }
                 }
                 AppWebDav.backUpWebDav(zipFileName)

@@ -99,8 +99,7 @@ object AppWebDav {
             webDav.downloadTo(Backup.zipFilePath, true)
             FileUtils.delete(Backup.backupPath)
             ZipUtils.unZipToPath(File(Backup.zipFilePath), Backup.backupPath)
-            Restore.restoreDatabase()
-            Restore.restoreConfig()
+            Restore.restore(Backup.backupPath)
         }
     }
 

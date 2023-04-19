@@ -71,15 +71,15 @@ object Restore {
                 ZipUtils.unZipToPath(File(uri.path!!), Backup.backupPath)
             }
         }.onSuccess {
-            restoreDatabase()
-            restoreConfig()
+            restore(Backup.backupPath)
             LocalConfig.lastBackup = System.currentTimeMillis()
         }.onFailure {
             AppLog.put("复制解压文件出错\n${it.localizedMessage}", it)
         }
     }
 
-    suspend fun restoreDatabase(path: String = Backup.backupPath) {
+    suspend fun restore(path: String) {
+        val aes = BackupAES()
         withContext(IO) {
             fileToListT<Book>(path, "bookshelf.json")?.let {
                 it.forEach { book ->
@@ -140,9 +140,6 @@ object Restore {
             fileToListT<DictRule>(path, "dictRule.json")?.let {
                 appDb.dictRuleDao.insert(*it.toTypedArray())
             }
-            fileToListT<Server>(path, "servers.json")?.let {
-                appDb.serverDao.insert(*it.toTypedArray())
-            }
             fileToListT<KeyboardAssist>(path, "keyboardAssists.json")?.let {
                 appDb.keyboardAssistsDao.insert(*it.toTypedArray())
             }
@@ -160,11 +157,14 @@ object Restore {
                     }
                 }
             }
-        }
-    }
-
-    suspend fun restoreConfig(path: String = Backup.backupPath) {
-        withContext(IO) {
+            File(path, "servers.json").takeIf {
+                it.exists()
+            }?.run {
+                val json = aes.decryptStr(readText())
+                GSON.fromJsonArray<Server>(json).getOrNull()?.let {
+                    appDb.serverDao.insert(*it.toTypedArray())
+                }
+            }
             try {
                 val file = File(path, DirectLinkUpload.ruleFileName)
                 if (file.exists()) {
@@ -209,7 +209,7 @@ object Restore {
             }
             appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
                 val edit = appCtx.defaultSharedPreferences.edit()
-                val aes = BackupAES()
+
                 map.forEach { (key, value) ->
                     if (BackupConfig.keyIsNotIgnore(key)) {
                         when (key) {
