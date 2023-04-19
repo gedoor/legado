@@ -44,6 +44,7 @@ import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.getSharedPreferences
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.openInputStream
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -160,7 +161,10 @@ object Restore {
             File(path, "servers.json").takeIf {
                 it.exists()
             }?.run {
-                val json = aes.decryptStr(readText())
+                var json = readText()
+                if (!json.isJsonArray()) {
+                    json = aes.decryptStr(json)
+                }
                 GSON.fromJsonArray<Server>(json).getOrNull()?.let {
                     appDb.serverDao.insert(*it.toTypedArray())
                 }
