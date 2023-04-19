@@ -95,3 +95,9 @@ fun SharedPreferences.putFloat(key: String, value: Float) {
         putFloat(key, value)
     }
 }
+
+fun SharedPreferences.remove(key: String) {
+    edit {
+        remove(key)
+    }
+}

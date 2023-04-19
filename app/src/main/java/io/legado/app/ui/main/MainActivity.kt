@@ -19,7 +19,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -212,7 +211,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
      * 设置本地密码
      */
     private suspend fun setLocalPassword() = suspendCoroutine { block ->
-        if (LocalConfig.password.isNotBlank()) {
+        if (LocalConfig.password != null) {
             block.resume(null)
             return@suspendCoroutine
         }
@@ -230,7 +229,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 LocalConfig.password = editTextBinding.editView.text.toString()
             }
             cancelButton {
-                LocalConfig.password = AppConst.androidId
+                LocalConfig.password = ""
             }
         }
     }
