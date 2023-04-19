@@ -248,6 +248,9 @@
 ## 对外提供api
 -keep class io.legado.app.api.ReturnData{*;}
 
+# Apache Commons Compress
+-keep class org.apache.commons.compress.archivers.** {*;}
+
 
 #-------------------Cronet------------------------------------
 # Contains flags that can be safely shared with Cronet, and thus would be
