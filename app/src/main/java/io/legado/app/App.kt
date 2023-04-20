@@ -10,13 +10,18 @@ import android.os.Build
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import com.github.liuyueyi.quick.transfer.constants.TransType
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.help.*
+import io.legado.app.help.AppWebDav
+import io.legado.app.help.CrashHandler
+import io.legado.app.help.DefaultData
+import io.legado.app.help.LifecycleHelp
+import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
@@ -36,6 +41,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        RhinoScriptEngine
         oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so

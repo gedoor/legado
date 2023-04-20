@@ -42,7 +42,7 @@ import java.security.*
  * @since 1.6
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
+object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     var accessContext: AccessControlContext? = null
     private var topLevel: RhinoTopLevel? = null
     private val indexedProps: MutableMap<Any, Any?>
@@ -198,6 +198,62 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     }
 
     init {
+        ContextFactory.initGlobal(object : ContextFactory() {
+
+            override fun makeContext(): Context {
+                val cx = super.makeContext()
+                cx.languageVersion = 200
+                cx.optimizationLevel = -1
+                cx.setClassShutter(RhinoClassShutter)
+                cx.wrapFactory = RhinoWrapFactory
+                return cx
+            }
+
+            override fun hasFeature(cx: Context, featureIndex: Int): Boolean {
+                @Suppress("UNUSED_EXPRESSION")
+                return when (featureIndex) {
+                    //Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true
+                    else -> super.hasFeature(cx, featureIndex)
+                }
+            }
+
+            override fun doTopCall(
+                callable: Callable,
+                cx: Context,
+                scope: Scriptable,
+                thisObj: Scriptable,
+                args: Array<Any>
+            ): Any? {
+                var accContext: AccessControlContext? = null
+                val global = ScriptableObject.getTopLevelScope(scope)
+                val globalProto = global.prototype
+                if (globalProto is RhinoTopLevel) {
+                    accContext = globalProto.accessContext
+                }
+                return if (accContext != null) AccessController.doPrivileged(
+                    PrivilegedAction {
+                        superDoTopCall(callable, cx, scope, thisObj, args)
+                    }, accContext
+                ) else superDoTopCall(
+                    callable,
+                    cx,
+                    scope,
+                    thisObj,
+                    args
+                )
+            }
+
+            private fun superDoTopCall(
+                callable: Callable,
+                cx: Context,
+                scope: Scriptable,
+                thisObj: Scriptable,
+                args: Array<Any>
+            ): Any? {
+                return super.doTopCall(callable, cx, scope, thisObj, args)
+            }
+        })
+
         if (System.getSecurityManager() != null) {
             try {
                 AccessController.checkPermission(AllPermission())
@@ -251,65 +307,4 @@ class RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         }
     }
 
-    @Suppress("unused")
-    companion object {
-
-        init {
-            ContextFactory.initGlobal(object : ContextFactory() {
-
-                override fun makeContext(): Context {
-                    val cx = super.makeContext()
-                    cx.languageVersion = 200
-                    cx.optimizationLevel = -1
-                    cx.setClassShutter(RhinoClassShutter)
-                    cx.wrapFactory = RhinoWrapFactory
-                    return cx
-                }
-
-                override fun hasFeature(cx: Context, featureIndex: Int): Boolean {
-                    @Suppress("UNUSED_EXPRESSION")
-                    return when (featureIndex) {
-                        //Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true
-                        else -> super.hasFeature(cx, featureIndex)
-                    }
-                }
-
-                override fun doTopCall(
-                    callable: Callable,
-                    cx: Context,
-                    scope: Scriptable,
-                    thisObj: Scriptable,
-                    args: Array<Any>
-                ): Any? {
-                    var accContext: AccessControlContext? = null
-                    val global = ScriptableObject.getTopLevelScope(scope)
-                    val globalProto = global.prototype
-                    if (globalProto is RhinoTopLevel) {
-                        accContext = globalProto.accessContext
-                    }
-                    return if (accContext != null) AccessController.doPrivileged(
-                        PrivilegedAction {
-                            superDoTopCall(callable, cx, scope, thisObj, args)
-                        }, accContext
-                    ) else superDoTopCall(
-                        callable,
-                        cx,
-                        scope,
-                        thisObj,
-                        args
-                    )
-                }
-
-                private fun superDoTopCall(
-                    callable: Callable,
-                    cx: Context,
-                    scope: Scriptable,
-                    thisObj: Scriptable,
-                    args: Array<Any>
-                ): Any? {
-                    return super.doTopCall(callable, cx, scope, thisObj, args)
-                }
-            })
-        }
-    }
 }

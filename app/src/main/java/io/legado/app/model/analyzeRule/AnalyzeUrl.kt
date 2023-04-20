@@ -5,6 +5,8 @@ import android.util.Base64
 import androidx.annotation.Keep
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
+import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppPattern.JS_PATTERN
@@ -19,9 +21,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
 import io.legado.app.rhino.Bindings
-import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.evaluate
-import io.legado.app.rhino.putBindings
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -267,14 +266,15 @@ class AnalyzeUrl(
         bindings["book"] = ruleData as? Book
         bindings["source"] = source
         bindings["result"] = result
-        return Rhino.use {
-            val scope = initStandardObjects()
-            scope.putBindings(bindings)
-            source?.getShareScope()?.let {
-                scope.prototype = it
-            }
-            evaluate(scope, jsStr)
-        }
+//        return Rhino.use {
+//            val scope = initStandardObjects()
+//            scope.putBindings(bindings)
+//            source?.getShareScope()?.let {
+//                scope.prototype = it
+//            }
+//            evaluate(scope, jsStr)
+//        }
+        return RhinoScriptEngine.eval(jsStr, SimpleBindings(bindings))
     }
 
     fun put(key: String, value: String): String {

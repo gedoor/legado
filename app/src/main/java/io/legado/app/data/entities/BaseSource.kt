@@ -1,6 +1,8 @@
 package io.legado.app.data.entities
 
 import cn.hutool.crypto.symmetric.AES
+import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi
@@ -10,9 +12,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.SharedJsScope
 import io.legado.app.rhino.Bindings
-import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.evaluate
-import io.legado.app.rhino.putBindings
 import io.legado.app.utils.*
 import org.intellij.lang.annotations.Language
 import org.mozilla.javascript.Scriptable
@@ -237,14 +236,15 @@ interface BaseSource : JsExtensions {
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-        return Rhino.use {
-            val scope = initStandardObjects()
-            scope.putBindings(bindings)
-            getShareScope()?.let {
-                scope.prototype = it
-            }
-            evaluate(scope, jsStr)
-        }
+//        return Rhino.use {
+//            val scope = initStandardObjects()
+//            scope.putBindings(bindings)
+//            getShareScope()?.let {
+//                scope.prototype = it
+//            }
+//            evaluate(scope, jsStr)
+//        }
+        return RhinoScriptEngine.eval(jsStr, SimpleBindings(bindings))
     }
 
     fun getShareScope(): Scriptable? {

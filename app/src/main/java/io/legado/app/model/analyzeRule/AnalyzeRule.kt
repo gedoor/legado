@@ -2,6 +2,8 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
+import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.*
 import io.legado.app.help.CacheManager
@@ -9,9 +11,6 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.rhino.Bindings
-import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.evaluate
-import io.legado.app.rhino.putBindings
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -695,14 +694,15 @@ class AnalyzeRule(
         bindings["title"] = chapter?.title
         bindings["src"] = content
         bindings["nextChapterUrl"] = nextChapterUrl
-        return Rhino.use {
-            val scope = initStandardObjects()
-            scope.putBindings(bindings)
-            source?.getShareScope()?.let {
-                scope.prototype = it
-            }
-            evaluate(scope, jsStr)
-        }
+//        return Rhino.use {
+//            val scope = initStandardObjects()
+//            scope.putBindings(bindings)
+//            source?.getShareScope()?.let {
+//                scope.prototype = it
+//            }
+//            evaluate(scope, jsStr)
+//        }
+        return RhinoScriptEngine.eval(jsStr, SimpleBindings(bindings))
     }
 
     override fun getSource(): BaseSource? {
