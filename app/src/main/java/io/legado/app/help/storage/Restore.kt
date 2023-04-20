@@ -158,7 +158,7 @@ object Restore {
         }
         File(path, "servers.json").takeIf {
             it.exists()
-        }?.run {
+        }?.runCatching {
             var json = readText()
             if (!json.isJsonArray()) {
                 json = aes.decryptStr(json)
@@ -166,6 +166,8 @@ object Restore {
             GSON.fromJsonArray<Server>(json).getOrNull()?.let {
                 appDb.serverDao.insert(*it.toTypedArray())
             }
+        }?.onFailure {
+            AppLog.put("恢复服务器配置出错\n${it.localizedMessage}", it)
         }
         File(path, DirectLinkUpload.ruleFileName).takeIf {
             it.exists()
@@ -173,7 +175,7 @@ object Restore {
             val json = readText()
             ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
         }?.onFailure {
-            AppLog.put("直链上传恢复出错\n${it.localizedMessage}", it)
+            AppLog.put("恢复直链上传出错\n${it.localizedMessage}", it)
         }
         //恢复主题配置
         File(path, ThemeConfig.configFileName).takeIf {
