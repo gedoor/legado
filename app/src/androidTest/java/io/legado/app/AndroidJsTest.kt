@@ -1,6 +1,7 @@
 package io.legado.app
 
 import io.legado.app.rhino.Rhino
+import io.legado.app.rhino.putBinding
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 import org.junit.Test
@@ -46,15 +47,31 @@ class AndroidJsTest {
         val result1 = Rhino.use {
             evaluateString(initStandardObjects(), js1, "xx", 1, null)
         }
-        Assert.assertEquals(result1, "未知错误,请联系开发者!")
+        Assert.assertEquals(result1, "未知错误,请联系开发者!").let {
+
+        }
     }
 
     @Test
-    fun testReturnNull() {
+    fun testMap() {
+        val map = hashMapOf("id" to "3242532321")
+
+        @Language("js")
+        val jsMap = "$=result;id=$.id;id"
         val result = Rhino.use {
-            evaluateString(initStandardObjects(), "null", "xx", 1, null)
+            val scope = initStandardObjects()
+            scope.putBinding("result", map)
+            evaluateString(scope, jsMap, "xxx", 1, null)
         }
-        Assert.assertEquals(null, result)
+        Assert.assertEquals("3242532321", result)
+        @Language("js")
+        val jsMap1 = """result.get("id")"""
+        val result1 = Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBinding("result", map)
+            evaluateString(scope, jsMap1, "xxx", 1, null)
+        }
+        Assert.assertEquals("3242532321", result1)
     }
 
 }

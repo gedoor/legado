@@ -3,10 +3,12 @@ package io.legado.app
 import com.script.SimpleBindings
 import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.rhino.Rhino
+import io.legado.app.rhino.putBinding
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 import org.junit.Test
-import org.mozilla.javascript.Context
+import org.mozilla.javascript.Scriptable
 
 class JsTest {
 
@@ -29,27 +31,33 @@ class JsTest {
     @Test
     fun testMap() {
         val map = hashMapOf("id" to "3242532321")
-        val bindings = SimpleBindings()
-        bindings["result"] = map
+
         @Language("js")
         val jsMap = "$=result;id=$.id;id"
-        val result = SCRIPT_ENGINE.eval(jsMap, bindings)?.toString()
+        val result = Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBinding("result", map)
+            evaluateString(scope, jsMap, "xxx", 1, null)
+        }
         Assert.assertEquals("3242532321", result)
         @Language("js")
         val jsMap1 = """result.get("id")"""
-        val result1 = SCRIPT_ENGINE.eval(jsMap1, bindings)?.toString()
+        val result1 = Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBinding("result", map)
+            evaluateString(scope, jsMap1, "xxx", 1, null)
+        }
         Assert.assertEquals("3242532321", result1)
     }
 
     @Test
     fun testFor() {
-        val context = SCRIPT_ENGINE.getScriptContext(SimpleBindings())
-        val scope = SCRIPT_ENGINE.getRuntimeScope(context)
-        try {
-            Context.enter().evaluateString(scope, printJs, "print", 1, null)
-        } finally {
-            Context.exit()
-        }
+        val scope = Rhino.use {
+            val scope = initStandardObjects()
+            evaluateString(scope, printJs, "print", 1, null)
+            scope
+        } as Scriptable
+
         @Language("js")
         val jsFor = """
             let result = 0
@@ -69,7 +77,9 @@ class JsTest {
             }
             result
         """.trimIndent()
-        val result = SCRIPT_ENGINE.eval(jsFor, scope).toString()
+        val result = Rhino.use {
+            evaluateString(scope, jsFor, "jsFor", 1, null)
+        }
         Assert.assertEquals("12012", result)
     }
 
