@@ -2,14 +2,16 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
-import com.script.SimpleBindings
 import io.legado.app.constant.AppPattern.JS_PATTERN
-import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.data.entities.*
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.rhino.Bindings
+import io.legado.app.rhino.Rhino
+import io.legado.app.rhino.evaluate
+import io.legado.app.rhino.putBindings
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -681,7 +683,7 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = SimpleBindings()
+        val bindings = Bindings()
         bindings["java"] = this
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
@@ -693,12 +695,14 @@ class AnalyzeRule(
         bindings["title"] = chapter?.title
         bindings["src"] = content
         bindings["nextChapterUrl"] = nextChapterUrl
-        val context = SCRIPT_ENGINE.getScriptContext(bindings)
-        val scope = SCRIPT_ENGINE.getRuntimeScope(context)
-        source?.getShareScope()?.let {
-            scope.prototype = it
+        return Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBindings(bindings)
+            source?.getShareScope()?.let {
+                scope.prototype = it
+            }
+            evaluate(scope, jsStr)
         }
-        return SCRIPT_ENGINE.eval(jsStr, scope)
     }
 
     override fun getSource(): BaseSource? {

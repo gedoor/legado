@@ -8,11 +8,10 @@ import org.mozilla.javascript.Wrapper
 
 object Rhino {
 
-    inline fun use(block: Context.() -> Any?): Any? {
+    inline fun <T> use(block: Context.() -> T): T {
         return try {
             val cx = Context.enter()
-            val result = block.invoke(cx)
-            unwrapReturnValue(result)
+            block.invoke(cx)
         } finally {
             Context.exit()
         }

@@ -1,14 +1,13 @@
 package io.legado.app
 
 import com.script.SimpleBindings
-import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.rhino.Rhino
+import io.legado.app.rhino.evaluate
 import io.legado.app.rhino.putBinding
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 import org.junit.Test
-import org.mozilla.javascript.Scriptable
 
 class JsTest {
 
@@ -56,7 +55,7 @@ class JsTest {
             val scope = initStandardObjects()
             evaluateString(scope, printJs, "print", 1, null)
             scope
-        } as Scriptable
+        }
 
         @Language("js")
         val jsFor = """
@@ -85,7 +84,9 @@ class JsTest {
 
     @Test
     fun testReturnNull() {
-        val result = SCRIPT_ENGINE.eval("null")
+        val result = Rhino.use {
+            evaluate(initStandardObjects(), "null")
+        }
         Assert.assertEquals(null, result)
     }
 
@@ -101,9 +102,11 @@ class JsTest {
             .replace(/\;/g,"；")
             .replace(/\:/g,"：")
         """.trimIndent()
-        val bindings = SimpleBindings()
-        bindings["result"] = ",.!?…;:"
-        val result = SCRIPT_ENGINE.eval(js, bindings).toString()
+        val result = Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBinding("result", ",.!?…;:")
+            evaluate(scope, js)
+        }
         Assert.assertEquals(result, "，。！？……；：")
     }
 
@@ -115,22 +118,29 @@ class JsTest {
         bindings["chapter"] = chapter
         @Language("js")
         val js = "chapter.title"
-        val result = SCRIPT_ENGINE.eval(js, bindings)
+        val result = Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBinding("chapter", chapter)
+            evaluate(scope, js)
+        }
         Assert.assertEquals(result, "xxxyyy")
     }
 
     @Test
     fun javaListForEach() {
         val list = arrayListOf(1, 2, 3)
-        val bindings = SimpleBindings()
-        bindings["list"] = list
+
         @Language("js")
         val js = """
             var result = 0
             list.forEach(item => {result = result + item})
             result
         """.trimIndent()
-        val result = SCRIPT_ENGINE.eval(js, bindings)
+        val result = Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBinding("list", list)
+            evaluate(scope, js)
+        }
         Assert.assertEquals(result, 6.0)
     }
 

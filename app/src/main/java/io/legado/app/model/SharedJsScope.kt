@@ -1,8 +1,6 @@
 package io.legado.app.model
 
 import com.google.gson.reflect.TypeToken
-import com.script.SimpleBindings
-import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
@@ -33,9 +31,8 @@ object SharedJsScope {
         val key = MD5Utils.md5Encode(jsLib)
         var scope = scopeMap[key]?.get()
         if (scope == null) {
-            val context = SCRIPT_ENGINE.getScriptContext(SimpleBindings())
-            scope = SCRIPT_ENGINE.getRuntimeScope(context)
             Rhino.use {
+                scope = initStandardObjects()
                 if (jsLib.isJsonObject()) {
                     val jsMap: Map<String, String> = GSON.fromJson(
                         jsLib,

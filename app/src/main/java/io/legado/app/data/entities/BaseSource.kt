@@ -1,16 +1,18 @@
 package io.legado.app.data.entities
 
 import cn.hutool.crypto.symmetric.AES
-import com.script.SimpleBindings
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.SharedJsScope
+import io.legado.app.rhino.Bindings
+import io.legado.app.rhino.Rhino
+import io.legado.app.rhino.evaluate
+import io.legado.app.rhino.putBindings
 import io.legado.app.utils.*
 import org.intellij.lang.annotations.Language
 import org.mozilla.javascript.Scriptable
@@ -227,19 +229,22 @@ interface BaseSource : JsExtensions {
      * 执行JS
      */
     @Throws(Exception::class)
-    fun evalJS(jsStr: String, bindingsConfig: SimpleBindings.() -> Unit = {}): Any? {
-        val bindings = SimpleBindings()
+    fun evalJS(jsStr: String, bindingsConfig: Bindings.() -> Unit = {}): Any? {
+        val bindings = Bindings()
         bindings.apply(bindingsConfig)
         bindings["java"] = this
         bindings["source"] = this
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-        val scope = SCRIPT_ENGINE.getRuntimeScope(SCRIPT_ENGINE.getScriptContext(bindings))
-        getShareScope()?.let {
-            scope.prototype = it
+        return Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBindings(bindings)
+            getShareScope()?.let {
+                scope.prototype = it
+            }
+            evaluate(scope, jsStr)
         }
-        return SCRIPT_ENGINE.eval(jsStr, scope)
     }
 
     fun getShareScope(): Scriptable? {

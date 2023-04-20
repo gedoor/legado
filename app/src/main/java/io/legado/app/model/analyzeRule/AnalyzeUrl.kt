@@ -5,12 +5,10 @@ import android.util.Base64
 import androidx.annotation.Keep
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
-import com.script.SimpleBindings
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.constant.AppPattern.dataUriRegex
-import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -20,6 +18,10 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
+import io.legado.app.rhino.Bindings
+import io.legado.app.rhino.Rhino
+import io.legado.app.rhino.evaluate
+import io.legado.app.rhino.putBindings
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -253,7 +255,7 @@ class AnalyzeUrl(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = SimpleBindings()
+        val bindings = Bindings()
         bindings["java"] = this
         bindings["baseUrl"] = baseUrl
         bindings["cookie"] = CookieStore
@@ -265,12 +267,14 @@ class AnalyzeUrl(
         bindings["book"] = ruleData as? Book
         bindings["source"] = source
         bindings["result"] = result
-        val context = SCRIPT_ENGINE.getScriptContext(bindings)
-        val scope = SCRIPT_ENGINE.getRuntimeScope(context)
-        source?.getShareScope()?.let {
-            scope.prototype = it
+        return Rhino.use {
+            val scope = initStandardObjects()
+            scope.putBindings(bindings)
+            source?.getShareScope()?.let {
+                scope.prototype = it
+            }
+            evaluate(scope, jsStr)
         }
-        return SCRIPT_ENGINE.eval(jsStr, scope)
     }
 
     fun put(key: String, value: String): String {

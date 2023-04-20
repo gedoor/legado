@@ -1,11 +1,12 @@
 package io.legado.app.utils
 
 import androidx.core.os.postDelayed
-import com.script.SimpleBindings
-import io.legado.app.constant.SCRIPT_ENGINE
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.rhino.Bindings
+import io.legado.app.rhino.Rhino
+import io.legado.app.rhino.evaluate
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import splitties.init.appCtx
@@ -30,10 +31,11 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): Stri
                     val stringBuffer = StringBuffer()
                     while (matcher.find()) {
                         if (isJs) {
-                            val bindings = SimpleBindings()
+                            val bindings = Bindings()
                             bindings["result"] = matcher.group()
-                            val jsResult =
-                                SCRIPT_ENGINE.eval(replacement1, bindings).toString()
+                            val jsResult = Rhino.use {
+                                evaluate(bindings, replacement1)
+                            }.toString()
                             matcher.appendReplacement(stringBuffer, jsResult)
                         } else {
                             matcher.appendReplacement(stringBuffer, replacement1)
