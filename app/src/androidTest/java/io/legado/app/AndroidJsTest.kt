@@ -1,11 +1,11 @@
 package io.legado.app
 
-import io.legado.app.constant.SCRIPT_ENGINE
+import io.legado.app.rhino.Rhino
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 import org.junit.Test
 
-class JsTest {
+class AndroidJsTest {
 
     @Test
     fun testPackages() {
@@ -35,14 +35,26 @@ class JsTest {
             var queryStringWithSign = "Signature=" + signStr + "&" + query;
             queryStringWithSign
         """.trimIndent()
-        SCRIPT_ENGINE.eval(js)
+        Rhino.use {
+            evaluateString(initStandardObjects(), js, "yy", 1, null)
+        }
         @Language("js")
         val js1 = """
             var returnData = new Packages.io.legado.app.api.ReturnData()
             returnData.getErrorMsg()
         """.trimIndent()
-        val result1 = SCRIPT_ENGINE.eval(js1)
+        val result1 = Rhino.use {
+            evaluateString(initStandardObjects(), js1, "xx", 1, null)
+        }
         Assert.assertEquals(result1, "未知错误,请联系开发者!")
+    }
+
+    @Test
+    fun testReturnNull() {
+        val result = Rhino.use {
+            evaluateString(initStandardObjects(), "null", "xx", 1, null)
+        }
+        Assert.assertEquals(null, result)
     }
 
 }

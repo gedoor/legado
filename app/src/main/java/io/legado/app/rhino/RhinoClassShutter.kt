@@ -22,7 +22,7 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package com.script.rhino
+package io.legado.app.rhino
 
 import org.mozilla.javascript.ClassShutter
 
