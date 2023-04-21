@@ -43,7 +43,7 @@
 <script setup>
 import API from "@api";
 import { Folder, Delete, Download, Search } from "@element-plus/icons-vue";
-import { isSourceContains } from "../utils/souce";
+import { isSourceContains } from "@utils/souce";
 import VirtualList from "vue3-virtual-scroll-list";
 import SourceItem from "./SourceItem.vue";
 
@@ -55,7 +55,7 @@ const isBookSource = computed(() => {
   return /bookSource/.test(window.location.href);
 });
 const deleteSelectSources = () => {
-  API.deleteSource(sourceSelect.value).then({ data } => {
+  API.deleteSource(sourceSelect.value).then(({ data }) => {
     if (!data.isSuccess) return ElMessage.error(data.errorMsg);
     store.deleteSources(sourceSelect.value);
     sourceSelect.value = [];
