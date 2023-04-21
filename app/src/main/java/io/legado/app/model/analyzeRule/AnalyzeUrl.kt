@@ -20,7 +20,6 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
-import io.legado.app.rhino.Bindings
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -255,7 +254,7 @@ class AnalyzeUrl(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = Bindings()
+        val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["baseUrl"] = baseUrl
         bindings["cookie"] = CookieStore
@@ -267,14 +266,7 @@ class AnalyzeUrl(
         bindings["book"] = ruleData as? Book
         bindings["source"] = source
         bindings["result"] = result
-//        return Rhino.use { scope ->
-//            scope.putBindings(bindings)
-//            source?.getShareScope()?.let {
-//                scope.prototype = it
-//            }
-//            eval(scope, jsStr)
-//        }
-        val context = RhinoScriptEngine.getScriptContext(SimpleBindings(bindings))
+        val context = RhinoScriptEngine.getScriptContext(bindings)
         val scope = RhinoScriptEngine.getRuntimeScope(context)
         source?.getShareScope()?.let {
             scope.prototype = it

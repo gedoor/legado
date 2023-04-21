@@ -3,6 +3,8 @@ package io.legado.app.model.localBook
 import android.net.Uri
 import android.util.Base64
 import androidx.documentfile.provider.DocumentFile
+import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.constant.*
 import io.legado.app.data.appDb
@@ -19,9 +21,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.eval
-import io.legado.app.rhino.putBinding
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Entities
@@ -271,9 +270,10 @@ object LocalBook {
                 val js =
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})"
                 //在脚本中定义如何分解文件名成书名、作者名
-                val jsonStr = Rhino.use {
-                    it.putBinding("src", tempFileName)
-                    eval(it, js)
+                val jsonStr = RhinoScriptEngine.run {
+                    val bindings = SimpleBindings()
+                    bindings["src"] = tempFileName
+                    eval(js, bindings)
                 }.toString()
                 val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr)
                     .getOrThrow()

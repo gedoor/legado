@@ -10,7 +10,6 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.rhino.Bindings
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -698,7 +697,7 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = Bindings()
+        val bindings = SimpleBindings()
         bindings["java"] = this
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
@@ -710,14 +709,7 @@ class AnalyzeRule(
         bindings["title"] = chapter?.title
         bindings["src"] = content
         bindings["nextChapterUrl"] = nextChapterUrl
-//        return Rhino.use { scope ->
-//            scope.putBindings(bindings)
-//            source?.getShareScope()?.let {
-//                scope.prototype = it
-//            }
-//            eval(scope, jsStr)
-//        }
-        val context = RhinoScriptEngine.getScriptContext(SimpleBindings(bindings))
+        val context = RhinoScriptEngine.getScriptContext(bindings)
         val scope = RhinoScriptEngine.getRuntimeScope(context)
         source?.getShareScope()?.let {
             scope.prototype = it

@@ -11,7 +11,6 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.SharedJsScope
-import io.legado.app.rhino.Bindings
 import io.legado.app.utils.*
 import org.intellij.lang.annotations.Language
 import org.mozilla.javascript.Scriptable
@@ -228,22 +227,15 @@ interface BaseSource : JsExtensions {
      * 执行JS
      */
     @Throws(Exception::class)
-    fun evalJS(jsStr: String, bindingsConfig: Bindings.() -> Unit = {}): Any? {
-        val bindings = Bindings()
+    fun evalJS(jsStr: String, bindingsConfig: SimpleBindings.() -> Unit = {}): Any? {
+        val bindings = SimpleBindings()
         bindings.apply(bindingsConfig)
         bindings["java"] = this
         bindings["source"] = this
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-//        return Rhino.use { scope ->
-//            scope.putBindings(bindings)
-//            getShareScope()?.let {
-//                scope.prototype = it
-//            }
-//            eval(scope, jsStr)
-//        }
-        val context = RhinoScriptEngine.getScriptContext(SimpleBindings(bindings))
+        val context = RhinoScriptEngine.getScriptContext(bindings)
         val scope = RhinoScriptEngine.getRuntimeScope(context)
         getShareScope()?.let {
             scope.prototype = it

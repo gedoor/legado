@@ -1,25 +1,20 @@
 package io.legado.app.utils
 
+import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.EXP_PATTERN
-import io.legado.app.rhino.Bindings
-import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.eval
-import io.legado.app.rhino.putBindings
 
 object JsUtils {
 
-    fun evalJs(js: String, bindingsFun: ((Bindings) -> Unit)? = null): String {
-        val bindings = Bindings()
+    fun evalJs(js: String, bindingsFun: ((SimpleBindings) -> Unit)? = null): String {
+        val bindings = SimpleBindings()
         bindingsFun?.invoke(bindings)
         if (js.contains("{{") && js.contains("}}")) {
             val sb = StringBuffer()
             val expMatcher = EXP_PATTERN.matcher(js)
             while (expMatcher.find()) {
                 val result = expMatcher.group(1)?.let { js1 ->
-                    Rhino.use {
-                        it.putBindings(bindings)
-                        eval(it, js1)
-                    }
+                    RhinoScriptEngine.eval(js1, bindings)
                 } ?: ""
                 if (result is String) {
                     expMatcher.appendReplacement(sb, result)
@@ -32,10 +27,7 @@ object JsUtils {
             expMatcher.appendTail(sb)
             return sb.toString()
         }
-        return Rhino.use {
-            it.putBindings(bindings)
-            eval(it, js)
-        }.toString()
+        return RhinoScriptEngine.eval(js, bindings).toString()
     }
 
 

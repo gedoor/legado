@@ -109,9 +109,13 @@ object Backup {
             writeListToJson(appDb.httpTTSDao.all, "httpTTS.json", backupPath)
             writeListToJson(appDb.keyboardAssistsDao.all, "keyboardAssists.json", backupPath)
             writeListToJson(appDb.dictRuleDao.all, "dictRule.json", backupPath)
-            aes.encryptBase64(GSON.toJson(appDb.serverDao.all)).let {
-                FileUtils.createFileIfNotExist(backupPath + File.separator + "servers.json")
-                    .writeText(it)
+            GSON.toJson(appDb.serverDao.all).let { json ->
+                aes.runCatching {
+                    encryptBase64(json)
+                }.getOrDefault(json).let {
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + "servers.json")
+                        .writeText(it)
+                }
             }
             ensureActive()
             GSON.toJson(ReadBookConfig.configList).let {
@@ -137,7 +141,9 @@ object Backup {
                     if (BackupConfig.keyIsNotIgnore(key)) {
                         when (key) {
                             PreferKey.webDavPassword -> {
-                                edit.putString(key, aes.encryptBase64(value.toString()))
+                                edit.putString(key, aes.runCatching {
+                                    encryptBase64(value.toString())
+                                }.getOrDefault(value.toString()))
                             }
 
                             else -> when (value) {

@@ -1,10 +1,8 @@
 package io.legado.app
 
 import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.eval
-import io.legado.app.rhino.putBinding
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 import org.junit.Test
@@ -30,29 +28,24 @@ class JsTest {
     @Test
     fun testMap() {
         val map = hashMapOf("id" to "3242532321")
-
+        val bindings = SimpleBindings()
+        bindings["result"] = map
         @Language("js")
         val jsMap = "$=result;id=$.id;id"
-        val result = Rhino.use {
-            val scope = initStandardObjects()
-            scope.putBinding("result", map)
-            evaluateString(scope, jsMap, "xxx", 1, null)
-        }
+        val result = RhinoScriptEngine.eval(jsMap, bindings)
         Assert.assertEquals("3242532321", result)
         @Language("js")
         val jsMap1 = """result.get("id")"""
-        val result1 = Rhino.use {
-            it.putBinding("result", map)
-            evaluateString(it, jsMap1, "xxx", 1, null)
-        }
+        val result1 = RhinoScriptEngine.eval(jsMap1, bindings)
         Assert.assertEquals("3242532321", result1)
     }
 
     @Test
     fun testFor() {
-        val scope = Rhino.use {
-            evaluateString(it, printJs, "print", 1, null)
-            it
+        val scope = RhinoScriptEngine.run {
+            val scope = getRuntimeScope(getScriptContext(SimpleBindings()))
+            eval(printJs, scope)
+            scope
         }
 
         @Language("js")
@@ -74,18 +67,13 @@ class JsTest {
             }
             result
         """.trimIndent()
-        val result = Rhino.use {
-            it.prototype = scope
-            evaluateString(it, jsFor, "jsFor", 1, null)
-        }
+        val result = RhinoScriptEngine.eval(jsFor, scope)
         Assert.assertEquals("12012", result)
     }
 
     @Test
     fun testReturnNull() {
-        val result = Rhino.use {
-            eval(it, "null")
-        }
+        val result = RhinoScriptEngine.eval("null")
         Assert.assertEquals(null, result)
     }
 
@@ -101,9 +89,10 @@ class JsTest {
             .replace(/\;/g,"；")
             .replace(/\:/g,"：")
         """.trimIndent()
-        val result = Rhino.use {
-            it.putBinding("result", ",.!?…;:")
-            eval(it, js)
+        val result = RhinoScriptEngine.run {
+            val bindings = SimpleBindings()
+            bindings["result"] = ",.!?…;:"
+            eval(js)
         }
         Assert.assertEquals(result, "，。！？……；：")
     }
@@ -116,27 +105,22 @@ class JsTest {
         bindings["chapter"] = chapter
         @Language("js")
         val js = "chapter.title"
-        val result = Rhino.use {
-            it.putBinding("chapter", chapter)
-            eval(it, js)
-        }
+        val result = RhinoScriptEngine.eval(js, bindings)
         Assert.assertEquals(result, "xxxyyy")
     }
 
     @Test
     fun javaListForEach() {
         val list = arrayListOf(1, 2, 3)
-
+        val bindings = SimpleBindings()
+        bindings["list"] = list
         @Language("js")
         val js = """
             var result = 0
             list.forEach(item => {result = result + item})
             result
         """.trimIndent()
-        val result = Rhino.use {
-            it.putBinding("list", list)
-            eval(it, js)
-        }
+        val result = RhinoScriptEngine.eval(js, bindings)
         Assert.assertEquals(result, 6.0)
     }
 

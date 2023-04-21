@@ -2,6 +2,7 @@
 
 package io.legado.app.rhino
 
+import com.script.Bindings
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.Scriptable
 import org.mozilla.javascript.ScriptableObject
@@ -14,9 +15,7 @@ fun Context.eval(
     lineno: Int = 1,
     securityDomain: Any? = null
 ): Any? {
-    return Rhino.unwrapReturnValue(
-        evaluateString(scope, source, sourceName, lineno, securityDomain)
-    )
+    return evaluateString(scope, source, sourceName, lineno, securityDomain)
 }
 
 fun Context.eval(
@@ -26,9 +25,7 @@ fun Context.eval(
     lineno: Int = 1,
     securityDomain: Any? = null
 ): Any? {
-    return Rhino.unwrapReturnValue(
-        evaluateReader(scope, reader, sourceName, lineno, securityDomain)
-    )
+    return evaluateReader(scope, reader, sourceName, lineno, securityDomain)
 }
 
 fun Scriptable.putBinding(key: String, value: Any?) {

@@ -3,6 +3,8 @@
 package io.legado.app.help.book
 
 import android.net.Uri
+import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.*
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseBook
@@ -10,9 +12,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
-import io.legado.app.rhino.Bindings
-import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.putBindings
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.File
@@ -236,14 +235,11 @@ fun Book.getExportFileName(suffix: String): String {
     if (jsStr.isNullOrBlank()) {
         return "$name 作者：${getRealAuthor()}.$suffix"
     }
-    val bindings = Bindings()
+    val bindings = SimpleBindings()
     bindings["name"] = name
     bindings["author"] = getRealAuthor()
     return kotlin.runCatching {
-        Rhino.use {
-            it.putBindings(bindings)
-            evaluateString(it, jsStr, "name&author", 1, null)
-        }.toString() + "." + suffix
+        RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
     }.onFailure {
         AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
     }.getOrDefault("${name} 作者：${getRealAuthor()}.$suffix")
