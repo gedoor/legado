@@ -126,6 +126,7 @@ object PreferKey {
     const val readAloudWakeLock = "readAloudWakeLock"
     const val showLastUpdateTime = "showLastUpdateTime"
     const val clearWebViewData = "clearWebViewData"
+    const val onlyLatestBackup = "onlyLatestBackup"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

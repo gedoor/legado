@@ -10,6 +10,7 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
@@ -119,6 +120,7 @@ class AudioPlayService : BaseService(),
                 IntentAction.adjustProgress -> {
                     adjustProgress(intent.getIntExtra("position", position))
                 }
+
                 else -> stopSelf()
             }
         }
@@ -250,9 +252,11 @@ class AudioPlayService : BaseService(),
             Player.STATE_IDLE -> {
                 // 空闲
             }
+
             Player.STATE_BUFFERING -> {
                 // 缓冲中
             }
+
             Player.STATE_READY -> {
                 // 准备好
                 if (exoPlayer.currentPosition != position.toLong()) {
@@ -266,9 +270,15 @@ class AudioPlayService : BaseService(),
                     postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
                 }
                 postEvent(EventBus.AUDIO_SIZE, exoPlayer.duration)
+                mediaSessionCompat?.setMetadata(
+                    MediaMetadataCompat.Builder()
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.duration)
+                        .build()
+                )
                 upPlayProgress()
                 AudioPlay.saveDurChapter(exoPlayer.duration)
             }
+
             Player.STATE_ENDED -> {
                 // 结束
                 upPlayProgressJob?.cancel()
@@ -340,6 +350,13 @@ class AudioPlayService : BaseService(),
                     postEvent(EventBus.AUDIO_BUFFER_PROGRESS, exoPlayer.bufferedPosition.toInt())
                     it.durChapterPos = exoPlayer.currentPosition.toInt()
                     postEvent(EventBus.AUDIO_PROGRESS, it.durChapterPos)
+                    mediaSessionCompat?.setPlaybackState(
+                        PlaybackStateCompat.Builder()
+                            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                            .setState(PlaybackStateCompat.STATE_NONE, exoPlayer.currentPosition, 1f)
+                            .setBufferedPosition(exoPlayer.bufferedPosition)
+                            .build()
+                    )
                     saveProgress(it)
                 }
                 delay(1000)
@@ -430,6 +447,11 @@ class AudioPlayService : BaseService(),
     private fun initMediaSession() {
         mediaSessionCompat = MediaSessionCompat(this, "readAloud")
         mediaSessionCompat?.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onSeekTo(pos: Long) {
+                position = pos.toInt()
+                exoPlayer.seekTo(pos)
+            }
+
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@AudioPlayService, mediaButtonEvent)
             }
@@ -472,10 +494,12 @@ class AudioPlayService : BaseService(),
                     AppLog.put("音频焦点获得")
                 }
             }
+
             AudioManager.AUDIOFOCUS_LOSS -> {
                 AppLog.put("音频焦点丢失,暂停播放")
                 pause()
             }
+
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 AppLog.put("音频焦点暂时丢失并会很快再次获得,暂停播放")
                 needResumeOnAudioFocusGain = true
@@ -484,12 +508,14 @@ class AudioPlayService : BaseService(),
                     pause(false)
                 }
             }
+
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
                 AppLog.put("音频焦点短暂丢失,不做处理")
             }
         }
     }
+
 
     /**
      * 更新通知
@@ -502,6 +528,7 @@ class AudioPlayService : BaseService(),
                     R.string.playing_timer,
                     timeMinute
                 )
+
                 else -> getString(R.string.audio_play_t)
             }
             nTitle += ": ${AudioPlay.book?.name}"
@@ -555,6 +582,7 @@ class AudioPlayService : BaseService(),
             builder.setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1, 2)
+                    .setMediaSession(mediaSessionCompat?.sessionToken)
             )
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             builder

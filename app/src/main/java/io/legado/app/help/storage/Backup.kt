@@ -159,18 +159,23 @@ object Backup {
                 paths[i] = backupPath + File.separator + paths[i]
             }
             FileUtils.delete(zipFilePath)
+            val backupFileName = if (AppConfig.onlyLatestBackup) {
+                "backup.zip"
+            } else {
+                zipFileName
+            }
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 when {
                     path.isNullOrBlank() -> {
-                        copyBackup(context.getExternalFilesDir(null)!!, zipFileName)
+                        copyBackup(context.getExternalFilesDir(null)!!, backupFileName)
                     }
 
                     path.isContentScheme() -> {
-                        copyBackup(context, Uri.parse(path), zipFileName)
+                        copyBackup(context, Uri.parse(path), backupFileName)
                     }
 
                     else -> {
-                        copyBackup(File(path), zipFileName)
+                        copyBackup(File(path), backupFileName)
                     }
                 }
                 AppWebDav.backUpWebDav(zipFileName)
