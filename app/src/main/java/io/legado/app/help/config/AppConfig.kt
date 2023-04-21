@@ -365,6 +365,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val ignoreAudioFocus get() = appCtx.getPrefBoolean(PreferKey.ignoreAudioFocus, false)
 
+    val onlyLatestBackup get() = appCtx.getPrefBoolean(PreferKey.onlyLatestBackup, false)
+
     val doublePageHorizontal: String?
         get() = appCtx.getPrefString(PreferKey.doublePageHorizontal)
 
