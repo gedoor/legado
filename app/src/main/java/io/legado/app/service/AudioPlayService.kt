@@ -350,13 +350,7 @@ class AudioPlayService : BaseService(),
                     postEvent(EventBus.AUDIO_BUFFER_PROGRESS, exoPlayer.bufferedPosition.toInt())
                     it.durChapterPos = exoPlayer.currentPosition.toInt()
                     postEvent(EventBus.AUDIO_PROGRESS, it.durChapterPos)
-                    mediaSessionCompat?.setPlaybackState(
-                        PlaybackStateCompat.Builder()
-                            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-                            .setState(PlaybackStateCompat.STATE_NONE, exoPlayer.currentPosition, 1f)
-                            .setBufferedPosition(exoPlayer.bufferedPosition)
-                            .build()
-                    )
+                    upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
                     saveProgress(it)
                 }
                 delay(1000)
@@ -435,7 +429,8 @@ class AudioPlayService : BaseService(),
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
-                .setState(state, position.toLong(), 1f)
+                .setState(state, exoPlayer.currentPosition, 1f)
+                .setBufferedPosition(exoPlayer.bufferedPosition)
                 .build()
         )
     }
