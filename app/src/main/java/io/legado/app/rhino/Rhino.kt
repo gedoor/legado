@@ -1,15 +1,18 @@
 package io.legado.app.rhino
 
 import org.mozilla.javascript.Context
+import org.mozilla.javascript.ImporterTopLevel
+import org.mozilla.javascript.Scriptable
 import org.mozilla.javascript.Undefined
 import org.mozilla.javascript.Wrapper
 
 object Rhino {
 
-    inline fun <T> use(block: Context.() -> T): T {
+    inline fun <T> use(block: Context.(Scriptable) -> T): T {
         return try {
             val cx = Context.enter()
-            block.invoke(cx)
+            val scope = cx.initStandardObjects(ImporterTopLevel(cx))
+            block.invoke(cx, scope)
         } finally {
             Context.exit()
         }

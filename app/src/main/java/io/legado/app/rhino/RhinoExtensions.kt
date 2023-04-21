@@ -7,7 +7,7 @@ import org.mozilla.javascript.Scriptable
 import org.mozilla.javascript.ScriptableObject
 import java.io.Reader
 
-fun Context.evaluate(
+fun Context.eval(
     scope: Scriptable,
     source: String,
     sourceName: String = "<Unknown source>",
@@ -19,41 +19,13 @@ fun Context.evaluate(
     )
 }
 
-fun Context.evaluate(
-    bindings: Bindings,
-    source: String,
-    sourceName: String = "<Unknown source>",
-    lineno: Int = 1,
-    securityDomain: Any? = null
-): Any? {
-    val scope = initStandardObjects()
-    scope.putBindings(bindings)
-    return Rhino.unwrapReturnValue(
-        evaluateString(scope, source, sourceName, lineno, securityDomain)
-    )
-}
-
-fun Context.evaluate(
+fun Context.eval(
     scope: Scriptable,
     reader: Reader,
     sourceName: String = "<Unknown source>",
     lineno: Int = 1,
     securityDomain: Any? = null
 ): Any? {
-    return Rhino.unwrapReturnValue(
-        evaluateReader(scope, reader, sourceName, lineno, securityDomain)
-    )
-}
-
-fun Context.evaluate(
-    bindings: Bindings,
-    reader: Reader,
-    sourceName: String = "<Unknown source>",
-    lineno: Int = 1,
-    securityDomain: Any? = null
-): Any? {
-    val scope = initStandardObjects()
-    scope.putBindings(bindings)
     return Rhino.unwrapReturnValue(
         evaluateReader(scope, reader, sourceName, lineno, securityDomain)
     )

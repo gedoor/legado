@@ -20,7 +20,7 @@ import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.evaluate
+import io.legado.app.rhino.eval
 import io.legado.app.rhino.putBinding
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
@@ -272,9 +272,8 @@ object LocalBook {
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})"
                 //在脚本中定义如何分解文件名成书名、作者名
                 val jsonStr = Rhino.use {
-                    val scope = initStandardObjects()
-                    scope.putBinding("src", tempFileName)
-                    evaluate(scope, js)
+                    it.putBinding("src", tempFileName)
+                    eval(it, js)
                 }.toString()
                 val bookMess = GSON.fromJsonObject<HashMap<String, String>>(jsonStr)
                     .getOrThrow()

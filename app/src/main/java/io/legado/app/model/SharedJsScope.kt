@@ -32,7 +32,7 @@ object SharedJsScope {
         var scope = scopeMap[key]?.get()
         if (scope == null) {
             Rhino.use {
-                scope = initStandardObjects()
+                scope = it
                 if (jsLib.isJsonObject()) {
                     val jsMap: Map<String, String> = GSON.fromJson(
                         jsLib,

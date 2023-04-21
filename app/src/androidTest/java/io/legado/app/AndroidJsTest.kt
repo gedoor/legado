@@ -37,7 +37,7 @@ class AndroidJsTest {
             queryStringWithSign
         """.trimIndent()
         Rhino.use {
-            evaluateString(initStandardObjects(), js, "yy", 1, null)
+            evaluateString(it, js, "yy", 1, null)
         }
         @Language("js")
         val js1 = """
@@ -45,7 +45,7 @@ class AndroidJsTest {
             returnData.getErrorMsg()
         """.trimIndent()
         val result1 = Rhino.use {
-            evaluateString(initStandardObjects(), js1, "xx", 1, null)
+            evaluateString(it, js1, "xx", 1, null)
         }
         Assert.assertEquals(result1, "未知错误,请联系开发者!").let {
 
@@ -59,17 +59,15 @@ class AndroidJsTest {
         @Language("js")
         val jsMap = "$=result;id=$.id;id"
         val result = Rhino.use {
-            val scope = initStandardObjects()
-            scope.putBinding("result", map)
-            evaluateString(scope, jsMap, "xxx", 1, null)
+            it.putBinding("result", map)
+            evaluateString(it, jsMap, "xxx", 1, null)
         }
         Assert.assertEquals("3242532321", result)
         @Language("js")
         val jsMap1 = """result.get("id")"""
         val result1 = Rhino.use {
-            val scope = initStandardObjects()
-            scope.putBinding("result", map)
-            evaluateString(scope, jsMap1, "xxx", 1, null)
+            it.putBinding("result", map)
+            evaluateString(it, jsMap1, "xxx", 1, null)
         }
         Assert.assertEquals("3242532321", result1)
     }

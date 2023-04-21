@@ -3,7 +3,8 @@ package io.legado.app.utils
 import io.legado.app.constant.AppPattern.EXP_PATTERN
 import io.legado.app.rhino.Bindings
 import io.legado.app.rhino.Rhino
-import io.legado.app.rhino.evaluate
+import io.legado.app.rhino.eval
+import io.legado.app.rhino.putBindings
 
 object JsUtils {
 
@@ -14,9 +15,10 @@ object JsUtils {
             val sb = StringBuffer()
             val expMatcher = EXP_PATTERN.matcher(js)
             while (expMatcher.find()) {
-                val result = expMatcher.group(1)?.let {
+                val result = expMatcher.group(1)?.let { js1 ->
                     Rhino.use {
-                        evaluate(bindings, it)
+                        it.putBindings(bindings)
+                        eval(it, js1)
                     }
                 } ?: ""
                 if (result is String) {
@@ -31,7 +33,8 @@ object JsUtils {
             return sb.toString()
         }
         return Rhino.use {
-            evaluate(bindings, js)
+            it.putBindings(bindings)
+            eval(it, js)
         }.toString()
     }
 

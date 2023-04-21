@@ -236,15 +236,19 @@ interface BaseSource : JsExtensions {
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-//        return Rhino.use {
-//            val scope = initStandardObjects()
+//        return Rhino.use { scope ->
 //            scope.putBindings(bindings)
 //            getShareScope()?.let {
 //                scope.prototype = it
 //            }
-//            evaluate(scope, jsStr)
+//            eval(scope, jsStr)
 //        }
-        return RhinoScriptEngine.eval(jsStr, SimpleBindings(bindings))
+        val context = RhinoScriptEngine.getScriptContext(SimpleBindings(bindings))
+        val scope = RhinoScriptEngine.getRuntimeScope(context)
+        getShareScope()?.let {
+            scope.prototype = it
+        }
+        return RhinoScriptEngine.eval(jsStr, scope)
     }
 
     fun getShareScope(): Scriptable? {

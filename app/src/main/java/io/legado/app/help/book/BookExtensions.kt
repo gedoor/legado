@@ -241,9 +241,8 @@ fun Book.getExportFileName(suffix: String): String {
     bindings["author"] = getRealAuthor()
     return kotlin.runCatching {
         Rhino.use {
-            val scope = initStandardObjects()
-            scope.putBindings(bindings)
-            evaluateString(scope, jsStr, "name&author", 1, null)
+            it.putBindings(bindings)
+            evaluateString(it, jsStr, "name&author", 1, null)
         }.toString() + "." + suffix
     }.onFailure {
         AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)

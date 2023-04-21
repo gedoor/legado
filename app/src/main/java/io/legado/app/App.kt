@@ -10,7 +10,6 @@ import android.os.Build
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import com.github.liuyueyi.quick.transfer.constants.TransType
 import com.jeremyliao.liveeventbus.LiveEventBus
-import com.script.rhino.RhinoScriptEngine
 import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
@@ -41,7 +40,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        RhinoScriptEngine
         oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so
