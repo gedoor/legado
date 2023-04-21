@@ -105,6 +105,7 @@ class AudioPlayService : BaseService(),
         intent?.action?.let { action ->
             when (action) {
                 IntentAction.play -> {
+                    exoPlayer.stop()
                     pause = false
                     position = AudioPlay.book?.durChapterPos ?: 0
                     loadContent()
