@@ -6,7 +6,7 @@
     placeholder="筛选源"
   />
   <div class="tool">
-    <el-button @click="importSourceFile" :icon="Folder"> 打开 </el-button>
+    <el-button @click="importSourceFile" :icon="Folder">打开</el-button>
     <el-button
       :disabled="sourcesFiltered.length === 0"
       @click="outExport"
@@ -15,6 +15,7 @@
       导出</el-button
     >
     <el-button
+      type="danger"
       :icon="Delete"
       @click="deleteSelectSources"
       :disabled="sourceSelect.length === 0"
@@ -40,6 +41,7 @@
 </template>
 
 <script setup>
+import API from "@api";
 import { Folder, Delete, Download, Search } from "@element-plus/icons-vue";
 import { isSourceContains } from "../utils/souce";
 import VirtualList from "vue3-virtual-scroll-list";
@@ -53,8 +55,11 @@ const isBookSource = computed(() => {
   return /bookSource/.test(window.location.href);
 });
 const deleteSelectSources = () => {
-  store.deleteSources(sourceSelect.value);
-  sourceSelect.value = [];
+  API.deleteSource(sourceSelect.value).then({ data } => {
+    if (!data.isSuccess) return ElMessage.error(data.errorMsg);
+    store.deleteSources(sourceSelect.value);
+    sourceSelect.value = [];
+  });
 };
 const clearAllSources = () => {
   store.clearAllSource();
