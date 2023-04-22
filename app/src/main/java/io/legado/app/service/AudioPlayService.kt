@@ -160,9 +160,9 @@ class AudioPlayService : BaseService(),
                     headerMapF = AudioPlay.headers(true),
                 )
                 val uri = Uri.parse(analyzeUrl.url)
-                ExoPlayerHelper.preDownload(uri, analyzeUrl.headerMap)
+                //ExoPlayerHelper.preDownload(uri, analyzeUrl.headerMap)
                 //休息1秒钟，防止403
-                delay(1000)
+                //delay(1000)
                 val mediaSource = ExoPlayerHelper
                     .createMediaSource(uri, analyzeUrl.headerMap)
                 exoPlayer.setMediaSource(mediaSource)
@@ -286,6 +286,7 @@ class AudioPlayService : BaseService(),
                 AudioPlay.next(this)
             }
         }
+        upNotification()
     }
 
     /**
