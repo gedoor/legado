@@ -11,6 +11,8 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.WebService
 import io.legado.app.utils.*
 import io.legado.app.web.utils.AssetsWeb
+import okio.Pipe
+import okio.buffer
 import java.io.*
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
@@ -101,11 +103,10 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 )
             } else {
                 val data = returnData.data
-                if (data is List<*> && data.size > 1000) {
-                    val pis = PipedInputStream(1024 * 1024)
+                if (data is List<*> && data.size > 3000) {
+                    val pipe = Pipe(16 * 1024)
                     Coroutine.async {
-                        @Suppress("BlockingMethodInNonBlockingContext")
-                        PipedOutputStream(pis).use { out ->
+                        pipe.sink.buffer().outputStream().use { out ->
                             BufferedWriter(OutputStreamWriter(out, "UTF-8")).use {
                                 GSON.toJson(returnData, it)
                             }
@@ -114,7 +115,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     newChunkedResponse(
                         Response.Status.OK,
                         "application/json",
-                        pis
+                        pipe.source.buffer().inputStream()
                     )
                 } else {
                     newFixedLengthResponse(GSON.toJson(returnData))
