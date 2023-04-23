@@ -1,9 +1,12 @@
 package io.legado.app.lib.cronet
 
 import androidx.annotation.Keep
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.asIOException
+import io.legado.app.utils.splitNotBlank
+import kotlinx.coroutines.delay
 import okhttp3.*
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -16,11 +19,13 @@ import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
 import java.io.IOException
+import java.net.ProtocolException
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+
 
 @Keep
 abstract class AbsCallBack(
@@ -34,8 +39,10 @@ abstract class AbsCallBack(
     private var followCount = 0
     private var request: UrlRequest? = null
     private var finished = AtomicBoolean(false)
+    private val canceled = AtomicBoolean(false)
     private val callbackResults = ArrayBlockingQueue<CallbackResult>(2)
     private val urlResponseInfoChain = arrayListOf<UrlResponseInfo>()
+    private var cancelJob: Coroutine<*>? = null
 
 
     @Throws(IOException::class)
@@ -87,14 +94,30 @@ abstract class AbsCallBack(
 
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
         this.request = request
-        val contentLength = info.allHeaders["Content-Length"]?.lastOrNull()?.toLongOrNull() ?: -1
-        val contentType = (info.allHeaders["content-type"]?.lastOrNull()
-            ?: "text/plain; charset=\"utf-8\"").toMediaTypeOrNull()
-        val responseBody = CronetBodySource().buffer().asResponseBody(contentType, contentLength)
+
+        cancelJob = Coroutine.async {
+            while (!mCall.isCanceled()) {
+                delay(1000)
+            }
+            request.cancel()
+        }
+
+        val responseBuilder: Response.Builder
+        try {
+            responseBuilder = createResponse(
+                originalRequest,
+                info,
+                CronetBodySource()
+            )
+        } catch (e: IOException) {
+            request.cancel()
+            cancelJob?.cancel()
+            onError(e)
+            return
+        }
         val newRequest = originalRequest.newBuilder().url(info.url).build()
-        val response = createResponse(originalRequest, info)
+        val response = responseBuilder
             .request(newRequest)
-            .body(responseBody)
             .priorResponse(buildPriorResponse(originalRequest, urlResponseInfoChain, info.urlChain))
             .build()
         mResponse = response
@@ -126,6 +149,7 @@ abstract class AbsCallBack(
 
     override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
         callbackResults.add(CallbackResult(CallbackStep.ON_SUCCESS))
+        cancelJob?.cancel()
         eventListener?.responseBodyEnd(mCall, info.receivedByteCount)
         //DebugLog.i(javaClass.simpleName, "end[${info.negotiatedProtocol}]${info.url}")
 
@@ -143,6 +167,7 @@ abstract class AbsCallBack(
     }
 
     override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
+        canceled.set(true)
         callbackResults.add(CallbackResult(CallbackStep.ON_CANCELED))
         eventListener?.callEnd(mCall)
         //onError(IOException("Cronet Request Canceled"))
@@ -161,6 +186,8 @@ abstract class AbsCallBack(
 
     companion object {
         const val MAX_FOLLOW_COUNT = 20
+        private val encodingsHandledByCronet = setOf("br", "deflate", "gzip", "x-gzip")
+
         private fun protocolFromNegotiatedProtocol(responseInfo: UrlResponseInfo): Protocol {
             val negotiatedProtocol = responseInfo.negotiatedProtocol.lowercase(Locale.getDefault())
             return when {
@@ -191,13 +218,20 @@ abstract class AbsCallBack(
             }
         }
 
-        private fun headersFromResponse(responseInfo: UrlResponseInfo): Headers {
+        private fun headersFromResponse(
+            responseInfo: UrlResponseInfo,
+            keepEncodingAffectedHeaders: Boolean
+        ): Headers {
+
             val headers = responseInfo.allHeadersAsList
             return Headers.Builder().apply {
                 for ((key, value) in headers) {
                     try {
 
-                        if (key.equals("content-encoding", ignoreCase = true)) {
+                        if (!keepEncodingAffectedHeaders
+                            && (key.equals("content-encoding", ignoreCase = true)
+                                    || key.equals("Content-Length", ignoreCase = true))
+                        ) {
                             // Strip all content encoding headers as decoding is done handled by cronet
                             continue
                         }
@@ -212,12 +246,39 @@ abstract class AbsCallBack(
 
         }
 
+        @Throws(IOException::class)
         private fun createResponse(
             request: Request,
-            responseInfo: UrlResponseInfo
+            responseInfo: UrlResponseInfo,
+            bodySource: Source? = null
         ): Response.Builder {
             val protocol = protocolFromNegotiatedProtocol(responseInfo)
-            val headers = headersFromResponse(responseInfo)
+
+            val contentEncodingHeaders =
+                responseInfo.allHeaders.getOrDefault("content-encoding", emptyList())
+            val contentEncodingItems = contentEncodingHeaders.flatMap {
+                it.splitNotBlank(",").toList()
+            }
+            val keepEncodingAffectedHeaders = contentEncodingItems.isEmpty()
+                    || !encodingsHandledByCronet.containsAll(contentEncodingItems)
+
+            val headers = headersFromResponse(responseInfo, keepEncodingAffectedHeaders)
+            val contentLength = if (keepEncodingAffectedHeaders) {
+                responseInfo.allHeaders["Content-Length"]?.lastOrNull()
+            } else null
+            val contentType = responseInfo.allHeaders["content-type"]?.lastOrNull()
+                ?: "text/plain; charset=\"utf-8\""
+
+            val responseBody = bodySource?.let {
+                createResponseBody(
+                    request,
+                    responseInfo.httpStatusCode,
+                    contentType,
+                    contentLength,
+                    bodySource
+                )
+            }
+
             return Response.Builder()
                 .request(request)
                 .receivedResponseAtMillis(System.currentTimeMillis())
@@ -225,6 +286,7 @@ abstract class AbsCallBack(
                 .code(responseInfo.httpStatusCode)
                 .message(responseInfo.httpStatusText)
                 .headers(headers)
+                .body(responseBody)
         }
 
         private fun buildPriorResponse(
@@ -247,6 +309,32 @@ abstract class AbsCallBack(
             }
             return priorResponse
         }
+
+        @Throws(IOException::class)
+        private fun createResponseBody(
+            request: Request,
+            httpStatusCode: Int,
+            contentType: String?,
+            contentLengthString: String?,
+            bodySource: Source
+        ): ResponseBody {
+
+            // Ignore content-length header for HEAD requests (consistency with OkHttp)
+            val contentLength: Long = if (request.method == "HEAD") {
+                0
+            } else {
+                contentLengthString?.toLongOrNull() ?: -1
+            }
+
+            // Check for absence of body in No Content / Reset Content responses (OkHttp consistency)
+            if ((httpStatusCode == 204 || httpStatusCode == 205) && contentLength > 0) {
+                throw ProtocolException(
+                    "HTTP $httpStatusCode had non-zero Content-Length: $contentLengthString"
+                )
+            }
+            return bodySource.buffer()
+                .asResponseBody(contentType?.toMediaTypeOrNull(), contentLength)
+        }
     }
 
     inner class CronetBodySource : Source {
@@ -254,7 +342,9 @@ abstract class AbsCallBack(
         private var buffer = ByteBuffer.allocateDirect(32 * 1024)
         private var closed = false
         private val timeout = mCall.timeout().timeoutNanos()
+
         override fun close() {
+            cancelJob?.cancel()
             if (closed) {
                 return
             }
@@ -266,13 +356,12 @@ abstract class AbsCallBack(
 
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         override fun read(sink: Buffer, byteCount: Long): Long {
-            if (mCall.isCanceled()) {
+            if (canceled.get()) {
                 throw IOException("Request Canceled")
             }
 
-            if (closed) {
-                throw IOException("Source Closed")
-            }
+            require(byteCount >= 0L) { "byteCount < 0: $byteCount" }
+            check(!closed) { "closed" }
 
             if (finished.get()) {
                 return -1
@@ -287,7 +376,7 @@ abstract class AbsCallBack(
             val result = callbackResults.poll(timeout, TimeUnit.NANOSECONDS)
             if (result == null) {
                 request?.cancel()
-                throw IOException("Request Timeout")
+                throw IOException("Body Read Timeout")
             }
 
             return when (result.callbackStep) {
