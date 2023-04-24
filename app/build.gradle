@@ -208,7 +208,7 @@ dependencies {
     lollipopImplementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
-    implementation('com.squareup.okhttp3:okhttp:4.10.0')
+    implementation('com.squareup.okhttp3:okhttp:4.11.0')
     appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
     appImplementation 'com.google.protobuf:protobuf-javalite:3.22.3'
 
