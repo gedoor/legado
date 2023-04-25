@@ -53,11 +53,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             }
             if (bookUrl.isNotBlank()) {
                 appDb.searchBookDao.getSearchBook(bookUrl)?.toBook()?.let {
-                    if (it.name == name && it.author == author) {
-                        upBook(it)
-                    } else {
-                        throw NoStackTraceException("未找到书籍，请删除此书源后重新搜索：${it.originName}")
-                    }
+                    upBook(it)
                     return@execute
                 }
             }
