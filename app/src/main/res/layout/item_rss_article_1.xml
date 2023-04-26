@@ -7,11 +7,12 @@
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         android:contentDescription="@string/loading"
         android:visibility="visible"
-        android:scaleType="centerCrop"
         android:paddingTop="12dp"
         android:paddingRight="12dp"
         android:paddingLeft="12dp"
