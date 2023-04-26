@@ -13,6 +13,10 @@
 * 漫画源看书显示乱码，**阅读与其他软件的源并不通用**，请导入阅读的支持的漫画源！
 
 **2023/04/18**
+* 文件类书源文件后缀识别：自动识别失败后会读取下载链接UrlOption的type字段
+```
+https://www.example.com/file/ajzjxhxjncnc, {type: "txt"}
+```
 * 更新cronet: 112.0.5615.135
 
 * 源添加jsLib字段
