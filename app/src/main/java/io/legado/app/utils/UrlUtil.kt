@@ -155,7 +155,7 @@ object UrlUtil {
         //检查截取的后缀字符是否合法 [a-zA-Z0-9]
         val fileSuffixRegex = Regex("^[a-z\\d]+$", RegexOption.IGNORE_CASE)
         return if (suffix.length > 5 || !suffix.matches(fileSuffixRegex)) {
-            AppLog.put("Cannot find illegal suffix:\n target: $str\nsuffix: $suffix")
+            AppLog.put("Cannot find legal suffix:\n target: $str\n suffix: $suffix")
             default ?: "ext"
         } else {
             suffix
