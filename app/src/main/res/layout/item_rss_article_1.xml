@@ -61,5 +61,4 @@
         android:layout_width="match_parent"
         android:background="@color/bg_divider_line" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
