@@ -157,7 +157,6 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
         waitDialog.show()
         viewModel.upBookTocRule(book) {
             waitDialog.dismiss()
-            viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
             ReadBook.book?.let { readBook ->
                 if (readBook == book) {
                     ReadBook.book = book

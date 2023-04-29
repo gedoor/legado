@@ -33,6 +33,7 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.delByBook(book.bookUrl)
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     appDb.bookDao.update(book)
+                    bookData.postValue(book)
                 }
             }
         }.onFinally {
