@@ -15,7 +15,6 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
     val openBookLiveData = MutableLiveData<String>()
     val notSupportedLiveData = MutableLiveData<Pair<Uri, String>>()
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     fun dispatchIndent(uri: Uri) {
         execute {
             lateinit var fileName: String
@@ -42,7 +41,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
         }
     }
 
-    fun dispatch(fileDoc: FileDoc) {
+    private fun dispatch(fileDoc: FileDoc) {
         kotlin.runCatching {
             if (fileDoc.openInputStream().getOrNull().isJson()) {
                 importJson(fileDoc.uri)
