@@ -64,7 +64,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
         recyclerView.setEdgeEffectColor(primaryColor)
         loadMoreView.setOnClickListener {
             if (!loadMoreView.isLoading) {
-                scrollToBottom()
+                scrollToBottom(true)
             }
         }
         recyclerView.layoutManager = if (activityViewModel.isGridLayout) {
@@ -111,10 +111,10 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
         }
     }
 
-    private fun scrollToBottom() {
+    private fun scrollToBottom(forceLoad: Boolean = false) {
         if (viewModel.isLoading) return
-        if (loadMoreView.hasMore && adapter.getActualItemCount() > 0) {
-            loadMoreView.startLoad()
+        if ((loadMoreView.hasMore && adapter.getActualItemCount() > 0) || forceLoad) {
+            loadMoreView.hasMore()
             activityViewModel.rssSource?.let {
                 viewModel.loadMore(it)
             }
