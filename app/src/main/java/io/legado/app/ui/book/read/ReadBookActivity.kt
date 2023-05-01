@@ -917,6 +917,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                         binding.readView.curPage.scroll(-scrollOffset)
                     } else {
                         autoPageProgress += scrollOffset
+                        upSystemUiVisibility()
                         if (autoPageProgress >= binding.readView.height) {
                             autoPageProgress = 0
                             if (!binding.readView.fillPage(PageDirection.NEXT)) {
