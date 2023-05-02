@@ -1,4 +1,5 @@
 @file:Keep
+@file:Suppress("DEPRECATION")
 
 package io.legado.app.lib.cronet
 
