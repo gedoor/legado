@@ -12,8 +12,25 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.DefaultData
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.*
+import io.legado.app.utils.BitmapUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
 import io.legado.app.utils.compress.ZipUtils
+import io.legado.app.utils.createFolderReplace
+import io.legado.app.utils.externalCache
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getFile
+import io.legado.app.utils.getMeanColor
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.hexString
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.resizeAndRecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -394,7 +411,6 @@ object ReadBookConfig {
                 zipFile.writeBytes(byteArray)
                 val configDir = appCtx.externalCache.getFile("readConfig")
                 configDir.createFolderReplace()
-                @Suppress("BlockingMethodInNonBlockingContext")
                 ZipUtils.unZipToPath(zipFile, configDir)
                 val configFile = configDir.getFile(configFileName)
                 val config: Config = GSON.fromJsonObject<Config>(configFile.readText()).getOrThrow()

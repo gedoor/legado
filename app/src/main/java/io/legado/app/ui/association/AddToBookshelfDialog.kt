@@ -123,7 +123,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
                         }
                     }
                 }
-                appDb.bookSourceDao.getBookSource(baseUrl)?.let { source ->
+                appDb.bookSourceDao.getBookSourceAddBook(baseUrl)?.let { source ->
                     getBookInfo(bookUrl, source)?.let { book ->
                         return@execute book
                     }

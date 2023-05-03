@@ -36,7 +36,6 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
 
     fun getBytes(url: String, success: (bytes: ByteArray) -> Unit) {
         execute {
-            @Suppress("BlockingMethodInNonBlockingContext")
             okHttpClient.newCallResponseBody {
                 if (url.endsWith("#requestWithoutUA")) {
                     url(url.substringBeforeLast("#requestWithoutUA"))
@@ -88,7 +87,6 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
             when (rs.contentType()) {
                 "application/zip".toMediaType(),
                 "application/octet-stream".toMediaType() -> {
-                    @Suppress("BlockingMethodInNonBlockingContext")
                     importReadConfig(rs.bytes(), finally)
                 }
                 else -> {

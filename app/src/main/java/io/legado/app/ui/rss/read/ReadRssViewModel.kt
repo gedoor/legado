@@ -19,11 +19,15 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
-import io.legado.app.utils.*
+import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
 import splitties.init.appCtx
 import java.io.File
-import java.util.*
+import java.util.Date
 
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application) {
@@ -156,7 +160,6 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
 
     private suspend fun webData2bitmap(data: String): ByteArray? {
         return if (URLUtil.isValidUrl(data)) {
-            @Suppress("BlockingMethodInNonBlockingContext")
             okHttpClient.newCallResponseBody {
                 url(data)
             }.bytes()

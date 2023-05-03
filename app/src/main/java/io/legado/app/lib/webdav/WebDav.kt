@@ -259,7 +259,6 @@ open class WebDav(
      * @param savedPath       本地的完整路径，包括最后的文件名
      * @param replaceExisting 是否替换本地的同名文件
      */
-    @Suppress("BlockingMethodInNonBlockingContext")
     @Throws(WebDavException::class)
     suspend fun downloadTo(savedPath: String, replaceExisting: Boolean) {
         val file = File(savedPath)

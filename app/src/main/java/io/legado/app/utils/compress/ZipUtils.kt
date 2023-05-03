@@ -13,7 +13,7 @@ import java.io.*
 import java.util.zip.*
 
 @SuppressLint("ObsoleteSdkInt")
-@Suppress("unused", "BlockingMethodInNonBlockingContext", "MemberVisibilityCanBePrivate")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object ZipUtils {
 
     fun zipString(text: String): ByteArray {

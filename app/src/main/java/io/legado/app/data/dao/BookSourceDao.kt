@@ -110,10 +110,13 @@ interface BookSourceDao {
     )
     fun getEnabledByGroup(group: String): List<BookSource>
 
-    @Query("select * from book_sources where enabled = 1 and bookSourceType = :type")
+    @Query("select * from book_sources where bookUrlPattern != 'NONE' and bookSourceType = :type")
     fun getEnabledByType(type: Int): List<BookSource>
 
-    @get:Query("select * from book_sources where enabled = 1 and trim(bookUrlPattern) <> '' order by enabled desc, customOrder")
+    @Query("select * from book_sources where enabled = 1 and bookSourceUrl = :baseUrl")
+    fun getBookSourceAddBook(baseUrl: String): BookSource?
+
+    @get:Query("select * from book_sources where enabled = 1 and trim(bookUrlPattern) <> '' and trim(bookUrlPattern) <> 'NONE'  order by enabled desc, customOrder")
     val hasBookUrlPattern: List<BookSource>
 
     @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = ''")

@@ -232,7 +232,6 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         })
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private fun exportConfig(uri: Uri) {
         val exportFileName = if (ReadBookConfig.config.name.isBlank()) {
             configFileName
@@ -324,7 +323,6 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
     private fun importNetConfig(url: String) {
         execute {
-            @Suppress("BlockingMethodInNonBlockingContext")
             okHttpClient.newCallResponseBody {
                 url(url)
             }.bytes().let {
@@ -337,7 +335,6 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
     private fun importConfig(uri: Uri) {
         execute {
-            @Suppress("BlockingMethodInNonBlockingContext")
             importConfig(uri.readBytes(requireContext()))
         }.onError {
             it.printOnDebug()
@@ -345,7 +342,6 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext", "BlockingMethodInNonBlockingContext")
     private fun importConfig(byteArray: ByteArray) {
         execute {
             ReadBookConfig.import(byteArray).getOrThrow()

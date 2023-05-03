@@ -123,7 +123,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun export(doc: DocumentFile, book: Book) {
         val filename = book.getExportFileName("txt")
         DocumentUtils.delete(doc, filename)
@@ -288,7 +287,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun exportEpub(doc: DocumentFile, book: Book) {
         val filename = book.getExportFileName("epub")
         DocumentUtils.delete(doc, filename)
