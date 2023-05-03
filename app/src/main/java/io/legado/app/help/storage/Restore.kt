@@ -70,11 +70,16 @@ object Restore {
             } else {
                 ZipUtils.unZipToPath(File(uri.path!!), Backup.backupPath)
             }
-        }.onSuccess {
+        }.onFailure {
+            AppLog.put("复制解压文件出错\n${it.localizedMessage}", it)
+            return
+        }
+        kotlin.runCatching {
             restore(Backup.backupPath)
             LocalConfig.lastBackup = System.currentTimeMillis()
         }.onFailure {
-            AppLog.put("复制解压文件出错\n${it.localizedMessage}", it)
+            appCtx.toastOnUi("恢复备份出错\n${it.localizedMessage}")
+            AppLog.put("恢复备份出错\n${it.localizedMessage}", it)
         }
     }
 
