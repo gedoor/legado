@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
+import android.net.http.SslError
 import android.os.Bundle
 import android.view.*
 import android.webkit.*
@@ -66,6 +67,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
                 window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             }
+
             Configuration.ORIENTATION_PORTRAIT -> {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
                 window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
@@ -95,6 +97,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             R.id.menu_rss_refresh -> viewModel.refresh {
                 binding.webView.reload()
             }
+
             R.id.menu_rss_star -> viewModel.favorite()
             R.id.menu_share_it -> {
                 binding.webView.url?.let {
@@ -103,11 +106,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     share(it.link)
                 } ?: toastOnUi(R.string.null_url)
             }
+
             R.id.menu_aloud -> readAloud()
             R.id.menu_login -> startActivity<SourceLoginActivity> {
                 putExtra("type", "rssSource")
                 putExtra("key", viewModel.rssSource?.loginUrl)
             }
+
             R.id.menu_browser_open -> binding.webView.url?.let {
                 openUrl(it)
             } ?: toastOnUi("url null")
@@ -397,12 +402,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 "http", "https", "jsbridge" -> {
                     return false
                 }
+
                 "legado", "yuedu" -> {
                     startActivity<OnLineImportActivity> {
                         data = url
                     }
                     return true
                 }
+
                 else -> {
                     binding.root.longSnackbar(R.string.jump_to_another_app, R.string.confirm) {
                         openUrl(url)
@@ -410,6 +417,15 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     return true
                 }
             }
+        }
+
+        @SuppressLint("WebViewClientOnReceivedSslError")
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            handler?.proceed()
         }
 
     }

@@ -3,6 +3,7 @@ package io.legado.app.ui.browser
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.net.http.SslError
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -247,12 +248,14 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 "http", "https" -> {
                     return false
                 }
+
                 "legado", "yuedu" -> {
                     startActivity<OnLineImportActivity> {
                         data = url
                     }
                     return true
                 }
+
                 else -> {
                     binding.root.longSnackbar("跳转其它应用", "确认") {
                         openUrl(url)
@@ -260,6 +263,15 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     return true
                 }
             }
+        }
+
+        @SuppressLint("WebViewClientOnReceivedSslError")
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            handler?.proceed()
         }
 
     }

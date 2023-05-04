@@ -18,7 +18,7 @@
       type="danger"
       :icon="Delete"
       @click="deleteSelectSources"
-      :disabled="sourceSelect.length === 0"
+      :disabled="sourceUrlSelect.length === 0"
       >删除</el-button
     >
     <el-button
@@ -29,7 +29,7 @@
       >清空</el-button
     >
   </div>
-  <el-checkbox-group id="source-list" v-model="sourceSelect">
+  <el-checkbox-group id="source-list" v-model="sourceUrlSelect">
     <virtual-list
       style="height: 100%; overflow-y: auto; overflow-x: hidden"
       :data-key="(source) => source.bookSourceUrl || source.sourceUrl"
@@ -48,22 +48,37 @@ import VirtualList from "vue3-virtual-scroll-list";
 import SourceItem from "./SourceItem.vue";
 
 const store = useSourceStore();
-const sourceSelect = ref([]);
+const sourceUrlSelect = ref([]);
 const searchKey = ref("");
 const { sources } = storeToRefs(store);
 const isBookSource = computed(() => {
   return /bookSource/.test(window.location.href);
 });
+const sourceSelect = computed(() => {
+  let temp = sourceUrlSelect.value,
+    selectUrlsLength = temp.length;
+  if (selectUrlsLength == 0) return [];
+  let searchKey = "sourceUrl";
+  if (isBookSource.value) searchKey = "bookSourceUrl";
+  return sources.value.filter((source) => {
+    let searchIndex = temp.indexOf(source[searchKey]);
+    if (searchIndex > -1) {
+      temp.splice(searchIndex, 1);
+      return true;
+    }
+    return false;
+  });
+});
 const deleteSelectSources = () => {
   API.deleteSource(sourceSelect.value).then(({ data }) => {
     if (!data.isSuccess) return ElMessage.error(data.errorMsg);
     store.deleteSources(sourceSelect.value);
-    sourceSelect.value = [];
+    sourceUrlSelect.value = [];
   });
 };
 const clearAllSources = () => {
   store.clearAllSource();
-  sourceSelect.value = [];
+  sourceUrlSelect.value = [];
 };
 //筛选源
 const sourcesFiltered = computed(() => {
@@ -104,7 +119,7 @@ const importSourceFile = () => {
 const outExport = () => {
   const exportFile = document.createElement("a");
   let sources =
-      sourceSelect.value.length === 0
+      sourceUrlSelect.value.length === 0
         ? sourcesFiltered.value
         : sourceSelect.value,
     sourceType = isBookSource.value ? "BookSource" : "RssSource";
@@ -131,7 +146,6 @@ const outExport = () => {
 #source-list {
   margin-top: 6px;
   height: calc(100vh - 112px - 7px);
-
   :deep(.el-checkbox) {
     margin-bottom: 4px;
     width: 100%;
