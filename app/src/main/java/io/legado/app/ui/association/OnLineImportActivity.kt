@@ -49,14 +49,20 @@ class OnLineImportActivity :
             finallyDialog(getString(R.string.error), it)
         }
         intent.data?.let {
-            val url = it.toString().substringAfter("src=")
+            val url = it.query?.substringAfter("src=")
+            if (url.isNullOrBlank()) {
+                finish()
+                return
+            }
             when (it.path) {
                 "/bookSource" -> showDialogFragment(
                     ImportBookSourceDialog(url, true)
                 )
+
                 "/rssSource" -> showDialogFragment(
                     ImportRssSourceDialog(url, true)
                 )
+
                 "/replaceRule" -> showDialogFragment(
                     ImportReplaceRuleDialog(url, true)
                 )
