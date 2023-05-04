@@ -1,10 +1,12 @@
 package io.legado.app.help.http
 
 import android.annotation.SuppressLint
+import android.net.http.SslError
 import android.os.Handler
 import android.os.Looper
 import android.util.AndroidRuntimeException
 import android.webkit.CookieManager
+import android.webkit.SslErrorHandler
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -135,6 +137,15 @@ class BackstageWebView(
             mHandler.postDelayed(runnable, 1000)
         }
 
+        @SuppressLint("WebViewClientOnReceivedSslError")
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            handler?.proceed()
+        }
+
     }
 
     private inner class EvalJsRunnable(
@@ -195,6 +206,15 @@ class BackstageWebView(
                 val runnable = LoadJsRunnable(webView, javaScript)
                 mHandler.postDelayed(runnable, 1000L)
             }
+        }
+
+        @SuppressLint("WebViewClientOnReceivedSslError")
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            handler?.proceed()
         }
 
     }

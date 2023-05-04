@@ -2,6 +2,7 @@ package io.legado.app.ui.login
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -84,6 +85,15 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
                     activity?.finish()
                 }
                 super.onPageFinished(view, url)
+            }
+
+            @SuppressLint("WebViewClientOnReceivedSslError")
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?
+            ) {
+                handler?.proceed()
             }
         }
         binding.webView.webChromeClient = object : WebChromeClient() {
