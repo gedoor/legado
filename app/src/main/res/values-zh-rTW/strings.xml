@@ -581,7 +581,7 @@
     <string name="add_replace_rule">建立取代</string>
     <string name="group">分組</string>
     <string name="group_s">分組：%s</string>
-    <string name="toc_s">目錄：%s</string>
+    <string name="toc_s">当前：%s</string>
     <string name="enable_explore">啟用發現</string>
     <string name="disable_explore">禁用發現</string>
     <string name="enable_selection">啟用所選</string>
@@ -1100,4 +1100,7 @@
     <string name="set_local_password_summary">本地密码用来对备份的敏感信息加密和解密,如需在不同设备之间同步,本地密码需一致.</string>
     <string name="only_latest_backup_t">仅保留最新备份</string>
     <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
+    <string name="read_chapter">已读：%s</string>
+    <string name="error_load_read_chapter">加载已读失败</string>
+    <string name="book_end">完</string>
 </resources>

@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf.style1.books
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.TextView
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfGridBinding
@@ -47,7 +48,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
         } else {
             binding.rlLoading.inVisible()
             if (AppConfig.showUnread) {
-                binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
+                binding.bvUnread.setText(item.getUnreadChapterStr(), TextView.BufferType.NORMAL)
                 binding.bvUnread.setHighlight(item.lastCheckCount > 0)
             } else {
                 binding.bvUnread.invisible()

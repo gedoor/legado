@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -102,7 +103,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                 binding.rlLoading.gone()
                 if (AppConfig.showUnread) {
                     binding.bvUnread.setHighlight(item.lastCheckCount > 0)
-                    binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
+                    binding.bvUnread.setText(item.getUnreadChapterStr(), TextView.BufferType.NORMAL)
                 } else {
                     binding.bvUnread.invisible()
                 }

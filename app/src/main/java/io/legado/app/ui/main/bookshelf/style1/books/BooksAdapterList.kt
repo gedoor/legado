@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf.style1.books
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.TextView
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfListBinding
@@ -57,7 +58,7 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
             binding.rlLoading.gone()
             if (AppConfig.showUnread) {
                 binding.bvUnread.setHighlight(item.lastCheckCount > 0)
-                binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
+                binding.bvUnread.setText(item.getUnreadChapterStr(), TextView.BufferType.NORMAL)
             } else {
                 binding.bvUnread.invisible()
             }

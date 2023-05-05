@@ -38,8 +38,14 @@ class App : Application() {
 
     private lateinit var oldConfig: Configuration
 
+    companion object {
+        private var instance: Application? = null
+        fun instance() = instance!!
+    }
+
     override fun onCreate() {
         super.onCreate()
+        instance = this
         oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so

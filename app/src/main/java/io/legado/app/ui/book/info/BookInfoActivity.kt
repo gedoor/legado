@@ -272,6 +272,7 @@ class BookInfoActivity :
         tvOrigin.text = getString(R.string.origin_show, book.originName)
         tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tvIntro.text = book.getDisplayIntro()
+        tvReaded.text = getString(R.string.read_chapter, "${book.durChapterIndex + 1}/${book.totalChapterNum}")
         llToc?.visible(!book.isWebFile)
         upTvBookshelf()
         val kinds = book.getKindList()
@@ -296,10 +297,15 @@ class BookInfoActivity :
         when {
             isLoading -> {
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
+                binding.tvReaded.text = getString(R.string.read_chapter, getString(R.string.loading))
             }
             chapterList.isNullOrEmpty() -> {
                 binding.tvToc.text = getString(
                     R.string.toc_s,
+                    getString(R.string.error_load_toc)
+                )
+                binding.tvReaded.text = getString(
+                    R.string.read_chapter,
                     getString(R.string.error_load_toc)
                 )
             }
@@ -313,6 +319,7 @@ class BookInfoActivity :
                     }
                     binding.tvLasted.text =
                         getString(R.string.lasted_show, chapterList.last().title)
+                    binding.tvReaded.text = getString(R.string.read_chapter, "${it.durChapterIndex + 1}/${it.totalChapterNum}")
                 }
             }
         }

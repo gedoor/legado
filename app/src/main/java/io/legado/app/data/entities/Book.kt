@@ -2,6 +2,8 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.*
+import io.legado.app.App
+import io.legado.app.R
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.constant.PageAnim
@@ -142,6 +144,18 @@ data class Book(
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
+
+    fun getUnreadChapterStr(): String {
+        if (totalChapterNum == 0 && durChapterIndex == 0) {
+            return ""
+        }
+
+        if (totalChapterNum == durChapterIndex + 1) {
+            return App.instance().getString(R.string.book_end)
+        }
+
+        return getUnreadChapterNum().toString()
+    }
 
     //自定义简介有自动更新的需求时，可通过更新intro再调用upCustomIntro()完成
     @Suppress("unused")

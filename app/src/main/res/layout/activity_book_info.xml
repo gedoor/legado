@@ -222,41 +222,6 @@
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal"
                                 android:paddingTop="3dp"
-                                android:paddingBottom="3dp"
-                                tools:ignore="UseCompoundDrawables">
-
-                                <ImageView
-                                    android:id="@+id/ic_book_last"
-                                    android:layout_width="18sp"
-                                    android:layout_height="18sp"
-                                    android:contentDescription="@string/read_dur_progress"
-                                    android:paddingRight="2dp"
-                                    android:src="@drawable/ic_book_last"
-                                    app:tint="@color/tv_text_summary"
-                                    tools:ignore="RtlHardcoded,RtlSymmetry" />
-
-                                <TextView
-                                    android:id="@+id/tv_lasted"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:ellipsize="end"
-                                    android:includeFontPadding="false"
-                                    android:paddingRight="6dp"
-                                    android:singleLine="true"
-                                    android:textColor="@color/tv_text_summary"
-                                    android:textSize="13sp"
-                                    tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
-                                    tools:text="@string/read_dur_progress" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                android:paddingTop="3dp"
                                 android:paddingBottom="3dp">
 
                                 <ImageView
@@ -309,7 +274,7 @@
                                     android:layout_height="18sp"
                                     android:contentDescription="@string/read_dur_progress"
                                     android:paddingRight="2dp"
-                                    android:src="@drawable/ic_folder_open"
+                                    android:src="@drawable/ic_view_quilt"
                                     app:tint="@color/tv_text_summary"
                                     tools:ignore="RtlHardcoded,RtlSymmetry" />
 
@@ -326,6 +291,75 @@
                                     android:textSize="13sp"
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/toc_s" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingTop="3dp"
+                                android:paddingBottom="3dp"
+                                tools:ignore="UseCompoundDrawables">
+
+                                <ImageView
+                                    android:id="@+id/ic_book_last"
+                                    android:layout_width="18sp"
+                                    android:layout_height="18sp"
+                                    android:contentDescription="@string/read_dur_progress"
+                                    android:paddingRight="2dp"
+                                    android:src="@drawable/ic_view_quilt"
+                                    app:tint="@color/tv_text_summary"
+                                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+                                <TextView
+                                    android:id="@+id/tv_lasted"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:paddingRight="6dp"
+                                    android:singleLine="true"
+                                    android:textColor="@color/tv_text_summary"
+                                    android:textSize="13sp"
+                                    tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                    tools:text="@string/read_dur_progress" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingTop="3dp"
+                                android:paddingBottom="3dp"
+                                tools:ignore="UseCompoundDrawables">
+
+                                <ImageView
+                                    android:layout_width="18sp"
+                                    android:layout_height="18sp"
+                                    android:contentDescription="@string/read_chapter"
+                                    android:paddingRight="2dp"
+                                    android:src="@drawable/ic_view_quilt"
+                                    app:tint="@color/tv_text_summary"
+                                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+                                <TextView
+                                    android:id="@+id/tv_readed"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:paddingRight="6dp"
+                                    android:singleLine="true"
+                                    android:textColor="@color/tv_text_summary"
+                                    android:textSize="13sp"
+                                    tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
+                                    tools:text="@string/read_chapter" />
 
                                 <io.legado.app.ui.widget.text.AccentBgTextView
                                     android:id="@+id/tv_toc_view"
