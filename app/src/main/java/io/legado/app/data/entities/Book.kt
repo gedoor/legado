@@ -2,7 +2,6 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import androidx.room.*
-import io.legado.app.App
 import io.legado.app.R
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
@@ -17,6 +16,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import splitties.init.appCtx
 import java.nio.charset.Charset
 import kotlin.math.max
 import kotlin.math.min
@@ -151,7 +151,7 @@ data class Book(
         }
 
         if (totalChapterNum == durChapterIndex + 1) {
-            return App.instance().getString(R.string.book_end)
+            return appCtx.getString(R.string.book_end)
         }
 
         return getUnreadChapterNum().toString()
