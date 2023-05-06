@@ -21,6 +21,12 @@ export const useSourceStore = defineStore("source", {
   },
   getters: {
     sources: (state) => (isBookSource ? state.bookSources : state.rssSources),
+    sourceUrlKey: (state) => isBookSource ? "bookSourceUrl" : "sourceUrl",
+    sourcesMap: (state) => {
+        let map = new Map();
+        state.sources.forEach(source => map.set(source[state.sourceUrlKey], source));
+        return map;
+    },
     currentSourceUrl: (state) =>
       isBookSource
         ? state.currentSource.bookSourceUrl
@@ -57,31 +63,13 @@ export const useSourceStore = defineStore("source", {
     },
     //保存当前编辑源
     saveCurrentSource() {
-      let source = this.currentSource,
-        sources,
-        searchKey;
-      if (isBookSource) {
-        sources = this.bookSources;
-        searchKey = "bookSourceUrl";
-      } else {
-        sources = this.rssSources;
-        searchKey = "sourceUrl";
-      }
-      let index = sources.findIndex(
-        (element) => element[searchKey] === source[searchKey]
-      );
-      //去掉响应 toRaw?
-      source = JSON.parse(JSON.stringify(source));
-      if (index > -1) {
-        sources.splice(index, 1, source);
-      } else {
-        sources.push(source);
-      }
+      let source = this.currentSource, map = this.sourcesMap;
+      map.set(source[this.sourceUrlKey], source);
+      this.saveSources(Array.from(map.values()));
     },
     // 更改当前编辑的源
     changeCurrentSource(source) {
-      const newContent = JSON.stringify(source);
-      this.currentSource = JSON.parse(newContent);
+      this.currentSource = JSON.parse(JSON.stringify((source)));
     },
     async setPushReturnSources(returnSoures) {
       if (isBookSource) {
@@ -104,8 +92,7 @@ export const useSourceStore = defineStore("source", {
       localStorage.setItem("tabName", tabName);
     },
     changeEditTabSource(source) {
-      const newContent = JSON.stringify(source);
-      this.editTabSource = JSON.parse(newContent);
+       this.editTabSource = JSON.parse(JSON.stringify((source)));
     },
     editHistory(history) {
       let historyObj;
