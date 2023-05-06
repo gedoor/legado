@@ -76,10 +76,12 @@ class SearchContentActivity :
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            currentFocus?.let {
-                if (it is EditText) {
-                    it.clearFocus()
-                    it.hideSoftInput()
+            searchView.post {
+                currentFocus?.let {
+                    if (it is EditText) {
+                        it.clearFocus()
+                        it.hideSoftInput()
+                    }
                 }
             }
         }
