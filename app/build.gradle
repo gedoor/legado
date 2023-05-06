@@ -168,7 +168,7 @@ dependencies {
     implementation('androidx.webkit:webkit:1.6.1')
 
     //google
-    implementation('com.google.android.material:material:1.8.0')
+    implementation('com.google.android.material:material:1.9.0')
     implementation('com.google.android.flexbox:flexbox:3.0.0')
     implementation('com.google.code.gson:gson:2.10.1')
 
