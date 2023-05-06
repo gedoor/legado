@@ -6,6 +6,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookType
 import io.legado.app.constant.PageAnim
+import io.legado.app.constant.UnreadType
 import io.legado.app.data.appDb
 import io.legado.app.help.book.*
 import io.legado.app.help.config.AppConfig
@@ -145,16 +146,29 @@ data class Book(
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
-    fun getUnreadChapterStr(): String {
+    fun getUnreadChapterType(): UnreadType {
         if (totalChapterNum == 0 && durChapterIndex == 0) {
-            return ""
+            return UnreadType.UNREAD
         }
 
         if (totalChapterNum == durChapterIndex + 1) {
-            return appCtx.getString(R.string.book_end)
+            return UnreadType.END
         }
 
-        return getUnreadChapterNum().toString()
+        if (lastCheckCount > 0) {
+            return UnreadType.UPDATE
+        }
+
+        return UnreadType.READ
+    }
+
+    fun getUnreadChapterStr(): String {
+        return when (getUnreadChapterType()) {
+            UnreadType.UNREAD -> ""
+            UnreadType.READ -> getUnreadChapterNum().toString()
+            UnreadType.UPDATE -> getUnreadChapterNum().toString()
+            UnreadType.END -> appCtx.getString(R.string.book_end)
+        }
     }
 
     //自定义简介有自动更新的需求时，可通过更新intro再调用upCustomIntro()完成

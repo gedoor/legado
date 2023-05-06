@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
+import io.legado.app.constant.UnreadType
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getCompatColor
@@ -146,11 +147,12 @@ class BadgeView @JvmOverloads constructor(
         text = if (count == 0) "" else count.toString()
     }
 
-    fun setHighlight(highlight: Boolean) {
-        if (highlight) {
-            setBackgroundColor(context.accentColor)
-        } else {
-            setBackgroundColor(context.getCompatColor(R.color.darker_gray))
+    fun setHighlight(type: UnreadType) {
+        when (type) {
+            UnreadType.READ -> setBackgroundColor(context.getCompatColor(R.color.darker_gray))
+            UnreadType.UPDATE -> setBackgroundColor(context.accentColor)
+            UnreadType.END -> setBackgroundColor(context.getCompatColor(R.color.darker_gray_2))
+            else -> {}
         }
     }
 

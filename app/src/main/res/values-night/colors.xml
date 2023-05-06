@@ -39,4 +39,5 @@
 
     <!--statusBarBackground-->
     <color name="navigation_bar_bag">#222222</color>
+    <color name="darker_gray_2">#696969</color>
 </resources>

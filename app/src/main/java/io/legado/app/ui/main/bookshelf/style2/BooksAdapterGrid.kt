@@ -94,7 +94,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                 binding.rlLoading.inVisible()
                 if (AppConfig.showUnread) {
                     binding.bvUnread.setText(item.getUnreadChapterStr(), TextView.BufferType.NORMAL)
-                    binding.bvUnread.setHighlight(item.lastCheckCount > 0)
+                    binding.bvUnread.setHighlight(item.getUnreadChapterType())
                 } else {
                     binding.bvUnread.invisible()
                 }

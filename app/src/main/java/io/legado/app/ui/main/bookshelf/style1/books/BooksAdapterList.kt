@@ -57,8 +57,8 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
         } else {
             binding.rlLoading.gone()
             if (AppConfig.showUnread) {
-                binding.bvUnread.setHighlight(item.lastCheckCount > 0)
                 binding.bvUnread.setText(item.getUnreadChapterStr(), TextView.BufferType.NORMAL)
+                binding.bvUnread.setHighlight(item.getUnreadChapterType())
             } else {
                 binding.bvUnread.invisible()
             }
