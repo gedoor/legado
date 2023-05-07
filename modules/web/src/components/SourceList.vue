@@ -50,14 +50,15 @@ import SourceItem from "./SourceItem.vue";
 const store = useSourceStore();
 const sourceUrlSelect = ref([]);
 const searchKey = ref("");
-const { sources, sourcesMap, sourceUrlKey } = storeToRefs(store);
+const { sources, sourcesMap } = storeToRefs(store);
 const isBookSource = computed(() => {
   return /bookSource/.test(window.location.href);
 });
 const sourceSelect = computed(() => {
   if (sourceUrlSelect.value.length == 0) return [];
-  let searchKey = sourceUrlKey.value;
-  return sourceUrlSelect.value.map(sourceUrl => sourcesMap.value.get(sourceUrl));
+  return sourceUrlSelect.value.map(
+    (sourceUrl) => sourcesMap.value.get(sourceUrl) ?? {}
+  );
 });
 const deleteSelectSources = () => {
   API.deleteSource(sourceSelect.value).then(({ data }) => {

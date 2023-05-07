@@ -11,7 +11,8 @@ export const useSourceStore = defineStore("source", {
       bookSources: [], // 临时存放所有书源,
       /** @type {import("@/source").RssSource[]} */
       rssSources: [], // 临时存放所有订阅源
-      errorPushSources: [], // 保存到阅读app出错的源
+      /** @type {import("@/source").Source[]} */
+      savedSources: [], // 批量保存到阅读app成功的源
       /** @type {import("@/source").Source} */
       currentSource: emptySource, // 当前编辑的源
       currentTab: localStorage.getItem("tabName") || "editTab",
@@ -21,11 +22,16 @@ export const useSourceStore = defineStore("source", {
   },
   getters: {
     sources: (state) => (isBookSource ? state.bookSources : state.rssSources),
-    sourceUrlKey: (state) => isBookSource ? "bookSourceUrl" : "sourceUrl",
+    sourceUrlKey: () => isBookSource ? "bookSourceUrl" : "sourceUrl",
     sourcesMap: (state) => {
-        let map = new Map();
-        state.sources.forEach(source => map.set(source[state.sourceUrlKey], source));
-        return map;
+      let map = new Map();
+      state.sources.forEach(source => map.set(source[state.sourceUrlKey], source));
+      return map;
+    },
+    savedSourcesMap: (state) => {
+      let map = new Map();
+      state.savedSources.forEach(source => map.set(source[state.sourceUrlKey], source));
+      return map;
     },
     currentSourceUrl: (state) =>
       isBookSource
@@ -53,6 +59,10 @@ export const useSourceStore = defineStore("source", {
         this.rssSources = data;
       }
     },
+    //批量推送
+    setPushReturnSources(returnSoures) {
+      this.savedSources = returnSoures;
+    },
     //删除源
     deleteSources(data) {
       let sources = isBookSource ? this.bookSources : this.rssSources;
@@ -70,21 +80,6 @@ export const useSourceStore = defineStore("source", {
     // 更改当前编辑的源
     changeCurrentSource(source) {
       this.currentSource = JSON.parse(JSON.stringify((source)));
-    },
-    async setPushReturnSources(returnSoures) {
-      if (isBookSource) {
-        // @ts-ignore
-        this.errorPushSources = this.sources.filter((source) =>
-          returnSoures.every(
-            (item) => item.bookSourceUrl !== source.bookSourceUrl
-          )
-        );
-      } else {
-        // @ts-ignore
-        this.errorPushSources = this.sources.filter((source) =>
-          returnSoures.every((item) => item.sourceUrl !== source.sourceUrl)
-        );
-      }
     },
     // update editTab tabName and editTab info
     changeTabName(tabName) {
@@ -133,6 +128,7 @@ export const useSourceStore = defineStore("source", {
     clearAllSource() {
       this.bookSources = [];
       this.rssSources = [];
+      this.savedSources = [];
     },
   },
 });
