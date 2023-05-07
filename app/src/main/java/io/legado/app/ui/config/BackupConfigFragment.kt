@@ -191,19 +191,19 @@ class BackupConfigFragment : PreferenceFragment(),
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
             PreferKey.webDavUrl ->
-                if (value == null) {
+                if (value.isNullOrBlank()) {
                     preference.summary = getString(R.string.web_dav_url_s)
                 } else {
                     preference.summary = value.toString()
                 }
             PreferKey.webDavAccount ->
-                if (value == null) {
+                if (value.isNullOrBlank()) {
                     preference.summary = getString(R.string.web_dav_account_s)
                 } else {
                     preference.summary = value.toString()
                 }
             PreferKey.webDavPassword ->
-                if (value == null) {
+                if (value.isNullOrBlank()) {
                     preference.summary = getString(R.string.web_dav_pw_s)
                 } else {
                     preference.summary = "*".repeat(value.toString().length)

@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import android.net.Uri
+import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
@@ -62,17 +63,28 @@ object AppWebDav {
     suspend fun upConfig() {
         kotlin.runCatching {
             authorization = null
+            defaultBookWebDav = null
             val account = appCtx.getPrefString(PreferKey.webDavAccount)
             val password = appCtx.getPrefString(PreferKey.webDavPassword)
             if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
                 val mAuthorization = Authorization(account, password)
-                WebDav(rootWebDavUrl, mAuthorization).makeAsDir()
-                WebDav(bookProgressUrl, mAuthorization).makeAsDir()
-                WebDav(exportsWebDavUrl, mAuthorization).makeAsDir()
+                checkAuthorization(mAuthorization)
                 val rootBooksUrl = "${rootWebDavUrl}books"
                 defaultBookWebDav = RemoteBookWebDav(rootBooksUrl, mAuthorization)
                 authorization = mAuthorization
             }
+        }
+    }
+
+    @Throws(WebDavException::class)
+    private suspend fun checkAuthorization(authorization: Authorization) {
+        if (!WebDav(rootWebDavUrl, authorization).makeAsDir() ||
+            !WebDav(bookProgressUrl, authorization).makeAsDir() ||
+            !WebDav(exportsWebDavUrl, authorization).makeAsDir()
+        ) {
+            appCtx.removePref(PreferKey.webDavPassword)
+            appCtx.toastOnUi(R.string.webdav_application_password_error)
+            throw WebDavException(appCtx.getString(R.string.webdav_application_password_error))
         }
     }
 
