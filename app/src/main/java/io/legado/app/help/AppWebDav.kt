@@ -83,8 +83,8 @@ object AppWebDav {
             !WebDav(exportsWebDavUrl, authorization).makeAsDir()
         ) {
             appCtx.removePref(PreferKey.webDavPassword)
-            appCtx.toastOnUi(R.string.webdav_application_password_error)
-            throw WebDavException(appCtx.getString(R.string.webdav_application_password_error))
+            appCtx.toastOnUi(R.string.webdav_application_authorization_error)
+            throw WebDavException(appCtx.getString(R.string.webdav_application_authorization_error))
         }
     }
 

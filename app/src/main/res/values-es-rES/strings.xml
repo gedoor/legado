@@ -1098,5 +1098,5 @@
     <string name="set_local_password_summary">本地密码用来对备份的敏感信息加密和解密,如需在不同设备之间同步,本地密码需一致.</string>
     <string name="only_latest_backup_t">仅保留最新备份</string>
     <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
-    <string name="webdav_application_password_error">WebDav application password error</string>
+    <string name="webdav_application_authorization_error">Fail to authorize WebDav application</string>
 </resources>
