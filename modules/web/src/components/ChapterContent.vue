@@ -1,4 +1,5 @@
 <template>
+  <div class="title">{{ title }}</div>
   <div v-for="(para, index) in carray" :key="index">
     <img
       class="full"
@@ -16,7 +17,11 @@ import config from "../plugins/config";
 import { getImageFromLegado, isLegadoUrl } from "../plugins/utils";
 
 const store = useBookStore();
-defineProps(["carray"]);
+const props = defineProps({
+  carray: { type: Array, required: true },
+  title: { type: String, required: true },
+  spacing: { type: Object, required: true },
+});
 
 const fontFamily = computed(() => {
   if (store.config.font >= 0) {
@@ -49,13 +54,26 @@ watch(fontSize, () => {
     store.setShowContent(true);
   });
 });
+
+const letterSpacing = computed(() => props.spacing.letter); //字间距 倍数
+const lineSpacing = computed(() => 1 + props.spacing.line); //行距 基础行距1
+const paragraphSpacing = computed(() => props.spacing.paragraph); //段距
 </script>
 
 <style lang="scss" scoped>
+.title {
+  margin-bottom: 57px;
+  font: 24px / 32px PingFangSC-Regular, HelveticaNeue-Light,
+    "Helvetica Neue Light", "Microsoft YaHei", sans-serif;
+}
 p {
   display: block;
   word-wrap: break-word;
   word-break: break-all;
+
+  letter-spacing: calc(v-bind("letterSpacing") * 1em);
+  line-height: v-bind("lineSpacing");
+  margin: calc(v-bind("paragraphSpacing") * 1em) 0;
 
   :deep(img) {
     height: 1em;

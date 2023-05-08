@@ -22,6 +22,11 @@ export const useBookStore = defineStore("book", {
         readWidth: 800,
         infiniteLoading: false,
         customFontName: "",
+        spacing: {
+          paragraph: 1,
+          line: 0.8,
+          letter: 0,
+        },
       },
       miniInterface: false,
       readSettingsVisible: false,
@@ -53,7 +58,7 @@ export const useBookStore = defineStore("book", {
       this.readingBook = readingBook;
     },
     setConfig(config) {
-      this.config = config;
+      Object.assign(this.config, config);
     },
     setReadSettingsVisible(visible) {
       this.readSettingsVisible = visible;
