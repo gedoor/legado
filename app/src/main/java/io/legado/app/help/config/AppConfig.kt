@@ -330,6 +330,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.changeSourceLoadToc, value)
         }
 
+    var changeSourceLoadWordCount: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.changeSourceLoadWordCount)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.changeSourceLoadWordCount, value)
+        }
+
     var contentSelectSpeakMod: Int
         get() = appCtx.getPrefInt(PreferKey.contentSelectSpeakMod)
         set(value) {

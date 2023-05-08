@@ -874,6 +874,7 @@
     <string name="upload_url">上傳URL</string>
     <string name="download_url_rule">下载URL规则(downloadUrls)</string>
     <string name="sort_by_respondTime">響應時間排序</string>
+    <string name="respondTime">響應時間：%1$d ms</string>
     <string name="export_success">導出成功</string>
     <string name="path">路徑</string>
     <string name="direct_link_upload_rule">直鏈上傳規則</string>
@@ -1099,4 +1100,5 @@
     <string name="only_latest_backup_t">仅保留最新备份</string>
     <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
     <string name="webdav_application_authorization_error">webDav应用验证失败</string>
+    <string name="load_word_count">加載字數</string>
 </resources>

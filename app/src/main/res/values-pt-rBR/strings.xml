@@ -875,6 +875,7 @@
     <string name="upload_url">上传URL</string>
     <string name="download_url_rule">downloadUrlRule(downloadUrls)</string>
     <string name="sort_by_respondTime">Classificar por tempo de resposta</string>
+    <string name="respondTime">tempo de resposta: %1$d ms</string>
     <string name="export_success">导出成功</string>
     <string name="path">路径</string>
     <string name="direct_link_upload_rule">直链上传规则</string>
@@ -1102,4 +1103,5 @@
     <string name="only_latest_backup_t">仅保留最新备份</string>
     <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
     <string name="webdav_application_authorization_error">Fail to authorize WebDav application</string>
+    <string name="load_word_count">Carregar os palavras do livro</string>
 </resources>

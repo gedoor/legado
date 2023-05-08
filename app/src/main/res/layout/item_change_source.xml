@@ -42,6 +42,7 @@
         android:layout_marginTop="10dp"
         android:singleLine="true"
         android:textColor="@color/primaryText"
+        tools:text="bookSourceName"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/tv_author"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,6 +54,7 @@
         android:layout_marginTop="10dp"
         android:maxWidth="160dp"
         android:singleLine="true"
+        tools:text="author"
         android:textColor="@color/secondaryText"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked"
         app:layout_constraintTop_toTopOf="parent" />
@@ -64,11 +66,38 @@
         android:layout_marginLeft="30dp"
         android:layout_marginBottom="10dp"
         android:singleLine="true"
+        tools:text="latest chapter name"
         android:textColor="@color/secondaryText"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked"
         app:layout_constraintTop_toBottomOf="@+id/tv_origin" />
+
+    <TextView
+        android:id="@+id/tv_current_chapter_word_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="10dp"
+        android:singleLine="false"
+        tools:text="word count"
+        android:textColor="@color/secondaryText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_last" />
+
+    <TextView
+        android:id="@+id/tv_respond_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="10dp"
+        android:singleLine="false"
+        tools:text="respond time"
+        android:textColor="@color/secondaryText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_current_chapter_word_count" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_checked"

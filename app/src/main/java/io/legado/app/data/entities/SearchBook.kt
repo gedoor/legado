@@ -41,7 +41,12 @@ data class SearchBook(
     var tocUrl: String = "",
     var time: Long = System.currentTimeMillis(),
     override var variable: String? = null,
-    var originOrder: Int = 0
+    var originOrder: Int = 0,
+    var chapterWordCountText: String? = null,
+    @ColumnInfo(defaultValue = "-1")
+    var chapterWordCount: Int = -1,
+    @ColumnInfo(defaultValue = "-1")
+    var respondTime: Int = -1
 ) : Parcelable, BaseBook, Comparable<SearchBook> {
 
     @Ignore
