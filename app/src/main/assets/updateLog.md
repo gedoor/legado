@@ -15,7 +15,7 @@
 **2023/05/08**
 
 * 更新cronet: 113.0.5672.76
-* web: 全新传书页面 [MakeHui](https://github.com/MakeHui)；修正源编辑列表多谢编辑逻辑，优化超大源列表多选性能
+* web: 全新传书页面 [MakeHui](https://github.com/MakeHui)；修正源编辑列表操作逻辑和多选性能
 * 优化部分文本提示toast
 * webView: 忽略部分网站的证书错误
 * 备份恢复webDav: 输入密码后自动验证
