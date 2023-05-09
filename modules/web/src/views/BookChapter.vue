@@ -292,8 +292,9 @@ const toChapterPos = (pos) => {
   nextTick(() => {
     let wordCount = 0;
     for (let element of chapter.value[0].children) {
-      wordCount += parseInt(element.getAttribute("wordCount"));
-      if (wordCount >= pos) {
+      wordCount += parseInt(element.getAttribute("wordCount")) + 1;//计算换行符
+      if (wordCount - 1 >= pos) {
+      //最后一段没有换行符
         jump(element, {
           duration: 0,
         });
@@ -313,9 +314,9 @@ const computeChapterPos = () => {
   //计算已读字数
   let mChapterPos = 0;
   for (let paragraph of chapterElement.children) {
-    mChapterPos += parseInt(paragraph.getAttribute("wordCount"));
+    mChapterPos += parseInt(paragraph.getAttribute("wordCount")) + 1; //计算换行符
     if (paragraph.getBoundingClientRect().top >= 0) {
-      chapterPos.value = mChapterPos;
+      chapterPos.value = mChapterPos - 1; //最后一段没有换行符
       break;
     }
   }

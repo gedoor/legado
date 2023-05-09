@@ -41,9 +41,8 @@ const calculateWordCount = (paragraph) => {
   const imgPattern = /<img[^>]*src="[^"]*(?:"[^>]+\})?"[^>]*>/g;
   //内嵌图片文字为1
   const imagePlaceHolder = " ";
-  return paragraph.trim().replaceAll(imgPattern, imagePlaceHolder).length;
+  return paragraph.replaceAll(imgPattern, imagePlaceHolder).length;
 };
-
 </script>
 
 <style lang="scss" scoped>
