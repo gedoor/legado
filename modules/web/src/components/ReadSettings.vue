@@ -87,6 +87,45 @@
             >
           </div>
         </li>
+        <li class="letter-spacing">
+          <i>字距</i>
+          <div class="resize">
+            <span class="less" @click="lessLetterSpacing"
+              ><em class="iconfont">&#58966;</em></span
+            ><b></b> <span class="lang">{{ spacing.letter.toFixed(2) }}</span
+            ><b></b>
+            <span class="more" @click="moreLetterSpacing"
+              ><em class="iconfont">&#58976;</em></span
+            >
+          </div>
+        </li>
+        <li class="line-spacing">
+          <i>行距</i>
+          <div class="resize">
+            <span class="less" @click="lessLineSpacing"
+              ><em class="iconfont">&#58966;</em></span
+            ><b></b> <span class="lang">{{ spacing.line.toFixed(1) }}</span
+            ><b></b>
+            <span class="more" @click="moreLineSpacing"
+              ><em class="iconfont">&#58976;</em></span
+            >
+          </div>
+        </li>
+        <li class="paragraph-spacing">
+          <i>段距</i>
+          <div class="resize">
+            <div class="resize">
+              <span class="less" @click="lessParagraphSpacing"
+                ><em class="iconfont">&#58966;</em></span
+              ><b></b>
+              <span class="lang">{{ spacing.paragraph.toFixed(1) }}</span
+              ><b></b>
+              <span class="more" @click="moreParagraphSpacing"
+                ><em class="iconfont">&#58976;</em></span
+              >
+            </div>
+          </div>
+        </li>
         <li class="read-width" v-if="!store.miniInterface">
           <i>页面宽度</i>
           <div class="resize">
@@ -176,6 +215,7 @@ onMounted(() => {
 const config = computed(() => {
   return store.config;
 });
+
 const popupTheme = computed(() => {
   return {
     background: settings.themes[config.value.theme].popup,
@@ -186,15 +226,6 @@ const selectedTheme = computed(() => {
 });
 const selectedFont = computed(() => {
   return store.config.font;
-});
-const fontSize = computed(() => {
-  return store.config.fontSize;
-});
-const readWidth = computed(() => {
-  return store.config.readWidth;
-});
-const infiniteLoading = computed(() => {
-  return store.config.infiniteLoading;
 });
 
 const setTheme = (theme) => {
@@ -219,6 +250,10 @@ const setCustomFont = () => {
   config.value.customFontName = customFontName.value;
   saveConfig(config.value);
 };
+
+const fontSize = computed(() => {
+  return store.config.fontSize;
+});
 const moreFontSize = () => {
   if (config.value.fontSize < 48) config.value.fontSize += 2;
   saveConfig(config.value);
@@ -227,6 +262,38 @@ const lessFontSize = () => {
   if (config.value.fontSize > 12) config.value.fontSize -= 2;
   saveConfig(config.value);
 };
+
+const spacing = computed(() => {
+  return store.config.spacing;
+});
+const lessLetterSpacing = () => {
+  store.config.spacing.letter -= 0.01;
+  saveConfig(config.value);
+};
+const moreLetterSpacing = () => {
+  store.config.spacing.letter += 0.01;
+  saveConfig(config.value);
+};
+const lessLineSpacing = () => {
+  store.config.spacing.line -= 0.1;
+  saveConfig(config.value);
+};
+const moreLineSpacing = () => {
+  store.config.spacing.line += 0.1;
+  saveConfig(config.value);
+};
+const lessParagraphSpacing = () => {
+  store.config.spacing.paragraph -= 0.1;
+  saveConfig(config.value);
+};
+const moreParagraphSpacing = () => {
+  store.config.spacing.paragraph += 0.1;
+  saveConfig(config.value);
+};
+
+const readWidth = computed(() => {
+  return store.config.readWidth;
+});
 const moreReadWidth = () => {
   /*if (config.value.readWidth < 960)*/
   config.value.readWidth += 160;
@@ -236,6 +303,9 @@ const lessReadWidth = () => {
   if (config.value.readWidth > 640) config.value.readWidth -= 160;
   saveConfig(config.value);
 };
+const infiniteLoading = computed(() => {
+  return store.config.infiniteLoading;
+});
 const setInfiniteLoading = (loading) => {
   config.value.infiniteLoading = loading;
   saveConfig(config.value);
@@ -279,6 +349,9 @@ const uploadConfig = (config) => {
   }
 
   .setting-list {
+    max-height: calc(70vh - 50px);
+    overflow: auto;
+
     ul {
       list-style: none outside none;
       margin: 0;
@@ -356,7 +429,10 @@ const uploadConfig = (config) => {
       }
 
       .font-size,
-      .read-width {
+      .read-width,
+      letter-spacing,
+      line-spacing,
+      paragraph-spacing {
         margin-top: 28px;
 
         .resize {
