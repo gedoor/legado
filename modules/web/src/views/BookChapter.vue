@@ -263,7 +263,7 @@ const getContent = (index, reloadChapter = true, chapterPos = 0) => {
         let data = res.data.data;
         let content = data.split(/\n+/);
         updateChapterData({ index, content, title }, reloadChapter);
-        toChapterPos(chapterPos);
+        if (reloadChapter) toChapterPos(chapterPos);
       } else {
         ElMessage({ message: res.data.errorMsg, type: "error" });
         let content = [res.data.errorMsg];
@@ -291,6 +291,7 @@ const chapter = ref();
 const toChapterPos = (pos) => {
   nextTick(() => {
     let wordCount = 0;
+    if (chapter.value.length != 1) return;
     for (let element of chapter.value[0].children) {
       wordCount += parseInt(element.getAttribute("wordCount")) + 1;//计算换行符
       if (wordCount - 1 >= pos) {
