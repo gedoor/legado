@@ -430,9 +430,9 @@ const uploadConfig = (config) => {
 
       .font-size,
       .read-width,
-      letter-spacing,
-      line-spacing,
-      paragraph-spacing {
+      .letter-spacing,
+      .line-spacing,
+      .paragraph-spacing {
         margin-top: 28px;
 
         .resize {
