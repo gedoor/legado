@@ -19,9 +19,11 @@ object SourceHelp {
     private val list18Plus by lazy {
         try {
             return@lazy String(appCtx.assets.open("18PlusList.txt").readBytes())
-                .splitNotBlank("\n")
+                .splitNotBlank("\n").map {
+                    EncoderUtils.base64Decode(it)
+                }.toHashSet()
         } catch (e: Exception) {
-            return@lazy arrayOf<String>()
+            return@lazy hashSetOf<String>()
         }
     }
 
@@ -32,42 +34,42 @@ object SourceHelp {
     }
 
     fun insertRssSource(vararg rssSources: RssSource) {
-        rssSources.forEach { rssSource ->
-            if (is18Plus(rssSource.sourceUrl)) {
-                handler.post {
-                    appCtx.toastOnUi("${rssSource.sourceName}是18+网址,禁止导入.")
-                }
-            } else {
-                appDb.rssSourceDao.insert(rssSource)
+        val rssSourcesGroup = rssSources.groupBy {
+            is18Plus(it.sourceUrl)
+        }
+        rssSourcesGroup[true]?.forEach {
+            handler.post {
+                appCtx.toastOnUi("${it.sourceName}是18+网址,禁止导入.")
             }
+        }
+        rssSourcesGroup[false]?.let {
+            appDb.rssSourceDao.insert(*it.toTypedArray())
         }
     }
 
     fun insertBookSource(vararg bookSources: BookSource) {
-        bookSources.forEach { bookSource ->
-            if (is18Plus(bookSource.bookSourceUrl)) {
-                handler.post {
-                    appCtx.toastOnUi("${bookSource.bookSourceName}是18+网址,禁止导入.")
-                }
-            } else {
-                appDb.bookSourceDao.insert(bookSource)
+        val bookSourcesGroup = bookSources.groupBy {
+            is18Plus(it.bookSourceUrl)
+        }
+        bookSourcesGroup[true]?.forEach {
+            handler.post {
+                appCtx.toastOnUi("${it.bookSourceName}是18+网址,禁止导入.")
             }
+        }
+        bookSourcesGroup[false]?.let {
+            appDb.bookSourceDao.insert(*it.toTypedArray())
         }
     }
 
     private fun is18Plus(url: String?): Boolean {
         url ?: return false
-        val baseUrl = NetworkUtils.getBaseUrl(url)
-        baseUrl ?: return false
         if (AppConst.isPlayChannel) return false
+        val baseUrl = NetworkUtils.getBaseUrl(url) ?: return false
         kotlin.runCatching {
-            val host = baseUrl.split("//", ".")
-            val base64Url = EncoderUtils.base64Encode("${host[host.lastIndex - 1]}.${host.last()}")
-            list18Plus.forEach {
-                if (base64Url == it) {
-                    return true
-                }
+            val host = baseUrl.split("//", ".").let {
+                if (it.size > 2) "${it[it.lastIndex - 1]}.${it.last()}" else return false
             }
+            return list18Plus.contains(host)
         }
         return false
     }

@@ -82,10 +82,12 @@
       <div class="content">
         <div class="top-bar" ref="top"></div>
         <div v-for="data in chapterData" :key="data.index" ref="chapter">
-          <div class="title" :index="data.index" v-if="showContent">
-            {{ data.title }}
-          </div>
-          <chapter-content :carray="data.content" v-if="showContent" />
+          <chapter-content
+            :carray="data.content"
+            :title="data.title"
+            :spacing="store.config.spacing"
+            v-if="showContent"
+          />
         </div>
         <div class="loading" ref="loading"></div>
         <div class="bottom-bar" ref="bottom"></div>
@@ -666,12 +668,6 @@ onUnmounted(() => {
       line-height: 1.8;
       font-family: "Microsoft YaHei", PingFangSC-Regular, HelveticaNeue-Light,
         "Helvetica Neue Light", sans-serif;
-
-      .title {
-        margin-bottom: 57px;
-        font: 24px / 32px PingFangSC-Regular, HelveticaNeue-Light,
-          "Helvetica Neue Light", "Microsoft YaHei", sans-serif;
-      }
 
       .bottom-bar,
       .top-bar {

@@ -430,7 +430,7 @@ class AudioPlayService : BaseService(),
     private fun upMediaSessionPlaybackState(state: Int) {
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
-                .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
+                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
                 .setState(state, exoPlayer.currentPosition, 1f)
                 .setBufferedPosition(exoPlayer.bufferedPosition)
                 .build()

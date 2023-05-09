@@ -16,12 +16,14 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -44,6 +46,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
     var name: String = ""
     var author: String = ""
+    private var fromReadBookActivity = false
+    private var oldBook: Book? = null
     private var tasks = CompositeCoroutine()
     private var screenKey: String = ""
     private var bookSourceList = arrayListOf<BookSource>()
@@ -114,7 +118,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     @CallSuper
-    open fun initData(arguments: Bundle?) {
+    open fun initData(arguments: Bundle?, book: Book?, fromReadBookActivity: Boolean) {
         arguments?.let { bundle ->
             bundle.getString("name")?.let {
                 name = it
@@ -122,6 +126,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             bundle.getString("author")?.let {
                 author = it.replace(AppPattern.authorRegex, "")
             }
+            this.fromReadBookActivity = fromReadBookActivity
+            oldBook = book
         }
     }
 
@@ -180,22 +186,24 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         val task = Coroutine.async(scope = viewModelScope, context = searchPool!!) {
             val resultBooks = WebBook.searchBookAwait(source, name)
             resultBooks.forEach { searchBook ->
-                if (searchBook.name == name) {
-                    if ((AppConfig.changeSourceCheckAuthor && searchBook.author.contains(author))
-                        || !AppConfig.changeSourceCheckAuthor
-                    ) {
-                        when {
-                            searchBook.latestChapterTitle.isNullOrEmpty() &&
-                                    (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) -> {
-                                loadBookInfo(source, searchBook.toBook())
-                            }
-                            searchBook.chapterWordCountText.isNullOrBlank() && AppConfig.changeSourceLoadWordCount -> {
-                                loadBookToc(source, searchBook.toBook())
-                            }
-                            else -> {
-                                searchCallback?.searchSuccess(searchBook)
-                            }
-                        }
+                if (searchBook.name != name) {
+                    return@forEach
+                }
+                if (AppConfig.changeSourceCheckAuthor && !searchBook.author.contains(author)) {
+                    return@forEach
+                }
+                when {
+                    searchBook.latestChapterTitle.isNullOrEmpty() &&
+                            (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) -> {
+                        loadBookInfo(source, searchBook.toBook())
+                    }
+
+                    AppConfig.changeSourceLoadWordCount -> {
+                        loadBookToc(source, searchBook.toBook())
+                    }
+
+                    else -> {
+                        searchCallback?.searchSuccess(searchBook)
                     }
                 }
             }
@@ -211,7 +219,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private suspend fun loadBookInfo(source: BookSource, book: Book) {
         WebBook.getBookInfoAwait(source, book)
-        if (context.getPrefBoolean(PreferKey.changeSourceLoadToc)) {
+        if (AppConfig.changeSourceLoadToc || AppConfig.changeSourceLoadWordCount) {
             loadBookToc(source, book)
         } else {
             //从详情页里获取最新章节
@@ -224,7 +232,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         val chapters = WebBook.getChapterListAwait(source, book).getOrThrow()
         tocMap[book.bookUrl] = chapters
         bookMap[book.bookUrl] = book
-        if (context.getPrefBoolean(PreferKey.changeSourceLoadWordCount)) {
+        if (AppConfig.changeSourceLoadWordCount) {
             loadBookWordCount(source, book, chapters)
         } else {
             val searchBook = book.toSearchBook()
@@ -237,16 +245,26 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         book: Book,
         chapters: List<BookChapter>
     ) = coroutineScope {
-        val chapterIndex = ReadBook.curTextChapter?.chapter?.index ?: (chapters.size - 1)
+        val chapterIndex = if (fromReadBookActivity) {
+            oldBook?.let {
+                BookHelp.getDurChapter(
+                    it.durChapterIndex,
+                    it.durChapterTitle,
+                    chapters,
+                    it.totalChapterNum
+                )
+            } ?: chapters.lastIndex
+        } else chapters.lastIndex
         val bookChapter = chapters.getOrNull(chapterIndex)
         val startTime = System.currentTimeMillis()
         val pair = try {
             if (bookChapter == null) throw NoStackTraceException("章节缺失，总章节数${chapters.size}")
-            if (!isActive) return@coroutineScope
-            WebBook.getContentAwait(source, book, bookChapter, null, false).length.let {
+            val nextChapterUrl = chapters.getOrNull(chapterIndex + 1)?.url
+            WebBook.getContentAwait(source, book, bookChapter, nextChapterUrl, false).length.let {
                 it to "第${chapterIndex + 1}章 字数：${it}"
             }
         } catch (t: Throwable) {
+            if (t is CancellationException) throw t
             -1 to "第${chapterIndex + 1}章 获取字数失败：${t.localizedMessage}"
         }
         val endTime = System.currentTimeMillis()

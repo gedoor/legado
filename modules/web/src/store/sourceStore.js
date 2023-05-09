@@ -22,15 +22,19 @@ export const useSourceStore = defineStore("source", {
   },
   getters: {
     sources: (state) => (isBookSource ? state.bookSources : state.rssSources),
-    sourceUrlKey: () => isBookSource ? "bookSourceUrl" : "sourceUrl",
+    sourceUrlKey: () => (isBookSource ? "bookSourceUrl" : "sourceUrl"),
     sourcesMap: (state) => {
       let map = new Map();
-      state.sources.forEach(source => map.set(source[state.sourceUrlKey], source));
+      state.sources.forEach((source) =>
+        map.set(source[state.sourceUrlKey], source)
+      );
       return map;
     },
     savedSourcesMap: (state) => {
       let map = new Map();
-      state.savedSources.forEach(source => map.set(source[state.sourceUrlKey], source));
+      state.savedSources.forEach((source) =>
+        map.set(source[state.sourceUrlKey], source)
+      );
       return map;
     },
     currentSourceUrl: (state) =>
@@ -73,13 +77,14 @@ export const useSourceStore = defineStore("source", {
     },
     //保存当前编辑源
     saveCurrentSource() {
-      let source = this.currentSource, map = this.sourcesMap;
+      let source = this.currentSource,
+        map = this.sourcesMap;
       map.set(source[this.sourceUrlKey], source);
       this.saveSources(Array.from(map.values()));
     },
     // 更改当前编辑的源
     changeCurrentSource(source) {
-      this.currentSource = JSON.parse(JSON.stringify((source)));
+      this.currentSource = JSON.parse(JSON.stringify(source));
     },
     // update editTab tabName and editTab info
     changeTabName(tabName) {
@@ -87,7 +92,7 @@ export const useSourceStore = defineStore("source", {
       localStorage.setItem("tabName", tabName);
     },
     changeEditTabSource(source) {
-       this.editTabSource = JSON.parse(JSON.stringify((source)));
+      this.editTabSource = JSON.parse(JSON.stringify(source));
     },
     editHistory(history) {
       let historyObj;

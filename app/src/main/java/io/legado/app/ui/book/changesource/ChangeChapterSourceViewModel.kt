@@ -15,8 +15,8 @@ class ChangeChapterSourceViewModel(application: Application) :
     var chapterIndex: Int = 0
     var chapterTitle: String = ""
 
-    override fun initData(arguments: Bundle?) {
-        super.initData(arguments)
+    override fun initData(arguments: Bundle?, book: Book?, fromReadBookActivity: Boolean) {
+        super.initData(arguments, book, fromReadBookActivity)
         arguments?.let { bundle ->
             bundle.getString("chapterTitle")?.let {
                 chapterTitle = it
