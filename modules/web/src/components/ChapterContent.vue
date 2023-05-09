@@ -3,7 +3,7 @@
   <div
     v-for="(para, index) in contents"
     :key="index"
-    :wordCount="calculateWordCount(para)"
+    :wordCount="wordCounts[index]"
   >
     <img
       class="full"
@@ -43,6 +43,10 @@ const calculateWordCount = (paragraph) => {
   const imagePlaceHolder = " ";
   return paragraph.replaceAll(imgPattern, imagePlaceHolder).length;
 };
+const wordCounts = computed(() => {
+  return Array.from(props.contents, content => calculateWordCount(content));
+});
+
 </script>
 
 <style lang="scss" scoped>
