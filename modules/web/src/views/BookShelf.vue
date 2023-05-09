@@ -197,7 +197,7 @@ onMounted(async () => {
     }
   }
   showLoading.value = true;
-  //await store.saveBookProcess();
+  await store.saveBookProcess();
   fetchBookShelfData();
 });
 const fetchBookShelfData = () => {

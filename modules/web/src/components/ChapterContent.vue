@@ -1,6 +1,10 @@
 <template>
-  <div class="title">{{ title }}</div>
-  <div v-for="(para, index) in carray" :key="index">
+  <div class="title" wordCount="0">{{ title }}</div>
+  <div
+    v-for="(para, index) in contents"
+    :key="index"
+    :wordCount="calculateWordCount(para)"
+  >
     <img
       class="full"
       v-if="/^\s*<img[^>]*src[^>]+>$/.test(para)"
@@ -8,34 +12,19 @@
       @error.once="proxyImage"
       loading="lazy"
     />
-    <p v-else :style="style" v-html="para" />
+    <p v-else :style="{ fontFamily, fontSize }" v-html="para" />
   </div>
 </template>
 
 <script setup>
-import config from "../plugins/config";
-import { getImageFromLegado, isLegadoUrl } from "../plugins/utils";
+import { getImageFromLegado, isLegadoUrl } from "@/plugins/utils";
 
-const store = useBookStore();
 const props = defineProps({
-  carray: { type: Array, required: true },
+  contents: { type: Array, required: true },
   title: { type: String, required: true },
   spacing: { type: Object, required: true },
-});
-
-const fontFamily = computed(() => {
-  if (store.config.font >= 0) {
-    return config.fonts[store.config.font];
-  }
-  return { fontFamily: store.config.customFontName };
-});
-const fontSize = computed(() => {
-  return store.config.fontSize + "px";
-});
-const style = computed(() => {
-  let style = fontFamily.value;
-  style.fontSize = fontSize.value;
-  return style;
+  fontFamily: { type: String, required: true },
+  fontSize: { type: String, required: true },
 });
 
 const getImageSrc = (content) => {
@@ -48,16 +37,13 @@ const proxyImage = (event) => {
   event.target.src = getImageFromLegado(event.target.src);
 };
 
-watch(fontSize, () => {
-  store.setShowContent(false);
-  nextTick(() => {
-    store.setShowContent(true);
-  });
-});
+const calculateWordCount = (paragraph) => {
+  const imgPattern = /<img[^>]*src="[^"]*(?:"[^>]+\})?"[^>]*>/g;
+  //内嵌图片文字为1
+  const imagePlaceHolder = " ";
+  return paragraph.trim().replaceAll(imgPattern, imagePlaceHolder).length;
+};
 
-const letterSpacing = computed(() => props.spacing.letter); //字间距 倍数
-const lineSpacing = computed(() => 1 + props.spacing.line); //行距 基础行距1
-const paragraphSpacing = computed(() => props.spacing.paragraph); //段距
 </script>
 
 <style lang="scss" scoped>
@@ -72,9 +58,9 @@ p {
   word-wrap: break-word;
   word-break: break-all;
 
-  letter-spacing: calc(v-bind("letterSpacing") * 1em);
-  line-height: v-bind("lineSpacing");
-  margin: calc(v-bind("paragraphSpacing") * 1em) 0;
+  letter-spacing: calc(v-bind("props.spacing.letter") * 1em);
+  line-height: calc(1 + v-bind("props.spacing.line"));
+  margin: calc(v-bind("props.spacing.paragraph") * 1em) 0;
 
   :deep(img) {
     height: 1em;

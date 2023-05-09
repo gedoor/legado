@@ -55,16 +55,11 @@ var settings = {
     },
   ],
   fonts: [
-    {
-      fontFamily:
-        "Microsoft YaHei, PingFangSC-Regular, HelveticaNeue-Light, Helvetica Neue Light, sans-serif",
-    },
-    {
-      fontFamily: "PingFangSC-Regular, -apple-system, Simsun",
-    },
-    {
-      fontFamily: "Kaiti",
-    },
+    "Microsoft YaHei, PingFangSC-Regular, HelveticaNeue-Light, Helvetica Neue Light, sans-serif",
+
+    "PingFangSC-Regular, -apple-system, Simsun",
+
+    "Kaiti",
   ],
 };
 export default settings;
