@@ -66,6 +66,7 @@ const paragraphSpacing = computed(() => props.spacing.paragraph); //段距
   font: 24px / 32px PingFangSC-Regular, HelveticaNeue-Light,
     "Helvetica Neue Light", "Microsoft YaHei", sans-serif;
 }
+
 p {
   display: block;
   word-wrap: break-word;

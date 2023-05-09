@@ -166,18 +166,18 @@ const popupWidth = computed(() => {
 });
 const bodyTheme = computed(() => {
   return {
-    background: settings.themes[theme.value].body,
+    background: bodyColor.value,
   };
 });
 const chapterTheme = computed(() => {
   return {
-    background: settings.themes[theme.value].content,
+    background: chapterColor.value,
     width: readWidth.value,
   };
 });
 const leftBarTheme = computed(() => {
   return {
-    background: settings.themes[theme.value].popup,
+    background: popupColor.value,
     marginLeft: miniInterface.value
       ? 0
       : -(store.config.readWidth / 2 + 68) + "px",
@@ -186,7 +186,7 @@ const leftBarTheme = computed(() => {
 });
 const rightBarTheme = computed(() => {
   return {
-    background: settings.themes[theme.value].popup,
+    background: popupColor.value,
     marginRight: miniInterface.value
       ? 0
       : -(store.config.readWidth / 2 + 52) + "px",
@@ -196,23 +196,6 @@ const rightBarTheme = computed(() => {
 const isNight = ref(false);
 watchEffect(() => {
   isNight.value = theme.value == 6;
-});
-watch(bodyColor, (color) => {
-  bodyTheme.value.background = color;
-});
-watch(chapterColor, (color) => {
-  chapterTheme.value.background = color;
-});
-watch(readWidth, (width) => {
-  chapterTheme.value.width = width;
-  let leftToolMargin = -((parseInt(width) + 130) / 2 + 68) + "px";
-  let rightToolMargin = -((parseInt(width) + 130) / 2 + 52) + "px";
-  leftBarTheme.value.marginLeft = leftToolMargin;
-  rightBarTheme.value.marginRight = rightToolMargin;
-});
-watch(popupColor, (color) => {
-  leftBarTheme.value.background = color;
-  rightBarTheme.value.background = color;
 });
 
 watchEffect(() => {
