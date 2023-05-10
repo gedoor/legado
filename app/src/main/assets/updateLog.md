@@ -30,6 +30,7 @@
 **2023/05/03**
 
 * 文件类书源文件后缀识别：自动识别失败后会读取下载链接UrlOption的type字段
+* 替换规则添加排除范围字段
 
 ```
 https://www.example.com/file/ajzjxhxjncnc, {type: "txt"}
