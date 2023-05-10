@@ -221,21 +221,31 @@ const recordKeyDowning = ref(false);
 const recordKeyDownIndex = ref(-1);
 
 const stopRecordKeyDown = () => {
+  if (!recordKeyDowning.value) {
+    hotkeysDialogVisible.value = false;
+  }
   recordKeyDowning.value = false;
 };
 
-watch(hotkeysDialogVisible, (visibale) => {
-  if (!visibale) return hotkeys.unbind("*");
-  hotkeys.unbind();
-  /**监听按键 */
-  hotkeys("*", (event) => {
-    event.preventDefault();
-    if (recordKeyDowning.value && recordKeyDownIndex.value > -1)
-      buttons.value[recordKeyDownIndex.value].hotKeys =
-        // @ts-ignore
-        hotkeys.getPressedKeyString();
-  });
-});
+watch(
+  hotkeysDialogVisible,
+  (visibale) => {
+    if (!visibale) return hotkeys.unbind("*");
+    hotkeys.unbind();
+    /**监听按键 */
+    hotkeys("*", (event) => {
+      event.preventDefault();
+      let pressedKeys = hotkeys.getPressedKeyString();
+      if (pressedKeys.length == 1 && pressedKeys[0] == "esc") {
+        //单独按下esc 不录入
+        return;
+      }
+      if (recordKeyDowning.value && recordKeyDownIndex.value > -1)
+        buttons.value[recordKeyDownIndex.value].hotKeys = pressedKeys;
+    });
+  },
+  { immediate: true }
+);
 
 const recordKeyDown = (index) => {
   recordKeyDowning.value = true;

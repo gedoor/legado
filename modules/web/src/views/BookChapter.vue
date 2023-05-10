@@ -148,7 +148,6 @@ const {
   config,
   readingBook,
 } = storeToRefs(store);
-
 const chapterPos = computed({
   get: () => readingBook.value.chapterPos,
   set: (value) => (readingBook.value.chapterPos = value),
@@ -293,9 +292,9 @@ const toChapterPos = (pos) => {
     let wordCount = 0;
     if (chapter.value.length != 1) return;
     for (let element of chapter.value[0].children) {
-      wordCount += parseInt(element.getAttribute("wordCount")) + 1;//计算换行符
+      wordCount += parseInt(element.getAttribute("wordCount")) + 1; //计算换行符
       if (wordCount - 1 >= pos) {
-      //最后一段没有换行符
+        //最后一段没有换行符
         jump(element, {
           duration: 0,
         });

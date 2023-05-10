@@ -44,9 +44,8 @@ const calculateWordCount = (paragraph) => {
   return paragraph.replaceAll(imgPattern, imagePlaceHolder).length;
 };
 const wordCounts = computed(() => {
-  return Array.from(props.contents, content => calculateWordCount(content));
+  return Array.from(props.contents, (content) => calculateWordCount(content));
 });
-
 </script>
 
 <style lang="scss" scoped>
