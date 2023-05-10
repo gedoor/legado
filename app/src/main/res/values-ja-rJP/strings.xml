@@ -1104,4 +1104,5 @@
     <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
     <string name="webdav_application_authorization_error">Fail to authorize WebDav application</string>
     <string name="load_word_count">Load word count</string>
+    <string name="exclude_scope">排除范围</string>
 </resources>

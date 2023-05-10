@@ -1104,4 +1104,5 @@
     <string name="webdav_application_authorization_error">Fail to authorize WebDav application</string>
     <string name="respondTime">respondTime: %1$d ms</string>
     <string name="load_word_count">Load word count</string>
+    <string name="exclude_scope">排除范围</string>
 </resources>

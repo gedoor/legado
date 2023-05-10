@@ -51,6 +51,7 @@ interface ReplaceRuleDao {
     @Query(
         """SELECT * FROM replace_rules WHERE isEnabled = 1 and scopeContent = 1
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
+        and (excludeScope is null or (excludeScope not LIKE '%' || :name || '%' and excludeScope not LIKE '%' || :origin || '%'))
         order by sortOrder"""
     )
     fun findEnabledByContentScope(name: String, origin: String): List<ReplaceRule>
@@ -58,6 +59,7 @@ interface ReplaceRuleDao {
     @Query(
         """SELECT * FROM replace_rules WHERE isEnabled = 1 and scopeTitle = 1
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
+        and (excludeScope is null or (excludeScope not LIKE '%' || :name || '%' and excludeScope not LIKE '%' || :origin || '%'))
         order by sortOrder"""
     )
     fun findEnabledByTitleScope(name: String, origin: String): List<ReplaceRule>
