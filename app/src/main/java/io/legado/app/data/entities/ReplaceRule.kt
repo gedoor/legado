@@ -40,6 +40,8 @@ data class ReplaceRule(
     //作用于正文
     @ColumnInfo(defaultValue = "1")
     var scopeContent: Boolean = true,
+    //排除范围
+    var excludeScope: String? = null,
     //是否启用
     @ColumnInfo(defaultValue = "1")
     var isEnabled: Boolean = true,
