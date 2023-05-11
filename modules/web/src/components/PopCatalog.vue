@@ -1,5 +1,8 @@
 <template>
-  <div class="cata-wrapper" :style="popupTheme">
+  <div
+    :class="{ 'cata-wrapper': true, visible: popCataVisible }"
+    :style="popupTheme"
+  >
     <div class="title">目录</div>
     <virtual-list
       style="height: 300px; overflow: auto"
@@ -53,21 +56,11 @@ const virtualListdata = computed(() => {
   while (i < length) {
     virtualListDataSource[i] = {
       index: i,
-      catas: catalogValue.slice(2 * i, 2 * i + 2)
-    }
+      catas: catalogValue.slice(2 * i, 2 * i + 2),
+    };
     i++;
   }
   return virtualListDataSource;
-});
-
-const virtualListRef = ref();
-const virtualListIndex = computed(() => {
-  if (miniInterface.value) return index.value;
-  return Math.floor(index.value / 2);
-});
-watch(popCataVisible, (visible) => {
-  if (visible) return; // 页面可见时，虚拟列表内部sizes Map全为0
-  nextTick(() => virtualListRef.value.scrollToIndex(virtualListIndex.value));
 });
 
 const emit = defineEmits(["getContent"]);
@@ -77,11 +70,16 @@ const gotoChapter = (note) => {
   store.setContentLoading(true);
   emit("getContent", index.value);
 };
+
+const virtualListRef = ref();
+const virtualListIndex = computed(() => {
+  if (miniInterface.value) return index.value;
+  return Math.floor(index.value / 2);
+});
+
 onUpdated(() => {
-  // catalog变化触发dom更新和ResizeObserver，更新虚拟列表内部的sizes Map
-  store.popCataVisible = false;
-  // 触发popCataVisible watcher
-  // virtualListRef.value.scrollToIndex(index.value)
+  // dom更新触发ResizeObserver，更新虚拟列表内部的sizes Map
+  virtualListRef.value.scrollToIndex(virtualListIndex.value);
 });
 </script>
 

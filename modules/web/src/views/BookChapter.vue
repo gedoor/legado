@@ -520,8 +520,6 @@ onMounted(() => {
       let data = res.data.data;
       store.setCatalog(data);
       store.setReadingBook(book);
-      // 目录使用虚拟列表显示，需要手动显示一次以便滚动到当前位置
-      store.popCataVisible = true;
 
       getContent(chapterIndex, true, chapterPos);
       window.addEventListener("keyup", handleKeyPress);
