@@ -1,6 +1,5 @@
 # legado_web_editor
 
-![image-20220901202413040](https://cdn.jsdelivr.net/gh/jgckM/image@main/image/202209031638325.png)
 
 ## 🚧开发注意
 
@@ -29,6 +28,6 @@ pnpm build
 
 ### Lints and fixes files
 ```
-pnpm lint
+pnpm lint:fix
 ```
 

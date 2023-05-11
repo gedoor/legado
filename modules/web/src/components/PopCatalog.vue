@@ -5,8 +5,7 @@
       style="height: 300px; overflow: auto"
       :class="{ night: isNight, day: !isNight }"
       ref="virtualListRef"
-      :data-key="'index'"
-      :start="index"
+      data-key="url"
       wrap-class="data-wrapper"
       item-class="cata"
       :data-sources="catalog"
@@ -19,7 +18,6 @@
 
 <script setup>
 import VirtualList from "vue3-virtual-scroll-list";
-import jump from "../plugins/jump";
 import settings from "../plugins/config";
 import "../assets/fonts/popfont.css";
 import CatalogItem from "./CatalogItem.vue";
@@ -43,11 +41,10 @@ const index = computed({
   set: (value) => (store.readingBook.index = value),
 });
 const virtualListRef = ref();
+
 watch(popCataVisible, (visible) => {
-  if (!visible) return;
-  nextTick(() => {
-    virtualListRef.value.scrollToIndex(index.value);
-  });
+  if (visible) return; // 页面可见时，虚拟列表内部sizes Map全为0
+  nextTick(() => virtualListRef.value.scrollToIndex(index.value));
 });
 
 const emit = defineEmits(["getContent"]);
@@ -57,6 +54,12 @@ const gotoChapter = (note) => {
   store.setContentLoading(true);
   emit("getContent", index.value);
 };
+onUpdated(() => {
+  // catalog变化触发dom更新和ResizeObserver，更新虚拟列表内部的sizes Map
+  store.popCataVisible = false;
+  // 触发popCataVisible watcher
+  // virtualListRef.value.scrollToIndex(index.value)
+});
 </script>
 
 <style lang="scss" scoped>

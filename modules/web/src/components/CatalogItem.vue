@@ -12,8 +12,6 @@ defineProps(["index", "source", "gotoChapter"]);
 
 const store = useBookStore();
 
-const { catalog } = storeToRefs(store);
-
 const index = computed(() => store.readingBook.index);
 
 const isSelected = (idx) => {
