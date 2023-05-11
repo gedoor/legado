@@ -22,18 +22,11 @@
 ```shell
 pnpm install
 #安装项目
-pnpm serve
+pnpm dev
 #开发模式
 pnpm build
 #打包
-pnpm lint
+pnpm lint:fix
 #格式化代码
 ```
  - 调试的时候可以修改.env.development里面的地址连接手机端调试
-
-## 预览
-
-![](imgs/1.jpg)
-![](imgs/2.jpg)
-![](imgs/3.jpg)
-![](imgs/4.jpg)
