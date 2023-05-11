@@ -124,7 +124,7 @@ abstract class AbsCallBack(
         onSuccess(response)
 
         //打印协议，用于调试
-        DebugLog.i(javaClass.simpleName, "start[${info.negotiatedProtocol}]${info.url}")
+        DebugLog.i(javaClass.simpleName, "onResponseStarted[${info.negotiatedProtocol}][${info.httpStatusCode}]${info.url}")
         if (eventListener != null) {
             eventListener.responseHeadersEnd(mCall, response)
             eventListener.responseBodyStart(mCall)
@@ -169,6 +169,7 @@ abstract class AbsCallBack(
     override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
         canceled.set(true)
         callbackResults.add(CallbackResult(CallbackStep.ON_CANCELED))
+        //DebugLog.i(javaClass.simpleName, "cancel[${info?.negotiatedProtocol}]${info?.url}")
         eventListener?.callEnd(mCall)
         //onError(IOException("Cronet Request Canceled"))
     }

@@ -1220,30 +1220,27 @@ class ReadBookActivity : BaseReadBookActivity(),
         val previousResult = binding.searchMenu.previousSearchResult
 
         fun jumpToPosition() {
-            ReadBook.curTextChapter?.let {
-                binding.searchMenu.updateSearchInfo()
-                val (pageIndex, lineIndex, charIndex, addLine, charIndex2) =
-                    viewModel.searchResultPositions(it, searchResult)
-                ReadBook.skipToPage(pageIndex) {
-                    launch {
-                        isSelectingSearchResult = true
-                        binding.readView.curPage.selectStartMoveIndex(0, lineIndex, charIndex)
-                        when (addLine) {
-                            0 -> binding.readView.curPage.selectEndMoveIndex(
-                                0,
-                                lineIndex,
-                                charIndex + viewModel.searchContentQuery.length - 1
-                            )
-                            1 -> binding.readView.curPage.selectEndMoveIndex(
-                                0, lineIndex + 1, charIndex2
-                            )
-                            //consider change page, jump to scroll position
-                            -1 -> binding.readView.curPage.selectEndMoveIndex(1, 0, charIndex2)
-                        }
-                        binding.readView.isTextSelected = true
-                        isSelectingSearchResult = false
-                    }
+            val curTextChapter = ReadBook.curTextChapter ?: return
+            binding.searchMenu.updateSearchInfo()
+            val (pageIndex, lineIndex, charIndex, addLine, charIndex2) =
+                viewModel.searchResultPositions(curTextChapter, searchResult)
+            ReadBook.skipToPage(pageIndex) {
+                isSelectingSearchResult = true
+                binding.readView.curPage.selectStartMoveIndex(0, lineIndex, charIndex)
+                when (addLine) {
+                    0 -> binding.readView.curPage.selectEndMoveIndex(
+                        0,
+                        lineIndex,
+                        charIndex + viewModel.searchContentQuery.length - 1
+                    )
+                    1 -> binding.readView.curPage.selectEndMoveIndex(
+                        0, lineIndex + 1, charIndex2
+                    )
+                    //consider change page, jump to scroll position
+                    -1 -> binding.readView.curPage.selectEndMoveIndex(1, 0, charIndex2)
                 }
+                binding.readView.isTextSelected = true
+                isSelectingSearchResult = false
             }
         }
 
@@ -1281,13 +1278,11 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     private fun startBackupJob() {
         backupJob?.cancel()
-        backupJob = launch {
+        backupJob = launch(IO) {
             delay(300000)
-            withContext(IO) {
-                ReadBook.book?.let {
-                    AppWebDav.uploadBookProgress(it)
-                    Backup.autoBack(this@ReadBookActivity)
-                }
+            ReadBook.book?.let {
+                AppWebDav.uploadBookProgress(it)
+                Backup.autoBack(this@ReadBookActivity)
             }
         }
     }
@@ -1323,6 +1318,8 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (ReadBook.callBack === this) {
             ReadBook.callBack = null
         }
+        ReadBook.preDownloadTask?.cancel()
+        ReadBook.downloadedChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }

@@ -158,6 +158,7 @@ class BackupConfigFragment : PreferenceFragment(),
                 showHelp()
                 return true
             }
+
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return false
@@ -174,6 +175,7 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        context ?: return
         when (key) {
             PreferKey.backupPath -> upPreferenceSummary(key, getPrefString(key))
             PreferKey.webDavUrl,
@@ -183,6 +185,7 @@ class BackupConfigFragment : PreferenceFragment(),
                 upPreferenceSummary(key, getPrefString(key))
                 viewModel.upWebDavConfig()
             }
+
             PreferKey.webDavDeviceName -> upPreferenceSummary(key, getPrefString(key))
         }
     }
@@ -196,22 +199,26 @@ class BackupConfigFragment : PreferenceFragment(),
                 } else {
                     preference.summary = value.toString()
                 }
+
             PreferKey.webDavAccount ->
                 if (value.isNullOrBlank()) {
                     preference.summary = getString(R.string.web_dav_account_s)
                 } else {
                     preference.summary = value.toString()
                 }
+
             PreferKey.webDavPassword ->
                 if (value.isNullOrBlank()) {
                     preference.summary = getString(R.string.web_dav_pw_s)
                 } else {
                     preference.summary = "*".repeat(value.toString().length)
                 }
+
             PreferKey.webDavDir -> preference.summary = when (value) {
                 null -> "legado"
                 else -> value
             }
+
             else -> {
                 if (preference is ListPreference) {
                     val index = preference.findIndexOfValue(value)

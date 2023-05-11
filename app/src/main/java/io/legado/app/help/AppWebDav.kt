@@ -69,6 +69,9 @@ object AppWebDav {
             if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
                 val mAuthorization = Authorization(account, password)
                 checkAuthorization(mAuthorization)
+                WebDav(rootWebDavUrl, mAuthorization).makeAsDir()
+                WebDav(bookProgressUrl, mAuthorization).makeAsDir()
+                WebDav(exportsWebDavUrl, mAuthorization).makeAsDir()
                 val rootBooksUrl = "${rootWebDavUrl}books"
                 defaultBookWebDav = RemoteBookWebDav(rootBooksUrl, mAuthorization)
                 authorization = mAuthorization
@@ -78,10 +81,7 @@ object AppWebDav {
 
     @Throws(WebDavException::class)
     private suspend fun checkAuthorization(authorization: Authorization) {
-        if (!WebDav(rootWebDavUrl, authorization).makeAsDir() ||
-            !WebDav(bookProgressUrl, authorization).makeAsDir() ||
-            !WebDav(exportsWebDavUrl, authorization).makeAsDir()
-        ) {
+        if (!WebDav(rootWebDavUrl, authorization).check()) {
             appCtx.removePref(PreferKey.webDavPassword)
             appCtx.toastOnUi(R.string.webdav_application_authorization_error)
             throw WebDavException(appCtx.getString(R.string.webdav_application_authorization_error))
@@ -213,7 +213,11 @@ object AppWebDav {
     }
 
     private fun getProgressUrl(name: String, author: String): String {
-        return bookProgressUrl + UrlUtil.replaceReservedChar("${name}_${author}") + ".json"
+        return bookProgressUrl + getProgressFileName(name, author)
+    }
+
+    private fun getProgressFileName(name: String, author: String): String {
+        return UrlUtil.replaceReservedChar("${name}_${author}") + ".json"
     }
 
     /**
@@ -229,15 +233,22 @@ object AppWebDav {
                         return GSON.fromJsonObject<BookProgress>(json).getOrNull()
                     }
                 }
+            }.onFailure {
+                AppLog.put("获取书籍进度失败\n${it.localizedMessage}", it)
             }
         }
         return null
     }
 
     suspend fun downloadAllBookProgress() {
-        authorization ?: return
+        val authorization = authorization ?: return
         if (!NetworkUtils.isAvailable()) return
+        val bookProgressFiles = WebDav(bookProgressUrl, authorization).listFiles().map {
+            it.displayName
+        }.toHashSet()
         appDb.bookDao.all.forEach { book ->
+            val progressFileName = getProgressFileName(book.name, book.author)
+            if (!bookProgressFiles.contains(progressFileName)) return@forEach
             getBookProgress(book)?.let { bookProgress ->
                 if (bookProgress.durChapterIndex > book.durChapterIndex
                     || (bookProgress.durChapterIndex == book.durChapterIndex

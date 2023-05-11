@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import kotlin.math.min
 
@@ -50,6 +51,9 @@ object ReadBook : CoroutineScope by MainScope() {
 
     /* web端阅读进度记录 */
     var webBookProgress: BookProgress? = null
+
+    var preDownloadTask: Coroutine<*>? = null
+    val downloadedChapters = hashSetOf<Int>()
 
     //暂时保存跳转前进度
     fun saveCurrentBookProcess() {
@@ -319,7 +323,7 @@ object ReadBook : CoroutineScope by MainScope() {
     /**
      * 下载正文
      */
-    private fun downloadIndex(index: Int) {
+    private suspend fun downloadIndex(index: Int) {
         if (index < 0) return
         if (index > chapterSize - 1) {
             upToc()
@@ -331,7 +335,9 @@ object ReadBook : CoroutineScope by MainScope() {
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                     if (BookHelp.hasContent(book, chapter)) {
                         removeLoading(chapter.index)
+                        downloadedChapters.add(chapter.index)
                     } else {
+                        delay(1000)
                         download(this, chapter, false)
                     }
                 } ?: removeLoading(index)
@@ -482,17 +488,22 @@ object ReadBook : CoroutineScope by MainScope() {
         if (AppConfig.preDownloadNum < 2) {
             return
         }
-        Coroutine.async {
+        preDownloadTask?.cancel()
+        preDownloadTask = Coroutine.async {
             //预下载
-            val maxChapterIndex = durChapterIndex + AppConfig.preDownloadNum
-            for (i in durChapterIndex.plus(2)..maxChapterIndex) {
-                delay(1000)
-                downloadIndex(i)
+            launch {
+                val maxChapterIndex = min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
+                for (i in durChapterIndex.plus(2)..maxChapterIndex) {
+                    if (downloadedChapters.contains(i)) continue
+                    downloadIndex(i)
+                }
             }
-            val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
-            for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
-                delay(1000)
-                downloadIndex(i)
+            launch {
+                val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
+                for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
+                    if (downloadedChapters.contains(i)) continue
+                    downloadIndex(i)
+                }
             }
         }
     }

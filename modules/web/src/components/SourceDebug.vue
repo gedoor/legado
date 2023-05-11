@@ -27,7 +27,7 @@ const store = useSourceStore();
 const printDebug = ref("");
 const searchKey = ref("");
 
-watchEffect(() => {
+watch(() => store.isDebuging, () => {
   if (store.isDebuging) startDebug();
 });
 

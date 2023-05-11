@@ -143,7 +143,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
 
                 mText.isUri() -> {
                     val uri = Uri.parse(mText)
-                    uri.inputStream(context).getOrThrow().let {
+                    uri.inputStream(context).getOrThrow().use {
                         allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
                     }
                 }
@@ -166,7 +166,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.byteStream().let {
+        }.byteStream().use {
             allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
         }
     }

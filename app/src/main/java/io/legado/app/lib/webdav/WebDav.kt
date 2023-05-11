@@ -229,8 +229,22 @@ open class WebDav(
                 addHeader("Depth", "0")
                 val requestBody = EXISTS.toRequestBody("application/xml".toMediaType())
                 method("PROPFIND", requestBody)
-            }.isSuccessful
+            }.use { it.isSuccessful }
         }.getOrDefault(false)
+    }
+
+    /**
+     * 检查用户名密码是否有效
+     */
+    suspend fun check(): Boolean {
+        return kotlin.runCatching {
+            webDavClient.newCallResponse {
+                url(url)
+                addHeader("Depth", "0")
+                val requestBody = EXISTS.toRequestBody("application/xml".toMediaType())
+                method("PROPFIND", requestBody)
+            }.use { it.code != 401 }
+        }.getOrDefault(true)
     }
 
     /**
@@ -245,7 +259,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     method("MKCOL", null)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -300,7 +314,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     put(fileBody)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -320,7 +334,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     put(fileBody)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -340,7 +354,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     put(fileBody)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -371,7 +385,7 @@ open class WebDav(
             webDavClient.newCallResponse {
                 url(url)
                 method("DELETE", null)
-            }.let {
+            }.use {
                 checkResult(it)
             }
         }.onFailure {

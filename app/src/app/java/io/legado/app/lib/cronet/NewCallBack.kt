@@ -3,6 +3,7 @@ package io.legado.app.lib.cronet
 import android.os.Build
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
+import io.legado.app.utils.DebugLog
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
@@ -20,6 +21,7 @@ class NewCallBack(originalRequest: Request, mCall: Call) : AbsCallBack(originalR
     @Throws(IOException::class)
     override fun waitForDone(urlRequest: UrlRequest): Response {
         urlRequest.start()
+        //DebugLog.i(javaClass.simpleName, "start ${originalRequest.method} ${originalRequest.url}")
         return if (mCall.timeout().timeoutNanos() > 0) {
             responseFuture.get(mCall.timeout().timeoutNanos(), TimeUnit.NANOSECONDS)
         } else {

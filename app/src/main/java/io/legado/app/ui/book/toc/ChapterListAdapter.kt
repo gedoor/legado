@@ -1,6 +1,8 @@
 package io.legado.app.ui.book.toc
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
@@ -19,7 +21,6 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Main
 import java.util.concurrent.ConcurrentHashMap
 
 class ChapterListAdapter(context: Context, val callback: Callback) :
@@ -27,6 +28,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     val cacheFileNames = hashSetOf<String>()
     private val displayTitleMap = ConcurrentHashMap<String, String>()
+    private val handler = Handler(Looper.getMainLooper())
 
     override val diffItemCallback: DiffUtil.ItemCallback<BookChapter>
         get() = object : DiffUtil.ItemCallback<BookChapter>() {
@@ -80,7 +82,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                         val displayTitle = item.getDisplayTitle(replaceRules, useReplace)
                         ensureActive()
                         displayTitleMap[item.title] = displayTitle
-                        withContext(Main) {
+                        handler.post {
                             notifyItemChanged(i, true)
                         }
                     }
@@ -94,7 +96,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                         val displayTitle = item.getDisplayTitle(replaceRules, useReplace)
                         ensureActive()
                         displayTitleMap[item.title] = displayTitle
-                        withContext(Main) {
+                        handler.post {
                             notifyItemChanged(i, true)
                         }
                     }
