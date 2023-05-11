@@ -79,6 +79,7 @@ const virtualListIndex = computed(() => {
 
 onUpdated(() => {
   // dom更新触发ResizeObserver，更新虚拟列表内部的sizes Map
+  if (!popCataVisible.value) return;
   virtualListRef.value.scrollToIndex(virtualListIndex.value);
 });
 </script>
