@@ -5,10 +5,10 @@
       style="height: 300px; overflow: auto"
       :class="{ night: isNight, day: !isNight }"
       ref="virtualListRef"
-      data-key="url"
+      data-key="index"
       wrap-class="data-wrapper"
       item-class="cata"
-      :data-sources="catalog"
+      :data-sources="virtualListdata"
       :data-component="CatalogItem"
       :estimate-size="40"
       :extra-props="{ gotoChapter }"
@@ -25,7 +25,7 @@ import CatalogItem from "./CatalogItem.vue";
 const store = useBookStore();
 
 const isNight = computed(() => theme.value == 6);
-const { catalog, popCataVisible } = storeToRefs(store);
+const { catalog, popCataVisible, miniInterface } = storeToRefs(store);
 
 const theme = computed(() => {
   return store.config.theme;
@@ -40,11 +40,33 @@ const index = computed({
   get: () => store.readingBook.index,
   set: (value) => (store.readingBook.index = value),
 });
-const virtualListRef = ref();
 
+const virtualListdata = computed(() => {
+  let catalogValue = catalog.value;
+  if (miniInterface.value) return catalogValue;
+
+  // pc端 virtualListIitem有2个章节
+  let length = Math.ceil(catalogValue.length / 2);
+  let virtualListDataSource = new Array(length);
+
+  let i = 0;
+  while ((i++) < length) {
+    virtualListDataSource[i] = {
+      index: i,
+      catas: catalogValue.slice(2 * i, 2 * i + 2)
+    }
+  }
+  return virtualListDataSource;
+});
+
+const virtualListRef = ref();
+const virtualListIndex = computed(() => {
+  if (miniInterface.value) return index.value;
+  return Math.floor(index.value / 2);
+});
 watch(popCataVisible, (visible) => {
   if (visible) return; // 页面可见时，虚拟列表内部sizes Map全为0
-  nextTick(() => virtualListRef.value.scrollToIndex(index.value));
+  nextTick(() => virtualListRef.value.scrollToIndex(virtualListIndex.value));
 });
 
 const emit = defineEmits(["getContent"]);
@@ -78,12 +100,8 @@ onUpdated(() => {
     border-bottom: 1px solid #ed4259;
   }
   :deep(.data-wrapper) {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
     .cata {
-      width: 50%;
+      //width: 50%;
       height: 40px;
       cursor: pointer;
       font: 16px / 40px PingFangSC-Regular, HelveticaNeue-Light,
@@ -101,11 +119,6 @@ onUpdated(() => {
     :deep(.cata) {
       border-bottom: 1px solid #f2f2f2;
     }
-  }
-}
-@media screen and (max-width: 500px) {
-  :deep(.cata) {
-    width: 100% !important;
   }
 }
 </style>
