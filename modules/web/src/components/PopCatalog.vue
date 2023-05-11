@@ -50,11 +50,12 @@ const virtualListdata = computed(() => {
   let virtualListDataSource = new Array(length);
 
   let i = 0;
-  while ((i++) < length) {
+  while (i < length) {
     virtualListDataSource[i] = {
       index: i,
       catas: catalogValue.slice(2 * i, 2 * i + 2)
     }
+    i++;
   }
   return virtualListDataSource;
 });
