@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioManager
-import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.support.v4.media.MediaMetadataCompat
@@ -15,10 +14,10 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.AudioFocusRequestCompat
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.*
@@ -40,6 +39,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
 
+@UnstableApi
 /**
  * 音频播放服务
  */
@@ -74,14 +74,7 @@ class AudioPlayService : BaseService(),
         MediaHelp.buildAudioFocusRequestCompat(this)
     }
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayer.Builder(this).setLoadControl(
-            DefaultLoadControl.Builder().setBufferDurationsMs(
-                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS / 10,
-                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS / 10
-            ).build()
-        ).build()
+       ExoPlayerHelper.createExoPlayer(this)
     }
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
@@ -159,13 +152,14 @@ class AudioPlayService : BaseService(),
                     chapter = AudioPlay.durChapter,
                     headerMapF = AudioPlay.headers(true),
                 )
-                val uri = Uri.parse(analyzeUrl.url)
+                //val uri = Uri.parse(analyzeUrl.url)
                 //ExoPlayerHelper.preDownload(uri, analyzeUrl.headerMap)
                 //休息1秒钟，防止403
                 //delay(1000)
-                val mediaSource = ExoPlayerHelper
-                    .createMediaSource(uri, analyzeUrl.headerMap)
-                exoPlayer.setMediaSource(mediaSource)
+//                val mediaSource = ExoPlayerHelper
+//                    .createMediaSource(uri, analyzeUrl.headerMap)
+                //exoPlayer.setMediaSource(mediaSource)
+                exoPlayer.setMediaItem(ExoPlayerHelper.createMediaItem(analyzeUrl.url,analyzeUrl.headerMap))
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             }.onError {
@@ -234,8 +228,10 @@ class AudioPlayService : BaseService(),
     /**
      * 调节速度
      */
+
     private fun upSpeed(adjust: Float) {
         kotlin.runCatching {
+            @SuppressLint("ObsoleteSdkInt")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 playSpeed += adjust
                 exoPlayer.setPlaybackSpeed(playSpeed)
