@@ -1,8 +1,5 @@
 <template>
-  <div
-    :class="{ 'cata-wrapper': true, visible: popCataVisible }"
-    :style="popupTheme"
-  >
+  <div :class="{ 'cata-wrapper': true, correctSize }" :style="popupTheme">
     <div class="title">目录</div>
     <virtual-list
       style="height: 300px; overflow: auto"
@@ -77,9 +74,12 @@ const virtualListIndex = computed(() => {
   return Math.floor(index.value / 2);
 });
 
-onUpdated(() => {
-  // dom更新触发ResizeObserver，更新虚拟列表内部的sizes Map
-  virtualListRef.value.scrollToIndex(virtualListIndex.value);
+const correctSize = ref(false);
+watch(popCataVisible, (visible) => {
+  // 组件挂载时不可见 virtualList计算首屏的size为0 重新触发其内部的ResizeObserver
+  if (visible && !correctSize.value) correctSize.value = true
+  if (!visible) return;
+  nextTick(() => virtualListRef.value.scrollToIndex(virtualListIndex.value));
 });
 </script>
 
