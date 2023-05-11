@@ -2,10 +2,10 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.net.Uri
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.constant.AppLog
@@ -16,6 +16,7 @@ import io.legado.app.exception.ConcurrentException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -38,7 +39,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     Player.Listener {
 
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayer.Builder(this).build()
+        //ExoPlayer.Builder(this).build()
+        ExoPlayerHelper.createExoPlayer(this)
     }
     private val ttsFolderPath: String by lazy {
         cacheDir.absolutePath + File.separator + "httpTTS" + File.separator

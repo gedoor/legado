@@ -179,8 +179,15 @@ dependencies {
 
     //media
     implementation("androidx.media:media:1.6.0")
-    implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
-    implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
+    // For media playback using ExoPlayer
+    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    // For loading data using the OkHttp network stack
+    implementation "androidx.media3:media3-datasource-okhttp:$media3_version"
+    // For exposing and controlling media sessions
+    //implementation "androidx.media3:media3-session:$media3_version"
+
+//    implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
+//    implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
 
     //Splitties
     implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
