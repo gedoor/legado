@@ -327,7 +327,7 @@
     <string name="book_info_edit">Editar informações do livro</string>
     <string name="ps_default_read">Definir a Estante como página inicial</string>
     <string name="pt_default_read">Vá automaticamente à lista de Recentes</string>
-    <string name="use_to">Objeto substituto. Nome do livro ou Url de origem estão disponíveis</string>
+    <string name="replace_scope">Objeto substituto. Nome do livro ou Url de origem estão disponíveis</string>
     <string name="menu_action_group">Grupos</string>
     <string name="download_path">Pasta de Cache</string>
     <string name="sys_file_picker">Seletor de arquivos do sistema</string>
@@ -1104,5 +1104,5 @@
     <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
     <string name="webdav_application_authorization_error">Fail to authorize WebDav application</string>
     <string name="load_word_count">Carregar os palavras do livro</string>
-    <string name="exclude_scope">排除范围</string>
+    <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
 </resources>

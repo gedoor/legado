@@ -324,7 +324,7 @@
     <string name="book_info_edit">書籍信息編輯</string>
     <string name="ps_default_read">默認打開書架</string>
     <string name="pt_default_read">自動跳轉最近閲讀</string>
-    <string name="use_to">替換範圍，選填書名或者書源url</string>
+    <string name="replace_scope">替換範圍，選填書名或者書源url</string>
     <string name="menu_action_group">分組</string>
     <string name="download_path">內容緩存路徑</string>
     <string name="sys_file_picker">系統文件選擇器</string>
@@ -1101,5 +1101,5 @@
     <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
     <string name="webdav_application_authorization_error">webDav应用验证失败</string>
     <string name="load_word_count">加載字數</string>
-    <string name="exclude_scope">排除范围</string>
+    <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
 </resources>

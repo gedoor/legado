@@ -130,7 +130,7 @@
                 android:id="@+id/til_scope"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/use_to">
+                android:hint="@string/replace_scope">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/et_scope"
@@ -143,7 +143,7 @@
                 android:id="@+id/til_exclude_scope"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/exclude_scope">
+                android:hint="@string/replace_exclude_scope">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/et_exclude_scope"
