@@ -13,6 +13,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.BackstageWebView
+import io.legado.app.help.http.CookieManager
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.StrResponse
@@ -286,10 +287,8 @@ interface JsExtensions : JsEncodeUtils {
             .headers(headers)
             .method(Connection.Method.GET)
             .execute()
-        val cookies = response.cookies()
-        CookieStore.mapToCookie(cookies)?.let {
-            val domain = NetworkUtils.getSubDomain(urlStr)
-            CacheManager.putMemory("${domain}_cookieJar", it)
+        if (getSource()?.enabledCookieJar == true) {
+            CookieManager.saveResponse(response)
         }
         return response
     }
@@ -305,10 +304,8 @@ interface JsExtensions : JsEncodeUtils {
             .headers(headers)
             .method(Connection.Method.HEAD)
             .execute()
-        val cookies = response.cookies()
-        CookieStore.mapToCookie(cookies)?.let {
-            val domain = NetworkUtils.getSubDomain(urlStr)
-            CacheManager.putMemory("${domain}_cookieJar", it)
+        if (getSource()?.enabledCookieJar == true) {
+            CookieManager.saveResponse(response)
         }
         return response
     }
@@ -325,10 +322,8 @@ interface JsExtensions : JsEncodeUtils {
             .headers(headers)
             .method(Connection.Method.POST)
             .execute()
-        val cookies = response.cookies()
-        CookieStore.mapToCookie(cookies)?.let {
-            val domain = NetworkUtils.getSubDomain(urlStr)
-            CacheManager.putMemory("${domain}_cookieJar", it)
+        if (getSource()?.enabledCookieJar == true) {
+            CookieManager.saveResponse(response)
         }
         return response
     }

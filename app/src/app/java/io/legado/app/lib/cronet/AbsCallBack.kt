@@ -2,6 +2,8 @@ package io.legado.app.lib.cronet
 
 import androidx.annotation.Keep
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.http.CookieManager
+import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.asIOException
@@ -11,6 +13,8 @@ import okhttp3.*
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.asResponseBody
+import okhttp3.internal.http.HttpMethod
+import okhttp3.internal.http.StatusLine
 import okio.Buffer
 import okio.Source
 import okio.Timeout
@@ -29,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 @Keep
 abstract class AbsCallBack(
-    val originalRequest: Request,
+    var originalRequest: Request,
     val mCall: Call,
     private val eventListener: EventListener? = null,
     private val responseCallback: Callback? = null
@@ -43,6 +47,16 @@ abstract class AbsCallBack(
     private val callbackResults = ArrayBlockingQueue<CallbackResult>(2)
     private val urlResponseInfoChain = arrayListOf<UrlResponseInfo>()
     private var cancelJob: Coroutine<*>? = null
+    private var followRedirect = false
+    private var enableCookieJar = false
+
+    init {
+        if (originalRequest.header(cookieJarHeader) != null) {
+            enableCookieJar = true
+            originalRequest = originalRequest.newBuilder()
+                .removeHeader(cookieJarHeader).build()
+        }
+    }
 
 
     @Throws(IOException::class)
@@ -80,15 +94,23 @@ abstract class AbsCallBack(
         urlResponseInfoChain.add(info)
         val client = okHttpClient
         if (originalRequest.url.isHttps && newLocationUrl.startsWith("http://") && client.followSslRedirects) {
-            request.followRedirect()
+            followRedirect = true
         } else if (!originalRequest.url.isHttps && newLocationUrl.startsWith("https://") && client.followSslRedirects) {
-            request.followRedirect()
+            followRedirect = true
         } else if (okHttpClient.followRedirects) {
-            request.followRedirect()
-        } else {
-            onError(IOException("Too many redirect"))
-            request.cancel()
+            followRedirect = true
         }
+
+        if (!followRedirect) {
+            onError(IOException("Too many redirect"))
+        } else {
+            val response = toResponse(originalRequest, info, urlResponseInfoChain)
+            if (enableCookieJar) {
+                CookieManager.saveResponse(response)
+            }
+            originalRequest = buildRedirectRequest(response, originalRequest.method, newLocationUrl)
+        }
+        request.cancel()
     }
 
 
@@ -102,29 +124,26 @@ abstract class AbsCallBack(
             request.cancel()
         }
 
-        val responseBuilder: Response.Builder
+        val response: Response
         try {
-            responseBuilder = createResponse(
-                originalRequest,
-                info,
-                CronetBodySource()
-            )
+            response = toResponse(originalRequest, info, urlResponseInfoChain, CronetBodySource())
         } catch (e: IOException) {
             request.cancel()
             cancelJob?.cancel()
             onError(e)
             return
         }
-        val newRequest = originalRequest.newBuilder().url(info.url).build()
-        val response = responseBuilder
-            .request(newRequest)
-            .priorResponse(buildPriorResponse(originalRequest, urlResponseInfoChain, info.urlChain))
-            .build()
+
+        if (enableCookieJar) {
+            CookieManager.saveResponse(response)
+        }
+
         mResponse = response
         onSuccess(response)
 
         //打印协议，用于调试
-        DebugLog.i(javaClass.simpleName, "onResponseStarted[${info.negotiatedProtocol}][${info.httpStatusCode}]${info.url}")
+        val msg = "onResponseStarted[${info.negotiatedProtocol}][${info.httpStatusCode}]${info.url}"
+        DebugLog.i(javaClass.simpleName, msg)
         if (eventListener != null) {
             eventListener.responseHeadersEnd(mCall, response)
             eventListener.responseBodyStart(mCall)
@@ -167,6 +186,16 @@ abstract class AbsCallBack(
     }
 
     override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
+        if (followRedirect) {
+            followRedirect = false
+            if (enableCookieJar) {
+                val newRequest = CookieManager.loadRequest(originalRequest)
+                buildRequest(newRequest, this)?.start()
+            } else {
+                buildRequest(originalRequest, this)?.start()
+            }
+            return
+        }
         canceled.set(true)
         callbackResults.add(CallbackResult(CallbackStep.ON_CANCELED))
         //DebugLog.i(javaClass.simpleName, "cancel[${info?.negotiatedProtocol}]${info?.url}")
@@ -293,15 +322,12 @@ abstract class AbsCallBack(
         private fun buildPriorResponse(
             request: Request,
             redirectResponseInfos: List<UrlResponseInfo>,
-            urlChain: List<String>
         ): Response? {
             var priorResponse: Response? = null
             if (redirectResponseInfos.isNotEmpty()) {
-                check(urlChain.size == redirectResponseInfos.size + 1) {
-                    "The number of redirects should be consistent across URLs and headers!"
-                }
                 for (i in redirectResponseInfos.indices) {
-                    val redirectedRequest = request.newBuilder().url(urlChain[i]).build()
+                    val url = redirectResponseInfos[i].url
+                    val redirectedRequest = request.newBuilder().url(url).build()
                     priorResponse = createResponse(redirectedRequest, redirectResponseInfos[i])
                         .priorResponse(priorResponse)
                         .build()
@@ -335,6 +361,48 @@ abstract class AbsCallBack(
             }
             return bodySource.buffer()
                 .asResponseBody(contentType?.toMediaTypeOrNull(), contentLength)
+        }
+
+        private fun buildRedirectRequest(
+            userResponse: Response,
+            method: String,
+            newLocationUrl: String
+        ): Request {
+            // Most redirects don't include a request body.
+            val requestBuilder = userResponse.request.newBuilder()
+            if (HttpMethod.permitsRequestBody(method)) {
+                val responseCode = userResponse.code
+                val maintainBody = HttpMethod.redirectsWithBody(method) ||
+                        responseCode == StatusLine.HTTP_PERM_REDIRECT ||
+                        responseCode == StatusLine.HTTP_TEMP_REDIRECT
+                if (HttpMethod.redirectsToGet(method) && responseCode != StatusLine.HTTP_PERM_REDIRECT && responseCode != StatusLine.HTTP_TEMP_REDIRECT) {
+                    requestBuilder.method("GET", null)
+                } else {
+                    val requestBody = if (maintainBody) userResponse.request.body else null
+                    requestBuilder.method(method, requestBody)
+                }
+                if (!maintainBody) {
+                    requestBuilder.removeHeader("Transfer-Encoding")
+                    requestBuilder.removeHeader("Content-Length")
+                    requestBuilder.removeHeader("Content-Type")
+                }
+            }
+
+            return requestBuilder.url(newLocationUrl).build()
+        }
+
+        private fun toResponse(
+            request: Request,
+            responseInfo: UrlResponseInfo,
+            redirectResponseInfos: List<UrlResponseInfo>,
+            bodySource: Source? = null
+        ): Response {
+            val responseBuilder = createResponse(request, responseInfo, bodySource)
+            val newRequest = request.newBuilder().url(responseInfo.url).build()
+            return responseBuilder
+                .request(newRequest)
+                .priorResponse(buildPriorResponse(request, redirectResponseInfos))
+                .build()
         }
     }
 

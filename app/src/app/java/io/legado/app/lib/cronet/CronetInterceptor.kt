@@ -25,18 +25,11 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
             //移除Keep-Alive,手动设置会导致400 BadRequest
             builder.removeHeader("Keep-Alive")
             builder.removeHeader("Accept-Encoding")
-            if (cookieJar != CookieJar.NO_COOKIES) {
-                val cookieStr = getCookie(original.url)
-                //设置Cookie
-                if (cookieStr.length > 3) {
-                    builder.addHeader("Cookie", cookieStr)
-                }
-            }
 
             val newReq = builder.build()
             proceedWithCronet(newReq, chain.call())?.let { response ->
                 //从Response 中保存Cookie到CookieJar
-                cookieJar.receiveHeaders(newReq.url, response.headers)
+                //cookieJar.receiveHeaders(newReq.url, response.headers)
                 response
             } ?: chain.proceed(original)
         } catch (e: Exception) {

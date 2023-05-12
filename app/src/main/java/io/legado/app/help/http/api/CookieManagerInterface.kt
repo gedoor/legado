@@ -1,6 +1,6 @@
 package io.legado.app.help.http.api
 
-interface CookieManager {
+interface CookieManagerInterface {
 
     /**
      * 保存cookie

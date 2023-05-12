@@ -20,6 +20,7 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
+import io.legado.app.help.http.CookieManager.mergeCookies
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -606,12 +607,12 @@ class AnalyzeUrl(
             CookieStore.getCookie(domain)
         }
         if (cookie.isNotEmpty()) {
-            val cookieMap = CookieStore.cookieToMap(cookie)
-            val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
-            cookieMap.putAll(customCookieMap)
-            CookieStore.mapToCookie(cookieMap)?.let {
+            mergeCookies(cookie, headerMap["Cookie"])?.let {
                 headerMap.put("Cookie", it)
             }
+        }
+        if (enabledCookieJar) {
+            headerMap[CookieManager.cookieJarHeader] = "1"
         }
     }
 

@@ -2,6 +2,7 @@ package io.legado.app.utils
 
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern.semicolonRegex
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.CustomUrl
@@ -102,7 +103,7 @@ object UrlUtil {
         val redirectUrl: String? = conn.getHeaderField("Location")
 
         return if (raw != null) {
-            val fileNames = raw.split(";".toRegex()).filter { it.contains("filename") }
+            val fileNames = raw.split(semicolonRegex).filter { it.contains("filename") }
             val names = hashSetOf<String>()
             fileNames.forEach {
                 val fileName = it.substringAfter("=")
