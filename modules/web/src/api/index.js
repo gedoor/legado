@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus/es";
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/api */
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/web */
 
-const { hostname, port } = new URL(import.meta.env.VITE_API || location.href);
+const { hostname, port } = new URL(import.meta.env.VITE_API || location.origin);
 
 const isSourecEditor = /source/i.test(location.href);
 const APIExceptionHandler = (error) => {

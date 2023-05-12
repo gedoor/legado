@@ -1,9 +1,10 @@
 <template>
-  <div class="title" wordCount="0">{{ title }}</div>
+  <div class="title" data-chapterpos="0" ref="titleRef">{{ title }}</div>
   <div
     v-for="(para, index) in contents"
     :key="index"
-    :wordCount="wordCounts[index]"
+    ref="paragraphRef"
+    :data-chapterpos="chapterPos[index]"
   >
     <img
       class="full"
@@ -18,8 +19,10 @@
 
 <script setup>
 import { getImageFromLegado, isLegadoUrl } from "@/plugins/utils";
+import jump from "@/plugins/jump";
 
 const props = defineProps({
+  chapterIndex: { type: Number, required: true },
   contents: { type: Array, required: true },
   title: { type: String, required: true },
   spacing: { type: Object, required: true },
@@ -43,8 +46,60 @@ const calculateWordCount = (paragraph) => {
   const imagePlaceHolder = " ";
   return paragraph.replaceAll(imgPattern, imagePlaceHolder).length;
 };
-const wordCounts = computed(() => {
-  return Array.from(props.contents, (content) => calculateWordCount(content));
+const chapterPos = computed(() => {
+  let pos = -1;
+  return Array.from(props.contents, (content) => {
+    pos += calculateWordCount(content) + 1; //计算上一段的换行符
+    return pos;
+  });
+});
+
+const titleRef = ref();
+const paragraphRef = ref();
+const scrollToReadedLength = (length) => {
+  if (length === 0) return;
+  console.log("已读长度", length);
+  let paragraphIndex = chapterPos.value.findIndex(
+    (wordCount) => wordCount >= length
+  );
+  if (paragraphIndex === -1) return;
+  nextTick(() => {
+    jump(paragraphRef.value[paragraphIndex], {
+      duration: 0,
+    });
+  });
+};
+defineExpose({
+  scrollToReadedLength,
+});
+const observer = ref(null);
+const emit = defineEmits(["readedLengthChange"]);
+onMounted(() => {
+  observer.value = new IntersectionObserver(
+    (entries) => {
+      for (let { target, isIntersecting } of entries) {
+        if (isIntersecting) {
+          emit(
+            "readedLengthChange",
+            props.chapterIndex,
+            parseInt(target.dataset.chapterpos)
+          );
+        }
+      }
+    },
+    {
+      rootMargin: `0px 0px -${window.innerHeight - 24}px 0px`,
+    }
+  );
+  observer.value.observe(titleRef.value);
+  paragraphRef.value.forEach((element) => {
+    observer.value.observe(element);
+  });
+});
+
+onUnmounted(() => {
+  observer.value?.disconnect();
+  observer.value = null;
 });
 </script>
 
