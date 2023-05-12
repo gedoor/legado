@@ -58,7 +58,6 @@ const titleRef = ref();
 const paragraphRef = ref();
 const scrollToReadedLength = (length) => {
   if (length === 0) return;
-  console.log("已读长度", length);
   let paragraphIndex = chapterPos.value.findIndex(
     (wordCount) => wordCount >= length
   );
