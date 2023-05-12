@@ -324,7 +324,7 @@ const saveReadingBookProgressToBrowser = (index, pos) => {
 
 // 进度同步
 // 返回同步 同步请求会在获取书架前完成
-// 刷新 关闭页面 切换tab 返回桌面 等操作 https://developer.mozilla.org/zh-CN/docs/Web/API/Document/visibilitychange_event
+// 关闭页面 切换tab 返回桌面 等操作 https://developer.mozilla.org/zh-CN/docs/Web/API/Document/visibilitychange_event
 const onVisibilityChange = () => {
   if (!bookProgress.value) return;
   if (document.visibilityState == 'hidden') {
