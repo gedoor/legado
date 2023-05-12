@@ -32,6 +32,23 @@ export const useBookStore = defineStore("book", {
       readSettingsVisible: false,
     };
   },
+  getters: {
+    bookProgress: (state) => {
+      if (state.catalog.length == 0) return;
+      // @ts-ignore
+      const { index, chapterPos, bookName, bookAuthor } = state.readingBook;
+      let title = state.catalog[index]?.title;
+      if (!title) return;
+      return {
+        name: bookName,
+        author: bookAuthor,
+        durChapterIndex: index,
+        durChapterPos: chapterPos,
+        durChapterTime: new Date().getTime(),
+        durChapterTitle: title,
+      };
+    },
+  },
   actions: {
     setConnectStatus(connectStatus) {
       this.connectStatus = connectStatus;
@@ -81,21 +98,9 @@ export const useBookStore = defineStore("book", {
       this.searchBooks = [];
     },
     //保存进度到app
-    async saveBookProcess() {
-      if (this.catalog.length == 0) return;
-      // @ts-ignore
-      const { index, chapterPos, bookName, bookAuthor } = this.readingBook;
-      let title = this.catalog[index]?.title;
-      if (!title) return;
-
-      API.saveBookProcess({
-        name: bookName,
-        author: bookAuthor,
-        durChapterIndex: index,
-        durChapterPos: chapterPos,
-        durChapterTime: new Date().getTime(),
-        durChapterTitle: title,
-      });
+    async saveBookProgress() {
+      if (!this.bookProgress) return Promise.resolve();
+      return API.saveBookProcess(this.bookProgress);
     },
   },
 });

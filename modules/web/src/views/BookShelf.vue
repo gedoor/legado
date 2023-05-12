@@ -187,7 +187,7 @@ const toDetail = (bookUrl, bookName, bookAuthor, chapterIndex, chapterPos) => {
   });
 };
 
-onMounted(async () => {
+onMounted(() => {
   //获取最近阅读书籍
   let readingRecentStr = localStorage.getItem("readingRecent");
   if (readingRecentStr != null) {
@@ -197,8 +197,10 @@ onMounted(async () => {
     }
   }
   showLoading.value = true;
-  await store.saveBookProcess();
-  fetchBookShelfData();
+  store
+    .saveBookProgress()
+    //确保各种网络情况下同步请求先完成
+    .finally(fetchBookShelfData);
 });
 const fetchBookShelfData = () => {
   API.getBookShelf()
