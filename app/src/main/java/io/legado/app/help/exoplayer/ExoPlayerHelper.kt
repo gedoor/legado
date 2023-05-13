@@ -43,17 +43,6 @@ object ExoPlayerHelper {
         type
     }
 
-//    fun createMediaSource(
-//        uri: Uri,
-//        defaultRequestProperties: Map<String, String>
-//    ): MediaSource {
-//        val mediaItem = MediaItem.fromUri(uri)
-//        val mediaSourceFactory = ProgressiveMediaSource.Factory(
-//            cacheDataSourceFactory.setDefaultRequestProperties(defaultRequestProperties)
-//        )
-//        return mediaSourceFactory.createMediaSource(mediaItem)
-//    }
-
     fun createMediaItem(url: String, headers: Map<String, String>): MediaItem {
         val formatUrl = url + SPLIT_TAG + gson.toJson(headers, mapType)
         return MediaItem.Builder().setUri(formatUrl).build()
