@@ -16,13 +16,21 @@ import io.legado.app.exception.ConcurrentException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Response
@@ -39,8 +47,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     Player.Listener {
 
     private val exoPlayer: ExoPlayer by lazy {
-        //ExoPlayer.Builder(this).build()
-        ExoPlayerHelper.createExoPlayer(this)
+        ExoPlayer.Builder(this).build()
     }
     private val ttsFolderPath: String by lazy {
         cacheDir.absolutePath + File.separator + "httpTTS" + File.separator
@@ -161,9 +168,11 @@ class HttpReadAloudService : BaseReadAloudService(),
                 if (checkJs?.isNotBlank() == true) {
                     response = analyzeUrl.evalJS(checkJs, response) as Response
                 }
-                val ct = httpTts.contentType
-                if (ct?.isNotBlank() == true) {
-                    response.headers["Content-Type"]?.let { contentType ->
+                response.headers["Content-Type"]?.let { contentType ->
+                    val ct = httpTts.contentType
+                    if (contentType == "application/json") {
+                        throw NoStackTraceException(response.body!!.string())
+                    } else if (ct?.isNotBlank() == true) {
                         if (!contentType.matches(ct.toRegex())) {
                             throw NoStackTraceException("TTS服务器返回错误：" + response.body!!.string())
                         }

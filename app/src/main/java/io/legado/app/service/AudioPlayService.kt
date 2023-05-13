@@ -74,7 +74,7 @@ class AudioPlayService : BaseService(),
         MediaHelp.buildAudioFocusRequestCompat(this)
     }
     private val exoPlayer: ExoPlayer by lazy {
-       ExoPlayerHelper.createExoPlayer(this)
+       ExoPlayerHelper.createHttpExoPlayer(this)
     }
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
@@ -152,13 +152,6 @@ class AudioPlayService : BaseService(),
                     chapter = AudioPlay.durChapter,
                     headerMapF = AudioPlay.headers(true),
                 )
-                //val uri = Uri.parse(analyzeUrl.url)
-                //ExoPlayerHelper.preDownload(uri, analyzeUrl.headerMap)
-                //休息1秒钟，防止403
-                //delay(1000)
-//                val mediaSource = ExoPlayerHelper
-//                    .createMediaSource(uri, analyzeUrl.headerMap)
-                //exoPlayer.setMediaSource(mediaSource)
                 exoPlayer.setMediaItem(ExoPlayerHelper.createMediaItem(analyzeUrl.url,analyzeUrl.headerMap))
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()

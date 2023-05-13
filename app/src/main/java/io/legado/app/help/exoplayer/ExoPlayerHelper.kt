@@ -59,7 +59,7 @@ object ExoPlayerHelper {
         return MediaItem.Builder().setUri(formatUrl).build()
     }
 
-    fun createExoPlayer(context: Context): ExoPlayer {
+    fun createHttpExoPlayer(context: Context): ExoPlayer {
         return ExoPlayer.Builder(context).setLoadControl(
             DefaultLoadControl.Builder().setBufferDurationsMs(
                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
@@ -68,12 +68,11 @@ object ExoPlayerHelper {
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS / 10
             ).build()
 
-        )
-            .setMediaSourceFactory(
-                DefaultMediaSourceFactory(context)
-                    .setDataSourceFactory(resolvingDataSource)
-                    .setLiveTargetOffsetMs(5000)
-            ).build()
+        ).setMediaSourceFactory(
+            DefaultMediaSourceFactory(context)
+                .setDataSourceFactory(resolvingDataSource)
+                .setLiveTargetOffsetMs(5000)
+        ).build()
     }
 
     /**
@@ -107,9 +106,7 @@ object ExoPlayerHelper {
 
 
     private val resolvingDataSource: ResolvingDataSource.Factory by lazy {
-        ResolvingDataSource.Factory(
-            cacheDataSourceFactory
-        ) {
+        ResolvingDataSource.Factory(cacheDataSourceFactory) {
             var res = it
 
             if (it.uri.toString().contains(SPLIT_TAG)) {
@@ -122,8 +119,6 @@ object ExoPlayerHelper {
                 } catch (_: Exception) {
                 }
             }
-
-
 
             res
 
