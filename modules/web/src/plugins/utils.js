@@ -22,7 +22,6 @@ export function getImageFromLegado(src) {
   );
 }
 // @ts-ignore
-
 export const dateFormat = (/** @type {number} */ t) => {
   let time = new Date().getTime();
   let offset = Math.floor((time - t) / 1000);

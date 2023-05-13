@@ -312,21 +312,18 @@ const saveReadingBookProgressToBrowser = (index, pos) => {
 };
 
 // 进度同步
-// 返回同步 同步请求会在获取书架前完成
-// 关闭页面 切换tab 返回桌面 等操作 https://developer.mozilla.org/zh-CN/docs/Web/API/Document/visibilitychange_event
+// 返回导航变化 同步请求会在获取书架前完成
+
+/**
+ * VisibilityChange https://developer.mozilla.org/zh-CN/docs/Web/API/Document/visibilitychange_event
+ * 监听关闭页面 切换tab 返回桌面 等操作
+ * 注意不用监听点击链接导航变化 不对Safari<14.5兼容处理
+**/
 const onVisibilityChange = () => {
-  if (!bookProgress.value) return;
   if (document.visibilityState == "hidden") {
-    // Safari > 14 和 非Safari移除额外pagehide event
-    document.removeEventListener("pagehide", onVisibilityChange);
-    // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon
-    navigator.sendBeacon(
-      `${import.meta.env.VITE_API || location.origin}/saveBookProgress`,
-      JSON.stringify(bookProgress.value)
-    );
+    API.saveBookProgressWithBeacon(bookProgress.value);
   }
 };
-
 // 定时同步
 
 // 章节切换
@@ -470,8 +467,6 @@ onMounted(() => {
         window.addEventListener("keyup", handleKeyPress);
         // 兼容Safari < 14
         document.addEventListener("visibilitychange", onVisibilityChange);
-        // 兼容Safari < 14.5
-        document.addEventListener("pagehide", onVisibilityChange);
         //监听底部加载
         scrollObserve.value = new IntersectionObserver(handleIScrollObserve, {
           rootMargin: "-100% 0% 20% 0%",
@@ -493,8 +488,6 @@ onUnmounted(() => {
   window.removeEventListener("keyup", handleKeyPress);
   // 兼容Safari < 14
   document.removeEventListener("visibilitychange", onVisibilityChange);
-  // 兼容Safari < 14.5
-  document.removeEventListener("pagehide", onVisibilityChange);
   readSettingsVisible.value = false;
   popCataVisible.value = false;
   scrollObserve.value?.disconnect();

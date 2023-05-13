@@ -22,8 +22,17 @@ ajax.interceptors.response.use((response) => response, APIExceptionHandler);
 const getReadConfig = () => ajax.get("/getReadConfig");
 const saveReadConfig = (config) => ajax.post("/saveReadConfig", config);
 
-const saveBookProcess = (bookProgress) =>
+const saveBookProgress = (bookProgress) =>
   ajax.post("/saveBookProgress", bookProgress);
+
+const saveBookProgressWithBeacon = (bookProgress) => {
+  if (!bookProgress) return;
+  // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon
+  navigator.sendBeacon(
+    `${import.meta.env.VITE_API || location.origin}/saveBookProgress`,
+    JSON.stringify(bookProgress)
+  );
+};
 
 const getBookShelf = () => ajax.get("/getBookshelf");
 
@@ -114,7 +123,8 @@ const debug = (
 export default {
   getReadConfig,
   saveReadConfig,
-  saveBookProcess,
+  saveBookProgress,
+  saveBookProgressWithBeacon,
   getBookShelf,
   getChapterList,
   getBookContent,

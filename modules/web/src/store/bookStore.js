@@ -100,7 +100,7 @@ export const useBookStore = defineStore("book", {
     //保存进度到app
     async saveBookProgress() {
       if (!this.bookProgress) return Promise.resolve();
-      return API.saveBookProcess(this.bookProgress);
+      return API.saveBookProgress(this.bookProgress);
     },
   },
 });
