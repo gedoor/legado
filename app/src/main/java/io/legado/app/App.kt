@@ -26,12 +26,15 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.Cronet
+import io.legado.app.help.http.ObsoleteUrlFactory
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import splitties.systemservices.notificationManager
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
@@ -53,6 +56,7 @@ class App : Application() {
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         DefaultData.upVersion()
         Coroutine.async {
+            URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }
             //初始化封面
             BookCover.toString()
