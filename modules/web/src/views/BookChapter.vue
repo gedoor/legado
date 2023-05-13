@@ -110,23 +110,13 @@
 import jump from "@/plugins/jump";
 import settings from "@/plugins/config";
 import API from "@api";
-import loadingSvg from "@element-plus/icons-svg/loading.svg?raw";
+import { useLoading } from "@/hooks/loading";
 
-// loading spinner
-const showLoading = ref(false);
-const loadingSerive = ref(null);
 const content = ref();
-watch(showLoading, (loading) => {
-  if (!loading) return loadingSerive.value?.close();
-  loadingSerive.value = ElLoading.service({
-    target: content.value,
-    spinner: loadingSvg,
-    text: "正在获取信息",
-    lock: true,
-  });
-});
-
+// loading spinner
+const { isLoading, loadingWrapper } = useLoading(content, "正在获取信息");
 const store = useBookStore();
+
 // 读取阅读配置
 try {
   const browerConfig = JSON.parse(localStorage.getItem("config"));
@@ -242,7 +232,6 @@ const getContent = (index, reloadChapter = true, chapterPos = 0) => {
   if (reloadChapter) {
     //展示进度条
     store.setShowContent(false);
-    showLoading.value = true;
     //强制滚回顶层
     jump(top.value, { duration: 0 });
     //从目录，按钮切换章节时保存进度 预加载时不保存
@@ -252,34 +241,34 @@ const getContent = (index, reloadChapter = true, chapterPos = 0) => {
   let bookUrl = sessionStorage.getItem("bookUrl");
   let { title, index: chapterIndex } = catalog.value[index];
 
-  API.getBookContent(bookUrl, chapterIndex).then(
-    (res) => {
-      if (res.data.isSuccess) {
-        let data = res.data.data;
-        let content = data.split(/\n+/);
+  loadingWrapper(
+    API.getBookContent(bookUrl, chapterIndex).then(
+      (res) => {
+        if (res.data.isSuccess) {
+          let data = res.data.data;
+          let content = data.split(/\n+/);
+          chapterData.value.push({ index, content, title });
+          if (reloadChapter) toChapterPos(chapterPos);
+        } else {
+          ElMessage({ message: res.data.errorMsg, type: "error" });
+          let content = [res.data.errorMsg];
+          chapterData.value.push({ index, content, title });
+        }
+        store.setContentLoading(true);
+        noPoint.value = false;
+        store.setShowContent(true);
+        if (!res.data.isSuccess) {
+          throw res.data;
+        }
+      },
+      (err) => {
+        ElMessage({ message: "获取章节内容失败", type: "error" });
+        let content = ["获取章节内容失败！"];
         chapterData.value.push({ index, content, title });
-        if (reloadChapter) toChapterPos(chapterPos);
-      } else {
-        ElMessage({ message: res.data.errorMsg, type: "error" });
-        let content = [res.data.errorMsg];
-        chapterData.value.push({ index, content, title });
+        store.setShowContent(true);
+        throw err;
       }
-      store.setContentLoading(true);
-      showLoading.value = false;
-      noPoint.value = false;
-      store.setShowContent(true);
-      if (!res.data.isSuccess) {
-        throw res.data;
-      }
-    },
-    (err) => {
-      ElMessage({ message: "获取章节内容失败", type: "error" });
-      let content = ["获取章节内容失败！"];
-      chapterData.value.push({ index, content, title });
-      showLoading.value = false;
-      store.setShowContent(true);
-      throw err;
-    }
+    )
   );
 };
 
@@ -327,14 +316,14 @@ const saveReadingBookProgressToBrowser = (index, pos) => {
 // 关闭页面 切换tab 返回桌面 等操作 https://developer.mozilla.org/zh-CN/docs/Web/API/Document/visibilitychange_event
 const onVisibilityChange = () => {
   if (!bookProgress.value) return;
-  if (document.visibilityState == 'hidden') {
+  if (document.visibilityState == "hidden") {
     // Safari > 14 和 非Safari移除额外pagehide event
     document.removeEventListener("pagehide", onVisibilityChange);
     // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon
     navigator.sendBeacon(
       `${import.meta.env.VITE_API || location.origin}/saveBookProgress`,
       JSON.stringify(bookProgress.value)
-  );
+    );
   }
 };
 
@@ -392,7 +381,7 @@ const loadMore = () => {
 };
 // IntersectionObserver回调 底部加载
 const handleIScrollObserve = (entries) => {
-  if (showLoading.value) return;
+  if (isLoading.value) return;
   for (let { isIntersecting } of entries) {
     if (!isIntersecting) return;
     loadMore();
@@ -444,7 +433,6 @@ const handleKeyPress = (event) => {
 };
 
 onMounted(() => {
-  showLoading.value = true;
   //获取书籍数据
   let bookUrl = sessionStorage.getItem("bookUrl");
   let bookName = sessionStorage.getItem("bookName");
@@ -466,39 +454,38 @@ onMounted(() => {
     };
     localStorage.setItem(bookUrl, JSON.stringify(book));
   }
+  loadingWrapper(
+    API.getChapterList(bookUrl).then(
+      (res) => {
+        if (!res.data.isSuccess) {
+          ElMessage({ message: res.data.errorMsg, type: "error" });
+          setTimeout(toShelf, 500);
+          return;
+        }
+        let data = res.data.data;
+        store.setCatalog(data);
+        store.setReadingBook(book);
 
-  API.getChapterList(bookUrl).then(
-    (res) => {
-      showLoading.value = false;
-      if (!res.data.isSuccess) {
-        ElMessage({ message: res.data.errorMsg, type: "error" });
-        setTimeout(toShelf, 500);
-        return;
+        getContent(chapterIndex, true, chapterPos);
+        window.addEventListener("keyup", handleKeyPress);
+        // 兼容Safari < 14
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        // 兼容Safari < 14.5
+        document.addEventListener("pagehide", onVisibilityChange);
+        //监听底部加载
+        scrollObserve.value = new IntersectionObserver(handleIScrollObserve, {
+          rootMargin: "-100% 0% 20% 0%",
+        });
+        infiniteLoading.value && scrollObserve.value.observe(loading.value);
+        //第二次点击同一本书 页面标题不会变化
+        document.title = null;
+        document.title = bookName + " | " + catalog.value[chapterIndex].title;
+      },
+      (err) => {
+        ElMessage({ message: "获取书籍目录失败", type: "error" });
+        throw err;
       }
-      let data = res.data.data;
-      store.setCatalog(data);
-      store.setReadingBook(book);
-
-      getContent(chapterIndex, true, chapterPos);
-      window.addEventListener("keyup", handleKeyPress);
-       // 兼容Safari < 14
-      document.addEventListener("visibilitychange", onVisibilityChange);
-       // 兼容Safari < 14.5
-      document.addEventListener("pagehide", onVisibilityChange);
-      //监听底部加载
-      scrollObserve.value = new IntersectionObserver(handleIScrollObserve, {
-        rootMargin: "-100% 0% 20% 0%",
-      });
-      infiniteLoading.value && scrollObserve.value.observe(loading.value);
-      //第二次点击同一本书 页面标题不会变化
-      document.title = null;
-      document.title = bookName + " | " + catalog.value[chapterIndex].title;
-    },
-    (err) => {
-      showLoading.value = false;
-      ElMessage({ message: "获取书籍目录失败", type: "error" });
-      throw err;
-    }
+    )
   );
 });
 
@@ -607,19 +594,6 @@ onUnmounted(() => {
     min-height: 100vh;
     width: 670px;
     margin: 0 auto;
-
-    :deep(.el-loading-mask) {
-      background-color: rgba(0, 0, 0, 0);
-    }
-    :deep(.el-loading-spinner) {
-      font-size: 36px;
-      color: #b5b5b5;
-    }
-
-    :deep(.el-loading-text) {
-      font-weight: 500;
-      color: #b5b5b5;
-    }
 
     .content {
       overflow: hidden;
