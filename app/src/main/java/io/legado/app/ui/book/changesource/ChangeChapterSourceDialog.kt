@@ -97,6 +97,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                         noButton()
                         yesButton {
                             AppConfig.searchGroup = ""
+                            upGroupMenu()
                             viewModel.startSearch()
                         }
                     }
@@ -262,17 +263,15 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
             R.id.menu_start_stop -> viewModel.startOrStopSearch()
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
-            else -> if (item?.groupId == R.id.source_group) {
-                if (!item.isChecked) {
-                    item.isChecked = true
-                    if (item.title.toString() == getString(R.string.all_source)) {
-                        AppConfig.searchGroup = ""
-                    } else {
-                        AppConfig.searchGroup = item.title.toString()
-                    }
-                    viewModel.startOrStopSearch()
-                    viewModel.refresh()
+            else -> if (item?.groupId == R.id.source_group && !item.isChecked) {
+                item.isChecked = true
+                if (item.title.toString() == getString(R.string.all_source)) {
+                    AppConfig.searchGroup = ""
+                } else {
+                    AppConfig.searchGroup = item.title.toString()
                 }
+                viewModel.startOrStopSearch()
+                viewModel.refresh()
             }
         }
         return false
@@ -359,24 +358,25 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
      * 更新分组菜单
      */
     private fun upGroupMenu() {
-        val menu: Menu = binding.toolBar.menu
-        val selectedGroup = AppConfig.searchGroup
-        menu.removeGroup(R.id.source_group)
-        val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
-        var hasSelectedGroup = false
-        groups.sortedWith { o1, o2 ->
-            o1.cnCompare(o2)
-        }.forEach { group ->
-            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
-                if (group == selectedGroup) {
-                    it.isChecked = true
-                    hasSelectedGroup = true
+        binding.toolBar.menu.findItem(R.id.menu_group)?.subMenu?.let { menu ->
+            val selectedGroup = AppConfig.searchGroup
+            menu.removeGroup(R.id.source_group)
+            val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+            var hasSelectedGroup = false
+            groups.sortedWith { o1, o2 ->
+                o1.cnCompare(o2)
+            }.forEach { group ->
+                menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
+                    if (group == selectedGroup) {
+                        it.isChecked = true
+                        hasSelectedGroup = true
+                    }
                 }
             }
-        }
-        menu.setGroupCheckable(R.id.source_group, true, true)
-        if (!hasSelectedGroup) {
-            allItem.isChecked = true
+            menu.setGroupCheckable(R.id.source_group, true, true)
+            if (!hasSelectedGroup) {
+                allItem.isChecked = true
+            }
         }
     }
 

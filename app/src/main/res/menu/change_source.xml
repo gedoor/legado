@@ -51,5 +51,17 @@
         android:title="@string/load_toc"
         android:checkable="true"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_group"
+        android:title="@string/group">
 
+        <menu>
+            <group
+                android:id="@+id/source_group"
+                android:checkableBehavior="single">
+            </group>
+
+        </menu>
+
+    </item>
 </menu>
