@@ -10,13 +10,13 @@ import bookSourceConfig from "@/utils/bookSourceEditConfig.js";
 import rssSourceConfig from "@/utils/rssSourceEditConfig.js";
 import "@/assets/main.css";
 
-const config = ref({});
+let config;
 
 if (/bookSource/i.test(location.href)) {
-  config.value = bookSourceConfig;
+  config = bookSourceConfig;
   document.title = "书源管理";
 } else {
-  config.value = rssSourceConfig;
+  config = rssSourceConfig;
   document.title = "订阅源管理";
 }
 </script>

@@ -318,7 +318,7 @@ const saveReadingBookProgressToBrowser = (index, pos) => {
  * VisibilityChange https://developer.mozilla.org/zh-CN/docs/Web/API/Document/visibilitychange_event
  * 监听关闭页面 切换tab 返回桌面 等操作
  * 注意不用监听点击链接导航变化 不对Safari<14.5兼容处理
-**/
+ **/
 const onVisibilityChange = () => {
   if (document.visibilityState == "hidden") {
     API.saveBookProgressWithBeacon(bookProgress.value);

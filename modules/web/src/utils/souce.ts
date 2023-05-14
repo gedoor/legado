@@ -14,7 +14,10 @@ export const isInvaildSource: (source: Source) => boolean = (source) => {
         !isNullOrBlank(source.sourceName)
 }
 
-export const isSourceContains: (source: Source, searchKey: string) => boolean = (source, searchKey) => {
+export const getSourceUniqueKey = (source: Source) => isBookSource(source) ? source.bookSourceUrl : source.sourceUrl;
+
+export const isSourceMatches: (source: Source, searchKey: string) => boolean = (source, searchKey) => {
+    // TODO: 正则和普通字符串识别 识别 * . \ [ ] <= <! != = ?: () \d\w\s\...
     if (isBookSource(source)) {
         return (source.bookSourceName?.includes(searchKey) ||
             source.bookSourceUrl?.includes(searchKey) ||
@@ -25,6 +28,14 @@ export const isSourceContains: (source: Source, searchKey: string) => boolean = 
         source.sourceUrl?.includes(searchKey) ||
         source.sourceGroup?.includes(searchKey) ||
         source.sourceComment?.includes(searchKey)) ?? false
+}
+
+export const convertSourcesToMap = (sources: Source[]): Map<string, Source> => {
+    const map = new Map();
+    sources.forEach((source) =>
+        map.set(getSourceUniqueKey(source), source)
+    );
+    return map;
 }
 
 export const emptyBookSource = {

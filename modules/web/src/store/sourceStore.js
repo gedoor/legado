@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { emptyBookSource, emptyRssSource } from "@utils/souce";
+import {
+  emptyBookSource,
+  emptyRssSource,
+  getSourceUniqueKey,
+  convertSourcesToMap,
+} from "@utils/souce";
 
 const isBookSource = /bookSource/i.test(location.href);
 const emptySource = isBookSource ? emptyBookSource : emptyRssSource;
@@ -22,21 +27,9 @@ export const useSourceStore = defineStore("source", {
   },
   getters: {
     sources: (state) => (isBookSource ? state.bookSources : state.rssSources),
-    sourceUrlKey: () => (isBookSource ? "bookSourceUrl" : "sourceUrl"),
-    sourcesMap: (state) => {
-      let map = new Map();
-      state.sources.forEach((source) =>
-        map.set(source[state.sourceUrlKey], source)
-      );
-      return map;
-    },
-    savedSourcesMap: (state) => {
-      let map = new Map();
-      state.savedSources.forEach((source) =>
-        map.set(source[state.sourceUrlKey], source)
-      );
-      return map;
-    },
+    // @ts-ignore
+    sourcesMap: (state) => convertSourcesToMap(state.sources),
+    savedSourcesMap: (state) => convertSourcesToMap(state.savedSources),
     currentSourceUrl: (state) =>
       isBookSource
         ? state.currentSource.bookSourceUrl
@@ -79,10 +72,10 @@ export const useSourceStore = defineStore("source", {
     saveCurrentSource() {
       let source = this.currentSource,
         map = this.sourcesMap;
-      map.set(source[this.sourceUrlKey], source);
+      map.set(getSourceUniqueKey(source), Object.create(source));
       this.saveSources(Array.from(map.values()));
     },
-    // 更改当前编辑的源
+    // 更改当前编辑的源qq
     changeCurrentSource(source) {
       this.currentSource = JSON.parse(JSON.stringify(source));
     },

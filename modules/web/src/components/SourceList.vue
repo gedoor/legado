@@ -18,7 +18,7 @@
       type="danger"
       :icon="Delete"
       @click="deleteSelectSources"
-      :disabled="sourceUrlSelect.length === 0"
+      :disabled="sourceSelect.length === 0"
       >删除</el-button
     >
     <el-button
@@ -43,7 +43,11 @@
 <script setup>
 import API from "@api";
 import { Folder, Delete, Download, Search } from "@element-plus/icons-vue";
-import { isSourceContains } from "@utils/souce";
+import {
+  isSourceMatches,
+  getSourceUniqueKey,
+  convertSourcesToMap,
+} from "@utils/souce";
 import VirtualList from "vue3-virtual-scroll-list";
 import SourceItem from "./SourceItem.vue";
 
@@ -52,35 +56,50 @@ const sourceUrlSelect = ref([]);
 const searchKey = ref("");
 const { sources, sourcesMap } = storeToRefs(store);
 
+// 筛选源
+/** @type Ref<import('@/source').Source[]> */
+const sourcesFiltered = computed(() => {
+  const key = searchKey.value;
+  if (key === "") return sources.value;
+  return (
+    sources.value
+      // @ts-ignore
+      .filter((source) => isSourceMatches(source, key))
+  );
+});
+// 计算当前筛选关键词下的选中源
+/** @type Ref<import('@/source').Source[]> */
 const sourceSelect = computed(() => {
   const urls = sourceUrlSelect.value;
   if (urls.length == 0) return [];
-  return urls.map(
-    (sourceUrl) => sourcesMap.value.get(sourceUrl) ?? {}
-  );
+  const sourcesFilteredMap =
+    searchKey.value == ""
+      ? sourcesMap.value
+      : convertSourcesToMap(sourcesFiltered.value);
+  return urls.reduce((sources, sourceUrl) => {
+    const source = sourcesFilteredMap.get(sourceUrl);
+    if (source) sources.push(source);
+    return sources;
+  }, []);
 });
+
 const deleteSelectSources = () => {
   const sourceSelectValue = sourceSelect.value;
   API.deleteSource(sourceSelectValue).then(({ data }) => {
     if (!data.isSuccess) return ElMessage.error(data.errorMsg);
     store.deleteSources(sourceSelectValue);
-    sourceUrlSelect.value = [];
+    const sourceUrlSelectRawValue = toRaw(sourceUrlSelect.value);
+    sourceSelectValue.forEach((source) => {
+      const index = sourceUrlSelectRawValue.indexOf(getSourceUniqueKey(source));
+      if (index > -1) sourceUrlSelectRawValue.splice(index, 1);
+    });
+    sourceUrlSelect.value = sourceUrlSelectRawValue;
   });
 };
 const clearAllSources = () => {
   store.clearAllSource();
   sourceUrlSelect.value = [];
 };
-//筛选源
-const sourcesFiltered = computed(() => {
-  let key = searchKey.value;
-  if (key === "") return sources.value;
-  return (
-    sources.value
-      // @ts-ignore
-      .filter((source) => isSourceContains(source, key))
-  );
-});
 
 //导入本地文件
 const importSourceFile = () => {

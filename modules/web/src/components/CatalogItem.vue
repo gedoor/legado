@@ -12,7 +12,12 @@
   </div>
 </template>
 <script setup>
-const props = defineProps(["index", "source", "gotoChapter", "currentChapterIndex"]);
+const props = defineProps([
+  "index",
+  "source",
+  "gotoChapter",
+  "currentChapterIndex",
+]);
 
 const isSelected = (idx) => {
   return idx == props.currentChapterIndex;

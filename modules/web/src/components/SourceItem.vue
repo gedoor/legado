@@ -15,11 +15,12 @@
 
 <script setup>
 import { Edit } from "@element-plus/icons-vue";
+import { getSourceUniqueKey } from "@/utils/souce";
 
 const props = defineProps(["source"]);
 const store = useSourceStore();
-const { savedSourcesMap, currentSourceUrl, sourceUrlKey } = storeToRefs(store);
-const sourceUrl = computed(() => props.source[sourceUrlKey.value]);
+const { savedSourcesMap, currentSourceUrl } = storeToRefs(store);
+const sourceUrl = computed(() => getSourceUniqueKey(props.source));
 const handleSourceClick = (source) => {
   store.changeCurrentSource(source);
 };

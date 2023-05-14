@@ -27,9 +27,12 @@ const store = useSourceStore();
 const printDebug = ref("");
 const searchKey = ref("");
 
-watch(() => store.isDebuging, () => {
-  if (store.isDebuging) startDebug();
-});
+watch(
+  () => store.isDebuging,
+  () => {
+    if (store.isDebuging) startDebug();
+  }
+);
 
 const appendDebugMsg = (msg) => {
   let debugDom = document.querySelector("#debug-text");
