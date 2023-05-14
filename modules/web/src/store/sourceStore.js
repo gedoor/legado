@@ -72,7 +72,7 @@ export const useSourceStore = defineStore("source", {
     saveCurrentSource() {
       let source = this.currentSource,
         map = this.sourcesMap;
-      map.set(getSourceUniqueKey(source), Object.create(source));
+      map.set(getSourceUniqueKey(source), JSON.parse(JSON.stringify(source)));
       this.saveSources(Array.from(map.values()));
     },
     // 更改当前编辑的源qq
