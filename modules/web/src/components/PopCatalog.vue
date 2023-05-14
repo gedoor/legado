@@ -14,7 +14,7 @@
       :data-sources="virtualListdata"
       :data-component="CatalogItem"
       :estimate-size="40"
-      :extra-props="{ gotoChapter }"
+      :extra-props="{ gotoChapter, currentChapterIndex }"
     />
   </div>
 </template>
@@ -39,7 +39,7 @@ const popupTheme = computed(() => {
   };
 });
 
-const index = computed({
+const currentChapterIndex = computed({
   get: () => store.readingBook.index,
   set: (value) => (store.readingBook.index = value),
 });
@@ -65,16 +65,18 @@ const virtualListdata = computed(() => {
 
 const emit = defineEmits(["getContent"]);
 const gotoChapter = (note) => {
-  index.value = catalog.value.indexOf(note);
+  const chapterIndex = catalog.value.indexOf(note);
+  currentChapterIndex.value = chapterIndex;
   store.setPopCataVisible(false);
   store.setContentLoading(true);
-  emit("getContent", index.value);
+  emit("getContent", chapterIndex);
 };
 
 const virtualListRef = ref();
 const virtualListIndex = computed(() => {
-  if (miniInterface.value) return index.value;
-  return Math.floor(index.value / 2);
+  let index = currentChapterIndex.value;
+  if (miniInterface.value) return index;
+  return Math.floor(index / 2);
 });
 
 onUpdated(() => {

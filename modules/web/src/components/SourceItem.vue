@@ -24,8 +24,9 @@ const handleSourceClick = (source) => {
   store.changeCurrentSource(source);
 };
 const isSaveError = computed(() => {
-  if (savedSourcesMap.value.size == 0) return false;
-  return !savedSourcesMap.value.has(sourceUrl.value);
+  const map = savedSourcesMap.value;
+  if (map.size == 0) return false;
+  return !map.has(sourceUrl.value);
 });
 </script>
 <style lang="scss" scoped>

@@ -51,19 +51,19 @@ const store = useSourceStore();
 const sourceUrlSelect = ref([]);
 const searchKey = ref("");
 const { sources, sourcesMap } = storeToRefs(store);
-const isBookSource = computed(() => {
-  return /bookSource/.test(window.location.href);
-});
+
 const sourceSelect = computed(() => {
-  if (sourceUrlSelect.value.length == 0) return [];
-  return sourceUrlSelect.value.map(
+  const urls = sourceUrlSelect.value;
+  if (urls.length == 0) return [];
+  return urls.map(
     (sourceUrl) => sourcesMap.value.get(sourceUrl) ?? {}
   );
 });
 const deleteSelectSources = () => {
-  API.deleteSource(sourceSelect.value).then(({ data }) => {
+  const sourceSelectValue = sourceSelect.value;
+  API.deleteSource(sourceSelectValue).then(({ data }) => {
     if (!data.isSuccess) return ElMessage.error(data.errorMsg);
-    store.deleteSources(sourceSelect.value);
+    store.deleteSources(sourceSelectValue);
     sourceUrlSelect.value = [];
   });
 };
@@ -107,13 +107,15 @@ const importSourceFile = () => {
   });
   input.click();
 };
+
+const isBookSource = /bookSource/.test(window.location.href);
 const outExport = () => {
   const exportFile = document.createElement("a");
   let sources =
       sourceUrlSelect.value.length === 0
         ? sourcesFiltered.value
         : sourceSelect.value,
-    sourceType = isBookSource.value ? "BookSource" : "RssSource";
+    sourceType = isBookSource ? "BookSource" : "RssSource";
 
   exportFile.download = `${sourceType}_${Date()
     .replace(/.*?\s(\d+)\s(\d+)\s(\d+:\d+:\d+).*/, "$2$1$3")

@@ -12,17 +12,12 @@
   </div>
 </template>
 <script setup>
-const props = defineProps(["index", "source", "gotoChapter"]);
-
-const store = useBookStore();
-
-const index = computed(() => store.readingBook.index);
+const props = defineProps(["index", "source", "gotoChapter", "currentChapterIndex"]);
 
 const isSelected = (idx) => {
-  return idx == index.value;
+  return idx == props.currentChapterIndex;
 };
 
-// 处理pc mobile
 const catas = computed(() => {
   return props.source?.catas ?? [props.source];
 });

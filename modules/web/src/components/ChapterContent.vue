@@ -71,10 +71,10 @@ const scrollToReadedLength = (length) => {
 defineExpose({
   scrollToReadedLength,
 });
-const observer = ref(null);
+let intersectionObserver = null;
 const emit = defineEmits(["readedLengthChange"]);
 onMounted(() => {
-  observer.value = new IntersectionObserver(
+  intersectionObserver = new IntersectionObserver(
     (entries) => {
       for (let { target, isIntersecting } of entries) {
         if (isIntersecting) {
@@ -90,15 +90,15 @@ onMounted(() => {
       rootMargin: `0px 0px -${window.innerHeight - 24}px 0px`,
     }
   );
-  observer.value.observe(titleRef.value);
+  intersectionObserver.observe(titleRef.value);
   paragraphRef.value.forEach((element) => {
-    observer.value.observe(element);
+    intersectionObserver.observe(element);
   });
 });
 
 onUnmounted(() => {
-  observer.value?.disconnect();
-  observer.value = null;
+  intersectionObserver?.disconnect();
+  intersectionObserver = null;
 });
 </script>
 
