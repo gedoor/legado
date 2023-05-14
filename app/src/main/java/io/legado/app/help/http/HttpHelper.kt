@@ -67,7 +67,7 @@ val okHttpClient: OkHttpClient by lazy {
             builder.addHeader("Keep-Alive", "300")
             builder.addHeader("Connection", "Keep-Alive")
             builder.addHeader("Cache-Control", "no-cache")
-            chain.proceed(builder.build()).newBuilder().removeHeader(cookieJarHeader).build()
+            chain.proceed(builder.build())
         })
         .addNetworkInterceptor { chain ->
             var request = chain.request()
@@ -79,11 +79,10 @@ val okHttpClient: OkHttpClient by lazy {
                 request = CookieManager.loadRequest(requestBuilder.build())
             }
 
-            var networkResponse = chain.proceed(request)
+            val networkResponse = chain.proceed(request)
 
             if (enableCookieJar) {
                 CookieManager.saveResponse(networkResponse)
-                networkResponse = networkResponse.newBuilder().header(cookieJarHeader, "1").build()
             }
             networkResponse
         }

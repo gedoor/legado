@@ -376,10 +376,6 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             val clientBuilder: OkHttpClient.Builder = client.newBuilder()
             clientBuilder.interceptors().clear()
             clientBuilder.interceptors().add(UnexpectedException.INTERCEPTOR)
-            clientBuilder.addInterceptor { chain ->
-                val response = chain.proceed(chain.request())
-                response.newBuilder().removeHeader(cookieJarHeader).build()
-            }
 
             clientBuilder.networkInterceptors().clear()
             clientBuilder.networkInterceptors().add(networkInterceptor)
@@ -393,13 +389,10 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                     request1 = CookieManager.loadRequest(requestBuilder.build())
                 }
 
-                var networkResponse = chain.proceed(request1)
+                val networkResponse = chain.proceed(request1)
 
                 if (enableCookieJar) {
                     CookieManager.saveResponse(networkResponse)
-                    networkResponse = networkResponse.newBuilder()
-                        .header(cookieJarHeader, "1")
-                        .build()
                 }
                 networkResponse
             }

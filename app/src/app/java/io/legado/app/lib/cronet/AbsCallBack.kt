@@ -49,6 +49,7 @@ abstract class AbsCallBack(
     private var cancelJob: Coroutine<*>? = null
     private var followRedirect = false
     private var enableCookieJar = false
+    private var redirectRequest: Request? = null
 
     init {
         if (originalRequest.header(cookieJarHeader) != null) {
@@ -108,7 +109,7 @@ abstract class AbsCallBack(
             if (enableCookieJar) {
                 CookieManager.saveResponse(response)
             }
-            originalRequest = buildRedirectRequest(response, originalRequest.method, newLocationUrl)
+            redirectRequest = buildRedirectRequest(response, originalRequest.method, newLocationUrl)
         }
         request.cancel()
     }
@@ -189,10 +190,10 @@ abstract class AbsCallBack(
         if (followRedirect) {
             followRedirect = false
             if (enableCookieJar) {
-                val newRequest = CookieManager.loadRequest(originalRequest)
+                val newRequest = CookieManager.loadRequest(redirectRequest!!)
                 buildRequest(newRequest, this)?.start()
             } else {
-                buildRequest(originalRequest, this)?.start()
+                buildRequest(redirectRequest!!, this)?.start()
             }
             return
         }
