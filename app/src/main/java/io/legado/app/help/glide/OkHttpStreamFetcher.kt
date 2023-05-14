@@ -10,6 +10,7 @@ import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.addHeaders
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
@@ -55,6 +56,9 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
             source = SourceHelp.getSource(sourceUrl)
             source?.getHeaderMap(true)?.let {
                 headerMap.putAll(it)
+            }
+            if (source?.enabledCookieJar == true) {
+                headerMap[cookieJarHeader] = "1"
             }
         }
         headerMap.putAll(url.headers)
