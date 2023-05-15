@@ -217,7 +217,7 @@ dependencies {
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.11.0')
     appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    appImplementation 'com.google.protobuf:protobuf-javalite:3.22.4'
+    appImplementation 'com.google.protobuf:protobuf-javalite:3.23.0'
 
     //Glide
     def glideVersion = "4.15.1"
