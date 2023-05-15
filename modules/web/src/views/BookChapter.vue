@@ -215,14 +215,18 @@ const isNight = computed(() => theme.value == 6);
  */
 const onResize = () => {
   store.setMiniInterface(window.innerWidth < 776);
-  checkPageWidth();
+  const width = store.config.readWidth; /**包含padding */
+  checkPageWidth(width);
 };
 /** 判断阅读宽度是否超出页面 */
-const checkPageWidth = () => {
-  const width = store.config.readWidth; /**包含padding */
+const checkPageWidth = (readWidth) => {
   if (store.miniInterface) return;
-  if (width + 2 * 68 > window.innerWidth) store.config.readWidth = 640;
+  if (readWidth + 2 * 68 > window.innerWidth) store.config.readWidth -= 160;
 }
+watch(
+  () => store.config.readWidth,
+  (width) => checkPageWidth(width)
+)
 // 顶部底部跳转
 const top = ref();
 const bottom = ref();
@@ -442,7 +446,6 @@ const handleKeyPress = (event) => {
       break;
   }
 };
-
 onMounted(() => {
   //获取书籍数据
   let bookUrl = sessionStorage.getItem("bookUrl");
@@ -523,8 +526,8 @@ onUnmounted(() => {
 
 .chapter-wrapper {
   padding: 0 4%;
-  flex-direction: column;
-  align-items: center;
+ 
+  overflow-x: hidden;
 
   :deep(.no-point) {
     pointer-events: none;
@@ -606,7 +609,6 @@ onUnmounted(() => {
     margin: 0 auto;
 
     .content {
-      overflow: hidden;
       font-size: 18px;
       line-height: 1.8;
       font-family: "Microsoft YaHei", PingFangSC-Regular, HelveticaNeue-Light,
