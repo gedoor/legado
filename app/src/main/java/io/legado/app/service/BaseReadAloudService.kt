@@ -311,7 +311,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     /**
-     * 断开耳机监听
+     * 注册多媒体按钮监听
      */
     private fun initBroadcastReceiver() {
         val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
