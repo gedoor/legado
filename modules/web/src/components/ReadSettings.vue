@@ -163,7 +163,7 @@
 <script setup>
 import "../assets/fonts/popfont.css";
 import "../assets/fonts/iconfont.css";
-import settings from "../plugins/config";
+import settings from "../config/themeConfig";
 import API from "@api";
 const store = useBookStore();
 
@@ -295,7 +295,8 @@ const readWidth = computed(() => {
   return store.config.readWidth;
 });
 const moreReadWidth = () => {
-  /*if (config.value.readWidth < 960)*/
+  // 此时会截断页面
+  if (config.value.readWidth + 160 + 2 * 68 > window.innerWidth) return;
   config.value.readWidth += 160;
   saveConfig(config.value);
 };

@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { getImageFromLegado, isLegadoUrl } from "@/plugins/utils";
+import { getImageFromLegado, isLegadoUrl } from "@/utils/utils";
 import jump from "@/plugins/jump";
 
 const props = defineProps({

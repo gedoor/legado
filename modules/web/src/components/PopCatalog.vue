@@ -21,7 +21,7 @@
 
 <script setup>
 import VirtualList from "vue3-virtual-scroll-list";
-import settings from "../plugins/config";
+import settings from "../config/themeConfig";
 import "../assets/fonts/popfont.css";
 import CatalogItem from "./CatalogItem.vue";
 

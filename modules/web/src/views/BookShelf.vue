@@ -322,22 +322,10 @@ const fetchBookShelfData = () => {
     width: 100%;
     display: flex;
     flex-direction: column;
-    :deep(.el-loading-mask) {
-      background-color: rgba(0, 0, 0, 0);
-    }
-    :deep(.el-loading-spinner) {
-      font-size: 36px;
-      color: #b5b5b5;
-    }
-
-    :deep(.el-loading-text) {
-      font-weight: 500;
-      color: #b5b5b5;
-    }
   }
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 428px) {
   .index-wrapper {
     overflow-x: hidden;
     flex-direction: column;

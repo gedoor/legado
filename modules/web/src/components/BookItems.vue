@@ -49,7 +49,7 @@
   </div>
 </template>
 <script setup>
-import { dateFormat } from "../plugins/utils";
+import { dateFormat } from "../utils/utils";
 const props = defineProps(["books", "isSearch"]);
 const emit = defineEmits(["bookClick"]);
 const handleClick = (book) => emit("bookClick", book);

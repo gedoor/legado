@@ -6,8 +6,8 @@
   </div>
 </template>
 <script setup>
-import bookSourceConfig from "@/utils/bookSourceEditConfig.js";
-import rssSourceConfig from "@/utils/rssSourceEditConfig.js";
+import bookSourceConfig from "@/config/bookSourceEditConfig";
+import rssSourceConfig from "@/config/rssSourceEditConfig";
 import "@/assets/main.css";
 
 let config;
