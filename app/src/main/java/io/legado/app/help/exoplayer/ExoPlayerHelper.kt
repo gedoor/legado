@@ -20,9 +20,9 @@ import androidx.media3.exoplayer.offline.DefaultDownloaderFactory
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloaderFactory
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.utils.GSON
 import okhttp3.CacheControl
 import splitties.init.appCtx
 import java.io.File
@@ -30,21 +30,19 @@ import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 
+@Suppress("unused")
 @SuppressLint("UnsafeOptInUsageError")
 object ExoPlayerHelper {
 
     private const val SPLIT_TAG = "\uD83D\uDEA7"
 
-    private val gson by lazy {
-        GsonBuilder().create()
-    }
     private val mapType by lazy {
         val type: Type = object : TypeToken<Map<String?, String?>?>() {}.type
         type
     }
 
     fun createMediaItem(url: String, headers: Map<String, String>): MediaItem {
-        val formatUrl = url + SPLIT_TAG + gson.toJson(headers, mapType)
+        val formatUrl = url + SPLIT_TAG + GSON.toJson(headers, mapType)
         return MediaItem.Builder().setUri(formatUrl).build()
     }
 
@@ -103,7 +101,7 @@ object ExoPlayerHelper {
                 val url = urls[0]
                 res = res.withUri(Uri.parse(url))
                 try {
-                    val headers: Map<String, String> = gson.fromJson(urls[1], mapType)
+                    val headers: Map<String, String> = GSON.fromJson(urls[1], mapType)
                     res = res.withAdditionalHeaders(headers)
                 } catch (_: Exception) {
                 }
