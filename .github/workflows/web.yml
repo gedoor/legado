@@ -49,7 +49,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Build and move files
-      - working-directory: $GITHUB_WORKSPACE/modules/web
+        working-directory: $GITHUB_WORKSPACE/modules/web
         run: |
           pnpm i
           pnpm build
