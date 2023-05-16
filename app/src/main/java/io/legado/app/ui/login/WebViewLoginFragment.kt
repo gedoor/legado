@@ -17,6 +17,7 @@ import io.legado.app.databinding.FragmentWebViewLoginBinding
 import io.legado.app.help.http.CookieStore
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.gone
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.snackbar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -47,7 +48,8 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
                     binding.titleBar.snackbar(R.string.check_host_cookie)
                     viewModel.source?.let { source ->
                         source.loginUrl?.let {
-                            binding.webView.loadUrl(it, source.getHeaderMap(true))
+                            val absoluteUrl = NetworkUtils.getAbsoluteURL(source.getKey(), it)
+                            binding.webView.loadUrl(absoluteUrl, source.getHeaderMap(true))
                         }
                     }
                 }
