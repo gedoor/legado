@@ -222,11 +222,11 @@ const onResize = () => {
 const checkPageWidth = (readWidth) => {
   if (store.miniInterface) return;
   if (readWidth + 2 * 68 > window.innerWidth) store.config.readWidth -= 160;
-}
+};
 watch(
   () => store.config.readWidth,
   (width) => checkPageWidth(width)
-)
+);
 // 顶部底部跳转
 const top = ref();
 const bottom = ref();
@@ -469,7 +469,7 @@ onMounted(() => {
     localStorage.setItem(bookUrl, JSON.stringify(book));
   }
   onResize();
-  window.addEventListener('resize', onResize);
+  window.addEventListener("resize", onResize);
   loadingWrapper(
     API.getChapterList(bookUrl).then(
       (res) => {
@@ -505,7 +505,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("keyup", handleKeyPress);
-  window.removeEventListener('resize', onResize);
+  window.removeEventListener("resize", onResize);
   // 兼容Safari < 14
   document.removeEventListener("visibilitychange", onVisibilityChange);
   readSettingsVisible.value = false;
@@ -526,7 +526,7 @@ onUnmounted(() => {
 
 .chapter-wrapper {
   padding: 0 4%;
- 
+
   overflow-x: hidden;
 
   :deep(.no-point) {
