@@ -1,6 +1,8 @@
 package io.legado.app.model.webBook
 
 import android.text.TextUtils
+import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -117,8 +119,21 @@ object BookChapterList {
         }
         Debug.log(book.origin, "◇目录总数:${list.size}")
         coroutineContext.ensureActive()
+        val formatJs = tocRule.formatJs
+        val bindings = SimpleBindings()
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
+            if (!formatJs.isNullOrBlank()) {
+                bindings["index"] = index + 1
+                bindings["title"] = bookChapter.title
+                RhinoScriptEngine.runCatching {
+                    eval(formatJs, bindings)?.toString()?.let {
+                        bookChapter.title = it
+                    }
+                }.onFailure {
+                    Debug.log(book.origin, "格式化标题出错, ${it.localizedMessage}")
+                }
+            }
         }
         val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
         book.latestChapterTitle = list.last().getDisplayTitle(replaceRules)

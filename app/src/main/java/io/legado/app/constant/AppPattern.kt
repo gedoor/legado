@@ -18,6 +18,7 @@ object AppPattern {
     val authorRegex = Regex("^\\s*作\\s*者[:：\\s]+|\\s+著")
     val fileNameRegex = Regex("[\\\\/:*?\"<>|.]")
     val splitGroupRegex = Regex("[,;，；]")
+    val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
 
     //书源调试信息中的各种符号
     val debugMessageSymbolRegex = Regex("[⇒◇┌└≡]")

@@ -11,6 +11,7 @@ data class TocRule(
     var chapterList: String? = null,
     var chapterName: String? = null,
     var chapterUrl: String? = null,
+    var formatJs: String? = null,
     var isVolume: String? = null,
     var isVip: String? = null,
     var isPay: String? = null,

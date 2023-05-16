@@ -744,18 +744,6 @@ class AnalyzeRule(
     }
 
     /**
-     * 章节数转数字
-     */
-    fun toNumChapter(s: String?): String? {
-        s ?: return null
-        val matcher = titleNumPattern.matcher(s)
-        if (matcher.find()) {
-            return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
-        }
-        return s
-    }
-
-    /**
      * 重新获取book
      */
     fun reGetBook() {
@@ -809,7 +797,6 @@ class AnalyzeRule(
         private val evalPattern =
             Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
-        private val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
     }
 
 }

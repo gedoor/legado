@@ -10,10 +10,10 @@ import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.BackstageWebView
-import io.legado.app.help.http.CookieManager
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
@@ -775,6 +775,19 @@ interface JsExtensions : JsEncodeUtils {
             }
         }
         return contentArray.joinToString("")
+    }
+
+
+    /**
+     * 章节数转数字
+     */
+    fun toNumChapter(s: String?): String? {
+        s ?: return null
+        val matcher = AppPattern.titleNumPattern.matcher(s)
+        if (matcher.find()) {
+            return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
+        }
+        return s
     }
 
     /**
