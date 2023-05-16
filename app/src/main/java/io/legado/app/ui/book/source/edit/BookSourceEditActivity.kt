@@ -320,6 +320,7 @@ class BookSourceEditActivity :
         contentEntities.clear()
         contentEntities.apply {
             add(EditEntity("content", cr.content, R.string.rule_book_content))
+            add(EditEntity("title", cr.title, R.string.rule_chapter_name))
             add(EditEntity("nextContentUrl", cr.nextContentUrl, R.string.rule_next_content))
             add(EditEntity("webJs", cr.webJs, R.string.rule_web_js))
             add(EditEntity("sourceRegex", cr.sourceRegex, R.string.rule_source_regex))
@@ -476,10 +477,11 @@ class BookSourceEditActivity :
         }
         contentEntities.forEach {
             when (it.key) {
-                "content" -> contentRule.content =
-                    viewModel.ruleComplete(it.value)
+                "content" -> contentRule.content = viewModel.ruleComplete(it.value)
+                "title" -> contentRule.title = viewModel.ruleComplete(it.value)
                 "nextContentUrl" -> contentRule.nextContentUrl =
                     viewModel.ruleComplete(it.value, type = 2)
+
                 "webJs" -> contentRule.webJs = it.value
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value

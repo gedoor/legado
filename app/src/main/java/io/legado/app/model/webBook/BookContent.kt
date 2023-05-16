@@ -51,11 +51,25 @@ object BookContent {
         val content = StringBuilder()
         val nextUrlList = arrayListOf(redirectUrl)
         val contentRule = bookSource.getContentRule()
-        val analyzeRule = AnalyzeRule(book, bookSource).setContent(body, baseUrl)
+        val analyzeRule = AnalyzeRule(book, bookSource)
+        analyzeRule.setContent(body, baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.chapter = bookChapter
         analyzeRule.nextChapterUrl = mNextChapterUrl
         coroutineContext.ensureActive()
+        contentRule.title?.let {
+            if (it.isNotBlank()) {
+                val title = analyzeRule.runCatching {
+                    getString(it)
+                }.onFailure { e ->
+                    Debug.log(bookSource.bookSourceUrl, "获取标题出错, ${e.localizedMessage}")
+                }.getOrNull()
+                if (!title.isNullOrBlank()) {
+                    bookChapter.title = title
+                    appDb.bookChapterDao.upDate(bookChapter)
+                }
+            }
+        }
         var contentData = analyzeContent(
             book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
         )
