@@ -213,6 +213,7 @@ class CheckSourceService : BaseService() {
                     source.bookSourceType != BookSourceType.file
                 ) {
                     val toc = WebBook.getChapterListAwait(source, mBook).getOrThrow()
+                        .filter { !(it.isVolume && it.url.startsWith(it.title)) }
                     val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
                     //校验正文
                     if (CheckSource.checkContent) {

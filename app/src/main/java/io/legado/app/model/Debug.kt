@@ -255,11 +255,12 @@ object Debug {
     private fun tocDebug(scope: CoroutineScope, bookSource: BookSource, book: Book) {
         log(debugSource, "︾开始解析目录页")
         val chapterList = WebBook.getChapterList(scope, bookSource, book)
-            .onSuccess {
+            .onSuccess { chapters ->
                 log(debugSource, "︽目录页解析完成")
                 log(debugSource, showTime = false)
-                val nextChapterUrl = it.getOrNull(1)?.url ?: it.first().url
-                contentDebug(scope, bookSource, book, it.first(), nextChapterUrl)
+                val toc = chapters.filter { !(it.isVolume && it.url.startsWith(it.title)) }
+                val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
+                contentDebug(scope, bookSource, book, toc.first(), nextChapterUrl)
             }
             .onError {
                 log(debugSource, it.stackTraceStr, state = -1)
