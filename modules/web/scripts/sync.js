@@ -1,7 +1,7 @@
 import { URL } from "node:url";
 import fs from "node:fs";
 
-const LEGADO_ASSETS_WEB_VUE_DIR = new URL("../../../legado/app/src/main/assets/web/vue", import.meta.url)
+const LEGADO_ASSETS_WEB_VUE_DIR = new URL("../../../app/src/main/assets/web/vue", import.meta.url)
 const VUE_DIST_DIR = new URL("../dist", import.meta.url)
 
 console.log("> delete", LEGADO_ASSETS_WEB_VUE_DIR.pathname)
