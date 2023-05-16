@@ -1,4 +1,4 @@
-import { resolve } from "path";
+import { fileURLToPath, URL } from "node:url";
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 import Icons from "unplugin-icons/vite";
@@ -47,9 +47,9 @@ export default ({ mode }) =>
     },
     resolve: {
       alias: {
-        "@": resolve(__dirname, "./src"),
-        "@api": resolve(__dirname, "./src/api"),
-        "@utils": resolve(__dirname, "./src/utils/"),
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+        "@api": fileURLToPath(new URL("./src/api", import.meta.url)),
+        "@utils": fileURLToPath(new URL("./src/utils/", import.meta.url)),
       },
     },
   });
