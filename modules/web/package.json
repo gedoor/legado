@@ -2,13 +2,14 @@
   "name": "legado-web",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=16",
     "pnpm": ">=8"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/sync.js",
     "preview": "vite preview",
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
