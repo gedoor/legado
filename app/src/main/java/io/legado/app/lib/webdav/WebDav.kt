@@ -404,7 +404,7 @@ open class WebDav(
                 val supportBasicAuth = headers.any {
                     it.startsWith("Basic", ignoreCase = true)
                 }
-                if (!supportBasicAuth) {
+                if (headers.isNotEmpty() && !supportBasicAuth) {
                     AppLog.put("服务器不支持BasicAuth认证")
                 }
             }

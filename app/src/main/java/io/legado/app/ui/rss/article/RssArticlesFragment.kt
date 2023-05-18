@@ -107,7 +107,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
 
     private fun loadArticles() {
         activityViewModel.rssSource?.let {
-            viewModel.loadContent(it)
+            viewModel.loadArticles(it)
         }
     }
 

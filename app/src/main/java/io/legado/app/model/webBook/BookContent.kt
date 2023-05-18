@@ -57,17 +57,16 @@ object BookContent {
         analyzeRule.chapter = bookChapter
         analyzeRule.nextChapterUrl = mNextChapterUrl
         coroutineContext.ensureActive()
-        contentRule.title?.let {
-            if (it.isNotBlank()) {
-                val title = analyzeRule.runCatching {
-                    getString(it)
-                }.onFailure { e ->
-                    Debug.log(bookSource.bookSourceUrl, "获取标题出错, ${e.localizedMessage}")
-                }.getOrNull()
-                if (!title.isNullOrBlank()) {
-                    bookChapter.title = title
-                    appDb.bookChapterDao.upDate(bookChapter)
-                }
+        val titleRule = contentRule.title
+        if (!titleRule.isNullOrBlank()) {
+            val title = analyzeRule.runCatching {
+                getString(titleRule)
+            }.onFailure {
+                Debug.log(bookSource.bookSourceUrl, "获取标题出错, ${it.localizedMessage}")
+            }.getOrNull()
+            if (!title.isNullOrBlank()) {
+                bookChapter.title = title
+                appDb.bookChapterDao.upDate(bookChapter)
             }
         }
         var contentData = analyzeContent(
