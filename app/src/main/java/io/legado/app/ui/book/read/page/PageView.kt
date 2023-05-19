@@ -97,8 +97,8 @@ class PageView(context: Context) : FrameLayout(context) {
                 it.footerPaddingRight.dpToPx(),
                 it.footerPaddingBottom.dpToPx()
             )
-            vwTopDivider.visible(it.showHeaderLine)
-            vwBottomDivider.visible(it.showFooterLine)
+            vwTopDivider.gone(llHeader.isGone || !it.showHeaderLine)
+            vwBottomDivider.gone(llFooter.isGone || !it.showFooterLine)
         }
         contentTextView.upVisibleRect()
         upTime()
