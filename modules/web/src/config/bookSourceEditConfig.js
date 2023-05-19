@@ -366,6 +366,13 @@ export default {
         hint: "选择章节链接 (规则结果为String类型的Url)",
       },
       {
+        title: "标题处理",
+        namespace: "ruleToc",
+        id: "formatJs",
+        type: "String",
+        hint: "直接填写js， 提供index和tittle变量",
+      },
+      {
         title: "卷名标识",
         namespace: "ruleToc",
         id: "isVolume",
@@ -418,6 +425,13 @@ export default {
         id: "content",
         type: "String",
         hint: "选择正文内容 (规则结果为String)",
+      },
+      {
+        title: "标题规则",
+        namespace: "ruleContent",
+        id: "title",
+        type: "String",
+        hint: "获取结果将会覆盖章节标题 (规则结果为String)",
       },
       {
         title: "翻页规则",
