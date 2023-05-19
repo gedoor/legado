@@ -81,20 +81,16 @@ class JsTest {
     fun testReplace() {
         @Language("js")
         val js = """
-          result.replace(/\,/g,"，")
-            .replace(/\./g,"。")
-            .replace(/\!/g,"！")
-            .replace(/\?/g,"？")
-            .replace(/\…/g,"……")
-            .replace(/\;/g,"；")
-            .replace(/\:/g,"：")
+            s=result.match(/(.{1,6}?)(第.*)/);
+            n=s[2].length-parseInt(6-s[1].length);
+            s[2].substr(0,n);
         """.trimIndent()
-        val result = RhinoScriptEngine.run {
+        val x = RhinoScriptEngine.run {
             val bindings = SimpleBindings()
-            bindings["result"] = ",.!?…;:"
-            eval(js)
+            bindings["result"] = "筳彩涫第七百一十四章 人头树鮺舦綸"
+            eval(js, bindings)
         }
-        Assert.assertEquals(result, "，。！？……；：")
+        Assert.assertEquals(x, "第七百一十四章 人头树")
     }
 
 
