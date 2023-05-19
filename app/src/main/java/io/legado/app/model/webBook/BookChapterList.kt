@@ -121,6 +121,7 @@ object BookChapterList {
         coroutineContext.ensureActive()
         val formatJs = tocRule.formatJs
         val bindings = SimpleBindings()
+        bindings["gInt"] = 0
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
             if (!formatJs.isNullOrBlank()) {
