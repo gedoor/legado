@@ -137,7 +137,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
                 }
                 throw NoStackTraceException("未找到匹配书源")
             }.onError {
-                AppLog.put("添加书籍 ${bookUrl} 出错", it)
+                AppLog.put("添加书籍 $bookUrl 出错", it)
                 loadErrorLiveData.postValue(it.localizedMessage)
             }.onSuccess {
                 book = it

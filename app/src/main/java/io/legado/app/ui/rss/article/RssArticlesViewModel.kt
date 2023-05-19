@@ -66,6 +66,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         Rss.getArticles(viewModelScope, sortName, pageUrl, rssSource, page).onSuccess(IO) {
             nextPageUrl = it.second
             loadMoreSuccess(it.first)
+            isLoading = false
         }.onError {
             loadFinallyLiveData.postValue(false)
             AppLog.put("rss获取内容失败", it)
@@ -88,7 +89,6 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             }
             appDb.rssArticleDao.insert(*articles.toTypedArray())
         }
-        isLoading = false
     }
 
 }

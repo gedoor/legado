@@ -49,8 +49,8 @@ class OnLineImportActivity :
             finallyDialog(getString(R.string.error), it)
         }
         intent.data?.let {
-            val url = it.toString().substringAfter("src=", "")
-            if (url.isEmpty()) {
+            val url = it.getQueryParameter("src")
+            if (url.isNullOrEmpty()) {
                 finish()
                 return
             }
