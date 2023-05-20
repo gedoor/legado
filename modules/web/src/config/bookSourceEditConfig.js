@@ -69,13 +69,13 @@ export default {
         title: "并发率",
         id: "concurrentRate",
         type: "String",
-        hint: "并发率",
+        hint: "并发率，如1000(访问间隔1000ms)或者1/1000(1000ms内访问1次)",
       },
       {
         title: "js库",
         id: "jsLib",
         type: "String",
-        hint: "js库",
+        hint: "js库, 可填写js或者key-value object获取在线js文件",
       },
       {
         title: "请求头",
@@ -105,7 +105,7 @@ export default {
         namespace: "ruleSearch",
         id: "checkKeyWord",
         type: "String",
-        hint: "校验关键字",
+        hint: "校验关键字，强烈建议填写",
       },
       {
         title: "列表规则",
@@ -179,7 +179,7 @@ export default {
         title: "发现地址",
         id: "exploreUrl",
         type: "String",
-        hint: "内容能显示在发现菜单\n每行一条发现分类(网址域名可省略)，例：\n名称1::网址(Url)1\n名称2::网址(Url)2\n...",
+        hint: "单个发现格式<name>::<url>或者{url:<url>,title:<name>,style:...}；前者用换行符或者&&连接，后者放在数组内；可用js动态生成",
       },
       {
         title: "发现筛选",
@@ -370,7 +370,7 @@ export default {
         namespace: "ruleToc",
         id: "formatJs",
         type: "String",
-        hint: "直接填写js， 提供index和tittle变量",
+        hint: "遍历去重后的章节列表的回调，提供index(章节序号从1开始)、title(章节标题)变量，额外提供gInt(初始值0)，返回值作为新的标题",
       },
       {
         title: "卷名标识",

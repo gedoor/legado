@@ -27,7 +27,7 @@
         </div>
         <el-button
           :disabled="recordKeyDowning"
-          @click="bindHotKeys"
+          @click="saveHotKeys"
           :icon="CircleCheckFilled"
           >保存</el-button
         >
@@ -230,7 +230,13 @@ const stopRecordKeyDown = () => {
 watch(
   hotkeysDialogVisible,
   (visibale) => {
-    if (!visibale) return hotkeys.unbind("*");
+    if (!visibale) {
+      hotkeys.unbind("*");
+      readHotkeysConfig();
+      bindHotKeys();
+      return;
+    }
+    readHotkeysConfig();
     hotkeys.unbind();
     /**监听按键 */
     hotkeys("*", (event) => {
@@ -257,39 +263,50 @@ const recordKeyDown = (index) => {
   recordKeyDownIndex.value = index;
 };
 
-const bindHotKeys = () => {
-  hotkeysDialogVisible.value = false;
+const saveHotKeys = () => {
   const hotKeysConfig = [];
+  buttons.value.forEach(({ hotKeys }) => {
+    hotKeysConfig.push(hotKeys);
+  });
+  saveHotkeysConfig(hotKeysConfig);
+  hotkeysDialogVisible.value = false;
+};
+
+const bindHotKeys = () => {
   buttons.value.forEach(({ hotKeys, action }) => {
+    if (hotKeys.length == 0) return;
     hotkeys(hotKeys.join("+"), (event) => {
       event.preventDefault();
       action.call(null);
     });
-    hotKeysConfig.push(hotKeys);
   });
-  saveHotkeysConfig(hotKeysConfig);
 };
-
 const saveHotkeysConfig = (config) => {
   localStorage.setItem("legado_web_hotkeys", JSON.stringify(config));
 };
 
-const readHotkeysConfig = () => {
+/**
+ * 读取快捷键配置
+ * @return 是否成功读取配置
+ */
+function readHotkeysConfig() {
   try {
     const config = JSON.parse(localStorage.getItem("legado_web_hotkeys"));
-    if (!Array.isArray(config) || config.length == 0) return;
+    if (!Array.isArray(config) || config.length == 0) return false;
     buttons.value.forEach((button, index) => (button.hotKeys = config[index]));
-    hotkeysDialogVisible.value = false;
-    bindHotKeys();
+    return true;
   } catch {
     ElMessage({ message: "快捷键配置错误", type: "error" });
     localStorage.removeItem("legado_web_hotkeys");
   }
-};
+  return false;
+}
 
 onMounted(() => {
   /**读取热键配置 */
-  readHotkeysConfig();
+  if (readHotkeysConfig()) {
+    hotkeysDialogVisible.value = false;
+  }
 });
 </script>
 
