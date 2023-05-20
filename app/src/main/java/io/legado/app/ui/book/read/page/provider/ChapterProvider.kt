@@ -182,7 +182,7 @@ object ChapterProvider {
                     }
                     durY = setTypeImage(
                         book, matcher.group(1)!!,
-                        absStartX, durY, textPages, book.getImageStyle()
+                        absStartX, durY, textPages, stringBuilder, book.getImageStyle()
                     )
                     start = matcher.end()
                 }
@@ -232,13 +232,17 @@ object ChapterProvider {
         x: Int,
         y: Float,
         textPages: ArrayList<TextPage>,
+        stringBuilder: StringBuilder,
         imageStyle: String?,
     ): Float {
         var durY = y
         val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
         if (size.width > 0 && size.height > 0) {
             if (durY > visibleHeight) {
-                textPages.last().height = durY
+                val textPage = textPages.last()
+                textPage.height = durY
+                textPage.text = stringBuilder.toString()
+                stringBuilder.clear()
                 textPages.add(TextPage())
                 durY = 0f
             }
@@ -249,6 +253,7 @@ object ChapterProvider {
                     width = visibleWidth
                     height = size.height * visibleWidth / size.width
                 }
+
                 else -> {
                     if (size.width > visibleWidth) {
                         height = size.height * visibleWidth / size.width
@@ -259,7 +264,10 @@ object ChapterProvider {
                         height = visibleHeight
                     }
                     if (durY + height > visibleHeight) {
-                        textPages.last().height = durY
+                        val textPage = textPages.last()
+                        textPage.height = durY
+                        textPage.text = stringBuilder.toString()
+                        stringBuilder.clear()
                         textPages.add(TextPage())
                         durY = 0f
                     }
@@ -326,8 +334,10 @@ object ChapterProvider {
                     y - textLayoutHeight
                 }
             }
+
             isTitle && textPages.size == 1 && textPages.last().lines.isEmpty() ->
                 y + titleTopSpacing
+
             else -> y
         }
         for (lineIndex in 0 until layout.lineCount) {
@@ -363,6 +373,7 @@ object ChapterProvider {
                         textPaint, desiredWidth, srcList
                     )
                 }
+
                 lineIndex == layout.lineCount - 1 -> {
                     //最后一行
                     textLine.text = words
@@ -381,6 +392,7 @@ object ChapterProvider {
                         startX, !isTitle && lineIndex == 0, srcList
                     )
                 }
+
                 else -> {
                     if (
                         isTitle &&
@@ -566,6 +578,7 @@ object ChapterProvider {
                     src = src
                 )
             }
+
             isLineEnd && char == reviewChar -> {
                 ReviewColumn(
                     start = absStartX + xStart,
@@ -573,6 +586,7 @@ object ChapterProvider {
                     count = 100
                 )
             }
+
             else -> {
                 TextColumn(
                     start = absStartX + xStart,
@@ -632,9 +646,11 @@ object ChapterProvider {
                             Typeface.Builder(it.fileDescriptor).build()
                         }
                 }
+
                 fontPath.isContentScheme() -> {
                     Typeface.createFromFile(RealPathUtil.getPath(appCtx, Uri.parse(fontPath)))
                 }
+
                 fontPath.isNotEmpty() -> Typeface.createFromFile(fontPath)
                 else -> when (AppConfig.systemTypefaces) {
                     1 -> Typeface.SERIF
@@ -660,12 +676,14 @@ object ChapterProvider {
                 else
                     Pair(bold, bold)
             }
+
             2 -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                     Pair(normal, Typeface.create(typeface, 300, false))
                 else
                     Pair(normal, normal)
             }
+
             else -> Pair(bold, normal)
         }
 
@@ -709,6 +727,7 @@ object ChapterProvider {
                 doublePage = (viewWidth > viewHeight)
                         && ReadBook.pageAnim() != 3
             }
+
             "3" -> {
                 doublePage = (viewWidth > viewHeight || appCtx.isPad)
                         && ReadBook.pageAnim() != 3
