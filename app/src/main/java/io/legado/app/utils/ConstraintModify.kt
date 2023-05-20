@@ -18,9 +18,8 @@ fun ConstraintLayout.modify(withAnim: Boolean = false): ConstraintModify.Constra
 class ConstraintModify(private val constraintLayout: ConstraintLayout) {
 
     val begin: ConstraintBegin by lazy {
-        ConstraintBegin(constraintLayout, applyConstraintSet).apply {
-            applyConstraintSet.clone(constraintLayout)
-        }
+        applyConstraintSet.clone(constraintLayout)
+        ConstraintBegin(constraintLayout, applyConstraintSet)
     }
     private val applyConstraintSet = ConstraintSet()
     private val resetConstraintSet = ConstraintSet()
@@ -75,8 +74,8 @@ class ConstraintModify(private val constraintLayout: ConstraintLayout) {
 
         /**
          * 清除某个控件的，某个关系
-         * @param viewId
-         * @param anchor
+         * @param viewId 控件ID
+         * @param anchor 要解除的关系
          * @return
          */
         fun clear(viewId: Int, anchor: Int): ConstraintBegin {
@@ -275,7 +274,9 @@ class ConstraintModify(private val constraintLayout: ConstraintLayout) {
          * 提交应用生效
          */
         fun commit() {
-            applyConstraintSet.applyTo(constraintLayout)
+            constraintLayout.post {
+                applyConstraintSet.applyTo(constraintLayout)
+            }
         }
     }
 

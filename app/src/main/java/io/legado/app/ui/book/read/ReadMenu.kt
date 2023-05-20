@@ -16,6 +16,7 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -208,6 +209,7 @@ class ReadMenu @JvmOverloads constructor(
         } else {
             titleBarAddition.gone()
         }
+        upBrightnessVwPos()
     }
 
     fun reset() {
@@ -366,7 +368,10 @@ class ReadMenu @JvmOverloads constructor(
             }
 
         })
-
+        vwBrightnessPosAdjust.setOnClickListener {
+            AppConfig.brightnessVwPos = !AppConfig.brightnessVwPos
+            upBrightnessVwPos()
+        }
         //阅读进度
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
@@ -492,6 +497,7 @@ class ReadMenu @JvmOverloads constructor(
                         progress = ReadBook.durPageIndex
                     }
                 }
+
                 "chapter" -> {
                     max = ReadBook.chapterSize - 1
                     progress = ReadBook.durChapterIndex
@@ -513,6 +519,20 @@ class ReadMenu @JvmOverloads constructor(
             fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
         }
         fabAutoPage.setColorFilter(textColor)
+    }
+
+    private fun upBrightnessVwPos() {
+        if (AppConfig.brightnessVwPos) {
+            binding.root.modify()
+                .clear(R.id.ll_brightness, ConstraintSet.LEFT)
+                .rightToRightOf(R.id.ll_brightness, R.id.vw_menu_root)
+                .commit()
+        } else {
+            binding.root.modify()
+                .clear(R.id.ll_brightness, ConstraintSet.RIGHT)
+                .leftToLeftOf(R.id.ll_brightness, R.id.vw_menu_root)
+                .commit()
+        }
     }
 
     interface CallBack {

@@ -128,6 +128,7 @@ object PreferKey {
     const val showLastUpdateTime = "showLastUpdateTime"
     const val clearWebViewData = "clearWebViewData"
     const val onlyLatestBackup = "onlyLatestBackup"
+    const val brightnessVwPos = "brightnessVwPos"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
