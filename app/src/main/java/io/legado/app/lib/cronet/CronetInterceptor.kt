@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.annotation.Keep
 import io.legado.app.utils.printOnDebug
 import okhttp3.*
-import okhttp3.internal.http.receiveHeaders
 import java.io.IOException
 
 @Keep

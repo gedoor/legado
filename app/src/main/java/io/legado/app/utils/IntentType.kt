@@ -25,6 +25,7 @@ object IntentType {
             "3gp", "mp4" -> "audio/*"
             "jpg", "gif", "png", "jpeg", "bmp" -> "image/*"
             "", "txt", "json", "log" -> "text/plain"
+            "apk" -> "application/vnd.android.package-archive"
             else -> appIntentType?.from(path) ?: "*/*"
         }
     }
