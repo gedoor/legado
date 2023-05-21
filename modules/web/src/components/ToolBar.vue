@@ -273,6 +273,8 @@ const saveHotKeys = () => {
 };
 
 const bindHotKeys = () => {
+  // hotkeys默认过滤INPUT SELECT TEXTAREA
+  hotkeys.filter = () => true;
   buttons.value.forEach(({ hotKeys, action }) => {
     if (hotKeys.length == 0) return;
     hotkeys(hotKeys.join("+"), (event) => {
