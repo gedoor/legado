@@ -108,7 +108,8 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
 
         }
         source.loginUrl?.let {
-            binding.webView.loadUrl(it, source.getHeaderMap(true))
+            val absoluteUrl = NetworkUtils.getAbsoluteURL(source.getKey(), it)
+            binding.webView.loadUrl(absoluteUrl, source.getHeaderMap(true))
         }
     }
 
