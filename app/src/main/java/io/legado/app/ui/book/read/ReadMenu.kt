@@ -16,7 +16,6 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.PopupMenu
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -523,13 +522,13 @@ class ReadMenu @JvmOverloads constructor(
 
     private fun upBrightnessVwPos() {
         if (AppConfig.brightnessVwPos) {
-            binding.root.modify()
-                .clear(R.id.ll_brightness, ConstraintSet.LEFT)
+            binding.root.modifyBegin()
+                .clear(R.id.ll_brightness, ConstraintModify.Anchor.LEFT)
                 .rightToRightOf(R.id.ll_brightness, R.id.vw_menu_root)
                 .commit()
         } else {
-            binding.root.modify()
-                .clear(R.id.ll_brightness, ConstraintSet.RIGHT)
+            binding.root.modifyBegin()
+                .clear(R.id.ll_brightness, ConstraintModify.Anchor.RIGHT)
                 .leftToLeftOf(R.id.ll_brightness, R.id.vw_menu_root)
                 .commit()
         }
