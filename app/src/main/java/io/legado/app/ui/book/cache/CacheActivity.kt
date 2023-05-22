@@ -339,6 +339,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                         etInputScope.error = null
                         val toInt = etEpubSize.text.toString().toInt()
                         startExport(path, position, toInt, text.toString())
+                        alertDialog.hide();
                     }
                 }
 
