@@ -268,6 +268,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.exportNoChapterName, value)
         }
+    var enableCustomExport: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.enableCustomExport)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableCustomExport, value)
+        }
+
     var exportType: Int
         get() = appCtx.getPrefInt(PreferKey.exportType)
         set(value) {

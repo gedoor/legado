@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -17,6 +19,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ActivityCacheBookBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.DialogSelectSectionExportBinding
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
@@ -32,7 +35,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.widget.doOnTextChanged
 
+/**
+ * cache/download 缓存界面
+ */
 class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>(),
     CacheAdapter.CallBack {
 
@@ -88,6 +95,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         menu.findItem(R.id.menu_enable_replace)?.isChecked = AppConfig.exportUseReplace
+        // 菜单打开时读取状态[enableCustomExport]
+        menu.findItem(R.id.menu_enable_custom_export)?.isChecked = AppConfig.enableCustomExport
         menu.findItem(R.id.menu_export_no_chapter_name)?.isChecked = AppConfig.exportNoChapterName
         menu.findItem(R.id.menu_export_web_dav)?.isChecked = AppConfig.exportToWebDav
         menu.findItem(R.id.menu_export_pics_file)?.isChecked = AppConfig.exportPictureFile
@@ -108,6 +117,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
     }
 
+    /**
+     * 菜单按下回调
+     */
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_download -> {
@@ -126,6 +138,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
             R.id.menu_export_all -> exportAll()
             R.id.menu_enable_replace -> AppConfig.exportUseReplace = !item.isChecked
+            // 更改菜单状态[enableCustomExport]
+            R.id.menu_enable_custom_export -> AppConfig.enableCustomExport = !item.isChecked
             R.id.menu_export_no_chapter_name -> AppConfig.exportNoChapterName = !item.isChecked
             R.id.menu_export_web_dav -> AppConfig.exportToWebDav = !item.isChecked
             R.id.menu_export_pics_file -> AppConfig.exportPictureFile = !item.isChecked
@@ -233,6 +247,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         val path = ACache.get().getAsString(exportBookPathKey)
         if (path.isNullOrEmpty()) {
             selectExportFolder(position)
+        } else if (AppConfig.enableCustomExport) {// 启用自定义导出
+            configExportSection(path, position);
         } else {
             startExport(path, position)
         }
@@ -247,6 +263,102 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
     }
 
+    /**
+     * 配置自定义导出对话框
+     *
+     * @param path  导出路径
+     * @param position  book位置
+     * @author Discut
+     * @since 1.0.0
+     */
+    private fun configExportSection(path: String, position: Int) {
+        if (AppConfig.enableCustomExport) {
+            val alertBinding = DialogSelectSectionExportBinding.inflate(layoutInflater)
+                .apply {
+                    cbAllExport.isChecked = true
+                    cbSelectExport.isChecked = false
+                    etEpubSize.isEnabled = false
+                    etInputScope.isEnabled = false
+                    tvAllExport.setOnClickListener {
+                        cbAllExport.isChecked = true
+                    }
+                    tvSelectExport.setOnClickListener {
+                        cbSelectExport.isChecked = true
+                    }
+                    cbSelectExport.onCheckedChangeListener = { _, isChecked ->
+                        if (isChecked) {
+                            etEpubSize.isEnabled = true
+                            etInputScope.isEnabled = true
+                            cbAllExport.isChecked = false
+                        }
+                    }
+                    cbAllExport.onCheckedChangeListener = { _, isChecked ->
+                        if (isChecked) {
+                            etEpubSize.isEnabled = false
+                            etInputScope.isEnabled = false
+                            cbSelectExport.isChecked = false
+                        }
+                    }
+
+                    etInputScope.onFocusChangeListener =
+                        View.OnFocusChangeListener { v, hasFocus ->
+                            if (hasFocus) {
+                                etInputScope.hint = "例如：1-5,8,10-18"
+                            } else {
+                                etInputScope.hint = ""
+                            }
+                        }
+                    etInputScope.doOnTextChanged { text, start, before, count ->
+                        var a: Int = 1
+                        a = 2
+                    }
+
+                }
+            val alertDialog = alert(titleResource = R.string.select_section_export) {
+                customView { alertBinding.root }
+                positiveButton("确认")
+                //okButton {
+//                    alertBinding.apply {
+//                        it.dismiss()
+//                        if (cbAllExport.isChecked) {
+//                            // export all sections of the book.
+//                            startExport(path, position)
+//                        } else if (cbSelectExport.isChecked) {
+//
+//                        }
+//                    }
+                //}
+                cancelButton()
+            }
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                alertBinding.apply {
+                    val text = etInputScope.text
+                    if (!verificationField(text.toString())) {
+                        etInputScope.error = "请输入正确的范围"
+                    } else {
+                        etInputScope.error = null
+                        val toInt = etEpubSize.text.toString().toInt()
+                        startExport(path, position, toInt, text.toString())
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    /**
+     * 验证 输入的范围 是否正确
+     *
+     * @since 1.0.0
+     * @author Discut
+     * @param text 输入的范围 字符串
+     * @return 是否正确
+     */
+    private fun verificationField(text: String): Boolean {
+        return text.matches(Regex("\\d+(-\\d+)?(,\\d+(-\\d+)?)*"))
+    }
+
     private fun selectExportFolder(exportPosition: Int) {
         val default = arrayListOf<SelectItem<Int>>()
         val path = ACache.get().getAsString(exportBookPathKey)
@@ -256,6 +368,18 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         exportDir.launch {
             otherActions = default
             requestCode = exportPosition
+        }
+    }
+
+    private fun startExport(path: String, exportPosition: Int, size: Int, scope: String) {
+        if (exportPosition >= 0) {
+            adapter.getItem(exportPosition)?.let { book ->
+                when (AppConfig.exportType) {
+                    1 -> viewModel.exportEPUB(path, book, size, scope)
+                    // 目前仅支持 epub
+                    //else -> viewModel.export(path, book)
+                }
+            }
         }
     }
 
