@@ -11,7 +11,7 @@
 : regex规则,不可省略,只可以用在书籍列表和目录列表
 ```
 * jsLib
-> 注入JavaScript到RhinoJs引擎中，支持两种格式
+> 注入JavaScript到RhinoJs引擎中，支持两种格式，可实现[函数共用](https://github.com/gedoor/legado/wiki/JavaScript%E5%87%BD%E6%95%B0%E5%85%B1%E7%94%A8)
 
 > `JavaScript Code` 直接填写JavaScript片段  
 > `{"example":"https://www.example.com/js/example.js", ...}` 自动复用已经下载的js文件
