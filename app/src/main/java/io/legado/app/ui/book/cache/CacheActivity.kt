@@ -276,15 +276,12 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun configExportSection(path: String, position: Int) {
         val alertBinding = DialogSelectSectionExportBinding.inflate(layoutInflater)
             .apply {
-                cbAllExport.isChecked = true
-                cbSelectExport.isChecked = false
-                etEpubSize.isEnabled = false
-                etInputScope.isEnabled = false
+                etEpubSize.setText("1")
                 tvAllExport.setOnClickListener {
-                    cbAllExport.isChecked = true
+                    cbAllExport.callOnClick()
                 }
                 tvSelectExport.setOnClickListener {
-                    cbSelectExport.isChecked = true
+                    cbSelectExport.callOnClick()
                 }
                 cbSelectExport.onCheckedChangeListener = { _, isChecked ->
                     if (isChecked) {
@@ -304,15 +301,16 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 etInputScope.onFocusChangeListener =
                     View.OnFocusChangeListener { _, hasFocus ->
                         if (hasFocus) {
-                            etInputScope.hint = "例如：1-5,8,10-18"
+                            etInputScope.hint = "1-5,8,10-18"
                         } else {
                             etInputScope.hint = ""
                         }
                     }
+                cbAllExport.callOnClick()
             }
         val alertDialog = alert(titleResource = R.string.select_section_export) {
             customView { alertBinding.root }
-            positiveButton("确认")
+            positiveButton(R.string.ok)
             cancelButton()
         }
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -324,7 +322,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
                 val text = etInputScope.text
                 if (!verificationField(text.toString())) {
-                    etInputScope.error = "请输入正确的范围"
+                    etInputScope.error =
+                        applicationContext.getString(R.string.error_scope_input)//"请输入正确的范围"
                     return@apply
                 }
                 etInputScope.error = null
@@ -398,7 +397,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     @SuppressLint("SetTextI18n")
     private fun alertExportFileName() {
         alert(R.string.export_file_name) {
-            var message = "js内有name和author变量,返回书名\n启用自定义epub导出章节时包含额外变量[epubIndex]"
+            var message =
+                "js内有name和author变量,返回书名\n启用自定义epub导出章节时包含额外变量[epubIndex]"
             if (AppConfig.bookExportFileName.isNullOrBlank()) {
                 message += "\n例如：\nname+\"-\"+author+(epubIndex?\"(\"+epubIndex+\")\":\"\")"
             }
