@@ -270,7 +270,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
             val left = v[0].toInt()
             val right = v[1].toInt()
-            if (left > right){
+            if (left > right) {
                 AppLog.put("Error expression : $s; left > right")
                 continue
             }
@@ -735,6 +735,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             val useReplace = AppConfig.exportUseReplace && book.getUseReplaceRule()
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             var chapterList: MutableList<BookChapter> = ArrayList()
+            appDb.bookChapterDao.getChapterList(book.bookUrl)
             appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
                 if (scope.indexOf(index) >= 0) {
                     chapterList.add(chapter)
@@ -744,7 +745,13 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
             val totalChapterNum = book.totalChapterNum / scope.size
-            chapterList = chapterList.subList(epubBookIndex * size, if((epubBookIndex + 1) * size > scope.size) scope.size else (epubBookIndex + 1) * size)
+            if (chapterList.size == 0) {
+                throw RuntimeException("书籍<${book.name}>(${epubBookIndex + 1})未找到章节信息")
+            }
+            chapterList = chapterList.subList(
+                epubBookIndex * size,
+                if ((epubBookIndex + 1) * size > scope.size) scope.size else (epubBookIndex + 1) * size
+            )
             chapterList.forEachIndexed { index, chapter ->
                 coroutineContext.ensureActive()
                 context.upAdapterLiveData.postValue(book.bookUrl)

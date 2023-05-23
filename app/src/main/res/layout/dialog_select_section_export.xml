@@ -64,6 +64,7 @@
                 android:id="@+id/et_epub_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="6"
                 android:inputType="number"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
