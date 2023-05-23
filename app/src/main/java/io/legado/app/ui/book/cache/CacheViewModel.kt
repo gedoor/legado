@@ -689,10 +689,11 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
          */
         private suspend fun exportEpub(doc: DocumentFile, book: Book) {
             val (contentModel, epubList) = createEpubs(doc, book)
-            epubList.forEachIndexed { index, epubBook ->
+            epubList.forEachIndexed { index, ep ->
+                val (filename, epubBook) = ep
                 //设置正文
                 this.setEpubContent(contentModel, book, epubBook, index)
-                save2Drive(book.name + index + ".epub", epubBook, doc)
+                save2Drive(filename, epubBook, doc)
             }
 
         }
@@ -717,13 +718,17 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 if (scope.indexOf(index) >= 0) {
                     chapterList.add(chapter)
                 }
+                if (scope.size == chapterList.size) {
+                    return@forEachIndexed
+                }
             }
             val totalChapterNum = book.totalChapterNum / scope.size
-            chapterList = chapterList.subList(epubBookIndex * size, (epubBookIndex + 1) * size)
+            chapterList = chapterList.subList(epubBookIndex * size, if((epubBookIndex + 1) * size > scope.size) scope.size else (epubBookIndex + 1) * size)
             chapterList.forEachIndexed { index, chapter ->
                 coroutineContext.ensureActive()
                 context.upAdapterLiveData.postValue(book.bookUrl)
-                context.exportProgress[book.bookUrl] = totalChapterNum * (epubBookIndex * size + index)
+                context.exportProgress[book.bookUrl] =
+                    totalChapterNum * (epubBookIndex * size + index)
                 BookHelp.getContent(book, chapter).let { content ->
                     var content1 = context.fixPic(
                         epubBook,
@@ -764,13 +769,21 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
         /**
          * 创建多个epub 对象
+         *
+         * @param doc 导出文档
+         * @param book 书籍
+         *
+         * @return <内容模板字符串, <epub文件名, epub对象>>
          */
-        private fun createEpubs(doc: DocumentFile, book: Book): Pair<String, List<EpubBook>> {
+        private fun createEpubs(
+            doc: DocumentFile,
+            book: Book
+        ): Pair<String, List<Pair<String, EpubBook>>> {
             val paresNumOfEpub = paresNumOfEpub(scope.size, size)
-            val result: MutableList<EpubBook> = ArrayList(paresNumOfEpub)
+            val result: MutableList<Pair<String, EpubBook>> = ArrayList(paresNumOfEpub)
             var contentModel = ""
             for (i in 1..paresNumOfEpub) {
-                val filename = book.getExportFileName("epub")
+                val filename = book.getExportFileName("epub", i)
                 DocumentUtils.delete(doc, filename)
                 val epubBook = EpubBook()
                 epubBook.version = "2.0"
@@ -782,7 +795,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 contentModel = context.setAssets(doc, book, epubBook)
 
                 // add epubBook
-                result.add(epubBook)
+                result.add(Pair(filename, epubBook))
             }
             return Pair(contentModel, result)
         }

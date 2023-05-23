@@ -244,3 +244,24 @@ fun Book.getExportFileName(suffix: String): String {
         AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
     }.getOrDefault("${name} 作者：${getRealAuthor()}.$suffix")
 }
+
+/**
+ * 获取分割文件后的文件名
+ */
+fun Book.getExportFileName(suffix: String, epubIndex: Int): String {
+    val jsStr = AppConfig.bookExportFileName
+    // 默认规则
+    val default = "$name 作者：${getRealAuthor()} [${epubIndex}].$suffix"
+    if (jsStr.isNullOrBlank()) {
+        return default
+    }
+    val bindings = SimpleBindings()
+    bindings["name"] = name
+    bindings["author"] = getRealAuthor()
+    bindings["epubIndex"] = epubIndex
+    return kotlin.runCatching {
+        RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
+    }.onFailure {
+        AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
+    }.getOrDefault(default)
+}
