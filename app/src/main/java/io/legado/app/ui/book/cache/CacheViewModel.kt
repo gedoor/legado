@@ -281,13 +281,12 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     //////////////////Start EPUB
     /**
-     * 导出Epub  自定义导出范围
+     * 导出Epub 根据自定义导出范围
      *
      * @param path  导出路径
      * @param book  书籍
      * @param size  每本Epub包含的章节
      * @param scope  导出范围
-     * @author Discut
      * @since 2023/5/22
      */
     fun exportEPUBs(path: String, book: Book, size: Int = 1, scope: String) {
@@ -295,7 +294,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         CustomExporter(this).let {
             it.scope = paresScope(scope)
             it.size = size
-            it.exportEPUB(path, book)
+            it.export(path, book)
         }
     }
 
@@ -644,7 +643,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
          * @param path 导出的路径
          * @param book 书籍
          */
-        fun exportEPUB(
+        fun export(
             path: String,
             book: Book
         ) {
@@ -662,10 +661,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     val uri = Uri.parse(path)
                     val doc = DocumentFile.fromTreeUri(context.context, uri)
                         ?: throw NoStackTraceException("获取导出文档失败")
-                    book.totalChapterNum
                     exportEpub(doc, book)
                 } else {
-                    context.exportEpub(File(path).createFolderIfNotExist(), book)
+                    exportEpub(File(path).createFolderIfNotExist(), book)
                 }
             }.onError {
                 context.exportProgress.remove(book.bookUrl)
@@ -687,6 +685,22 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
          *
          * from [io.legado.app.ui.book.cache.CacheViewModel.exportEpub]
          */
+        private suspend fun exportEpub(file: File, book: Book) {
+            val (contentModel, epubList) = createEpubs(book)
+            epubList.forEachIndexed { index, ep ->
+                val (filename, epubBook) = ep
+                //设置正文
+                this.setEpubContent(contentModel, book, epubBook, index)
+                save2Drive(filename, epubBook, file)
+            }
+
+        }
+
+        /**
+         * 导出 epub
+         *
+         * from [io.legado.app.ui.book.cache.CacheViewModel.exportEpub]
+         */
         private suspend fun exportEpub(doc: DocumentFile, book: Book) {
             val (contentModel, epubList) = createEpubs(doc, book)
             epubList.forEachIndexed { index, ep ->
@@ -698,10 +712,16 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
         }
 
+
         /**
          * 设置epub正文
          *
          * from [io.legado.app.ui.book.cache.CacheViewModel.setEpubContent]
+         *
+         * @param contentModel 正文模板
+         * @param book 书籍
+         * @param epubBook 分割后的epub
+         * @param epubBookIndex 分割后的epub序号
          */
         private suspend fun setEpubContent(
             contentModel: String,
@@ -709,7 +729,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             epubBook: EpubBook,
             epubBookIndex: Int
         ) {
-
             //正文
             val useReplace = AppConfig.exportUseReplace && book.getUseReplaceRule()
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
@@ -770,6 +789,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         /**
          * 创建多个epub 对象
          *
+         * 分割epub时，一个书籍需要创建多个epub对象
+         *
          * @param doc 导出文档
          * @param book 书籍
          *
@@ -801,6 +822,38 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         }
 
         /**
+         * 创建多个epub 对象
+         *
+         * 分割epub时，一个书籍需要创建多个epub对象
+         *
+         * @param book 书籍
+         *
+         * @return <内容模板字符串, <epub文件名, epub对象>>
+         */
+        private fun createEpubs(
+            book: Book
+        ): Pair<String, List<Pair<String, EpubBook>>> {
+            val paresNumOfEpub = paresNumOfEpub(scope.size, size)
+            val result: MutableList<Pair<String, EpubBook>> = ArrayList(paresNumOfEpub)
+            var contentModel = ""
+            for (i in 1..paresNumOfEpub) {
+                val filename = book.getExportFileName("epub", i)
+                val epubBook = EpubBook()
+                epubBook.version = "2.0"
+                //set metadata
+                context.setEpubMetadata(book, epubBook)
+                //set cover
+                context.setCover(book, epubBook)
+                //set css
+                contentModel = context.setAssets(book, epubBook)
+
+                // add epubBook
+                result.add(Pair(filename, epubBook))
+            }
+            return Pair(contentModel, result)
+        }
+
+        /**
          * 保存文件到 设备
          */
         private suspend fun save2Drive(filename: String, epubBook: EpubBook, doc: DocumentFile) {
@@ -813,11 +866,27 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     AppWebDav.exportWebDav(bookDoc.uri, filename)
                 }
             }
+        }
 
+        /**
+         * 保存文件到 设备
+         */
+        private suspend fun save2Drive(filename: String, epubBook: EpubBook, file: File) {
+            val bookPath = FileUtils.getPath(file, filename)
+            val bookFile = FileUtils.createFileWithReplace(bookPath)
+            @Suppress("BlockingMethodInNonBlockingContext")
+            EpubWriter().write(epubBook, FileOutputStream(bookFile))
+            if (AppConfig.exportToWebDav) {
+                // 导出到webdav
+                AppWebDav.exportWebDav(Uri.fromFile(bookFile), filename)
+            }
         }
 
         /**
          * 解析 分割epub后的数量
+         *
+         * @param total 章节总数
+         * @param size 每个epub文件包含多少章节
          */
         private fun paresNumOfEpub(total: Int, size: Int): Int {
             val i = total % size

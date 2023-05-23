@@ -398,7 +398,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     @SuppressLint("SetTextI18n")
     private fun alertExportFileName() {
         alert(R.string.export_file_name) {
-            setMessage("js内有name和author变量,返回书名")
+            var message = "js内有name和author变量,返回书名\n启用自定义epub导出章节时包含额外变量[epubIndex]"
+            if (AppConfig.bookExportFileName.isNullOrBlank()) {
+                message += "\n例如：\nname+\"-\"+author+(epubIndex?\"(\"+epubIndex+\")\":\"\")"
+            }
+            setMessage(message)
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "file name js"
                 editView.setText(AppConfig.bookExportFileName)
