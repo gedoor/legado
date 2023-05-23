@@ -270,7 +270,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
             val left = v[0].toInt()
             val right = v[1].toInt()
-            if (left > right) {
+            if (left > right){
                 AppLog.put("Error expression : $s; left > right")
                 continue
             }
@@ -735,7 +735,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             val useReplace = AppConfig.exportUseReplace && book.getUseReplaceRule()
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             var chapterList: MutableList<BookChapter> = ArrayList()
-            appDb.bookChapterDao.getChapterList(book.bookUrl)
             appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
                 if (scope.indexOf(index) >= 0) {
                     chapterList.add(chapter)
