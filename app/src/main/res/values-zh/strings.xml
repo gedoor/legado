@@ -31,7 +31,7 @@
     <string name="delete_all">删除所有</string>
     <string name="replace">替换</string>
     <string name="replace_purify">替换净化</string>
-    <string name="custom_export_section">自定义导出章节</string>
+    <string name="custom_export_section">自定义Epub导出章节</string>
     <string name="replace_purify_desc">配置替换净化规则</string>
     <string name="not_available">暂无</string>
     <string name="enable">启用</string>

@@ -268,8 +268,8 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                 result.add(s.toInt() - 1)
                 continue
             }
-            val left = v[0].toInt();
-            val right = v[1].toInt();
+            val left = v[0].toInt()
+            val right = v[1].toInt()
             if (left > right)
                 return IntArray(0)
             for (i in left..right)
@@ -290,7 +290,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
      * @author Discut
      * @since 2023/5/22
      */
-    fun exportEPUB(path: String, book: Book, size: Int = 1, scope: String) {
+    fun exportEPUBs(path: String, book: Book, size: Int = 1, scope: String) {
         if (exportProgress.contains(book.bookUrl)) return
         CustomExporter(this).let {
             it.scope = paresScope(scope)
@@ -627,13 +627,23 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
 
     //////end of EPUB
 
+    //////start of custom exporter
     /**
      * 自定义Exporter
+     *
+     * @since 2023/5/23
      */
     class CustomExporter(private val context: CacheViewModel) {
-        var scope: IntArray = IntArray(0);
-        var size: Int = 1;
+        var scope: IntArray = IntArray(0)
+        var size: Int = 1
 
+        /**
+         * 导出Epub
+         *
+         * from [io.legado.app.ui.book.cache.CacheViewModel.exportEPUB]
+         * @param path 导出的路径
+         * @param book 书籍
+         */
         fun exportEPUB(
             path: String,
             book: Book
@@ -653,7 +663,6 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     val doc = DocumentFile.fromTreeUri(context.context, uri)
                         ?: throw NoStackTraceException("获取导出文档失败")
                     book.totalChapterNum
-                    // TODO
                     exportEpub(doc, book)
                 } else {
                     context.exportEpub(File(path).createFolderIfNotExist(), book)
@@ -683,7 +692,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             epubList.forEachIndexed { index, epubBook ->
                 //设置正文
                 this.setEpubContent(contentModel, book, epubBook, index)
-                save2Drive(book.name+index+".epub", epubBook, doc)
+                save2Drive(book.name + index + ".epub", epubBook, doc)
             }
 
         }
@@ -703,17 +712,18 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             //正文
             val useReplace = AppConfig.exportUseReplace && book.getUseReplaceRule()
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
-            var chapterList: MutableList<BookChapter> = ArrayList();
+            var chapterList: MutableList<BookChapter> = ArrayList()
             appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
                 if (scope.indexOf(index) >= 0) {
                     chapterList.add(chapter)
                 }
             }
+            val totalChapterNum = book.totalChapterNum / scope.size
             chapterList = chapterList.subList(epubBookIndex * size, (epubBookIndex + 1) * size)
             chapterList.forEachIndexed { index, chapter ->
                 coroutineContext.ensureActive()
                 context.upAdapterLiveData.postValue(book.bookUrl)
-                context.exportProgress[book.bookUrl] = index
+                context.exportProgress[book.bookUrl] = totalChapterNum * (epubBookIndex * size + index)
                 BookHelp.getContent(book, chapter).let { content ->
                     var content1 = context.fixPic(
                         epubBook,
@@ -758,7 +768,7 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
         private fun createEpubs(doc: DocumentFile, book: Book): Pair<String, List<EpubBook>> {
             val paresNumOfEpub = paresNumOfEpub(scope.size, size)
             val result: MutableList<EpubBook> = ArrayList(paresNumOfEpub)
-            var contentModel = "";
+            var contentModel = ""
             for (i in 1..paresNumOfEpub) {
                 val filename = book.getExportFileName("epub")
                 DocumentUtils.delete(doc, filename)
@@ -798,11 +808,11 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
          */
         private fun paresNumOfEpub(total: Int, size: Int): Int {
             val i = total % size
-            var result = total / size;
+            var result = total / size
             if (i > 0) {
-                result++;
+                result++
             }
-            return result;
+            return result
         }
     }
 }
