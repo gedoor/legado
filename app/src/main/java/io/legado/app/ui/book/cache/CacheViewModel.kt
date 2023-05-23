@@ -270,8 +270,10 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
             }
             val left = v[0].toInt()
             val right = v[1].toInt()
-            if (left > right)
-                return IntArray(0)
+            if (left > right){
+                AppLog.put("Error expression : $s; left > right")
+                continue
+            }
             for (i in left..right)
                 result.add(i - 1)
         }
