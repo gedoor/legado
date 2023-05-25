@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.config.AppConfig
@@ -186,6 +187,7 @@ object Backup {
                 }
                 AppWebDav.backUpWebDav(zipFileName)
             }
+            FileUtils.delete(backupPath)
         }
     }
 
@@ -203,12 +205,15 @@ object Backup {
     @Throws(Exception::class)
     @Suppress("SameParameterValue")
     private fun copyBackup(context: Context, uri: Uri, fileName: String) {
-        DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
-            treeDoc.findFile(fileName)?.delete()
-            treeDoc.createFile("", fileName)?.openOutputStream()?.use { outputS ->
-                FileInputStream(File(zipFilePath)).use { inputS ->
-                    inputS.copyTo(outputS)
-                }
+        val treeDoc = DocumentFile.fromTreeUri(context, uri)!!
+        treeDoc.findFile(fileName)?.delete()
+        val fileDoc = treeDoc.createFile("", fileName)
+            ?: throw NoStackTraceException("创建文件失败")
+        val outputS = fileDoc.openOutputStream()
+            ?: throw NoStackTraceException("打开OutputStream失败")
+        outputS.use {
+            FileInputStream(zipFilePath).use { inputS ->
+                inputS.copyTo(outputS)
             }
         }
     }
