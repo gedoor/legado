@@ -1,6 +1,8 @@
 package io.legado.app.utils
 
+import io.legado.app.constant.AppLog
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import org.jsoup.nodes.Entities
 import java.net.URL
 import java.util.regex.Pattern
 
@@ -29,6 +31,13 @@ object HtmlFormatter {
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
             .replace("^[\\n\\s]+".toRegex(), "　　")
             .replace("[\\n\\s]+$".toRegex(), "")
+            .let { s ->
+                kotlin.runCatching {
+                    Entities.unescape(s)
+                }.onFailure {
+                    AppLog.put("Entities.unescape() error\n${it.localizedMessage}", it)
+                }.getOrDefault(s)
+            }
     }
 
     fun formatKeepImg(html: String?, redirectUrl: URL? = null): String {

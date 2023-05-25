@@ -26,6 +26,7 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.flow.conflate
@@ -82,7 +83,13 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_add -> showDialogFragment(GroupEditDialog())
+            R.id.menu_add -> {
+                if (appDb.bookGroupDao.canAddGroup) {
+                    showDialogFragment(GroupEditDialog())
+                } else {
+                    toastOnUi("分组已达上限(64个)")
+                }
+            }
         }
         return true
     }

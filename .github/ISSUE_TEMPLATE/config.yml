@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 讨论 / Discussions
+    url: https://github.com/gedoor/legado/discussions
+    about: Please ask and answer questions here.
+  - name: 常见问题 / Wiki
+    url: https://github.com/gedoor/legado/wiki
+    about: Read wiki if your are new here.

@@ -2,8 +2,7 @@ package io.legado.app.web
 
 import fi.iki.elonen.NanoWSD
 import io.legado.app.service.WebService
-import io.legado.app.web.socket.BookSourceDebugWebSocket
-import io.legado.app.web.socket.RssSourceDebugWebSocket
+import io.legado.app.web.socket.*
 
 class WebSocketServer(port: Int) : NanoWSD(port) {
 
@@ -15,6 +14,9 @@ class WebSocketServer(port: Int) : NanoWSD(port) {
             }
             "/rssSourceDebug" -> {
                 RssSourceDebugWebSocket(handshake)
+            }
+            "/searchBook" -> {
+                BookSearchWebSocket(handshake)
             }
             else -> null
         }

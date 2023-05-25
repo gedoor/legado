@@ -8,7 +8,9 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookHelp
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.printOnDebug
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
@@ -143,9 +145,9 @@ class EpubFile(var book: Book) {
         }
         /*获取当前章节文本*/
         val contents = epubBookContents ?: return null
-        val nextChapterFirstResourceHref = chapter.getVariable("nextUrl")?.substringBeforeLast("#")
+        val nextChapterFirstResourceHref = chapter.getVariable("nextUrl").substringBeforeLast("#")
         val currentChapterFirstResourceHref = chapter.url.substringBeforeLast("#")
-        val isLastChapter = nextChapterFirstResourceHref.isNullOrBlank()
+        val isLastChapter = nextChapterFirstResourceHref.isBlank()
         val startFragmentId = chapter.startFragmentId
         val endFragmentId = chapter.endFragmentId
         val elements = Elements()
@@ -221,7 +223,8 @@ class EpubFile(var book: Book) {
          */
         if (!startFragmentId.isNullOrBlank()) {
             bodyElement.getElementById(startFragmentId)?.outerHtml()?.let {
-                bodyString = bodyString.substringAfter(it)
+                /* 章节内容在fragmentI对应的div下时 会截取空白 */
+                bodyString = bodyString.substringAfter(it).ifBlank { bodyString }
             }
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {

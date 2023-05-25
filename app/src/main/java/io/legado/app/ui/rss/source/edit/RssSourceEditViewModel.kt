@@ -2,16 +2,15 @@ package io.legado.app.ui.rss.source.edit
 
 import android.app.Application
 import android.content.Intent
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.RuleComplete
 import io.legado.app.help.http.CookieStore
-import io.legado.app.utils.getClipText
-import io.legado.app.utils.printOnDebug
-import io.legado.app.utils.stackTraceStr
+import io.legado.app.utils.*
 
-import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 
 
@@ -32,15 +31,19 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         }
     }
 
-    fun save(source: RssSource, success: (() -> Unit)) {
+    fun save(source: RssSource, success: ((RssSource) -> Unit)) {
         execute {
+            if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
+                throw NoStackTraceException(context.getString(R.string.non_null_name_url))
+            }
             rssSource?.let {
                 appDb.rssSourceDao.delete(it)
             }
             appDb.rssSourceDao.insert(source)
             rssSource = source
+            source
         }.onSuccess {
-            success()
+            success(it)
         }.onError {
             context.toastOnUi(it.localizedMessage)
             it.printOnDebug()
@@ -51,7 +54,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         execute(context = Dispatchers.Main) {
             var source: RssSource? = null
             context.getClipText()?.let { json ->
-                source = RssSource.fromJson(json).getOrThrow()
+                source = GSON.fromJsonObject<RssSource>(json).getOrThrow()
             }
             source
         }.onError {
@@ -68,7 +71,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
     fun importSource(text: String, finally: (source: RssSource) -> Unit) {
         execute {
             val text1 = text.trim()
-            RssSource.fromJson(text1).getOrThrow().let {
+            GSON.fromJsonObject<RssSource>(text1).getOrThrow().let {
                 finally.invoke(it)
             }
         }.onError {

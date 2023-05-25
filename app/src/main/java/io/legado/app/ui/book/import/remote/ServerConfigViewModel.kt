@@ -14,10 +14,10 @@ class ServerConfigViewModel(application: Application): BaseViewModel(application
         //mServer不为空可能是旋转屏幕界面重新创建,不用更新数据
         if (mServer != null) return
         execute {
-            if (id != null) {
-                mServer = appDb.serverDao.get(id)
+            mServer = if (id != null) {
+                appDb.serverDao.get(id)
             } else {
-                mServer = Server()
+                Server()
             }
         }.onSuccess {
             onSuccess.invoke()

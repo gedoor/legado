@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
@@ -98,13 +99,13 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                             importSourceUrl(it)
                         }
                     } else {
-                        RssSource.fromJsonArray(mText).getOrThrow().let {
+                        GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
                             allSources.addAll(it)
                         }
                     }
                 }
                 mText.isJsonArray() -> {
-                    RssSource.fromJsonArray(mText).getOrThrow().let {
+                    GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
                         allSources.addAll(it)
                     }
                 }
@@ -115,6 +116,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             }
         }.onError {
             errorLiveData.postValue("ImportError:${it.localizedMessage}")
+            AppLog.put("ImportError:${it.localizedMessage}", it)
         }.onSuccess {
             comparisonSource()
         }
@@ -132,7 +134,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
                 val jsonItem = jsonPath.parse(item)
-                RssSource.fromJson(jsonItem.jsonString()).getOrThrow().let { source ->
+                GSON.fromJsonObject<RssSource>(jsonItem.jsonString()).getOrThrow().let { source ->
                     allSources.add(source)
                 }
             }

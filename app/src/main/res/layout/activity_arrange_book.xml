@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/bookshelf_management"
+        app:contentInsetStartWithNavigation="0dp"
+        app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
@@ -22,8 +24,10 @@ import io.legado.app.databinding.ActivityArrangeBookBinding
 import io.legado.app.help.book.contains
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.widget.SelectActionBar
@@ -31,10 +35,7 @@ import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.cnCompare
-import io.legado.app.utils.dpToPx
-import io.legado.app.utils.setEdgeEffectColor
-import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -59,9 +60,12 @@ class BookshelfManageActivity :
     private val groupRequestCode = 22
     private val addToGroupRequestCode = 34
     private val adapter by lazy { BookAdapter(this, this) }
+    private val itemTouchCallback by lazy { ItemTouchCallback(adapter) }
     private var booksFlowJob: Job? = null
     private var menu: Menu? = null
-    private var searchView: SearchView? = null
+    private val searchView: SearchView by lazy {
+        binding.titleBar.findViewById(R.id.search_view)
+    }
     private var books: List<Book>? = null
     private val waitDialog by lazy { WaitDialog(this) }
 
@@ -72,12 +76,25 @@ class BookshelfManageActivity :
                 appDb.bookGroupDao.getByID(viewModel.groupId)?.groupName
                     ?: getString(R.string.no_group)
             }
-            binding.titleBar.subtitle = viewModel.groupName
+            upTitle()
         }
+        initSearchView()
         initRecyclerView()
         initOtherView()
         initGroupData()
         upBookDataByGroupId()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let {
+                if (it is EditText) {
+                    it.clearFocus()
+                    it.hideSoftInput()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun observeLiveBus() {
@@ -96,7 +113,6 @@ class BookshelfManageActivity :
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.bookshelf_manage, menu)
-        initSearchView(menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -118,40 +134,26 @@ class BookshelfManageActivity :
         selectGroup(groupRequestCode, 0)
     }
 
-    private fun showTitle() {
-        binding.titleBar.title = getString(R.string.bookshelf_management)
-        binding.titleBar.subtitle = viewModel.groupName
+    private fun upTitle() {
+        searchView.queryHint = getString(R.string.screen) + " • " + viewModel.groupName
     }
 
-    private fun initSearchView(menu: Menu) {
-        searchView = menu.findItem(R.id.menu_screen).actionView as SearchView
-        searchView?.run {
-            setOnCloseListener {
-                showTitle()
-                false
+    private fun initSearchView() {
+        searchView.applyTint(primaryTextColor)
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
             }
-            setOnSearchClickListener {
-                binding.titleBar.title = ""
-                binding.titleBar.subtitle = ""
-            }
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    upBookData()
-                    return false
-                }
-
-            })
-            setOnQueryTextFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    searchView?.isIconified = true
-                    showTitle()
-                }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                upBookData()
+                return false
             }
-        }
+
+        })
     }
 
     private fun initRecyclerView() {
@@ -159,7 +161,6 @@ class BookshelfManageActivity :
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
-        val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = AppConfig.bookshelfSort == 3
         val dragSelectTouchHelper: DragSelectTouchHelper =
             DragSelectTouchHelper(adapter.dragSelectCallback).setSlideArea(16, 50)
@@ -229,7 +230,7 @@ class BookshelfManageActivity :
 
     private fun upBookData() {
         books?.let { books ->
-            val searchKey = searchView?.query
+            val searchKey = searchView.query
             if (searchKey.isNullOrEmpty()) {
                 adapter.setItems(books)
             } else {
@@ -247,7 +248,7 @@ class BookshelfManageActivity :
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             else -> if (item.groupId == R.id.menu_group) {
                 viewModel.groupName = item.title.toString()
-                binding.titleBar.subtitle = item.title
+                upTitle()
                 viewModel.groupId =
                     appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
                 upBookDataByGroupId()
@@ -281,7 +282,19 @@ class BookshelfManageActivity :
 
     private fun alertDelSelection() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            okButton { viewModel.deleteBook(adapter.selection) }
+            val checkBox = CheckBox(this@BookshelfManageActivity).apply {
+                setText(R.string.delete_book_file)
+                isChecked = LocalConfig.deleteBookOriginal
+            }
+            val view = LinearLayout(this@BookshelfManageActivity).apply {
+                setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                addView(checkBox)
+            }
+            customView { view }
+            okButton {
+                LocalConfig.deleteBookOriginal = checkBox.isChecked
+                viewModel.deleteBook(adapter.selection, checkBox.isChecked)
+            }
             noButton()
         }
     }
@@ -325,18 +338,23 @@ class BookshelfManageActivity :
 
     override fun deleteBook(book: Book) {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            val checkBox = CheckBox(this@BookshelfManageActivity).apply {
-                setText(R.string.delete_book_file)
-            }
-            val view = LinearLayout(this@BookshelfManageActivity).apply {
-                setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
-                addView(checkBox)
-            }
+            var checkBox: CheckBox? = null
             if (book.isLocal) {
+                checkBox = CheckBox(this@BookshelfManageActivity).apply {
+                    setText(R.string.delete_book_file)
+                    isChecked = LocalConfig.deleteBookOriginal
+                }
+                val view = LinearLayout(this@BookshelfManageActivity).apply {
+                    setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                    addView(checkBox)
+                }
                 customView { view }
             }
             okButton {
-                viewModel.deleteBook(listOf(book), checkBox.isChecked)
+                if (checkBox != null) {
+                    LocalConfig.deleteBookOriginal = checkBox.isChecked
+                }
+                viewModel.deleteBook(listOf(book), LocalConfig.deleteBookOriginal)
             }
         }
     }

@@ -3,14 +3,18 @@
 package io.legado.app.help.http
 
 import android.text.TextUtils
+import io.legado.app.constant.AppPattern.semicolonRegex
+import io.legado.app.constant.AppPattern.equalsRegex
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cookie
 import io.legado.app.help.CacheManager
-import io.legado.app.help.http.api.CookieManager
+import io.legado.app.help.http.CookieManager.getCookieNoSession
+import io.legado.app.help.http.CookieManager.mergeCookiesToMap
+import io.legado.app.help.http.api.CookieManagerInterface
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.removeCookie
 
-object CookieStore : CookieManager {
+object CookieStore : CookieManagerInterface {
 
     /**
      *保存cookie到数据库，会自动识别url的二级域名
@@ -26,7 +30,7 @@ object CookieStore : CookieManager {
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(cookie)) {
             return
         }
-        val oldCookie = getCookie(url)
+        val oldCookie = getCookieNoSession(url)
         if (TextUtils.isEmpty(oldCookie)) {
             setCookie(url, cookie)
         } else {
@@ -42,19 +46,26 @@ object CookieStore : CookieManager {
      */
     override fun getCookie(url: String): String {
         val domain = NetworkUtils.getSubDomain(url)
-        CacheManager.getFromMemory("${domain}_cookie")?.let {
-            return it
-        }
 
-        val cookieBean = appDb.cookieDao.get(domain)
-        val cookie = cookieBean?.cookie ?: ""
-        CacheManager.putMemory(url, cookie)
-        return cookie
+        val cookie = getCookieNoSession(url)
+        val sessionCookie = CookieManager.getSessionCookie(domain)
+
+        val cookieMap = mergeCookiesToMap(cookie, sessionCookie)
+
+        var ck = mapToCookie(cookieMap) ?: ""
+        while (ck.length > 4096) {
+            val removeKey = cookieMap.keys.random()
+            CookieManager.removeCookie(url, removeKey)
+            cookieMap.remove(removeKey)
+            ck = mapToCookie(cookieMap) ?: ""
+        }
+        return ck
     }
 
     fun getKey(url: String, key: String): String {
         val cookie = getCookie(url)
-        val cookieMap = cookieToMap(cookie)
+        val sessionCookie = CookieManager.getSessionCookie(url)
+        val cookieMap = mergeCookiesToMap(cookie, sessionCookie)
         return cookieMap[key] ?: ""
     }
 
@@ -62,6 +73,7 @@ object CookieStore : CookieManager {
         val domain = NetworkUtils.getSubDomain(url)
         appDb.cookieDao.delete(domain)
         CacheManager.deleteMemory("${domain}_cookie")
+        CacheManager.deleteMemory("${domain}_session_cookie")
         android.webkit.CookieManager.getInstance().removeCookie(domain)
     }
 
@@ -70,9 +82,9 @@ object CookieStore : CookieManager {
         if (cookie.isBlank()) {
             return cookieMap
         }
-        val pairArray = cookie.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val pairArray = cookie.split(semicolonRegex).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (pair in pairArray) {
-            val pairs = pair.split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val pairs = pair.split(equalsRegex).dropLastWhile { it.isEmpty() }.toTypedArray()
             if (pairs.size == 1) {
                 continue
             }
@@ -91,7 +103,7 @@ object CookieStore : CookieManager {
         }
         val builder = StringBuilder()
         cookieMap.keys.forEachIndexed { index, key ->
-            if (index > 0) builder.append(";")
+            if (index > 0) builder.append("; ")
             builder.append(key).append("=").append(cookieMap[key])
         }
         return builder.toString()

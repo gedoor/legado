@@ -118,6 +118,9 @@ object BookList {
                     bookList.add(searchBook)
                 }
             }
+            val lh = LinkedHashSet(bookList)
+            bookList.clear()
+            bookList.addAll(lh)
             if (reverse) {
                 bookList.reverse()
             }

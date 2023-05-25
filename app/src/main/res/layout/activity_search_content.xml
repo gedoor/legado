@@ -54,6 +54,10 @@
             android:textColor="@color/primaryText"
             android:textSize="12sp" />
 
+        <Space
+            android:layout_width="20dp"
+            android:layout_height="1dp" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_search_content_top"
             android:layout_width="36dp"

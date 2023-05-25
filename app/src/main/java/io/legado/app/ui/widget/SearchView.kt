@@ -38,11 +38,11 @@ class SearchView @JvmOverloads constructor(
             if (textView == null) {
                 textView = findViewById(androidx.appcompat.R.id.search_src_text)
                 mSearchHintIcon = this.context.getDrawable(R.drawable.ic_search_hint)
-                updateQueryHint()
             }
             // 改变字体
             textView!!.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             textView!!.gravity = Gravity.CENTER_VERTICAL
+            updateQueryHint()
         } catch (e: Exception) {
             e.printOnDebug()
         }
@@ -54,7 +54,7 @@ class SearchView @JvmOverloads constructor(
         if (mSearchHintIcon == null) {
             return hintText
         }
-        val textSize = (textView!!.textSize * 0.8).toInt()
+        val textSize = textView!!.textSize.toInt()
         mSearchHintIcon!!.setBounds(0, 0, textSize, textSize)
         val ssb = SpannableStringBuilder("   ")
         ssb.setSpan(CenteredImageSpan(mSearchHintIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

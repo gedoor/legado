@@ -1,34 +1,63 @@
 package io.legado.app.lib.cronet
 
 import androidx.annotation.Keep
+import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.http.CookieManager
+import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.asIOException
+import io.legado.app.utils.splitNotBlank
+import kotlinx.coroutines.delay
 import okhttp3.*
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.asResponseBody
+import okhttp3.internal.http.HttpMethod
+import okhttp3.internal.http.StatusLine
 import okio.Buffer
+import okio.Source
+import okio.Timeout
+import okio.buffer
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
 import java.io.IOException
+import java.net.ProtocolException
 import java.nio.ByteBuffer
 import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+
 
 @Keep
 abstract class AbsCallBack(
-    val originalRequest: Request,
+    var originalRequest: Request,
     val mCall: Call,
     private val eventListener: EventListener? = null,
     private val responseCallback: Callback? = null
-) : UrlRequest.Callback(), AutoCloseable {
-
-    val buffer = Buffer()
+) : UrlRequest.Callback() {
 
     var mResponse: Response
-
     private var followCount = 0
+    private var request: UrlRequest? = null
+    private var finished = AtomicBoolean(false)
+    private val canceled = AtomicBoolean(false)
+    private val callbackResults = ArrayBlockingQueue<CallbackResult>(2)
+    private val urlResponseInfoChain = arrayListOf<UrlResponseInfo>()
+    private var cancelJob: Coroutine<*>? = null
+    private var followRedirect = false
+    private var enableCookieJar = false
+    private var redirectRequest: Request? = null
+
+    init {
+        if (originalRequest.header(cookieJarHeader) != null) {
+            enableCookieJar = true
+            originalRequest = originalRequest.newBuilder()
+                .removeHeader(cookieJarHeader).build()
+        }
+    }
 
 
     @Throws(IOException::class)
@@ -63,29 +92,68 @@ abstract class AbsCallBack(
             return
         }
         followCount += 1
+        urlResponseInfoChain.add(info)
         val client = okHttpClient
         if (originalRequest.url.isHttps && newLocationUrl.startsWith("http://") && client.followSslRedirects) {
-            request.followRedirect()
+            followRedirect = true
         } else if (!originalRequest.url.isHttps && newLocationUrl.startsWith("https://") && client.followSslRedirects) {
-            request.followRedirect()
+            followRedirect = true
         } else if (okHttpClient.followRedirects) {
-            request.followRedirect()
-        } else {
-            onError(IOException("Too many redirect"))
-            request.cancel()
+            followRedirect = true
         }
+
+        if (!followRedirect) {
+            onError(IOException("Too many redirect"))
+        } else {
+            val response = toResponse(originalRequest, info, urlResponseInfoChain)
+            if (enableCookieJar) {
+                CookieManager.saveResponse(response)
+            }
+            redirectRequest = buildRedirectRequest(response, originalRequest.method, newLocationUrl)
+        }
+        request.cancel()
     }
 
 
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
-        this.mResponse = responseFromResponse(this.mResponse, info)
+        this.request = request
+
+        cancelJob = Coroutine.async {
+            while (!mCall.isCanceled()) {
+                delay(1000)
+            }
+            request.cancel()
+        }
+
+        val response: Response
+        try {
+            response = toResponse(originalRequest, info, urlResponseInfoChain, CronetBodySource())
+        } catch (e: IOException) {
+            request.cancel()
+            cancelJob?.cancel()
+            onError(e)
+            return
+        }
+
+        if (enableCookieJar) {
+            CookieManager.saveResponse(response)
+        }
+
+        mResponse = response
+        onSuccess(response)
+
         //打印协议，用于调试
-        DebugLog.i(javaClass.simpleName, "start[${info.negotiatedProtocol}]${info.url}")
+        val msg = "onResponseStarted[${info.negotiatedProtocol}][${info.httpStatusCode}]${info.url}"
+        DebugLog.i(javaClass.simpleName, msg)
         if (eventListener != null) {
-            eventListener.responseHeadersEnd(mCall, this.mResponse)
+            eventListener.responseHeadersEnd(mCall, response)
             eventListener.responseBodyStart(mCall)
         }
-        request.read(ByteBuffer.allocateDirect(32 * 1024))
+        try {
+            responseCallback?.onResponse(mCall, response)
+        } catch (e: IOException) {
+            // Pass?
+        }
     }
 
 
@@ -95,60 +163,44 @@ abstract class AbsCallBack(
         info: UrlResponseInfo,
         byteBuffer: ByteBuffer
     ) {
-
-
-        if (mCall.isCanceled()) {
-            request.cancel()
-            onError(IOException("Request Canceled"))
-        }
-
-        byteBuffer.flip()
-
-        try {
-            buffer.write(byteBuffer)
-        } catch (e: IOException) {
-            DebugLog.e(javaClass.name, "IOException during ByteBuffer read. Details: ", e)
-            onError(IOException("IOException during ByteBuffer read. Details:", e))
-            return
-        }
-        byteBuffer.clear()
-        request.read(byteBuffer)
+        callbackResults.add(CallbackResult(CallbackStep.ON_READ_COMPLETED, byteBuffer))
     }
 
 
     override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
+        callbackResults.add(CallbackResult(CallbackStep.ON_SUCCESS))
+        cancelJob?.cancel()
         eventListener?.responseBodyEnd(mCall, info.receivedByteCount)
-        val contentType: MediaType? = (this.mResponse.header("content-type")
-            ?: "text/plain; charset=\"utf-8\"").toMediaTypeOrNull()
-        val responseBody: ResponseBody =
-            buffer.asResponseBody(contentType)
-        val newRequest = originalRequest.newBuilder().url(info.url).build()
-        this.mResponse = this.mResponse.newBuilder().body(responseBody).request(newRequest).build()
-        onSuccess(this.mResponse)
         //DebugLog.i(javaClass.simpleName, "end[${info.negotiatedProtocol}]${info.url}")
 
         eventListener?.callEnd(mCall)
-        if (responseCallback != null) {
-            try {
-                responseCallback.onResponse(mCall, this.mResponse)
-            } catch (e: IOException) {
-                // Pass?
-            }
-        }
     }
 
 
     //UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
+        callbackResults.add(CallbackResult(CallbackStep.ON_FAILED, null, error))
         DebugLog.e(javaClass.name, error.message.toString())
         onError(error.asIOException())
-        this.eventListener?.callFailed(mCall, error)
+        eventListener?.callFailed(mCall, error)
         responseCallback?.onFailure(mCall, error)
     }
 
     override fun onCanceled(request: UrlRequest?, info: UrlResponseInfo?) {
-        super.onCanceled(request, info)
-        this.eventListener?.callEnd(mCall)
+        if (followRedirect) {
+            followRedirect = false
+            if (enableCookieJar) {
+                val newRequest = CookieManager.loadRequest(redirectRequest!!)
+                buildRequest(newRequest, this)?.start()
+            } else {
+                buildRequest(redirectRequest!!, this)?.start()
+            }
+            return
+        }
+        canceled.set(true)
+        callbackResults.add(CallbackResult(CallbackStep.ON_CANCELED))
+        //DebugLog.i(javaClass.simpleName, "cancel[${info?.negotiatedProtocol}]${info?.url}")
+        eventListener?.callEnd(mCall)
         //onError(IOException("Cronet Request Canceled"))
     }
 
@@ -165,38 +217,52 @@ abstract class AbsCallBack(
 
     companion object {
         const val MAX_FOLLOW_COUNT = 20
+        private val encodingsHandledByCronet = setOf("br", "deflate", "gzip", "x-gzip")
+
         private fun protocolFromNegotiatedProtocol(responseInfo: UrlResponseInfo): Protocol {
             val negotiatedProtocol = responseInfo.negotiatedProtocol.lowercase(Locale.getDefault())
             return when {
                 negotiatedProtocol.contains("h3") -> {
-                    return Protocol.QUIC
+                    Protocol.QUIC
                 }
+
                 negotiatedProtocol.contains("quic") -> {
                     Protocol.QUIC
                 }
+
                 negotiatedProtocol.contains("spdy") -> {
                     @Suppress("DEPRECATION")
                     Protocol.SPDY_3
                 }
+
                 negotiatedProtocol.contains("h2") -> {
                     Protocol.HTTP_2
                 }
+
                 negotiatedProtocol.contains("1.1") -> {
                     Protocol.HTTP_1_1
                 }
+
                 else -> {
                     Protocol.HTTP_1_0
                 }
             }
         }
 
-        private fun headersFromResponse(responseInfo: UrlResponseInfo): Headers {
+        private fun headersFromResponse(
+            responseInfo: UrlResponseInfo,
+            keepEncodingAffectedHeaders: Boolean
+        ): Headers {
+
             val headers = responseInfo.allHeadersAsList
             return Headers.Builder().apply {
                 for ((key, value) in headers) {
                     try {
 
-                        if (key.equals("content-encoding", ignoreCase = true)) {
+                        if (!keepEncodingAffectedHeaders
+                            && (key.equals("content-encoding", ignoreCase = true)
+                                    || key.equals("Content-Length", ignoreCase = true))
+                        ) {
                             // Strip all content encoding headers as decoding is done handled by cronet
                             continue
                         }
@@ -211,23 +277,208 @@ abstract class AbsCallBack(
 
         }
 
-        private fun responseFromResponse(
-            response: Response,
-            responseInfo: UrlResponseInfo
-        ): Response {
+        @Throws(IOException::class)
+        private fun createResponse(
+            request: Request,
+            responseInfo: UrlResponseInfo,
+            bodySource: Source? = null
+        ): Response.Builder {
             val protocol = protocolFromNegotiatedProtocol(responseInfo)
-            val headers = headersFromResponse(responseInfo)
-            return response.newBuilder()
+
+            val contentEncodingHeaders =
+                responseInfo.allHeaders.getOrDefault("content-encoding", emptyList())
+            val contentEncodingItems = contentEncodingHeaders.flatMap {
+                it.splitNotBlank(",").toList()
+            }
+            val keepEncodingAffectedHeaders = contentEncodingItems.isEmpty()
+                    || !encodingsHandledByCronet.containsAll(contentEncodingItems)
+
+            val headers = headersFromResponse(responseInfo, keepEncodingAffectedHeaders)
+            val contentLength = if (keepEncodingAffectedHeaders) {
+                responseInfo.allHeaders["Content-Length"]?.lastOrNull()
+            } else null
+            val contentType = responseInfo.allHeaders["content-type"]?.lastOrNull()
+                ?: "text/plain; charset=\"utf-8\""
+
+            val responseBody = bodySource?.let {
+                createResponseBody(
+                    request,
+                    responseInfo.httpStatusCode,
+                    contentType,
+                    contentLength,
+                    bodySource
+                )
+            }
+
+            return Response.Builder()
+                .request(request)
                 .receivedResponseAtMillis(System.currentTimeMillis())
                 .protocol(protocol)
                 .code(responseInfo.httpStatusCode)
                 .message(responseInfo.httpStatusText)
                 .headers(headers)
+                .body(responseBody)
+        }
+
+        private fun buildPriorResponse(
+            request: Request,
+            redirectResponseInfos: List<UrlResponseInfo>,
+        ): Response? {
+            var priorResponse: Response? = null
+            if (redirectResponseInfos.isNotEmpty()) {
+                for (i in redirectResponseInfos.indices) {
+                    val url = redirectResponseInfos[i].url
+                    val redirectedRequest = request.newBuilder().url(url).build()
+                    priorResponse = createResponse(redirectedRequest, redirectResponseInfos[i])
+                        .priorResponse(priorResponse)
+                        .build()
+                }
+
+            }
+            return priorResponse
+        }
+
+        @Throws(IOException::class)
+        private fun createResponseBody(
+            request: Request,
+            httpStatusCode: Int,
+            contentType: String?,
+            contentLengthString: String?,
+            bodySource: Source
+        ): ResponseBody {
+
+            // Ignore content-length header for HEAD requests (consistency with OkHttp)
+            val contentLength: Long = if (request.method == "HEAD") {
+                0
+            } else {
+                contentLengthString?.toLongOrNull() ?: -1
+            }
+
+            // Check for absence of body in No Content / Reset Content responses (OkHttp consistency)
+            if ((httpStatusCode == 204 || httpStatusCode == 205) && contentLength > 0) {
+                throw ProtocolException(
+                    "HTTP $httpStatusCode had non-zero Content-Length: $contentLengthString"
+                )
+            }
+            return bodySource.buffer()
+                .asResponseBody(contentType?.toMediaTypeOrNull(), contentLength)
+        }
+
+        private fun buildRedirectRequest(
+            userResponse: Response,
+            method: String,
+            newLocationUrl: String
+        ): Request {
+            // Most redirects don't include a request body.
+            val requestBuilder = userResponse.request.newBuilder()
+            if (HttpMethod.permitsRequestBody(method)) {
+                val responseCode = userResponse.code
+                val maintainBody = HttpMethod.redirectsWithBody(method) ||
+                        responseCode == StatusLine.HTTP_PERM_REDIRECT ||
+                        responseCode == StatusLine.HTTP_TEMP_REDIRECT
+                if (HttpMethod.redirectsToGet(method) && responseCode != StatusLine.HTTP_PERM_REDIRECT && responseCode != StatusLine.HTTP_TEMP_REDIRECT) {
+                    requestBuilder.method("GET", null)
+                } else {
+                    val requestBody = if (maintainBody) userResponse.request.body else null
+                    requestBuilder.method(method, requestBody)
+                }
+                if (!maintainBody) {
+                    requestBuilder.removeHeader("Transfer-Encoding")
+                    requestBuilder.removeHeader("Content-Length")
+                    requestBuilder.removeHeader("Content-Type")
+                }
+            }
+
+            return requestBuilder.url(newLocationUrl).build()
+        }
+
+        private fun toResponse(
+            request: Request,
+            responseInfo: UrlResponseInfo,
+            redirectResponseInfos: List<UrlResponseInfo>,
+            bodySource: Source? = null
+        ): Response {
+            val responseBuilder = createResponse(request, responseInfo, bodySource)
+            val newRequest = request.newBuilder().url(responseInfo.url).build()
+            return responseBuilder
+                .request(newRequest)
+                .priorResponse(buildPriorResponse(request, redirectResponseInfos))
                 .build()
         }
     }
 
-    override fun close() {
-        buffer.clear()
+    inner class CronetBodySource : Source {
+
+        private var buffer = ByteBuffer.allocateDirect(32 * 1024)
+        private var closed = false
+        private val timeout = mCall.timeout().timeoutNanos()
+
+        override fun close() {
+            cancelJob?.cancel()
+            if (closed) {
+                return
+            }
+            closed = true
+            if (!finished.get()) {
+                request?.cancel()
+            }
+        }
+
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        override fun read(sink: Buffer, byteCount: Long): Long {
+            if (canceled.get()) {
+                throw IOException("Request Canceled")
+            }
+
+            require(byteCount >= 0L) { "byteCount < 0: $byteCount" }
+            check(!closed) { "closed" }
+
+            if (finished.get()) {
+                return -1
+            }
+
+            if (byteCount < buffer.limit()) {
+                buffer.limit(byteCount.toInt())
+            }
+
+            request?.read(buffer)
+
+            val result = callbackResults.poll(timeout, TimeUnit.NANOSECONDS)
+            if (result == null) {
+                request?.cancel()
+                throw IOException("Body Read Timeout")
+            }
+
+            return when (result.callbackStep) {
+                CallbackStep.ON_FAILED -> {
+                    finished.set(true)
+                    buffer = null
+                    throw IOException(result.exception)
+                }
+
+                CallbackStep.ON_SUCCESS -> {
+                    finished.set(true)
+                    buffer = null
+                    -1
+                }
+
+                CallbackStep.ON_CANCELED -> {
+                    buffer = null
+                    throw IOException("Request Canceled")
+                }
+
+                CallbackStep.ON_READ_COMPLETED -> {
+                    result.buffer!!.flip()
+                    val bytesWritten = sink.write(result.buffer)
+                    result.buffer.clear()
+                    bytesWritten.toLong()
+                }
+            }
+        }
+
+        override fun timeout(): Timeout {
+            return mCall.timeout()
+        }
+
     }
 }

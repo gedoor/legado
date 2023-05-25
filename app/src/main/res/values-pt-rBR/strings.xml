@@ -327,7 +327,7 @@
     <string name="book_info_edit">Editar informações do livro</string>
     <string name="ps_default_read">Definir a Estante como página inicial</string>
     <string name="pt_default_read">Vá automaticamente à lista de Recentes</string>
-    <string name="use_to">Objeto substituto. Nome do livro ou Url de origem estão disponíveis</string>
+    <string name="replace_scope">Objeto substituto. Nome do livro ou Url de origem estão disponíveis</string>
     <string name="menu_action_group">Grupos</string>
     <string name="download_path">Pasta de Cache</string>
     <string name="sys_file_picker">Seletor de arquivos do sistema</string>
@@ -374,7 +374,6 @@
     <string name="page_anim_simulation">Simulação</string>
     <string name="page_anim_scroll">Deslizar</string>
     <string name="page_anim_none">Nenhum</string>
-    <string name="donate_s">Esta fonte de livro usa recursos avançados, por favor vá até Doações e toque no código de busca do envelope vermelho Alipay para receber o envelope vermelho, depois você pode usá-lo.</string>
     <string name="up_change_source_last_chapter_t">Atualizar o último capítulo após a alteração de origem em segundo plano</string>
     <string name="up_change_source_last_chapter_s">se ativado, a atualização será iniciada 1 minuto depois o App for aberto</string>
     <string name="behavior_main_t">Auto esconder a barra de ferramentas</string>
@@ -876,6 +875,7 @@
     <string name="upload_url">上传URL</string>
     <string name="download_url_rule">downloadUrlRule(downloadUrls)</string>
     <string name="sort_by_respondTime">Classificar por tempo de resposta</string>
+    <string name="respondTime">tempo de resposta: %1$d ms</string>
     <string name="export_success">导出成功</string>
     <string name="path">路径</string>
     <string name="direct_link_upload_rule">直链上传规则</string>
@@ -1085,4 +1085,26 @@
     <string name="sure_upload">Remote webDav url exists, Continue?</string>
     <string name="unsupport_archivefile_entry">Cannot find supported files in archive</string>
     <string name="no_books_dir">没有设置书籍保存位置!</string>
+    <string name="delete_alert">删除提醒</string>
+    <string name="no_book_found_bookshelf">No book found in bookshelf, import again ?</string>
+    <string name="archive_not_found">Can not find archive selected, continue to download ?</string>
+    <string name="privacy_policy">用户隐私与协议</string>
+    <string name="agree">同意</string>
+    <string name="refuse">拒绝</string>
+    <string name="file_manage">文件管理</string>
+    <string name="file_manage_summary">管理私有文件夹的文件</string>
+    <string name="create_folder">创建文件夹</string>
+    <string name="allow_drop_down_refresh">允许下拉刷新</string>
+    <string name="text_underline">文字下划线</string>
+    <string name="select_new_source">选中新增源</string>
+    <string name="select_update_source">选中更新源</string>
+    <string name="set_local_password">设置本地密码</string>
+    <string name="set_local_password_summary">本地密码用来对备份的敏感信息加密和解密,如需在不同设备之间同步,本地密码需一致.</string>
+    <string name="only_latest_backup_t">仅保留最新备份</string>
+    <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
+    <string name="webdav_application_authorization_error">Fail to authorize WebDav application</string>
+    <string name="load_word_count">Carregar os palavras do livro</string>
+    <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
+    <string name="format_js_rule">格式化规则(formatJs)</string>
+    <string name="adjust_pos">调整位置</string>
 </resources>

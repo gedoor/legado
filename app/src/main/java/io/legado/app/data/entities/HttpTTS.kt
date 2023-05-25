@@ -24,6 +24,7 @@ data class HttpTTS(
     override var loginUrl: String? = null,
     override var loginUi: String? = null,
     override var header: String? = null,
+    override var jsLib: String? = null,
     @ColumnInfo(defaultValue = "0")
     override var enabledCookieJar: Boolean? = false,
     var loginCheckJs: String? = null,

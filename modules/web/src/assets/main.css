@@ -1,0 +1,14 @@
+@import './kbd.css';
+@import './code.css';
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.el-tabs__header {
+    position: sticky;
+    top: 0px;
+    z-index: 2;
+    background-color: white;
+}

@@ -10,6 +10,16 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
+        android:id="@+id/menu_select_new_source"
+        android:title="@string/select_new_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_select_update_source"
+        android:title="@string/select_update_source"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_keep_original_name"
         android:title="@string/keep_original_name"
         android:checkable="true"

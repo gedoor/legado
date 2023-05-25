@@ -2,12 +2,18 @@ package io.legado.app.help.source
 
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.rule.ExploreKind
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.set
 
 /**
  * 采用md5作为key可以在分类修改后自动重新计算,不需要手动刷新

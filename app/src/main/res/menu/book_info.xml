@@ -67,6 +67,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_delete_alert"
+        android:title="@string/delete_alert"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_clear_cache"
         android:title="@string/clear_cache"
         app:showAsAction="never" />

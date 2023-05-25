@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
-import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
@@ -20,7 +19,7 @@ import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.import.BaseImportBookActivity
-import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -49,7 +48,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        searchView.queryHint = getString(R.string.screen) + "-" + getString(R.string.local_book)
+        searchView.queryHint = getString(R.string.screen) + " • " + getString(R.string.local_book)
         launch {
             initView()
             initEvent()
@@ -86,10 +85,9 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_del_selection ->
-                viewModel.deleteDoc(adapter.selectedUris) {
-                    adapter.removeSelection()
-                }
+            R.id.menu_del_selection -> viewModel.deleteDoc(adapter.selectedUris) {
+                adapter.removeSelection()
+            }
         }
         return false
     }
@@ -130,11 +128,6 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
     private fun initData() {
         viewModel.dataFlowStart = {
             initRootDoc()
-        }
-        launch {
-            appDb.bookDao.flowLocalUri().conflate().collect {
-                adapter.upBookHas(it)
-            }
         }
         launch {
             viewModel.dataFlow.conflate().collect { docs ->
@@ -300,6 +293,12 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         binding.selectActionBar.upCountView(adapter.selectedUris.size, adapter.checkableCount)
     }
 
-    override fun startRead(bookUrl: String) = startReadBook(bookUrl)
+    override fun startRead(fileDoc: FileDoc) {
+        if (!ArchiveUtils.isArchive(fileDoc.name)) {
+            startReadBook(fileDoc.toString())
+        } else {
+            onArchiveFileClick(fileDoc)
+        }
+    }
 
 }

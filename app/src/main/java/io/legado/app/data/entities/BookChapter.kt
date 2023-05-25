@@ -83,7 +83,7 @@ data class BookChapter(
         return false
     }
 
-    suspend fun getDisplayTitle(
+    fun getDisplayTitle(
         replaceRules: List<ReplaceRule>? = null,
         useReplace: Boolean = true,
         chineseConvert: Boolean = true,
@@ -103,7 +103,7 @@ data class BookChapter(
                             displayTitle.replace(
                                 item.pattern.toRegex(),
                                 item.replacement,
-                                item.timeoutMillisecond
+                                item.getValidTimeoutMillisecond()
                             )
                         } else {
                             displayTitle.replace(item.pattern, item.replacement)

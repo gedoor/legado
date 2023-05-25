@@ -100,6 +100,11 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="privacyPolicy"
+            android:title="@string/privacy_policy"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="license"
             android:title="@string/license"
             app:iconSpaceReserved="false" />

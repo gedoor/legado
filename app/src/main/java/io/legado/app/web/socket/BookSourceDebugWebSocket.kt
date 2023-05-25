@@ -65,6 +65,10 @@ class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                         Debug.callback = this@BookSourceDebugWebSocket
                         Debug.startDebug(this, it, key)
                     }
+                } else {
+                    send("数据必须为Json格式")
+                    close(NanoWSD.WebSocketFrame.CloseCode.NormalClosure, "调试结束", false)
+                    return@launch
                 }
             }
         }

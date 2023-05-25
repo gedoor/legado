@@ -44,9 +44,6 @@ interface BookDao {
     )
     fun flowLocalNoGroup(): Flow<List<Book>>
 
-    @Query("SELECT bookUrl FROM books WHERE type & ${BookType.local} > 0")
-    fun flowLocalUri(): Flow<List<String>>
-
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
     fun flowByGroup(group: Long): Flow<List<Book>>
 
@@ -104,7 +101,7 @@ interface BookDao {
     @Query("select 1 from books where bookUrl = :bookUrl")
     fun has(bookUrl: String): Boolean?
 
-    @Query("select 1 from books where originName = :fileName")
+    @Query("select 1 from books where originName = :fileName or origin like '%' || :fileName")
     fun hasFile(fileName: String): Boolean?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

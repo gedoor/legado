@@ -26,14 +26,13 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
 
     fun upBookTocRule(book: Book, finally: () -> Unit) {
         execute {
-            execute {
+            appDb.bookDao.update(book)
+            LocalBook.getChapterList(book).let {
+                book.latestChapterTime = System.currentTimeMillis()
+                appDb.bookChapterDao.delByBook(book.bookUrl)
+                appDb.bookChapterDao.insert(*it.toTypedArray())
                 appDb.bookDao.update(book)
-                LocalBook.getChapterList(book).let {
-                    book.latestChapterTime = System.currentTimeMillis()
-                    appDb.bookChapterDao.delByBook(book.bookUrl)
-                    appDb.bookChapterDao.insert(*it.toTypedArray())
-                    appDb.bookDao.update(book)
-                }
+                bookData.postValue(book)
             }
         }.onFinally {
             finally.invoke()

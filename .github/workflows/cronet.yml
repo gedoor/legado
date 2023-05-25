@@ -2,7 +2,8 @@ name: Update Cronet
 
 on:
   schedule:
-    - cron: 0 0 * * *
+  # 周一北京时间9点
+    - cron: 0 1 * * 1
   workflow_dispatch:
 
 jobs:
@@ -11,11 +12,20 @@ jobs:
     if: ${{ github.repository == 'gedoor/legado' }}
     steps:
       - uses: actions/checkout@v3
+
       - name: Check Cronet Updates
         run: source .github/scripts/cronet.sh
 
+      - name: Set up JDK 17
+        if: ${{ env.cronet == 'ok' }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
       - uses: gradle/gradle-build-action@v2
         if: ${{ env.cronet == 'ok' }}
+
       - name: Download Cronet
         if: ${{ env.cronet == 'ok' }}
         run: |
@@ -24,7 +34,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ env.cronet == 'ok' }}
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v5
         continue-on-error: true
         with:
           token: ${{ secrets.ACTIONS_TOKEN }}

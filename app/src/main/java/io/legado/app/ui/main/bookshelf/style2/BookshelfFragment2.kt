@@ -16,7 +16,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
-import io.legado.app.databinding.FragmentBookshelf1Binding
+import io.legado.app.databinding.FragmentBookshelf2Binding
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.accentColor
@@ -42,11 +42,11 @@ import kotlin.math.max
 /**
  * 书架界面
  */
-class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
+class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf2),
     SearchView.OnQueryTextListener,
     BaseBooksAdapter.CallBack {
 
-    private val binding by viewBinding(FragmentBookshelf1Binding::bind)
+    private val binding by viewBinding(FragmentBookshelf2Binding::bind)
     private val bookshelfLayout by lazy {
         getPrefInt(PreferKey.bookshelfLayout)
     }
@@ -114,11 +114,13 @@ class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     private fun initBooksData() {
         if (groupId == -100L) {
             binding.titleBar.title = getString(R.string.bookshelf)
+            binding.refreshLayout.isEnabled = true
         } else {
-            bookGroups.forEach {
-                if (groupId == it.groupId) {
-                    binding.titleBar.title = "${getString(R.string.bookshelf)}(${it.groupName})"
-                }
+            bookGroups.firstOrNull {
+                groupId == it.groupId
+            }?.let {
+                binding.titleBar.title = "${getString(R.string.bookshelf)}(${it.groupName})"
+                binding.refreshLayout.isEnabled = it.enableRefresh
             }
         }
         booksFlowJob?.cancel()

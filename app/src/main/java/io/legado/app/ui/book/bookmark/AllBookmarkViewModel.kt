@@ -6,7 +6,6 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.Bookmark
 import io.legado.app.utils.*
 import java.io.File
 import java.io.FileOutputStream
@@ -15,20 +14,6 @@ import java.util.*
 
 class AllBookmarkViewModel(application: Application) : BaseViewModel(application) {
 
-
-    fun initData(onSuccess: (bookmarks: List<Bookmark>) -> Unit) {
-        execute {
-            appDb.bookmarkDao.all
-        }.onSuccess {
-            onSuccess.invoke(it)
-        }
-    }
-
-    fun deleteBookmark(bookmark: Bookmark) {
-        execute {
-            appDb.bookmarkDao.delete(bookmark)
-        }
-    }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @SuppressLint("SimpleDateFormat")

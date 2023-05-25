@@ -77,24 +77,23 @@ class TTS {
     }
 
     private fun addTextToSpeakList() {
-        textToSpeech?.let { tts ->
-            kotlin.runCatching {
-                var result = tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
-                if (result == TextToSpeech.ERROR) {
-                    clearTts()
-                    textToSpeech = TextToSpeech(appCtx, initListener)
-                    return
-                }
-                text?.splitNotBlank("\n")?.forEachIndexed { i, s ->
-                    result = tts.speak(s, TextToSpeech.QUEUE_ADD, null, tag + i)
-                    if (result == TextToSpeech.ERROR) {
-                        AppLog.put("tts朗读出错:$text")
-                    }
-                }
-            }.onFailure {
-                AppLog.put("tts朗读出错", it)
-                appCtx.toastOnUi(it.localizedMessage)
+        val tts = textToSpeech ?: return
+        kotlin.runCatching {
+            var result = tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
+            if (result == TextToSpeech.ERROR) {
+                clearTts()
+                textToSpeech = TextToSpeech(appCtx, initListener)
+                return
             }
+            text?.splitNotBlank("\n")?.forEachIndexed { i, s ->
+                result = tts.speak(s, TextToSpeech.QUEUE_ADD, null, tag + i)
+                if (result == TextToSpeech.ERROR) {
+                    AppLog.put("tts朗读出错:$text")
+                }
+            }
+        }.onFailure {
+            AppLog.put("tts朗读出错", it)
+            appCtx.toastOnUi(it.localizedMessage)
         }
     }
 

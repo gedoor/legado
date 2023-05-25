@@ -61,6 +61,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             AudioPlay.bookSource?.let {
                 WebBook.getChapterList(this, it, book)
                     .onSuccess(Dispatchers.IO) { cList ->
+                        book.save()
                         appDb.bookChapterDao.insert(*cList.toTypedArray())
                         AudioPlay.upDurChapter(book)
                     }.onError {

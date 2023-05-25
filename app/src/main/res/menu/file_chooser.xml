@@ -3,10 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_ok"
-        android:title="@string/ok"
-        android:visible="false"
+        android:id="@+id/menu_create"
+        android:title="@string/create_folder"
+        android:icon="@drawable/ic_create_folder_outline"
         app:showAsAction="always" />
-
 
 </menu>

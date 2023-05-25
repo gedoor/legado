@@ -126,4 +126,15 @@ data class TextChapter(
         }
         return pages.lastIndex
     }
+
+    fun clearSearchResult() {
+        pages.forEach { page ->
+            page.searchResult.forEach {
+                it.selected = false
+                it.isSearchResult = false
+            }
+            page.searchResult.clear()
+        }
+    }
+
 }

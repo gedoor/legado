@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
@@ -21,6 +23,7 @@ import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ActivityMainBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
@@ -38,10 +41,7 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.observeEvent
-import io.legado.app.utils.setEdgeEffectColor
-import io.legado.app.utils.showDialogFragment
-import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -85,6 +85,18 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let {
+                if (it is EditText) {
+                    it.clearFocus()
+                    it.hideSoftInput()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         launch {
@@ -92,6 +104,8 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             if (!privacyPolicy()) return@launch
             //版本更新
             upVersion()
+            //设置本地密码
+            setLocalPassword()
             //备份同步
             backupSync()
             //自动更新书籍
@@ -149,16 +163,16 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return@suspendCoroutine
         }
         val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
-        alert("用户隐私与协议", privacyPolicy) {
+        alert(getString(R.string.privacy_policy), privacyPolicy) {
             noButton {
                 finish()
                 block.resume(false)
             }
-            yesButton {
+            positiveButton(R.string.agree) {
                 LocalConfig.privacyPolicyOk = true
                 block.resume(true)
             }
-            onCancelled {
+            negativeButton(R.string.refuse) {
                 finish()
                 block.resume(false)
             }
@@ -170,7 +184,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
      */
     private suspend fun upVersion() = suspendCoroutine { block ->
         if (LocalConfig.versionCode == appInfo.versionCode) {
-            block.resume(Unit)
+            block.resume(null)
             return@suspendCoroutine
         }
         LocalConfig.versionCode = appInfo.versionCode
@@ -178,18 +192,45 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             val help = String(assets.open("help/appHelp.md").readBytes())
             val dialog = TextDialog(getString(R.string.help), help, TextDialog.Mode.MD)
             dialog.setOnDismissListener {
-                block.resume(Unit)
+                block.resume(null)
             }
             showDialogFragment(dialog)
         } else if (!BuildConfig.DEBUG) {
             val log = String(assets.open("updateLog.md").readBytes())
             val dialog = TextDialog(getString(R.string.update_log), log, TextDialog.Mode.MD)
             dialog.setOnDismissListener {
-                block.resume(Unit)
+                block.resume(null)
             }
             showDialogFragment(dialog)
         } else {
-            block.resume(Unit)
+            block.resume(null)
+        }
+    }
+
+    /**
+     * 设置本地密码
+     */
+    private suspend fun setLocalPassword() = suspendCoroutine { block ->
+        if (LocalConfig.password != null) {
+            block.resume(null)
+            return@suspendCoroutine
+        }
+        alert(R.string.set_local_password, R.string.set_local_password_summary) {
+            val editTextBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = "password"
+            }
+            customView {
+                editTextBinding.root
+            }
+            onDismiss {
+                block.resume(null)
+            }
+            okButton {
+                LocalConfig.password = editTextBinding.editView.text.toString()
+            }
+            cancelButton {
+                LocalConfig.password = ""
+            }
         }
     }
 

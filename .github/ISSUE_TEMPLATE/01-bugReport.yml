@@ -1,5 +1,5 @@
 name: BUG提交 / BUG Report
-description: 提交BUG / Report bugs to developers
+description: Report bugs to developers
 labels: ["BUG"]
 body:
   - type: checkboxes
@@ -24,10 +24,22 @@ body:
       label: 复现步骤 / How to reproduce
     validations:
       required: true
+  - type: checkboxes
+    attributes:
+      label: 确认 / Assignment
+      options:
+        - label: 已经提交复现所需要的附加资料 / Submit additions related with bugs
+          required: true
+  - type: textarea
+    attributes:
+      label: 其他信息 / Additions
+      placeholder: "请用```将提交的内容包裹"
+
   - type: textarea
     attributes:
       label: 日志提交 / Relevant log output
       description: 阅读日志位于我的-关于-崩溃日志、书架-右上角-日志，或者自行使用log工具抓取日志
+      placeholder: "请用```将日志内容包裹"
 
   - type: input
     attributes:
@@ -47,7 +59,3 @@ body:
       placeholder: "Redmi K30 Pro"
     validations:
       required: true
-
-  - type: textarea
-    attributes:
-      label: 其他信息 / Additions

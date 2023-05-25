@@ -16,18 +16,25 @@ import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.help.*
+import io.legado.app.help.AppWebDav
+import io.legado.app.help.CrashHandler
+import io.legado.app.help.DefaultData
+import io.legado.app.help.LifecycleHelp
+import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.Cronet
+import io.legado.app.help.http.ObsoleteUrlFactory
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import splitties.systemservices.notificationManager
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
@@ -49,6 +56,7 @@ class App : Application() {
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         DefaultData.upVersion()
         Coroutine.async {
+            URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }
             //初始化封面
             BookCover.toString()

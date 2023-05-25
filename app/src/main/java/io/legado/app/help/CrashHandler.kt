@@ -2,14 +2,14 @@ package io.legado.app.help
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.webkit.WebSettings
 import io.legado.app.constant.AppConst
+import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.ReadAloud
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.getFile
-import io.legado.app.utils.longToastOnUi
-import io.legado.app.utils.stackTraceStr
+import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -105,14 +105,25 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
             val timestamp = System.currentTimeMillis()
             val time = format.format(Date())
             val fileName = "crash-$time-$timestamp.log"
-            appCtx.externalCacheDir?.let { rootFile ->
-                rootFile.getFile("crash").listFiles()?.forEach {
-                    if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)) {
-                        it.delete()
-                    }
-                }
-                FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
+            try {
+                val backupPath = AppConfig.backupPath ?: throw NoStackTraceException("备份路径未配置")
+                val uri = Uri.parse(backupPath)
+                val fileDoc = FileDoc.fromUri(uri, true)
+                fileDoc.createFileIfNotExist(fileName, "crash")
                     .writeText(sb.toString())
+            } catch (e: Exception) {
+                appCtx.externalCacheDir?.let { rootFile ->
+                    rootFile.getFile("crash").listFiles()?.forEach {
+                        if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
+                                7
+                            )
+                        ) {
+                            it.delete()
+                        }
+                    }
+                    FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
+                        .writeText(sb.toString())
+                }
             }
         }
 

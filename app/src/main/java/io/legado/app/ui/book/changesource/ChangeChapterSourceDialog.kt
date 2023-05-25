@@ -2,16 +2,20 @@ package io.legado.app.ui.book.changesource
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
 import android.view.KeyEvent.ACTION_UP
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -28,11 +32,21 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.*
+import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.gone
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -83,6 +97,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                         noButton()
                         yesButton {
                             AppConfig.searchGroup = ""
+                            upGroupMenu()
                             viewModel.startSearch()
                         }
                     }
@@ -99,7 +114,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
-        viewModel.initData(arguments)
+        viewModel.initData(arguments, callBack?.oldBook, activity is ReadBookActivity)
         showTitle()
         initMenu()
         initView()
@@ -124,6 +139,8 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             ?.isChecked = AppConfig.changeSourceLoadInfo
         binding.toolBar.menu.findItem(R.id.menu_load_toc)
             ?.isChecked = AppConfig.changeSourceLoadToc
+        binding.toolBar.menu.findItem(R.id.menu_load_word_count)
+            ?.isChecked = AppConfig.changeSourceLoadWordCount
     }
 
     private fun initView() {
@@ -239,19 +256,22 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 AppConfig.changeSourceLoadToc = !item.isChecked
                 item.isChecked = !item.isChecked
             }
+            R.id.menu_load_word_count -> {
+                AppConfig.changeSourceLoadWordCount = !item.isChecked
+                item.isChecked = !item.isChecked
+                viewModel.onLoadWordCountChecked(item.isChecked)
+            }
             R.id.menu_start_stop -> viewModel.startOrStopSearch()
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
-            else -> if (item?.groupId == R.id.source_group) {
-                if (!item.isChecked) {
-                    item.isChecked = true
-                    if (item.title.toString() == getString(R.string.all_source)) {
-                        AppConfig.searchGroup = ""
-                    } else {
-                        AppConfig.searchGroup = item.title.toString()
-                    }
-                    viewModel.startOrStopSearch()
-                    viewModel.refresh()
+            else -> if (item?.groupId == R.id.source_group && !item.isChecked) {
+                item.isChecked = true
+                if (item.title.toString() == getString(R.string.all_source)) {
+                    AppConfig.searchGroup = ""
+                } else {
+                    AppConfig.searchGroup = item.title.toString()
                 }
+                viewModel.startOrStopSearch()
+                viewModel.refresh()
             }
         }
         return false
@@ -338,24 +358,25 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
      * 更新分组菜单
      */
     private fun upGroupMenu() {
-        val menu: Menu = binding.toolBar.menu
-        val selectedGroup = AppConfig.searchGroup
-        menu.removeGroup(R.id.source_group)
-        val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
-        var hasSelectedGroup = false
-        groups.sortedWith { o1, o2 ->
-            o1.cnCompare(o2)
-        }.forEach { group ->
-            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
-                if (group == selectedGroup) {
-                    it.isChecked = true
-                    hasSelectedGroup = true
+        binding.toolBar.menu.findItem(R.id.menu_group)?.subMenu?.let { menu ->
+            val selectedGroup = AppConfig.searchGroup
+            menu.removeGroup(R.id.source_group)
+            val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+            var hasSelectedGroup = false
+            groups.sortedWith { o1, o2 ->
+                o1.cnCompare(o2)
+            }.forEach { group ->
+                menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
+                    if (group == selectedGroup) {
+                        it.isChecked = true
+                        hasSelectedGroup = true
+                    }
                 }
             }
-        }
-        menu.setGroupCheckable(R.id.source_group, true, true)
-        if (!hasSelectedGroup) {
-            allItem.isChecked = true
+            menu.setGroupCheckable(R.id.source_group, true, true)
+            if (!hasSelectedGroup) {
+                allItem.isChecked = true
+            }
         }
     }
 

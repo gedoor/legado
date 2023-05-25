@@ -1,5 +1,6 @@
 package io.legado.app.base
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
@@ -64,6 +65,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         return super.onCreateView(parent, name, context, attrs)
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.disableAutoFill()
         initTheme()
@@ -75,8 +77,8 @@ abstract class BaseActivity<VB : ViewBinding>(
             findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
         }
-        onActivityCreated(savedInstanceState)
         observeLiveBus()
+        onActivityCreated(savedInstanceState)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

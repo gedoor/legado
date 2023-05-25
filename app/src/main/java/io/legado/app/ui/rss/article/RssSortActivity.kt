@@ -12,19 +12,19 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
-import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.source.sortUrls
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
+import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>() {
+class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>(),
+    VariableDialog.Callback {
 
     override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
     override val viewModel by viewModels<RssSortViewModel>()
@@ -112,23 +112,21 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 toastOnUi("源不存在")
                 return@launch
             }
+            val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
             val variable = withContext(Dispatchers.IO) { source.getVariable() }
-            alert(R.string.set_source_variable) {
-                setMessage(source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取"))
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = "source variable"
-                    editView.setText(variable)
-                }
-                customView { alertBinding.root }
-                okButton {
-                    viewModel.rssSource?.setVariable(alertBinding.editView.text?.toString())
-                }
-                cancelButton()
-                neutralButton(R.string.delete) {
-                    viewModel.rssSource?.setVariable(null)
-                }
-            }
+            showDialogFragment(
+                VariableDialog(
+                    getString(R.string.set_source_variable),
+                    source.getKey(),
+                    variable,
+                    comment
+                )
+            )
         }
+    }
+
+    override fun setVariable(key: String, variable: String?) {
+        viewModel.rssSource?.setVariable(variable)
     }
 
     private inner class TabFragmentPageAdapter :

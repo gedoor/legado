@@ -3,4 +3,8 @@
 
     <string name="app_name">legadoPro</string>
 
+    <string name="app_share_description">
+        Legado (YueDu 3.0) download link：\n https://play.google.com/store/apps/details?id=io.legado.play.release
+    </string>
+
 </resources>

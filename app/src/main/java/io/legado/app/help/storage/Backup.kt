@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.config.AppConfig
@@ -19,6 +20,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -91,6 +93,7 @@ object Backup {
     suspend fun backup(context: Context, path: String?) {
         LocalConfig.lastBackup = System.currentTimeMillis()
         withContext(IO) {
+            val aes = BackupAES()
             FileUtils.delete(backupPath)
             writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
             writeListToJson(appDb.bookmarkDao.all, "bookmark.json", backupPath)
@@ -107,7 +110,14 @@ object Backup {
             writeListToJson(appDb.httpTTSDao.all, "httpTTS.json", backupPath)
             writeListToJson(appDb.keyboardAssistsDao.all, "keyboardAssists.json", backupPath)
             writeListToJson(appDb.dictRuleDao.all, "dictRule.json", backupPath)
-            writeListToJson(appDb.serverDao.all, "servers.json", backupPath)
+            GSON.toJson(appDb.serverDao.all).let { json ->
+                aes.runCatching {
+                    encryptBase64(json)
+                }.getOrDefault(json).let {
+                    FileUtils.createFileIfNotExist(backupPath + File.separator + "servers.json")
+                        .writeText(it)
+                }
+            }
             ensureActive()
             GSON.toJson(ReadBookConfig.configList).let {
                 FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
@@ -130,12 +140,20 @@ object Backup {
                 val edit = sp.edit()
                 appCtx.defaultSharedPreferences.all.forEach { (key, value) ->
                     if (BackupConfig.keyIsNotIgnore(key)) {
-                        when (value) {
-                            is Int -> edit.putInt(key, value)
-                            is Boolean -> edit.putBoolean(key, value)
-                            is Long -> edit.putLong(key, value)
-                            is Float -> edit.putFloat(key, value)
-                            is String -> edit.putString(key, value)
+                        when (key) {
+                            PreferKey.webDavPassword -> {
+                                edit.putString(key, aes.runCatching {
+                                    encryptBase64(value.toString())
+                                }.getOrDefault(value.toString()))
+                            }
+
+                            else -> when (value) {
+                                is Int -> edit.putInt(key, value)
+                                is Boolean -> edit.putBoolean(key, value)
+                                is Long -> edit.putLong(key, value)
+                                is Float -> edit.putFloat(key, value)
+                                is String -> edit.putString(key, value)
+                            }
                         }
                     }
                 }
@@ -148,28 +166,38 @@ object Backup {
                 paths[i] = backupPath + File.separator + paths[i]
             }
             FileUtils.delete(zipFilePath)
+            val backupFileName = if (AppConfig.onlyLatestBackup) {
+                "backup.zip"
+            } else {
+                zipFileName
+            }
             if (ZipUtils.zipFiles(paths, zipFilePath)) {
                 when {
                     path.isNullOrBlank() -> {
-                        copyBackup(context.getExternalFilesDir(null)!!, "backup.zip")
+                        copyBackup(context.getExternalFilesDir(null)!!, backupFileName)
                     }
+
                     path.isContentScheme() -> {
-                        copyBackup(context, Uri.parse(path), "backup.zip")
+                        copyBackup(context, Uri.parse(path), backupFileName)
                     }
+
                     else -> {
-                        copyBackup(File(path), "backup.zip")
+                        copyBackup(File(path), backupFileName)
                     }
                 }
                 AppWebDav.backUpWebDav(zipFileName)
             }
+            FileUtils.delete(backupPath)
         }
     }
 
     private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
         if (list.isNotEmpty()) {
             val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
-            FileOutputStream(file).use {
-                GSON.writeToOutputStream(it, list)
+            FileOutputStream(file).use { fos ->
+                BufferedOutputStream(fos, 64 * 1024).use {
+                    GSON.writeToOutputStream(it, list)
+                }
             }
         }
     }
@@ -177,12 +205,15 @@ object Backup {
     @Throws(Exception::class)
     @Suppress("SameParameterValue")
     private fun copyBackup(context: Context, uri: Uri, fileName: String) {
-        DocumentFile.fromTreeUri(context, uri)?.let { treeDoc ->
-            treeDoc.findFile(fileName)?.delete()
-            treeDoc.createFile("", fileName)?.openOutputStream()?.use { outputS ->
-                FileInputStream(File(zipFilePath)).use { inputS ->
-                    inputS.copyTo(outputS)
-                }
+        val treeDoc = DocumentFile.fromTreeUri(context, uri)!!
+        treeDoc.findFile(fileName)?.delete()
+        val fileDoc = treeDoc.createFile("", fileName)
+            ?: throw NoStackTraceException("创建文件失败")
+        val outputS = fileDoc.openOutputStream()
+            ?: throw NoStackTraceException("打开OutputStream失败")
+        outputS.use {
+            FileInputStream(zipFilePath).use { inputS ->
+                inputS.copyTo(outputS)
             }
         }
     }

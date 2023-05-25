@@ -35,6 +35,24 @@ data class FileDoc(
         return uri.readBytes(appCtx)
     }
 
+    fun asDocumentFile(): DocumentFile? {
+        if (isContentScheme) {
+            return if (isDir) {
+                DocumentFile.fromTreeUri(appCtx, uri)
+            } else {
+                DocumentFile.fromSingleUri(appCtx, uri)
+            }
+        }
+        return null
+    }
+
+    fun asFile(): File? {
+        if (isContentScheme) {
+            return null
+        }
+        return File(uri.path!!)
+    }
+
     companion object {
 
         fun fromUri(uri: Uri, isDir: Boolean): FileDoc {
@@ -183,12 +201,11 @@ fun FileDoc.find(name: String, depth: Int = 0): FileDoc? {
 
 fun FileDoc.createFileIfNotExist(
     fileName: String,
-    mimeType: String = "",
     vararg subDirs: String
 ): FileDoc {
     return if (uri.isContentScheme()) {
         val documentFile = DocumentFile.fromTreeUri(appCtx, uri)!!
-        val tmp = DocumentUtils.createFileIfNotExist(documentFile, fileName, mimeType, *subDirs)!!
+        val tmp = DocumentUtils.createFileIfNotExist(documentFile, fileName, *subDirs)!!
         FileDoc.fromDocumentFile(tmp)
     } else {
         val path = FileUtils.getPath(uri.path!!, *subDirs) + File.separator + fileName
@@ -211,6 +228,10 @@ fun FileDoc.createFolderIfNotExist(
     }
 }
 
+fun FileDoc.openInputStream(): Result<InputStream> {
+    return uri.inputStream(appCtx)
+}
+
 fun FileDoc.exists(
     fileName: String,
     vararg subDirs: String
@@ -229,6 +250,21 @@ fun FileDoc.exists(): Boolean {
     } else {
         FileUtils.exist(uri.path!!)
     }
+}
+
+fun FileDoc.writeText(text: String) {
+    if (uri.isContentScheme()) {
+        uri.writeText(appCtx, text)
+    } else {
+        File(uri.path!!).writeText(text)
+    }
+}
+
+fun FileDoc.delete() {
+    asFile()?.let {
+        FileUtils.delete(it, true)
+    }
+    asDocumentFile()?.delete()
 }
 
 /**

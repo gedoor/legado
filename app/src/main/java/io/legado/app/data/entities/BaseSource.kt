@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import cn.hutool.crypto.symmetric.AES
 import com.script.SimpleBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi
@@ -9,8 +10,10 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
+import io.legado.app.model.SharedJsScope
 import io.legado.app.utils.*
 import org.intellij.lang.annotations.Language
+import org.mozilla.javascript.Scriptable
 
 /**
  * 可在js里调用,source.xxx()
@@ -41,6 +44,11 @@ interface BaseSource : JsExtensions {
      * 启用cookieJar
      */
     var enabledCookieJar: Boolean?
+
+    /**
+     * js库
+     */
+    var jsLib: String?
 
     fun getTag(): String
 
@@ -196,8 +204,8 @@ interface BaseSource : JsExtensions {
     /**
      * 获取自定义变量
      */
-    fun getVariable(): String? {
-        return CacheManager.get("sourceVariable_${getKey()}")
+    fun getVariable(): String {
+        return CacheManager.get("sourceVariable_${getKey()}") ?: ""
     }
 
     /**
@@ -227,6 +235,15 @@ interface BaseSource : JsExtensions {
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-        return AppConst.SCRIPT_ENGINE.eval(jsStr, bindings)
+        val context = RhinoScriptEngine.getScriptContext(bindings)
+        val scope = RhinoScriptEngine.getRuntimeScope(context)
+        getShareScope()?.let {
+            scope.prototype = it
+        }
+        return RhinoScriptEngine.eval(jsStr, scope)
+    }
+
+    fun getShareScope(): Scriptable? {
+        return SharedJsScope.getScope(jsLib)
     }
 }

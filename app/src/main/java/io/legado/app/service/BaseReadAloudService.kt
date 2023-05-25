@@ -78,6 +78,7 @@ abstract class BaseReadAloudService : BaseService(),
     internal var pageIndex = 0
     private var needResumeOnAudioFocusGain = false
     private var dsJob: Job? = null
+    var pageChanged = false
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -157,7 +158,7 @@ abstract class BaseReadAloudService : BaseService(),
                         contentList.add(text)
                     }
                 }
-            if (play) play()
+            if (play) play() else pageChanged = true
         }
     }
 
@@ -310,7 +311,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     /**
-     * 断开耳机监听
+     * 注册多媒体按钮监听
      */
     private fun initBroadcastReceiver() {
         val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)

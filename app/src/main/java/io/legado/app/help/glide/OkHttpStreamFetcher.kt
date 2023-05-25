@@ -10,6 +10,7 @@ import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.addHeaders
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
@@ -35,7 +36,15 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
     @Volatile
     private var call: Call? = null
 
+    companion object {
+        val failUrl = hashSetOf<String>()
+    }
+
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
+        if (failUrl.contains(url.toStringUrl())) {
+            callback.onLoadFailed(NoStackTraceException("跳过加载失败的图片"))
+            return
+        }
         val loadOnlyWifi = options.get(OkHttpModelLoader.loadOnlyWifiOption) ?: false
         if (loadOnlyWifi && !appCtx.isWifiConnect) {
             callback.onLoadFailed(NoStackTraceException("只在wifi加载图片"))
@@ -47,6 +56,9 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
             source = SourceHelp.getSource(sourceUrl)
             source?.getHeaderMap(true)?.let {
                 headerMap.putAll(it)
+            }
+            if (source?.enabledCookieJar == true) {
+                headerMap[cookieJarHeader] = "1"
             }
         }
         headerMap.putAll(url.headers)
@@ -96,6 +108,7 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
                 callback?.onDataReady(stream)
             }
         } else {
+            failUrl.add(url.toStringUrl())
             callback?.onLoadFailed(HttpException(response.message, response.code))
         }
     }

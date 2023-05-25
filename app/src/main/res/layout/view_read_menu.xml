@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vw_menu_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -73,10 +74,11 @@
         android:id="@+id/ll_brightness"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:background="@color/transparent30"
         app:layout_constraintBottom_toTopOf="@+id/bottom_menu"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
@@ -93,7 +95,8 @@
 
         <io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <io.legado.app.ui.widget.seekbar.VerticalSeekBar
                 android:id="@+id/seek_brightness"
@@ -103,6 +106,15 @@
                 app:seekBarRotation="CW270" />
 
         </io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/vw_brightness_pos_adjust"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="8dp"
+            android:contentDescription="@string/adjust_pos"
+            android:src="@drawable/ic_swap_horiz"
+            app:tint="@color/white" />
 
     </LinearLayout>
 
@@ -294,7 +306,8 @@
                         android:contentDescription="@string/chapter_list"
                         android:focusable="true"
                         android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:paddingBottom="7dp"
+                        tools:ignore="VisualLintBounds">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_catalog"
@@ -335,7 +348,8 @@
                         android:contentDescription="@string/read_aloud"
                         android:focusable="true"
                         android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:paddingBottom="7dp"
+                        tools:ignore="VisualLintBounds">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_read_aloud"
@@ -376,7 +390,8 @@
                         android:contentDescription="@string/interface_setting"
                         android:focusable="true"
                         android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:paddingBottom="7dp"
+                        tools:ignore="VisualLintBounds">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_font"
@@ -417,7 +432,8 @@
                         android:contentDescription="@string/setting"
                         android:focusable="true"
                         android:orientation="vertical"
-                        android:paddingBottom="7dp">
+                        android:paddingBottom="7dp"
+                        tools:ignore="VisualLintBounds">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_setting"

@@ -6,7 +6,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import io.legado.app.R
+import io.legado.app.exception.NoStackTraceException
 import kotlinx.parcelize.Parcelize
+import splitties.init.appCtx
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -37,6 +40,8 @@ data class ReplaceRule(
     //作用于正文
     @ColumnInfo(defaultValue = "1")
     var scopeContent: Boolean = true,
+    //排除范围
+    var excludeScope: String? = null,
     //是否启用
     @ColumnInfo(defaultValue = "1")
     var isEnabled: Boolean = true,
@@ -83,6 +88,13 @@ data class ReplaceRule(
             }
         }
         return true
+    }
+
+    @Throws(NoStackTraceException::class)
+    fun checkValid() {
+        if (!isValid()) {
+            throw NoStackTraceException(appCtx.getString(R.string.replace_rule_invalid))
+        }
     }
 
     fun getValidTimeoutMillisecond(): Long {

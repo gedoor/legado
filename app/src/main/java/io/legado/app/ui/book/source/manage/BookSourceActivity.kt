@@ -3,6 +3,7 @@ package io.legado.app.ui.book.source.manage
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
@@ -31,7 +32,7 @@ import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.config.CheckSourceConfig
-import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.TextDialog
@@ -82,9 +83,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         it.uri?.let { uri ->
             alert(R.string.export_success) {
                 if (uri.toString().isAbsUrl()) {
-                    DirectLinkUpload.getSummary()?.let { summary ->
-                        setMessage(summary)
-                    }
+                    setMessage(DirectLinkUpload.getSummary())
                 }
                 val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                     editView.hint = getString(R.string.path)
@@ -108,6 +107,18 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         if (!LocalConfig.bookSourcesHelpVersionIsLast) {
             showHelp()
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let {
+                if (it is EditText) {
+                    it.clearFocus()
+                    it.hideSoftInput()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

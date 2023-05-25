@@ -1,10 +1,12 @@
 @file:Keep
+@file:Suppress("DEPRECATION")
 
 package io.legado.app.lib.cronet
 
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
+import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
 import okhttp3.Headers
@@ -79,6 +81,7 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
         setHttpMethod(request.method)//设置
         allowDirectExecutor()
         headers.forEachIndexed { index, _ ->
+            if (headers.name(index) == cookieJarHeader) return@forEachIndexed
             addHeader(headers.name(index), headers.value(index))
         }
         if (requestBody != null) {

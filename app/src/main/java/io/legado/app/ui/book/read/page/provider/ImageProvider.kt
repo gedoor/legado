@@ -88,7 +88,6 @@ object ImageProvider {
                 if (book.isEpub) {
                     EpubFile.getImage(book, src)?.use { input ->
                         val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
-                        @Suppress("BlockingMethodInNonBlockingContext")
                         FileOutputStream(newFile).use { output ->
                             input.copyTo(output)
                         }
@@ -96,7 +95,6 @@ object ImageProvider {
                 } else if (book.isPdf) {
                     PdfFile.getImage(book, src)?.use { input ->
                         val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
-                        @Suppress("BlockingMethodInNonBlockingContext")
                         FileOutputStream(newFile).use { output ->
                             input.copyTo(output)
                         }
@@ -170,7 +168,6 @@ object ImageProvider {
             }
             return null
         }
-        @Suppress("BlockingMethodInNonBlockingContext")
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
                 ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)

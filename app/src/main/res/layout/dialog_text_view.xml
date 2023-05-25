@@ -20,6 +20,7 @@
         android:layout_height="0dp"
         android:padding="12dp"
         android:textColor="@color/secondaryText"
+        android:scrollbarStyle="outsideOverlay"
         android:textIsSelectable="true"
         app:layout_constraintTop_toBottomOf="@+id/tool_bar"
         app:layout_constraintBottom_toBottomOf="parent"/>

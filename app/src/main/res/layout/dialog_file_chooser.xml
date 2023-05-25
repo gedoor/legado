@@ -25,7 +25,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@color/background_card">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -41,5 +42,14 @@
             android:visibility="gone" />
 
     </FrameLayout>
+
+    <io.legado.app.ui.widget.text.AccentBgTextView
+        android:id="@+id/tv_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_margin="3dp"
+        android:text="@string/ok"
+        android:gravity="center" />
 
 </LinearLayout>

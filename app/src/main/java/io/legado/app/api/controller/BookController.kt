@@ -99,7 +99,7 @@ object BookController {
                 return returnData.setErrorMsg("参数url不能为空，请指定书籍地址")
             }
             val book = appDb.bookDao.getBook(bookUrl)
-                ?: return returnData.setErrorMsg("bookUrl不对")
+                ?: return returnData.setErrorMsg("未在数据库找到对应书籍，请先添加")
             if (book.isLocal) {
                 val toc = LocalBook.getChapterList(book)
                 appDb.bookChapterDao.delByBook(book.bookUrl)
@@ -200,8 +200,20 @@ object BookController {
     fun saveBook(postData: String?): ReturnData {
         val returnData = ReturnData()
         GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
-            appDb.bookDao.update(book)
+            book.save()
             AppWebDav.uploadBookProgress(book)
+            return returnData.setData("")
+        }
+        return returnData.setErrorMsg("格式不对")
+    }
+
+    /**
+     * 删除书籍
+     */
+    fun deleteBook(postData: String?): ReturnData {
+        val returnData = ReturnData()
+        GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
+            book.delete()
             return returnData.setData("")
         }
         return returnData.setErrorMsg("格式不对")

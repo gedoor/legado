@@ -2,6 +2,7 @@ package io.legado.app.ui.login
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +17,7 @@ import io.legado.app.databinding.FragmentWebViewLoginBinding
 import io.legado.app.help.http.CookieStore
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.gone
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.snackbar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -46,7 +48,8 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
                     binding.titleBar.snackbar(R.string.check_host_cookie)
                     viewModel.source?.let { source ->
                         source.loginUrl?.let {
-                            binding.webView.loadUrl(it, source.getHeaderMap(true))
+                            val absoluteUrl = NetworkUtils.getAbsoluteURL(source.getKey(), it)
+                            binding.webView.loadUrl(absoluteUrl, source.getHeaderMap(true))
                         }
                     }
                 }
@@ -85,6 +88,15 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
                 }
                 super.onPageFinished(view, url)
             }
+
+            @SuppressLint("WebViewClientOnReceivedSslError")
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?
+            ) {
+                handler?.proceed()
+            }
         }
         binding.webView.webChromeClient = object : WebChromeClient() {
 
@@ -96,7 +108,8 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
 
         }
         source.loginUrl?.let {
-            binding.webView.loadUrl(it, source.getHeaderMap(true))
+            val absoluteUrl = NetworkUtils.getAbsoluteURL(source.getKey(), it)
+            binding.webView.loadUrl(absoluteUrl, source.getHeaderMap(true))
         }
     }
 

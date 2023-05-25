@@ -2,7 +2,6 @@ package io.legado.app.ui.config
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -17,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
@@ -24,7 +24,7 @@ import io.legado.app.model.CheckSource
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
 import io.legado.app.ui.book.read.page.provider.ImageProvider
-import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
 import splitties.init.appCtx
@@ -132,7 +132,9 @@ class OtherConfigFragment : PreferenceFragment(),
                         AppConfig.sourceEditMaxLine = it
                     }
             }
+
             PreferKey.clearWebViewData -> clearWebViewData()
+            "localPassword" -> alertLocalPassword()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -256,6 +258,21 @@ class OtherConfigFragment : PreferenceFragment(),
                 componentName,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
             )
+        }
+    }
+
+    private fun alertLocalPassword() {
+        context?.alert(R.string.set_local_password, R.string.set_local_password_summary) {
+            val editTextBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = "password"
+            }
+            customView {
+                editTextBinding.root
+            }
+            okButton {
+                LocalConfig.password = editTextBinding.editView.text.toString()
+            }
+            cancelButton()
         }
     }
 

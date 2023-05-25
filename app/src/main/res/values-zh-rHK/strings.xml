@@ -324,7 +324,7 @@
     <string name="book_info_edit">書籍信息編輯</string>
     <string name="ps_default_read">默認打開書架</string>
     <string name="pt_default_read">自動跳轉最近閲讀</string>
-    <string name="use_to">替換範圍，選填書名或者書源url</string>
+    <string name="replace_scope">替換範圍，選填書名或者書源url</string>
     <string name="menu_action_group">分組</string>
     <string name="download_path">內容緩存路徑</string>
     <string name="sys_file_picker">系統文件選擇器</string>
@@ -373,7 +373,6 @@
     <string name="page_anim_simulation">仿真</string>
     <string name="page_anim_scroll">滾動</string>
     <string name="page_anim_none">無動畫</string>
-    <string name="donate_s">此書源使用了高級功能，請到捐贈裏點擊支付寶紅包搜索碼領取紅包開啟。</string>
     <string name="up_change_source_last_chapter_t">後台更新換源最新章節</string>
     <string name="up_change_source_last_chapter_s">開啟則會在軟件打開 1 分鐘後開始更新</string>
     <string name="behavior_main_t">書架 ToolBar 自動隱藏</string>
@@ -875,6 +874,7 @@
     <string name="upload_url">上傳URL</string>
     <string name="download_url_rule">下载URL规则(downloadUrls)</string>
     <string name="sort_by_respondTime">響應時間排序</string>
+    <string name="respondTime">響應時間：%1$d ms</string>
     <string name="export_success">導出成功</string>
     <string name="path">路徑</string>
     <string name="direct_link_upload_rule">直鏈上傳規則</string>
@@ -1082,4 +1082,26 @@
     <string name="sure_upload">远程webDav链接已存在，是否继续</string>
     <string name="unsupport_archivefile_entry">压缩文件内没有支持的文件</string>
     <string name="no_books_dir">没有设置书籍保存位置!</string>
+    <string name="delete_alert">删除提醒</string>
+    <string name="no_book_found_bookshelf">未在书架上找到所选书籍, 是否重新导入？</string>
+    <string name="archive_not_found">未能在书籍保存目录找到压缩文件，是否重新导入？</string>
+    <string name="privacy_policy">用户隐私与协议</string>
+    <string name="agree">同意</string>
+    <string name="refuse">拒绝</string>
+    <string name="file_manage">文件管理</string>
+    <string name="file_manage_summary">管理私有文件夹的文件</string>
+    <string name="create_folder">创建文件夹</string>
+    <string name="allow_drop_down_refresh">允许下拉刷新</string>
+    <string name="text_underline">文字下划线</string>
+    <string name="select_new_source">选中新增源</string>
+    <string name="select_update_source">选中更新源</string>
+    <string name="set_local_password">设置本地密码</string>
+    <string name="set_local_password_summary">本地密码用来对备份的敏感信息加密和解密,如需在不同设备之间同步,本地密码需一致.</string>
+    <string name="only_latest_backup_t">仅保留最新备份</string>
+    <string name="only_latest_backup_s">本地备份仅保留最新备份文件</string>
+    <string name="webdav_application_authorization_error">webDav应用验证失败</string>
+    <string name="load_word_count">加載字數</string>
+    <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
+    <string name="format_js_rule">格式化规则(formatJs)</string>
+    <string name="adjust_pos">调整位置</string>
 </resources>

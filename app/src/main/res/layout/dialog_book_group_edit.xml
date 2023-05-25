@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_menu">
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
@@ -15,99 +15,117 @@
         android:theme="?attr/actionBarStyle"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false"
-        app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="@string/group_edit"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
-    <io.legado.app.ui.widget.image.CoverImageView
-        android:id="@+id/iv_cover"
-        android:layout_width="90dp"
-        android:layout_height="126dp"
-        android:layout_margin="6dp"
-        android:contentDescription="@string/img_cover"
-        android:scaleType="centerCrop"
-        android:src="@drawable/image_cover_default"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tool_bar"
-        tools:ignore="ImageContrastCheck" />
-
-
-    <io.legado.app.ui.widget.text.TextInputLayout
-        android:id="@+id/til_group_name"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:hint="@string/group_name"
-        app:layout_constraintBottom_toTopOf="@+id/tv_sort"
-        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tool_bar">
+        android:background="@color/background_menu">
 
-        <io.legado.app.lib.theme.view.ThemeEditText
-            android:id="@+id/tie_group_name"
-            android:layout_width="match_parent"
+        <io.legado.app.ui.widget.image.CoverImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="90dp"
+            android:layout_height="126dp"
+            android:layout_margin="6dp"
+            android:contentDescription="@string/img_cover"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_cover_default"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ImageContrastCheck" />
+
+
+        <io.legado.app.ui.widget.text.TextInputLayout
+            android:id="@+id/til_group_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:maxLines="2"
-            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
-    </io.legado.app.ui.widget.text.TextInputLayout>
+            android:layout_margin="6dp"
+            android:hint="@string/group_name"
+            app:layout_constraintBottom_toTopOf="@+id/tv_sort"
+            app:layout_constraintLeft_toRightOf="@+id/iv_cover"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:id="@+id/tv_sort"
-        android:layout_width="wrap_content"
+            <io.legado.app.lib.theme.view.ThemeEditText
+                android:id="@+id/tie_group_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+        </io.legado.app.ui.widget.text.TextInputLayout>
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/tv_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="@string/sort"
+            android:textColor="@color/primaryText"
+            app:layout_constraintLeft_toLeftOf="@id/til_group_name"
+            app:layout_constraintTop_toBottomOf="@id/til_group_name" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/sp_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:entries="@array/book_sort"
+            app:layout_constraintBottom_toBottomOf="@id/tv_sort"
+            app:layout_constraintLeft_toRightOf="@+id/tv_sort"
+            app:layout_constraintTop_toTopOf="@id/tv_sort"
+            app:theme="@style/Spinner"
+            tools:ignore="RtlHardcoded" />
+
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/cb_enable_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/allow_drop_down_refresh"
+            android:checked="true"
+            app:layout_constraintTop_toBottomOf="@+id/tv_sort"
+            app:layout_constraintLeft_toLeftOf="@id/tv_sort" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sort"
-        android:textColor="@color/primaryText"
-        app:layout_constraintBottom_toTopOf="@id/btn_ok"
-        app:layout_constraintLeft_toLeftOf="@id/til_group_name"
-        app:layout_constraintTop_toBottomOf="@id/til_group_name" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/sp_sort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="6dp"
-        android:entries="@array/book_sort"
-        app:layout_constraintBottom_toBottomOf="@id/tv_sort"
-        app:layout_constraintLeft_toRightOf="@+id/tv_sort"
-        app:layout_constraintTop_toTopOf="@id/tv_sort"
-        app:theme="@style/Spinner"
-        tools:ignore="RtlHardcoded" />
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:padding="6dp"
+            android:text="@string/delete"
+            tools:ignore="RtlHardcoded" />
 
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:id="@+id/btn_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:padding="6dp"
-        android:text="@string/delete"
-        app:layout_constraintBottom_toBottomOf="@id/btn_ok"
-        app:layout_constraintLeft_toRightOf="@+id/iv_cover"
-        app:layout_constraintTop_toTopOf="@+id/btn_ok"
-        tools:ignore="RtlHardcoded" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
 
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:id="@+id/btn_ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:padding="6dp"
-        android:text="@string/ok"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sort"
-        tools:ignore="RtlHardcoded" />
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:padding="6dp"
+            android:text="@string/cancel" />
 
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:padding="6dp"
-        android:text="@string/cancel"
-        app:layout_constraintBottom_toBottomOf="@id/btn_ok"
-        app:layout_constraintRight_toLeftOf="@+id/btn_ok"
-        app:layout_constraintTop_toTopOf="@+id/btn_ok" />
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:id="@+id/btn_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:padding="6dp"
+            android:text="@string/ok"
+            tools:ignore="RtlHardcoded" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</LinearLayout>

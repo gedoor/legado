@@ -3,6 +3,7 @@ package io.legado.app.help.http
 import io.legado.app.constant.AppConst
 import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.utils.NetworkUtils
 import okhttp3.*
 import java.net.InetSocketAddress
@@ -48,7 +49,7 @@ val okHttpClient: OkHttpClient by lazy {
         .writeTimeout(15, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
         .callTimeout(60, TimeUnit.SECONDS)
-        .cookieJar(cookieJar = cookieJar)
+        //.cookieJar(cookieJar = cookieJar)
         .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory, SSLHelper.unsafeTrustManager)
         .retryOnConnectionFailure(true)
         .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
@@ -68,6 +69,23 @@ val okHttpClient: OkHttpClient by lazy {
             builder.addHeader("Cache-Control", "no-cache")
             chain.proceed(builder.build())
         })
+        .addNetworkInterceptor { chain ->
+            var request = chain.request()
+            val enableCookieJar = request.header(cookieJarHeader) !=  null
+
+            if (enableCookieJar) {
+                val requestBuilder = request.newBuilder()
+                requestBuilder.removeHeader(cookieJarHeader)
+                request = CookieManager.loadRequest(requestBuilder.build())
+            }
+
+            val networkResponse = chain.proceed(request)
+
+            if (enableCookieJar) {
+                CookieManager.saveResponse(networkResponse)
+            }
+            networkResponse
+        }
     if (!AppConst.isPlayChannel && AppConfig.isCronet) {
         if (Cronet.loader?.install() == true) {
             Cronet.interceptor?.let {

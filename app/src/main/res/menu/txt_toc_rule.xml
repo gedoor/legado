@@ -35,12 +35,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_split_long_chapter"
-        android:title="@string/split_long_chapter"
-        android:checkable="true"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"

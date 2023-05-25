@@ -7,7 +7,6 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
-import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.model.remote.RemoteBook
@@ -88,9 +87,7 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
                     callBack.upCountView()
                 } else {
                     /* 点击开始阅读 */
-                    appDb.bookDao.getBookByFileName(it.filename)?.let {
-                        callBack.startRead(it)
-                    }
+                    callBack.startRead(it)
                 }
             }
         }
@@ -147,6 +144,6 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
     interface CallBack {
         fun openDir(remoteBook: RemoteBook)
         fun upCountView()
-        fun startRead(book: Book)
+        fun startRead(remoteBook: RemoteBook)
     }
 }

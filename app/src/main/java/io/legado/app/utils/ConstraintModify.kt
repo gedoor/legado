@@ -6,7 +6,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.transition.TransitionManager
 
 @Suppress("unused")
-fun ConstraintLayout.modify(withAnim: Boolean = false): ConstraintModify.ConstraintBegin {
+fun ConstraintLayout.modifyBegin(withAnim: Boolean = false): ConstraintModify.ConstraintBegin {
     val begin = ConstraintModify(this).begin
     if (withAnim) {
         TransitionManager.beginDelayedTransition(this)
@@ -18,9 +18,8 @@ fun ConstraintLayout.modify(withAnim: Boolean = false): ConstraintModify.Constra
 class ConstraintModify(private val constraintLayout: ConstraintLayout) {
 
     val begin: ConstraintBegin by lazy {
-        ConstraintBegin(constraintLayout, applyConstraintSet).apply {
-            applyConstraintSet.clone(constraintLayout)
-        }
+        applyConstraintSet.clone(constraintLayout)
+        ConstraintBegin(constraintLayout, applyConstraintSet)
     }
     private val applyConstraintSet = ConstraintSet()
     private val resetConstraintSet = ConstraintSet()
@@ -61,26 +60,23 @@ class ConstraintModify(private val constraintLayout: ConstraintLayout) {
     ) {
 
         /**
-         * 清除关系<br></br>
-         * 注意：这里不仅仅会清除关系，还会清除对应控件的宽高为 w:0,h:0
-         * @param viewIds
+         * 清除关系,这里不仅仅会清除关系，还会清除对应控件的宽高为 w:0,h:0
+         * @param viewId 视图ID
          * @return
          */
-        fun clear(@IdRes vararg viewIds: Int): ConstraintBegin {
-            for (viewId in viewIds) {
-                applyConstraintSet.clear(viewId)
-            }
+        fun clear(viewId: Int): ConstraintBegin {
+            applyConstraintSet.clear(viewId)
             return this
         }
 
         /**
          * 清除某个控件的，某个关系
-         * @param viewId
-         * @param anchor
+         * @param viewId 控件ID
+         * @param anchor 要解除的关系
          * @return
          */
-        fun clear(viewId: Int, anchor: Int): ConstraintBegin {
-            applyConstraintSet.clear(viewId, anchor)
+        fun clear(viewId: Int, anchor: Anchor): ConstraintBegin {
+            applyConstraintSet.clear(viewId, anchor.toInt())
             return this
         }
 
@@ -275,8 +271,28 @@ class ConstraintModify(private val constraintLayout: ConstraintLayout) {
          * 提交应用生效
          */
         fun commit() {
-            applyConstraintSet.applyTo(constraintLayout)
+            constraintLayout.post {
+                applyConstraintSet.applyTo(constraintLayout)
+            }
         }
+    }
+
+    enum class Anchor {
+        LEFT, RIGHT, TOP, BOTTOM, BASELINE, START, END, CIRCLE_REFERENCE;
+
+        fun toInt(): Int {
+            return when (this) {
+                LEFT -> ConstraintSet.LEFT
+                RIGHT -> ConstraintSet.RIGHT
+                TOP -> ConstraintSet.TOP
+                BOTTOM -> ConstraintSet.BOTTOM
+                BASELINE -> ConstraintSet.BASELINE
+                START -> ConstraintSet.START
+                END -> ConstraintSet.END
+                CIRCLE_REFERENCE -> ConstraintSet.CIRCLE_REFERENCE
+            }
+        }
+
     }
 
 }

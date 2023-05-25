@@ -10,6 +10,7 @@ import android.os.Build
 import android.text.Html
 import android.view.View
 import android.view.View.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +40,11 @@ val View.activity: AppCompatActivity?
 
 fun View.hideSoftInput() = run {
     inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
+}
+
+fun EditText.showSoftInput() = run {
+    requestFocus()
+    inputMethodManager.showSoftInput(this, InputMethodManager.RESULT_SHOWN)
 }
 
 fun View.disableAutoFill() = run {
@@ -140,6 +146,10 @@ fun View.screenshot(): Bitmap? {
     }
 }
 
+fun View.setPaddingBottom(bottom: Int) {
+    setPadding(paddingLeft, paddingTop, paddingRight, bottom)
+}
+
 fun SeekBar.progressAdd(int: Int) {
     progress += int
 }
@@ -166,6 +176,7 @@ fun RadioGroup.checkByIndex(index: Int) {
     check(get(index).id)
 }
 
+@SuppressLint("ObsoleteSdkInt")
 fun TextView.setHtml(html: String) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         text = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT)

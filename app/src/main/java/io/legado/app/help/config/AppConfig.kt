@@ -330,6 +330,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.changeSourceLoadToc, value)
         }
 
+    var changeSourceLoadWordCount: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.changeSourceLoadWordCount)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.changeSourceLoadWordCount, value)
+        }
+
     var contentSelectSpeakMod: Int
         get() = appCtx.getPrefInt(PreferKey.contentSelectSpeakMod)
         set(value) {
@@ -364,6 +370,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val asyncLoadImage get() = appCtx.getPrefBoolean(PreferKey.asyncLoadImage, false)
 
     val ignoreAudioFocus get() = appCtx.getPrefBoolean(PreferKey.ignoreAudioFocus, false)
+
+    val onlyLatestBackup get() = appCtx.getPrefBoolean(PreferKey.onlyLatestBackup, true)
 
     val doublePageHorizontal: String?
         get() = appCtx.getPrefString(PreferKey.doublePageHorizontal)
@@ -441,6 +449,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         get() = appCtx.getPrefBoolean(PreferKey.audioPlayWakeLock)
         set(value) {
             appCtx.putPrefBoolean(PreferKey.audioPlayWakeLock, value)
+        }
+
+    var brightnessVwPos: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.brightnessVwPos)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.brightnessVwPos, value)
         }
 
     fun detectClickArea() {

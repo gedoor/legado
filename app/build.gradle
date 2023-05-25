@@ -17,11 +17,10 @@ def gitCommits = Integer.parseInt('git rev-list HEAD --count'.execute().text.tri
 
 android {
     compileSdk = compile_sdk_version
-    buildToolsVersion = build_tool_version
     namespace 'io.legado.app'
     kotlin {
         jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of("11"))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 
@@ -41,7 +40,7 @@ android {
     }
     defaultConfig {
         applicationId "io.legado.app"
-        minSdk 21
+        minSdk 24
         targetSdk 33
         versionCode 10000 + gitCommits
         versionName version
@@ -77,7 +76,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
             }
@@ -87,16 +85,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            def flavor = variant.productFlavors[0].name
-            outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
-        }
-    }
-
-    flavorDimensions.add("mode")
-
+    //noinspection GrDeprecatedAPIUsage
+    flavorDimensions = ['mode']
     productFlavors {
         app {
             dimension "mode"
@@ -107,16 +97,28 @@ android {
             applicationId "io.legado.play"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
         }
+        lollipop {
+            dimension "mode"
+            minSdk 21
+            manifestPlaceholders.put("APP_CHANNEL_VALUE", "lollipop")
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            def flavor = variant.productFlavors[0].name
+            outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
+        }
     }
 
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 11
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        // Sets Java compatibility
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-    packagingOptions {
+    packaging {
         resources.excludes.add('META-INF/*')
     }
 
@@ -135,9 +137,10 @@ android {
 dependencies {
     compileOnly "com.android.tools.build:gradle:$agp_version"
     //noinspection GradleDependency,GradlePackageUpdate
-    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.2')
+    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.3')
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.5.2')
+    androidTestImplementation('androidx.test.ext:junit:1.1.5')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1')
     //kotlin
     //noinspection GradleDependency,DifferentStdlibGradleVersion
@@ -146,7 +149,7 @@ dependencies {
     //noinspection GradleDependency,DifferentStdlibGradleVersion
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
     //协程
-    def coroutines_version = '1.6.4'
+    def coroutines_version = '1.7.1'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
@@ -154,30 +157,34 @@ dependencies {
     implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
 
     //androidX
-    implementation('androidx.core:core-ktx:1.9.0')
+    implementation('androidx.core:core-ktx:1.10.1')
     implementation('androidx.appcompat:appcompat:1.6.1')
-    implementation('androidx.activity:activity-ktx:1.6.1')
-    implementation('androidx.fragment:fragment-ktx:1.5.5')
+    implementation('androidx.activity:activity-ktx:1.7.1')
+    implementation('androidx.fragment:fragment-ktx:1.5.7')
     implementation('androidx.preference:preference-ktx:1.2.0')
     implementation('androidx.constraintlayout:constraintlayout:2.1.4')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
     implementation('androidx.viewpager2:viewpager2:1.0.0')
-    implementation('androidx.webkit:webkit:1.6.0')
+    implementation('androidx.webkit:webkit:1.6.1')
 
     //google
-    implementation('com.google.android.material:material:1.8.0')
+    implementation('com.google.android.material:material:1.9.0')
     implementation('com.google.android.flexbox:flexbox:3.0.0')
     implementation('com.google.code.gson:gson:2.10.1')
 
     //lifecycle
-    def lifecycle_version = '2.6.0'
+    def lifecycle_version = '2.6.1'
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
 
     //media
     implementation("androidx.media:media:1.6.0")
-    implementation("com.google.android.exoplayer:exoplayer-core:$exoplayer_version")
-    implementation("com.google.android.exoplayer:extension-okhttp:$exoplayer_version")
+    // For media playback using ExoPlayer
+    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    // For loading data using the OkHttp network stack
+    implementation "androidx.media3:media3-datasource-okhttp:$media3_version"
+    // For exposing and controlling media sessions
+    //implementation "androidx.media3:media3-session:$media3_version"
 
     //Splitties
     implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
@@ -194,19 +201,20 @@ dependencies {
     implementation('io.github.jeremyliao:live-event-bus-x:1.8.0')
 
     //规则相关
-    implementation('org.jsoup:jsoup:1.15.4')
-    implementation('com.jayway.jsonpath:json-path:2.7.0')
+    implementation('org.jsoup:jsoup:1.16.1')
+    implementation('com.jayway.jsonpath:json-path:2.8.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
-    implementation implementation(project(path: ':book'))
+    implementation(project(path: ':modules:book'))
 
     //JS rhino
-    //implementation('com.github.gedoor:rhino-android:1.8')
-    implementation(project(path: ':rhino'))
+    appImplementation(project(path: ':modules:rhino1.7.3'))
+    googleImplementation(project(path: ':modules:rhino1.7.3'))
+    lollipopImplementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
-    implementation('com.squareup.okhttp3:okhttp:4.10.0')
+    implementation('com.squareup.okhttp3:okhttp:4.11.0')
     appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    appImplementation 'com.google.protobuf:protobuf-javalite:3.22.2'
+    appImplementation 'com.google.protobuf:protobuf-javalite:3.23.1'
 
     //Glide
     def glideVersion = "4.15.1"
@@ -224,13 +232,14 @@ dependencies {
     implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
 
     //二维码
-    implementation('com.github.jenly1314:zxing-lite:2.3.1')
+    implementation('com.github.jenly1314:zxing-lite:2.4.0')
 
     //颜色选择
     implementation('com.jaredrummler:colorpicker:1.1.0')
 
     //apache
     implementation('org.apache.commons:commons-text:1.10.0')
+    //noinspection GradleDependency,1.23.0对安卓支持不好
     implementation 'org.apache.commons:commons-compress:1.22'
     implementation 'org.tukaani:xz:1.9'
 
@@ -245,11 +254,11 @@ dependencies {
     implementation("io.noties.markwon:html:$markwonVersion")
 
     //转换繁体
-    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.11')
+    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.13')
 
     //加解密类库,有些书源使用
     //noinspection GradleDependency,GradlePackageUpdate
-    implementation('cn.hutool:hutool-crypto:5.8.15')
+    implementation('cn.hutool:hutool-crypto:5.8.18')
 
     //firebase, 崩溃统计和性能统计, 会导致共存版本崩溃
     //implementation platform('com.google.firebase:firebase-bom:30.0.1')

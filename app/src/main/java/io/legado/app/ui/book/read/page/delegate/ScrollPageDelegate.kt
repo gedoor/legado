@@ -33,6 +33,15 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     }
 
     override fun onTouch(event: MotionEvent) {
+        //在多点触控时，事件不走ACTION_DOWN分支而产生的特殊事件处理
+        if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN){
+            //当多个手指同时按下的情况，将最后一个按下的手指的坐标设置为起始坐标，所以只有最后一个手指的滑动事件被处理
+            readView.setStartPoint(event.getX(event.pointerCount - 1), event.getY(event.pointerCount - 1), false)
+        } else if(event.actionMasked == MotionEvent.ACTION_POINTER_UP){
+            //当多个手指同时按下的情况，当抬起一个手指时，起始坐标恢复为第一次按下的手指的坐标
+            readView.setStartPoint(event.x, event.y, false)
+            return
+        }
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 abortAnim()
@@ -58,26 +67,14 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     private fun onScroll(event: MotionEvent) {
         mVelocity.addMovement(event)
         mVelocity.computeCurrentVelocity(velocityDuration)
-        val action: Int = event.action
-        val pointerUp =
-            action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_POINTER_UP
-        val skipIndex = if (pointerUp) event.actionIndex else -1
-        // Determine focal point
-        var sumX = 0f
-        var sumY = 0f
-        val count: Int = event.pointerCount
-        for (i in 0 until count) {
-            if (skipIndex == i) continue
-            sumX += event.getX(i)
-            sumY += event.getY(i)
-        }
-        val div = if (pointerUp) count - 1 else count
-        val focusX = sumX / div
-        val focusY = sumY / div
-        readView.setTouchPoint(sumX, sumY)
+        //取最后添加(即最新的)一个触摸点来计算滚动位置
+        //多点触控时即最后按下的手指产生的事件点
+        val pointX = event.getX(event.pointerCount - 1)
+        val pointY = event.getY(event.pointerCount - 1)
+        readView.setTouchPoint(pointX, pointY)
         if (!isMoved) {
-            val deltaX = (focusX - startX).toInt()
-            val deltaY = (focusY - startY).toInt()
+            val deltaX = (pointX - startX).toInt()
+            val deltaY = (pointY - startY).toInt()
             val distance = deltaX * deltaX + deltaY * deltaY
             isMoved = distance > readView.slopSquare
         }

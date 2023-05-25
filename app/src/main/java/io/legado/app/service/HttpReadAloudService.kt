@@ -2,10 +2,10 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.net.Uri
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.constant.AppLog
@@ -19,9 +19,18 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Response
@@ -62,6 +71,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun play() {
+        pageChanged = false
         exoPlayer.stop()
         if (contentList.isEmpty()) {
             AppLog.putDebug("朗读列表为空")
@@ -158,9 +168,11 @@ class HttpReadAloudService : BaseReadAloudService(),
                 if (checkJs?.isNotBlank() == true) {
                     response = analyzeUrl.evalJS(checkJs, response) as Response
                 }
-                val ct = httpTts.contentType
-                if (ct?.isNotBlank() == true) {
-                    response.headers["Content-Type"]?.let { contentType ->
+                response.headers["Content-Type"]?.let { contentType ->
+                    val ct = httpTts.contentType
+                    if (contentType == "application/json") {
+                        throw NoStackTraceException(response.body!!.string())
+                    } else if (ct?.isNotBlank() == true) {
                         if (!contentType.matches(ct.toRegex())) {
                             throw NoStackTraceException("TTS服务器返回错误：" + response.body!!.string())
                         }
@@ -285,8 +297,12 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun resumeReadAloud() {
         super.resumeReadAloud()
         kotlin.runCatching {
-            exoPlayer.play()
-            upPlayPos()
+            if (pageChanged) {
+                play()
+            } else {
+                exoPlayer.play()
+                upPlayPos()
+            }
         }
     }
 

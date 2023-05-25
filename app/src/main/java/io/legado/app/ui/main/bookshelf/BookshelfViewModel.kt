@@ -12,12 +12,24 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.isActive
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.forEach
+import kotlin.collections.hashMapOf
+import kotlin.collections.set
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
 
@@ -33,7 +45,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 if (bookUrl.isEmpty()) continue
                 if (appDb.bookDao.getBook(bookUrl) != null) continue
                 val baseUrl = NetworkUtils.getBaseUrl(bookUrl) ?: continue
-                var source = appDb.bookSourceDao.getBookSource(baseUrl)
+                var source = appDb.bookSourceDao.getBookSourceAddBook(baseUrl)
                 if (source == null) {
                     hasBookUrlPattern.forEach { bookSource ->
                         if (bookUrl.matches(bookSource.bookUrlPattern!!.toRegex())) {
@@ -75,7 +87,6 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 val path = "${context.filesDir}/books.json"
                 FileUtils.delete(path)
                 val file = FileUtils.createFileWithReplace(path)
-                @Suppress("BlockingMethodInNonBlockingContext")
                 FileOutputStream(file).use { out ->
                     val writer = JsonWriter(OutputStreamWriter(out, "UTF-8"))
                     writer.setIndent("  ")

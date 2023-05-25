@@ -7,7 +7,6 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr
-import kotlinx.coroutines.runBlocking
 
 object ReplaceRuleController {
 
@@ -77,19 +76,18 @@ object ReplaceRuleController {
                 returnData.setErrorMsg("替换规则不能为空")
             }
             val text = map["text"] as String
-            val content = runBlocking {
-                try {
-                    if (rule.isRegex) {
-                        text.replace(
-                            rule.pattern.toRegex(),
-                            rule.replacement, rule.timeoutMillisecond
-                        )
-                    } else {
-                        text.replace(rule.pattern, rule.replacement)
-                    }
-                } catch (e: Exception) {
-                    e.stackTraceStr
+            val content = try {
+                if (rule.isRegex) {
+                    text.replace(
+                        rule.pattern.toRegex(),
+                        rule.replacement,
+                        rule.getValidTimeoutMillisecond()
+                    )
+                } else {
+                    text.replace(rule.pattern, rule.replacement)
                 }
+            } catch (e: Exception) {
+                e.stackTraceStr
             }
             returnData.setData(content)
         }

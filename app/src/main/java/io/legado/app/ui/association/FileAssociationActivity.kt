@@ -15,7 +15,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.ui.document.HandleFileContract
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -116,11 +116,13 @@ class FileAssociationActivity :
                         viewModel.dispatchIndent(data)
                     }.onDenied {
                         toastOnUi("请求存储权限失败。")
+                        finish()
                     }.request()
             } else {
                 toastOnUi("由于安卓系统限制，请使用系统文件管理重新打开。")
+                finish()
             }
-        }
+        } ?: finish()
     }
 
     private fun importBook(uri: Uri) {

@@ -39,7 +39,7 @@ open class WebDav(
     companion object {
 
         fun fromPath(path: String): WebDav {
-            val id = AnalyzeUrl(path).serverID
+            val id = AnalyzeUrl(path).serverID ?: throw WebDavException("没有serverID")
             val authorization = Authorization(id)
             return WebDav(path, authorization)
         }
@@ -229,8 +229,22 @@ open class WebDav(
                 addHeader("Depth", "0")
                 val requestBody = EXISTS.toRequestBody("application/xml".toMediaType())
                 method("PROPFIND", requestBody)
-            }.isSuccessful
+            }.use { it.isSuccessful }
         }.getOrDefault(false)
+    }
+
+    /**
+     * 检查用户名密码是否有效
+     */
+    suspend fun check(): Boolean {
+        return kotlin.runCatching {
+            webDavClient.newCallResponse {
+                url(url)
+                addHeader("Depth", "0")
+                val requestBody = EXISTS.toRequestBody("application/xml".toMediaType())
+                method("PROPFIND", requestBody)
+            }.use { it.code != 401 }
+        }.getOrDefault(true)
     }
 
     /**
@@ -245,7 +259,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     method("MKCOL", null)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -259,7 +273,6 @@ open class WebDav(
      * @param savedPath       本地的完整路径，包括最后的文件名
      * @param replaceExisting 是否替换本地的同名文件
      */
-    @Suppress("BlockingMethodInNonBlockingContext")
     @Throws(WebDavException::class)
     suspend fun downloadTo(savedPath: String, replaceExisting: Boolean) {
         val file = File(savedPath)
@@ -301,7 +314,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     put(fileBody)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -321,7 +334,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     put(fileBody)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -341,7 +354,7 @@ open class WebDav(
                 webDavClient.newCallResponse {
                     url(url)
                     put(fileBody)
-                }.let {
+                }.use {
                     checkResult(it)
                 }
             }
@@ -372,7 +385,7 @@ open class WebDav(
             webDavClient.newCallResponse {
                 url(url)
                 method("DELETE", null)
-            }.let {
+            }.use {
                 checkResult(it)
             }
         }.onFailure {
@@ -386,6 +399,16 @@ open class WebDav(
     private fun checkResult(response: Response) {
         if (!response.isSuccessful) {
             val body = response.body?.string()
+            if (response.code == 401) {
+                val headers = response.headers("WWW-Authenticate")
+                val supportBasicAuth = headers.any {
+                    it.startsWith("Basic", ignoreCase = true)
+                }
+                if (headers.isNotEmpty() && !supportBasicAuth) {
+                    AppLog.put("服务器不支持BasicAuth认证")
+                }
+            }
+
             if (response.message.isNotBlank() || body.isNullOrBlank()) {
                 throw WebDavException("${url}\n${response.code}:${response.message}")
             }

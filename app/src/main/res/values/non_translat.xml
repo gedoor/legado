@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="pk_bookshelf_px" translatable="false">bookshelf_px</string>
     <string name="legado_gzh" translatable="false">开源阅读</string>
-    <string name="email" translatable="false">kunfei.ge@gmail.com</string>
+    <string name="email" translatable="false">gekunfei@live.com</string>
 
     <string name="source_rule_url" translatable="false">https://alanskycn.gitee.io/teachme/</string>
     <string name="this_github_url" translatable="false">https://github.com/gedoor/legado</string>

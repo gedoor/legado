@@ -37,10 +37,14 @@ object BookType {
      */
     const val local = 0b100000000
 
+    /**
+     * 512 压缩包 表明书籍文件是从压缩包内解压来的
+     */
+    const val archive = 0b1000000000
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(text, updateError, audio, image, webFile, local)
+    @IntDef(text, updateError, audio, image, webFile, local, archive)
     annotation class Type
 
 

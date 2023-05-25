@@ -15,6 +15,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.ContentEmptyException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
+import io.legado.app.help.IntentData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.source.exploreKinds
 import io.legado.app.model.CheckSource
@@ -65,12 +66,12 @@ class CheckSourceService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            IntentAction.start -> intent.getStringArrayListExtra("selectIds")?.let {
+            IntentAction.start -> IntentData.get<List<String>>("checkSourceSelectedIds")?.let {
                 check(it)
             }
 
             IntentAction.resume -> upNotification()
-            else -> stopSelf()
+            IntentAction.stop -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -212,6 +213,7 @@ class CheckSourceService : BaseService() {
                     source.bookSourceType != BookSourceType.file
                 ) {
                     val toc = WebBook.getChapterListAwait(source, mBook).getOrThrow()
+                        .filter { !(it.isVolume && it.url.startsWith(it.title)) }
                     val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
                     //校验正文
                     if (CheckSource.checkContent) {

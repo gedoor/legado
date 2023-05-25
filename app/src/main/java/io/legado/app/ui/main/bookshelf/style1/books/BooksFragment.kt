@@ -46,6 +46,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         bundle.putInt("position", position)
         bundle.putLong("groupId", group.groupId)
         bundle.putInt("bookSort", group.getRealBookSort())
+        bundle.putBoolean("enableRefresh", group.enableRefresh)
         arguments = bundle
     }
 
@@ -77,6 +78,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
             bookSort = it.getInt("bookSort", 0)
+            binding.refreshLayout.isEnabled = it.getBoolean("enableRefresh", true)
         }
         initRecyclerView()
         upRecyclerData()
@@ -121,6 +123,10 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             bookSort = sort
             upRecyclerData()
         }
+    }
+
+    fun setEnableRefresh(enableRefresh: Boolean) {
+        binding.refreshLayout.isEnabled = enableRefresh
     }
 
     private fun upRecyclerData() {

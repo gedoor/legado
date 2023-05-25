@@ -105,6 +105,13 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="fileManage"
+            android:title="@string/file_manage"
+            android:summary="@string/file_manage_summary"
+            android:icon="@drawable/ic_folder_outline"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="donate"
             android:summary="@string/donate_summary"
             android:title="@string/donate"

@@ -208,6 +208,7 @@ class ReadMenu @JvmOverloads constructor(
         } else {
             titleBarAddition.gone()
         }
+        upBrightnessVwPos()
     }
 
     fun reset() {
@@ -366,7 +367,10 @@ class ReadMenu @JvmOverloads constructor(
             }
 
         })
-
+        vwBrightnessPosAdjust.setOnClickListener {
+            AppConfig.brightnessVwPos = !AppConfig.brightnessVwPos
+            upBrightnessVwPos()
+        }
         //阅读进度
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
@@ -492,6 +496,7 @@ class ReadMenu @JvmOverloads constructor(
                         progress = ReadBook.durPageIndex
                     }
                 }
+
                 "chapter" -> {
                     max = ReadBook.chapterSize - 1
                     progress = ReadBook.durChapterIndex
@@ -513,6 +518,20 @@ class ReadMenu @JvmOverloads constructor(
             fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
         }
         fabAutoPage.setColorFilter(textColor)
+    }
+
+    private fun upBrightnessVwPos() {
+        if (AppConfig.brightnessVwPos) {
+            binding.root.modifyBegin()
+                .clear(R.id.ll_brightness, ConstraintModify.Anchor.LEFT)
+                .rightToRightOf(R.id.ll_brightness, R.id.vw_menu_root)
+                .commit()
+        } else {
+            binding.root.modifyBegin()
+                .clear(R.id.ll_brightness, ConstraintModify.Anchor.RIGHT)
+                .leftToLeftOf(R.id.ll_brightness, R.id.vw_menu_root)
+                .commit()
+        }
     }
 
     interface CallBack {

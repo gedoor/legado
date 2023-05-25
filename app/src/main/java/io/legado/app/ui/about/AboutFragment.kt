@@ -13,7 +13,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.help.AppUpdate
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.prefs.PreferenceCategory
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
@@ -23,7 +22,7 @@ import splitties.init.appCtx
 class AboutFragment : PreferenceFragmentCompat() {
 
     private val qqGroups = linkedMapOf(
-        Pair("(QQ群1)805192012", "6GlFKjLeIk5RhQnR3PNVDaKB6j10royo"),
+        Pair("(QQ群1)809302327", "TvJfIiNQUDgTrJU7lwx1WfJOHVkFaQNr"),
         Pair("(QQ群2)773736122", "5Bm5w6OgLupXnICbYvbgzpPUgf0UlsJF"),
         Pair("(QQ群3)981838750", "g_Sgmp2nQPKqcZQ5qPcKLHziwX_mpps9"),
         Pair("(QQ群4)256929088", "czEJPLDnT4Pd9SKQ6RoRVzKhDxLchZrO"),
@@ -35,8 +34,7 @@ class AboutFragment : PreferenceFragmentCompat() {
         Pair("(QQ群10)812720266", "oW9ksY0sAWUEq0hfM5irN5aOdvKVgMEE")
     )
 
-    private val qqChannel =
-        "https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=25d870&from=246610&biz=ka"
+    private val qqChannel = "https://pd.qq.com/s/8qxylhj2s"
 
     private val waitDialog by lazy {
         WaitDialog(requireContext())
@@ -72,9 +70,10 @@ class AboutFragment : PreferenceFragmentCompat() {
             "home_page" -> openUrl(R.string.home_page_url)
             "license" -> showMdFile(getString(R.string.license), "LICENSE.md")
             "disclaimer" -> showMdFile(getString(R.string.disclaimer), "disclaimer.md")
+            "privacyPolicy" -> showMdFile(getString(R.string.privacy_policy), "privacyPolicy.md")
             "qq" -> showQqGroups()
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
-            "crashLog" -> showCrashLogs()
+            "crashLog" -> showDialogFragment<CrashLogsDialog>()
             "qqChannel" -> context?.openUrl(qqChannel)
             "tg" -> openUrl(R.string.tg_url)
             "discord" -> openUrl(R.string.discord_url)
@@ -109,7 +108,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                 }.onError {
                     appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
                 }.onFinally {
-                    waitDialog.hide()
+                    waitDialog.dismiss()
                 }
         }
     }
@@ -149,22 +148,6 @@ class AboutFragment : PreferenceFragmentCompat() {
             toastOnUi("添加失败,请手动添加")
         }
         return false
-    }
-
-    private fun showCrashLogs() {
-        context?.externalCacheDir?.let { exCacheDir ->
-            val crashDir = exCacheDir.getFile("crash")
-            val crashLogs = crashDir.listFiles()
-            val crashLogNames = arrayListOf<String>()
-            crashLogs?.forEach {
-                crashLogNames.add(it.name)
-            }
-            context?.selector(R.string.crash_log, crashLogNames) { _, select ->
-                crashLogs?.getOrNull(select)?.let { logFile ->
-                    showDialogFragment(TextDialog("Crash log", logFile.readText()))
-                }
-            }
-        }
     }
 
 }

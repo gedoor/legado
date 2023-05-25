@@ -18,6 +18,7 @@ object AppPattern {
     val authorRegex = Regex("^\\s*作\\s*者[:：\\s]+|\\s+著")
     val fileNameRegex = Regex("[\\\\/:*?\"<>|.]")
     val splitGroupRegex = Regex("[,;，；]")
+    val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
 
     //书源调试信息中的各种符号
     val debugMessageSymbolRegex = Regex("[⇒◇┌└≡]")
@@ -25,7 +26,7 @@ object AppPattern {
     //本地书籍支持类型
     val bookFileRegex = Regex(".*\\.(txt|epub|umd|pdf)", RegexOption.IGNORE_CASE)
     //压缩文件支持类型
-    val archiveFileRegex = Regex(".*\\.(zip|rar|7z)", RegexOption.IGNORE_CASE)
+    val archiveFileRegex = Regex(".*\\.(zip|rar|7z)$", RegexOption.IGNORE_CASE)
 
     /**
      * 所有标点
@@ -43,4 +44,8 @@ object AppPattern {
     val notReadAloudRegex = Regex("^(\\s|\\p{C}|\\p{P}|\\p{Z}|\\p{S})+$")
 
     val xmlContentTypeRegex = "(application|text)/\\w*\\+?xml.*".toRegex()
+
+    val semicolonRegex = ";".toRegex()
+
+    val equalsRegex = "=".toRegex()
 }

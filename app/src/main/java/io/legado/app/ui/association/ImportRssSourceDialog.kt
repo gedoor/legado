@@ -190,7 +190,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
 
     override fun onCodeSave(code: String, requestId: String?) {
         requestId?.toInt()?.let {
-            RssSource.fromJson(code).getOrNull()?.let { source ->
+            GSON.fromJsonObject<RssSource>(code).getOrNull()?.let { source ->
                 viewModel.allSources[it] = source
                 adapter.setItem(it, source)
             }

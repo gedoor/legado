@@ -6,7 +6,7 @@ import androidx.annotation.Keep
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
 import com.script.SimpleBindings
-import io.legado.app.constant.AppConst.SCRIPT_ENGINE
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppPattern.JS_PATTERN
@@ -20,6 +20,7 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
+import io.legado.app.help.http.CookieManager.mergeCookies
 import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -116,14 +117,14 @@ class AnalyzeUrl(
         val jsMatcher = JS_PATTERN.matcher(ruleUrl)
         var result = ruleUrl
         while (jsMatcher.find()) {
-            if (jsMatcher.start() > start && start > 0) {
+            if (jsMatcher.start() > start) {
                 ruleUrl.substring(start, jsMatcher.start()).trim().let {
                     if (it.isNotEmpty()) {
                         result = it.replace("@result", result)
                     }
                 }
             }
-            result = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), result) as String
+            result = evalJS(jsMatcher.group(2) ?: jsMatcher.group(1), result).toString()
             start = jsMatcher.end()
         }
         if (ruleUrl.length > start) {
@@ -214,6 +215,7 @@ class AnalyzeUrl(
                     urlNoQuery = url.substring(0, pos)
                 }
             }
+
             RequestMethod.POST -> body?.let {
                 if (!it.isJson() && !it.isXml() && headerMap["Content-Type"].isNullOrEmpty()) {
                     analyzeFields(it)
@@ -265,7 +267,12 @@ class AnalyzeUrl(
         bindings["book"] = ruleData as? Book
         bindings["source"] = source
         bindings["result"] = result
-        return SCRIPT_ENGINE.eval(jsStr, bindings)
+        val context = RhinoScriptEngine.getScriptContext(bindings)
+        val scope = RhinoScriptEngine.getRuntimeScope(context)
+        source?.getShareScope()?.let {
+            scope.prototype = it
+        }
+        return RhinoScriptEngine.eval(jsStr, scope)
     }
 
     fun put(key: String, value: String): String {
@@ -279,12 +286,13 @@ class AnalyzeUrl(
             "bookName" -> (ruleData as? Book)?.let {
                 return it.name
             }
+
             "title" -> chapter?.let {
                 return it.title
             }
         }
-        return chapter?.getVariable(key)
-            ?: ruleData?.getVariable(key)
+        return chapter?.getVariable(key)?.takeIf { it.isNotEmpty() }
+            ?: ruleData?.getVariable(key)?.takeIf { it.isNotEmpty() }
             ?: ""
     }
 
@@ -344,7 +352,10 @@ class AnalyzeUrl(
             }
         }
         if (waitTime > 0) {
-            throw ConcurrentException("根据并发率还需等待${waitTime}毫秒才可以访问", waitTime = waitTime)
+            throw ConcurrentException(
+                "根据并发率还需等待${waitTime}毫秒才可以访问",
+                waitTime = waitTime
+            )
         }
         return fetchRecord
     }
@@ -405,6 +416,7 @@ class AnalyzeUrl(
                             headerMap = headerMap
                         ).getStrResponse()
                     }
+
                     else -> BackstageWebView(
                         url = url,
                         tag = source?.getKey(),
@@ -430,6 +442,7 @@ class AnalyzeUrl(
                                 postJson(body)
                             }
                         }
+
                         else -> get(urlNoQuery, fieldMap, true)
                     }
                 }.let {
@@ -475,7 +488,6 @@ class AnalyzeUrl(
         }
         try {
             setCookie()
-            @Suppress("BlockingMethodInNonBlockingContext")
             val response = getProxyClient(proxy).newCallResponse(retry) {
                 addHeaders(headerMap)
                 when (method) {
@@ -492,6 +504,7 @@ class AnalyzeUrl(
                             postJson(body)
                         }
                     }
+
                     else -> get(urlNoQuery, fieldMap, true)
                 }
             }
@@ -514,7 +527,6 @@ class AnalyzeUrl(
     private fun getByteArrayIfDataUri(): ByteArray? {
         @Suppress("RegExpRedundantEscape")
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
-        @Suppress("BlockingMethodInNonBlockingContext")
         if (dataUriFindResult != null) {
             val dataUriBase64 = dataUriFindResult.groupValues[1]
             val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
@@ -526,7 +538,6 @@ class AnalyzeUrl(
     /**
      * 访问网站,返回ByteArray
      */
-    @Suppress("UnnecessaryVariable", "LiftReturnOrAssignment")
     @Throws(ConcurrentException::class)
     suspend fun getByteArrayAwait(): ByteArray {
         getByteArrayIfDataUri()?.let {
@@ -544,7 +555,6 @@ class AnalyzeUrl(
     /**
      * 访问网站,返回InputStream
      */
-    @Suppress("LiftReturnOrAssignment")
     @Throws(ConcurrentException::class)
     suspend fun getInputStreamAwait(): InputStream {
         getByteArrayIfDataUri()?.let {
@@ -597,12 +607,12 @@ class AnalyzeUrl(
             CookieStore.getCookie(domain)
         }
         if (cookie.isNotEmpty()) {
-            val cookieMap = CookieStore.cookieToMap(cookie)
-            val customCookieMap = CookieStore.cookieToMap(headerMap["Cookie"] ?: "")
-            cookieMap.putAll(customCookieMap)
-            CookieStore.mapToCookie(cookieMap)?.let {
+            mergeCookies(cookie, headerMap["Cookie"])?.let {
                 headerMap.put("Cookie", it)
             }
+        }
+        if (enabledCookieJar) {
+            headerMap[CookieManager.cookieJarHeader] = "1"
         }
     }
 
@@ -614,8 +624,10 @@ class AnalyzeUrl(
         if (enabledCookieJar) {
             val key = "${domain}_cookieJar"
             CacheManager.getFromMemory(key)?.let {
-                CookieStore.replaceCookie(domain, it)
-                CacheManager.deleteMemory(key)
+                if (it is String) {
+                    CookieStore.replaceCookie(domain, it)
+                    CacheManager.deleteMemory(key)
+                }
             }
         }
     }
