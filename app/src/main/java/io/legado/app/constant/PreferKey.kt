@@ -54,6 +54,7 @@ object PreferKey {
     const val webDavAccount = "web_dav_account"
     const val webDavPassword = "web_dav_password"
     const val webDavDir = "webDavDir"
+    const val enableCustomExport = "enableCustomExport"
     const val exportToWebDav = "webDavCacheBackup"
     const val exportNoChapterName = "exportNoChapterName"
     const val exportType = "exportType"

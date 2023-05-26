@@ -33,6 +33,7 @@
     <string name="replace">Reemplazar</string>
     <string name="replace_purify">Reemplazo</string>
     <string name="replace_purify_desc">Configurar reglas de reemplazo</string>
+    <string name="custom_export_section">Custom export chapter of epub</string>
     <string name="not_available">No disponible</string>
     <string name="enable">Activar</string>
     <string name="replace_purify_search">Buscar reemplazo</string>
@@ -1104,4 +1105,9 @@
     <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
     <string name="format_js_rule">格式化规则(formatJs)</string>
     <string name="adjust_pos">调整位置</string>
+    <string name="select_section_export">Choose some chapters to be exported</string>
+    <string name="error_scope_input">Please enter the correct range</string>
+    <string name="custom_export">Custom Export</string>
+    <string name="file_contains_number">The number of chapters contained in each file</string>
+    <string name="export_chapter_index">The section index that needs to be exported</string>
 </resources>

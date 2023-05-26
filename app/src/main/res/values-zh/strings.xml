@@ -31,6 +31,7 @@
     <string name="delete_all">删除所有</string>
     <string name="replace">替换</string>
     <string name="replace_purify">替换净化</string>
+    <string name="custom_export_section">自定义Epub导出章节</string>
     <string name="replace_purify_desc">配置替换净化规则</string>
     <string name="not_available">暂无</string>
     <string name="enable">启用</string>
@@ -346,6 +347,7 @@
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
     <string name="update_toc">更新目录</string>
     <string name="txt_toc_rule">TXT 目录规则</string>
+    <string name="select_section_export">选择待导出章节</string>
     <string name="set_charset">设置编码</string>
     <string name="swap_sort">倒序-顺序</string>
     <string name="sort">排序</string>
@@ -1106,4 +1108,8 @@
     <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
     <string name="format_js_rule">格式化规则(formatJs)</string>
     <string name="adjust_pos">调整位置</string>
+    <string name="error_scope_input">请输入正确的范围</string>
+    <string name="custom_export">自定义导出</string>
+    <string name="file_contains_number">每个文件包含的章节数量</string>
+    <string name="export_chapter_index">需要输出的章节</string>
 </resources>

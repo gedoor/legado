@@ -30,6 +30,7 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="delete_all">Delete all</string>
+    <string name="custom_export_section">Custom export chapter of epub</string>
     <string name="replace">Replace</string>
     <string name="replace_purify">Replacement</string>
     <string name="replace_purify_desc">Configure replacement rules</string>
@@ -347,6 +348,7 @@
     <string name="ps_show_all_find">Display the selected origin\'s Discovery if closed</string>
     <string name="update_toc">Update chapters</string>
     <string name="txt_toc_rule">Txt Chapters Rule</string>
+    <string name="select_section_export">Choose some chapters to be exported</string>
     <string name="set_charset">Text encoding</string>
     <string name="swap_sort">Ascending/Descending order</string>
     <string name="sort">Sort</string>
@@ -1107,4 +1109,8 @@
     <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
     <string name="format_js_rule">格式化规则(formatJs)</string>
     <string name="adjust_pos">调整位置</string>
+    <string name="error_scope_input">Please enter the correct range</string>
+    <string name="custom_export">Custom Export</string>
+    <string name="file_contains_number">The number of chapters contained in each file</string>
+    <string name="export_chapter_index">The section index that needs to be exported</string>
 </resources>
