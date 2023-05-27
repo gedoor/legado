@@ -248,6 +248,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 } else {
                     AppConfig.searchGroup = item.title.toString()
                 }
+                upGroupMenu()
                 viewModel.startOrStopSearch()
                 viewModel.refresh()
             }
@@ -345,24 +346,29 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
      * 更新分组菜单
      */
     private fun upGroupMenu() {
-        binding.toolBar.menu.findItem(R.id.menu_group)?.subMenu?.let { menu ->
-            val selectedGroup = AppConfig.searchGroup
-            menu.removeGroup(R.id.source_group)
-            val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
-            var hasSelectedGroup = false
-            groups.sortedWith { o1, o2 ->
-                o1.cnCompare(o2)
-            }.forEach { group ->
-                menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
-                    if (group == selectedGroup) {
-                        it.isChecked = true
-                        hasSelectedGroup = true
+        binding.toolBar.menu.findItem(R.id.menu_group)?.run {
+            subMenu?.let { menu ->
+                val selectedGroup = AppConfig.searchGroup
+                menu.removeGroup(R.id.source_group)
+                val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+                var hasSelectedGroup = false
+                groups.sortedWith { o1, o2 ->
+                    o1.cnCompare(o2)
+                }.forEach { group ->
+                    menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
+                        if (group == selectedGroup) {
+                            it.isChecked = true
+                            hasSelectedGroup = true
+                        }
                     }
                 }
-            }
-            menu.setGroupCheckable(R.id.source_group, true, true)
-            if (!hasSelectedGroup) {
-                allItem.isChecked = true
+                menu.setGroupCheckable(R.id.source_group, true, true)
+                if (hasSelectedGroup) {
+                    title = getString(R.string.group) + "(" + AppConfig.searchGroup + ")"
+                } else {
+                    allItem.isChecked = true
+                    title = getString(R.string.group)
+                }
             }
         }
     }
