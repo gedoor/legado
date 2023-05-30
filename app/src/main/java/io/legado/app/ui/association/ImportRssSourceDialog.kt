@@ -141,6 +141,8 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             AppConfig.importKeepName
         binding.toolBar.menu.findItem(R.id.menu_keep_group)?.isChecked =
             AppConfig.importKeepGroup
+        binding.toolBar.menu.findItem(R.id.menu_select_new_source)?.isVisible = false
+        binding.toolBar.menu.findItem(R.id.menu_select_update_source)?.isVisible = false
     }
 
     @SuppressLint("InflateParams")
@@ -151,6 +153,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepName, item.isChecked)
             }
+
             R.id.menu_keep_group -> {
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepGroup, item.isChecked)
