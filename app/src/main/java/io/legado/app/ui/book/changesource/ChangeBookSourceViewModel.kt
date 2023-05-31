@@ -137,12 +137,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchIndex = -1
     }
 
-    fun refresh() {
+    fun refresh(): Boolean {
         getDbSearchBooks().let {
             searchBooks.clear()
             searchBooks.addAll(it)
             searchCallback?.upAdapter()
         }
+        return searchBooks.isEmpty()
     }
 
     /**

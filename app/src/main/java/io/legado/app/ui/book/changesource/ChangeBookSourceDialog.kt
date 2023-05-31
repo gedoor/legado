@@ -41,6 +41,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -79,7 +80,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                         cancelButton()
                         okButton {
                             AppConfig.searchGroup = ""
-                            upGroupMenu()
+                            upGroupMenuName()
                             viewModel.startSearch()
                         }
                     }
@@ -248,9 +249,12 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 } else {
                     AppConfig.searchGroup = item.title.toString()
                 }
-                upGroupMenu()
-                viewModel.startOrStopSearch()
-                viewModel.refresh()
+                upGroupMenuName()
+                launch(IO) {
+                    if (viewModel.refresh()) {
+                        viewModel.startOrStopSearch()
+                    }
+                }
             }
         }
         return false
@@ -370,6 +374,19 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                     title = getString(R.string.group)
                 }
             }
+        }
+    }
+
+    /**
+     * 更新分组菜单名
+     */
+    private fun upGroupMenuName() {
+        val menuGroup = binding.toolBar.menu.findItem(R.id.menu_group)
+        val searchGroup = AppConfig.searchGroup
+        if (searchGroup.isEmpty()) {
+            menuGroup?.title = getString(R.string.group)
+        } else {
+            menuGroup?.title = getString(R.string.group) + "($searchGroup)"
         }
     }
 
