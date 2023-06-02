@@ -1,5 +1,5 @@
 <template>
-  <div class="index-wrapper">
+  <div :class="{ 'index-wrapper': true, night: isNight, day: !isNight }">
     <div class="navigation-wrapper">
       <div class="navigation-title-wrapper">
         <div class="navigation-title">阅读</div>
@@ -84,6 +84,11 @@ import API from "@api";
 
 const store = useBookStore();
 const { connectStatus, connectType, newConnect, shelf } = storeToRefs(store);
+
+const theme = computed(() => {
+  return store.config.theme;
+});
+const isNight = computed(() => theme.value == 6);
 
 const readingRecent = ref({
   name: "尚无阅读记录",
@@ -261,6 +266,11 @@ const fetchBookShelfData = () => {
       }
     }
 
+    .bottom-wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
     .recent-wrapper {
       margin-top: 36px;
 
@@ -322,10 +332,15 @@ const fetchBookShelfData = () => {
     width: 100%;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 }
 
-@media screen and (max-width: 428px) {
+@media screen and (max-width: 428px),
+  screen and (max-width: 750px) and (min-resolution: 2dppx),
+  screen and (max-width: 750px) and (-webkit-min-device-pixel-ratio: 2),
+  screen and (max-width: 750px) and (min--moz-device-pixel-ratio: 2) {
   .index-wrapper {
     overflow-x: hidden;
     flex-direction: column;
@@ -339,17 +354,50 @@ const fetchBookShelfData = () => {
         justify-content: space-between;
         align-items: flex-end;
       }
-      .bottom-wrapper,
+      .bottom-wrapper {
+        flex-direction: row;
+        > * {
+          flex-grow: 1;
+          margin-top: 18px;
+          .reading-recent,
+          .setting-item {
+            margin-bottom: 0px;
+          }
+        }
+      }
       .bottom-icons {
         display: none;
       }
     }
     .shelf-wrapper {
       padding: 0;
+      flex-grow: 1;
       :deep(.el-loading-spinner) {
         display: none;
       }
     }
+  }
+}
+
+.night {
+  :deep(.navigation-wrapper) {
+    background-color: #454545;
+    .navigation-title {
+      color: #aeaeae;
+    }
+    .search-wrapper {
+      .search-input {
+        .el-input__wrapper {
+          background-color: #454545;
+        }
+        .el-input__inner {
+          color: #b1b1b1;
+        }
+      }
+    }
+  }
+  :deep(.shelf-wrapper) {
+    background-color: #161819;
   }
 }
 </style>
