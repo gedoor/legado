@@ -91,27 +91,38 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
         execute {
             val mText = text.trim()
             when {
-                mText.isJsonObject() -> {
+                mText.isJsonObject() -> kotlin.runCatching {
                     val json = JsonPath.parse(mText)
                     val urls = json.read<List<String>>("$.sourceUrls")
                     if (!urls.isNullOrEmpty()) {
                         urls.forEach {
                             importSourceUrl(it)
                         }
-                    } else {
-                        GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
-                            allSources.addAll(it)
-                        }
                     }
-                }
-                mText.isJsonArray() -> {
+                }.onFailure {
                     GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
+                        val source = it.firstOrNull() ?: return@let
+                        if (source.sourceUrl.isEmpty()) {
+                            throw NoStackTraceException("不是订阅源")
+                        }
                         allSources.addAll(it)
                     }
                 }
+
+                mText.isJsonArray() -> {
+                    GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
+                        val source = it.firstOrNull() ?: return@let
+                        if (source.sourceUrl.isEmpty()) {
+                            throw NoStackTraceException("不是订阅源")
+                        }
+                        allSources.addAll(it)
+                    }
+                }
+
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
                 }
+
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
@@ -133,6 +144,9 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
         }.byteStream().let { body ->
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
+                if (!item.containsKey("sourceUrl")) {
+                    throw NoStackTraceException("不是订阅源")
+                }
                 val jsonItem = jsonPath.parse(item)
                 GSON.fromJsonObject<RssSource>(jsonItem.jsonString()).getOrThrow().let { source ->
                     allSources.add(source)

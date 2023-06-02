@@ -127,6 +127,9 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                     }.onFailure {
                         GSON.fromJsonObject<BookSource>(mText).getOrThrow().let {
+                            if (it.bookSourceUrl.isEmpty()) {
+                                throw NoStackTraceException("不是书源")
+                            }
                             allSources.add(it)
                         }
                     }
@@ -134,6 +137,10 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
 
                 mText.isJsonArray() -> GSON.fromJsonArray<BookSource>(mText).getOrThrow()
                     .let { items ->
+                        val source = items.firstOrNull() ?: return@let
+                        if (source.bookSourceUrl.isEmpty()) {
+                            throw NoStackTraceException("不是书源")
+                        }
                         allSources.addAll(items)
                     }
 
@@ -143,8 +150,14 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
 
                 mText.isUri() -> {
                     val uri = Uri.parse(mText)
-                    uri.inputStream(context).getOrThrow().use {
-                        allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
+                    uri.inputStream(context).getOrThrow().use { inputS ->
+                        GSON.fromJsonArray<BookSource>(inputS).getOrThrow().let {
+                            val source = it.firstOrNull() ?: return@let
+                            if (source.bookSourceUrl.isEmpty()) {
+                                throw NoStackTraceException("不是书源")
+                            }
+                            allSources.addAll(it)
+                        }
                     }
                 }
 
@@ -166,8 +179,14 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.byteStream().use {
-            allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
+        }.byteStream().use { body ->
+            GSON.fromJsonArray<BookSource>(body).getOrThrow().let {
+                val source = it.firstOrNull() ?: return@let
+                if (source.bookSourceUrl.isEmpty()) {
+                    throw NoStackTraceException("不是书源")
+                }
+                allSources.addAll(it)
+            }
         }
     }
 
