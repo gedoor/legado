@@ -241,7 +241,7 @@ object ChapterProvider {
             if (durY > visibleHeight) {
                 val textPage = textPages.last()
                 textPage.height = durY
-                textPage.text = stringBuilder.toString()
+                textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                 stringBuilder.clear()
                 textPages.add(TextPage())
                 durY = 0f
@@ -266,7 +266,7 @@ object ChapterProvider {
                     if (durY + height > visibleHeight) {
                         val textPage = textPages.last()
                         textPage.height = durY
-                        textPage.text = stringBuilder.toString()
+                        textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                         stringBuilder.clear()
                         textPages.add(TextPage())
                         durY = 0f
