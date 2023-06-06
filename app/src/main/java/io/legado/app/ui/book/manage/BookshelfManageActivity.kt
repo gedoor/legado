@@ -22,17 +22,15 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityArrangeBookBinding
 import io.legado.app.help.book.contains
-import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
-import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
@@ -362,16 +360,10 @@ class BookshelfManageActivity :
         }
     }
 
-    override fun readBook(book: Book) {
-        when {
-            book.isAudio ->
-                startActivity<AudioPlayActivity> {
-                    putExtra("bookUrl", book.bookUrl)
-                }
-
-            else -> startActivity<ReadBookActivity> {
-                putExtra("bookUrl", book.bookUrl)
-            }
+    override fun openBook(book: Book) {
+        startActivity<BookInfoActivity> {
+            putExtra("name", book.name)
+            putExtra("author", book.author)
         }
     }
 

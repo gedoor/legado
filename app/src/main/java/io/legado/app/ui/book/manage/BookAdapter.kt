@@ -91,7 +91,7 @@ class BookAdapter(context: Context, val callBack: CallBack) :
             }
             tvName.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
-                    callBack.readBook(it)
+                    callBack.openBook(it)
                 }
             }
             tvDelete.setOnClickListener {
@@ -235,6 +235,6 @@ class BookAdapter(context: Context, val callBack: CallBack) :
 
         fun selectGroup(requestCode: Int, groupId: Long)
 
-        fun readBook(book: Book)
+        fun openBook(book: Book)
     }
 }
