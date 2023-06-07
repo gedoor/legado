@@ -51,8 +51,19 @@ object BookHelp {
     }
 
     fun updateCacheFolder(oldBook: Book, newBook: Book) {
-        val oldFolderPath = FileUtils.getPath(downloadDir, cacheFolderName, oldBook.getFolderName())
-        val newFolderPath = FileUtils.getPath(downloadDir, cacheFolderName, newBook.getFolderName())
+        val oldFolderName = oldBook.getFolderNameNoCache()
+        val newFolderName = newBook.getFolderNameNoCache()
+        if (oldFolderName == newFolderName) return
+        val oldFolderPath = FileUtils.getPath(
+            downloadDir,
+            cacheFolderName,
+            oldFolderName
+        )
+        val newFolderPath = FileUtils.getPath(
+            downloadDir,
+            cacheFolderName,
+            newFolderName
+        )
         FileUtils.move(oldFolderPath, newFolderPath)
     }
 
@@ -331,21 +342,25 @@ object BookHelp {
      * 设置是否禁用正文的去除重复标题,针对单个章节
      */
     fun setRemoveSameTitle(book: Book, bookChapter: BookChapter, removeSameTitle: Boolean) {
+        val fileName = bookChapter.getFileName("nr")
+        val contentProcessor = ContentProcessor.get(book)
         if (removeSameTitle) {
             val path = FileUtils.getPath(
                 downloadDir,
                 cacheFolderName,
                 book.getFolderName(),
-                bookChapter.getFileName(".nr")
+                fileName
             )
+            contentProcessor.removeSameTitleCache.remove(fileName)
             File(path).delete()
         } else {
             FileUtils.createFileIfNotExist(
                 downloadDir,
                 cacheFolderName,
                 book.getFolderName(),
-                bookChapter.getFileName(".nr")
+                fileName
             )
+            contentProcessor.removeSameTitleCache.add(fileName)
         }
     }
 
@@ -357,7 +372,7 @@ object BookHelp {
             downloadDir,
             cacheFolderName,
             book.getFolderName(),
-            bookChapter.getFileName(".nr")
+            bookChapter.getFileName("nr")
         )
         return !File(path).exists()
     }

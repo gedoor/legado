@@ -54,6 +54,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
     var preDownloadTask: Coroutine<*>? = null
     val downloadedChapters = hashSetOf<Int>()
+    var contentProcessor: ContentProcessor? = null
 
     //暂时保存跳转前进度
     fun saveCurrentBookProcess() {
@@ -74,6 +75,7 @@ object ReadBook : CoroutineScope by MainScope() {
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
+        contentProcessor = ContentProcessor.get(book)
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
         isLocalBook = book.isLocal

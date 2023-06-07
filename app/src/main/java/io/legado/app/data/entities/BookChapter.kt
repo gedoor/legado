@@ -59,6 +59,12 @@ data class BookChapter(
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
+    @delegate:Ignore
+    @IgnoredOnParcel
+    private val titleMD5: String by lazy {
+        MD5Utils.md5Encode16(title)
+    }
+
     override fun putVariable(key: String, value: String?): Boolean {
         if (super.putVariable(key, value)) {
             variable = GSON.toJson(variableMap)
@@ -145,9 +151,10 @@ data class BookChapter(
 
     @Suppress("unused")
     fun getFileName(suffix: String = "nb"): String =
-        String.format("%05d-%s.%s", index, MD5Utils.md5Encode16(title), suffix)
+        String.format("%05d-%s.%s", index, titleMD5, suffix)
+
 
     @Suppress("unused")
-    fun getFontName(): String = String.format("%05d-%s.ttf", index, MD5Utils.md5Encode16(title))
+    fun getFontName(): String = String.format("%05d-%s.ttf", index, titleMD5)
 }
 

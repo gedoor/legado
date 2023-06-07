@@ -18,7 +18,7 @@ import kotlin.coroutines.coroutineContext
 class SearchContentViewModel(application: Application) : BaseViewModel(application) {
     var bookUrl: String = ""
     var book: Book? = null
-    private var contentProcessor: ContentProcessor? = null
+    var contentProcessor: ContentProcessor? = null
     var lastQuery: String = ""
     var searchResultCounts = 0
     val cacheChapterNames = hashSetOf<String>()
@@ -38,10 +38,9 @@ class SearchContentViewModel(application: Application) : BaseViewModel(applicati
 
     suspend fun searchChapter(
         query: String,
-        chapter: BookChapter?
+        chapter: BookChapter
     ): List<SearchResult> {
         val searchResultsWithinChapter: MutableList<SearchResult> = mutableListOf()
-        chapter ?: return searchResultsWithinChapter
         val book = book ?: return searchResultsWithinChapter
         val chapterContent = BookHelp.getContent(book, chapter) ?: return searchResultsWithinChapter
         coroutineContext.ensureActive()

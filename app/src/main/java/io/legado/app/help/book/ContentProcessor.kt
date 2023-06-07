@@ -2,6 +2,7 @@ package io.legado.app.help.book
 
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern.spaceRegex
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -9,6 +10,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.utils.escapeRegex
 import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
@@ -25,7 +27,8 @@ class ContentProcessor private constructor(
 
     companion object {
         private val processors = hashMapOf<String, WeakReference<ContentProcessor>>()
-        var enableRemoveSameTitle = true
+
+        fun get(book: Book) = get(book.name, book.origin)
 
         fun get(bookName: String, bookOrigin: String): ContentProcessor {
             val processorWr = processors[bookName + bookOrigin]
@@ -47,9 +50,11 @@ class ContentProcessor private constructor(
 
     private val titleReplaceRules = CopyOnWriteArrayList<ReplaceRule>()
     private val contentReplaceRules = CopyOnWriteArrayList<ReplaceRule>()
+    val removeSameTitleCache = hashSetOf<String>()
 
     init {
         upReplaceRules()
+        upRemoveSameTitle()
     }
 
     fun upReplaceRules() {
@@ -61,6 +66,15 @@ class ContentProcessor private constructor(
             clear()
             addAll(appDb.replaceRuleDao.findEnabledByContentScope(bookName, bookOrigin))
         }
+    }
+
+    fun upRemoveSameTitle() {
+        val book = appDb.bookDao.getBookByOrigin(bookName, bookOrigin) ?: return
+        removeSameTitleCache.clear()
+        val files = BookHelp.getChapterFiles(book).filter {
+            it.endsWith("nr")
+        }
+        removeSameTitleCache.addAll(files)
     }
 
     fun getTitleReplaceRules(): List<ReplaceRule> {
@@ -85,9 +99,10 @@ class ContentProcessor private constructor(
         var sameTitleRemoved = false
         if (content != "null") {
             //去除重复标题
-            if (enableRemoveSameTitle && BookHelp.removeSameTitle(book, chapter)) try {
+            val fileName = chapter.getFileName("nr")
+            if (!removeSameTitleCache.contains(fileName)) try {
                 val name = Pattern.quote(book.name)
-                var title = Pattern.quote(chapter.title)
+                var title = chapter.title.escapeRegex().replace(spaceRegex, "\\\\s*")
                 var matcher = Pattern.compile("^(\\s|\\p{P}|${name})*${title}(\\s)*")
                     .matcher(mContent)
                 if (matcher.find()) {

@@ -155,6 +155,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     is SecurityException, is FileNotFoundException -> {
                         permissionDenialLiveData.postValue(1)
                     }
+
                     else -> {
                         AppLog.put("LoadTocError:${it.localizedMessage}", it)
                         ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
@@ -434,14 +435,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      */
     fun reverseRemoveSameTitle() {
         execute {
-            val book = ReadBook.book
-            val textChapter = ReadBook.curTextChapter
-            if (book != null && textChapter != null) {
-                BookHelp.setRemoveSameTitle(
-                    book, textChapter.chapter, !textChapter.sameTitleRemoved
-                )
-                ReadBook.loadContent(ReadBook.durChapterIndex)
-            }
+            val book = ReadBook.book ?: return@execute
+            val textChapter = ReadBook.curTextChapter ?: return@execute
+            BookHelp.setRemoveSameTitle(
+                book, textChapter.chapter, !textChapter.sameTitleRemoved
+            )
+            ReadBook.loadContent(ReadBook.durChapterIndex)
         }
     }
 

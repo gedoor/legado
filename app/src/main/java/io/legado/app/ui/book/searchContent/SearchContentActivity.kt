@@ -27,8 +27,10 @@ import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,6 +49,7 @@ class SearchContentActivity :
     }
     private var durChapterIndex = 0
     private var searchJob: Job? = null
+    private var initJob: Deferred<*>? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val bbg = bottomBackground
@@ -56,36 +59,35 @@ class SearchContentActivity :
         binding.ivSearchContentTop.setColorFilter(btc)
         binding.ivSearchContentBottom.setColorFilter(btc)
         val searchResultList = IntentData.get<List<SearchResult>>("searchResultList")
+        val position = intent.getIntExtra("searchResultIndex", 0)
         val noSearchResult = searchResultList == null
         initSearchView(!noSearchResult)
         initRecyclerView()
         initView()
-        intent.getStringExtra("bookUrl")?.let { bookUrl ->
-            viewModel.initBook(bookUrl) {
-                searchResultList?.let {
-                    viewModel.searchResultList.addAll(it)
-                    viewModel.searchResultCounts = it.size
-                    adapter.setItems(it)
-                    val position = intent.getIntExtra("searchResultIndex", 0)
-                    binding.recyclerView.scrollToPosition(position)
-                }
-                initBook(noSearchResult)
-            }
+        val bookUrl = intent.getStringExtra("bookUrl") ?: return
+        viewModel.initBook(bookUrl) {
+            initSearchResultList(searchResultList, position)
+            initBook(noSearchResult)
         }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            searchView.post {
-                currentFocus?.let {
-                    if (it is EditText) {
-                        it.clearFocus()
-                        it.hideSoftInput()
-                    }
+            currentFocus?.let {
+                if (it.shouldHideSoftInput(ev)) {
+                    it.hideSoftInput()
                 }
             }
         }
         return super.dispatchTouchEvent(ev)
+    }
+
+    private fun initSearchResultList(list: List<SearchResult>?, position: Int) {
+        list ?: return
+        viewModel.searchResultList.addAll(list)
+        viewModel.searchResultCounts = list.size
+        adapter.setItems(list)
+        binding.recyclerView.scrollToPosition(position)
     }
 
     private fun initSearchView(clearFocus: Boolean) {
@@ -149,7 +151,7 @@ class SearchContentActivity :
     }
 
     private fun initCacheFileNames(book: Book) {
-        launch {
+        initJob = async {
             withContext(IO) {
                 viewModel.cacheChapterNames.addAll(BookHelp.getChapterFiles(book))
             }
@@ -179,8 +181,8 @@ class SearchContentActivity :
         viewModel.lastQuery = query
         binding.refreshProgressBar.isAutoLoading = true
         binding.fbStop.visible()
-        ContentProcessor.enableRemoveSameTitle = false
         searchJob = launch(IO) {
+            initJob?.await()
             kotlin.runCatching {
                 appDb.bookChapterDao.getChapterList(viewModel.bookUrl).forEach { bookChapter ->
                     ensureActive()
@@ -211,7 +213,6 @@ class SearchContentActivity :
             }.onFailure {
                 AppLog.put("全文搜索出错\n${it.localizedMessage}", it)
             }
-            ContentProcessor.enableRemoveSameTitle = true
             binding.tvCurrentSearchInfo.post {
                 binding.fbStop.invisible()
                 binding.refreshProgressBar.isAutoLoading = false
