@@ -93,7 +93,9 @@ object AppWebDav {
         val names = arrayListOf<String>()
         authorization?.let {
             var files = WebDav(rootWebDavUrl, it).listFiles()
-            files = files.reversed()
+            files = files.sortedWith { o1, o2 ->
+                AlphanumComparator.compare(o1.displayName, o2.displayName)
+            }.reversed()
             files.forEach { webDav ->
                 val name = webDav.displayName
                 if (name.startsWith("backup")) {

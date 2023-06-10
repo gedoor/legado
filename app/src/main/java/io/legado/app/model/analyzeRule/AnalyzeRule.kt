@@ -13,7 +13,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import org.jsoup.nodes.Entities
+import org.apache.commons.text.StringEscapeUtils
 import org.mozilla.javascript.NativeObject
 import java.net.URL
 import java.util.regex.Pattern
@@ -48,6 +48,8 @@ class AnalyzeRule(
     private var objectChangedXP = false
     private var objectChangedJS = false
     private var objectChangedJP = false
+
+    private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
 
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
@@ -128,7 +130,7 @@ class AnalyzeRule(
     @JvmOverloads
     fun getStringList(rule: String?, mContent: Any? = null, isUrl: Boolean = false): List<String>? {
         if (rule.isNullOrEmpty()) return null
-        val ruleList = splitSourceRule(rule, false)
+        val ruleList = splitSourceRuleCacheString(rule)
         return getStringList(ruleList, mContent, isUrl)
     }
 
@@ -208,13 +210,13 @@ class AnalyzeRule(
     @JvmOverloads
     fun getString(ruleStr: String?, mContent: Any? = null, isUrl: Boolean = false): String {
         if (TextUtils.isEmpty(ruleStr)) return ""
-        val ruleList = splitSourceRule(ruleStr)
+        val ruleList = splitSourceRuleCacheString(ruleStr)
         return getString(ruleList, mContent, isUrl)
     }
 
     fun getString(ruleStr: String?, unescape: Boolean): String {
         if (TextUtils.isEmpty(ruleStr)) return ""
-        val ruleList = splitSourceRule(ruleStr)
+        val ruleList = splitSourceRuleCacheString(ruleStr)
         return getString(ruleList, unescape = unescape)
     }
 
@@ -270,13 +272,7 @@ class AnalyzeRule(
         }
         if (result == null) result = ""
         val str = if (unescape) {
-            kotlin.runCatching {
-                Entities.unescape(result.toString())
-            }.onFailure {
-                log("Entities.unescape() error\n${it.localizedMessage}")
-            }.getOrElse {
-                result.toString()
-            }
+            StringEscapeUtils.unescapeHtml3(result.toString())
         } else result.toString()
         if (isUrl) {
             return if (str.isBlank()) {
@@ -412,6 +408,21 @@ class AnalyzeRule(
             }
         }
         return vResult
+    }
+
+    /**
+     * getString 类规则缓存
+     */
+    fun splitSourceRuleCacheString(ruleStr: String?) : List<SourceRule> {
+        if (ruleStr.isNullOrEmpty()) return emptyList()
+        val cacheRule = stringRuleCache[ruleStr]
+        return if (cacheRule != null) {
+            cacheRule
+        } else {
+            val rules = splitSourceRule(ruleStr)
+            stringRuleCache[ruleStr] = rules
+            rules
+        }
     }
 
     /**

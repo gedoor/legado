@@ -9,12 +9,16 @@ import java.io.InputStream
 @Suppress("unused")
 object MD5Utils {
 
+    private val MD5Digester by lazy {
+        DigestUtil.digester("MD5")
+    }
+
     fun md5Encode(str: String?): String {
-        return DigestUtil.digester("MD5").digestHex(str)
+        return MD5Digester.digestHex(str)
     }
 
     fun md5Encode(inputStream: InputStream): String {
-        return DigestUtil.digester("MD5").digestHex(inputStream)
+        return MD5Digester.digestHex(inputStream)
     }
 
     fun md5Encode16(str: String): String {

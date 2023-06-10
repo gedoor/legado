@@ -9,12 +9,14 @@ import java.io.Reader
 import java.io.Writer
 import java.util.*
 
-open class SimpleScriptContext : ScriptContext {
-    private var engineScope: Bindings = SimpleBindings()
-    override var errorWriter: Writer = PrintWriter(System.err, true)
-    private var globalScope: Bindings? = null
-    override var reader: Reader = InputStreamReader(System.`in`)
+open class SimpleScriptContext(
+    private var engineScope: Bindings = SimpleBindings(),
+    override var errorWriter: Writer = PrintWriter(System.err, true),
+    override var reader: Reader = InputStreamReader(System.`in`),
     override var writer: Writer = PrintWriter(System.out, true)
+) : ScriptContext {
+    private var globalScope: Bindings? = null
+
     override fun setBindings(bindings: Bindings?, scope: Int) {
         when (scope) {
             100 -> {
@@ -24,6 +26,7 @@ open class SimpleScriptContext : ScriptContext {
                 engineScope = bindings
                 return
             }
+
             200 -> {
                 globalScope = bindings
                 return
@@ -46,6 +49,7 @@ open class SimpleScriptContext : ScriptContext {
             100 -> {
                 return engineScope[name]
             }
+
             200 -> {
                 return globalScope?.get(name)
             }
@@ -58,6 +62,7 @@ open class SimpleScriptContext : ScriptContext {
             100 -> {
                 return getBindings(100)?.remove(name)
             }
+
             200 -> {
                 return getBindings(200)?.remove(name)
             }
@@ -71,6 +76,7 @@ open class SimpleScriptContext : ScriptContext {
                 engineScope[name] = value
                 return
             }
+
             200 -> {
                 globalScope?.put(name, value)
                 return

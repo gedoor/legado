@@ -23,6 +23,7 @@ import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
+import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.nodes.Entities
 import splitties.init.appCtx
 import java.io.*
@@ -133,11 +134,7 @@ object LocalBook {
         }
         if (book.isEpub) {
             content = content?.replace("&lt;img", "&lt; img", true) ?: return null
-            return kotlin.runCatching {
-                Entities.unescape(content)
-            }.onFailure {
-                AppLog.put("HTML实体解码失败\n${it.localizedMessage}", it)
-            }.getOrDefault(content)
+            return StringEscapeUtils.unescapeHtml3(content)
         }
         return content
     }

@@ -68,7 +68,7 @@ class ContentProcessor private constructor(
         }
     }
 
-    fun upRemoveSameTitle() {
+    private fun upRemoveSameTitle() {
         val book = appDb.bookDao.getBookByOrigin(bookName, bookOrigin) ?: return
         removeSameTitleCache.clear()
         val files = BookHelp.getChapterFiles(book).filter {
