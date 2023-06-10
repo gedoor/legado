@@ -38,7 +38,7 @@ object Debug {
         showTime: Boolean = true,
         state: Int = 1
     ) {
-        if (BuildConfig.DEBUG && !isHtml) {
+        if (BuildConfig.DEBUG) {
             Log.d("sourceDebug", msg)
         }
         //调试信息始终要执行
