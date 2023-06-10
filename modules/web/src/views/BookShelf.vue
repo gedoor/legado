@@ -337,10 +337,7 @@ const fetchBookShelfData = () => {
   }
 }
 
-@media screen and (max-width: 428px),
-  screen and (max-width: 750px) and (min-resolution: 2dppx),
-  screen and (max-width: 750px) and (-webkit-min-device-pixel-ratio: 2),
-  screen and (max-width: 750px) and (min--moz-device-pixel-ratio: 2) {
+@media screen and (max-width: 750px) {
   .index-wrapper {
     overflow-x: hidden;
     flex-direction: column;
