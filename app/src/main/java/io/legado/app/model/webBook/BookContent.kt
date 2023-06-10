@@ -48,7 +48,7 @@ object BookContent {
         } else {
             nextChapterUrl
         }
-        val content = StringBuilder()
+        val contentList = arrayListOf<String>()
         val nextUrlList = arrayListOf(redirectUrl)
         val contentRule = bookSource.getContentRule()
         val analyzeRule = AnalyzeRule(book, bookSource)
@@ -72,7 +72,7 @@ object BookContent {
         var contentData = analyzeContent(
             book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
         )
-        content.append(contentData.first)
+        contentList.add(contentData.first)
         if (contentData.second.size == 1) {
             var nextUrl = contentData.second[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
@@ -95,7 +95,8 @@ object BookContent {
                     )
                     nextUrl =
                         if (contentData.second.isNotEmpty()) contentData.second[0] else ""
-                    content.append("\n").append(contentData.first)
+                    contentList.add(contentData.first)
+                    Debug.log(bookSource.bookSourceUrl, "第${contentList.size}页完成")
                 }
             }
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
@@ -119,11 +120,11 @@ object BookContent {
                 }
                 asyncArray.forEach { coroutine ->
                     coroutineContext.ensureActive()
-                    content.append("\n").append(coroutine.await())
+                    contentList.add(coroutine.await())
                 }
             }
         }
-        var contentStr = content.toString()
+        var contentStr = contentList.joinToString("\n")
         //全文替换
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {

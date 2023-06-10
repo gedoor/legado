@@ -75,7 +75,7 @@ object Rss {
         val res = analyzeUrl.getStrResponseAwait()
         checkRedirect(rssSource, res)
         Debug.log(rssSource.sourceUrl, "≡获取成功:${rssSource.sourceUrl}")
-        Debug.log(rssSource.sourceUrl, res.body, state = 20)
+        Debug.log(rssSource.sourceUrl, res.body ?: "", state = 20)
         val analyzeRule = AnalyzeRule(rssArticle, rssSource)
         analyzeRule.setContent(res.body)
             .setBaseUrl(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))
