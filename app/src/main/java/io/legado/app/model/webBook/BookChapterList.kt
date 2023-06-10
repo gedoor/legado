@@ -15,6 +15,7 @@ import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.isTrue
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
@@ -80,11 +81,18 @@ object BookChapterList {
                 }
                 Debug.log(bookSource.bookSourceUrl, "◇目录总页数:${nextUrlList.size}")
             }
+
             else -> {
-                Debug.log(bookSource.bookSourceUrl, "◇并发解析目录,总页数:${chapterData.second.size}")
+                Debug.log(
+                    bookSource.bookSourceUrl,
+                    "◇并发解析目录,总页数:${chapterData.second.size}"
+                )
                 withContext(IO) {
+                    //页数太多并行访问有问题,这里判断下页数,超过5页就不并行访问
+                    val asyncStart =
+                        if (chapterData.second.size > 5) CoroutineStart.LAZY else CoroutineStart.DEFAULT
                     val asyncArray = Array(chapterData.second.size) {
-                        async(IO) {
+                        async(IO, start = asyncStart) {
                             val urlStr = chapterData.second[it]
                             val res = AnalyzeUrl(
                                 mUrl = urlStr,
@@ -212,10 +220,16 @@ object BookChapterList {
                 if (bookChapter.url.isEmpty()) {
                     if (bookChapter.isVolume) {
                         bookChapter.url = bookChapter.title + index
-                        Debug.log(bookSource.bookSourceUrl, "⇒一级目录${index}未获取到url,使用标题替代")
+                        Debug.log(
+                            bookSource.bookSourceUrl,
+                            "⇒一级目录${index}未获取到url,使用标题替代"
+                        )
                     } else {
                         bookChapter.url = baseUrl
-                        Debug.log(bookSource.bookSourceUrl, "⇒目录${index}未获取到url,使用baseUrl替代")
+                        Debug.log(
+                            bookSource.bookSourceUrl,
+                            "⇒目录${index}未获取到url,使用baseUrl替代"
+                        )
                     }
                 }
                 if (bookChapter.title.isNotEmpty()) {
