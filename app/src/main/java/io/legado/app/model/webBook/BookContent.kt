@@ -173,13 +173,15 @@ object BookContent {
         var content = analyzeRule.getString(contentRule.content, unescape = false)
         content = HtmlFormatter.formatKeepImg(content, rUrl)
         //获取下一页链接
-        val nextUrlRule = contentRule.nextContentUrl
-        if (getNextChapterUrl && !nextUrlRule.isNullOrEmpty()) {
-            Debug.log(bookSource.bookSourceUrl, "┌获取正文下一页链接", printLog)
-            analyzeRule.getStringList(nextUrlRule, isUrl = true)?.let {
-                nextUrlList.addAll(it)
+        if (getNextChapterUrl) {
+            val nextUrlRule = contentRule.nextContentUrl
+            if (!nextUrlRule.isNullOrEmpty()) {
+                Debug.log(bookSource.bookSourceUrl, "┌获取正文下一页链接", printLog)
+                analyzeRule.getStringList(nextUrlRule, isUrl = true)?.let {
+                    nextUrlList.addAll(it)
+                }
+                Debug.log(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
             }
-            Debug.log(bookSource.bookSourceUrl, "└" + nextUrlList.joinToString("，"), printLog)
         }
         return Pair(content, nextUrlList)
     }
