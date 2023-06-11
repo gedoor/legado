@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.data.appDb
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.utils.FileUtils
@@ -34,5 +35,12 @@ class ConfigViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun shrinkDatabase() {
+        execute {
+            appDb.openHelper.writableDatabase.execSQL("VACUUM")
+        }.onSuccess {
+            context.toastOnUi(R.string.success)
+        }
+    }
 
 }

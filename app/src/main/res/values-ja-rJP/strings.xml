@@ -1113,4 +1113,6 @@
     <string name="custom_export">Custom Export</string>
     <string name="file_contains_number">The number of chapters contained in each file</string>
     <string name="export_chapter_index">The section index that needs to be exported</string>
+    <string name="shrink_database">压缩数据库</string>
+    <string name="shrink_database_summary">减小数据库文件的大小</string>
 </resources>

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.ItemBookSourceBinding
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.model.Debug
@@ -28,34 +28,34 @@ import java.util.*
 
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<BookSource, ItemBookSourceBinding>(context),
+    RecyclerAdapter<BookSourcePart, ItemBookSourceBinding>(context),
     ItemTouchCallback.Callback {
 
-    private val selected = linkedSetOf<BookSource>()
+    private val selected = linkedSetOf<BookSourcePart>()
     private val finalMessageRegex = Regex("成功|失败")
 
-    val selection: List<BookSource>
+    val selection: List<BookSourcePart>
         get() {
             return getItems().filter {
                 selected.contains(it)
             }
         }
 
-    val diffItemCallback = object : DiffUtil.ItemCallback<BookSource>() {
+    val diffItemCallback = object : DiffUtil.ItemCallback<BookSourcePart>() {
 
-        override fun areItemsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
+        override fun areItemsTheSame(oldItem: BookSourcePart, newItem: BookSourcePart): Boolean {
             return oldItem.bookSourceUrl == newItem.bookSourceUrl
         }
 
-        override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
+        override fun areContentsTheSame(oldItem: BookSourcePart, newItem: BookSourcePart): Boolean {
             return oldItem.bookSourceName == newItem.bookSourceName
                     && oldItem.bookSourceGroup == newItem.bookSourceGroup
                     && oldItem.enabled == newItem.enabled
                     && oldItem.enabledExplore == newItem.enabledExplore
-                    && oldItem.exploreUrl == newItem.exploreUrl
+                    && oldItem.hasExploreUrl == newItem.hasExploreUrl
         }
 
-        override fun getChangePayload(oldItem: BookSource, newItem: BookSource): Any? {
+        override fun getChangePayload(oldItem: BookSourcePart, newItem: BookSourcePart): Any? {
             val payload = Bundle()
             if (oldItem.bookSourceName != newItem.bookSourceName
                 || oldItem.bookSourceGroup != newItem.bookSourceGroup
@@ -66,7 +66,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 payload.putBoolean("enabled", newItem.enabled)
             }
             if (oldItem.enabledExplore != newItem.enabledExplore ||
-                oldItem.exploreUrl != newItem.exploreUrl
+                oldItem.hasExploreUrl != newItem.hasExploreUrl
             ) {
                 payload.putBoolean("upExplore", true)
             }
@@ -85,7 +85,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemBookSourceBinding,
-        item: BookSource,
+        item: BookSourcePart,
         payloads: MutableList<Any>
     ) {
         binding.run {
@@ -117,7 +117,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 getItem(holder.layoutPosition)?.let {
                     if (view.isPressed) {
                         it.enabled = checked
-                        callBack.update(it)
+                        callBack.enable(checked, it)
                     }
                 }
             }
@@ -153,7 +153,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.book_source_item)
         val qyMenu = popupMenu.menu.findItem(R.id.menu_enable_explore)
-        if (source.exploreUrl.isNullOrEmpty()) {
+        if (!source.hasExploreUrl) {
             qyMenu.isVisible = false
         } else {
             if (source.enabledExplore) {
@@ -163,7 +163,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             }
         }
         val loginMenu = popupMenu.menu.findItem(R.id.menu_login)
-        loginMenu.isVisible = !source.loginUrl.isNullOrBlank()
+        loginMenu.isVisible = source.hasLoginUrl
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
@@ -172,14 +172,16 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                     putExtra("type", "bookSource")
                     putExtra("key", source.bookSourceUrl)
                 }
+
                 R.id.menu_search -> callBack.searchBook(source)
                 R.id.menu_debug_source -> callBack.debug(source)
                 R.id.menu_del -> {
                     callBack.del(source)
                     selected.remove(source)
                 }
+
                 R.id.menu_enable_explore -> {
-                    callBack.update(source.copy(enabledExplore = !source.enabledExplore))
+                    callBack.enableExplore(!source.enabledExplore, source)
                 }
             }
             true
@@ -187,16 +189,18 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         popupMenu.show()
     }
 
-    private fun upShowExplore(iv: ImageView, source: BookSource) {
+    private fun upShowExplore(iv: ImageView, source: BookSourcePart) {
         when {
-            source.exploreUrl.isNullOrEmpty() -> {
+            !source.hasExploreUrl -> {
                 iv.invisible()
             }
+
             source.enabledExplore -> {
                 iv.setColorFilter(Color.GREEN)
                 iv.visible()
                 iv.contentDescription = context.getString(R.string.tag_explore_enabled)
             }
+
             else -> {
                 iv.setColorFilter(Color.RED)
                 iv.visible()
@@ -205,7 +209,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun upCheckSourceMessage(binding: ItemBookSourceBinding, item: BookSource) = binding.run {
+    private fun upCheckSourceMessage(
+        binding: ItemBookSourceBinding,
+        item: BookSourcePart
+    ) = binding.run {
         val msg = Debug.debugMessageMap[item.bookSourceUrl] ?: ""
         ivDebugText.text = msg
         val isEmpty = msg.isEmpty()
@@ -274,7 +281,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         return true
     }
 
-    private val movedItems = hashSetOf<BookSource>()
+    private val movedItems = hashSetOf<BookSourcePart>()
 
     override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         if (movedItems.isNotEmpty()) {
@@ -285,19 +292,19 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             if (movedItems.size > sortNumberSet.size) {
                 callBack.upOrder(getItems())
             } else {
-                callBack.update(*movedItems.toTypedArray())
+                callBack.upOrder(movedItems.toList())
             }
             movedItems.clear()
         }
     }
 
     val dragSelectCallback: DragSelectTouchHelper.Callback =
-        object : DragSelectTouchHelper.AdvanceCallback<BookSource>(Mode.ToggleAndReverse) {
-            override fun currentSelectedId(): MutableSet<BookSource> {
+        object : DragSelectTouchHelper.AdvanceCallback<BookSourcePart>(Mode.ToggleAndReverse) {
+            override fun currentSelectedId(): MutableSet<BookSourcePart> {
                 return selected
             }
 
-            override fun getItemId(position: Int): BookSource {
+            override fun getItemId(position: Int): BookSourcePart {
                 return getItem(position)!!
             }
 
@@ -317,14 +324,15 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
 
     interface CallBack {
-        fun del(bookSource: BookSource)
-        fun edit(bookSource: BookSource)
-        fun update(vararg bookSource: BookSource)
-        fun toTop(bookSource: BookSource)
-        fun toBottom(bookSource: BookSource)
-        fun searchBook(bookSource: BookSource)
-        fun debug(bookSource: BookSource)
-        fun upOrder(items: List<BookSource>)
+        fun del(bookSource: BookSourcePart)
+        fun edit(bookSource: BookSourcePart)
+        fun toTop(bookSource: BookSourcePart)
+        fun toBottom(bookSource: BookSourcePart)
+        fun searchBook(bookSource: BookSourcePart)
+        fun debug(bookSource: BookSourcePart)
+        fun upOrder(items: List<BookSourcePart>)
+        fun enable(enable: Boolean, bookSource: BookSourcePart)
+        fun enableExplore(enable: Boolean, bookSource: BookSourcePart)
         fun upCountView()
     }
 }

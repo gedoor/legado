@@ -157,6 +157,12 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="shrinkDatabase"
+            android:summary="@string/shrink_database_summary"
+            android:title="@string/shrink_database"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="threadCount"
             android:title="@string/threads_num_title"
             app:iconSpaceReserved="false" />

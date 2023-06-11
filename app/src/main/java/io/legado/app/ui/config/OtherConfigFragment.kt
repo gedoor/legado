@@ -135,6 +135,7 @@ class OtherConfigFragment : PreferenceFragment(),
 
             PreferKey.clearWebViewData -> clearWebViewData()
             "localPassword" -> alertLocalPassword()
+            PreferKey.shrinkDatabase -> shrinkDatabase()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -229,6 +230,15 @@ class OtherConfigFragment : PreferenceFragment(),
         ) {
             okButton {
                 viewModel.clearCache()
+            }
+            noButton()
+        }
+    }
+
+    private fun shrinkDatabase() {
+        alert(R.string.sure, R.string.shrink_database) {
+            okButton {
+                viewModel.shrinkDatabase()
             }
             noButton()
         }

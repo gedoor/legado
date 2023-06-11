@@ -3,6 +3,7 @@ package io.legado.app.data.dao
 import androidx.room.*
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.flow.Flow
@@ -11,21 +12,29 @@ import kotlinx.coroutines.flow.map
 @Dao
 interface BookSourceDao {
 
-    @Query("select * from book_sources order by customOrder asc")
-    fun flowAll(): Flow<List<BookSource>>
+    @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources order by customOrder asc"""
+    )
+    fun flowAll(): Flow<List<BookSourcePart>>
 
     @Query(
-        """select * from book_sources 
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources 
         where bookSourceName like '%' || :searchKey || '%'
         or bookSourceGroup like '%' || :searchKey || '%'
         or bookSourceUrl like '%' || :searchKey || '%'
         or bookSourceComment like '%' || :searchKey || '%' 
         order by customOrder asc"""
     )
-    fun flowSearch(searchKey: String): Flow<List<BookSource>>
+    fun flowSearch(searchKey: String): Flow<List<BookSourcePart>>
 
     @Query(
-        """select * from book_sources 
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources 
         where enabled = 1 and 
         (bookSourceName like '%' || :searchKey || '%' 
         or bookSourceGroup like '%' || :searchKey || '%' 
@@ -33,32 +42,42 @@ interface BookSourceDao {
         or bookSourceComment like '%' || :searchKey || '%')
         order by customOrder asc"""
     )
-    fun flowSearchEnabled(searchKey: String): Flow<List<BookSource>>
+    fun flowSearchEnabled(searchKey: String): Flow<List<BookSourcePart>>
 
     @Query(
-        """select * from book_sources 
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources 
         where bookSourceGroup = :searchKey
         or bookSourceGroup like :searchKey || ',%' 
         or bookSourceGroup like  '%,' || :searchKey
         or bookSourceGroup like  '%,' || :searchKey || ',%' 
         order by customOrder asc"""
     )
-    fun flowGroupSearch(searchKey: String): Flow<List<BookSource>>
+    fun flowGroupSearch(searchKey: String): Flow<List<BookSourcePart>>
 
-    @Query("select * from book_sources where enabled = 1 order by customOrder asc")
-    fun flowEnabled(): Flow<List<BookSource>>
+    @Query("""select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabled = 1 order by customOrder asc""")
+    fun flowEnabled(): Flow<List<BookSourcePart>>
 
-    @Query("select * from book_sources where enabled = 0 order by customOrder asc")
-    fun flowDisabled(): Flow<List<BookSource>>
+    @Query("""select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabled = 0 order by customOrder asc""")
+    fun flowDisabled(): Flow<List<BookSourcePart>>
 
     @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
     fun flowExplore(): Flow<List<BookSource>>
 
-    @Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
-    fun flowLogin(): Flow<List<BookSource>>
+    @Query("""select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where loginUrl is not null and loginUrl != ''""")
+    fun flowLogin(): Flow<List<BookSourcePart>>
 
-    @Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = '' or bookSourceGroup like '%未分组%'")
-    fun flowNoGroup(): Flow<List<BookSource>>
+    @Query("""select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where bookSourceGroup is null or bookSourceGroup = '' or bookSourceGroup like '%未分组%'""")
+    fun flowNoGroup(): Flow<List<BookSourcePart>>
 
     @Query(
         """select * from book_sources 
@@ -155,11 +174,58 @@ interface BookSourceDao {
     @Query("delete from book_sources where bookSourceUrl = :key")
     fun delete(key: String)
 
+    @Transaction
+    fun delete(bookSources: List<BookSourcePart>) {
+        for (bs in bookSources) {
+            delete(bs.bookSourceUrl)
+        }
+    }
+
     @get:Query("select min(customOrder) from book_sources")
     val minOrder: Int
 
     @get:Query("select max(customOrder) from book_sources")
     val maxOrder: Int
+
+    @Query("update book_sources set enabled = :enable where bookSourceUrl = :bookSourceUrl")
+    fun enable(bookSourceUrl: String, enable: Boolean)
+
+    @Transaction
+    fun enable(enable: Boolean, bookSources: List<BookSourcePart>) {
+        for (bs in bookSources) {
+            enable(bs.bookSourceUrl, enable)
+        }
+    }
+
+    @Query("update book_sources set enabledExplore = :enable where bookSourceUrl = :bookSourceUrl")
+    fun enableExplore(bookSourceUrl: String, enable: Boolean)
+
+    @Transaction
+    fun enableExplore(enable: Boolean, bookSources: List<BookSourcePart>) {
+        for (bs in bookSources) {
+            enableExplore(bs.bookSourceUrl, enable)
+        }
+    }
+
+    @Query("update book_sources set customOrder = :customOrder where bookSourceUrl = :bookSourceUrl")
+    fun upOrder(bookSourceUrl: String, customOrder: Int)
+
+    @Transaction
+    fun upOrder(bookSources: List<BookSourcePart>) {
+        for (bs in bookSources) {
+            upOrder(bs.bookSourceUrl, bs.customOrder)
+        }
+    }
+
+    @Query("update book_sources set bookSourceGroup = :bookSourceGroup where bookSourceUrl = :bookSourceUrl")
+    fun upGroup(bookSourceUrl: String, bookSourceGroup: String)
+
+    @Transaction
+    fun upGroup(bookSources: List<BookSourcePart>) {
+        for (bs in bookSources) {
+            bs.bookSourceGroup?.let { upGroup(bs.bookSourceUrl, it) }
+        }
+    }
 
     private fun dealGroups(list: List<String>): List<String> {
         val groups = linkedSetOf<String>()

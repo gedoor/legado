@@ -17,6 +17,8 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
+import io.legado.app.data.entities.toBookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.DirectLinkUpload
@@ -143,54 +145,66 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 mode = HandleFileContract.FILE
                 allowExtensions = arrayOf("txt", "json")
             }
+
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_sort_manual -> {
                 item.isChecked = true
                 sortCheck(Sort.Default)
                 upBookSource(searchView.query?.toString())
             }
+
             R.id.menu_sort_auto -> {
                 item.isChecked = true
                 sortCheck(Sort.Weight)
                 upBookSource(searchView.query?.toString())
             }
+
             R.id.menu_sort_name -> {
                 item.isChecked = true
                 sortCheck(Sort.Name)
                 upBookSource(searchView.query?.toString())
             }
+
             R.id.menu_sort_url -> {
                 item.isChecked = true
                 sortCheck(Sort.Url)
                 upBookSource(searchView.query?.toString())
             }
+
             R.id.menu_sort_time -> {
                 item.isChecked = true
                 sortCheck(Sort.Update)
                 upBookSource(searchView.query?.toString())
             }
+
             R.id.menu_sort_respondTime -> {
                 item.isChecked = true
                 sortCheck(Sort.Respond)
                 upBookSource(searchView.query?.toString())
             }
+
             R.id.menu_sort_enable -> {
                 item.isChecked = true
                 sortCheck(Sort.Enable)
                 upBookSource(searchView.query?.toString())
             }
+
             R.id.menu_enabled_group -> {
                 searchView.setQuery(getString(R.string.enabled), true)
             }
+
             R.id.menu_disabled_group -> {
                 searchView.setQuery(getString(R.string.disabled), true)
             }
+
             R.id.menu_group_login -> {
                 searchView.setQuery(getString(R.string.need_login), true)
             }
+
             R.id.menu_group_null -> {
                 searchView.setQuery(getString(R.string.no_group), true)
             }
+
             R.id.menu_help -> showHelp()
         }
         if (item.groupId == R.id.source_group) {
@@ -228,22 +242,28 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 searchKey.isNullOrEmpty() -> {
                     appDb.bookSourceDao.flowAll()
                 }
+
                 searchKey == getString(R.string.enabled) -> {
                     appDb.bookSourceDao.flowEnabled()
                 }
+
                 searchKey == getString(R.string.disabled) -> {
                     appDb.bookSourceDao.flowDisabled()
                 }
+
                 searchKey == getString(R.string.need_login) -> {
                     appDb.bookSourceDao.flowLogin()
                 }
+
                 searchKey == getString(R.string.no_group) -> {
                     appDb.bookSourceDao.flowNoGroup()
                 }
+
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
                     appDb.bookSourceDao.flowGroupSearch(key)
                 }
+
                 else -> {
                     appDb.bookSourceDao.flowSearch(searchKey)
                 }
@@ -253,6 +273,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     Sort.Name -> data.sortedWith { o1, o2 ->
                         o1.bookSourceName.cnCompare(o2.bookSourceName)
                     }
+
                     Sort.Url -> data.sortedBy { it.bookSourceUrl }
                     Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
                     Sort.Respond -> data.sortedBy { it.respondTime }
@@ -263,6 +284,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         }
                         sort
                     }
+
                     else -> data
                 }
                 else when (sort) {
@@ -270,6 +292,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     Sort.Name -> data.sortedWith { o1, o2 ->
                         o2.bookSourceName.cnCompare(o1.bookSourceName)
                     }
+
                     Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
                     Sort.Update -> data.sortedBy { it.lastUpdateTime }
                     Sort.Respond -> data.sortedByDescending { it.respondTime }
@@ -280,6 +303,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         }
                         sort
                     }
+
                     else -> data.reversed()
                 }
             }.catch {
@@ -330,7 +354,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     override fun onClickSelectBarMainAction() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            yesButton { viewModel.del(*adapter.selection.toTypedArray()) }
+            yesButton { viewModel.del(adapter.selection) }
             noButton()
         }
     }
@@ -353,7 +377,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
-            R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection) { file ->
+            R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection.toBookSource()) { file ->
                 exportDir.launch {
                     mode = HandleFileContract.EXPORT
                     fileData = HandleFileContract.FileData(
@@ -363,9 +387,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     )
                 }
             }
-            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
+
+            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection.toBookSource()) {
                 share(it)
             }
+
             R.id.menu_check_selected_interval -> adapter.checkSelectedInterval()
         }
         return true
@@ -386,9 +412,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         CheckSource.keyword = it
                     }
                 }
-                CheckSource.start(this@BookSourceActivity, adapter.selection)
-                val firstItem = adapter.getItems().indexOf(adapter.selection.firstOrNull())
-                val lastItem = adapter.getItems().indexOf(adapter.selection.lastOrNull())
+                val selectItems = adapter.selection
+                CheckSource.start(this@BookSourceActivity, selectItems)
+                val adapterItems = adapter.getItems()
+                val firstItem = adapterItems.indexOf(selectItems.firstOrNull())
+                val lastItem = adapterItems.indexOf(selectItems.lastOrNull())
                 Debug.isChecking = firstItem >= 0 && lastItem >= 0
                 checkMessageRefreshJob(firstItem, lastItem).start()
             }
@@ -587,45 +615,49 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         return false
     }
 
-    override fun del(bookSource: BookSource) {
+    override fun del(bookSource: BookSourcePart) {
         alert(R.string.draw) {
             setMessage(getString(R.string.sure_del) + "\n" + bookSource.bookSourceName)
             noButton()
             yesButton {
-                viewModel.del(bookSource)
+                viewModel.del(listOf(bookSource))
             }
         }
     }
 
-    override fun update(vararg bookSource: BookSource) {
-        viewModel.update(*bookSource)
-    }
-
-    override fun edit(bookSource: BookSource) {
+    override fun edit(bookSource: BookSourcePart) {
         startActivity<BookSourceEditActivity> {
             putExtra("sourceUrl", bookSource.bookSourceUrl)
         }
     }
 
-    override fun upOrder(items: List<BookSource>) {
+    override fun upOrder(items: List<BookSourcePart>) {
         viewModel.upOrder(items)
     }
 
-    override fun toTop(bookSource: BookSource) {
+    override fun enable(enable: Boolean, bookSource: BookSourcePart) {
+        viewModel.enable(enable, listOf(bookSource))
+    }
+
+    override fun enableExplore(enable: Boolean, bookSource: BookSourcePart) {
+        viewModel.enableExplore(enable, listOf(bookSource))
+    }
+
+    override fun toTop(bookSource: BookSourcePart) {
         viewModel.topSource(bookSource)
     }
 
-    override fun toBottom(bookSource: BookSource) {
+    override fun toBottom(bookSource: BookSourcePart) {
         viewModel.bottomSource(bookSource)
     }
 
-    override fun searchBook(bookSource: BookSource) {
+    override fun searchBook(bookSource: BookSourcePart) {
         startActivity<SearchActivity> {
             putExtra("searchScope", SearchScope(bookSource).toString())
         }
     }
 
-    override fun debug(bookSource: BookSource) {
+    override fun debug(bookSource: BookSourcePart) {
         startActivity<BookSourceDebugActivity> {
             putExtra("key", bookSource.bookSourceUrl)
         }

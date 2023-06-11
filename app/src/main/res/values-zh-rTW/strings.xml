@@ -1112,4 +1112,6 @@
     <string name="custom_export">自定義導出</string>
     <string name="file_contains_number">每個文件包含的章節數量</string>
     <string name="export_chapter_index">需要輸出的章節</string>
+    <string name="shrink_database">压缩数据库</string>
+    <string name="shrink_database_summary">减小数据库文件的大小</string>
 </resources>
