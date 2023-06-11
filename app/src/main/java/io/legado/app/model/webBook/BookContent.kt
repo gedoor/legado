@@ -120,7 +120,7 @@ object BookContent {
                         analyzeContent(
                             book, urlStr, res.url, res.body!!, contentRule,
                             bookChapter, bookSource, mNextChapterUrl,
-                            getNextChapterUrl = false,
+                            getNextPageUrl = false,
                             printLog = false
                         ).first
                     }
@@ -160,7 +160,7 @@ object BookContent {
         chapter: BookChapter,
         bookSource: BookSource,
         nextChapterUrl: String?,
-        getNextChapterUrl: Boolean = true,
+        getNextPageUrl: Boolean = true,
         printLog: Boolean = true
     ): Pair<String, List<String>> {
         val analyzeRule = AnalyzeRule(book, bookSource)
@@ -173,7 +173,7 @@ object BookContent {
         var content = analyzeRule.getString(contentRule.content, unescape = false)
         content = HtmlFormatter.formatKeepImg(content, rUrl)
         //获取下一页链接
-        if (getNextChapterUrl) {
+        if (getNextPageUrl) {
             val nextUrlRule = contentRule.nextContentUrl
             if (!nextUrlRule.isNullOrEmpty()) {
                 Debug.log(bookSource.bookSourceUrl, "┌获取正文下一页链接", printLog)
