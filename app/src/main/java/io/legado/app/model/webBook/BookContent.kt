@@ -14,7 +14,6 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
@@ -105,11 +104,8 @@ object BookContent {
         } else if (contentData.second.size > 1) {
             Debug.log(bookSource.bookSourceUrl, "◇并发解析正文,总页数:${contentData.second.size}")
             withContext(IO) {
-                //页数太多并行访问有问题,这里判断下页数,超过5页就不并行访问
-                val asyncStart =
-                    if (contentData.second.size > 5) CoroutineStart.LAZY else CoroutineStart.DEFAULT
                 val asyncArray = Array(contentData.second.size) {
-                    async(IO, start = asyncStart) {
+                    async(IO) {
                         val urlStr = contentData.second[it]
                         val res = AnalyzeUrl(
                             mUrl = urlStr,

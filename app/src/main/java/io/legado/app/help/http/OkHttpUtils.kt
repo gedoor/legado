@@ -3,14 +3,19 @@ package io.legado.app.help.http
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.GSON
 import io.legado.app.utils.Utf8BomUtils
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
 import java.io.File
 import java.io.IOException
 import java.nio.charset.Charset
@@ -21,18 +26,16 @@ suspend fun OkHttpClient.newCallResponse(
     retry: Int = 0,
     builder: Request.Builder.() -> Unit
 ): Response {
-    return withContext(IO) {
-        val requestBuilder = Request.Builder()
-        requestBuilder.apply(builder)
-        var response: Response? = null
-        for (i in 0..retry) {
-            response = newCall(requestBuilder.build()).await()
-            if (response.isSuccessful) {
-                return@withContext response
-            }
+    val requestBuilder = Request.Builder()
+    requestBuilder.apply(builder)
+    var response: Response? = null
+    for (i in 0..retry) {
+        response = newCall(requestBuilder.build()).await()
+        if (response.isSuccessful) {
+            return response
         }
-        return@withContext response!!
     }
+    return response!!
 }
 
 suspend fun OkHttpClient.newCallResponseBody(
