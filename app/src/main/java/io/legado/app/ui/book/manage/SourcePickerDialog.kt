@@ -13,6 +13,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.DialogSourcePickerBinding
 import io.legado.app.databinding.Item1lineTextBinding
 import io.legado.app.lib.theme.primaryColor
@@ -81,7 +82,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
     }
 
     inner class SourceAdapter(context: Context) :
-        RecyclerAdapter<BookSource, Item1lineTextBinding>(context) {
+        RecyclerAdapter<BookSourcePart, Item1lineTextBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding {
             return Item1lineTextBinding.inflate(inflater, parent, false).apply {
@@ -92,7 +93,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
         override fun convert(
             holder: ItemViewHolder,
             binding: Item1lineTextBinding,
-            item: BookSource,
+            item: BookSourcePart,
             payloads: MutableList<Any>
         ) {
             binding.textView.text = item.getDisPlayNameGroup()
@@ -101,7 +102,9 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
         override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextBinding) {
             binding.root.onClick {
                 getItemByLayoutPosition(holder.layoutPosition)?.let {
-                    callback?.sourceOnClick(it)
+                    it.getBookSource()?.let { source ->
+                        callback?.sourceOnClick(source)
+                    }
                     dismissAllowingStateLoss()
                 }
             }

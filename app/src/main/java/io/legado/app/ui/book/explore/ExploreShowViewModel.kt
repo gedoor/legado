@@ -56,18 +56,17 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
     fun explore() {
         val source = bookSource
         val url = exploreUrl
-        if (source != null && url != null) {
-            WebBook.exploreBook(viewModelScope, source, url, page)
-                .timeout(if (BuildConfig.DEBUG) 0L else 30000L)
-                .onSuccess(IO) { searchBooks ->
-                    booksData.postValue(searchBooks)
-                    appDb.searchBookDao.insert(*searchBooks.toTypedArray())
-                    page++
-                }.onError {
-                    it.printOnDebug()
-                    errorLiveData.postValue(it.stackTraceStr)
-                }
-        }
+        if (source == null || url == null) return
+        WebBook.exploreBook(viewModelScope, source, url, page)
+            .timeout(if (BuildConfig.DEBUG) 0L else 30000L)
+            .onSuccess(IO) { searchBooks ->
+                booksData.postValue(searchBooks)
+                appDb.searchBookDao.insert(*searchBooks.toTypedArray())
+                page++
+            }.onError {
+                it.printOnDebug()
+                errorLiveData.postValue(it.stackTraceStr)
+            }
     }
 
 }

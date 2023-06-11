@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -158,6 +159,12 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
                     }
                     diffResult.dispatchUpdatesTo(this@RecyclerAdapter)
                     onCurrentListChanged()
+                }
+            }
+            handler.postDelayed(1000) {
+                if (diffJob?.isCompleted == false) {
+                    diffJob?.cancel()
+                    setItems(items)
                 }
             }
         }

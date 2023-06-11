@@ -5,6 +5,7 @@ import android.text.TextUtils
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.utils.*
 import java.io.File
@@ -16,31 +17,31 @@ import java.io.FileOutputStream
  */
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
-    fun topSource(vararg sources: BookSource) {
+    fun topSource(vararg sources: BookSourcePart) {
         execute {
             sources.sortBy { it.customOrder }
             val minOrder = appDb.bookSourceDao.minOrder - 1
-            val array = Array(sources.size) {
-                sources[it].copy(customOrder = minOrder - it)
+            val array = sources.mapIndexed { index, it ->
+                it.copy(customOrder = minOrder - index)
             }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.upOrder(array)
         }
     }
 
-    fun bottomSource(vararg sources: BookSource) {
+    fun bottomSource(vararg sources: BookSourcePart) {
         execute {
             sources.sortBy { it.customOrder }
             val maxOrder = appDb.bookSourceDao.maxOrder + 1
-            val array = Array(sources.size) {
-                sources[it].copy(customOrder = maxOrder + it)
+            val array = sources.mapIndexed { index, it ->
+                it.copy(customOrder = maxOrder + index)
             }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.upOrder(array)
         }
     }
 
-    fun del(vararg sources: BookSource) {
+    fun del(sources: List<BookSourcePart>) {
         execute {
-            appDb.bookSourceDao.delete(*sources)
+            appDb.bookSourceDao.delete(sources)
             sources.forEach {
                 SourceConfig.removeSource(it.bookSourceUrl)
             }
@@ -51,68 +52,72 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute { appDb.bookSourceDao.update(*bookSource) }
     }
 
-    fun upOrder(items: List<BookSource>) {
+    fun upOrder(items: List<BookSourcePart>) {
         if (items.isEmpty()) return
         execute {
             val firstSortNumber = items[0].customOrder
             items.forEachIndexed { index, bookSource ->
                 bookSource.customOrder = firstSortNumber + index
-                appDb.bookSourceDao.update(bookSource)
             }
+            appDb.bookSourceDao.upOrder(items)
         }
     }
 
-    fun enableSelection(sources: List<BookSource>) {
+    fun enable(enable: Boolean, items: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabled = true)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enable(enable, items)
         }
     }
 
-    fun disableSelection(sources: List<BookSource>) {
+    fun enableSelection(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabled = false)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enable(true, sources)
         }
     }
 
-    fun enableSelectExplore(sources: List<BookSource>) {
+    fun disableSelection(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabledExplore = true)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enable(false, sources)
         }
     }
 
-    fun disableSelectExplore(sources: List<BookSource>) {
+    fun enableExplore(enable: Boolean, items: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabledExplore = false)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enableExplore(enable, items)
         }
     }
 
-    fun selectionAddToGroups(sources: List<BookSource>, groups: String) {
+    fun enableSelectExplore(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy().addGroup(groups)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enableExplore(true, sources)
         }
     }
 
-    fun selectionRemoveFromGroups(sources: List<BookSource>, groups: String) {
+    fun disableSelectExplore(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy().removeGroup(groups)
+            appDb.bookSourceDao.enableExplore(false, sources)
+        }
+    }
+
+    fun selectionAddToGroups(sources: List<BookSourcePart>, groups: String) {
+        execute {
+            val array = sources.map {
+                it.copy().apply {
+                    addGroup(groups)
+                }
             }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.upGroup(array)
+        }
+    }
+
+    fun selectionRemoveFromGroups(sources: List<BookSourcePart>, groups: String) {
+        execute {
+            val array = sources.map {
+                it.copy().apply {
+                    removeGroup(groups)
+                }
+            }
+            appDb.bookSourceDao.upGroup(array)
         }
     }
 
