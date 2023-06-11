@@ -372,6 +372,19 @@ class AnalyzeUrl(
     }
 
     /**
+     * 获取并发记录，若处于并发限制状态下则会等待
+     */
+    private suspend fun getConcurrentRecord(): ConcurrentRecord? {
+        while (true) {
+            try {
+                return fetchStart()
+            } catch (e: ConcurrentException) {
+                delay(e.waitTime.toLong())
+            }
+        }
+    }
+
+    /**
      * 访问网站,返回StrResponse
      */
     @Throws(ConcurrentException::class)
@@ -383,15 +396,7 @@ class AnalyzeUrl(
         if (type != null) {
             return StrResponse(url, HexUtil.encodeHexStr(getByteArrayAwait()))
         }
-        var concurrentRecord: ConcurrentRecord?
-        while (true) {
-            try {
-                concurrentRecord = fetchStart()
-                break
-            } catch (e: ConcurrentException) {
-                delay(e.waitTime.toLong())
-            }
-        }
+        val concurrentRecord = getConcurrentRecord()
         try {
             setCookie()
             val strResponse: StrResponse
@@ -455,7 +460,7 @@ class AnalyzeUrl(
             }
             return strResponse
         } finally {
-            saveCookie()
+            //saveCookie()
             fetchEnd(concurrentRecord)
         }
     }
@@ -477,15 +482,7 @@ class AnalyzeUrl(
      */
     @Throws(ConcurrentException::class)
     suspend fun getResponseAwait(): Response {
-        var concurrentRecord: ConcurrentRecord?
-        while (true) {
-            try {
-                concurrentRecord = fetchStart()
-                break
-            } catch (e: ConcurrentException) {
-                delay(e.waitTime.toLong())
-            }
-        }
+        val concurrentRecord = getConcurrentRecord()
         try {
             setCookie()
             val response = getProxyClient(proxy).newCallResponse(retry) {
@@ -510,7 +507,7 @@ class AnalyzeUrl(
             }
             return response
         } finally {
-            saveCookie()
+            //saveCookie()
             fetchEnd(concurrentRecord)
         }
     }
