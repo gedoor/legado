@@ -120,10 +120,8 @@ class BookSourceEditActivity :
                 finish()
             }
             R.id.menu_debug_source -> viewModel.save(getSource()) { source ->
-                viewModel.save(source) {
-                    startActivity<BookSourceDebugActivity> {
-                        putExtra("key", source.bookSourceUrl)
-                    }
+                startActivity<BookSourceDebugActivity> {
+                    putExtra("key", source.bookSourceUrl)
                 }
             }
             R.id.menu_clear_cookie -> viewModel.clearCookie(getSource().bookSourceUrl)
