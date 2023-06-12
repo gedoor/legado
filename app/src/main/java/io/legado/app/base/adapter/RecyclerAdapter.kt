@@ -161,7 +161,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
                     onCurrentListChanged()
                 }
             }
-            handler.postDelayed(1000) {
+            handler.postDelayed(500) {
                 if (diffJob?.isCompleted == false) {
                     diffJob?.cancel()
                     setItems(items)
