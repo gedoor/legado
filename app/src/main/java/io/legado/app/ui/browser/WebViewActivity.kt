@@ -172,8 +172,12 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         return super.onKeyUp(keyCode, event)
     }
 
+    override fun finish() {
+        SourceVerificationHelp.checkResult(viewModel.key)
+        super.finish()
+    }
+
     override fun onDestroy() {
-        SourceVerificationHelp.checkResult()
         super.onDestroy()
         binding.webView.destroy()
     }

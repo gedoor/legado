@@ -71,7 +71,7 @@ val okHttpClient: OkHttpClient by lazy {
         })
         .addNetworkInterceptor { chain ->
             var request = chain.request()
-            val enableCookieJar = request.header(cookieJarHeader) !=  null
+            val enableCookieJar = request.header(cookieJarHeader) != null
 
             if (enableCookieJar) {
                 val requestBuilder = request.newBuilder()

@@ -727,15 +727,13 @@ interface JsExtensions : JsEncodeUtils {
             var qTTF = CacheManager.getQueryTTF(key)
             if (qTTF != null) return qTTF
             val font: ByteArray? = when {
-                str.isAbsUrl() -> runBlocking {
+                str.isAbsUrl() -> {
                     var x = CacheManager.getByteArray(key)
                     if (x == null) {
                         x = AnalyzeUrl(str, source = getSource()).getByteArray()
-                        x.let {
-                            CacheManager.put(key, it)
-                        }
+                        CacheManager.put(key, x)
                     }
-                    return@runBlocking x
+                    x
                 }
 
                 str.isContentScheme() -> Uri.parse(str).readBytes(appCtx)
