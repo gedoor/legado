@@ -68,9 +68,10 @@ object DirectLinkUpload {
 
     @Keep
     data class Rule(
-        var uploadUrl: String,
-        var downloadUrlRule: String,
-        var summary: String
+        var uploadUrl: String, //上传url
+        var downloadUrlRule: String, //下载链接规则
+        var summary: String, //注释
+        var compress: Boolean = true, //是否压缩
     ) {
 
         override fun toString(): String {

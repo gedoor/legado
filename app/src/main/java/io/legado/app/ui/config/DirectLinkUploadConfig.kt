@@ -11,7 +11,13 @@ import io.legado.app.databinding.DialogDirectLinkUploadConfigBinding
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getClipText
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
@@ -68,12 +74,14 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
         binding.editUploadUrl.setText(rule.uploadUrl)
         binding.editDownloadUrlRule.setText(rule.downloadUrlRule)
         binding.editSummary.setText(rule.summary)
+        binding.cbCompress.isChecked = rule.compress
     }
 
     private fun getRule(): DirectLinkUpload.Rule? {
         val uploadUrl = binding.editUploadUrl.text?.toString()
         val downloadUrlRule = binding.editDownloadUrlRule.text?.toString()
         val summary = binding.editSummary.text?.toString()
+        val compress = binding.cbCompress.isChecked
         if (uploadUrl.isNullOrBlank()) {
             toastOnUi("上传Url不能为空")
             return null
@@ -86,7 +94,7 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
             toastOnUi("注释不能为空")
             return null
         }
-        return DirectLinkUpload.Rule(uploadUrl, downloadUrlRule, summary)
+        return DirectLinkUpload.Rule(uploadUrl, downloadUrlRule, summary, compress)
     }
 
     private fun importDefault() {
