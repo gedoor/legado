@@ -29,6 +29,8 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
@@ -71,7 +73,7 @@ abstract class BaseReadAloudService : BaseService(),
     private val mediaSessionCompat: MediaSessionCompat by lazy {
         MediaSessionCompat(this, "readAloud")
     }
-    internal val contentList = arrayListOf<String>()
+    internal var contentList = emptyList<String>()
     internal var nowSpeak: Int = 0
     internal var readAloudNumber: Int = 0
     internal var textChapter: TextChapter? = null
@@ -132,6 +134,7 @@ abstract class BaseReadAloudService : BaseService(),
                 intent.getIntExtra("pageIndex", ReadBook.durPageIndex),
                 intent.getIntExtra("startPos", 0)
             )
+
             IntentAction.pause -> pauseReadAloud()
             IntentAction.resume -> resumeReadAloud()
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
@@ -144,20 +147,17 @@ abstract class BaseReadAloudService : BaseService(),
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun newReadAloud(play: Boolean, pageIndex: Int, startPos: Int) {
-        this.pageIndex = pageIndex
+    private fun newReadAloud(play: Boolean, pageIndex: Int, startPos: Int) = launch(IO) {
+        this@BaseReadAloudService.pageIndex = pageIndex
         textChapter = ReadBook.curTextChapter
-        textChapter?.let { textChapter ->
-            nowSpeak = 0
-            readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
-            contentList.clear()
-            val readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
-            textChapter.getNeedReadAloud(pageIndex, readAloudByPage, startPos)
-                .split("\n").forEach { text ->
-                    if (text.isNotEmpty()) {
-                        contentList.add(text)
-                    }
-                }
+        val textChapter = textChapter ?: return@launch
+        nowSpeak = 0
+        readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
+        val readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
+        contentList = textChapter.getNeedReadAloud(pageIndex, readAloudByPage, startPos)
+            .split("\n")
+            .filter { it.isNotEmpty() }
+        launch(Main) {
             if (play) play() else pageChanged = true
         }
     }
@@ -335,10 +335,12 @@ abstract class BaseReadAloudService : BaseService(),
                     AppLog.put("音频焦点获得")
                 }
             }
+
             AudioManager.AUDIOFOCUS_LOSS -> {
                 AppLog.put("音频焦点丢失,暂停朗读")
                 pauseReadAloud()
             }
+
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 AppLog.put("音频焦点暂时丢失并会很快再次获得,暂停朗读")
                 if (!pause) {
@@ -346,6 +348,7 @@ abstract class BaseReadAloudService : BaseService(),
                     pauseReadAloud(false)
                 }
             }
+
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
                 AppLog.put("音频焦点短暂丢失,不做处理")
@@ -364,6 +367,7 @@ abstract class BaseReadAloudService : BaseService(),
                     R.string.read_aloud_timer,
                     timeMinute
                 )
+
                 else -> getString(R.string.read_aloud_t)
             }
             nTitle += ": ${ReadBook.book?.name}"
