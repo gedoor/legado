@@ -43,9 +43,12 @@ class AndroidJsTest {
             returnData.getErrorMsg()
         """.trimIndent()
         val result1 = RhinoScriptEngine.eval(js1)
-        Assert.assertEquals(result1, "未知错误,请联系开发者!").let {
-
-        }
+        Assert.assertEquals(result1, "未知错误,请联系开发者!")
+        @Language("js")
+        val js2 = """
+            let x = java.lang.Class.forName('android.app.ActivityThread')
+        """.trimIndent()
+        RhinoScriptEngine.eval(js2)
     }
 
     @Test
