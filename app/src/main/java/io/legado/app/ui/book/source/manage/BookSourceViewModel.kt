@@ -56,10 +56,10 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         if (items.isEmpty()) return
         execute {
             val firstSortNumber = items[0].customOrder
-            items.forEachIndexed { index, bookSource ->
-                bookSource.customOrder = firstSortNumber + index
+            val array = items.mapIndexed { index, bookSource ->
+                bookSource.copy(customOrder = firstSortNumber + index)
             }
-            appDb.bookSourceDao.upOrder(items)
+            appDb.bookSourceDao.upOrder(array)
         }
     }
 
