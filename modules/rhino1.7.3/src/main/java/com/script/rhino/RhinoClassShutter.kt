@@ -38,9 +38,15 @@ object RhinoClassShutter : ClassShutter {
 
     private val protectedClasses by lazy {
         val protectedClasses = HashMap<Any, Any>()
-        protectedClasses["java.lang.Runtime"] = java.lang.Boolean.TRUE
-        protectedClasses["java.io.File"] = java.lang.Boolean.TRUE
-        protectedClasses["java.security.AccessController"] = java.lang.Boolean.TRUE
+        protectedClasses["java.lang.Runtime"] = true
+        protectedClasses["java.io.File"] = true
+        protectedClasses["java.security.AccessController"] = true
+        protectedClasses["java.nio.file.Paths"] = true
+        protectedClasses["java.nio.file.Files"] = true
+        protectedClasses["io.legado.app.data.AppDatabaseKt"] = true
+        protectedClasses["android.content.Intent"] = true
+        protectedClasses["androidx.core.content.FileProvider"] = true
+        protectedClasses["android.provider.Settings"] = true
         protectedClasses
     }
 
