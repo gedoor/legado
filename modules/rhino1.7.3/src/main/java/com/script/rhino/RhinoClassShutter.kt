@@ -38,6 +38,7 @@ object RhinoClassShutter : ClassShutter {
 
     private val protectedClasses by lazy {
         val protectedClasses = HashMap<Any, Any>()
+        protectedClasses["java.lang.Class"] = true
         protectedClasses["java.lang.Runtime"] = true
         protectedClasses["java.io.File"] = true
         protectedClasses["java.security.AccessController"] = true

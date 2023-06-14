@@ -43,9 +43,11 @@ class AndroidJsTest {
             returnData.getErrorMsg()
         """.trimIndent()
         val result1 = RhinoScriptEngine.eval(js1)
-        Assert.assertEquals(result1, "未知错误,请联系开发者!").let {
-
-        }
+        Assert.assertEquals(result1, "未知错误,请联系开发者!")
+        val js2 = """
+            let intent = new android.content.Intent(android.content.Intent.ACTION_VIEW)
+        """.trimIndent()
+        RhinoScriptEngine.eval(js2)
     }
 
     @Test
