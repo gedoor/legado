@@ -55,6 +55,9 @@ object RhinoClassShutter : ClassShutter {
             "androidx.core.content.FileProvider",
             "android.provider.Settings",
             "androidx.sqlite.db",
+            "splitties.init.AppCtxKt",
+            "android.app.ActivityThread",
+            "android.app.AppGlobals"
         )
     }
 
