@@ -128,9 +128,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        groupMenu = menu.findItem(R.id.menu_group)?.subMenu
-        groupMenu?.findItem(R.id.action_sort)?.subMenu
-            ?.setGroupCheckable(R.id.menu_group_sort, true, true)
+        val sortSubMenu = menu.findItem(R.id.action_sort).subMenu!!
+        sortSubMenu.findItem(R.id.menu_sort_desc).isChecked = !sortAscending
+        sortSubMenu.setGroupCheckable(R.id.menu_group_sort, true, true)
         upGroupMenu()
         return super.onPrepareOptionsMenu(menu)
     }
@@ -146,45 +146,52 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
 
             R.id.menu_import_onLine -> showImportDialog()
+
+            R.id.menu_sort_desc -> {
+                sortAscending = !sortAscending
+                item.isChecked = !sortAscending
+                upBookSource(searchView.query?.toString())
+            }
+
             R.id.menu_sort_manual -> {
                 item.isChecked = true
-                sortCheck(Sort.Default)
+                sort = Sort.Default
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_auto -> {
                 item.isChecked = true
-                sortCheck(Sort.Weight)
+                sort = Sort.Weight
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_name -> {
                 item.isChecked = true
-                sortCheck(Sort.Name)
+                sort = Sort.Name
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_url -> {
                 item.isChecked = true
-                sortCheck(Sort.Url)
+                sort = Sort.Url
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_time -> {
                 item.isChecked = true
-                sortCheck(Sort.Update)
+                sort = Sort.Update
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_respondTime -> {
                 item.isChecked = true
-                sortCheck(Sort.Respond)
+                sort = Sort.Respond
                 upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_sort_enable -> {
                 item.isChecked = true
-                sortCheck(Sort.Enable)
+                sort = Sort.Enable
                 upBookSource(searchView.query?.toString())
             }
 
@@ -319,15 +326,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun showHelp() {
         val text = String(assets.open("help/SourceMBookHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
-    }
-
-    private fun sortCheck(sort: Sort) {
-        if (this.sort == sort) {
-            sortAscending = !sortAscending
-        } else {
-            sortAscending = true
-            this.sort = sort
-        }
     }
 
     private fun initLiveDataGroup() {

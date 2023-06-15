@@ -1116,4 +1116,5 @@
     <string name="shrink_database">压缩数据库</string>
     <string name="shrink_database_summary">减小数据库文件的大小</string>
     <string name="is_compress">是否压缩</string>
+    <string name="sort_desc">反序</string>
 </resources>

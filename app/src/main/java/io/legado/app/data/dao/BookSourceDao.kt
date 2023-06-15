@@ -96,14 +96,16 @@ interface BookSourceDao {
     @Query(
         """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
         trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
-        from book_sources where loginUrl is not null and loginUrl != ''"""
+        from book_sources where loginUrl is not null and loginUrl != ''
+        order by customOrder asc"""
     )
     fun flowLogin(): Flow<List<BookSourcePart>>
 
     @Query(
         """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
         trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
-        from book_sources where bookSourceGroup is null or bookSourceGroup = '' or bookSourceGroup like '%未分组%'"""
+        from book_sources where bookSourceGroup is null or bookSourceGroup = '' or bookSourceGroup like '%未分组%'
+        order by customOrder asc"""
     )
     fun flowNoGroup(): Flow<List<BookSourcePart>>
 
@@ -144,7 +146,7 @@ interface BookSourceDao {
     )
     fun flowExploreGroupsUnProcessed(): Flow<List<String>>
 
-    @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%'")
+    @Query("select * from book_sources where bookSourceGroup like '%' || :group || '%' order by customOrder asc")
     fun getByGroup(group: String): List<BookSource>
 
     @Query(
@@ -153,11 +155,12 @@ interface BookSourceDao {
         and (bookSourceGroup = :group
             or bookSourceGroup like :group || ',%' 
             or bookSourceGroup like  '%,' || :group
-            or bookSourceGroup like  '%,' || :group || ',%')"""
+            or bookSourceGroup like  '%,' || :group || ',%')
+        order by customOrder asc"""
     )
     fun getEnabledByGroup(group: String): List<BookSource>
 
-    @Query("select * from book_sources where bookUrlPattern != 'NONE' and bookSourceType = :type")
+    @Query("select * from book_sources where bookUrlPattern != 'NONE' and bookSourceType = :type order by customOrder asc")
     fun getEnabledByType(type: Int): List<BookSource>
 
     @Query("select * from book_sources where enabled = 1 and bookSourceUrl = :baseUrl")
