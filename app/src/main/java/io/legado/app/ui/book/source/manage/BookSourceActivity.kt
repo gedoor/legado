@@ -276,43 +276,46 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     appDb.bookSourceDao.flowSearch(searchKey)
                 }
             }.conflate().map { data ->
-                if (sortAscending) when (sort) {
-                    Sort.Weight -> data.sortedBy { it.weight }
-                    Sort.Name -> data.sortedWith { o1, o2 ->
-                        o1.bookSourceName.cnCompare(o2.bookSourceName)
-                    }
-
-                    Sort.Url -> data.sortedBy { it.bookSourceUrl }
-                    Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
-                    Sort.Respond -> data.sortedBy { it.respondTime }
-                    Sort.Enable -> data.sortedWith { o1, o2 ->
-                        var sort = -o1.enabled.compareTo(o2.enabled)
-                        if (sort == 0) {
-                            sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                if (sortAscending) {
+                    when (sort) {
+                        Sort.Weight -> data.sortedBy { it.weight }
+                        Sort.Name -> data.sortedWith { o1, o2 ->
+                            o1.bookSourceName.cnCompare(o2.bookSourceName)
                         }
-                        sort
-                    }
 
-                    else -> data
-                }
-                else when (sort) {
-                    Sort.Weight -> data.sortedByDescending { it.weight }
-                    Sort.Name -> data.sortedWith { o1, o2 ->
-                        o2.bookSourceName.cnCompare(o1.bookSourceName)
-                    }
-
-                    Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
-                    Sort.Update -> data.sortedBy { it.lastUpdateTime }
-                    Sort.Respond -> data.sortedByDescending { it.respondTime }
-                    Sort.Enable -> data.sortedWith { o1, o2 ->
-                        var sort = o1.enabled.compareTo(o2.enabled)
-                        if (sort == 0) {
-                            sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                        Sort.Url -> data.sortedBy { it.bookSourceUrl }
+                        Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
+                        Sort.Respond -> data.sortedBy { it.respondTime }
+                        Sort.Enable -> data.sortedWith { o1, o2 ->
+                            var sort = -o1.enabled.compareTo(o2.enabled)
+                            if (sort == 0) {
+                                sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                            }
+                            sort
                         }
-                        sort
-                    }
 
-                    else -> data.reversed()
+                        else -> data
+                    }
+                } else {
+                    when (sort) {
+                        Sort.Weight -> data.sortedByDescending { it.weight }
+                        Sort.Name -> data.sortedWith { o1, o2 ->
+                            o2.bookSourceName.cnCompare(o1.bookSourceName)
+                        }
+
+                        Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
+                        Sort.Update -> data.sortedBy { it.lastUpdateTime }
+                        Sort.Respond -> data.sortedByDescending { it.respondTime }
+                        Sort.Enable -> data.sortedWith { o1, o2 ->
+                            var sort = o1.enabled.compareTo(o2.enabled)
+                            if (sort == 0) {
+                                sort = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                            }
+                            sort
+                        }
+
+                        else -> data.reversed()
+                    }
                 }
             }.catch {
                 AppLog.put("书源界面更新书源出错", it)
@@ -653,11 +656,19 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun toTop(bookSource: BookSourcePart) {
-        viewModel.topSource(bookSource)
+        if (sortAscending) {
+            viewModel.topSource(bookSource)
+        } else {
+            viewModel.bottomSource(bookSource)
+        }
     }
 
     override fun toBottom(bookSource: BookSourcePart) {
-        viewModel.bottomSource(bookSource)
+        if (sortAscending) {
+            viewModel.bottomSource(bookSource)
+        } else {
+            viewModel.topSource(bookSource)
+        }
     }
 
     override fun searchBook(bookSource: BookSourcePart) {
