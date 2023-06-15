@@ -128,6 +128,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        groupMenu = menu.findItem(R.id.menu_group).subMenu
         val sortSubMenu = menu.findItem(R.id.action_sort).subMenu!!
         sortSubMenu.findItem(R.id.menu_sort_desc).isChecked = !sortAscending
         sortSubMenu.setGroupCheckable(R.id.menu_group_sort, true, true)
