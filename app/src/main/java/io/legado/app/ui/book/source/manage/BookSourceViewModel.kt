@@ -2,14 +2,19 @@ package io.legado.app.ui.book.source.manage
 
 import android.app.Application
 import android.text.TextUtils
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
+import io.legado.app.data.entities.toBookSource
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.utils.*
+import splitties.init.appCtx
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import io.legado.app.ui.book.source.manage.BookSourceActivity.Sort
 
 /**
  * 书源管理数据修改
@@ -56,10 +61,10 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         if (items.isEmpty()) return
         execute {
             val firstSortNumber = items[0].customOrder
-            items.forEachIndexed { index, bookSource ->
-                bookSource.customOrder = firstSortNumber + index
+            val array = items.mapIndexed { index, bookSource ->
+                bookSource.copy(customOrder = firstSortNumber + index)
             }
-            appDb.bookSourceDao.upOrder(items)
+            appDb.bookSourceDao.upOrder(array)
         }
     }
 
@@ -122,19 +127,122 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun saveToFile(sources: List<BookSource>, success: (file: File) -> Unit) {
+    private fun saveToFile(sources: List<BookSource>, success: (file: File) -> Unit) {
         execute {
             val path = "${context.filesDir}/shareBookSource.json"
             FileUtils.delete(path)
             val file = FileUtils.createFileWithReplace(path)
-            FileOutputStream(file).use {
-                GSON.writeToOutputStream(it, sources)
+            FileOutputStream(file).use { out ->
+                BufferedOutputStream(out, 64 * 1024).use {
+                    GSON.writeToOutputStream(it, sources)
+                }
             }
             file
         }.onSuccess {
             success.invoke(it)
         }.onError {
             context.toastOnUi(it.stackTraceStr)
+        }
+    }
+
+    fun saveToFile(
+        adapter: BookSourceAdapter,
+        searchKey: String?,
+        sortAscending: Boolean,
+        sort: Sort,
+        success: (file: File) -> Unit
+    ) {
+        execute {
+            val selection = adapter.selection
+            val selectedRate = selection.size.toFloat() / adapter.itemCount.toFloat()
+            val sources = if (selectedRate == 1f) {
+                getBookSources(searchKey, sortAscending, sort)
+            } else if (selectedRate < 0.3) {
+                selection.toBookSource()
+            } else {
+                val keys = selection.map { it.bookSourceUrl }.toHashSet()
+                val bookSources = getBookSources(searchKey, sortAscending, sort)
+                bookSources.filter {
+                    keys.contains(it.bookSourceUrl)
+                }
+            }
+            saveToFile(sources, success)
+        }
+    }
+
+    private fun getBookSources(
+        searchKey: String?,
+        sortAscending: Boolean,
+        sort: Sort
+    ): List<BookSource> {
+        return when {
+            searchKey.isNullOrEmpty() -> {
+                appDb.bookSourceDao.all
+            }
+
+            searchKey == appCtx.getString(R.string.enabled) -> {
+                appDb.bookSourceDao.allEnabled
+            }
+
+            searchKey == appCtx.getString(R.string.disabled) -> {
+                appDb.bookSourceDao.allDisabled
+            }
+
+            searchKey == appCtx.getString(R.string.need_login) -> {
+                appDb.bookSourceDao.allLogin
+            }
+
+            searchKey == appCtx.getString(R.string.no_group) -> {
+                appDb.bookSourceDao.allNoGroup
+            }
+
+            searchKey.startsWith("group:") -> {
+                val key = searchKey.substringAfter("group:")
+                appDb.bookSourceDao.groupSearch(key)
+            }
+
+            else -> {
+                appDb.bookSourceDao.search(searchKey)
+            }
+        }.let { data ->
+            if (sortAscending) when (sort) {
+                Sort.Weight -> data.sortedBy { it.weight }
+                Sort.Name -> data.sortedWith { o1, o2 ->
+                    o1.bookSourceName.cnCompare(o2.bookSourceName)
+                }
+
+                Sort.Url -> data.sortedBy { it.bookSourceUrl }
+                Sort.Update -> data.sortedByDescending { it.lastUpdateTime }
+                Sort.Respond -> data.sortedBy { it.respondTime }
+                Sort.Enable -> data.sortedWith { o1, o2 ->
+                    var sortNum = -o1.enabled.compareTo(o2.enabled)
+                    if (sortNum == 0) {
+                        sortNum = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                    }
+                    sortNum
+                }
+
+                else -> data
+            }
+            else when (sort) {
+                Sort.Weight -> data.sortedByDescending { it.weight }
+                Sort.Name -> data.sortedWith { o1, o2 ->
+                    o2.bookSourceName.cnCompare(o1.bookSourceName)
+                }
+
+                Sort.Url -> data.sortedByDescending { it.bookSourceUrl }
+                Sort.Update -> data.sortedBy { it.lastUpdateTime }
+                Sort.Respond -> data.sortedByDescending { it.respondTime }
+                Sort.Enable -> data.sortedWith { o1, o2 ->
+                    var sortNum = o1.enabled.compareTo(o2.enabled)
+                    if (sortNum == 0) {
+                        sortNum = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                    }
+                    sortNum
+                }
+
+                else -> data.reversed()
+            }
         }
     }
 

@@ -32,9 +32,6 @@ object HtmlFormatter {
             .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
             .replace("^[\\n\\s]+".toRegex(), "　　")
             .replace("[\\n\\s]+$".toRegex(), "")
-            .let {
-                StringEscapeUtils.unescapeHtml3(it)
-            }
     }
 
     fun formatKeepImg(html: String?, redirectUrl: URL? = null): String {

@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -21,6 +22,7 @@ object NetworkUtils {
     /**
      * 判断是否联网
      */
+    @SuppressLint("ObsoleteSdkInt")
     @Suppress("DEPRECATION")
     fun isAvailable(): Boolean {
         if (Build.VERSION.SDK_INT < 23) {
@@ -31,7 +33,9 @@ object NetworkUtils {
                         // 移动数据
                         mWiFiNetworkInfo.type == ConnectivityManager.TYPE_MOBILE ||
                         // 以太网
-                        mWiFiNetworkInfo.type == ConnectivityManager.TYPE_ETHERNET
+                        mWiFiNetworkInfo.type == ConnectivityManager.TYPE_ETHERNET ||
+                        // VPN
+                        mWiFiNetworkInfo.type == ConnectivityManager.TYPE_VPN
             }
         } else {
             val network = connectivityManager.activeNetwork
@@ -43,7 +47,9 @@ object NetworkUtils {
                             // 移动数据
                             nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                             // 以太网
-                            nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                            nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) ||
+                            // VPN
+                            nc.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
                 }
             }
         }

@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import org.apache.commons.text.StringEscapeUtils
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
 
@@ -168,6 +169,7 @@ object BookContent {
         //获取正文
         var content = analyzeRule.getString(contentRule.content, unescape = false)
         content = HtmlFormatter.formatKeepImg(content, rUrl)
+        content = StringEscapeUtils.unescapeHtml4(content)
         //获取下一页链接
         if (getNextPageUrl) {
             val nextUrlRule = contentRule.nextContentUrl

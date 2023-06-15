@@ -17,7 +17,6 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSourcePart
-import io.legado.app.data.entities.toBookSource
 import io.legado.app.databinding.ActivityBookSourceBinding
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.DirectLinkUpload
@@ -71,6 +70,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private var sortAscending = true
     private var snackBar: Snackbar? = null
     private var isPaused = false
+    private var searchKey: String? = null
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         showDialogFragment(ImportBookSourceDialog(it))
@@ -235,6 +235,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
 
     private fun upBookSource(searchKey: String? = null) {
+        this.searchKey = searchKey
         sourceFlowJob?.cancel()
         sourceFlowJob = launch {
             when {
@@ -376,7 +377,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             R.id.menu_bottom_sel -> viewModel.bottomSource(*adapter.selection.toTypedArray())
             R.id.menu_add_group -> selectionAddToGroups()
             R.id.menu_remove_group -> selectionRemoveFromGroups()
-            R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection.toBookSource()) { file ->
+            R.id.menu_export_selection -> viewModel.saveToFile(
+                adapter,
+                searchKey,
+                sortAscending,
+                sort
+            ) { file ->
                 exportDir.launch {
                     mode = HandleFileContract.EXPORT
                     fileData = HandleFileContract.FileData(
@@ -387,7 +393,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
 
-            R.id.menu_share_source -> viewModel.saveToFile(adapter.selection.toBookSource()) {
+            R.id.menu_share_source -> viewModel.saveToFile(
+                adapter,
+                searchKey,
+                sortAscending,
+                sort
+            ) {
                 share(it)
             }
 
