@@ -39,6 +39,11 @@ object RhinoClassShutter : ClassShutter {
     private val protectedClasses by lazy {
         hashSetOf(
             "dalvik.system",
+            "java.lang.Class",
+            "java.lang.ClassLoader",
+            "java.net.URLClassLoader",
+            "cn.hutool.core.lang.JarClassLoader",
+            "org.mozilla.javascript.DefiningClassLoader",
             "java.lang.Runtime",
             "java.io.File",
             "java.security.AccessController",
