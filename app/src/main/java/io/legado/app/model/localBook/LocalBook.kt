@@ -134,7 +134,7 @@ object LocalBook {
         }
         if (book.isEpub) {
             content = content?.replace("&lt;img", "&lt; img", true) ?: return null
-            return StringEscapeUtils.unescapeHtml3(content)
+            return StringEscapeUtils.unescapeHtml4(content)
         }
         return content
     }

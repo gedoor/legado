@@ -272,7 +272,7 @@ class AnalyzeRule(
         }
         if (result == null) result = ""
         val str = if (unescape) {
-            StringEscapeUtils.unescapeHtml3(result.toString())
+            StringEscapeUtils.unescapeHtml4(result.toString())
         } else result.toString()
         if (isUrl) {
             return if (str.isBlank()) {
