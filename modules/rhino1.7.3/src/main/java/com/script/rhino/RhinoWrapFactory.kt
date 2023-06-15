@@ -29,7 +29,6 @@ import org.mozilla.javascript.NativeJavaObject
 import org.mozilla.javascript.Scriptable
 import org.mozilla.javascript.WrapFactory
 import java.lang.reflect.Member
-import java.lang.reflect.Modifier
 
 /**
  * This wrap factory is used for security reasons. JSR 223 script
@@ -52,50 +51,15 @@ object RhinoWrapFactory : WrapFactory() {
         javaObject: Any,
         staticType: Class<*>?
     ): Scriptable? {
-        scope?.delete("Packages")
-        val sm = System.getSecurityManager()
         val classShutter = RhinoClassShutter
-        return if (javaObject is ClassLoader) {
-            sm?.checkPermission(RuntimePermission("getClassLoader"))
-            super.wrapAsJavaObject(cx, scope, javaObject, staticType)
-        } else {
-            var name: String? = null
-            if (javaObject is Class<*>) {
-                name = javaObject.name
-            } else if (javaObject is Member) {
-                if (sm != null && !Modifier.isPublic(javaObject.modifiers)) {
-                    return null
-                }
-                name = javaObject.declaringClass.name
-            }
-            if (name != null) {
-                if (!classShutter.visibleToScripts(name)) null else super.wrapAsJavaObject(
-                    cx,
-                    scope,
-                    javaObject,
-                    staticType
-                )
-            } else {
-                var dynamicType: Class<*>? = javaObject.javaClass
-                name = dynamicType!!.name
+        return when (javaObject) {
+            is ClassLoader, is Class<*>, is Member, is android.content.Context -> null
+            else -> {
+                val name = javaObject.javaClass.name
                 if (classShutter.visibleToScripts(name)) {
                     super.wrapAsJavaObject(cx, scope, javaObject, staticType)
                 } else {
-                    var type: Class<*>? = null
-                    if (staticType != null && staticType.isInterface) {
-                        type = staticType
-                    } else {
-                        while (dynamicType != null) {
-                            dynamicType = dynamicType.superclass
-                            name = dynamicType.name
-                            if (classShutter.visibleToScripts(name)) {
-                                type = dynamicType
-                                break
-                            }
-                        }
-                        assert(type != null) { "java.lang.Object 不可访问" }
-                    }
-                    RhinoJavaObject(scope, javaObject, type)
+                    null
                 }
             }
         }
