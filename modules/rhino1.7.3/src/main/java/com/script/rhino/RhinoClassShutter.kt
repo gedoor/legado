@@ -37,36 +37,39 @@ import org.mozilla.javascript.ClassShutter
 object RhinoClassShutter : ClassShutter {
 
     private val protectedClasses by lazy {
-        val protectedClasses = HashMap<Any, Any>()
-        protectedClasses["java.lang.Class"] = true
-        protectedClasses["java.lang.ClassLoader"] = true
-        protectedClasses["java.lang.Runtime"] = true
-        protectedClasses["java.io.File"] = true
-        protectedClasses["java.security.AccessController"] = true
-        protectedClasses["java.nio.file.Paths"] = true
-        protectedClasses["java.nio.file.Files"] = true
-        protectedClasses["io.legado.app.data.AppDatabaseKt"] = true
-        protectedClasses["io.legado.app.utils.ContextExtensionsKt"] = true
-        protectedClasses["android.content.Intent"] = true
-        protectedClasses["androidx.core.content.FileProvider"] = true
-        protectedClasses["android.provider.Settings"] = true
-        protectedClasses["androidx.sqlite.db"] = true
-        protectedClasses
+        hashSetOf(
+            "dalvik.system",
+            "org.mozilla.javascript",
+            "java.lang.Class",
+            "java.lang.ClassLoader",
+            "java.net.URLClassLoader",
+            "cn.hutool.core.lang.JarClassLoader",
+            "java.lang.Runtime",
+            "java.io.File",
+            "java.security.AccessController",
+            "java.nio.file.Paths",
+            "java.nio.file.Files",
+            "io.legado.app.data.AppDatabaseKt",
+            "io.legado.app.utils.ContextExtensionsKt",
+            "android.content.Intent",
+            "androidx.core.content.FileProvider",
+            "android.provider.Settings",
+            "androidx.sqlite.db",
+        )
     }
 
     override fun visibleToScripts(fullClassName: String): Boolean {
-        val sm = System.getSecurityManager()
-        if (sm != null) {
-            val i = fullClassName.lastIndexOf(".")
-            if (i != -1) {
-                try {
-                    sm.checkPackageAccess(fullClassName.substring(0, i))
-                } catch (var5: SecurityException) {
+        if (!protectedClasses.contains(fullClassName)) {
+            var className = fullClassName
+            while (className.contains(".")) {
+                className = className.substringBeforeLast(".")
+                if (protectedClasses.contains(className)) {
                     return false
                 }
             }
+            return true
         }
-        return protectedClasses[fullClassName] == null
+        return false
     }
 
 }
