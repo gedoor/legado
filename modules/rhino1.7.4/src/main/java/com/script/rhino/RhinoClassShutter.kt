@@ -45,9 +45,11 @@ object RhinoClassShutter : ClassShutter {
         protectedClasses["java.nio.file.Paths"] = true
         protectedClasses["java.nio.file.Files"] = true
         protectedClasses["io.legado.app.data.AppDatabaseKt"] = true
+        protectedClasses["io.legado.app.utils.ContextExtensionsKt"] = true
         protectedClasses["android.content.Intent"] = true
         protectedClasses["androidx.core.content.FileProvider"] = true
         protectedClasses["android.provider.Settings"] = true
+        protectedClasses["androidx.sqlite.db"] = true
         protectedClasses
     }
 
