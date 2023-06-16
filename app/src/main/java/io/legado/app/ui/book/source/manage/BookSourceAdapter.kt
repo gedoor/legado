@@ -24,7 +24,7 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.invisible
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
-import java.util.*
+import java.util.Collections
 
 
 class BookSourceAdapter(context: Context, val callBack: CallBack) :
@@ -290,7 +290,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 sortNumberSet.add(it.customOrder)
             }
             if (movedItems.size > sortNumberSet.size) {
-                callBack.upOrder(getItems())
+                callBack.upOrder(getItems().mapIndexed { index, bookSourcePart ->
+                    bookSourcePart.customOrder = if (callBack.sortAscending) index else -index
+                    bookSourcePart
+                })
             } else {
                 callBack.upOrder(movedItems.toList())
             }
@@ -324,6 +327,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
 
     interface CallBack {
+        val sortAscending: Boolean
         fun del(bookSource: BookSourcePart)
         fun edit(bookSource: BookSourcePart)
         fun toTop(bookSource: BookSourcePart)

@@ -49,6 +49,7 @@ object RhinoClassShutter : ClassShutter {
             "java.security.AccessController",
             "java.nio.file.Paths",
             "java.nio.file.Files",
+            "io.legado.app.data.AppDatabase",
             "io.legado.app.data.AppDatabaseKt",
             "io.legado.app.utils.ContextExtensionsKt",
             "android.content.Intent",

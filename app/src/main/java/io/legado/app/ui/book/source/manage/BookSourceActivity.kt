@@ -67,7 +67,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private val groups = linkedSetOf<String>()
     private var groupMenu: SubMenu? = null
     private var sort = Sort.Default
-    private var sortAscending = true
+    override var sortAscending = true
+        private set
     private var snackBar: Snackbar? = null
     private var isPaused = false
     private var searchKey: String? = null

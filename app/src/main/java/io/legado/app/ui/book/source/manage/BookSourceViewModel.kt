@@ -9,12 +9,12 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.data.entities.toBookSource
 import io.legado.app.help.config.SourceConfig
+import io.legado.app.ui.book.source.manage.BookSourceActivity.Sort
 import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import io.legado.app.ui.book.source.manage.BookSourceActivity.Sort
 
 /**
  * 书源管理数据修改
@@ -60,11 +60,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     fun upOrder(items: List<BookSourcePart>) {
         if (items.isEmpty()) return
         execute {
-            val firstSortNumber = items[0].customOrder
-            val array = items.mapIndexed { index, bookSource ->
-                bookSource.copy(customOrder = firstSortNumber + index)
-            }
-            appDb.bookSourceDao.upOrder(array)
+            appDb.bookSourceDao.upOrder(items)
         }
     }
 

@@ -52,7 +52,13 @@ object RhinoWrapFactory : WrapFactory() {
     ): Scriptable? {
         val classShutter = RhinoClassShutter
         return when (javaObject) {
-            is ClassLoader, is Class<*>, is Member, is android.content.Context -> null
+            is ClassLoader,
+            is Class<*>,
+            is Member,
+            is android.content.Context -> {
+                null
+            }
+
             else -> {
                 val name = javaObject.javaClass.name
                 if (classShutter.visibleToScripts(name)) {

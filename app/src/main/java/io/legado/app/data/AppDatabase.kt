@@ -1,7 +1,6 @@
 package io.legado.app.data
 
 import android.content.ContentValues
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.AutoMigration
 import androidx.room.Database
@@ -17,7 +16,12 @@ import splitties.init.appCtx
 import java.util.*
 
 val appDb by lazy {
-    AppDatabase.createDatabase(appCtx)
+    Room.databaseBuilder(appCtx, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
+        .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5, 6, 7, 8, 9)
+        .addMigrations(*DatabaseMigrations.migrations)
+        .allowMainThreadQueries()
+        .addCallback(AppDatabase.dbCallback)
+        .build()
 }
 
 @Database(
@@ -82,17 +86,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
-        private const val DATABASE_NAME = "legado.db"
+        const val DATABASE_NAME = "legado.db"
 
-        fun createDatabase(context: Context) = Room
-            .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-            .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5, 6, 7, 8, 9)
-            .addMigrations(*DatabaseMigrations.migrations)
-            .allowMainThreadQueries()
-            .addCallback(dbCallback)
-            .build()
-
-        private val dbCallback = object : Callback() {
+        val dbCallback = object : Callback() {
 
             override fun onCreate(db: SupportSQLiteDatabase) {
                 db.setLocale(Locale.CHINESE)
