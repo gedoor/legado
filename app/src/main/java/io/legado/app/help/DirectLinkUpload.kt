@@ -52,6 +52,9 @@ object DirectLinkUpload {
         }
         val analyzeUrl = AnalyzeUrl(url)
         val res = analyzeUrl.upload(mFileName, mFile, mContentType)
+        if (mFile is File) {
+            mFile.delete()
+        }
         val analyzeRule = AnalyzeRule().setContent(res.body, res.url)
         val downloadUrl = analyzeRule.getString(downloadUrlRule)
         if (downloadUrl.isBlank()) {
