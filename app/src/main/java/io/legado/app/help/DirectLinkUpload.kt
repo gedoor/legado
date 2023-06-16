@@ -5,7 +5,11 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ACache
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.compress.ZipUtils
+import io.legado.app.utils.createFileReplace
+import io.legado.app.utils.externalCache
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
 import splitties.init.appCtx
@@ -27,8 +31,27 @@ object DirectLinkUpload {
         if (downloadUrlRule.isBlank()) {
             throw NoStackTraceException("下载地址规则未配置")
         }
+        var mFileName = fileName
+        var mFile = file
+        var mContentType = contentType
+        if (rule.compress && contentType != "application/zip") {
+            mFileName = "$fileName.zip"
+            mContentType = "application/zip"
+            mFile = when (file) {
+                is File -> {
+                    val zipFile = File(FileUtils.getPath(appCtx.externalCache, "upload", mFileName))
+                    zipFile.createFileReplace()
+                    ZipUtils.zipFile(file, zipFile)
+                    zipFile
+                }
+
+                is ByteArray -> ZipUtils.zipByteArray(file)
+                is String -> ZipUtils.zipString(file)
+                else -> ZipUtils.zipString(GSON.toJson(file))
+            }
+        }
         val analyzeUrl = AnalyzeUrl(url)
-        val res = analyzeUrl.upload(fileName, file, contentType)
+        val res = analyzeUrl.upload(mFileName, mFile, mContentType)
         val analyzeRule = AnalyzeRule().setContent(res.body, res.url)
         val downloadUrl = analyzeRule.getString(downloadUrlRule)
         if (downloadUrl.isBlank()) {

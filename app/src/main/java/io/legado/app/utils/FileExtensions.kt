@@ -42,7 +42,9 @@ fun File.createFileIfNotExist(): File {
 
 fun File.createFileReplace(): File {
     if (!exists()) {
-        parentFile?.createFileIfNotExist()
+        parent?.let {
+            File(it).mkdirs()
+        }
         createNewFile()
     } else {
         delete()
