@@ -93,7 +93,8 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
                 labelSys.visible()
                 cbName.text = "系统默认"
                 cbName.tag = ""
-                cbName.isChecked = GSON.fromJsonObject<SelectItem<String>>(ttsEngine)
+                cbName.isChecked = ttsEngine == null || ttsEngine!!.toIntOrNull() == null
+                        && GSON.fromJsonObject<SelectItem<String>>(ttsEngine)
                     .getOrNull()?.value.isNullOrEmpty()
                 cbName.setOnClickListener {
                     upTts(GSON.toJson(SelectItem("系统默认", "")))
