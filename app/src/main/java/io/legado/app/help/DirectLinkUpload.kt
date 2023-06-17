@@ -21,8 +21,12 @@ object DirectLinkUpload {
     const val ruleFileName = "directLinkUploadRule.json"
 
     @Throws(NoStackTraceException::class)
-    suspend fun upLoad(fileName: String, file: Any, contentType: String): String {
-        val rule = getRule()
+    suspend fun upLoad(
+        fileName: String,
+        file: Any,
+        contentType: String,
+        rule: Rule = getRule()
+    ): String {
         val url = rule.uploadUrl
         if (url.isBlank()) {
             throw NoStackTraceException("上传url未配置")

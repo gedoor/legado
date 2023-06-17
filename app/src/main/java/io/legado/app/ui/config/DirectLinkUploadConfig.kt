@@ -15,6 +15,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
+import io.legado.app.utils.longToast
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
@@ -41,8 +42,7 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
             dismiss()
         }
         binding.tvFooterLeft.onClick {
-            DirectLinkUpload.delConfig()
-            dismiss()
+            test()
         }
         binding.tvOk.onClick {
             getRule()?.let { rule ->
@@ -58,6 +58,7 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
             R.id.menu_copy_rule -> getRule()?.let { rule ->
                 requireContext().sendToClip(GSON.toJson(rule))
             }
+
             R.id.menu_paste_rule -> runCatching {
                 requireContext().getClipText()!!.let {
                     val rule = GSON.fromJsonObject<DirectLinkUpload.Rule>(it).getOrThrow()
@@ -100,6 +101,17 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
     private fun importDefault() {
         requireContext().selector(DirectLinkUpload.defaultRules) { _, rule, _ ->
             upView(rule)
+        }
+    }
+
+    private fun test() {
+        val rule = getRule() ?: return
+        execute {
+            DirectLinkUpload.upLoad("test.json", "{}", "application/json", rule)
+        }.onError {
+            longToast(it.localizedMessage!!)
+        }.onSuccess {
+            longToast(it)
         }
     }
 

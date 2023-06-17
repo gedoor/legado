@@ -18,7 +18,9 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import java.nio.charset.Charset
+import java.util.zip.ZipInputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -90,6 +92,19 @@ fun ResponseBody.text(encode: String? = null): String {
     //根据内容判断
     charsetName = EncodingDetect.getHtmlEncode(responseBytes)
     return String(responseBytes, Charset.forName(charsetName))
+}
+
+fun ResponseBody.unCompress(success: (inputStream: InputStream) -> Unit) {
+    if (contentType() == "application/zip".toMediaType()) {
+        byteStream().use { byteStream ->
+            ZipInputStream(byteStream).use {
+                it.nextEntry
+                success.invoke(it)
+            }
+        }
+    } else {
+        byteStream().use(success)
+    }
 }
 
 fun Request.Builder.addHeaders(headers: Map<String, String>) {
