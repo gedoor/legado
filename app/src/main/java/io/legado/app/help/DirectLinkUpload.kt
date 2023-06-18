@@ -49,9 +49,9 @@ object DirectLinkUpload {
                     zipFile
                 }
 
-                is ByteArray -> ZipUtils.zipByteArray(file)
-                is String -> ZipUtils.zipString(file)
-                else -> ZipUtils.zipString(GSON.toJson(file))
+                is ByteArray -> ZipUtils.zipByteArray(file, fileName)
+                is String -> ZipUtils.zipByteArray(file.toByteArray(), fileName)
+                else -> ZipUtils.zipByteArray(GSON.toJson(file).toByteArray(), fileName)
             }
         }
         val analyzeUrl = AnalyzeUrl(url)
