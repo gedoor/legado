@@ -9,17 +9,18 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogDirectLinkUploadConfigBinding
 import io.legado.app.help.DirectLinkUpload
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
-import io.legado.app.utils.longToast
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 import splitties.views.onClick
 
 class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_upload_config),
@@ -109,9 +110,24 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
         execute {
             DirectLinkUpload.upLoad("test.json", "{}", "application/json", rule)
         }.onError {
-            longToast(it.localizedMessage!!)
-        }.onSuccess {
-            longToast(it)
+            val result = it.localizedMessage ?: "ERROR"
+            alert {
+                setTitle("result")
+                setMessage(result)
+                okButton()
+                negativeButton(R.string.copy_text) {
+                    appCtx.sendToClip(result)
+                }
+            }
+        }.onSuccess { result ->
+            alert {
+                setTitle("result")
+                setMessage(result)
+                okButton()
+                negativeButton(R.string.copy_text) {
+                    appCtx.sendToClip(result)
+                }
+            }
         }
     }
 
