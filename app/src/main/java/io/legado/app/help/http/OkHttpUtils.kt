@@ -77,25 +77,27 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
 }
 
 fun ResponseBody.text(encode: String? = null): String {
-    val responseBytes = Utf8BomUtils.removeUTF8BOM(bytes())
-    var charsetName: String? = encode
+    return unCompress {
+        val responseBytes = Utf8BomUtils.removeUTF8BOM(it.readBytes())
+        var charsetName: String? = encode
 
-    charsetName?.let {
-        return String(responseBytes, Charset.forName(charsetName))
+        charsetName?.let {
+            return@unCompress String(responseBytes, Charset.forName(charsetName))
+        }
+
+        //根据http头判断
+        contentType()?.charset()?.let { charset ->
+            return@unCompress String(responseBytes, charset)
+        }
+
+        //根据内容判断
+        charsetName = EncodingDetect.getHtmlEncode(responseBytes)
+        return@unCompress String(responseBytes, Charset.forName(charsetName))
     }
-
-    //根据http头判断
-    contentType()?.charset()?.let {
-        return String(responseBytes, it)
-    }
-
-    //根据内容判断
-    charsetName = EncodingDetect.getHtmlEncode(responseBytes)
-    return String(responseBytes, Charset.forName(charsetName))
 }
 
-fun ResponseBody.unCompress(success: (inputStream: InputStream) -> Unit) {
-    if (contentType() == "application/zip".toMediaType()) {
+fun <T> ResponseBody.unCompress(success: (inputStream: InputStream) -> T): T {
+    return if (contentType() == "application/zip".toMediaType()) {
         byteStream().use { byteStream ->
             ZipInputStream(byteStream).use {
                 it.nextEntry
@@ -152,18 +154,22 @@ fun Request.Builder.postMultipart(type: String?, form: Map<String, Any>) {
                     is File -> {
                         file.asRequestBody(mediaType)
                     }
+
                     is ByteArray -> {
                         file.toRequestBody(mediaType)
                     }
+
                     is String -> {
                         file.toRequestBody(mediaType)
                     }
+
                     else -> {
                         GSON.toJson(file).toRequestBody(mediaType)
                     }
                 }
                 multipartBody.addFormDataPart(it.key, fileName, requestBody)
             }
+
             else -> multipartBody.addFormDataPart(it.key, it.value.toString())
         }
     }

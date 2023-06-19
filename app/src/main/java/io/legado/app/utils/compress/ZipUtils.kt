@@ -33,6 +33,7 @@ object ZipUtils {
         zipOutputStream.putNextEntry(ZipEntry(fileName))
         zipOutputStream.write(byteArray)
         zipOutputStream.closeEntry()
+        zipOutputStream.finish()
         return zipOutputStream.use {
             byteOut.use {
                 byteOut.toByteArray()
@@ -183,11 +184,11 @@ object ZipUtils {
                 }
             }
         } else {
-            BufferedInputStream(FileInputStream(srcFile)).use { `is` ->
+            BufferedInputStream(FileInputStream(srcFile)).use {
                 val entry = ZipEntry(rootPath1)
                 entry.comment = comment
                 zos.putNextEntry(entry)
-                zos.write(`is`.readBytes())
+                it.copyTo(zos)
                 zos.closeEntry()
             }
         }
