@@ -110,23 +110,19 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
         execute {
             DirectLinkUpload.upLoad("test.json", "{}", "application/json", rule)
         }.onError {
-            val result = it.localizedMessage ?: "ERROR"
-            alert {
-                setTitle("result")
-                setMessage(result)
-                okButton()
-                negativeButton(R.string.copy_text) {
-                    appCtx.sendToClip(result)
-                }
-            }
+            alertTestResult(it.localizedMessage ?: "ERROR")
         }.onSuccess { result ->
-            alert {
-                setTitle("result")
-                setMessage(result)
-                okButton()
-                negativeButton(R.string.copy_text) {
-                    appCtx.sendToClip(result)
-                }
+            alertTestResult(result)
+        }
+    }
+
+    private fun alertTestResult(result: String) {
+        alert {
+            setTitle("result")
+            setMessage(result)
+            okButton()
+            negativeButton(R.string.copy_text) {
+                appCtx.sendToClip(result)
             }
         }
     }
