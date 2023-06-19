@@ -3,6 +3,7 @@ package io.legado.app.model
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
@@ -50,7 +51,7 @@ object ReadAloud {
         intent.putExtra("play", play)
         intent.putExtra("pageIndex", pageIndex)
         intent.putExtra("startPos", startPos)
-        context.startService(intent)
+        ContextCompat.startForegroundService(context, intent)
     }
 
     fun playByEventBus(
@@ -70,7 +71,7 @@ object ReadAloud {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.pause
-            context.startService(intent)
+            ContextCompat.startForegroundService(context, intent)
         }
     }
 
@@ -78,7 +79,7 @@ object ReadAloud {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.resume
-            context.startService(intent)
+            ContextCompat.startForegroundService(context, intent)
         }
     }
 
@@ -86,7 +87,7 @@ object ReadAloud {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.stop
-            context.startService(intent)
+            ContextCompat.startForegroundService(context, intent)
         }
     }
 
@@ -94,7 +95,7 @@ object ReadAloud {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.prevParagraph
-            context.startService(intent)
+            ContextCompat.startForegroundService(context, intent)
         }
     }
 
@@ -102,7 +103,7 @@ object ReadAloud {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.nextParagraph
-            context.startService(intent)
+            ContextCompat.startForegroundService(context, intent)
         }
     }
 
@@ -110,7 +111,7 @@ object ReadAloud {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.upTtsSpeechRate
-            context.startService(intent)
+            ContextCompat.startForegroundService(context, intent)
         }
     }
 
@@ -119,7 +120,7 @@ object ReadAloud {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.setTimer
             intent.putExtra("minute", minute)
-            context.startService(intent)
+            ContextCompat.startForegroundService(context, intent)
         }
     }
 

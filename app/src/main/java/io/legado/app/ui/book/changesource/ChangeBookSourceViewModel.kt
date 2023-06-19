@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -90,23 +91,30 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             searchCallback = null
         }
     }.map {
-        searchBooks.sortedWith { o1, o2 ->
-            val o1bs = SourceConfig.getBookScore(o1.origin, o1.name, o1.author)
-            val o2bs = SourceConfig.getBookScore(o2.origin, o2.name, o2.author)
-            when {
-                o1bs - o2bs > 0 -> -1
-                o1bs - o2bs < 0 -> 1
-                else -> {
-                    val o1ss = SourceConfig.getSourceScore(o1.origin)
-                    val o2ss = SourceConfig.getSourceScore(o2.origin)
-                    when {
-                        o1ss - o2ss > 0 -> -1
-                        o1ss - o2ss < 0 -> 1
-                        else -> o1.originOrder - o2.originOrder
+        kotlin.runCatching {
+            searchBooks.sortedWith { o1, o2 ->
+                val o1bs = SourceConfig.getBookScore(o1.origin, o1.name, o1.author)
+                val o2bs = SourceConfig.getBookScore(o2.origin, o2.name, o2.author)
+                when {
+                    o1bs - o2bs > 0 -> -1
+                    o1bs - o2bs < 0 -> 1
+                    else -> {
+                        val o1ss = SourceConfig.getSourceScore(o1.origin)
+                        val o2ss = SourceConfig.getSourceScore(o2.origin)
+                        when {
+                            o1ss - o2ss > 0 -> -1
+                            o1ss - o2ss < 0 -> 1
+                            else -> {
+                                val n = o1.originOrder - o2.originOrder
+                                if (n == 0) -1 else n
+                            }
+                        }
                     }
                 }
             }
-        }
+        }.onFailure {
+            AppLog.put("换源排序出错\n${it.localizedMessage}", it)
+        }.getOrDefault(searchBooks)
     }.flowOn(IO)
 
     @Volatile
