@@ -152,6 +152,9 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         val source = getItem(position) ?: return
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.book_source_item)
+        popupMenu.menu.findItem(R.id.menu_top).isVisible = callBack.sort == BookSourceSort.Default
+        popupMenu.menu.findItem(R.id.menu_bottom).isVisible =
+            callBack.sort == BookSourceSort.Default
         val qyMenu = popupMenu.menu.findItem(R.id.menu_enable_explore)
         if (!source.hasExploreUrl) {
             qyMenu.isVisible = false
@@ -327,6 +330,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
 
     interface CallBack {
+        val sort: BookSourceSort
         val sortAscending: Boolean
         fun del(bookSource: BookSourcePart)
         fun edit(bookSource: BookSourcePart)
