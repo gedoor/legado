@@ -25,6 +25,8 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 
@@ -55,7 +57,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         launch {
-            appDb.bookSourceDao.flowGroups().collect {
+            appDb.bookSourceDao.flowGroups().flowOn(IO).collect {
                 adapter.setItems(it)
             }
         }
