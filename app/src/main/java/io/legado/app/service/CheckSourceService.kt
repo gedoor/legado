@@ -188,7 +188,6 @@ class CheckSourceService : BaseService() {
                         "" else "\n\n${source.bookSourceComment}"
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
             }.onSuccess(searchCoroutine) {
-                source.removeGroup("校验超时")
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
             }.onFinally(IO) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
