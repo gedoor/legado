@@ -135,7 +135,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     launch(Main) {
                         exoPlayer.addMediaItem(mediaItem)
                         if (!exoPlayer.isPlaying && nowSpeak == index) {
-                            exoPlayer.playWhenReady = true
+                            exoPlayer.playWhenReady = !pause
                             exoPlayer.prepare()
                         }
                     }
