@@ -130,6 +130,7 @@ object BookChapterList {
             bookChapter.index = index
             if (!formatJs.isNullOrBlank()) {
                 bindings["index"] = index + 1
+                bindings["chapter"] = bookChapter
                 bindings["title"] = bookChapter.title
                 RhinoScriptEngine.runCatching {
                     eval(formatJs, bindings)?.toString()?.let {
