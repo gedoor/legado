@@ -93,7 +93,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
                 labelSys.visible()
                 cbName.text = "系统默认"
                 cbName.tag = ""
-                cbName.isChecked = ttsEngine == null || ttsEngine!!.toIntOrNull() == null
+                cbName.isChecked = ttsEngine == null || ttsEngine!!.isJsonObject()
                         && GSON.fromJsonObject<SelectItem<String>>(ttsEngine)
                     .getOrNull()?.value.isNullOrEmpty()
                 cbName.setOnClickListener {
