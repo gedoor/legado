@@ -12,7 +12,9 @@ import splitties.init.appCtx
 import java.util.concurrent.locks.LockSupport
 import kotlin.time.Duration.Companion.minutes
 
-
+/**
+ * 源验证
+ */
 object SourceVerificationHelp {
 
     private val waitTime = 1.minutes.inWholeNanoseconds

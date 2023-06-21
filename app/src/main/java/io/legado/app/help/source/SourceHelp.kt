@@ -74,4 +74,18 @@ object SourceHelp {
         return false
     }
 
+    /**
+     * 调整排序序号
+     */
+    fun adjustSortNumber() {
+        if (
+            appDb.bookSourceDao.maxOrder > 99999
+            || appDb.bookSourceDao.minOrder < -99999
+        ) {
+            appDb.bookSourceDao.all.forEachIndexed { index, bookSource ->
+                appDb.bookSourceDao.upOrder(bookSource.bookSourceUrl, index)
+            }
+        }
+    }
+
 }
