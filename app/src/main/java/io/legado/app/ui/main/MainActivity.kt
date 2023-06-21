@@ -71,13 +71,16 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private val fragmentMap = hashMapOf<Int, Fragment>()
     private var bottomMenuCount = 4
     private val realPositions = arrayOf(idBookshelf, idExplore, idRss, idMy)
+    private val adapter by lazy {
+        TabFragmentPageAdapter(supportFragmentManager)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
         binding.run {
             viewPagerMain.setEdgeEffectColor(primaryColor)
             viewPagerMain.offscreenPageLimit = 3
-            viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
+            viewPagerMain.adapter = adapter
             viewPagerMain.addOnPageChangeListener(PageChangeCallback())
             bottomNavigationView.elevation = elevation
             bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
@@ -350,9 +353,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private inner class PageChangeCallback : ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
+            val oldPosition = pagePosition
             pagePosition = position
             binding.bottomNavigationView.menu
                 .getItem(realPositions[position]).isChecked = true
+            val callback1 = fragmentMap[getFragmentId(position)] as? Callback
+            val callback2 = fragmentMap[getFragmentId(oldPosition)] as? Callback
+            callback1?.onActive()
+            callback2?.onInactive()
         }
 
     }
@@ -389,6 +397,12 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return fragment
         }
 
+    }
+
+    interface Callback {
+        fun onActive()
+
+        fun onInactive()
     }
 
 }

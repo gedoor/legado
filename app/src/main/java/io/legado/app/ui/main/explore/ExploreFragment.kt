@@ -23,6 +23,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.main.MainActivity
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.setEdgeEffectColor
@@ -31,6 +32,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
@@ -40,7 +43,7 @@ import kotlinx.coroutines.launch
  * 发现界面
  */
 class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
-    ExploreAdapter.CallBack {
+    ExploreAdapter.CallBack, MainActivity.Callback {
 
     override val viewModel by viewModels<ExploreViewModel>()
     private val binding by viewBinding(FragmentExploreBinding::bind)
@@ -53,13 +56,14 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     private val groups = linkedSetOf<String>()
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
+    private var isActive = false
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(binding.titleBar.toolbar)
         initSearchView()
         initRecyclerView()
         initGroupData()
-        upExploreData()
+        upExploreData(once = true)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -72,6 +76,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
     override fun onPause() {
         super.onPause()
         searchView.clearFocus()
+        exploreFlowJob?.cancel()
     }
 
     private fun initSearchView() {
@@ -117,25 +122,29 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
         }
     }
 
-    private fun upExploreData(searchKey: String? = null) {
+    private fun upExploreData(searchKey: String? = null, once: Boolean = false) {
         exploreFlowJob?.cancel()
         exploreFlowJob = launch {
             when {
                 searchKey.isNullOrBlank() -> {
                     appDb.bookSourceDao.flowExplore()
                 }
+
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
                     appDb.bookSourceDao.flowGroupExplore(key)
                 }
+
                 else -> {
                     appDb.bookSourceDao.flowExplore(searchKey)
                 }
             }.catch {
                 AppLog.put("发现界面更新数据出错", it)
-            }.conflate().collect {
+            }.conflate().flowOn(IO).collect {
                 binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
                 adapter.setItems(it, diffItemCallBack)
+                if (once) cancel()
+                delay(500)
             }
         }
     }
@@ -200,6 +209,21 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
                 binding.rvFind.smoothScrollToPosition(0)
             }
         }
+    }
+
+    override fun onActive() {
+        isActive = true
+        upExploreData()
+    }
+
+    override fun onInactive() {
+        isActive = false
+        exploreFlowJob?.cancel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isActive) upExploreData()
     }
 
 }
