@@ -76,7 +76,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun play() {
         pageChanged = false
         exoPlayer.stop()
-        exoPlayer.clearMediaItems()
         if (!requestFocus()) return
         if (contentList.isEmpty()) {
             AppLog.putDebug("朗读列表为空")
@@ -101,6 +100,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun downloadAndPlayAudios() {
+        exoPlayer.clearMediaItems()
         downloadTask?.cancel()
         downloadTask = execute {
             downloadTaskActiveLock.withLock {
@@ -133,8 +133,12 @@ class HttpReadAloudService : BaseReadAloudService(),
                     val file = getSpeakFileAsMd5(fileName)
                     val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
                     launch(Main) {
+                        if (exoPlayer.playbackState == Player.STATE_ENDED) {
+                            exoPlayer.stop()
+                            exoPlayer.clearMediaItems()
+                        }
                         exoPlayer.addMediaItem(mediaItem)
-                        if (!exoPlayer.isPlaying && nowSpeak == index) {
+                        if (!exoPlayer.isPlaying) {
                             exoPlayer.playWhenReady = !pause
                             exoPlayer.prepare()
                         }

@@ -20,6 +20,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -85,9 +86,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         upTocJob?.cancel()
                         upTocJob = null
                     }
+
                     onUpTocBooks.size < threadCount -> {
                         updateToc()
                     }
+
                     else -> {
                         delay(500)
                     }
@@ -119,7 +122,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
         waitUpTocBooks.remove(bookUrl)
         upTocAdd(bookUrl)
-        execute(context = upTocPool) {
+        execute(context = upTocPool, executeContext = IO) {
             kotlin.runCatching {
                 val oldBook = book.copy()
                 WebBook.runPreUpdateJs(source, book)

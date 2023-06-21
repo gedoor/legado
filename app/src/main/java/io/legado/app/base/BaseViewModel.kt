@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.App
 import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
@@ -19,9 +20,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     fun <T> execute(
         scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        executeContext: CoroutineContext = Dispatchers.Main,
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
-        return Coroutine.async(scope, context) { block() }
+        return Coroutine.async(scope, context, start, executeContext, block)
     }
 
     fun <R> submit(

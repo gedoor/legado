@@ -122,7 +122,11 @@ class CheckSourceService : BaseService() {
      *校验书源
      */
     private fun check(source: BookSource) {
-        execute(context = searchCoroutine, start = CoroutineStart.LAZY) {
+        execute(
+            context = searchCoroutine,
+            start = CoroutineStart.LAZY,
+            executeContext = IO
+        ) {
             Debug.startChecking(source)
             var searchWord = CheckSource.keyword
             source.ruleSearch?.checkKeyWord?.let {

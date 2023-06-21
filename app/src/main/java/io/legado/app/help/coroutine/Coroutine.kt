@@ -25,6 +25,7 @@ class Coroutine<T>(
     val scope: CoroutineScope,
     context: CoroutineContext = Dispatchers.IO,
     val startOption: CoroutineStart = CoroutineStart.DEFAULT,
+    val executeContext: CoroutineContext = Dispatchers.Main,
     block: suspend CoroutineScope.() -> T
 ) {
 
@@ -36,9 +37,10 @@ class Coroutine<T>(
             scope: CoroutineScope = DEFAULT,
             context: CoroutineContext = Dispatchers.IO,
             start: CoroutineStart = CoroutineStart.DEFAULT,
+            executeContext: CoroutineContext = Dispatchers.Main,
             block: suspend CoroutineScope.() -> T
         ): Coroutine<T> {
-            return Coroutine(scope, context, start, block)
+            return Coroutine(scope, context, start, executeContext, block)
         }
 
     }
@@ -158,7 +160,7 @@ class Coroutine<T>(
         context: CoroutineContext,
         block: suspend CoroutineScope.() -> T
     ): Job {
-        return (scope.plus(Dispatchers.Main)).launch(start = startOption) {
+        return (scope.plus(executeContext)).launch(start = startOption) {
             try {
                 start?.let { dispatchVoidCallback(this, it) }
                 ensureActive()
