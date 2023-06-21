@@ -29,9 +29,11 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 /**
@@ -107,7 +109,7 @@ class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explo
 
     private fun initGroupData() {
         launch {
-            appDb.bookSourceDao.flowExploreGroups().conflate().collect {
+            appDb.bookSourceDao.flowExploreGroups().flowOn(IO).conflate().collect {
                 groups.clear()
                 groups.addAll(it)
                 upGroupsMenu()

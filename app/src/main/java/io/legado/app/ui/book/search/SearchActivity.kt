@@ -31,6 +31,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -279,7 +280,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             adapter.setItems(it)
         }
         launch {
-            appDb.bookSourceDao.flowEnabledGroups().collect {
+            appDb.bookSourceDao.flowEnabledGroups().flowOn(IO).collect {
                 groups = it
             }
         }

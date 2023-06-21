@@ -1044,7 +1044,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 更新状态栏,导航栏
      */
     override fun upSystemUiVisibility() {
-        upSystemUiVisibility(isInMultiWindow, !menuLayoutIsVisible)
+        upSystemUiVisibility(isInMultiWindow, !menuLayoutIsVisible, bottomDialog > 0)
         upNavigationBarColor()
     }
 

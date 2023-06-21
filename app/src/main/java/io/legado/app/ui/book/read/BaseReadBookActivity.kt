@@ -108,7 +108,8 @@ abstract class BaseReadBookActivity :
      */
     fun upSystemUiVisibility(
         isInMultiWindow: Boolean,
-        toolBarHide: Boolean = true
+        toolBarHide: Boolean = true,
+        useBgMeanColor: Boolean = false
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.run {
@@ -129,7 +130,10 @@ abstract class BaseReadBookActivity :
             setLightStatusBar(ReadBookConfig.durConfig.curStatusIconDark())
         } else {
             val statusBarColor =
-                if (AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0) {
+                if (AppConfig.readBarStyleFollowPage
+                    && ReadBookConfig.durConfig.curBgType() == 0
+                    || useBgMeanColor
+                ) {
                     ReadBookConfig.bgMeanColor
                 } else {
                     ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
@@ -184,12 +188,14 @@ abstract class BaseReadBookActivity :
                             width = MATCH_PARENT
                             gravity = Gravity.BOTTOM
                         }
+
                     Gravity.LEFT -> layoutParams =
                         (layoutParams as FrameLayout.LayoutParams).apply {
                             height = MATCH_PARENT
                             width = navigationBarHeight
                             gravity = Gravity.LEFT
                         }
+
                     Gravity.RIGHT -> layoutParams =
                         (layoutParams as FrameLayout.LayoutParams).apply {
                             height = MATCH_PARENT

@@ -42,9 +42,11 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 /**
@@ -321,7 +323,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }.catch {
                 AppLog.put("书源界面更新书源出错", it)
-            }.conflate().collect { data ->
+            }.flowOn(IO).conflate().collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback)
                 itemTouchCallback.isCanDrag = sort == BookSourceSort.Default
                 delay(500)
@@ -336,10 +338,11 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun initLiveDataGroup() {
         launch {
-            appDb.bookSourceDao.flowGroups().conflate().collect {
+            appDb.bookSourceDao.flowGroups().flowOn(IO).conflate().collect {
                 groups.clear()
                 groups.addAll(it)
                 upGroupMenu()
+                delay(500)
             }
         }
     }

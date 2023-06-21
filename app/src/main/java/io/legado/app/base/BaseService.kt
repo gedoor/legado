@@ -18,8 +18,9 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
         scope: CoroutineScope = this,
         context: CoroutineContext = Dispatchers.IO,
         start: CoroutineStart = CoroutineStart.DEFAULT,
+        executeContext: CoroutineContext = Dispatchers.Main,
         block: suspend CoroutineScope.() -> T
-    ) = Coroutine.async(scope, context, start) { block() }
+    ) = Coroutine.async(scope, context, start, executeContext, block)
 
     @CallSuper
     override fun onCreate() {
@@ -57,7 +58,7 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
     /**
      * 检测通知权限
      */
-    private fun checkNotificationPermission()  {
+    private fun checkNotificationPermission() {
         PermissionsCompat.Builder()
             .addPermissions(Permissions.POST_NOTIFICATIONS)
             .rationale(R.string.notification_permission_rationale)

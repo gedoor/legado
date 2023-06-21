@@ -122,7 +122,11 @@ class CheckSourceService : BaseService() {
      *校验书源
      */
     private fun check(source: BookSource) {
-        execute(context = searchCoroutine, start = CoroutineStart.LAZY) {
+        execute(
+            context = searchCoroutine,
+            start = CoroutineStart.LAZY,
+            executeContext = IO
+        ) {
             Debug.startChecking(source)
             var searchWord = CheckSource.keyword
             source.ruleSearch?.checkKeyWord?.let {
@@ -188,7 +192,6 @@ class CheckSourceService : BaseService() {
                         "" else "\n\n${source.bookSourceComment}"
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
             }.onSuccess(searchCoroutine) {
-                source.removeGroup("校验超时")
                 Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
             }.onFinally(IO) {
                 source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
