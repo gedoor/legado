@@ -6,6 +6,7 @@ import com.script.rhino.RhinoScriptEngine
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.coroutine.Coroutine
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import splitties.init.appCtx
@@ -23,7 +24,7 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): Stri
     val replacement1 = if (isJs) replacement.substring(4) else replacement
     return runBlocking {
         suspendCancellableCoroutine { block ->
-            val coroutine = Coroutine.async {
+            val coroutine = Coroutine.async(executeContext = IO) {
                 try {
                     val pattern = regex.toPattern()
                     val matcher = pattern.matcher(charSequence)
