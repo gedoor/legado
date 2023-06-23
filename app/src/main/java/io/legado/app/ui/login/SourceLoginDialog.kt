@@ -15,6 +15,7 @@ import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemSourceEditBinding
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
@@ -77,22 +78,24 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     it.textView.text = rowUi.name
                     it.textView.setPadding(16.dpToPx())
                     it.root.onClick {
-                        if (rowUi.action.isAbsUrl()) {
-                            context?.openUrl(rowUi.action!!)
-                        } else {
-                            // JavaScript
-                            rowUi.action?.let { buttonFunctionJS ->
-                                kotlin.runCatching {
-                                    source.getLoginJs()?.let { loginJS ->
-                                        source.evalJS("$loginJS\n$buttonFunctionJS") {
-                                            put("result", getLoginData(loginUi))
+                        Coroutine.async {
+                            if (rowUi.action.isAbsUrl()) {
+                                context?.openUrl(rowUi.action!!)
+                            } else {
+                                // JavaScript
+                                rowUi.action?.let { buttonFunctionJS ->
+                                    kotlin.runCatching {
+                                        source.getLoginJs()?.let { loginJS ->
+                                            source.evalJS("$loginJS\n$buttonFunctionJS") {
+                                                put("result", getLoginData(loginUi))
+                                            }
                                         }
+                                    }.onFailure { e ->
+                                        AppLog.put(
+                                            "LoginUI Button ${rowUi.name} JavaScript error",
+                                            e
+                                        )
                                     }
-                                }.onFailure { e ->
-                                    AppLog.put(
-                                        "LoginUI Button ${rowUi.name} JavaScript error",
-                                        e
-                                    )
                                 }
                             }
                         }
