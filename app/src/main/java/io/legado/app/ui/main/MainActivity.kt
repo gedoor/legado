@@ -74,6 +74,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private val adapter by lazy {
         TabFragmentPageAdapter(supportFragmentManager)
     }
+    private val onUpBooksBadgeView by lazy {
+        binding.bottomNavigationView.addBadgeView(0)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
@@ -128,10 +131,13 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         when (item.itemId) {
             R.id.menu_bookshelf ->
                 viewPagerMain.setCurrentItem(0, false)
+
             R.id.menu_discovery ->
                 viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
+
             R.id.menu_rss ->
                 viewPagerMain.setCurrentItem(realPositions.indexOf(idRss), false)
+
             R.id.menu_my_config ->
                 viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
         }
@@ -147,6 +153,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     (fragmentMap[getFragmentId(0)] as? BaseBookshelfFragment)?.gotoTop()
                 }
             }
+
             R.id.menu_discovery -> {
                 if (System.currentTimeMillis() - exploreReselected > 300) {
                     exploreReselected = System.currentTimeMillis()
@@ -304,6 +311,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     override fun observeLiveBus() {
+        viewModel.onUpBooksLiveData.observe(this) {
+            onUpBooksBadgeView.setBadgeCount(it)
+        }
         observeEvent<String>(EventBus.RECREATE) {
             recreate()
         }
@@ -400,9 +410,11 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     interface Callback {
+
         fun onActive()
 
         fun onInactive()
+
     }
 
 }

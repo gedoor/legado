@@ -88,6 +88,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.showLastUpdateTime, value)
         }
 
+    var showWaitUpCount: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showWaitUpCount, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.showWaitUpCount, value)
+        }
+
     var readBrightness: Int
         get() = if (isNightTheme) {
             appCtx.getPrefInt(PreferKey.nightBrightness, 100)
