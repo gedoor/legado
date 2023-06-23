@@ -36,7 +36,7 @@ object Backup {
     val backupPath: String by lazy {
         appCtx.filesDir.getFile("backup").createFolderIfNotExist().absolutePath
     }
-    val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}backup.zip"
+    val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}tmp_backup.zip"
 
     private val backupFileNames by lazy {
         arrayOf(
@@ -166,6 +166,7 @@ object Backup {
                 paths[i] = backupPath + File.separator + paths[i]
             }
             FileUtils.delete(zipFilePath)
+            FileUtils.delete(zipFilePath.replace("tmp_", ""))
             val backupFileName = if (AppConfig.onlyLatestBackup) {
                 "backup.zip"
             } else {
@@ -188,6 +189,7 @@ object Backup {
                 AppWebDav.backUpWebDav(zipFileName)
             }
             FileUtils.delete(backupPath)
+            FileUtils.delete(zipFilePath)
         }
     }
 
@@ -227,5 +229,10 @@ object Backup {
                 inputS.copyTo(outputS)
             }
         }
+    }
+
+    fun clearCache() {
+        FileUtils.delete(backupPath)
+        FileUtils.delete(zipFilePath)
     }
 }

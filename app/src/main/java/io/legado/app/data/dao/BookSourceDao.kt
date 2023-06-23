@@ -175,6 +175,13 @@ interface BookSourceDao {
     @get:Query("select * from book_sources order by customOrder asc")
     val all: List<BookSource>
 
+    @get:Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources order by customOrder asc"""
+    )
+    val allPart: List<BookSourcePart>
+
     @get:Query("select * from book_sources where enabled = 1 order by customOrder")
     val allEnabled: List<BookSource>
 
