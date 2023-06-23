@@ -156,7 +156,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     }
                     if (AppConfig.showWaitUpCount != swShowWaitUpBooks.isChecked) {
                         AppConfig.showWaitUpCount = swShowWaitUpBooks.isChecked
-                        activityViewModel.postUpBooksLiveData()
+                        activityViewModel.postUpBooksLiveData(true)
                     }
                     var changed = false
                     if (bookshelfLayout != rgLayout.getCheckedIndex()) {

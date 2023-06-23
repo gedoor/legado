@@ -180,10 +180,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun postUpBooksLiveData() {
+    fun postUpBooksLiveData(reset: Boolean = false) {
         if (AppConfig.showWaitUpCount) {
             onUpBooksLiveData.postValue(waitUpTocBooks.size + onUpTocBooks.size)
-        } else {
+        } else if (reset) {
             onUpBooksLiveData.postValue(0)
         }
     }

@@ -43,7 +43,7 @@ inline fun <reified A : Activity> Context.startActivity(configIntent: Intent.() 
 }
 
 inline fun <reified T : Service> Context.startService(configIntent: Intent.() -> Unit = {}) {
-    ContextCompat.startForegroundService(this, Intent(this, T::class.java).apply(configIntent))
+    startService(Intent(this, T::class.java).apply(configIntent))
 }
 
 inline fun <reified T : Service> Context.stopService() {
