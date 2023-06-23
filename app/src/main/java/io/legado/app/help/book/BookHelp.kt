@@ -92,6 +92,10 @@ object BookHelp {
                     }
                 }
             FileUtils.delete(ArchiveUtils.TEMP_PATH)
+            val filesDir = appCtx.filesDir
+            FileUtils.delete("$filesDir/shareBookSource.json")
+            FileUtils.delete("$filesDir/shareRssSource.json")
+            FileUtils.delete("$filesDir/books.json")
         }
     }
 

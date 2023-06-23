@@ -82,9 +82,11 @@ object SourceHelp {
             appDb.bookSourceDao.maxOrder > 99999
             || appDb.bookSourceDao.minOrder < -99999
         ) {
-            appDb.bookSourceDao.all.forEachIndexed { index, bookSource ->
-                appDb.bookSourceDao.upOrder(bookSource.bookSourceUrl, index)
+            val sources = appDb.bookSourceDao.allPart
+            sources.forEachIndexed { index, bookSource ->
+                bookSource.customOrder = index
             }
+            appDb.bookSourceDao.upOrder(sources)
         }
     }
 
