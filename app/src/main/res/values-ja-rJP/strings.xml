@@ -1119,4 +1119,5 @@
     <string name="sort_desc">反序</string>
     <string name="test">测试</string>
     <string name="show_wait_up_count">显示等待更新数量</string>
+    <string name="exit_app">退出软件</string>
 </resources>

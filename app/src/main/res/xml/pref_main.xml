@@ -125,6 +125,13 @@
             android:icon="@drawable/ic_cfg_about"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.lib.prefs.Preference
+            android:key="exit"
+            android:summary="@string/exit_app"
+            android:title="@string/exit"
+            android:icon="@drawable/ic_exit"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.lib.prefs.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

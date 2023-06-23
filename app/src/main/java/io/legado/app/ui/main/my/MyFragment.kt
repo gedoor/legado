@@ -155,6 +155,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                 "readRecord" -> startActivity<ReadRecordActivity>()
                 "donate" -> startActivity<DonateActivity>()
                 "about" -> startActivity<AboutActivity>()
+                "exit" -> activity?.finish()
             }
             return super.onPreferenceTreeClick(preference)
         }
