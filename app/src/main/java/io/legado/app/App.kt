@@ -29,6 +29,7 @@ import io.legado.app.help.http.Cronet
 import io.legado.app.help.http.ObsoleteUrlFactory
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
+import io.legado.app.help.storage.Backup
 import io.legado.app.model.BookCover
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
@@ -69,6 +70,7 @@ class App : Application() {
             }
             RuleBigDataHelp.clearInvalid()
             BookHelp.clearInvalidCache()
+            Backup.clearCache()
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
                 1 -> ChineseUtils.preLoad(true, TransType.TRADITIONAL_TO_SIMPLE)

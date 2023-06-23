@@ -230,4 +230,9 @@ object Backup {
             }
         }
     }
+
+    fun clearCache() {
+        FileUtils.delete(backupPath)
+        FileUtils.delete(zipFilePath)
+    }
 }
