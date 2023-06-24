@@ -1120,4 +1120,6 @@
     <string name="test">测试</string>
     <string name="show_wait_up_count">显示等待更新数量</string>
     <string name="exit_app">退出软件</string>
+    <string name="add_all_to_bookshelf">全部加入书架</string>
+    <string name="page_to">页至</string>
 </resources>
