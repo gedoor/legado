@@ -142,7 +142,7 @@ object BookHelp {
             matcher.group(1)?.let { src ->
                 val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
                 awaitList.add(async {
-                    saveImage(bookSource, book, mSrc)
+                    saveImage(bookSource, book, mSrc, bookChapter)
                 })
             }
         }
@@ -151,7 +151,12 @@ object BookHelp {
         }
     }
 
-    suspend fun saveImage(bookSource: BookSource?, book: Book, src: String) {
+    suspend fun saveImage(
+        bookSource: BookSource?,
+        book: Book,
+        src: String,
+        chapter: BookChapter? = null
+    ) {
         while (downloadImages.contains(src)) {
             delay(100)
         }
@@ -178,8 +183,10 @@ object BookHelp {
                 ).writeBytes(it)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            AppLog.put("图片 $src 下载错误\n${e.localizedMessage}", e)
+            AppLog.put(
+                "${book.name} ${chapter?.title} 图片 $src 下载失败\n${e.localizedMessage}",
+                e
+            )
         } finally {
             downloadImages.remove(src)
         }
