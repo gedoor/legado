@@ -166,7 +166,12 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
                 waitDialog.setText("添加书架中...")
             }
             books.forEach {
-                if (isInBookshelf(it.name, it.author)) return@forEach
+                appDb.bookDao.getBook(it.bookUrl)?.let { book ->
+                    book.group = book.group or groupId
+                    it.order = appDb.bookDao.minOrder - 1
+                    book.save()
+                    return@forEach
+                }
                 if (it.tocUrl.isEmpty()) {
                     val source = appDb.bookSourceDao.getBookSource(it.origin)!!
                     WebBook.getBookInfoAwait(source, it)
