@@ -83,8 +83,8 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         }
         for (page in range) {
             val books = WebBook.exploreBookAwait(source, url, page)
-            if (reverse) books.reverse()
             if (books.isEmpty()) break
+            if (reverse) books.reverse()
             searchBooks.addAll(books)
         }
         return searchBooks
