@@ -142,8 +142,14 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
             customView { alertBinding.root }
             yesButton {
                 alertBinding.run {
-                    val start = editStart.text!!.toString().toInt()
-                    val end = editEnd.text!!.toString().toInt()
+                    val start = editStart.text
+                        .runCatching {
+                            toString().toInt()
+                        }.getOrDefault(0)
+                    val end = editEnd.text
+                        .runCatching {
+                            toString().toInt()
+                        }.getOrDefault(9)
                     addAllToBookshelf(start, end, groupId)
                 }
             }
