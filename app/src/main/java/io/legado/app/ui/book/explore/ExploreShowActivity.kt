@@ -145,7 +145,7 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
                     val start = editStart.text
                         .runCatching {
                             toString().toInt()
-                        }.getOrDefault(0)
+                        }.getOrDefault(1)
                     val end = editEnd.text
                         .runCatching {
                             toString().toInt()
