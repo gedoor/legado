@@ -9,6 +9,8 @@ import okhttp3.*
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 private val proxyClientCache: ConcurrentHashMap<String, OkHttpClient> by lazy {
@@ -56,6 +58,7 @@ val okHttpClient: OkHttpClient by lazy {
         .connectionSpecs(specs)
         .followRedirects(true)
         .followSslRedirects(true)
+        .addInterceptor(OkHttpExceptionInterceptor)
         .addInterceptor(Interceptor { chain ->
             val request = chain.request()
             val builder = request.newBuilder()
@@ -93,7 +96,18 @@ val okHttpClient: OkHttpClient by lazy {
             }
         }
     }
-    builder.build()
+    builder.build().apply {
+        val okHttpName =
+            OkHttpClient::class.java.name.removePrefix("okhttp3.").removeSuffix("Client")
+        val executor = dispatcher.executorService as ThreadPoolExecutor
+        val threadName = "$okHttpName Dispatcher"
+        executor.threadFactory = ThreadFactory { runnable ->
+            Thread(runnable, threadName).apply {
+                isDaemon = false
+                uncaughtExceptionHandler = OkhttpUncaughtExceptionHandler
+            }
+        }
+    }
 }
 
 /**
