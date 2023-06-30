@@ -16,11 +16,12 @@ import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
+import java.util.Collections
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
-    val bookshelf = hashSetOf<String>()
+    val bookshelf: MutableSet<String> = Collections.synchronizedSet(hashSetOf<String>())
     val upAdapterLiveData = MutableLiveData<String>()
     val booksData = MutableLiveData<List<SearchBook>>()
     val errorLiveData = MutableLiveData<String>()
@@ -74,7 +75,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         val url = exploreUrl
         if (source == null || url == null) return emptyList()
         val searchBooks = arrayListOf<SearchBook>()
-        for (page in start .. end) {
+        for (page in start..end) {
             val books = WebBook.exploreBookAwait(source, url, page)
             if (books.isEmpty()) break
             searchBooks.addAll(books)
