@@ -54,7 +54,7 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
         arguments = bundle
     }
 
-    override val position: Int get() = arguments?.getInt("position") ?: -1
+    override val position: Int? get() = arguments?.getInt("position")
 
     override val viewModel by viewModels<ExploreViewModel>()
     private val binding by viewBinding(FragmentExploreBinding::bind)

@@ -40,8 +40,6 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
         arguments = bundle
     }
 
-    override val position: Int get() = arguments?.getInt("position") ?: -1
-
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
     private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager) }
     private val tabLayout: TabLayout by lazy {

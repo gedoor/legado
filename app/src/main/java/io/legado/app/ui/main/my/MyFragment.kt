@@ -52,7 +52,7 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
         arguments = bundle
     }
 
-    override val position: Int get() = arguments?.getInt("position") ?: -1
+    override val position: Int? get() = arguments?.getInt("position")
 
     private val binding by viewBinding(FragmentMyConfigBinding::bind)
 

@@ -52,8 +52,6 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         arguments = bundle
     }
 
-    override val position: Int get() = arguments?.getInt("position") ?: -1
-
     private val binding by viewBinding(FragmentBookshelf2Binding::bind)
     private val bookshelfLayout by lazy {
         getPrefInt(PreferKey.bookshelfLayout)

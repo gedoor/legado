@@ -33,6 +33,8 @@ import io.legado.app.utils.*
 abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId),
     MainFragmentInterface {
 
+    override val position: Int? get() = arguments?.getInt("position")
+
     val activityViewModel by activityViewModels<MainViewModel>()
     override val viewModel by viewModels<BookshelfViewModel>()
 

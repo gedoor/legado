@@ -52,7 +52,7 @@ class RssFragment() : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
         arguments = bundle
     }
 
-    override val position: Int get() = arguments?.getInt("position") ?: -1
+    override val position: Int? get() = arguments?.getInt("position")
 
     private val binding by viewBinding(FragmentRssBinding::bind)
     override val viewModel by viewModels<RssSourceViewModel>()
