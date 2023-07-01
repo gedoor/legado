@@ -30,9 +30,17 @@ import kotlin.collections.set
 /**
  * 书架界面
  */
-class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
+class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
+
+    override val position: Int get() = arguments?.getInt("position") ?: -1
 
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
     private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager) }
@@ -134,8 +142,8 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
          * 确定视图位置是否更改时调用
          * @return POSITION_NONE 已更改,刷新视图. POSITION_UNCHANGED 未更改,不刷新视图
          */
-        override fun getItemPosition(`object`: Any): Int {
-            val fragment = `object` as BooksFragment
+        override fun getItemPosition(any: Any): Int {
+            val fragment = any as BooksFragment
             val position = fragment.position
             val group = bookGroups.getOrNull(position)
             if (fragment.groupId != group?.groupId) {

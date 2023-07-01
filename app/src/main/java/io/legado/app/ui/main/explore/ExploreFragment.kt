@@ -24,6 +24,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.main.MainActivity
+import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.setEdgeEffectColor
@@ -42,8 +43,18 @@ import kotlinx.coroutines.launch
 /**
  * 发现界面
  */
-class ExploreFragment : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
-    ExploreAdapter.CallBack, MainActivity.Callback {
+class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
+    MainFragmentInterface,
+    ExploreAdapter.CallBack,
+    MainActivity.Callback {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
+
+    override val position: Int get() = arguments?.getInt("position") ?: -1
 
     override val viewModel by viewModels<ExploreViewModel>()
     private val binding by viewBinding(FragmentExploreBinding::bind)

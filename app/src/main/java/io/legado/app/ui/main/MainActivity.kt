@@ -320,7 +320,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         observeEvent<Boolean>(EventBus.NOTIFY_MAIN) {
             binding.apply {
                 upBottomMenu()
-                viewPagerMain.adapter?.notifyDataSetChanged()
                 if (it) {
                     viewPagerMain.setCurrentItem(bottomMenuCount - 1, false)
                 }
@@ -350,6 +349,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         index++
         realPositions[index] = idMy
         bottomMenuCount = index + 1
+        adapter.notifyDataSetChanged()
     }
 
     private fun getFragmentId(position: Int): Int {
@@ -383,17 +383,27 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return getFragmentId(position)
         }
 
-        override fun getItemPosition(`object`: Any): Int {
+        override fun getItemPosition(any: Any): Int {
+            val position = (any as MainFragmentInterface).position
+            val fragmentId = getId(position)
+            if ((fragmentId == idBookshelf1 && any is BookshelfFragment1)
+                || (fragmentId == idBookshelf2 && any is BookshelfFragment2)
+                || (fragmentId == idExplore && any is ExploreFragment)
+                || (fragmentId == idRss && any is RssFragment)
+                || (fragmentId == idMy && any is MyFragment)
+            ) {
+                return POSITION_UNCHANGED
+            }
             return POSITION_NONE
         }
 
         override fun getItem(position: Int): Fragment {
             return when (getId(position)) {
-                idBookshelf1 -> BookshelfFragment1()
-                idBookshelf2 -> BookshelfFragment2()
-                idExplore -> ExploreFragment()
-                idRss -> RssFragment()
-                else -> MyFragment()
+                idBookshelf1 -> BookshelfFragment1(position)
+                idBookshelf2 -> BookshelfFragment2(position)
+                idExplore -> ExploreFragment(position)
+                idRss -> RssFragment(position)
+                else -> MyFragment(position)
             }
         }
 

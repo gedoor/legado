@@ -42,9 +42,17 @@ import kotlin.math.max
 /**
  * 书架界面
  */
-class BookshelfFragment2 : BaseBookshelfFragment(R.layout.fragment_bookshelf2),
+class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2),
     SearchView.OnQueryTextListener,
     BaseBooksAdapter.CallBack {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
+
+    override val position: Int get() = arguments?.getInt("position") ?: -1
 
     private val binding by viewBinding(FragmentBookshelf2Binding::bind)
     private val bookshelfLayout by lazy {

@@ -18,6 +18,7 @@ import io.legado.app.databinding.ItemRssBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.ui.rss.article.RssSortActivity
 import io.legado.app.ui.rss.favorites.RssFavoritesActivity
 import io.legado.app.ui.rss.read.ReadRssActivity
@@ -25,7 +26,12 @@ import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.rss.source.manage.RssSourceActivity
 import io.legado.app.ui.rss.source.manage.RssSourceViewModel
 import io.legado.app.ui.rss.subscription.RuleSubActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -36,8 +42,17 @@ import kotlinx.coroutines.launch
 /**
  * 订阅界面
  */
-class RssFragment : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
+class RssFragment() : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
+    MainFragmentInterface,
     RssAdapter.CallBack {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
+
+    override val position: Int get() = arguments?.getInt("position") ?: -1
 
     private val binding by viewBinding(FragmentRssBinding::bind)
     override val viewModel by viewModels<RssSourceViewModel>()

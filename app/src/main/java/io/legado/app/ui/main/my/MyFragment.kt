@@ -30,12 +30,29 @@ import io.legado.app.ui.config.ConfigActivity
 import io.legado.app.ui.config.ConfigTag
 import io.legado.app.ui.dict.rule.DictRuleActivity
 import io.legado.app.ui.file.FileManageActivity
+import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.observeEventSticky
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class MyFragment : BaseFragment(R.layout.fragment_my_config) {
+class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInterface {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
+
+    override val position: Int get() = arguments?.getInt("position") ?: -1
 
     private val binding by viewBinding(FragmentMyConfigBinding::bind)
 
@@ -131,6 +148,7 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                         WebService.stop(requireContext())
                     }
                 }
+
                 "recordLog" -> LogUtils.upLevel()
             }
         }
@@ -145,12 +163,15 @@ class MyFragment : BaseFragment(R.layout.fragment_my_config) {
                 "setting" -> startActivity<ConfigActivity> {
                     putExtra("configTag", ConfigTag.OTHER_CONFIG)
                 }
+
                 "web_dav_setting" -> startActivity<ConfigActivity> {
                     putExtra("configTag", ConfigTag.BACKUP_CONFIG)
                 }
+
                 "theme_setting" -> startActivity<ConfigActivity> {
                     putExtra("configTag", ConfigTag.THEME_CONFIG)
                 }
+
                 "fileManage" -> startActivity<FileManageActivity>()
                 "readRecord" -> startActivity<ReadRecordActivity>()
                 "donate" -> startActivity<DonateActivity>()

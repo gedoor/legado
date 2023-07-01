@@ -26,10 +26,12 @@ import io.legado.app.ui.book.import.remote.RemoteBookActivity
 import io.legado.app.ui.book.manage.BookshelfManageActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.file.HandleFileContract
+import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.*
 
-abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId) {
+abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId),
+    MainFragmentInterface {
 
     val activityViewModel by activityViewModels<MainViewModel>()
     override val viewModel by viewModels<BookshelfViewModel>()
@@ -83,15 +85,19 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             R.id.menu_bookshelf_manage -> startActivity<BookshelfManageActivity> {
                 putExtra("groupId", groupId)
             }
+
             R.id.menu_download -> startActivity<CacheActivity> {
                 putExtra("groupId", groupId)
             }
+
             R.id.menu_export_bookshelf -> viewModel.exportBookshelf(books) { file ->
                 exportResult.launch {
                     mode = HandleFileContract.EXPORT
-                    fileData = HandleFileContract.FileData("bookshelf.json", file, "application/json")
+                    fileData =
+                        HandleFileContract.FileData("bookshelf.json", file, "application/json")
                 }
             }
+
             R.id.menu_import_bookshelf -> importBookshelfAlert(groupId)
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
