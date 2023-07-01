@@ -385,6 +385,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
         override fun getItemPosition(any: Any): Int {
             val position = (any as MainFragmentInterface).position
+            if (position < 0) {
+                return POSITION_NONE
+            }
             val fragmentId = getId(position)
             if ((fragmentId == idBookshelf1 && any is BookshelfFragment1)
                 || (fragmentId == idBookshelf2 && any is BookshelfFragment2)
