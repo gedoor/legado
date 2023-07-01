@@ -17,7 +17,11 @@ import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -51,6 +55,8 @@ class CacheBookService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         isRun = true
+        CacheBook.successDownloadSet.clear()
+        CacheBook.errorDownloadMap.clear()
         launch {
             while (isActive) {
                 delay(1000)
@@ -81,6 +87,8 @@ class CacheBookService : BaseService() {
         cachePool.close()
         CacheBook.cacheBookMap.forEach { it.value.stop() }
         CacheBook.cacheBookMap.clear()
+        CacheBook.successDownloadSet.clear()
+        CacheBook.errorDownloadMap.clear()
         super.onDestroy()
         postEvent(EventBus.UP_DOWNLOAD, "")
     }
