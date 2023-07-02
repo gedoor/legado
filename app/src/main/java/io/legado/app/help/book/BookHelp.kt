@@ -171,7 +171,7 @@ object BookHelp {
             ImageUtils.decode(
                 src, bytes, isCover = false, bookSource, book
             )?.let {
-                if (!checkImage(bytes)) {
+                if (!checkImage(it)) {
                     throw NoStackTraceException("数据异常")
                 }
                 FileUtils.createFileIfNotExist(
