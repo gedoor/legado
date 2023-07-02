@@ -4,43 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/menu_group"
-        android:icon="@drawable/ic_groups"
-        android:title="@string/menu_action_group"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction">
-
-        <menu>
-
-            <item
-                android:id="@+id/menu_group_manage"
-                android:title="@string/group_manage" />
-
-            <item
-                android:id="@+id/menu_enabled_group"
-                android:title="@string/enabled" />
-
-            <item
-                android:id="@+id/menu_disabled_group"
-                android:title="@string/disabled" />
-
-            <item
-                android:id="@+id/menu_group_login"
-                android:title="@string/need_login" />
-
-            <item
-                android:id="@+id/menu_group_null"
-                android:title="@string/no_group" />
-
-            <group android:id="@+id/source_group">
-
-            </group>
-
-        </menu>
-
-    </item>
-
-    <item
         android:id="@+id/action_sort"
         android:title="@string/sort"
         android:icon="@drawable/ic_sort"
@@ -93,6 +56,43 @@
                     android:id="@+id/menu_sort_enable"
                     android:checkable="true"
                     android:title="@string/is_enabled" />
+
+            </group>
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/menu_group"
+        android:icon="@drawable/ic_groups"
+        android:title="@string/menu_action_group"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_group_manage"
+                android:title="@string/group_manage" />
+
+            <item
+                android:id="@+id/menu_enabled_group"
+                android:title="@string/enabled" />
+
+            <item
+                android:id="@+id/menu_disabled_group"
+                android:title="@string/disabled" />
+
+            <item
+                android:id="@+id/menu_group_login"
+                android:title="@string/need_login" />
+
+            <item
+                android:id="@+id/menu_group_null"
+                android:title="@string/no_group" />
+
+            <group android:id="@+id/source_group">
 
             </group>
 
