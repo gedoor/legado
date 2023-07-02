@@ -89,6 +89,10 @@ data class BookChapter(
         return false
     }
 
+    fun primaryStr(): String {
+        return bookUrl + url
+    }
+
     fun getDisplayTitle(
         replaceRules: List<ReplaceRule>? = null,
         useReplace: Boolean = true,

@@ -161,15 +161,16 @@ object CacheBook {
         @Synchronized
         private fun onSuccess(chapter: BookChapter) {
             onDownloadSet.remove(chapter.index)
-            successDownloadSet.add(chapter.url)
-            errorDownloadMap.remove(chapter.url)
+            successDownloadSet.add(chapter.primaryStr())
+            errorDownloadMap.remove(chapter.primaryStr())
         }
 
         @Synchronized
         private fun onPreError(chapter: BookChapter, error: Throwable) {
             waitingRetry = true
             if (error !is ConcurrentException) {
-                errorDownloadMap[chapter.url] = (errorDownloadMap[chapter.url] ?: 0) + 1
+                errorDownloadMap[chapter.primaryStr()] =
+                    (errorDownloadMap[chapter.primaryStr()] ?: 0) + 1
             }
             onDownloadSet.remove(chapter.index)
         }
@@ -177,7 +178,7 @@ object CacheBook {
         @Synchronized
         private fun onPostError(chapter: BookChapter, error: Throwable) {
             //重试3次
-            if ((errorDownloadMap[chapter.url] ?: 0) < 3 && !isStopped) {
+            if ((errorDownloadMap[chapter.primaryStr()] ?: 0) < 3 && !isStopped) {
                 waitDownloadSet.add(chapter.index)
             } else {
                 AppLog.put(
