@@ -19,6 +19,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
 import io.legado.app.help.IntentData
@@ -254,15 +255,20 @@ class ReadMenu @JvmOverloads constructor(
      * 设置屏幕亮度
      */
     private fun setScreenBrightness(value: Int) {
-        var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        if (!brightnessAuto()) {
-            brightness = value.toFloat()
-            if (brightness < 1f) brightness = 1f
-            brightness /= 255f
+        activity?.run {
+            var brightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+            if (!brightnessAuto()) {
+                brightness = value.toFloat()
+                if (brightness < 1f) brightness = 1f
+                brightness /= 255f
+            }
+            val params = window.attributes
+            params.screenBrightness = brightness
+            window.attributes = params
+            if (AppConfig.recordLog) {
+                AppLog.put("设置亮度$brightness")
+            }
         }
-        val params = activity?.window?.attributes
-        params?.screenBrightness = brightness
-        activity?.window?.attributes = params
     }
 
     fun runMenuIn(anim: Boolean = !AppConfig.isEInkMode) {
