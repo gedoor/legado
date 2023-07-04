@@ -19,7 +19,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
-import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
 import io.legado.app.help.IntentData
@@ -265,7 +264,6 @@ class ReadMenu @JvmOverloads constructor(
             val params = window.attributes
             params.screenBrightness = brightness
             window.attributes = params
-            AppLog.put("设置亮度$brightness")
         }
     }
 
