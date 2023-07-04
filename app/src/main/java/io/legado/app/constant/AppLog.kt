@@ -17,11 +17,9 @@ object AppLog {
             mLogs.removeLastOrNull()
         }
         mLogs.add(0, Triple(System.currentTimeMillis(), message, throwable))
-        if (throwable != null) {
-            if (BuildConfig.DEBUG) {
-                val stackTrace = Thread.currentThread().stackTrace
-                Log.e(stackTrace[3].className, message, throwable)
-            }
+        if (BuildConfig.DEBUG) {
+            val stackTrace = Thread.currentThread().stackTrace
+            Log.e(stackTrace[3].className, message, throwable)
         }
     }
 

@@ -199,7 +199,15 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         upSystemUiVisibility()
-        binding.readMenu.upBrightnessState()
+        if (hasFocus) {
+            //调节系统亮度后如果设置亮度值和原来一样亮度不会变
+            launch {
+                delay(100)
+                binding.readMenu.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+                delay(1000)
+                binding.readMenu.upBrightnessState()
+            }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
