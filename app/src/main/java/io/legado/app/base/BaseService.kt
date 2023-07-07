@@ -9,7 +9,12 @@ import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlin.coroutines.CoroutineContext
 
 abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
@@ -26,8 +31,8 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         LifecycleHelp.onServiceCreate(this)
-        upNotification()
         checkNotificationPermission()
+        upNotification()
     }
 
     @CallSuper
