@@ -52,8 +52,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
     @Synchronized
     fun clearTTS() {
-        textToSpeech?.stop()
-        textToSpeech?.shutdown()
+        textToSpeech?.runCatching {
+            stop()
+            shutdown()
+        }
         textToSpeech = null
         ttsInitFinish = false
     }
