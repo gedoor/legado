@@ -425,6 +425,10 @@ abstract class BaseReadAloudService : BaseService(),
             builder
         }.onSuccess {
             startForeground(AppConst.notificationIdRead, it.build())
+        }.onError {
+            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
+            //创建通知出错不结束服务就会崩溃,服务必须绑定通知
+            stopSelf()
         }
     }
 
