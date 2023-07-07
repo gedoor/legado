@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Bundle
@@ -80,6 +81,7 @@ abstract class BaseReadAloudService : BaseService(),
     internal var pageIndex = 0
     private var needResumeOnAudioFocusGain = false
     private var dsJob: Job? = null
+    private var cover: Bitmap? = null
     var pageChanged = false
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -102,6 +104,15 @@ abstract class BaseReadAloudService : BaseService(),
         setTimer(AppConfig.ttsTimer)
         if (AppConfig.ttsTimer > 0) {
             toastOnUi("朗读定时 ${AppConfig.ttsTimer} 分钟")
+        }
+        execute {
+            @Suppress("BlockingMethodInNonBlockingContext")
+            ImageLoader
+                .loadBitmap(this@BaseReadAloudService, ReadBook.book?.getDisplayCover())
+                .submit()
+                .get()
+        }.onSuccess {
+            cover = it
         }
     }
 
@@ -384,15 +395,11 @@ abstract class BaseReadAloudService : BaseService(),
                 .setContentIntent(
                     activityPendingIntent<ReadBookActivity>("activity")
                 )
-            kotlin.runCatching {
-                ImageLoader
-                    .loadBitmap(this@BaseReadAloudService, ReadBook.book?.getDisplayCover())
-                    .submit()
-                    .get()
-            }.getOrElse {
-                BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
-            }.let {
-                builder.setLargeIcon(it)
+            if (cover != null) {
+                builder.setLargeIcon(cover)
+            } else {
+                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
+                builder.setLargeIcon(bitmap)
             }
             if (pause) {
                 builder.addAction(
