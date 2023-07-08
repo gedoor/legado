@@ -81,7 +81,8 @@ abstract class BaseReadAloudService : BaseService(),
     internal var pageIndex = 0
     private var needResumeOnAudioFocusGain = false
     private var dsJob: Job? = null
-    private var cover: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
+    private var cover: Bitmap =
+        BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
     var pageChanged = false
 
     private val broadcastReceiver = object : BroadcastReceiver() {
