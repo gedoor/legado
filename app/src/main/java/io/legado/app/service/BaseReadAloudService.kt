@@ -81,7 +81,7 @@ abstract class BaseReadAloudService : BaseService(),
     internal var pageIndex = 0
     private var needResumeOnAudioFocusGain = false
     private var dsJob: Job? = null
-    private var cover: Bitmap? = null
+    private var cover: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
     var pageChanged = false
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -112,7 +112,10 @@ abstract class BaseReadAloudService : BaseService(),
                 .submit()
                 .get()
         }.onSuccess {
+            val tmpCover = cover
             cover = it
+            upNotification()
+            tmpCover.recycle()
         }
     }
 
@@ -136,6 +139,7 @@ abstract class BaseReadAloudService : BaseService(),
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         mediaSessionCompat.release()
         ReadBook.uploadProgress()
+        cover.recycle()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -395,12 +399,7 @@ abstract class BaseReadAloudService : BaseService(),
                 .setContentIntent(
                     activityPendingIntent<ReadBookActivity>("activity")
                 )
-            if (cover != null) {
-                builder.setLargeIcon(cover)
-            } else {
-                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
-                builder.setLargeIcon(bitmap)
-            }
+            builder.setLargeIcon(cover)
             if (pause) {
                 builder.addAction(
                     R.drawable.ic_play_24dp,
