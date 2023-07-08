@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Build
+import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -61,6 +62,14 @@ class AudioPlayService : BaseService(),
 
         var url: String = ""
             private set
+
+        private const val MEDIA_SESSION_ACTIONS = (PlaybackStateCompat.ACTION_PLAY
+                or PlaybackStateCompat.ACTION_PAUSE
+                or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                or PlaybackStateCompat.ACTION_SEEK_TO)
+
+        private const val APP_ACTION_STOP = "Stop"
+        private const val APP_ACTION_TIMER = "Timer"
     }
 
     private val useWakeLock = AppConfig.audioPlayUseWakeLock
@@ -74,7 +83,7 @@ class AudioPlayService : BaseService(),
         MediaHelp.buildAudioFocusRequestCompat(this)
     }
     private val exoPlayer: ExoPlayer by lazy {
-       ExoPlayerHelper.createHttpExoPlayer(this)
+        ExoPlayerHelper.createHttpExoPlayer(this)
     }
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
@@ -152,7 +161,12 @@ class AudioPlayService : BaseService(),
                     chapter = AudioPlay.durChapter,
                     headerMapF = AudioPlay.headers(true),
                 )
-                exoPlayer.setMediaItem(ExoPlayerHelper.createMediaItem(analyzeUrl.url,analyzeUrl.headerMap))
+                exoPlayer.setMediaItem(
+                    ExoPlayerHelper.createMediaItem(
+                        analyzeUrl.url,
+                        analyzeUrl.headerMap
+                    )
+                )
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             }.onError {
@@ -419,9 +433,19 @@ class AudioPlayService : BaseService(),
     private fun upMediaSessionPlaybackState(state: Int) {
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
-                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                .setActions(MEDIA_SESSION_ACTIONS)
                 .setState(state, exoPlayer.currentPosition, 1f)
                 .setBufferedPosition(exoPlayer.bufferedPosition)
+                .addCustomAction(
+                    APP_ACTION_STOP,
+                    getString(R.string.set_timer),
+                    R.drawable.ic_stop_black_24dp
+                )
+                .addCustomAction(
+                    APP_ACTION_TIMER,
+                    getString(R.string.set_timer),
+                    R.drawable.ic_time_add_24dp
+                )
                 .build()
         )
     }
@@ -440,6 +464,19 @@ class AudioPlayService : BaseService(),
 
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@AudioPlayService, mediaButtonEvent)
+            }
+
+            override fun onPlay() = resume()
+
+            override fun onPause() = pause()
+
+            override fun onCustomAction(action: String?, extras: Bundle?) {
+                action ?: return
+
+                when (action) {
+                    APP_ACTION_STOP -> stopSelf()
+                    APP_ACTION_TIMER -> addTimer()
+                }
             }
         })
         mediaSessionCompat?.setMediaButtonReceiver(

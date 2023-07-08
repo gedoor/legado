@@ -56,15 +56,15 @@ object CookieManager {
         val cookie = CookieStore.getCookie(domain)
         val requestCookie = request.header("Cookie")
 
-        mergeCookies(cookie, requestCookie)?.let { cookie ->
+        mergeCookies(cookie, requestCookie)?.let { newCookie ->
             kotlin.runCatching {
                 return request.newBuilder()
-                    .header("Cookie", cookie)
+                    .header("Cookie", newCookie)
                     .build()
             }.onFailure {
                 CookieStore.removeCookie(url)
                 AppLog.put(
-                    "设置cookie出错，已清除cookie $domain cookie:$cookie\n${it.localizedMessage}",
+                    "设置cookie出错，已清除cookie $domain cookie:$newCookie\n${it.localizedMessage}",
                     it
                 )
             }
