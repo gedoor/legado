@@ -17,7 +17,7 @@
 格式参考[这个文件](/app/src/main/java/io/legado/app/data/entities/BookSource.kt)
 
 ```
-URL = http://127.0.0.1:1234/saveSource
+URL = http://127.0.0.1:1234/saveBookSource
 Method = POST
 ```
 
