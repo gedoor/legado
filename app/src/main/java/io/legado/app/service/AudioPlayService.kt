@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Build
@@ -37,6 +38,7 @@ import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
+import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
 
@@ -92,6 +94,8 @@ class AudioPlayService : BaseService(),
     private var dsJob: Job? = null
     private var upPlayProgressJob: Job? = null
     private var playSpeed: Float = 1f
+    private var cover: Bitmap =
+        BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
 
     override fun onCreate() {
         super.onCreate()
@@ -101,6 +105,18 @@ class AudioPlayService : BaseService(),
         initBroadcastReceiver()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         doDs()
+        execute {
+            @Suppress("BlockingMethodInNonBlockingContext")
+            ImageLoader
+                .loadBitmap(this@AudioPlayService, AudioPlay.book?.getDisplayCover())
+                .submit()
+                .get()
+        }.onSuccess {
+            val tmpCover = cover
+            cover = it
+            upNotification()
+            tmpCover.recycle()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -141,6 +157,7 @@ class AudioPlayService : BaseService(),
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         AudioPlay.status = Status.STOP
         postEvent(EventBus.AUDIO_STATE, Status.STOP)
+        cover.recycle()
     }
 
     /**
@@ -569,16 +586,7 @@ class AudioPlayService : BaseService(),
                 .setContentIntent(
                     activityPendingIntent<AudioPlayActivity>("activity")
                 )
-            kotlin.runCatching {
-                ImageLoader
-                    .loadBitmap(this@AudioPlayService, AudioPlay.book?.getDisplayCover())
-                    .submit()
-                    .get()
-            }.getOrElse {
-                BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
-            }.let {
-                builder.setLargeIcon(it)
-            }
+            builder.setLargeIcon(cover)
             if (pause) {
                 builder.addAction(
                     R.drawable.ic_play_24dp,
