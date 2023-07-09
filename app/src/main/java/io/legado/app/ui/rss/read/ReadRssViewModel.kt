@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Base64
 import android.webkit.URLUtil
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
@@ -20,14 +19,10 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
 import splitties.init.appCtx
-import java.io.File
 import java.util.Date
 
 
@@ -99,6 +94,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                     appDb.rssStarDao.insert(it)
                 }
                 contentLiveData.postValue(body)
+            }.onError {
+                contentLiveData.postValue("加载正文失败\n${it.stackTraceToString()}")
             }
     }
 
