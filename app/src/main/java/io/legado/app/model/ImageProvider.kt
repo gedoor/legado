@@ -200,20 +200,4 @@ object ImageProvider {
         return tmp
     }
 
-    fun getServiceCover(coverUrl: String?): Bitmap {
-        var bitmap: Bitmap?
-        if (!coverUrl.isNullOrBlank()) {
-            bitmap = get(coverUrl)
-            if (bitmap != null) {
-                return bitmap
-            }
-        }
-        bitmap = get("defaultCover")
-        if (bitmap == null) {
-            bitmap = BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)!!
-            put("defaultCover", bitmap)
-        }
-        return bitmap
-    }
-
 }
