@@ -200,13 +200,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         super.onWindowFocusChanged(hasFocus)
         upSystemUiVisibility()
         if (hasFocus) {
-            //调节系统亮度后如果设置亮度值和原来一样亮度不会变
-            launch {
-                delay(100)
-                binding.readMenu.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
-                delay(1000)
-                binding.readMenu.upBrightnessState()
-            }
+            binding.readMenu.upBrightnessState()
         }
     }
 

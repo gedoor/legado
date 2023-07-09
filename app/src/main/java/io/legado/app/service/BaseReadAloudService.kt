@@ -113,10 +113,8 @@ abstract class BaseReadAloudService : BaseService(),
                 .submit()
                 .get()
         }.onSuccess {
-            val tmpCover = cover
             cover = it
             upNotification()
-            tmpCover.recycle()
         }
     }
 
@@ -140,7 +138,6 @@ abstract class BaseReadAloudService : BaseService(),
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         mediaSessionCompat.release()
         ReadBook.uploadProgress()
-        cover.recycle()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

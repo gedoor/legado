@@ -11,8 +11,8 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.model.BookCover
+import io.legado.app.model.ImageProvider
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
