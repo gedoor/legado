@@ -204,6 +204,7 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
+        upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
