@@ -31,7 +31,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.12.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.0",
     "sass": "^1.62.1",
     "unplugin-auto-import": "^0.16.0",
     "unplugin-icons": "^0.16.1",
