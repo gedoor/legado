@@ -3,6 +3,8 @@ package io.legado.app.ui.book.searchContent
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.widget.EditText
 import androidx.activity.viewModels
@@ -18,7 +20,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ActivitySearchContentBinding
 import io.legado.app.help.IntentData
 import io.legado.app.help.book.BookHelp
-import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -69,6 +70,26 @@ class SearchContentActivity :
             initSearchResultList(searchResultList, position)
             initBook(noSearchResult)
         }
+    }
+
+    override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.content_search, menu)
+        return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.findItem(R.id.menu_enable_replace)?.isChecked = viewModel.replaceEnabled
+        return super.onMenuOpened(featureId, menu)
+    }
+
+    override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_enable_replace -> {
+                viewModel.replaceEnabled = !viewModel.replaceEnabled
+                item.isChecked = viewModel.replaceEnabled
+            }
+        }
+        return super.onCompatOptionsItemSelected(item)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
