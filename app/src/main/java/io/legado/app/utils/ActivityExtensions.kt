@@ -34,8 +34,17 @@ val WindowManager.windowSize: DisplayMetrics
             val windowMetrics: WindowMetrics = currentWindowMetrics
             val insets = windowMetrics.windowInsets
                 .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            displayMetrics.widthPixels = windowMetrics.bounds.width() - insets.left - insets.right
-            displayMetrics.heightPixels = windowMetrics.bounds.height() - insets.top - insets.bottom
+            val windowWidth = windowMetrics.bounds.width()
+            val windowHeight = windowMetrics.bounds.height()
+            var insetsWidth = insets.left + insets.right
+            var insetsHeight = insets.top + insets.bottom
+            if (windowWidth > windowHeight) {
+                val tmp = insetsWidth
+                insetsWidth = insetsHeight
+                insetsHeight = tmp
+            }
+            displayMetrics.widthPixels = windowWidth - insetsWidth
+            displayMetrics.heightPixels = windowHeight - insetsHeight
         } else {
             @Suppress("DEPRECATION")
             defaultDisplay.getMetrics(displayMetrics)
