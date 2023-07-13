@@ -22,6 +22,8 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.explore.ExploreShowActivity
+import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.main.MainFragmentInterface
@@ -211,6 +213,12 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
             yesButton {
                 viewModel.deleteSource(source)
             }
+        }
+    }
+
+    override fun searchBook(bookSource: BookSource) {
+        startActivity<SearchActivity> {
+            putExtra("searchScope", SearchScope(bookSource).toString())
         }
     }
 
