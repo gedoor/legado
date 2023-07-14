@@ -1,6 +1,17 @@
 [
   {
+    "articleStyle": 0,
     "customOrder": 1,
+    "enableJs": true,
+    "enabled": true,
+    "loadWithBaseUrl": true,
+    "singleUrl": true,
+    "sourceIcon": "https://funimg.pddpic.com/ktt/762ee1c9-a117-46e4-b0c7-9d820420c08b.png.slim.png",
+    "sourceName": "我的小店",
+    "sourceUrl": "weixin://dl/business/?t=7J0aXwcqPPd"
+  },
+  {
+    "customOrder": 2,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
@@ -10,7 +21,7 @@
     "sourceUrl": "https://www.yuque.com/legado"
   },
   {
-    "customOrder": 2,
+    "customOrder": 3,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
@@ -20,7 +31,7 @@
     "sourceUrl": "snssdk1128://user/profile/562564899806367"
   },
   {
-    "customOrder": 3,
+    "customOrder": 4,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
@@ -30,7 +41,7 @@
     "sourceUrl": "https://pan.miaogongzi.net"
   },
   {
-    "customOrder": 4,
+    "customOrder": 5,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
