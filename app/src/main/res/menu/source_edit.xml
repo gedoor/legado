@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AlwaysShowAction">
 
     <item
@@ -22,14 +22,19 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_search"
+        android:title="@string/search"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_clear_cookie"
         android:title="@string/cookie"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_auto_complete"
-        android:title="@string/auto_complete"
         android:checkable="true"
+        android:title="@string/auto_complete"
         app:showAsAction="never" />
 
     <item
