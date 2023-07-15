@@ -31,26 +31,37 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             PreferKey.themeMode -> isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
             PreferKey.clickActionTL -> clickActionTL =
                 appCtx.getPrefInt(PreferKey.clickActionTL, 2)
+
             PreferKey.clickActionTC -> clickActionTC =
                 appCtx.getPrefInt(PreferKey.clickActionTC, 2)
+
             PreferKey.clickActionTR -> clickActionTR =
                 appCtx.getPrefInt(PreferKey.clickActionTR, 1)
+
             PreferKey.clickActionML -> clickActionML =
                 appCtx.getPrefInt(PreferKey.clickActionML, 2)
+
             PreferKey.clickActionMC -> clickActionMC =
                 appCtx.getPrefInt(PreferKey.clickActionMC, 0)
+
             PreferKey.clickActionMR -> clickActionMR =
                 appCtx.getPrefInt(PreferKey.clickActionMR, 1)
+
             PreferKey.clickActionBL -> clickActionBL =
                 appCtx.getPrefInt(PreferKey.clickActionBL, 2)
+
             PreferKey.clickActionBC -> clickActionBC =
                 appCtx.getPrefInt(PreferKey.clickActionBC, 1)
+
             PreferKey.clickActionBR -> clickActionBR =
                 appCtx.getPrefInt(PreferKey.clickActionBR, 1)
+
             PreferKey.readBodyToLh -> ReadBookConfig.readBodyToLh =
                 appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
+
             PreferKey.useZhLayout -> ReadBookConfig.useZhLayout =
                 appCtx.getPrefBoolean(PreferKey.useZhLayout)
+
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
         }
     }
@@ -130,6 +141,13 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         get() = appCtx.getPrefString(PreferKey.bookExportFileName)
         set(value) {
             appCtx.putPrefString(PreferKey.bookExportFileName, value)
+        }
+
+    // 保存 自定义导出章节模式 文件名js表达式
+    var episodeExportFileName: String?
+        get() = appCtx.getPrefString(PreferKey.episodeExportFileName, "")
+        set(value) {
+            appCtx.putPrefString(PreferKey.episodeExportFileName, value)
         }
 
     var bookImportFileName: String?
@@ -274,8 +292,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.exportNoChapterName, value)
         }
+
+    // 是否启用自定义导出 default->false
     var enableCustomExport: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.enableCustomExport)
+        get() = appCtx.getPrefBoolean(PreferKey.enableCustomExport, false)
         set(value) {
             appCtx.putPrefBoolean(PreferKey.enableCustomExport, value)
         }

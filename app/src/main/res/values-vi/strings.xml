@@ -1118,4 +1118,5 @@ Còn </string>
      <string name="exit_app">Thoát khỏi phần mềm</string>
      <string name="add_all_to_bookshelf">Thêm tất cả vào giá sách</string>
      <string name="page_to">Trang tới</string>
+    <string name="result_analyzed">Analyzed</string>
 </resources>
