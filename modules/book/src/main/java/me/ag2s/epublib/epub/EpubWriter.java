@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Objects;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -25,15 +26,20 @@ import me.ag2s.epublib.util.IOUtil;
  */
 public class EpubWriter {
 
-    private static final String TAG = EpubWriter.class.getName();
-
     // package
     static final String EMPTY_NAMESPACE_PREFIX = "";
-
+    private static final String TAG = EpubWriter.class.getName();
     private BookProcessor bookProcessor;
+
+    private EpubWriterProcessor epubWriterProcessor;
 
     public EpubWriter() {
         this(BookProcessor.IDENTITY_BOOKPROCESSOR);
+        this.epubWriterProcessor = new EpubWriterProcessor();
+        // 写入MimeType、Container，初始化TOCResource整体为1
+        // 写入PackageDocument 为1
+        // 关闭流 为1
+        this.epubWriterProcessor.setTotalProgress(3);
     }
 
 
@@ -41,16 +47,31 @@ public class EpubWriter {
         this.bookProcessor = bookProcessor;
     }
 
+    public EpubWriter setCallback(EpubWriterProcessor.Callback callback) {
+        epubWriterProcessor.setCallback(callback);
+        return this;
+    }
 
     public void write(EpubBook book, OutputStream out) throws IOException {
+        if (Objects.nonNull(this.epubWriterProcessor.getCallback())) {
+            epubWriterProcessor.getCallback().onStart(book);
+        }
+        epubWriterProcessor.setTotalProgress(epubWriterProcessor.getTotalProgress() + book.getResources().size());
         book = processBook(book);
         ZipOutputStream resultStream = new ZipOutputStream(out);
+        resultStream.setLevel(ZipOutputStream.STORED);
         writeMimeType(resultStream);
         writeContainer(resultStream);
         initTOCResource(book);
+        epubWriterProcessor.updateCurrentProgress(1);
         writeResources(book, resultStream);
         writePackageDocument(book, resultStream);
+        epubWriterProcessor.updateCurrentProgress(epubWriterProcessor.getCurrentProgress() + 1);
         resultStream.close();
+        epubWriterProcessor.updateCurrentProgress(epubWriterProcessor.getCurrentProgress() + 1);
+        if (Objects.nonNull(epubWriterProcessor.getCallback())) {
+            epubWriterProcessor.getCallback().onEnd(book);
+        }
     }
 
     private EpubBook processBook(EpubBook book) {
@@ -76,9 +97,7 @@ public class EpubWriter {
             book.getSpine().setTocResource(tocResource);
             book.getResources().add(tocResource);
         } catch (Exception ex) {
-            Log.e(TAG,
-                    "Error writing table of contents: "
-                            + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            Log.e(TAG, "Error writing table of contents: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
     }
 
@@ -86,6 +105,7 @@ public class EpubWriter {
     private void writeResources(EpubBook book, ZipOutputStream resultStream) {
         for (Resource resource : book.getResources().getAll()) {
             writeResource(resource, resultStream);
+            epubWriterProcessor.updateCurrentProgress(epubWriterProcessor.getCurrentProgress() + 1);
         }
     }
 
@@ -111,11 +131,9 @@ public class EpubWriter {
     }
 
 
-    private void writePackageDocument(EpubBook book, ZipOutputStream resultStream)
-            throws IOException {
+    private void writePackageDocument(EpubBook book, ZipOutputStream resultStream) throws IOException {
         resultStream.putNextEntry(new ZipEntry("OEBPS/content.opf"));
-        XmlSerializer xmlSerializer = EpubProcessorSupport
-                .createXmlSerializer(resultStream);
+        XmlSerializer xmlSerializer = EpubProcessorSupport.createXmlSerializer(resultStream);
         PackageDocumentWriter.write(this, xmlSerializer, book);
         xmlSerializer.flush();
 //		String resultAsString = result.toString();
@@ -132,11 +150,9 @@ public class EpubWriter {
         resultStream.putNextEntry(new ZipEntry("META-INF/container.xml"));
         Writer out = new OutputStreamWriter(resultStream);
         out.write("<?xml version=\"1.0\"?>\n");
-        out.write(
-                "<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">\n");
+        out.write("<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">\n");
         out.write("\t<rootfiles>\n");
-        out.write(
-                "\t\t<rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/>\n");
+        out.write("\t\t<rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/>\n");
         out.write("\t</rootfiles>\n");
         out.write("</container>");
         out.flush();
