@@ -43,22 +43,25 @@ class RssViewModel(application: Application) : BaseViewModel(application) {
 
     fun getSingleUrl(rssSource: RssSource, onSuccess: (url: String) -> Unit) {
         execute {
-            val url = rssSource.sortUrl
-            if (!url.isNullOrBlank()) {
-                if (url.startsWith("<js>", false)
-                    || url.startsWith("@js:", false)
+            var sortUrl = rssSource.sortUrl
+            if (!sortUrl.isNullOrBlank()) {
+                if (sortUrl.startsWith("<js>", false)
+                    || sortUrl.startsWith("@js:", false)
                 ) {
-                    val jsStr = if (url.startsWith("@")) {
-                        url.substring(4)
+                    val jsStr = if (sortUrl.startsWith("@")) {
+                        sortUrl.substring(4)
                     } else {
-                        url.substring(4, url.lastIndexOf("<"))
+                        sortUrl.substring(4, sortUrl.lastIndexOf("<"))
                     }
                     val result = rssSource.evalJS(jsStr)?.toString()
                     if (!result.isNullOrBlank()) {
-                        return@execute result
+                        sortUrl = result
                     }
+                }
+                if (sortUrl.contains("::")) {
+                    return@execute sortUrl.split("::")[1]
                 } else {
-                    return@execute url
+                    return@execute sortUrl
                 }
             }
             rssSource.sourceUrl
