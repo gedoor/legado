@@ -16,6 +16,12 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="ktt"
+            android:summary="快团团购物支持"
+            android:title="我的店铺"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="wxZsm"
             android:summary="@string/click_to_open"
             android:title="@string/weChat_appreciation_code"

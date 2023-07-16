@@ -4,10 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
+import io.legado.app.help.JsEngine
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.*
+import org.intellij.lang.annotations.Language
+import splitties.init.appCtx
 
 
 class DonateFragment : PreferenceFragmentCompat() {
@@ -38,6 +43,7 @@ class DonateFragment : PreferenceFragmentCompat() {
             "qqSkRwm" -> requireContext().openUrl(qqSkRwmUrl)
             "zfbHbSsm" -> getZfbHb(requireContext())
             "gzGzh" -> requireContext().sendToClip("开源阅读")
+            "ktt" -> openKtt()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -56,6 +62,21 @@ class DonateFragment : PreferenceFragmentCompat() {
             ACache.get(cacheDir = false)
                 .put("proTime", System.currentTimeMillis())
         }
+    }
+
+    private fun openKtt() {
+        Coroutine.async(lifecycleScope) {
+            @Language("js")
+            val js = """
+                java.webViewGetOverrideUrl(null, "https://ktt.pinduoduo.com/t/tlQQsofbQM", null, "weixin:.*")
+            """.trimIndent()
+            JsEngine.eval(js).toString()
+        }.timeout(10000)
+            .onSuccess {
+                activity?.openUrl(it)
+            }.onError {
+                appCtx.toastOnUi(it.localizedMessage)
+            }
     }
 
 }
