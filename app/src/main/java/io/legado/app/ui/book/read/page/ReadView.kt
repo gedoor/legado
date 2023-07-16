@@ -415,7 +415,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
      */
     private fun click(action: Int) {
         when (action) {
-            0 -> callBack.showActionMenu()
+            0 -> {
+                pageDelegate?.dismissSnackBar()
+                callBack.showActionMenu()
+            }
             1 -> pageDelegate?.nextPageByAnim(defaultAnimationSpeed)
             2 -> pageDelegate?.prevPageByAnim(defaultAnimationSpeed)
             3 -> ReadBook.moveToNextChapter(true)
