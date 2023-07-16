@@ -141,11 +141,6 @@ abstract class PageDelegate(protected val readView: ReadView) {
      * 按下
      */
     fun onDown() {
-        // 判断snackBar是否显示，并关闭
-        if (snackBar.isShown) {
-            snackBar.dismiss()
-        }
-
         //是否移动
         isMoved = false
         //是否存在下一章
@@ -185,6 +180,13 @@ abstract class PageDelegate(protected val readView: ReadView) {
             }
         }
         return hasNext
+    }
+
+    fun dismissSnackBar() {
+        // 判断snackBar是否显示，并关闭
+        if (snackBar.isShown) {
+            snackBar.dismiss()
+        }
     }
 
     open fun onDestroy() {

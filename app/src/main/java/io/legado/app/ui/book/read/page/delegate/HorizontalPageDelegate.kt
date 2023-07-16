@@ -26,12 +26,14 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
                 curBitmap?.recycle()
                 curBitmap = curPage.screenshot()
             }
+
             PageDirection.NEXT -> {
                 nextBitmap?.recycle()
                 nextBitmap = nextPage.screenshot()
                 curBitmap?.recycle()
                 curBitmap = curPage.screenshot()
             }
+
             else -> Unit
         }
     }
@@ -41,9 +43,11 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
             MotionEvent.ACTION_DOWN -> {
                 abortAnim()
             }
+
             MotionEvent.ACTION_MOVE -> {
                 onScroll(event)
             }
+
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 onAnimStart(readView.defaultAnimationSpeed)
             }
@@ -120,7 +124,7 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
         if (!hasNext()) return
         setDirection(PageDirection.NEXT)
         val y = when {
-            viewHeight / 2 < startY -> viewHeight.toFloat() * 0.9f
+            startY > viewHeight / 2 -> viewHeight.toFloat() * 0.9f
             else -> 1f
         }
         readView.setStartPoint(viewWidth.toFloat() * 0.9f, y, false)
