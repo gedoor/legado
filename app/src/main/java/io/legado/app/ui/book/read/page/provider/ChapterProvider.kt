@@ -91,7 +91,7 @@ object ChapterProvider {
     private var titleBottomSpacing = 0
 
     @JvmStatic
-    var typeface: Typeface = Typeface.DEFAULT
+    var typeface: Typeface? = Typeface.DEFAULT
         private set
 
     @JvmStatic
@@ -637,7 +637,7 @@ object ChapterProvider {
         upLayout()
     }
 
-    private fun getTypeface(fontPath: String): Typeface {
+    private fun getTypeface(fontPath: String): Typeface? {
         return kotlin.runCatching {
             when {
                 fontPath.isContentScheme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
@@ -666,7 +666,7 @@ object ChapterProvider {
         } ?: Typeface.DEFAULT
     }
 
-    private fun getPaints(typeface: Typeface): Pair<TextPaint, TextPaint> {
+    private fun getPaints(typeface: Typeface?): Pair<TextPaint, TextPaint> {
         // 字体统一处理
         val bold = Typeface.create(typeface, Typeface.BOLD)
         val normal = Typeface.create(typeface, Typeface.NORMAL)
