@@ -7,6 +7,7 @@ import android.os.Looper
 import android.util.AndroidRuntimeException
 import android.webkit.CookieManager
 import android.webkit.SslErrorHandler
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -33,6 +34,7 @@ class BackstageWebView(
     private val tag: String? = null,
     private val headerMap: Map<String, String>? = null,
     private val sourceRegex: String? = null,
+    private val overrideUrlRegex: String? = null,
     private val javaScript: String? = null,
 ) {
 
@@ -102,7 +104,7 @@ class BackstageWebView(
         settings.blockNetworkImage = true
         settings.userAgentString = headerMap?.get(AppConst.UA_NAME) ?: AppConfig.userAgent
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        if (sourceRegex.isNullOrEmpty()) {
+        if (sourceRegex.isNullOrBlank() && overrideUrlRegex.isNullOrBlank()) {
             webView.webViewClient = HtmlWebViewClient()
         } else {
             webView.webViewClient = SnifferWebClient()
@@ -153,49 +155,83 @@ class BackstageWebView(
             handler?.proceed()
         }
 
-    }
+        private inner class EvalJsRunnable(
+            webView: WebView,
+            private val url: String,
+            private val mJavaScript: String
+        ) : Runnable {
+            var retry = 0
+            private val mWebView: WeakReference<WebView> = WeakReference(webView)
+            override fun run() {
+                mWebView.get()?.evaluateJavascript(mJavaScript) {
+                    handleResult(it)
+                }
+            }
 
-    private inner class EvalJsRunnable(
-        webView: WebView,
-        private val url: String,
-        private val mJavaScript: String
-    ) : Runnable {
-        var retry = 0
-        private val mWebView: WeakReference<WebView> = WeakReference(webView)
-        override fun run() {
-            mWebView.get()?.evaluateJavascript(mJavaScript) {
-                handleResult(it)
+            private fun handleResult(result: String) = Coroutine.async {
+                if (result.isNotEmpty() && result != "null") {
+                    val content = StringEscapeUtils.unescapeJson(result)
+                        .replace(quoteRegex, "")
+                    try {
+                        val response = StrResponse(url, content)
+                        callback?.onResult(response)
+                    } catch (e: Exception) {
+                        callback?.onError(e)
+                    }
+                    mHandler.post {
+                        destroy()
+                    }
+                    return@async
+                }
+                if (retry > 30) {
+                    callback?.onError(NoStackTraceException("js执行超时"))
+                    mHandler.post {
+                        destroy()
+                    }
+                    return@async
+                }
+                retry++
+                mHandler.postDelayed(this@EvalJsRunnable, 1000)
             }
         }
 
-        private fun handleResult(result: String) = Coroutine.async {
-            if (result.isNotEmpty() && result != "null") {
-                val content = StringEscapeUtils.unescapeJson(result)
-                    .replace(quoteRegex, "")
-                try {
-                    val response = StrResponse(url, content)
-                    callback?.onResult(response)
-                } catch (e: Exception) {
-                    callback?.onError(e)
-                }
-                mHandler.post {
-                    destroy()
-                }
-                return@async
-            }
-            if (retry > 30) {
-                callback?.onError(NoStackTraceException("js执行超时"))
-                mHandler.post {
-                    destroy()
-                }
-                return@async
-            }
-            retry++
-            mHandler.postDelayed(this@EvalJsRunnable, 1000)
-        }
     }
 
     private inner class SnifferWebClient : WebViewClient() {
+
+        override fun shouldOverrideUrlLoading(
+            view: WebView,
+            request: WebResourceRequest
+        ): Boolean {
+            if (shouldOverrideUrlLoading(request.url.toString())) {
+                return true
+            }
+            return super.shouldOverrideUrlLoading(view, request)
+        }
+
+        @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "KotlinRedundantDiagnosticSuppress")
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            if (shouldOverrideUrlLoading(url)) {
+                return true
+            }
+            return super.shouldOverrideUrlLoading(view, url)
+        }
+
+        private fun shouldOverrideUrlLoading(requestUrl: String): Boolean {
+            overrideUrlRegex?.let {
+                if (requestUrl.matches(it.toRegex())) {
+                    try {
+                        val response = StrResponse(url!!, requestUrl)
+                        callback?.onResult(response)
+                    } catch (e: Exception) {
+                        callback?.onError(e)
+                    }
+                    destroy()
+                    return true
+                }
+            }
+            return false
+        }
 
         override fun onLoadResource(view: WebView, resUrl: String) {
             sourceRegex?.let {
@@ -213,8 +249,7 @@ class BackstageWebView(
 
         override fun onPageFinished(webView: WebView, url: String) {
             setCookie(url)
-            val js = javaScript
-            if (!js.isNullOrEmpty()) {
+            if (!javaScript.isNullOrEmpty()) {
                 val runnable = LoadJsRunnable(webView, javaScript)
                 mHandler.postDelayed(runnable, 1000L)
             }
@@ -229,16 +264,16 @@ class BackstageWebView(
             handler?.proceed()
         }
 
-    }
-
-    private class LoadJsRunnable(
-        webView: WebView,
-        private val mJavaScript: String?
-    ) : Runnable {
-        private val mWebView: WeakReference<WebView> = WeakReference(webView)
-        override fun run() {
-            mWebView.get()?.loadUrl("javascript:${mJavaScript}")
+        private inner class LoadJsRunnable(
+            webView: WebView,
+            private val mJavaScript: String?
+        ) : Runnable {
+            private val mWebView: WeakReference<WebView> = WeakReference(webView)
+            override fun run() {
+                mWebView.get()?.loadUrl("javascript:${mJavaScript}")
+            }
         }
+
     }
 
     companion object {

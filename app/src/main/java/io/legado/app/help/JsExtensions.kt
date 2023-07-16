@@ -146,6 +146,43 @@ interface JsExtensions : JsEncodeUtils {
     }
 
     /**
+     * 使用webView获取资源url
+     */
+    fun webViewGetSource(html: String?, url: String?, js: String?, sourceRegex: String): String? {
+        return runBlocking {
+            BackstageWebView(
+                url = url,
+                html = html,
+                javaScript = js,
+                headerMap = getSource()?.getHeaderMap(true),
+                tag = getSource()?.getKey(),
+                sourceRegex = sourceRegex
+            ).getStrResponse().body
+        }
+    }
+
+    /**
+     * 使用webView获取跳转url
+     */
+    fun webViewGetOverrideUrl(
+        html: String?,
+        url: String?,
+        js: String?,
+        overrideUrlRegex: String
+    ): String? {
+        return runBlocking {
+            BackstageWebView(
+                url = url,
+                html = html,
+                javaScript = js,
+                headerMap = getSource()?.getHeaderMap(true),
+                tag = getSource()?.getKey(),
+                overrideUrlRegex = overrideUrlRegex
+            ).getStrResponse().body
+        }
+    }
+
+    /**
      * 使用内置浏览器打开链接，手动验证网站防爬
      * @param url 要打开的链接
      * @param title 浏览器页面的标题

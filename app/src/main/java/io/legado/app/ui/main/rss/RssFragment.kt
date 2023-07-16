@@ -24,7 +24,6 @@ import io.legado.app.ui.rss.favorites.RssFavoritesActivity
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.rss.source.manage.RssSourceActivity
-import io.legado.app.ui.rss.source.manage.RssSourceViewModel
 import io.legado.app.ui.rss.subscription.RuleSubActivity
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
@@ -42,7 +41,7 @@ import kotlinx.coroutines.launch
 /**
  * 订阅界面
  */
-class RssFragment() : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
+class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
     MainFragmentInterface,
     RssAdapter.CallBack {
 
@@ -55,7 +54,7 @@ class RssFragment() : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
     override val position: Int? get() = arguments?.getInt("position")
 
     private val binding by viewBinding(FragmentRssBinding::bind)
-    override val viewModel by viewModels<RssSourceViewModel>()
+    override val viewModel by viewModels<RssViewModel>()
     private val adapter by lazy { RssAdapter(requireContext(), this) }
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
@@ -169,13 +168,15 @@ class RssFragment() : VMBaseFragment<RssSourceViewModel>(R.layout.fragment_rss),
 
     override fun openRss(rssSource: RssSource) {
         if (rssSource.singleUrl) {
-            if (rssSource.sourceUrl.startsWith("http", true)) {
-                startActivity<ReadRssActivity> {
-                    putExtra("title", rssSource.sourceName)
-                    putExtra("origin", rssSource.sourceUrl)
+            viewModel.getSingleUrl(rssSource) { url ->
+                if (url.startsWith("http", true)) {
+                    startActivity<ReadRssActivity> {
+                        putExtra("title", rssSource.sourceName)
+                        putExtra("origin", url)
+                    }
+                } else {
+                    context?.openUrl(url)
                 }
-            } else {
-                context?.openUrl(rssSource.sourceUrl)
             }
         } else {
             startActivity<RssSortActivity> {
