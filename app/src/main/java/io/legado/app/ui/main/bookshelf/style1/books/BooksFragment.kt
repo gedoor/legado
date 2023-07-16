@@ -41,8 +41,11 @@ import kotlin.math.max
 class BooksFragment() : BaseFragment(R.layout.fragment_books),
     BaseBooksAdapter.CallBack {
 
+    lateinit var group: BookGroup
+
     constructor(position: Int, group: BookGroup) : this() {
         val bundle = Bundle()
+        this.group = group
         bundle.putInt("position", position)
         bundle.putLong("groupId", group.groupId)
         bundle.putInt("bookSort", group.getRealBookSort())
@@ -79,6 +82,9 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             groupId = it.getLong("groupId", -1)
             bookSort = it.getInt("bookSort", 0)
             binding.refreshLayout.isEnabled = it.getBoolean("enableRefresh", true)
+        }
+        appDb.bookGroupDao.getByID(groupId)?.apply {
+            group = this
         }
         initRecyclerView()
         upRecyclerData()
@@ -129,6 +135,9 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         binding.refreshLayout.isEnabled = enableRefresh
     }
 
+    /**
+     * 更新书籍列表信息
+     */
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
@@ -140,13 +149,22 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 AppConst.bookGroupLocalNoneId -> appDb.bookDao.flowLocalNoGroup()
                 AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(groupId)
+                // 书籍排序
             }.conflate().map { list ->
                 when (bookSort) {
                     1 -> list.sortedByDescending { it.latestChapterTime }
                     2 -> list.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
+
                     3 -> list.sortedBy { it.order }
+
+                    // 综合排序 issue #3192
+                    4 -> {
+                        list.sortedByDescending {
+                            if(it.latestChapterTime>it.durChapterTime) it.latestChapterTime else it.durChapterTime
+                        }
+                    }
                     else -> list.sortedByDescending { it.durChapterTime }
                 }
             }.flowOn(Dispatchers.Default).catch {
@@ -181,6 +199,9 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     override fun onResume() {
         super.onResume()
+        if (::group.isInitialized) {
+            bookSort = group.getRealBookSort()
+        }
         startLastUpdateTimeJob()
         upRecyclerData()
     }
@@ -244,6 +265,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 startActivity<AudioPlayActivity> {
                     putExtra("bookUrl", book.bookUrl)
                 }
+
             else -> startActivity<ReadBookActivity> {
                 putExtra("bookUrl", book.bookUrl)
             }

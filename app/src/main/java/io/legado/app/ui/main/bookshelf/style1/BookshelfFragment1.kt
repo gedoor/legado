@@ -91,6 +91,13 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
             if (data != bookGroups) {
                 bookGroups.clear()
                 bookGroups.addAll(data)
+                /**
+                 * 在书架布局对话框修改排序后，会导致书架页面刷新。但是在分组标签未修改的情况下,此处的adapter.notifyDataSetChanged()调用不会引起
+                 * [io.legado.app.ui.main.bookshelf.style1.BookshelfFragment1.TabFragmentPageAdapter.getItemPosition]
+                 * 被调用。
+                 * 有关方法：
+                 * [androidx.viewpager.widget.ViewPager.dataSetChanged]
+                 */
                 adapter.notifyDataSetChanged()
                 selectLastTab()
                 for (i in 0 until adapter.count) {
