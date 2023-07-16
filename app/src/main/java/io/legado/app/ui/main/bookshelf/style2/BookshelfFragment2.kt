@@ -116,6 +116,10 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         }
     }
 
+    override fun upSort() {
+        initBooksData()
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun initBooksData() {
         if (groupId == -100L) {

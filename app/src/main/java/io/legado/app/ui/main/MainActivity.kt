@@ -310,6 +310,16 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    /**
+     * 如果重启太快fragment不会重建,这里更新一下书架的排序
+     */
+    override fun recreate() {
+        (fragmentMap[getFragmentId(0)] as? BaseBookshelfFragment)?.run {
+            upSort()
+        }
+        super.recreate()
+    }
+
     override fun observeLiveBus() {
         viewModel.onUpBooksLiveData.observe(this) {
             onUpBooksBadgeView.setBadgeCount(it)

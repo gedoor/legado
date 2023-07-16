@@ -116,6 +116,8 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
 
     abstract fun upGroup(data: List<BookGroup>)
 
+    abstract fun upSort()
+
     @SuppressLint("InflateParams")
     fun addBookByUrl() {
         alert(titleResource = R.string.add_book_url) {
@@ -166,16 +168,12 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         AppConfig.showWaitUpCount = swShowWaitUpBooks.isChecked
                         activityViewModel.postUpBooksLiveData(true)
                     }
-                    var changed = false
-                    if (bookshelfLayout != rgLayout.getCheckedIndex()) {
-                        putPrefInt(PreferKey.bookshelfLayout, rgLayout.getCheckedIndex())
-                        changed = true
-                    }
                     if (bookshelfSort != rgSort.getCheckedIndex()) {
                         AppConfig.bookshelfSort = rgSort.getCheckedIndex()
-                        changed = true
+                        upSort()
                     }
-                    if (changed) {
+                    if (bookshelfLayout != rgLayout.getCheckedIndex()) {
+                        putPrefInt(PreferKey.bookshelfLayout, rgLayout.getCheckedIndex())
                         postEvent(EventBus.RECREATE, "")
                     }
                 }

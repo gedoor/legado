@@ -41,11 +41,8 @@ import kotlin.math.max
 class BooksFragment() : BaseFragment(R.layout.fragment_books),
     BaseBooksAdapter.CallBack {
 
-    lateinit var group: BookGroup
-
     constructor(position: Int, group: BookGroup) : this() {
         val bundle = Bundle()
-        this.group = group
         bundle.putInt("position", position)
         bundle.putLong("groupId", group.groupId)
         bundle.putInt("bookSort", group.getRealBookSort())
@@ -82,9 +79,6 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             groupId = it.getLong("groupId", -1)
             bookSort = it.getInt("bookSort", 0)
             binding.refreshLayout.isEnabled = it.getBoolean("enableRefresh", true)
-        }
-        appDb.bookGroupDao.getByID(groupId)?.apply {
-            group = this
         }
         initRecyclerView()
         upRecyclerData()
@@ -199,9 +193,6 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     override fun onResume() {
         super.onResume()
-        if (::group.isInitialized) {
-            bookSort = group.getRealBookSort()
-        }
         startLastUpdateTimeJob()
         upRecyclerData()
     }
