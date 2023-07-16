@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:focusable="true"
-    android:background="@drawable/bg_item_focused_on_tv">
+    android:background="@drawable/bg_item_focused_on_tv"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <io.legado.app.ui.widget.image.FilletImageView
         android:id="@+id/iv_icon"
@@ -32,5 +33,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_icon" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
