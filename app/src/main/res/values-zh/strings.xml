@@ -1122,4 +1122,5 @@
     <string name="add_all_to_bookshelf">全部加入书架</string>
     <string name="page_to">页至</string>
     <string name="result_analyzed">解析示例</string>
+    <string name="bookshelf_px_4" >综合排序</string>
 </resources>
