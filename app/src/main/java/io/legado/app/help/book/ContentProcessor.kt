@@ -97,6 +97,7 @@ class ContentProcessor private constructor(
     ): BookContent {
         var mContent = content
         var sameTitleRemoved = false
+        var effectiveReplaceRules: ArrayList<ReplaceRule>? = null
         if (content != "null") {
             //去除重复标题
             val fileName = chapter.getFileName("nr")
@@ -142,7 +143,35 @@ class ContentProcessor private constructor(
             }
             if (useReplace && book.getUseReplaceRule()) {
                 //替换
-                mContent = replaceContent(mContent)
+                effectiveReplaceRules = arrayListOf()
+                mContent = mContent.lines().joinToString("\n") { it.trim() }
+                getContentReplaceRules().forEach { item ->
+                    if (item.pattern.isNotEmpty()) {
+                        try {
+                            val tmp = if (item.isRegex) {
+                                mContent.replace(
+                                    item.pattern.toRegex(),
+                                    item.replacement,
+                                    item.getValidTimeoutMillisecond()
+                                )
+                            } else {
+                                mContent.replace(item.pattern, item.replacement)
+                            }
+                            if (mContent != tmp) {
+                                effectiveReplaceRules.add(item)
+                                mContent = tmp
+                            }
+                        } catch (e: RegexTimeoutException) {
+                            item.isEnabled = false
+                            appDb.replaceRuleDao.update(item)
+                            mContent = item.name + e.stackTraceStr
+                        } catch (_: CancellationException) {
+                        } catch (e: Exception) {
+                            AppLog.put("替换净化: 规则 ${item.name}替换出错.\n${mContent}", e)
+                            appCtx.toastOnUi("替换净化: 规则 ${item.name}替换出错")
+                        }
+                    }
+                }
             }
         }
         if (includeTitle) {
@@ -165,37 +194,7 @@ class ContentProcessor private constructor(
                 }
             }
         }
-        return BookContent(sameTitleRemoved, contents)
-    }
-
-    private fun replaceContent(content: String): String {
-        var mContent = content
-        mContent = mContent.lines().joinToString("\n") { it.trim() }
-        getContentReplaceRules().forEach { item ->
-            if (item.pattern.isNotEmpty()) {
-                try {
-                    mContent = if (item.isRegex) {
-                        mContent.replace(
-                            item.pattern.toRegex(),
-                            item.replacement,
-                            item.getValidTimeoutMillisecond()
-                        )
-                    } else {
-                        mContent.replace(item.pattern, item.replacement)
-                    }
-                } catch (e: RegexTimeoutException) {
-                    item.isEnabled = false
-                    appDb.replaceRuleDao.update(item)
-                    return item.name + e.stackTraceStr
-                } catch (e: CancellationException) {
-                    return mContent
-                } catch (e: Exception) {
-                    AppLog.put("替换净化: 规则 ${item.name}替换出错\n替换内容\n${mContent}", e)
-                    appCtx.toastOnUi("替换净化: 规则 ${item.name}替换出错")
-                }
-            }
-        }
-        return mContent
+        return BookContent(sameTitleRemoved, contents, effectiveReplaceRules)
     }
 
 }
