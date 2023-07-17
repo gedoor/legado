@@ -441,6 +441,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                 viewModel.reverseRemoveSameTitle()
             }
 
+            R.id.menu_effective_replaces -> showDialogFragment<EffectiveReplacesDialog>()
+
             R.id.menu_help -> showReadMenuHelp()
         }
         return super.onCompatOptionsItemSelected(item)
