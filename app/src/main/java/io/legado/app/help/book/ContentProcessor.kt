@@ -146,30 +146,31 @@ class ContentProcessor private constructor(
                 effectiveReplaceRules = arrayListOf()
                 mContent = mContent.lines().joinToString("\n") { it.trim() }
                 getContentReplaceRules().forEach { item ->
-                    if (item.pattern.isNotEmpty()) {
-                        try {
-                            val tmp = if (item.isRegex) {
-                                mContent.replace(
-                                    item.pattern.toRegex(),
-                                    item.replacement,
-                                    item.getValidTimeoutMillisecond()
-                                )
-                            } else {
-                                mContent.replace(item.pattern, item.replacement)
-                            }
-                            if (mContent != tmp) {
-                                effectiveReplaceRules.add(item)
-                                mContent = tmp
-                            }
-                        } catch (e: RegexTimeoutException) {
-                            item.isEnabled = false
-                            appDb.replaceRuleDao.update(item)
-                            mContent = item.name + e.stackTraceStr
-                        } catch (_: CancellationException) {
-                        } catch (e: Exception) {
-                            AppLog.put("替换净化: 规则 ${item.name}替换出错.\n${mContent}", e)
-                            appCtx.toastOnUi("替换净化: 规则 ${item.name}替换出错")
+                    if (item.pattern.isEmpty()) {
+                        return@forEach
+                    }
+                    try {
+                        val tmp = if (item.isRegex) {
+                            mContent.replace(
+                                item.pattern.toRegex(),
+                                item.replacement,
+                                item.getValidTimeoutMillisecond()
+                            )
+                        } else {
+                            mContent.replace(item.pattern, item.replacement)
                         }
+                        if (mContent != tmp) {
+                            effectiveReplaceRules.add(item)
+                            mContent = tmp
+                        }
+                    } catch (e: RegexTimeoutException) {
+                        item.isEnabled = false
+                        appDb.replaceRuleDao.update(item)
+                        mContent = item.name + e.stackTraceStr
+                    } catch (_: CancellationException) {
+                    } catch (e: Exception) {
+                        AppLog.put("替换净化: 规则 ${item.name}替换出错.\n${mContent}", e)
+                        appCtx.toastOnUi("替换净化: 规则 ${item.name}替换出错")
                     }
                 }
             }

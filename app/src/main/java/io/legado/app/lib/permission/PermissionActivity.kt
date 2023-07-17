@@ -42,7 +42,8 @@ class PermissionActivity : AppCompatActivity() {
             Request.TYPE_MANAGE_ALL_FILES_ACCESS -> showSettingDialog(permissions, rationale) {
                 try {
                     if (Permissions.isManageExternalStorage()) {
-                        val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                        val settingIntent =
+                            Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
                         settingActivityResult.launch(settingIntent)
                     } else {
                         throw NoStackTraceException("no MANAGE_ALL_FILES_ACCESS_PERMISSION")
@@ -53,6 +54,7 @@ class PermissionActivity : AppCompatActivity() {
                     finish()
                 }
             }
+
             Request.TYPE_REQUEST_NOTIFICATIONS -> showSettingDialog(permissions, rationale) {
                 kotlin.runCatching {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -135,6 +137,10 @@ class PermissionActivity : AppCompatActivity() {
                 )
                 finish()
             }.setOnCancelListener {
+                RequestPlugins.sRequestCallback?.onRequestPermissionsResult(
+                    permissions,
+                    IntArray(0)
+                )
                 finish()
             }
             .show()
