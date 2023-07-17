@@ -308,7 +308,9 @@ class HttpReadAloudService : BaseReadAloudService(),
             for (i in start..contentList[nowSpeak].length) {
                 if (readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)) {
                     pageIndex++
-                    ReadBook.moveToNextPage()
+                    if (pageIndex < textChapter.pages.size) {
+                        ReadBook.moveToNextPage()
+                    }
                     postEvent(EventBus.TTS_PROGRESS, readAloudNumber + i)
                 }
                 delay(sleep)
