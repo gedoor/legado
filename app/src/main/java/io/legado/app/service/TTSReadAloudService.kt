@@ -86,7 +86,12 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         speakJob?.cancel()
         speakJob = execute {
             val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
-            var result = tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
+            var result = tts.runCatching {
+                speak("", TextToSpeech.QUEUE_FLUSH, null, null)
+            }.getOrElse {
+                AppLog.put("tts出错\n${it.localizedMessage}", it, true)
+                TextToSpeech.ERROR
+            }
             if (result == TextToSpeech.ERROR) {
                 clearTTS()
                 initTts()
@@ -99,7 +104,12 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (text.matches(AppPattern.notReadAloudRegex)) {
                     continue
                 }
-                result = tts.speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                result = tts.runCatching {
+                    speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                }.getOrElse {
+                    AppLog.put("tts出错\n${it.localizedMessage}", it, true)
+                    TextToSpeech.ERROR
+                }
                 if (result == TextToSpeech.ERROR) {
                     AppLog.put("tts朗读出错:$text")
                 }
@@ -111,7 +121,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     }
 
     override fun playStop() {
-        textToSpeech?.stop()
+        textToSpeech?.runCatching {
+            stop()
+        }
     }
 
     /**
@@ -135,7 +147,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     override fun pauseReadAloud(abandonFocus: Boolean) {
         super.pauseReadAloud(abandonFocus)
         speakJob?.cancel()
-        textToSpeech?.stop()
+        textToSpeech?.runCatching {
+            stop()
+        }
     }
 
     /**
