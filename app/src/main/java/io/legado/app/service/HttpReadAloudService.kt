@@ -356,8 +356,8 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
-        upPlayPos()
         playNext()
+        upPlayPos()
     }
 
     override fun onPlayerError(error: PlaybackException) {
