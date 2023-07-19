@@ -11,12 +11,15 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.DialogRecyclerViewBinding
-import io.legado.app.databinding.ItemTextBinding
+import io.legado.app.databinding.Item1lineTextBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
+/**
+ * 起效的替换规则
+ */
 class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -41,13 +44,13 @@ class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view
 
 
     private inner class ReplaceAdapter(context: Context) :
-        RecyclerAdapter<ReplaceRule, ItemTextBinding>(context) {
+        RecyclerAdapter<ReplaceRule, Item1lineTextBinding>(context) {
 
-        override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
-            return ItemTextBinding.inflate(inflater, parent, false)
+        override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding {
+            return Item1lineTextBinding.inflate(inflater, parent, false)
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemTextBinding) {
+        override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextBinding) {
             binding.root.setOnClickListener {
 
             }
@@ -55,7 +58,7 @@ class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view
 
         override fun convert(
             holder: ItemViewHolder,
-            binding: ItemTextBinding,
+            binding: Item1lineTextBinding,
             item: ReplaceRule,
             payloads: MutableList<Any>
         ) {
