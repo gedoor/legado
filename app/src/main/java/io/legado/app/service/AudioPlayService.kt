@@ -163,31 +163,32 @@ class AudioPlayService : BaseService(),
     private fun play() {
         if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         upNotification()
-        if (requestFocus()) {
-            execute(context = Main) {
-                AudioPlay.status = Status.STOP
-                postEvent(EventBus.AUDIO_STATE, Status.STOP)
-                upPlayProgressJob?.cancel()
-                val analyzeUrl = AnalyzeUrl(
-                    url,
-                    source = AudioPlay.bookSource,
-                    ruleData = AudioPlay.book,
-                    chapter = AudioPlay.durChapter,
-                    headerMapF = AudioPlay.headers(true),
+        if (!requestFocus()) {
+            return
+        }
+        execute(context = Main) {
+            AudioPlay.status = Status.STOP
+            postEvent(EventBus.AUDIO_STATE, Status.STOP)
+            upPlayProgressJob?.cancel()
+            val analyzeUrl = AnalyzeUrl(
+                url,
+                source = AudioPlay.bookSource,
+                ruleData = AudioPlay.book,
+                chapter = AudioPlay.durChapter,
+                headerMapF = AudioPlay.headers(true),
+            )
+            exoPlayer.setMediaItem(
+                ExoPlayerHelper.createMediaItem(
+                    analyzeUrl.url,
+                    analyzeUrl.headerMap
                 )
-                exoPlayer.setMediaItem(
-                    ExoPlayerHelper.createMediaItem(
-                        analyzeUrl.url,
-                        analyzeUrl.headerMap
-                    )
-                )
-                exoPlayer.playWhenReady = true
-                exoPlayer.prepare()
-            }.onError {
-                AppLog.put("播放出错\n${it.localizedMessage}", it)
-                toastOnUi("$url ${it.localizedMessage}")
-                stopSelf()
-            }
+            )
+            exoPlayer.playWhenReady = true
+            exoPlayer.prepare()
+        }.onError {
+            AppLog.put("播放出错\n${it.localizedMessage}", it)
+            toastOnUi("$url ${it.localizedMessage}")
+            stopSelf()
         }
     }
 
