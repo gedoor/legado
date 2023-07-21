@@ -39,7 +39,13 @@ object ImageProvider {
      * filePath bitmap
      */
     private const val M = 1024 * 1024
-    val cacheSize get() = AppConfig.bitmapCacheSize * M
+    val cacheSize: Int
+        get() {
+            if (AppConfig.bitmapCacheSize <= 0) {
+                AppConfig.bitmapCacheSize = 50
+            }
+            return AppConfig.bitmapCacheSize * M
+        }
     var triggerRecycled = false
     val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
 
