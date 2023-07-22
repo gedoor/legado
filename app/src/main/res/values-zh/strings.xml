@@ -1124,4 +1124,5 @@
     <string name="result_analyzed">解析示例</string>
     <string name="bookshelf_px_4" >综合排序</string>
     <string name="effective_replaces">起效的替换</string>
+    <string name="export_book">导出书籍</string>
 </resources>

@@ -124,7 +124,7 @@ class ExportBookService : BaseService() {
     override fun upNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
-            .setContentTitle(getString(R.string.export))
+            .setContentTitle(getString(R.string.export_book))
             .setContentIntent(activityPendingIntent<CacheActivity>("cacheActivity"))
         if (exportJob?.isActive == true) {
             notification.setOngoing(true)
