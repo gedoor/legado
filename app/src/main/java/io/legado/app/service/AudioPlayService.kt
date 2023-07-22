@@ -250,10 +250,10 @@ class AudioPlayService : BaseService(),
     /**
      * 调节速度
      */
-
+    @SuppressLint(value = ["ObsoleteSdkInt"])
     private fun upSpeed(adjust: Float) {
         kotlin.runCatching {
-            @SuppressLint("ObsoleteSdkInt")
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 playSpeed += adjust
                 exoPlayer.setPlaybackSpeed(playSpeed)

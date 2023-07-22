@@ -558,7 +558,7 @@ class BookSourceEditActivity :
     private fun alertGroups() {
         launch {
             val groups = withContext(IO) {
-                appDb.bookSourceDao.allGroups
+                appDb.bookSourceDao.allGroups()
             }
             selector(groups) { _, s, _ ->
                 sendText(s)
