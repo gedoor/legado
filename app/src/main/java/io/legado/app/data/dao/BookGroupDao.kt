@@ -7,7 +7,7 @@ import io.legado.app.data.entities.BookGroup
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BookGroupDao {
+abstract interface BookGroupDao {
 
     @Query("select * from book_groups where groupId = :id")
     fun getByID(id: Long): BookGroup?

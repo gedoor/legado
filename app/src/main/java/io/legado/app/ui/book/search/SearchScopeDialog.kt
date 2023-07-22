@@ -102,7 +102,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     private fun initData() {
         launch {
             groups = withContext(IO) {
-                appDb.bookSourceDao.allEnabledGroups
+                appDb.bookSourceDao.allEnabledGroups()
             }
             sources = withContext(IO) {
                 appDb.bookSourceDao.allEnabled
