@@ -34,6 +34,7 @@ import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.activityPendingIntent
+import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.createFolderIfNotExist
 import io.legado.app.utils.isContentScheme
@@ -45,12 +46,10 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.ag2s.epublib.domain.Author
 import me.ag2s.epublib.domain.Date
 import me.ag2s.epublib.domain.EpubBook
@@ -86,6 +85,7 @@ class ExportBookService : BaseService() {
         val epubScope: String? = null
     )
 
+    private val handler = buildMainHandler()
     private val waitExportBooks = linkedMapOf<String, ExportConfig>()
     private var exportJob: Job? = null
 
@@ -124,14 +124,21 @@ class ExportBookService : BaseService() {
     override fun upNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
-            .setOngoing(true)
             .setContentTitle(getString(R.string.export))
             .setContentIntent(activityPendingIntent<CacheActivity>("cacheActivity"))
-        notification.addAction(
-            R.drawable.ic_stop_black_24dp,
-            getString(R.string.cancel),
-            servicePendingIntent<ExportBookService>(IntentAction.stop)
-        )
+        if (exportJob?.isActive == true) {
+            notification.setOngoing(true)
+            notification.addAction(
+                R.drawable.ic_stop_black_24dp,
+                getString(R.string.cancel),
+                servicePendingIntent<ExportBookService>(IntentAction.stop)
+            )
+        } else {
+            notification.setOngoing(false)
+            notification.setDeleteIntent(
+                servicePendingIntent<ExportBookService>(IntentAction.stop)
+            )
+        }
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         notification.setContentText(notificationContent)
         startForeground(AppConst.notificationIdCache, notification.build())
@@ -175,7 +182,7 @@ class ExportBookService : BaseService() {
                 exportProgress.remove(bookUrl)
                 postEvent(EventBus.EXPORT_BOOK, bookUrl)
             }
-            withContext(Main) {
+            handler.post {
                 export()
             }
         }
