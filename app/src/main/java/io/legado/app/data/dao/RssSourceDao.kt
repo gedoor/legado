@@ -128,10 +128,7 @@ interface RssSourceDao {
         }
     }
 
-    fun allGroups(): List<String> =dealGroups(allGroupsUnProcessed)
-//        get() {
-//            return dealGroups(allGroupsUnProcessed)
-//        }
+    fun allGroups(): List<String> = dealGroups(allGroupsUnProcessed)
 
     fun flowGroups(): Flow<List<String>> {
         return flowGroupsUnProcessed().map { list ->
