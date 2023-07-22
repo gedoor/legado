@@ -417,6 +417,7 @@
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.CacheBookService" />
+        <service android:name=".service.ExportBookService" />
         <service android:name=".service.WebService" />
         <service
             android:name=".service.WebTileService"

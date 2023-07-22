@@ -26,6 +26,9 @@ import splitties.init.appCtx
 import java.util.concurrent.Executors
 import kotlin.math.min
 
+/**
+ * 缓存书籍服务
+ */
 class CacheBookService : BaseService() {
 
     companion object {
@@ -75,6 +78,7 @@ class CacheBookService : BaseService() {
                     intent.getIntExtra("start", 0),
                     intent.getIntExtra("end", 0)
                 )
+
                 IntentAction.remove -> removeDownload(intent.getStringExtra("bookUrl"))
                 IntentAction.stop -> stopSelf()
             }

@@ -15,6 +15,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.charsets
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -30,6 +31,7 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.model.CacheBook
+import io.legado.app.service.ExportBookService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.*
@@ -239,6 +241,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         viewModel.upAdapterLiveData.observe(this) {
             notifyItemChanged(it)
         }
+        observeEvent<String>(EventBus.EXPORT_BOOK) {
+            notifyItemChanged(it)
+        }
         observeEvent<String>(EventBus.UP_DOWNLOAD) {
             if (!CacheBook.isRun) {
                 menu?.findItem(R.id.menu_download)?.let { item ->
@@ -290,7 +295,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
      * @since 1.0.0
      */
     private fun configExportSection(path: String, position: Int) {
-
 
         val alertBinding = DialogSelectSectionExportBinding.inflate(layoutInflater)
             .apply {
@@ -391,15 +395,21 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
                 etInputScope.error = null
                 val toInt = etEpubSize.text.toString().toInt()
-                startExport(path, position, toInt, text.toString())
+                adapter.getItem(position)?.let { book ->
+                    startService<ExportBookService> {
+                        action = IntentAction.start
+                        putExtra("bookUrl", book.bookUrl)
+                        putExtra("exportType", "epub")
+                        putExtra("exportPath", path)
+                        putExtra("epubSize", toInt)
+                        putExtra("epubScope", text.toString())
+                    }
+                }
                 alertDialog.hide()
-
             }
 
         }
     }
-
-
 
     private fun selectExportFolder(exportPosition: Int) {
         val default = arrayListOf<SelectItem<Int>>()
@@ -413,25 +423,19 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         }
     }
 
-    private fun startExport(path: String, exportPosition: Int, size: Int, scope: String) {
-        if (exportPosition >= 0) {
-            adapter.getItem(exportPosition)?.let { book ->
-                when (AppConfig.exportType) {
-                    1 -> viewModel.exportEPUBs(path, book, size, scope)
-                    // 目前仅支持 epub
-                    //else -> viewModel.export(path, book)
-                }
-            }
-        }
-    }
-
     private fun startExport(path: String, exportPosition: Int) {
+        val exportType = when (AppConfig.exportType) {
+            1 -> "epub"
+            else -> "txt"
+        }
         if (exportPosition == -10) {
             if (adapter.getItems().isNotEmpty()) {
                 adapter.getItems().forEach { book ->
-                    when (AppConfig.exportType) {
-                        1 -> viewModel.exportEPUB(path, book)
-                        else -> viewModel.export(path, book)
+                    startService<ExportBookService> {
+                        action = IntentAction.start
+                        putExtra("bookUrl", book.bookUrl)
+                        putExtra("exportType", exportType)
+                        putExtra("exportPath", path)
                     }
                 }
             } else {
@@ -439,9 +443,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
         } else if (exportPosition >= 0) {
             adapter.getItem(exportPosition)?.let { book ->
-                when (AppConfig.exportType) {
-                    1 -> viewModel.exportEPUB(path, book)
-                    else -> viewModel.export(path, book)
+                startService<ExportBookService> {
+                    action = IntentAction.start
+                    putExtra("bookUrl", book.bookUrl)
+                    putExtra("exportType", exportType)
+                    putExtra("exportPath", path)
                 }
             }
         }
@@ -450,11 +456,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     @SuppressLint("SetTextI18n")
     private fun alertExportFileName() {
         alert(R.string.export_file_name) {
-            val message =
-                "Variable: name, author."
-//            if (AppConfig.bookExportFileName.isNullOrBlank()) {
-//                message += "\n例如：\nname+\"-\"+author+(epubIndex?\"(\"+epubIndex+\")\":\"\")"
-//            }
+            val message = "Variable: name, author."
             setMessage(message)
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "file name js"
@@ -499,11 +501,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         get() = viewModel.cacheChapters
 
     override fun exportProgress(bookUrl: String): Int? {
-        return viewModel.exportProgress[bookUrl]
+        return ExportBookService.exportProgress[bookUrl]
     }
 
     override fun exportMsg(bookUrl: String): String? {
-        return viewModel.exportMsg[bookUrl]
+        return ExportBookService.exportMsg[bookUrl]
     }
 
 }
