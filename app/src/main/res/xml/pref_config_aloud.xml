@@ -10,6 +10,12 @@
 
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
+            android:key="ignoreAudioFocus"
+            android:summary="@string/ignore_audio_focus_summary"
+            android:title="@string/ignore_audio_focus_title" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
             android:title="@string/read_aloud_wake_lock"
             android:summary="@string/read_aloud_wake_lock_summary"
             android:key="readAloudWakeLock"
