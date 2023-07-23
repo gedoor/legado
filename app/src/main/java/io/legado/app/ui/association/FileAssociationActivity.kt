@@ -62,18 +62,23 @@ class FileAssociationActivity :
                 "bookSource" -> showDialogFragment(
                     ImportBookSourceDialog(it.second, true)
                 )
+
                 "rssSource" -> showDialogFragment(
                     ImportRssSourceDialog(it.second, true)
                 )
+
                 "replaceRule" -> showDialogFragment(
                     ImportReplaceRuleDialog(it.second, true)
                 )
+
                 "httpTts" -> showDialogFragment(
                     ImportHttpTtsDialog(it.second, true)
                 )
+
                 "theme" -> showDialogFragment(
                     ImportThemeDialog(it.second, true)
                 )
+
                 "txtRule" -> showDialogFragment(
                     ImportTxtTocRuleDialog(it.second, true)
                 )
@@ -148,9 +153,12 @@ class FileAssociationActivity :
                     if (treeUri.isContentScheme()) {
                         val treeDoc =
                             DocumentFile.fromTreeUri(this@FileAssociationActivity, treeUri)
+                        if (!treeDoc!!.checkWrite()) {
+                            throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
+                        }
                         readUri(uri) { fileDoc, inputStream ->
                             val name = fileDoc.name
-                            var doc = treeDoc!!.findFile(name)
+                            var doc = treeDoc.findFile(name)
                             if (doc == null || fileDoc.lastModified > doc.lastModified()) {
                                 if (doc == null) {
                                     doc = treeDoc.createFile(FileUtils.getMimeType(name), name)
@@ -165,6 +173,9 @@ class FileAssociationActivity :
                         }
                     } else {
                         val treeFile = File(treeUri.path ?: treeUri.toString())
+                        if (!treeFile.checkWrite()) {
+                            throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
+                        }
                         readUri(uri) { fileDoc, inputStream ->
                             val name = fileDoc.name
                             val file = treeFile.getFile(name)
@@ -184,9 +195,11 @@ class FileAssociationActivity :
                         title = getString(R.string.select_book_folder)
                         mode = HandleFileContract.DIR_SYS
                     }
+
                     else -> {
-                        AppLog.put("导入书籍失败", it)
-                        toastOnUi(it.localizedMessage)
+                        val msg = "导入书籍失败\n${it.localizedMessage}"
+                        AppLog.put(msg, it)
+                        toastOnUi(msg)
                         finish()
                     }
                 }

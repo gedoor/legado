@@ -309,3 +309,19 @@ fun DocumentFile.readBytes(context: Context): ByteArray {
         return buffer
     } ?: throw NoStackTraceException("打开文件失败\n${uri}")
 }
+
+fun DocumentFile.checkWrite(): Boolean {
+    return try {
+        val filename = System.currentTimeMillis().toString()
+        createFile(FileUtils.getMimeType(filename), filename)?.let {
+            it.openOutputStream()?.let { out ->
+                out.use { }
+                it.delete()
+                return true
+            }
+        }
+        false
+    } catch (e: Exception) {
+        false
+    }
+}

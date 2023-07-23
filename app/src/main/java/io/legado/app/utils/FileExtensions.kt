@@ -67,3 +67,15 @@ fun File.createFolderReplace(): File {
     mkdirs()
     return this
 }
+
+fun File.checkWrite(): Boolean {
+    return try {
+        val filename = System.currentTimeMillis().toString()
+        val file = FileUtils.createFileIfNotExist(this, filename)
+        file.outputStream().use { }
+        file.delete()
+        true
+    } catch (e: Exception) {
+        false
+    }
+}

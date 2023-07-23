@@ -34,10 +34,10 @@ object ImportOldData {
                         kotlin.runCatching {
                             doc.uri.readText(context).let { json ->
                                 val importCount = importOldBookshelf(json)
-                                context.toastOnUi("成功导入书籍${importCount}")
+                                context.toastOnUi("成功导入书架${importCount}")
                             }
                         }.onFailure {
-                            context.toastOnUi("导入书籍失败\n${it.localizedMessage}")
+                            context.toastOnUi("导入书架失败\n${it.localizedMessage}")
                         }
                     "myBookSource.json" ->
                         kotlin.runCatching {
@@ -67,9 +67,9 @@ object ImportOldData {
                         FileUtils.createFileIfNotExist(file, "myBookShelf.json")
                     val json = shelfFile.readText()
                     val importCount = importOldBookshelf(json)
-                    context.toastOnUi("成功导入书籍${importCount}")
+                    context.toastOnUi("成功导入书架${importCount}")
                 }.onFailure {
-                    context.toastOnUi("导入书籍失败\n${it.localizedMessage}")
+                    context.toastOnUi("导入书架失败\n${it.localizedMessage}")
                 }
 
                 kotlin.runCatching {// Book source
