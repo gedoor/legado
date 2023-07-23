@@ -184,16 +184,20 @@ object ReadBook : CoroutineScope by MainScope() {
             curTextChapter = nextTextChapter
             nextTextChapter = null
             if (curTextChapter == null) {
+                AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
                 loadContent(durChapterIndex, upContent, false)
             } else if (upContent) {
+                AppLog.putDebug("moveToNextChapter-章节已加载,刷新视图")
                 callBack?.upContent()
             }
             loadContent(durChapterIndex.plus(1), upContent, false)
             saveRead()
             callBack?.upMenuView()
+            AppLog.putDebug("moveToNextChapter-curPageChanged()")
             curPageChanged()
             return true
         } else {
+            AppLog.putDebug("跳转下一章失败,没有下一章")
             return false
         }
     }

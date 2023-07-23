@@ -441,6 +441,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     open fun nextChapter() {
         ReadBook.upReadTime()
+        AppLog.putDebug("${ReadBook.curTextChapter?.chapter?.title} 朗读结束跳转下一章并朗读")
         if (!ReadBook.moveToNextChapter(true)) {
             stopSelf()
         }
