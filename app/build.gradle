@@ -255,7 +255,7 @@ dependencies {
     implementation 'org.tukaani:xz:1.9'
 
     //RAR
-    implementation 'com.github.junrar:junrar:7.5.4'
+    implementation 'com.github.junrar:junrar:7.5.5'
 
     //MarkDown
     def markwonVersion = "4.6.2"
