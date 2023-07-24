@@ -192,7 +192,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             searchIndex++
         }
         val source = bookSourceList[searchIndex]
-        val task = Coroutine.async(scope = viewModelScope, context = searchPool!!) {
+        val task = execute(context = searchPool!!, executeContext = searchPool!!) {
             val resultBooks = WebBook.searchBookAwait(source, name)
             resultBooks.forEach { searchBook ->
                 if (searchBook.name != name) {
@@ -336,8 +336,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             searchIndex++
         }
         val searchBook = searchBookList[searchIndex]
-        val task = Coroutine.async(scope = viewModelScope, context = searchPool!!) {
-            val source = appDb.bookSourceDao.getBookSource(searchBook.origin) ?: return@async
+        val task = execute(context = searchPool!!, executeContext = searchPool!!) {
+            val source = appDb.bookSourceDao.getBookSource(searchBook.origin) ?: return@execute
             loadBookInfo(source, searchBook.toBook())
         }.timeout(60000L)
             .onError {
@@ -438,15 +438,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     suspend fun getToc(book: Book): Result<Pair<List<BookChapter>, BookSource>> {
         return kotlin.runCatching {
-            withContext(IO) {
-                val source = appDb.bookSourceDao.getBookSource(book.origin)
-                    ?: throw NoStackTraceException("书源不存在")
-                if (book.tocUrl.isEmpty()) {
-                    WebBook.getBookInfoAwait(source, book)
-                }
-                val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
-                Pair(toc, source)
+            val source = appDb.bookSourceDao.getBookSource(book.origin)
+                ?: throw NoStackTraceException("书源不存在")
+            if (book.tocUrl.isEmpty()) {
+                WebBook.getBookInfoAwait(source, book)
             }
+            val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
+            Pair(toc, source)
         }
     }
 

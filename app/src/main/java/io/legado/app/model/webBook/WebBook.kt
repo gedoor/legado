@@ -30,8 +30,9 @@ object WebBook {
         key: String,
         page: Int? = 1,
         context: CoroutineContext = Dispatchers.IO,
+        executeContext: CoroutineContext = Dispatchers.Main,
     ): Coroutine<ArrayList<SearchBook>> {
-        return Coroutine.async(scope, context) {
+        return Coroutine.async(scope, context, executeContext = executeContext) {
             searchBookAwait(bookSource, key, page)
         }
     }
