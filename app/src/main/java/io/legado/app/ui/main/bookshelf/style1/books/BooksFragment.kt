@@ -154,11 +154,10 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                     3 -> list.sortedBy { it.order }
 
                     // 综合排序 issue #3192
-                    4 -> {
-                        list.sortedByDescending {
-                            if(it.latestChapterTime>it.durChapterTime) it.latestChapterTime else it.durChapterTime
-                        }
+                    4 -> list.sortedByDescending {
+                        max(it.latestChapterTime, it.durChapterTime)
                     }
+
                     else -> list.sortedByDescending { it.durChapterTime }
                 }
             }.flowOn(Dispatchers.Default).catch {

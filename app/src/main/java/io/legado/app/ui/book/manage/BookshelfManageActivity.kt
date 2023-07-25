@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.max
 
 
 class BookshelfManageActivity :
@@ -197,6 +198,7 @@ class BookshelfManageActivity :
     private fun upBookDataByGroupId() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
+            val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
             when (viewModel.groupId) {
                 AppConst.rootGroupId -> appDb.bookDao.flowNetNoGroup()
                 AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
@@ -207,16 +209,23 @@ class BookshelfManageActivity :
                 AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
                 else -> appDb.bookDao.flowByGroup(viewModel.groupId)
             }.conflate().map { list ->
-                when (AppConfig.getBookSortByGroupId(viewModel.groupId)) {
+                when (bookSort) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
                     }
+
                     2 -> list.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
+
                     3 -> list.sortedBy {
                         it.order
                     }
+
+                    4 -> list.sortedByDescending {
+                        max(it.latestChapterTime, it.durChapterTime)
+                    }
+
                     else -> list.sortedByDescending {
                         it.durChapterTime
                     }
@@ -225,6 +234,7 @@ class BookshelfManageActivity :
                 .conflate().collect {
                     books = it
                     upBookData()
+                    itemTouchCallback.isCanDrag = bookSort == 3
                 }
         }
     }
@@ -263,8 +273,10 @@ class BookshelfManageActivity :
             R.id.menu_del_selection -> alertDelSelection()
             R.id.menu_update_enable ->
                 viewModel.upCanUpdate(adapter.selection, true)
+
             R.id.menu_update_disable ->
                 viewModel.upCanUpdate(adapter.selection, false)
+
             R.id.menu_add_to_group -> selectGroup(addToGroupRequestCode, 0)
             R.id.menu_change_source -> showDialogFragment<SourcePickerDialog>()
             R.id.menu_check_selected_interval -> adapter.checkSelectedInterval()
@@ -314,11 +326,13 @@ class BookshelfManageActivity :
                 }
                 viewModel.updateBook(*array)
             }
+
             adapter.groupRequestCode -> {
                 adapter.actionItem?.let {
                     viewModel.updateBook(it.copy(group = groupId))
                 }
             }
+
             addToGroupRequestCode -> adapter.selection.let { books ->
                 val array = Array(books.size) { index ->
                     val book = books[index]

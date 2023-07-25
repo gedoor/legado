@@ -108,7 +108,9 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
         searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.rss)
-        searchView.clearFocus()
+        searchView.post {
+            searchView.clearFocus()
+        }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
