@@ -29,7 +29,7 @@
                   readingRecent.name,
                   readingRecent.author,
                   readingRecent.chapterIndex,
-                  readingRecent.chapterPos
+                  readingRecent.chapterPos,
                 )
               "
               :class="{ 'no-point': readingRecent.url == '' }"
@@ -100,7 +100,7 @@ const readingRecent = ref({
 const shelfWrapper = ref(null);
 const { showLoading, closeLoading, loadingWrapper } = useLoading(
   shelfWrapper,
-  "正在获取书籍信息"
+  "正在获取书籍信息",
 );
 
 const books = ref([]);
@@ -144,7 +144,7 @@ const searchBook = () => {
       if (books.value.length == 0) {
         ElMessage.info("搜索结果为空");
       }
-    }
+    },
   );
 };
 
@@ -195,7 +195,7 @@ onMounted(() => {
     store
       .saveBookProgress()
       //确保各种网络情况下同步请求先完成
-      .finally(fetchBookShelfData)
+      .finally(fetchBookShelfData),
   );
 });
 const fetchBookShelfData = () => {
@@ -209,7 +209,7 @@ const fetchBookShelfData = () => {
             var x = a["durChapterTime"] || 0;
             var y = b["durChapterTime"] || 0;
             return y - x;
-          })
+          }),
         );
       } else {
         ElMessage.error(response.data.errorMsg);

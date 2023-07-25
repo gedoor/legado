@@ -30,7 +30,7 @@ const saveBookProgressWithBeacon = (bookProgress) => {
   // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon
   navigator.sendBeacon(
     `${import.meta.env.VITE_API || location.origin}/saveBookProgress`,
-    JSON.stringify(bookProgress)
+    JSON.stringify(bookProgress),
   );
 };
 
@@ -41,19 +41,19 @@ const getChapterList = (/** @type {string} */ bookUrl) =>
 
 const getBookContent = (
   /** @type {string} */ bookUrl,
-  /** @type {number} */ chapterIndex
+  /** @type {number} */ chapterIndex,
 ) =>
   ajax.get(
     "/getBookContent?url=" +
       encodeURIComponent(bookUrl) +
       "&index=" +
-      chapterIndex
+      chapterIndex,
   );
 
 const search = (
   /** @type {string} */ searchKey,
   /** @type {(data: string) => void} */ onReceive,
-  /** @type {() => void} */ onFinish
+  /** @type {() => void} */ onFinish,
 ) => {
   // webSocket
   const url = `ws://${hostname}:${Number(port) + 1}/searchBook`;
@@ -97,7 +97,7 @@ const debug = (
   /** @type {string} */ sourceUrl,
   /** @type {string} */ searchKey,
   /** @type {(data: string) => void} */ onReceive,
-  /** @type {() => void} */ onFinish
+  /** @type {() => void} */ onFinish,
 ) => {
   // webSocket
   const url = `ws://${hostname}:${Number(port) + 1}/${

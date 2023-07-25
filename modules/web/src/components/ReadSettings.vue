@@ -362,7 +362,10 @@ const uploadConfig = (config) => {
         list-style: none outside none;
 
         i {
-          font: 12px / 16px PingFangSC-Regular, "-apple-system", Simsun;
+          font:
+            12px / 16px PingFangSC-Regular,
+            "-apple-system",
+            Simsun;
           display: inline-block;
           min-width: 48px;
           margin-right: 16px;
@@ -410,8 +413,12 @@ const uploadConfig = (config) => {
           text-align: center;
           vertical-align: middle;
           display: inline-block;
-          font: 14px / 34px PingFangSC-Regular, HelveticaNeue-Light,
-            "Helvetica Neue Light", "Microsoft YaHei", sans-serif;
+          font:
+            14px / 34px PingFangSC-Regular,
+            HelveticaNeue-Light,
+            "Helvetica Neue Light",
+            "Microsoft YaHei",
+            sans-serif;
         }
         .font-item-input {
           width: 168px;
