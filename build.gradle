@@ -6,7 +6,7 @@ buildscript {
         build_tool_version = '33.0.1'
         kotlin_version = '1.9.0'
         ksp_version="1.0.12"
-        agp_version = '8.0.2'
+        agp_version = '8.1.0'
         media3_version = "1.1.0"
         splitties_version = '3.0.0'
         room_version = '2.5.2'
@@ -22,6 +22,6 @@ plugins {
     id "com.google.gms.google-services" version "4.3.15" apply false
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
