@@ -112,13 +112,6 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="donate"
-            android:summary="@string/donate_summary"
-            android:title="@string/donate"
-            android:icon="@drawable/ic_cfg_donate"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
             android:key="about"
             android:summary="@string/about_summary"
             android:title="@string/about"

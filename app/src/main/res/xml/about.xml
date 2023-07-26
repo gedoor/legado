@@ -15,8 +15,14 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.prefs.Preference
+        android:key="check_update"
+        android:title="@string/check_update"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.prefs.PreferenceCategory
-        android:key="lx"
         android:title="@string/contact"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
@@ -33,12 +39,6 @@
             android:key="qqChannel"
             android:title="@string/join_qq_channel"
             android:summary="@string/qq_channel_summary"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
-            android:key="qq"
-            android:summary="@string/click_to_apply"
-            android:title="@string/join_qq_group"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
