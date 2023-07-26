@@ -62,7 +62,7 @@ const getCover = (coverUrl) => {
 };
 
 const subJustify = computed(() =>
-  props.isSearch ? "space-between" : "flex-start"
+  props.isSearch ? "space-between" : "flex-start",
 );
 </script>
 
