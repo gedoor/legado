@@ -23,7 +23,6 @@ object RealPathUtil {
      */
     private var filePathUri: Uri? = null
 
-    @Suppress("DEPRECATION")
     fun getPath(context: Context, uri: Uri): String? {
         //check here to KITKAT or new version
         @SuppressLint("ObsoleteSdkInt")

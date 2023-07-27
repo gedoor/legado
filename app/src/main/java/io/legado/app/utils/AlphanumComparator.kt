@@ -1,6 +1,11 @@
 package io.legado.app.utils
 
+
+/**
+ * 排序比较
+ */
 object AlphanumComparator : Comparator<String> {
+
 
     override fun compare(s1: String, s2: String): Int {
         var thisMarker = 0

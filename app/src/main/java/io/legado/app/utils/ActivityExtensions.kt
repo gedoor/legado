@@ -88,6 +88,7 @@ fun Activity.setStatusBarColorAuto(
     setLightStatusBar(isLightBar)
 }
 
+@SuppressLint("ObsoleteSdkInt")
 fun Activity.setLightStatusBar(isLightBar: Boolean) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         window.insetsController?.let {

@@ -1,9 +1,6 @@
 package io.legado.app.utils
 
-import io.legado.app.constant.AppLog
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import org.apache.commons.text.StringEscapeUtils
-import org.jsoup.nodes.Entities
 import java.net.URL
 import java.util.regex.Pattern
 

@@ -4,7 +4,11 @@ import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.core.graphics.ColorUtils
-import kotlin.math.*
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object ColorUtils {
@@ -77,13 +81,13 @@ object ColorUtils {
         return Color.argb(a.toInt(), r.toInt(), g.toInt(), b.toInt())
     }
 
-    fun argb(R: Int, G: Int, B: Int): Int {
-        return argb(Byte.MAX_VALUE.toInt(), R, G, B)
+    fun argb(r: Int, g: Int, b: Int): Int {
+        return argb(Byte.MAX_VALUE.toInt(), r, g, b)
     }
 
-    fun argb(A: Int, R: Int, G: Int, B: Int): Int {
+    fun argb(alpha: Int, r: Int, g: Int, b: Int): Int {
         val colorByteArr =
-            byteArrayOf(A.toByte(), R.toByte(), G.toByte(), B.toByte())
+            byteArrayOf(alpha.toByte(), r.toByte(), g.toByte(), b.toByte())
         return byteArrToInt(colorByteArr)
     }
 
