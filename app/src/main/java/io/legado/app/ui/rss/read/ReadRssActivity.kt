@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
+import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.JsExtensions
@@ -414,7 +415,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                         put("url", url.toString())
                     }.toString()
                 }.onFailure {
-                    it.printOnDebug()
+                    AppLog.put("url跳转拦截js出错", it)
                 }.getOrNull()
                 if (result.isTrue()) {
                     return true
@@ -460,9 +461,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
 
         fun searchBook(key: String) {
-            launch {
-                SearchActivity.start(this@ReadRssActivity, key)
-            }
+            SearchActivity.start(this@ReadRssActivity, key)
         }
 
         fun addBook(bookUrl: String) {
