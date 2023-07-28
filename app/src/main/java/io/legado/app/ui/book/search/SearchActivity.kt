@@ -280,8 +280,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         viewModel.searchBookLiveData.observe(this) {
             adapter.setItems(it)
         }
-        launch {
-            appDb.bookSourceDao.flowEnabledGroups().flowOn(IO).collect {
+        launch(IO) {
+            appDb.bookSourceDao.flowEnabledGroups().collect {
                 groups = it
             }
         }
