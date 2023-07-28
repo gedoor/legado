@@ -398,6 +398,16 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
+            val source = viewModel.rssSource
+            val js = source?.shouldOverrideUrlLoading
+            if (!js.isNullOrBlank()) {
+                val result = source.evalJS(js) {
+                    put("url", url.toString())
+                }.toString()
+                if (result.isTrue()) {
+                    return true
+                }
+            }
             when (url.scheme) {
                 "http", "https", "jsbridge" -> {
                     return false

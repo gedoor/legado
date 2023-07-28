@@ -73,6 +73,11 @@ data class RssSource(
     var contentWhitelist: String? = null,
     /**正文url黑名单**/
     var contentBlacklist: String? = null,
+    /**
+     * 跳转url拦截,
+     * js, 返回true拦截,js变量url,可以通过js打开url,比如调用阅读搜索,添加书架等,简化规则写法,不用webView js注入
+     * **/
+    var shouldOverrideUrlLoading: String? = null,
     /**webView样式**/
     var style: String? = null,
     @ColumnInfo(defaultValue = "1")

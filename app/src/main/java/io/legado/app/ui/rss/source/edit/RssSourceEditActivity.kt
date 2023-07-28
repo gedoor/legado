@@ -27,7 +27,16 @@ import io.legado.app.ui.widget.dialog.UrlOptionDialog
 import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.ui.widget.text.EditEntity
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.isTrue
+import io.legado.app.utils.launch
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.share
+import io.legado.app.utils.shareWithQr
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -116,17 +125,20 @@ class RssSourceEditActivity :
                 setResult(Activity.RESULT_OK)
                 finish()
             }
+
             R.id.menu_debug_source -> viewModel.save(getRssSource()) { source ->
                 startActivity<RssSourceDebugActivity> {
                     putExtra("key", source.sourceUrl)
                 }
             }
+
             R.id.menu_login -> viewModel.save(getRssSource()) {
                 startActivity<SourceLoginActivity> {
                     putExtra("type", "rssSource")
                     putExtra("key", it.sourceUrl)
                 }
             }
+
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_clear_cookie -> viewModel.clearCookie(getRssSource().sourceUrl)
             R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
@@ -139,6 +151,7 @@ class RssSourceEditActivity :
                 getString(R.string.share_rss_source),
                 ErrorCorrectionLevel.L
             )
+
             R.id.menu_help -> showHelp("ruleHelp")
         }
         return super.onCompatOptionsItemSelected(item)
@@ -239,6 +252,13 @@ class RssSourceEditActivity :
             add(EditEntity("injectJs", rs.injectJs, R.string.r_inject_js))
             add(EditEntity("contentWhitelist", rs.contentWhitelist, R.string.c_whitelist))
             add(EditEntity("contentBlacklist", rs.contentBlacklist, R.string.c_blacklist))
+            add(
+                EditEntity(
+                    "shouldOverrideUrlLoading",
+                    rs.shouldOverrideUrlLoading,
+                    "url跳转拦截(js, 返回true拦截,js变量url,可以通过js打开url,比如调用阅读搜索,添加书架等,简化规则写法,不用webView js注入)"
+                )
+            )
         }
         binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
@@ -272,14 +292,19 @@ class RssSourceEditActivity :
                 "ruleArticles" -> source.ruleArticles = it.value
                 "ruleNextPage" -> source.ruleNextPage =
                     viewModel.ruleComplete(it.value, source.ruleArticles, 2)
+
                 "ruleTitle" -> source.ruleTitle =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
+
                 "rulePubDate" -> source.rulePubDate =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
+
                 "ruleDescription" -> source.ruleDescription =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
+
                 "ruleImage" -> source.ruleImage =
                     viewModel.ruleComplete(it.value, source.ruleArticles, 3)
+
                 "ruleLink" -> source.ruleLink =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
             }
@@ -290,10 +315,12 @@ class RssSourceEditActivity :
                 "loadWithBaseUrl" -> source.loadWithBaseUrl = it.value.isTrue()
                 "ruleContent" -> source.ruleContent =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
+
                 "style" -> source.style = it.value
                 "injectJs" -> source.injectJs = it.value
                 "contentWhitelist" -> source.contentWhitelist = it.value
                 "contentBlacklist" -> source.contentBlacklist = it.value
+                "shouldOverrideUrlLoading" -> source.shouldOverrideUrlLoading = it.value
             }
         }
         return source
@@ -302,7 +329,8 @@ class RssSourceEditActivity :
     private fun setSourceVariable() {
         viewModel.save(getRssSource()) { source ->
             launch {
-                val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+                val comment =
+                    source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
                 val variable = withContext(Dispatchers.IO) { source.getVariable() }
                 showDialogFragment(
                     VariableDialog(
@@ -335,6 +363,7 @@ class RssSourceEditActivity :
             "urlOption" -> UrlOptionDialog(this) {
                 sendText(it)
             }.show()
+
             "ruleHelp" -> showHelp("ruleHelp")
             "jsHelp" -> showHelp("jsHelp")
             "regexHelp" -> showHelp("regexHelp")
