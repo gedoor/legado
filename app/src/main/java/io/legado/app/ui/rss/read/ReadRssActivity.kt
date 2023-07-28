@@ -10,18 +10,23 @@ import android.view.*
 import android.webkit.*
 import androidx.activity.viewModels
 import androidx.core.view.size
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.databinding.ActivityRssReadBinding
+import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.Download
+import io.legado.app.ui.association.AddToBookshelfDialog
 import io.legado.app.ui.association.OnLineImportActivity
+import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.*
@@ -39,6 +44,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
     override val viewModel by viewModels<ReadRssViewModel>()
+
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
@@ -48,6 +54,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             viewModel.saveImage(it.value, uri)
         }
     }
+    private val rssJsExtensions by lazy { RssJsExtensions() }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.upStarMenuData.observe(this) { upStarMenu() }
@@ -401,9 +408,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             val source = viewModel.rssSource
             val js = source?.shouldOverrideUrlLoading
             if (!js.isNullOrBlank()) {
-                val result = source.evalJS(js) {
-                    put("url", url.toString())
-                }.toString()
+                val result = RhinoScriptEngine.runCatching {
+                    eval(js) {
+                        put("java", rssJsExtensions)
+                        put("url", url.toString())
+                    }.toString()
+                }.onFailure {
+                    it.printOnDebug()
+                }.getOrNull()
                 if (result.isTrue()) {
                     return true
                 }
@@ -436,6 +448,25 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             error: SslError?
         ) {
             handler?.proceed()
+        }
+
+    }
+
+    @Suppress("unused")
+    private inner class RssJsExtensions : JsExtensions {
+
+        override fun getSource(): BaseSource? {
+            return viewModel.rssSource
+        }
+
+        fun searchBook(key: String) {
+            launch {
+                SearchActivity.start(this@ReadRssActivity, key)
+            }
+        }
+
+        fun addBook(bookUrl: String) {
+            showDialogFragment(AddToBookshelfDialog(bookUrl))
         }
 
     }

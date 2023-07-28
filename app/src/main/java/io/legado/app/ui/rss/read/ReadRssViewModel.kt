@@ -10,10 +10,12 @@ import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.JsExtensions
 import io.legado.app.help.TTS
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
@@ -26,7 +28,7 @@ import splitties.init.appCtx
 import java.util.Date
 
 
-class ReadRssViewModel(application: Application) : BaseViewModel(application) {
+class ReadRssViewModel(application: Application) : BaseViewModel(application), JsExtensions {
     var rssSource: RssSource? = null
     var rssArticle: RssArticle? = null
     var tts: TTS? = null
@@ -35,6 +37,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     var rssStar: RssStar? = null
     val upTtsMenuData = MutableLiveData<Boolean>()
     val upStarMenuData = MutableLiveData<Boolean>()
+
+    override fun getSource(): BaseSource? {
+        return rssSource
+    }
 
     fun initData(intent: Intent) {
         execute {

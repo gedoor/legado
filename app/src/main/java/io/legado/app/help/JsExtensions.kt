@@ -539,9 +539,9 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 删除本地文件
      */
-    fun deleteFile(path: String) {
+    fun deleteFile(path: String): Boolean {
         val file = getFile(path)
-        FileUtils.delete(file, true)
+        return FileUtils.delete(file, true)
     }
 
     /**
@@ -823,6 +823,15 @@ interface JsExtensions : JsEncodeUtils {
             return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
         }
         return s
+    }
+
+
+    fun toURL(urlStr: String): JsURL {
+        return JsURL(urlStr)
+    }
+
+    fun toURL(url: String, baseUrl: String? = null): JsURL {
+        return JsURL(url, baseUrl)
     }
 
     /**
