@@ -162,6 +162,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                     searchView.setQuery(it, true)
                 }
             }
+
             R.id.menu_search_scope -> alertSearchScope()
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
             R.id.menu_log -> showDialogFragment(AppLogDialog())
@@ -203,7 +204,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             }
         })
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (binding.refreshProgressBar.isAutoLoading || (!hasFocus && adapter.isNotEmpty() && searchView.query.isNotBlank())){
+            if (binding.refreshProgressBar.isAutoLoading || (!hasFocus && adapter.isNotEmpty() && searchView.query.isNotBlank())) {
                 visibleInputHelp(false)
             } else {
                 visibleInputHelp(true)
@@ -299,7 +300,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
                 .requestFocus()
         } else {
-            searchView.setQuery(key, true)
+            searchView.post {
+                searchView.setQuery(key, true)
+            }
         }
     }
 
@@ -427,9 +430,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 searchView.query.toString() == key -> {
                     searchView.setQuery(key, true)
                 }
+
                 withContext(IO) { appDb.bookDao.findByName(key).isEmpty() } -> {
                     searchView.setQuery(key, true)
                 }
+
                 else -> {
                     searchView.setQuery(key, false)
                 }
