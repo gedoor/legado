@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.util.ArraySet
 import androidx.core.app.NotificationCompat
 import androidx.documentfile.provider.DocumentFile
@@ -134,6 +135,12 @@ class ExportBookService : BaseService() {
                 servicePendingIntent<ExportBookService>(IntentAction.stop)
             )
         } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                stopForeground(STOP_FOREGROUND_DETACH)
+            } else {
+                @Suppress("DEPRECATION")
+                stopForeground(false)
+            }
             notification.setOngoing(false)
             notification.setDeleteIntent(
                 servicePendingIntent<ExportBookService>(IntentAction.stop)
@@ -342,7 +349,13 @@ class ExportBookService : BaseService() {
      */
     private fun paresScope(scope: String): IntArray {
         val split = scope.split(",")
-        val result = ArraySet<Int>()
+
+        @Suppress("RemoveExplicitTypeArguments")
+        val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ArraySet<Int>()
+        } else {
+            HashSet<Int>()
+        }
         for (s in split) {
             val v = s.split("-")
             if (v.size != 2) {
