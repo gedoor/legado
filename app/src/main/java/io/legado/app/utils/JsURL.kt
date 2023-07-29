@@ -1,8 +1,10 @@
 package io.legado.app.utils
 
+import androidx.annotation.Keep
 import java.net.URL
 import java.net.URLDecoder
 
+@Keep
 @Suppress("MemberVisibilityCanBePrivate")
 class JsURL(url: String, baseUrl: String? = null) {
 
@@ -26,7 +28,7 @@ class JsURL(url: String, baseUrl: String? = null) {
         }
         pathname = mUrl.path
         val query = mUrl.query
-        searchParams = query?.let { query ->
+        searchParams = query?.let { _ ->
             val map = hashMapOf<String, String>()
             query.split("&").forEach {
                 val x = it.split("=")
