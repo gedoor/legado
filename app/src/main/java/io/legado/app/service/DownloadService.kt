@@ -31,7 +31,7 @@ import splitties.systemservices.notificationManager
  */
 class DownloadService : BaseService() {
     private val groupKey = "${appCtx.packageName}.download"
-    private val downloads = hashMapOf<Long, Pair<String, String>>()
+    private val downloads = hashMapOf<Long, DownloadInfo>()
     private val completeDownloads = hashSetOf<Long>()
     private var upStateJob: Job? = null
     private val downloadReceiver = object : BroadcastReceiver() {
@@ -64,7 +64,7 @@ class DownloadService : BaseService() {
             IntentAction.play -> {
                 val id = intent.getLongExtra("downloadId", 0)
                 if (completeDownloads.contains(id)) {
-                    openDownload(id, downloads[id]?.second)
+                    openDownload(id, downloads[id]?.fileName)
                 } else {
                     toastOnUi("未完成,下载的文件夹Download")
                 }
@@ -89,7 +89,7 @@ class DownloadService : BaseService() {
             }
             return
         }
-        if (downloads.values.any { it.first == url }) {
+        if (downloads.values.any { it.url == url }) {
             toastOnUi("已在下载列表")
             return
         }
@@ -102,7 +102,7 @@ class DownloadService : BaseService() {
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
             // 添加一个下载任务
             val downloadId = downloadManager.enqueue(request)
-            downloads[downloadId] = Pair(url, fileName)
+            downloads[downloadId] = DownloadInfo(url, fileName, downloads.size + 1)
             queryState()
             if (upStateJob == null) {
                 checkDownloadState()
@@ -138,7 +138,7 @@ class DownloadService : BaseService() {
     private fun successDownload(downloadId: Long) {
         if (!completeDownloads.contains(downloadId)) {
             completeDownloads.add(downloadId)
-            val fileName = downloads[downloadId]?.second
+            val fileName = downloads[downloadId]?.fileName
             openDownload(downloadId, fileName)
         }
     }
@@ -188,7 +188,15 @@ class DownloadService : BaseService() {
                         DownloadManager.STATUS_FAILED -> getString(R.string.download_error)
                         else -> getString(R.string.unknown_state)
                     }
-                    upDownloadNotification(id, "${downloads[id]?.second} $status", max, progress)
+                    downloads[id]?.let { downloadInfo ->
+                        upDownloadNotification(
+                            id,
+                            downloadInfo.notificationId,
+                            "${downloadInfo.fileName} $status",
+                            max,
+                            progress
+                        )
+                    }
                 } while (cursor.moveToNext())
             }
         }
@@ -222,7 +230,13 @@ class DownloadService : BaseService() {
     /**
      * 更新通知
      */
-    private fun upDownloadNotification(downloadId: Long, content: String, max: Int, progress: Int) {
+    private fun upDownloadNotification(
+        downloadId: Long,
+        notificationId: Int,
+        content: String,
+        max: Int,
+        progress: Int
+    ) {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setSubText(getString(R.string.action_download))
@@ -241,7 +255,13 @@ class DownloadService : BaseService() {
             .setProgress(max, progress, false)
             .setGroup(groupKey)
             .build()
-        notificationManager.notify(downloadId.toInt(), notification)
+        notificationManager.notify(notificationId, notification)
     }
+
+    private data class DownloadInfo(
+        val url: String,
+        val fileName: String,
+        val notificationId: Int
+    )
 
 }
