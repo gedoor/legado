@@ -19,6 +19,7 @@
 * 后台导出书籍
 * 订阅添加跳转url拦截, js, 返回true拦截,js变量url,可以通过js打开url,比如调用阅读搜索java.searchBook(
   bookName),添加书架等java.addBook(bookUrl),简化规则写法,不用webView js注入
+* 导出单个书籍的书签
 * 其它优化与bug修复
 * 其中一些更新由 Horis, Xwite, ag2s20150909 提供
 
