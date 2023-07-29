@@ -63,6 +63,7 @@ import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.epub.EpubWriterProcessor
 import me.ag2s.epublib.util.ResourceUtil
 import splitties.init.appCtx
+import splitties.systemservices.notificationManager
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -87,6 +88,7 @@ class ExportBookService : BaseService() {
         val epubScope: String? = null
     )
 
+    private val groupKey = "${appCtx.packageName}.exportBook"
     private val handler = buildMainHandler()
     private val waitExportBooks = linkedMapOf<String, ExportConfig>()
     private var exportJob: Job? = null
@@ -128,23 +130,31 @@ class ExportBookService : BaseService() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
             .setContentTitle(getString(R.string.export_book))
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentText(notificationContent)
+            .setGroup(groupKey)
+            .setGroupSummary(true)
+        startForeground(AppConst.notificationIdExport, notification.build())
+    }
+
+    private fun upExportNotification() {
+        val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
+            .setSmallIcon(R.drawable.ic_export)
+            .setContentTitle(getString(R.string.export_book))
             .setContentIntent(activityPendingIntent<CacheActivity>("cacheActivity"))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentText(notificationContent)
+            .setDeleteIntent(servicePendingIntent<ExportBookService>(IntentAction.stop))
+            .setGroup(groupKey)
         if (exportJob?.isActive == true) {
+            notification.setOngoing(true)
             notification.addAction(
                 R.drawable.ic_stop_black_24dp,
                 getString(R.string.cancel),
                 servicePendingIntent<ExportBookService>(IntentAction.stop)
             )
-        } else {
-            notification.addAction(
-                R.drawable.ic_stop_black_24dp,
-                getString(R.string.close),
-                servicePendingIntent<ExportBookService>(IntentAction.stop)
-            )
         }
-        startForeground(AppConst.notificationIdExport, notification.build())
+        notificationManager.notify(AppConst.notificationIdExport, notification.build())
     }
 
     private fun export() {
@@ -154,7 +164,7 @@ class ExportBookService : BaseService() {
         val entry = waitExportBooks.firstNotNullOfOrNull { it }
         if (entry == null) {
             notificationContent = "导出完成"
-            upNotification()
+            upExportNotification()
             return
         }
         val bookUrl = entry.key
@@ -171,7 +181,7 @@ class ExportBookService : BaseService() {
                     book.name,
                     waitExportBooks.size
                 )
-                upNotification()
+                upExportNotification()
                 if (exportConfig.type == "epub") {
                     if (exportConfig.epubScope.isNullOrBlank()) {
                         exportEPUB(exportConfig.path, book)

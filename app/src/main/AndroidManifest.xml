@@ -186,11 +186,6 @@
             android:name=".ui.about.AboutActivity"
             android:launchMode="singleTask"
             android:screenOrientation="behind" />
-        <!-- 捐赠界面 -->
-        <activity
-            android:name=".ui.about.DonateActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="behind" />
         <!-- 书源管理 -->
         <activity
             android:name=".ui.book.source.manage.BookSourceActivity"
@@ -432,7 +427,9 @@
         <service android:name=".service.TTSReadAloudService" />
         <service android:name=".service.HttpReadAloudService" />
         <service android:name=".service.AudioPlayService" />
-        <service android:name=".service.DownloadService" />
+        <service
+            android:name=".service.DownloadService"
+            android:exported="" />
 
         <receiver
             android:name=".receiver.MediaButtonReceiver"
