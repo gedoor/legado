@@ -15,6 +15,24 @@
 
 ## 当前类对象的可使用的部分方法
 
+### [RssJsExtensions](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/ui/rss/read/RssJsExtensions.kt)
+> 只能在订阅源`shouldOverrideUrlLoading`规则中使用  
+> 订阅添加跳转url拦截, js, 返回true拦截,js变量url,可以通过js打开url  
+> 例子https://github.com/gedoor/legado/discussions/3259
+
+* 调用阅读搜索
+
+```
+java.searchBook(
+bookName)
+```
+
+* 添加书架
+
+```
+java.addBook(bookUrl)
+```
+
 ### [AnalyzeUrl](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeUrl.kt) 部分函数
 > js中通过java.调用,只在`登录检查JS`规则中有效
 ```
@@ -64,6 +82,12 @@ java.put(key, value)
 
 ### [js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt) 部分函数
 
+* 链接解析[JsURL](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/utils/JsURL.kt)
+
+```
+java.toURL(url): JsURL
+java.toURL(url, baseUrl): JsURL
+```
 * 网络请求
 
 ```
@@ -83,7 +107,13 @@ java.head(url: String, headerMap: Map<String, String>): Connection.Response
 * @param url html内如果有相对路径的资源不传入url访问不了
 * @param js 用来取返回值的js语句, 没有就返回整个源代码
 * @return 返回js获取的内容
-java.webView(html: String?, url: String?, js: String?): String
+java.webView(html: String?, url: String?, js: String?): String?
+
+* 使用webView获取跳转url
+java.webViewGetOverrideUrl(html: String?, url: String?, js: String?, overrideUrlRegex: String): String?
+
+* 使用webView获取资源url
+java.webViewGetSource(html: String?, url: String?, js: String?, sourceRegex: String): String?
 
 * 使用内置浏览器打开链接，可用于获取验证码 手动验证网站防爬
 * @param url 要打开的链接
@@ -194,6 +224,8 @@ deleteFile(path: String)
 > 提供在JavaScript环境中快捷调用crypto算法的函数，由[hutool-crypto](https://www.hutool.cn/docs/#/crypto/概述)实现  
 
 > 其他没有添加的算法可在JavaScript中使用`JavaImporter`[调用](https://m.jb51.net/article/92138.htm)Java，例子可参考`朗读引擎-阿里云语音`  
+
+> 注意阅读app会屏蔽部分java类调用，见[RhinoClassShutter](https://github.com/gedoor/legado/blob/master/modules/rhino1.7.3/src/main/java/com/script/rhino/RhinoClassShutter.kt)
 
 > 注意：如果输入的参数不是Utf8String 可先调用`java.hexDecodeToByteArray java.base64DecodeToByteArray`转成ByteArray
 * 对称加密
