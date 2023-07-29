@@ -20,12 +20,17 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.getInt
+import io.legado.app.utils.putInt
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
@@ -149,7 +154,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     inner class RecordAdapter(context: Context) :
         RecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
 
-        private val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         override fun getViewBinding(parent: ViewGroup): ItemReadRecordBinding {
             return ItemReadRecordBinding.inflate(inflater, parent, false)

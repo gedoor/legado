@@ -50,8 +50,7 @@ object StringUtils {
      * 将日期转换成昨天、今天、明天
      */
     fun dateConvert(source: String, pattern: String): String {
-        @SuppressLint("SimpleDateFormat")
-        val format = SimpleDateFormat(pattern)
+        val format = SimpleDateFormat(pattern, Locale.getDefault())
         val calendar = Calendar.getInstance()
         kotlin.runCatching {
             val date = format.parse(source) ?: return ""

@@ -24,6 +24,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.toc.rule.TxtTocRuleDialog
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -41,6 +42,11 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
     private var menu: Menu? = null
     private var searchView: SearchView? = null
     private val waitDialog by lazy { WaitDialog(this) }
+    private val exportDir = registerForActivityResult(HandleFileContract()) {
+        it.uri?.let { uri ->
+            viewModel.saveBookmark(uri)
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         tabLayout = binding.titleBar.findViewById(R.id.tab_layout)
@@ -71,9 +77,6 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_toc, menu)
         this.menu = menu
-        viewModel.bookData.value?.let {
-            menu.setGroupVisible(R.id.menu_group_text, it.isLocalTxt)
-        }
         val search = menu.findItem(R.id.menu_search)
         searchView = (search.actionView as SearchView).apply {
             applyTint(primaryTextColor)
@@ -110,6 +113,15 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        if (tabLayout.selectedTabPosition == 1) {
+            menu.setGroupVisible(R.id.menu_group_bookmark, true)
+            menu.setGroupVisible(R.id.menu_group_toc, false)
+            menu.setGroupVisible(R.id.menu_group_text, false)
+        } else {
+            menu.setGroupVisible(R.id.menu_group_bookmark, false)
+            menu.setGroupVisible(R.id.menu_group_toc, true)
+            menu.setGroupVisible(R.id.menu_group_text, viewModel.bookData.value?.isLocalTxt == true)
+        }
         menu.findItem(R.id.menu_use_replace)?.isChecked =
             AppConfig.tocUiUseReplace
         menu.findItem(R.id.menu_split_long_chapter)?.isChecked =
@@ -122,6 +134,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
             R.id.menu_toc_regex -> showDialogFragment(
                 TxtTocRuleDialog(viewModel.bookData.value?.tocUrl)
             )
+
             R.id.menu_split_long_chapter -> {
                 viewModel.bookData.value?.let { book ->
                     item.isChecked = !item.isChecked
@@ -129,6 +142,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
                     upBookAndToc(book)
                 }
             }
+
             R.id.menu_reverse_toc -> viewModel.reverseToc {
                 viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
                 setResult(RESULT_OK, Intent().apply {
@@ -136,11 +150,15 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
                     putExtra("chapterPos", 0)
                 })
             }
+
             R.id.menu_use_replace -> {
                 AppConfig.tocUiUseReplace = !item.isChecked
                 viewModel.chapterListCallBack?.clearDisplayTitle()
                 viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
             }
+
+            R.id.menu_export -> exportDir.launch()
+
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
