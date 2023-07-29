@@ -154,7 +154,7 @@ class ExportBookService : BaseService() {
                 servicePendingIntent<ExportBookService>(IntentAction.stop)
             )
         }
-        notificationManager.notify(AppConst.notificationIdExport, notification.build())
+        notificationManager.notify(AppConst.notificationIdExport + 100, notification.build())
     }
 
     private fun export() {
