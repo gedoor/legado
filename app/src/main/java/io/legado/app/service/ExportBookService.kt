@@ -92,8 +92,7 @@ class ExportBookService : BaseService() {
     private val handler = buildMainHandler()
     private val waitExportBooks = linkedMapOf<String, ExportConfig>()
     private var exportJob: Job? = null
-
-    private var notificationContent = appCtx.getString(R.string.service_starting)
+    private var notificationContentText = appCtx.getString(R.string.service_starting)
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -129,9 +128,8 @@ class ExportBookService : BaseService() {
     override fun upNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
-            .setContentTitle(getString(R.string.export_book))
+            .setSubText(getString(R.string.export_book))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentText(notificationContent)
             .setGroup(groupKey)
             .setGroupSummary(true)
         startForeground(AppConst.notificationIdExport, notification.build())
@@ -140,10 +138,10 @@ class ExportBookService : BaseService() {
     private fun upExportNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
-            .setContentTitle(getString(R.string.export_book))
+            .setSubText(getString(R.string.export_book))
             .setContentIntent(activityPendingIntent<CacheActivity>("cacheActivity"))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentText(notificationContent)
+            .setContentText(notificationContentText)
             .setDeleteIntent(servicePendingIntent<ExportBookService>(IntentAction.stop))
             .setGroup(groupKey)
         if (exportJob?.isActive == true) {
@@ -163,7 +161,7 @@ class ExportBookService : BaseService() {
         }
         val entry = waitExportBooks.firstNotNullOfOrNull { it }
         if (entry == null) {
-            notificationContent = "导出完成"
+            notificationContentText = "导出完成"
             upExportNotification()
             return
         }
@@ -176,7 +174,7 @@ class ExportBookService : BaseService() {
             val book = appDb.bookDao.getBook(bookUrl)
             try {
                 book ?: throw NoStackTraceException("获取${bookUrl}书籍出错")
-                notificationContent = getString(
+                notificationContentText = getString(
                     R.string.export_book_notification_content,
                     book.name,
                     waitExportBooks.size
