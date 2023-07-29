@@ -16,18 +16,15 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
 import io.legado.app.constant.AppLog
-import io.legado.app.data.entities.BaseSource
+import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssReadBinding
-import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.Download
-import io.legado.app.ui.association.AddToBookshelfDialog
 import io.legado.app.ui.association.OnLineImportActivity
-import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.*
@@ -55,7 +52,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             viewModel.saveImage(it.value, uri)
         }
     }
-    private val rssJsExtensions by lazy { RssJsExtensions() }
+    private val rssJsExtensions by lazy { RssJsExtensions(this) }
+
+    fun getSource(): RssSource? {
+        return viewModel.rssSource
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.upStarMenuData.observe(this) { upStarMenu() }
@@ -449,23 +450,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             error: SslError?
         ) {
             handler?.proceed()
-        }
-
-    }
-
-    @Suppress("unused")
-    private inner class RssJsExtensions : JsExtensions {
-
-        override fun getSource(): BaseSource? {
-            return viewModel.rssSource
-        }
-
-        fun searchBook(key: String) {
-            SearchActivity.start(this@ReadRssActivity, key)
-        }
-
-        fun addBook(bookUrl: String) {
-            showDialogFragment(AddToBookshelfDialog(bookUrl))
         }
 
     }
