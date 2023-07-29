@@ -163,7 +163,11 @@ class ExportBookService : BaseService() {
             val book = appDb.bookDao.getBook(bookUrl)
             try {
                 book ?: throw NoStackTraceException("获取${bookUrl}书籍出错")
-                notificationContent = "正在导出(${book.name}),还有${waitExportBooks.size}本待导出"
+                notificationContent = getString(
+                    R.string.export_book_notification_content,
+                    book.name,
+                    waitExportBooks.size
+                )
                 upNotification()
                 if (exportConfig.type == "epub") {
                     if (exportConfig.epubScope.isNullOrBlank()) {
