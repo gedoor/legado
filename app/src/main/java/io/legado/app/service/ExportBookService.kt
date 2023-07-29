@@ -1,5 +1,6 @@
 package io.legado.app.service
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -122,33 +123,28 @@ class ExportBookService : BaseService() {
         exportMsg.clear()
     }
 
+    @SuppressLint("MissingPermission")
     override fun upNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
             .setContentTitle(getString(R.string.export_book))
             .setContentIntent(activityPendingIntent<CacheActivity>("cacheActivity"))
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentText(notificationContent)
         if (exportJob?.isActive == true) {
-            notification.setOngoing(true)
             notification.addAction(
                 R.drawable.ic_stop_black_24dp,
                 getString(R.string.cancel),
                 servicePendingIntent<ExportBookService>(IntentAction.stop)
             )
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                stopForeground(STOP_FOREGROUND_DETACH)
-            } else {
-                @Suppress("DEPRECATION")
-                stopForeground(false)
-            }
-            notification.setOngoing(false)
-            notification.setDeleteIntent(
+            notification.addAction(
+                R.drawable.ic_stop_black_24dp,
+                getString(R.string.close),
                 servicePendingIntent<ExportBookService>(IntentAction.stop)
             )
         }
-        notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        notification.setContentText(notificationContent)
-        startForeground(AppConst.notificationIdCache, notification.build())
+        startForeground(AppConst.notificationIdExport, notification.build())
     }
 
     private fun export() {
