@@ -8,6 +8,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
 import io.legado.app.data.appDb
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.CacheBook
@@ -167,7 +168,7 @@ class CacheBookService : BaseService() {
     override fun upNotification() {
         notificationBuilder.setContentText(notificationContent)
         val notification = notificationBuilder.build()
-        startForeground(AppConst.notificationIdCache, notification)
+        startForeground(NotificationId.CacheBookService, notification)
     }
 
 }

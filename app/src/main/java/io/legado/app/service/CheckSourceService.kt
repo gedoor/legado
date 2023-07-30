@@ -9,6 +9,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
@@ -264,7 +265,7 @@ class CheckSourceService : BaseService() {
         notificationBuilder.setContentText(notificationMsg)
         notificationBuilder.setProgress(allIds.size, checkedIds.size, false)
         postEvent(EventBus.CHECK_SOURCE, notificationMsg)
-        startForeground(AppConst.notificationIdCheckSource, notificationBuilder.build())
+        startForeground(NotificationId.CheckSourceService, notificationBuilder.build())
     }
 
 }

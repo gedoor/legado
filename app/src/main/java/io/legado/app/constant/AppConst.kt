@@ -46,14 +46,6 @@ object AppConst {
     const val bookGroupLocalNoneId = -5L
     const val bookGroupErrorId = -11L
 
-    const val notificationIdRead = -1122391
-    const val notificationIdAudio = -1122392
-    const val notificationIdCache = -1122393
-    const val notificationIdExport = -1122394
-    const val notificationIdWeb = -1122395
-    const val notificationIdDownload = -1122396
-    const val notificationIdCheckSource = -1122397
-
     const val imagePathKey = "imagePath"
 
     val menuViewNames = arrayOf(

@@ -614,7 +614,7 @@ class AudioPlayService : BaseService(),
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             builder
         }.onSuccess {
-            startForeground(AppConst.notificationIdAudio, it.build())
+            startForeground(NotificationId.AudioPlayService, it.build())
         }
     }
 

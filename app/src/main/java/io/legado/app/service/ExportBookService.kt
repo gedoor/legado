@@ -19,6 +19,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -132,7 +133,7 @@ class ExportBookService : BaseService() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setGroup(groupKey)
             .setGroupSummary(true)
-        startForeground(AppConst.notificationIdExport, notification.build())
+        startForeground(NotificationId.ExportBookService, notification.build())
     }
 
     private fun upExportNotification() {
@@ -152,7 +153,7 @@ class ExportBookService : BaseService() {
                 servicePendingIntent<ExportBookService>(IntentAction.stop)
             )
         }
-        notificationManager.notify(AppConst.notificationIdExport + 100, notification.build())
+        notificationManager.notify(NotificationId.ExportBook, notification.build())
     }
 
     private fun export() {

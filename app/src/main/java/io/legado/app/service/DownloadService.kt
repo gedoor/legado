@@ -14,6 +14,7 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
 import io.legado.app.utils.IntentType
 import io.legado.app.utils.openFileUri
 import io.legado.app.utils.servicePendingIntent
@@ -102,7 +103,8 @@ class DownloadService : BaseService() {
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
             // 添加一个下载任务
             val downloadId = downloadManager.enqueue(request)
-            downloads[downloadId] = DownloadInfo(url, fileName, downloads.size + 1)
+            downloads[downloadId] =
+                DownloadInfo(url, fileName, NotificationId.Download + downloads.size)
             queryState()
             if (upStateJob == null) {
                 checkDownloadState()
@@ -224,7 +226,7 @@ class DownloadService : BaseService() {
             .setGroupSummary(true)
             .setOngoing(true)
             .build()
-        startForeground(AppConst.notificationIdDownload, notification)
+        startForeground(NotificationId.DownloadService, notification)
     }
 
     /**
