@@ -164,6 +164,12 @@ export default {
         type: "String",
         hint: "webView链接加载白名单，英文逗号隔开",
       },
+      {
+        title: "链接拦截",
+        id: "shouldOverrideUrlLoading",
+        type: "String",
+        hint: "填写js，变量url为当前资源链接，返回true拦截",
+      },
     ],
   },
   other: {
