@@ -52,7 +52,7 @@ class AllBookmarkViewModel(application: Application) : BaseViewModel(application
                         author = it.bookAuthor
                         outputStream.write("## ${it.bookName} ${it.bookAuthor}\n\n".toByteArray())
                     }
-                    outputStream.write("#### ${it.chapterName}\n".toByteArray())
+                    outputStream.write("#### ${it.chapterName}\n\n".toByteArray())
                     outputStream.write("###### 原文\n ${it.bookText}\n\n".toByteArray())
                     outputStream.write("###### 摘要\n ${it.content}\n\n".toByteArray())
                 }

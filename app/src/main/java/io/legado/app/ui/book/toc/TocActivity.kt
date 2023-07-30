@@ -44,7 +44,10 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
     private val waitDialog by lazy { WaitDialog(this) }
     private val exportDir = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            viewModel.saveBookmark(uri)
+            when (it.requestCode) {
+                1 -> viewModel.saveBookmark(uri)
+                2 -> viewModel.saveBookmarkMd(uri)
+            }
         }
     }
 
@@ -157,7 +160,13 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
                 viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
             }
 
-            R.id.menu_export_bookmark -> exportDir.launch()
+            R.id.menu_export_bookmark -> exportDir.launch {
+                requestCode = 1
+            }
+
+            R.id.menu_export_md -> exportDir.launch {
+                requestCode = 2
+            }
 
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }

@@ -53,6 +53,11 @@
             android:title="@string/export"
             app:showAsAction="never" />
 
+        <item
+            android:id="@+id/menu_export_md"
+            android:title="@string/export_md"
+            app:showAsAction="never" />
+
     </group>
 
     <item
