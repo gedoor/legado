@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -199,16 +198,7 @@ class BookshelfManageActivity :
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
-            when (viewModel.groupId) {
-                AppConst.rootGroupId -> appDb.bookDao.flowNetNoGroup()
-                AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
-                AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
-                AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
-                AppConst.bookGroupNetNoneId -> appDb.bookDao.flowNetNoGroup()
-                AppConst.bookGroupLocalNoneId -> appDb.bookDao.flowLocalNoGroup()
-                AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
-                else -> appDb.bookDao.flowByGroup(viewModel.groupId)
-            }.conflate().map { list ->
+            BookGroup.flowBook(viewModel.groupId).conflate().map { list ->
                 when (bookSort) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime

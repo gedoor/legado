@@ -7,7 +7,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.legado.app.constant.AppConst
 import io.legado.app.data.dao.*
 import io.legado.app.data.entities.*
 import io.legado.app.help.DefaultData
@@ -99,43 +98,43 @@ abstract class AppDatabase : RoomDatabase() {
                 @Language("sql")
                 val insertBookGroupAllSql = """
                     insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${AppConst.bookGroupAllId}, '全部', -10, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAllId})
+                    select ${BookGroup.IdAll}, '全部', -10, 1
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdAll})
                 """.trimIndent()
                 db.execSQL(insertBookGroupAllSql)
                 @Language("sql")
                 val insertBookGroupLocalSql = """
                     insert into book_groups(groupId, groupName, 'order', enableRefresh, show) 
-                    select ${AppConst.bookGroupLocalId}, '本地', -9, 0, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalId})
+                    select ${BookGroup.IdLocal}, '本地', -9, 0, 1
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdLocal})
                 """.trimIndent()
                 db.execSQL(insertBookGroupLocalSql)
                 @Language("sql")
                 val insertBookGroupMusicSql = """
                     insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${AppConst.bookGroupAudioId}, '音频', -8, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupAudioId})
+                    select ${BookGroup.IdAudio}, '音频', -8, 1
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdAudio})
                 """.trimIndent()
                 db.execSQL(insertBookGroupMusicSql)
                 @Language("sql")
                 val insertBookGroupNetNoneGroupSql = """
                     insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${AppConst.bookGroupNetNoneId}, '网络未分组', -7, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupNetNoneId})
+                    select ${BookGroup.IdNetNone}, '网络未分组', -7, 1
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdNetNone})
                 """.trimIndent()
                 db.execSQL(insertBookGroupNetNoneGroupSql)
                 @Language("sql")
                 val insertBookGroupLocalNoneGroupSql = """
                     insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${AppConst.bookGroupLocalNoneId}, '本地未分组', -6, 0
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupLocalNoneId})
+                    select ${BookGroup.IdLocalNone}, '本地未分组', -6, 0
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdLocalNone})
                 """.trimIndent()
                 db.execSQL(insertBookGroupLocalNoneGroupSql)
                 @Language("sql")
                 val insertBookGroupErrorSql = """
                     insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${AppConst.bookGroupErrorId}, '更新失败', -1, 1
-                    where not exists (select * from book_groups where groupId = ${AppConst.bookGroupErrorId})
+                    select ${BookGroup.IdError}, '更新失败', -1, 1
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdError})
                 """.trimIndent()
                 db.execSQL(insertBookGroupErrorSql)
                 @Language("sql")
