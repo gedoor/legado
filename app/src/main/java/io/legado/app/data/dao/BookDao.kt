@@ -2,12 +2,26 @@ package io.legado.app.data.dao
 
 import androidx.room.*
 import io.legado.app.constant.BookType
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao {
+
+    fun flowByGroup(groupId: Long): Flow<List<Book>> {
+        return when (groupId) {
+            BookGroup.IdRoot -> appDb.bookDao.flowRoot()
+            BookGroup.IdAll -> appDb.bookDao.flowAll()
+            BookGroup.IdLocal -> appDb.bookDao.flowLocal()
+            BookGroup.IdAudio -> appDb.bookDao.flowAudio()
+            BookGroup.IdNetNone -> appDb.bookDao.flowNetNoGroup()
+            BookGroup.IdLocalNone -> appDb.bookDao.flowLocalNoGroup()
+            BookGroup.IdError -> appDb.bookDao.flowUpdateError()
+            else -> appDb.bookDao.flowByUserGroup(groupId)
+        }
+    }
 
     @Query(
         """
@@ -45,7 +59,7 @@ interface BookDao {
     fun flowLocalNoGroup(): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
-    fun flowByGroup(group: Long): Flow<List<Book>>
+    fun flowByUserGroup(group: Long): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun flowSearch(key: String): Flow<List<Book>>

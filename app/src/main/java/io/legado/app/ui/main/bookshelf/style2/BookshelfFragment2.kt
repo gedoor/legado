@@ -12,6 +12,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.FragmentBookshelf2Binding
@@ -133,7 +134,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         }
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            BookGroup.flowBook(groupId).conflate().map { list ->
+            appDb.bookDao.flowByGroup(groupId).conflate().map { list ->
                 //排序
                 when (AppConfig.getBookSortByGroupId(groupId)) {
                     1 -> list.sortedByDescending {

@@ -6,9 +6,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.legado.app.R
-import io.legado.app.data.appDb
 import io.legado.app.help.config.AppConfig
-import kotlinx.coroutines.flow.Flow
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -35,20 +33,6 @@ data class BookGroup(
         const val IdNetNone = -4L
         const val IdLocalNone = -5L
         const val IdError = -11L
-
-        fun flowBook(groupId: Long): Flow<List<Book>> {
-            return when (groupId) {
-                IdRoot -> appDb.bookDao.flowRoot()
-                IdAll -> appDb.bookDao.flowAll()
-                IdLocal -> appDb.bookDao.flowLocal()
-                IdAudio -> appDb.bookDao.flowAudio()
-                IdNetNone -> appDb.bookDao.flowNetNoGroup()
-                IdLocalNone -> appDb.bookDao.flowLocalNoGroup()
-                IdError -> appDb.bookDao.flowUpdateError()
-                else -> appDb.bookDao.flowByGroup(groupId)
-            }
-        }
-
     }
 
     fun getManageName(context: Context): String {

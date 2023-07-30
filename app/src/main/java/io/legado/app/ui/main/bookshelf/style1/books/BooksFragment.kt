@@ -13,6 +13,7 @@ import io.legado.app.base.BaseFragment
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.FragmentBooksBinding
@@ -133,7 +134,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            BookGroup.flowBook(groupId).conflate().map { list ->
+            appDb.bookDao.flowByGroup(groupId).conflate().map { list ->
                 //排序
                 when (bookSort) {
                     1 -> list.sortedByDescending { it.latestChapterTime }
