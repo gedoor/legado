@@ -157,7 +157,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
                 viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
             }
 
-            R.id.menu_export -> exportDir.launch()
+            R.id.menu_export_bookmark -> exportDir.launch()
 
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }

@@ -232,6 +232,10 @@ fun FileDoc.openInputStream(): Result<InputStream> {
     return uri.inputStream(appCtx)
 }
 
+fun FileDoc.openOutputStream(): Result<OutputStream> {
+    return uri.outputStream(appCtx)
+}
+
 fun FileDoc.exists(
     fileName: String,
     vararg subDirs: String

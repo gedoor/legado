@@ -2,41 +2,32 @@ package io.legado.app.ui.book.bookmark
 
 import android.app.Application
 import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
-import io.legado.app.utils.*
-import java.io.File
-import java.io.FileOutputStream
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.GSON
+import io.legado.app.utils.createFileIfNotExist
+import io.legado.app.utils.openOutputStream
+import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.writeToOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class AllBookmarkViewModel(application: Application) : BaseViewModel(application) {
 
 
-    @Suppress("BlockingMethodInNonBlockingContext")
+    /**
+     * 导出书签
+     */
     fun saveToFile(treeUri: Uri) {
         execute {
             val dateFormat = SimpleDateFormat("yyMMddHHmmss", Locale.getDefault())
-            val bookmark = appDb.bookmarkDao.all
-            if (treeUri.isContentScheme()) {
-                val doc = DocumentFile.fromTreeUri(context, treeUri)
-                    ?.createFile("", "bookmark-${dateFormat.format(Date())}")
-                doc?.let {
-                    context.contentResolver.openOutputStream(doc.uri)!!.use {
-                        GSON.writeToOutputStream(it, bookmark)
-                    }
-                }
-            } else {
-                val path = treeUri.path!!
-                val file = FileUtils.createFileIfNotExist(
-                    File(path),
-                    "bookmark-${dateFormat.format(Date())}"
-                )
-                FileOutputStream(file).use {
-                    GSON.writeToOutputStream(it, bookmark)
-                }
+            val fileName = "bookmark-${dateFormat.format(Date())}"
+            val dirDoc = FileDoc.fromUri(treeUri, true)
+            dirDoc.createFileIfNotExist(fileName).openOutputStream().getOrThrow().use {
+                GSON.writeToOutputStream(it, appDb.bookmarkDao.all)
             }
         }.onError {
             AppLog.put("导出失败\n${it.localizedMessage}", it, true)

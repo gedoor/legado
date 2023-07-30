@@ -17,7 +17,9 @@ import okio.source
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStream
+import java.io.OutputStream
 import java.nio.charset.Charset
 
 fun Uri.isContentScheme() = this.scheme == "content"
@@ -192,6 +194,32 @@ fun Uri.inputStream(context: Context): Result<InputStream> {
                 val file = File(path)
                 if (file.exists()) {
                     return@runCatching FileInputStream(file)
+                } else {
+                    throw NoStackTraceException("文件不存在")
+                }
+            }
+        } catch (e: Exception) {
+            e.printOnDebug()
+            AppLog.put("读取inputStream失败：${e.localizedMessage}", e)
+            throw e
+        }
+    }
+}
+
+fun Uri.outputStream(context: Context): Result<OutputStream> {
+    val uri = this
+    return kotlin.runCatching {
+        try {
+            if (isContentScheme()) {
+                DocumentFile.fromSingleUri(context, uri)
+                    ?: throw NoStackTraceException("未获取到文件")
+                return@runCatching context.contentResolver.openOutputStream(uri)!!
+            } else {
+                val path = RealPathUtil.getPath(context, uri)
+                    ?: throw NoStackTraceException("未获取到文件")
+                val file = File(path)
+                if (file.exists()) {
+                    return@runCatching FileOutputStream(file)
                 } else {
                     throw NoStackTraceException("文件不存在")
                 }
