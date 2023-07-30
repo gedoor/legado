@@ -105,8 +105,8 @@ android {
         }
     }
 
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
+    android.applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
             def flavor = variant.productFlavors[0].name
             outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
         }
@@ -138,8 +138,10 @@ android {
     lint {
         checkDependencies true
     }
-    tasks.withType(JavaCompile) {
-        //options.compilerArgs << "-Xlint:unchecked"
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            //options.compilerArgs << "-Xlint:unchecked"
+        }
     }
 }
 
@@ -169,7 +171,7 @@ dependencies {
     implementation('androidx.core:core-ktx:1.10.1')
     implementation('androidx.appcompat:appcompat:1.6.1')
     implementation('androidx.activity:activity-ktx:1.7.2')
-    implementation('androidx.fragment:fragment-ktx:1.6.0')
+    implementation('androidx.fragment:fragment-ktx:1.6.1')
     implementation('androidx.preference:preference-ktx:1.2.0')
     implementation('androidx.constraintlayout:constraintlayout:2.1.4')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
