@@ -76,7 +76,7 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
         execute {
             val book = bookData.value
                 ?: throw NoStackTraceException(context.getString(R.string.no_book))
-            val fileName = "bookmark-${book.name} ${book.author}"
+            val fileName = "bookmark-${book.name} ${book.author}.json"
             val doc = FileDoc.fromUri(treeUri, true)
             doc.createFileIfNotExist(fileName).writeText(
                 GSON.toJson(

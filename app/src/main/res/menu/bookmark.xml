@@ -5,4 +5,8 @@
         android:id="@+id/menu_export"
         android:title="@string/export" />
 
+    <item
+        android:id="@+id/menu_export_md"
+        android:title="@string/export_md" />
+
 </menu>

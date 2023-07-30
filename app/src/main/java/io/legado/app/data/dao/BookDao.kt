@@ -2,7 +2,6 @@ package io.legado.app.data.dao
 
 import androidx.room.*
 import io.legado.app.constant.BookType
-import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import kotlinx.coroutines.flow.Flow
@@ -12,14 +11,14 @@ interface BookDao {
 
     fun flowByGroup(groupId: Long): Flow<List<Book>> {
         return when (groupId) {
-            BookGroup.IdRoot -> appDb.bookDao.flowRoot()
-            BookGroup.IdAll -> appDb.bookDao.flowAll()
-            BookGroup.IdLocal -> appDb.bookDao.flowLocal()
-            BookGroup.IdAudio -> appDb.bookDao.flowAudio()
-            BookGroup.IdNetNone -> appDb.bookDao.flowNetNoGroup()
-            BookGroup.IdLocalNone -> appDb.bookDao.flowLocalNoGroup()
-            BookGroup.IdError -> appDb.bookDao.flowUpdateError()
-            else -> appDb.bookDao.flowByUserGroup(groupId)
+            BookGroup.IdRoot -> flowRoot()
+            BookGroup.IdAll -> flowAll()
+            BookGroup.IdLocal -> flowLocal()
+            BookGroup.IdAudio -> flowAudio()
+            BookGroup.IdNetNone -> flowNetNoGroup()
+            BookGroup.IdLocalNone -> flowLocalNoGroup()
+            BookGroup.IdError -> flowUpdateError()
+            else -> flowByUserGroup(groupId)
         }
     }
 
