@@ -667,6 +667,10 @@ class ReadBookActivity : BaseReadBookActivity(),
         textActionMenu.dismiss()
     }
 
+    override fun onLongScreenshotTouchEvent(event: MotionEvent): Boolean {
+        return binding.readView.onTouchEvent(event)
+    }
+
     /**
      * 显示文本操作菜单
      */

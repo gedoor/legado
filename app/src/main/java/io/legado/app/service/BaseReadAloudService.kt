@@ -398,6 +398,9 @@ abstract class BaseReadAloudService : BaseService(),
                 .setContentIntent(
                     activityPendingIntent<ReadBookActivity>("activity")
                 )
+                .setVibrate(null)
+                .setSound(null)
+                .setLights(0, 0, 0)
             builder.setLargeIcon(cover)
             if (pause) {
                 builder.addAction(

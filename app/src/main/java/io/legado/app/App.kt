@@ -136,6 +136,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
+            importance = NotificationManager.IMPORTANCE_LOW
         }
 
         val readAloudChannel = NotificationChannel(
@@ -146,6 +147,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
+            importance = NotificationManager.IMPORTANCE_LOW
         }
 
         val webChannel = NotificationChannel(
@@ -156,6 +158,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
+            importance = NotificationManager.IMPORTANCE_LOW
         }
 
         //向notification manager 提交channel

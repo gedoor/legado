@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Build
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import io.legado.app.R
 import io.legado.app.constant.AppLog
@@ -47,6 +48,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     var isMainView = false
     private var drawVisibleImageOnly = false
     private var cacheIncreased = false
+    private var longScreenshot = false
     private val increaseSize = 8 * 1024 * 1024
     private val maxCacheSize = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
         min(128 * 1024 * 1024, Runtime.getRuntime().maxMemory())
@@ -100,6 +102,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (longScreenshot) {
+            canvas.translate(0f, scrollY.toFloat())
+        }
         canvas.clipRect(visibleRect)
         drawPage(canvas)
         drawVisibleImageOnly = false
@@ -193,6 +198,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         canvas.drawRect(it.start, lineTop, it.end, lineBottom, selectedPaint)
                     }
                 }
+
                 is ImageColumn -> drawImage(canvas, textPage, textLine, it, lineTop, lineBottom)
                 is ReviewColumn -> it.drawToCanvas(canvas, lineBase, textPaint.textSize)
             }
@@ -267,6 +273,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     fun scroll(mOffset: Int) {
         if (mOffset == 0) return
         pageOffset += mOffset
+        if (longScreenshot) {
+            scrollY += -mOffset
+        }
         if (!pageFactory.hasPrev() && pageOffset > 0) {
             pageOffset = 0
         } else if (!pageFactory.hasNext()
@@ -659,6 +668,25 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
+    override fun canScrollVertically(direction: Int): Boolean {
+        return callBack.isScroll && pageFactory.hasNext()
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                longScreenshot = true
+                scrollY = 0
+            }
+
+            MotionEvent.ACTION_UP -> {
+                longScreenshot = false
+                scrollY = 0
+            }
+        }
+        return callBack.onLongScreenshotTouchEvent(event)
+    }
+
     interface CallBack {
         val headerHeight: Int
         val pageFactory: TextPageFactory
@@ -668,5 +696,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun upSelectedEnd(x: Float, y: Float)
         fun onImageLongPress(x: Float, y: Float, src: String)
         fun onCancelSelect()
+        fun onLongScreenshotTouchEvent(event: MotionEvent): Boolean
     }
 }
