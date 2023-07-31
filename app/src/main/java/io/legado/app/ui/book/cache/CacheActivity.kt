@@ -186,7 +186,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun initBookData() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            appDb.bookDao.flowByGroup(groupId).conflate().map { books ->
+            appDb.bookDao.flowByGroup(groupId).map { books ->
                 val booksDownload = books.filter {
                     !it.isAudio
                 }

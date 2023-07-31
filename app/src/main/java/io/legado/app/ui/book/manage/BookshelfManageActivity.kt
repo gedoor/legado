@@ -198,7 +198,7 @@ class BookshelfManageActivity :
         booksFlowJob?.cancel()
         booksFlowJob = launch {
             val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
-            appDb.bookDao.flowByGroup(viewModel.groupId).conflate().map { list ->
+            appDb.bookDao.flowByGroup(viewModel.groupId).map { list ->
                 when (bookSort) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime

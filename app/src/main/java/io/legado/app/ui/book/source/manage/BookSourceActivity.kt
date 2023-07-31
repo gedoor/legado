@@ -279,7 +279,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 else -> {
                     appDb.bookSourceDao.flowSearch(searchKey)
                 }
-            }.conflate().map { data ->
+            }.map { data ->
                 if (sortAscending) {
                     when (sort) {
                         BookSourceSort.Weight -> data.sortedBy { it.weight }

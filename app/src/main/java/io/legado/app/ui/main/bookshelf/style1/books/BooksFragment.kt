@@ -134,7 +134,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            appDb.bookDao.flowByGroup(groupId).conflate().map { list ->
+            appDb.bookDao.flowByGroup(groupId).map { list ->
                 //排序
                 when (bookSort) {
                     1 -> list.sortedByDescending { it.latestChapterTime }

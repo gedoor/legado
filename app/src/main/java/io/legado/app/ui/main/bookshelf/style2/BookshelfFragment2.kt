@@ -134,7 +134,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         }
         booksFlowJob?.cancel()
         booksFlowJob = launch {
-            appDb.bookDao.flowByGroup(groupId).conflate().map { list ->
+            appDb.bookDao.flowByGroup(groupId).map { list ->
                 //排序
                 when (AppConfig.getBookSortByGroupId(groupId)) {
                     1 -> list.sortedByDescending {
