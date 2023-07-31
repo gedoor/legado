@@ -5,11 +5,11 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.*
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.size
 import io.legado.app.R
@@ -56,6 +56,18 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             } else {
                 binding.webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
             }
+        }
+        onBackPressedDispatcher.addCallback(this) {
+            if (binding.customWebView.size > 0) {
+                customWebViewCallback?.onCustomViewHidden()
+                return@addCallback
+            } else if (binding.webView.canGoBack()
+                && binding.webView.copyBackForwardList().size > 1
+            ) {
+                binding.webView.goBack()
+                return@addCallback
+            }
+            finish()
         }
     }
 
@@ -143,33 +155,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         saveImage.launch {
             otherActions = default
         }
-    }
-
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                finish()
-                return true
-            }
-        }
-        return super.onKeyLongPress(keyCode, event)
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        event?.let {
-            when (keyCode) {
-                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled && binding.webView.canGoBack()) {
-                    if (binding.customWebView.size > 0) {
-                        customWebViewCallback?.onCustomViewHidden()
-                        return true
-                    } else if (binding.webView.copyBackForwardList().size > 1) {
-                        binding.webView.goBack()
-                        return true
-                    }
-                }
-            }
-        }
-        return super.onKeyUp(keyCode, event)
     }
 
     override fun finish() {

@@ -4,11 +4,11 @@ package io.legado.app.ui.main
 
 import android.os.Bundle
 import android.text.format.DateUtils
-import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
@@ -88,6 +88,27 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             bottomNavigationView.elevation = elevation
             bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
             bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
+        }
+        onBackPressedDispatcher.addCallback(this) {
+            if (pagePosition != 0) {
+                binding.viewPagerMain.currentItem = 0
+                return@addCallback
+            }
+            (fragmentMap[getFragmentId(0)] as? BookshelfFragment2)?.let {
+                if (it.back()) {
+                    return@addCallback
+                }
+            }
+            if (System.currentTimeMillis() - exitTime > 2000) {
+                toastOnUi(R.string.double_click_exit)
+                exitTime = System.currentTimeMillis()
+            } else {
+                if (BaseReadAloudService.pause) {
+                    finish()
+                } else {
+                    moveTaskToBack(true)
+                }
+            }
         }
     }
 
@@ -261,36 +282,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 }
             }
         }
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        event?.let {
-            when (keyCode) {
-                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled) {
-                    if (pagePosition != 0) {
-                        binding.viewPagerMain.currentItem = 0
-                        return true
-                    }
-                    (fragmentMap[getFragmentId(0)] as? BookshelfFragment2)?.let {
-                        if (it.back()) {
-                            return true
-                        }
-                    }
-                    if (System.currentTimeMillis() - exitTime > 2000) {
-                        toastOnUi(R.string.double_click_exit)
-                        exitTime = System.currentTimeMillis()
-                    } else {
-                        if (BaseReadAloudService.pause) {
-                            finish()
-                        } else {
-                            moveTaskToBack(true)
-                        }
-                    }
-                    return true
-                }
-            }
-        }
-        return super.onKeyUp(keyCode, event)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

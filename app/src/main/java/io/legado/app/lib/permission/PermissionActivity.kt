@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.KeyEvent
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -70,6 +70,9 @@ class PermissionActivity : AppCompatActivity() {
                 }
             }
         }
+        onBackPressedDispatcher.addCallback(this) {
+
+        }
     }
 
     private fun openSettingsActivity() {
@@ -106,12 +109,6 @@ class PermissionActivity : AppCompatActivity() {
     override fun finish() {
         super.finish()
         overridePendingTransition(0, 0)
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_BACK) {
-            true
-        } else super.onKeyDown(keyCode, event)
     }
 
     private fun showSettingDialog(
