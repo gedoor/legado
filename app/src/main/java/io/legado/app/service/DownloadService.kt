@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Environment
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -147,7 +148,7 @@ class DownloadService : BaseService() {
 
     private fun checkDownloadState() {
         upStateJob?.cancel()
-        upStateJob = launch {
+        upStateJob = lifecycleScope.launch {
             while (isActive) {
                 queryState()
                 delay(1000)

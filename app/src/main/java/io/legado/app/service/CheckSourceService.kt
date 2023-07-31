@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -109,7 +110,7 @@ class CheckSourceService : BaseService() {
         synchronized(this) {
             processIndex++
         }
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             if (index < allIds.size) {
                 val sourceUrl = allIds[index]
                 appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->

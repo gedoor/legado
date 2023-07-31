@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -61,7 +62,7 @@ class CacheBookService : BaseService() {
         isRun = true
         CacheBook.successDownloadSet.clear()
         CacheBook.errorDownloadMap.clear()
-        launch {
+        lifecycleScope.launch {
             while (isActive) {
                 delay(1000)
                 notificationContent = CacheBook.downloadSummary
@@ -142,7 +143,7 @@ class CacheBookService : BaseService() {
 
     private fun download() {
         downloadJob?.cancel()
-        downloadJob = launch(cachePool) {
+        downloadJob = lifecycleScope.launch(cachePool) {
             while (isActive) {
                 if (!CacheBook.isRun) {
                     CacheBook.stop(this@CacheBookService)

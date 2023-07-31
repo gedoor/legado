@@ -15,6 +15,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import io.legado.app.R
@@ -160,18 +161,20 @@ abstract class BaseReadAloudService : BaseService(),
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun newReadAloud(play: Boolean, pageIndex: Int, startPos: Int) = launch(IO) {
-        this@BaseReadAloudService.pageIndex = pageIndex
-        textChapter = ReadBook.curTextChapter
-        val textChapter = textChapter ?: return@launch
-        nowSpeak = 0
-        readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
-        val readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
-        contentList = textChapter.getNeedReadAloud(pageIndex, readAloudByPage, startPos)
-            .split("\n")
-            .filter { it.isNotEmpty() }
-        launch(Main) {
-            if (play) play() else pageChanged = true
+    private fun newReadAloud(play: Boolean, pageIndex: Int, startPos: Int) {
+        lifecycleScope.launch(IO) {
+            this@BaseReadAloudService.pageIndex = pageIndex
+            textChapter = ReadBook.curTextChapter
+            val textChapter = textChapter ?: return@launch
+            nowSpeak = 0
+            readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
+            val readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
+            contentList = textChapter.getNeedReadAloud(pageIndex, readAloudByPage, startPos)
+                .split("\n")
+                .filter { it.isNotEmpty() }
+            launch(Main) {
+                if (play) play() else pageChanged = true
+            }
         }
     }
 
@@ -256,7 +259,7 @@ abstract class BaseReadAloudService : BaseService(),
         postEvent(EventBus.READ_ALOUD_DS, timeMinute)
         upNotification()
         dsJob?.cancel()
-        dsJob = launch {
+        dsJob = lifecycleScope.launch {
             while (isActive) {
                 delay(60000)
                 if (!pause) {

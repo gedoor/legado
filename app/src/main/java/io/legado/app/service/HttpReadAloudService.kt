@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.net.Uri
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -26,6 +27,7 @@ import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -33,6 +35,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import okhttp3.Response
 import org.mozilla.javascript.WrappedException
 import java.io.File
@@ -151,7 +154,10 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
     }
 
-    private suspend fun getSpeakStream(httpTts: HttpTTS, speakText: String): InputStream? {
+    private suspend fun getSpeakStream(
+        httpTts: HttpTTS,
+        speakText: String
+    ): InputStream? = withContext(IO) {
         while (true) {
             try {
                 val analyzeUrl = AnalyzeUrl(
@@ -180,7 +186,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 ensureActive()
                 response.body!!.byteStream().let { stream ->
                     downloadErrorNo = 0
-                    return stream
+                    return@withContext stream
                 }
             } catch (e: Exception) {
                 when (e) {
@@ -221,7 +227,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 }
             }
         }
-        return null
+        return@withContext null
     }
 
     private fun md5SpeakFileName(content: String): String {
@@ -294,7 +300,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun upPlayPos() {
         playIndexJob?.cancel()
         val textChapter = textChapter ?: return
-        playIndexJob = launch {
+        playIndexJob = lifecycleScope.launch {
             postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             if (exoPlayer.duration <= 0) {
                 return@launch

@@ -15,6 +15,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.media.AudioFocusRequestCompat
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -341,7 +342,7 @@ class AudioPlayService : BaseService(),
         postEvent(EventBus.AUDIO_DS, timeMinute)
         upNotification()
         dsJob?.cancel()
-        dsJob = launch {
+        dsJob = lifecycleScope.launch {
             while (isActive) {
                 delay(60000)
                 if (!pause) {
@@ -363,7 +364,7 @@ class AudioPlayService : BaseService(),
      */
     private fun upPlayProgress() {
         upPlayProgressJob?.cancel()
-        upPlayProgressJob = launch {
+        upPlayProgressJob = lifecycleScope.launch {
             while (isActive) {
                 AudioPlay.book?.let {
                     //更新buffer位置
@@ -387,7 +388,7 @@ class AudioPlayService : BaseService(),
                 val book = AudioPlay.book
                 val bookSource = AudioPlay.bookSource
                 if (book != null && bookSource != null) {
-                    WebBook.getContent(this@AudioPlayService, bookSource, book, chapter)
+                    WebBook.getContent(lifecycleScope, bookSource, book, chapter)
                         .onSuccess { content ->
                             if (content.isEmpty()) {
                                 toastOnUi("未获取到资源链接")

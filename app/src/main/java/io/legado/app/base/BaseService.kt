@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
@@ -12,15 +13,13 @@ import io.legado.app.lib.permission.PermissionsCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
+abstract class BaseService : LifecycleService() {
 
     fun <T> execute(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = lifecycleScope,
         context: CoroutineContext = Dispatchers.IO,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         executeContext: CoroutineContext = Dispatchers.Main,
@@ -49,7 +48,6 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
     @CallSuper
     override fun onDestroy() {
         super.onDestroy()
-        cancel()
         LifecycleHelp.onServiceDestroy(this)
     }
 
@@ -68,7 +66,7 @@ abstract class BaseService : LifecycleService(), CoroutineScope by MainScope() {
             .addPermissions(Permissions.POST_NOTIFICATIONS)
             .rationale(R.string.notification_permission_rationale)
             .onGranted {
-                if (isActive) {
+                if (lifecycleScope.isActive) {
                     upNotification()
                 }
             }
