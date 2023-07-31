@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
@@ -184,6 +185,28 @@ class ReadBookActivity : BaseReadBookActivity(),
         upScreenTimeOut()
         ReadBook.callBack?.notifyBookChanged()
         ReadBook.callBack = this
+        onBackPressedDispatcher.addCallback(this) {
+            if (isShowingSearchResult) {
+                exitSearchMenu()
+                restoreLastBookProcess()
+                return@addCallback
+            }
+            //拦截返回供恢复阅读进度
+            if (ReadBook.lastBookPress != null && confirmRestoreProcess != false) {
+                restoreLastBookProcess()
+                return@addCallback
+            }
+            if (BaseReadAloudService.isPlay()) {
+                ReadAloud.pause(this@ReadBookActivity)
+                toastOnUi(R.string.read_aloud_pause)
+                return@addCallback
+            }
+            if (isAutoPage) {
+                autoPageStop()
+                return@addCallback
+            }
+            finish()
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -544,33 +567,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                 return true
             }
 
-            keyCode == KeyEvent.KEYCODE_BACK -> {
-                if (isShowingSearchResult) {
-                    exitSearchMenu()
-                    restoreLastBookProcess()
-                    return true
-                }
-                //拦截返回供恢复阅读进度
-                if (ReadBook.lastBookPress != null && confirmRestoreProcess != false) {
-                    restoreLastBookProcess()
-                    return true
-                }
-            }
         }
         return super.onKeyDown(keyCode, event)
-    }
-
-    /**
-     * 长按事件
-     */
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                finish()
-                return true
-            }
-        }
-        return super.onKeyLongPress(keyCode, event)
     }
 
     /**
@@ -584,30 +582,6 @@ class ReadBookActivity : BaseReadBookActivity(),
                 }
             }
 
-            KeyEvent.KEYCODE_BACK -> {
-                event?.let {
-                    if ((event.flags and KeyEvent.FLAG_CANCELED_LONG_PRESS == 0)
-                        && event.isTracking
-                        && !event.isCanceled
-                    ) {
-                        if (BaseReadAloudService.isPlay()) {
-                            ReadAloud.pause(this)
-                            toastOnUi(R.string.read_aloud_pause)
-                            return true
-                        }
-                        if (isAutoPage) {
-                            autoPageStop()
-                            return true
-                        }
-                        if (getPrefBoolean("disableReturnKey")) {
-                            if (menuLayoutIsVisible) {
-                                finish()
-                            }
-                            return true
-                        }
-                    }
-                }
-            }
         }
         return super.onKeyUp(keyCode, event)
     }
