@@ -551,15 +551,15 @@ object FileUtils {
     /**
      * 获取文件或网址的名称（包括后缀）
      */
-    fun getName(pathOrUrl: String?): String {
-        if (pathOrUrl == null) {
+    fun getName(path: String?): String {
+        if (path == null) {
             return ""
         }
-        val pos = pathOrUrl.lastIndexOf('/')
+        val pos = path.lastIndexOf(File.separator)
         return if (0 <= pos) {
-            pathOrUrl.substring(pos + 1)
+            path.substring(pos + 1)
         } else {
-            System.currentTimeMillis().toString() + "." + getExtension(pathOrUrl)
+            path
         }
     }
 
