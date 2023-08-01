@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -28,8 +29,21 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.association.ImportHttpTtsDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.gone
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
@@ -148,7 +162,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
     }
 
     private fun initData() {
-        launch {
+        lifecycleScope.launch {
             appDb.httpTTSDao.flowAll().conflate().collect {
                 adapter.setItems(it)
             }

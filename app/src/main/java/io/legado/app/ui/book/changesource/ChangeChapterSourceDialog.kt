@@ -90,7 +90,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         if (it) {
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isNotEmpty()) {
-                launch {
+                lifecycleScope.launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         noButton()
@@ -234,7 +234,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 }
             }
         }
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.flowEnabledGroups().flowOn(IO).conflate().collect {
                 groups.clear()
                 groups.addAll(it)

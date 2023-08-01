@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.BaseViewModel
@@ -48,7 +49,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
         binding.toolBar.title = ReadBook.curTextChapter?.title
         initMenu()
         binding.toolBar.setOnClickListener {
-            launch {
+            lifecycleScope.launch {
                 val book = ReadBook.book ?: return@launch
                 val chapter = withContext(IO) {
                     appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
@@ -103,7 +104,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
             setCustomView(alertBinding.root)
             okButton {
                 chapter.title = alertBinding.editView.text.toString()
-                launch {
+                lifecycleScope.launch {
                     withContext(IO) {
                         appDb.bookChapterDao.upDate(chapter)
                     }

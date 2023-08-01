@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -19,7 +20,19 @@ import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.file.HandleFileContract
-import io.legado.app.utils.*
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.RealPathUtil
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.list
+import io.legado.app.utils.listFileDocs
+import io.legado.app.utils.putPrefString
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -111,7 +124,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     }
 
     private fun openFolder() {
-        launch(Main) {
+        lifecycleScope.launch(Main) {
             val defaultPath = "SD${File.separator}Fonts"
             selectFontDir.launch {
                 otherActions = arrayListOf(SelectItem(defaultPath, -1))

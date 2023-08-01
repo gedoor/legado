@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.setPadding
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -71,7 +72,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
 
     private fun initData(searchKey: String? = null) {
         sourceFlowJob?.cancel()
-        sourceFlowJob = launch {
+        sourceFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
                 else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)

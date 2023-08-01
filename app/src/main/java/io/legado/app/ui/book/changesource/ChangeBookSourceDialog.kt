@@ -75,7 +75,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         if (it) {
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isNotEmpty()) {
-                launch {
+                lifecycleScope.launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         cancelButton()
@@ -204,7 +204,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 }
             }
         }
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.flowEnabledGroups().flowOn(IO).conflate().collect {
                 groups.clear()
                 groups.addAll(it)
@@ -251,7 +251,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                     AppConfig.searchGroup = item.title.toString()
                 }
                 upGroupMenuName()
-                launch(IO) {
+                lifecycleScope.launch(IO) {
                     if (viewModel.refresh()) {
                         viewModel.startOrStopSearch()
                     }

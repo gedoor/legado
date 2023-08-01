@@ -3,6 +3,7 @@ package io.legado.app.ui.book.bookmark
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.appDb
@@ -57,7 +58,7 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
             tvOk.setOnClickListener {
                 bookmark.bookText = editBookText.text?.toString() ?: ""
                 bookmark.content = editContent.text?.toString() ?: ""
-                launch {
+                lifecycleScope.launch {
                     withContext(IO) {
                         appDb.bookmarkDao.insert(bookmark)
                     }
@@ -65,7 +66,7 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
                 }
             }
             tvFooterLeft.setOnClickListener {
-                launch {
+                lifecycleScope.launch {
                     withContext(IO) {
                         appDb.bookmarkDao.delete(bookmark)
                     }

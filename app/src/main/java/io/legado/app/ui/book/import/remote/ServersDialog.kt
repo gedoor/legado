@@ -8,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
-import io.legado.app.constant.AppConst.DEFAULT_WEBDAV_ID
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppConst.DEFAULT_WEBDAV_ID
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Server
 import io.legado.app.databinding.DialogRecyclerViewBinding
@@ -77,8 +78,8 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     }
 
     private fun initData() {
-        launch {
-            appDb.serverDao.observeAll().collect{
+        lifecycleScope.launch {
+            appDb.serverDao.observeAll().collect {
                 adapter.setItems(it)
             }
         }

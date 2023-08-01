@@ -7,21 +7,20 @@ import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
 
 abstract class BaseDialogFragment(
     @LayoutRes layoutID: Int,
     private val adaptationSoftKeyboard: Boolean = false
-) : DialogFragment(layoutID), CoroutineScope by MainScope() {
+) : DialogFragment(layoutID) {
 
     private var onDismissListener: OnDismissListener? = null
 
@@ -65,13 +64,8 @@ abstract class BaseDialogFragment(
         onDismissListener?.onDismiss(dialog)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cancel()
-    }
-
     fun <T> execute(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = lifecycleScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
     ) = Coroutine.async(scope, context) { block() }
