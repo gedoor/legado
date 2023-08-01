@@ -27,7 +27,6 @@ import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,13 +34,13 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import okhttp3.Response
 import org.mozilla.javascript.WrappedException
 import java.io.File
 import java.io.InputStream
 import java.net.ConnectException
 import java.net.SocketTimeoutException
+import kotlin.coroutines.coroutineContext
 
 /**
  * 在线朗读
@@ -157,7 +156,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private suspend fun getSpeakStream(
         httpTts: HttpTTS,
         speakText: String
-    ): InputStream? = withContext(IO) {
+    ): InputStream? {
         while (true) {
             try {
                 val analyzeUrl = AnalyzeUrl(
@@ -168,7 +167,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     headerMapF = httpTts.getHeaderMap(true)
                 )
                 var response = analyzeUrl.getResponseAwait()
-                ensureActive()
+                coroutineContext.ensureActive()
                 val checkJs = httpTts.loginCheckJs
                 if (checkJs?.isNotBlank() == true) {
                     response = analyzeUrl.evalJS(checkJs, response) as Response
@@ -183,10 +182,10 @@ class HttpReadAloudService : BaseReadAloudService(),
                         }
                     }
                 }
-                ensureActive()
+                coroutineContext.ensureActive()
                 response.body!!.byteStream().let { stream ->
                     downloadErrorNo = 0
-                    return@withContext stream
+                    return stream
                 }
             } catch (e: Exception) {
                 when (e) {
@@ -227,7 +226,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 }
             }
         }
-        return@withContext null
+        return null
     }
 
     private fun md5SpeakFileName(content: String): String {
