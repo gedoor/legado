@@ -7,7 +7,6 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
-import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.utils.ConvertUtils

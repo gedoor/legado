@@ -2,16 +2,12 @@ package io.legado.app.ui.book.import.local
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.Uri
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
-import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemImportBookBinding
-import io.legado.app.help.book.archiveName
-import io.legado.app.help.book.isArchive
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
 
