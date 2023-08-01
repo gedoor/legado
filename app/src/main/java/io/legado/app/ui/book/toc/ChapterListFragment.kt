@@ -7,6 +7,7 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.EventBus
@@ -76,7 +77,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
 
     @SuppressLint("SetTextI18n")
     private fun initBook(book: Book) {
-        launch {
+        lifecycleScope.launch {
             upChapterList(null)
             durChapterIndex = book.durChapterIndex
             binding.tvCurrentChapterInfo.text =
@@ -86,7 +87,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     private fun initCacheFileNames(book: Book) {
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             adapter.cacheFileNames.addAll(BookHelp.getChapterFiles(book))
             withContext(Main) {
                 adapter.notifyItemRangeChanged(0, adapter.itemCount, true)
@@ -114,7 +115,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     override fun upChapterList(searchKey: String?) {
-        launch {
+        lifecycleScope.launch {
             withContext(IO) {
                 when {
                     searchKey.isNullOrBlank() -> appDb.bookChapterDao.getChapterList(viewModel.bookUrl)
@@ -127,7 +128,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     override fun onListChanged() {
-        launch {
+        lifecycleScope.launch {
             var scrollPos = 0
             withContext(Default) {
                 adapter.getItems().forEachIndexed { index, bookChapter ->
@@ -148,7 +149,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     }
 
     override val scope: CoroutineScope
-        get() = this
+        get() = lifecycleScope
 
     override val book: Book?
         get() = viewModel.bookData.value

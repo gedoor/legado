@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -133,7 +134,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
      */
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             appDb.bookDao.flowByGroup(groupId).map { list ->
                 //排序
                 when (bookSort) {
@@ -192,7 +193,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         if (!AppConfig.showLastUpdateTime) {
             return
         }
-        upLastUpdateTimeJob = launch {
+        upLastUpdateTimeJob = lifecycleScope.launch {
             while (isActive) {
                 if (SystemUtils.isScreenOn()) {
                     booksAdapter.upLastUpdateTime()

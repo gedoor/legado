@@ -129,7 +129,7 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
     }
 
     private fun initGroupData() {
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.flowExploreGroups().flowOn(IO).conflate().collect {
                 groups.clear()
                 groups.addAll(it)
@@ -141,7 +141,7 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
     private fun upExploreData(searchKey: String? = null, once: Boolean = false) {
         this.searchKey = searchKey
         exploreFlowJob?.cancel()
-        exploreFlowJob = launch {
+        exploreFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrBlank() -> {
                     appDb.bookSourceDao.flowExplore()

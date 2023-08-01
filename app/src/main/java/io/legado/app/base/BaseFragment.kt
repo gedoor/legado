@@ -14,13 +14,9 @@ import androidx.fragment.app.Fragment
 import io.legado.app.R
 import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.applyTint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID),
-    CoroutineScope by MainScope() {
+abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID) {
 
     var supportToolbar: Toolbar? = null
         private set
@@ -53,11 +49,6 @@ abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID),
             view?.findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(it.isInMultiWindow, it.fullScreen)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cancel()
     }
 
     fun setSupportToolbar(toolbar: Toolbar) {

@@ -7,6 +7,7 @@ import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppLog
@@ -139,7 +140,7 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
 
     private fun initGroupData() {
         groupsFlowJob?.cancel()
-        groupsFlowJob = launch {
+        groupsFlowJob = lifecycleScope.launch {
             appDb.rssSourceDao.flowGroupEnabled().conflate().collect {
                 groups.clear()
                 it.map { group ->
@@ -152,13 +153,14 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
 
     private fun upRssFlowJob(searchKey: String? = null) {
         rssFlowJob?.cancel()
-        rssFlowJob = launch {
+        rssFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrEmpty() -> appDb.rssSourceDao.flowEnabled()
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
                     appDb.rssSourceDao.flowEnabledByGroup(key)
                 }
+
                 else -> appDb.rssSourceDao.flowEnabled(searchKey)
             }.catch {
                 AppLog.put("订阅界面更新数据出错", it)

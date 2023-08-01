@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -133,7 +134,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
             }
         }
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             appDb.bookDao.flowByGroup(groupId).map { list ->
                 //排序
                 when (AppConfig.getBookSortByGroupId(groupId)) {
