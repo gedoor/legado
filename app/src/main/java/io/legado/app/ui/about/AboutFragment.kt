@@ -74,8 +74,8 @@ class AboutFragment : PreferenceFragmentCompat() {
     /**
      * 显示md文件
      */
-    private fun showMdFile(title: String, FileName: String) {
-        val mdText = String(requireContext().assets.open(FileName).readBytes())
+    private fun showMdFile(title: String, fileName: String) {
+        val mdText = String(requireContext().assets.open(fileName).readBytes())
         showDialogFragment(TextDialog(title, mdText, TextDialog.Mode.MD))
     }
 

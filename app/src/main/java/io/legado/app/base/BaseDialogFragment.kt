@@ -2,6 +2,7 @@ package io.legado.app.base
 
 import android.content.DialogInterface
 import android.content.DialogInterface.OnDismissListener
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.LayoutRes
@@ -32,6 +33,13 @@ abstract class BaseDialogFragment(
         super.onStart()
         if (adaptationSoftKeyboard) {
             dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            setStyle(STYLE_NO_TITLE, 0)
         }
     }
 
