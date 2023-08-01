@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.RssSourceController
+import kotlinx.coroutines.runBlocking
 
 /**
  * Export book data to other app.
@@ -76,28 +77,36 @@ class ReaderProvider : ContentProvider() {
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         if (sMatcher.match(uri) < 0) return null
-        when (RequestCode.values()[sMatcher.match(uri)]) {
-            RequestCode.SaveBookSource -> values?.let {
-                BookSourceController.saveSource(values.getAsString(postBodyKey))
+        runBlocking {
+            when (RequestCode.values()[sMatcher.match(uri)]) {
+                RequestCode.SaveBookSource -> values?.let {
+                    BookSourceController.saveSource(values.getAsString(postBodyKey))
+                }
+
+                RequestCode.SaveBookSources -> values?.let {
+                    BookSourceController.saveSources(values.getAsString(postBodyKey))
+                }
+
+                RequestCode.SaveRssSource -> values?.let {
+                    RssSourceController.saveSource(values.getAsString(postBodyKey))
+                }
+
+                RequestCode.SaveRssSources -> values?.let {
+                    RssSourceController.saveSources(values.getAsString(postBodyKey))
+                }
+
+                RequestCode.SaveBook -> values?.let {
+                    BookController.saveBook(values.getAsString(postBodyKey))
+                }
+
+                RequestCode.SaveBookProgress -> values?.let {
+                    BookController.saveBookProgress(values.getAsString(postBodyKey))
+                }
+
+                else -> throw IllegalStateException(
+                    "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
+                )
             }
-            RequestCode.SaveBookSources -> values?.let {
-                BookSourceController.saveSources(values.getAsString(postBodyKey))
-            }
-            RequestCode.SaveRssSource -> values?.let {
-                RssSourceController.saveSource(values.getAsString(postBodyKey))
-            }
-            RequestCode.SaveRssSources -> values?.let {
-                RssSourceController.saveSources(values.getAsString(postBodyKey))
-            }
-            RequestCode.SaveBook -> values?.let {
-                BookController.saveBook(values.getAsString(postBodyKey))
-            }
-            RequestCode.SaveBookProgress -> values?.let {
-                BookController.saveBookProgress(values.getAsString(postBodyKey))
-            }
-            else -> throw IllegalStateException(
-                "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
-            )
         }
         return null
     }

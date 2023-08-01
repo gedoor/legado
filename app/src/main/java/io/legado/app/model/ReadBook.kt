@@ -140,6 +140,7 @@ object ReadBook : CoroutineScope by MainScope() {
         book?.let {
             Coroutine.async {
                 AppWebDav.uploadBookProgress(it)
+                it.save()
             }
         }
     }

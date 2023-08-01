@@ -1312,6 +1312,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             delay(300000)
             ReadBook.book?.let {
                 AppWebDav.uploadBookProgress(it)
+                it.save()
                 Backup.autoBack(this@ReadBookActivity)
             }
         }
