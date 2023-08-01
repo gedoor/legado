@@ -85,7 +85,7 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
             R.id.menu_rss_config -> startActivity<RssSourceActivity>()
             R.id.menu_rss_star -> startActivity<RssFavoritesActivity>()
             else -> if (item.groupId == R.id.menu_group_text) {
-                searchView.setQuery(item.title, true)
+                searchView.setQuery("group:${item.title}", true)
             }
         }
     }
