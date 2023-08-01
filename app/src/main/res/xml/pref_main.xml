@@ -112,17 +112,17 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="donate"
-            android:summary="@string/donate_summary"
-            android:title="@string/donate"
-            android:icon="@drawable/ic_cfg_donate"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
             android:key="about"
             android:summary="@string/about_summary"
             android:title="@string/about"
             android:icon="@drawable/ic_cfg_about"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="exit"
+            android:summary="@string/exit_app"
+            android:title="@string/exit"
+            android:icon="@drawable/ic_exit"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.lib.prefs.PreferenceCategory>

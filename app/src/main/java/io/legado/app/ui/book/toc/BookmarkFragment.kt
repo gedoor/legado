@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.data.appDb
@@ -49,7 +50,7 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
 
     override fun upBookmark(searchKey: String?) {
         val book = viewModel.bookData.value ?: return
-        launch {
+        lifecycleScope.launch {
             when {
                 searchKey.isNullOrBlank() -> appDb.bookmarkDao.flowByBook(book.name, book.author)
                 else -> appDb.bookmarkDao.flowSearch(book.name, book.author, searchKey)

@@ -8,12 +8,17 @@ import android.net.http.SslError
 import android.os.Bundle
 import android.view.*
 import android.webkit.*
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.size
+import androidx.lifecycle.lifecycleScope
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
+import io.legado.app.constant.AppLog
+import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
@@ -39,6 +44,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
     override val viewModel by viewModels<ReadRssViewModel>()
+
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
@@ -48,6 +54,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             viewModel.saveImage(it.value, uri)
         }
     }
+    private val rssJsExtensions by lazy { RssJsExtensions(this) }
+
+    fun getSource(): RssSource? {
+        return viewModel.rssSource
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.upStarMenuData.observe(this) { upStarMenu() }
@@ -56,6 +67,18 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         initWebView()
         initLiveData()
         viewModel.initData(intent)
+        onBackPressedDispatcher.addCallback(this) {
+            if (binding.customWebView.size > 0) {
+                customWebViewCallback?.onCustomViewHidden()
+                return@addCallback
+            } else if (binding.webView.canGoBack()
+                && binding.webView.copyBackForwardList().size > 1
+            ) {
+                binding.webView.goBack()
+                return@addCallback
+            }
+            finish()
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -241,7 +264,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     private fun upTtsMenu(isPlaying: Boolean) {
-        launch {
+        lifecycleScope.launch {
             if (isPlaying) {
                 ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
                 ttsMenuItem?.setTitle(R.string.aloud_stop)
@@ -251,33 +274,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             }
             ttsMenuItem?.icon?.setTintMutate(primaryTextColor)
         }
-    }
-
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                finish()
-                return true
-            }
-        }
-        return super.onKeyLongPress(keyCode, event)
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        event?.let {
-            when (keyCode) {
-                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled && binding.webView.canGoBack()) {
-                    if (binding.customWebView.size > 0) {
-                        customWebViewCallback?.onCustomViewHidden()
-                        return true
-                    } else if (binding.webView.copyBackForwardList().size > 1) {
-                        binding.webView.goBack()
-                        return true
-                    }
-                }
-            }
-        }
-        return super.onKeyUp(keyCode, event)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -398,6 +394,21 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
+            val source = viewModel.rssSource
+            val js = source?.shouldOverrideUrlLoading
+            if (!js.isNullOrBlank()) {
+                val result = RhinoScriptEngine.runCatching {
+                    eval(js) {
+                        put("java", rssJsExtensions)
+                        put("url", url.toString())
+                    }.toString()
+                }.onFailure {
+                    AppLog.put("url跳转拦截js出错", it)
+                }.getOrNull()
+                if (result.isTrue()) {
+                    return true
+                }
+            }
             when (url.scheme) {
                 "http", "https", "jsbridge" -> {
                     return false

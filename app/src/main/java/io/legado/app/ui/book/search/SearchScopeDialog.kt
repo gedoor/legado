@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -100,9 +101,9 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     }
 
     private fun initData() {
-        launch {
+        lifecycleScope.launch {
             groups = withContext(IO) {
-                appDb.bookSourceDao.allEnabledGroups
+                appDb.bookSourceDao.allEnabledGroups()
             }
             sources = withContext(IO) {
                 appDb.bookSourceDao.allEnabled
@@ -113,7 +114,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun upData() {
-        launch {
+        lifecycleScope.launch {
             withContext(IO) {
                 if (binding.rbSource.isChecked) {
                     sources.filter { source ->

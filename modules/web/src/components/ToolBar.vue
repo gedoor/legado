@@ -211,8 +211,8 @@ const buttons = ref(
     { name: "↶撤销操作", hotKeys: [], action: undo },
     { name: "↷重做操作", hotKeys: [], action: redo },
     { name: "⇏调试源", hotKeys: [], action: debug },
-    { name: "✓保存源", hotKeys: [], action: saveSource }
-  )
+    { name: "✓保存源", hotKeys: [], action: saveSource },
+  ),
 );
 const hotkeysDialogVisible = ref(true);
 
@@ -250,7 +250,7 @@ watch(
         buttons.value[recordKeyDownIndex.value].hotKeys = pressedKeys;
     });
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const recordKeyDown = (index) => {

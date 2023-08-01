@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.setPadding
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -13,6 +14,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.DialogSourcePickerBinding
 import io.legado.app.databinding.Item1lineTextBinding
 import io.legado.app.lib.theme.primaryColor
@@ -70,7 +72,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
 
     private fun initData(searchKey: String? = null) {
         sourceFlowJob?.cancel()
-        sourceFlowJob = launch {
+        sourceFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
                 else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)
@@ -81,7 +83,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
     }
 
     inner class SourceAdapter(context: Context) :
-        RecyclerAdapter<BookSource, Item1lineTextBinding>(context) {
+        RecyclerAdapter<BookSourcePart, Item1lineTextBinding>(context) {
 
         override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding {
             return Item1lineTextBinding.inflate(inflater, parent, false).apply {
@@ -92,7 +94,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
         override fun convert(
             holder: ItemViewHolder,
             binding: Item1lineTextBinding,
-            item: BookSource,
+            item: BookSourcePart,
             payloads: MutableList<Any>
         ) {
             binding.textView.text = item.getDisPlayNameGroup()
@@ -101,7 +103,9 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
         override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextBinding) {
             binding.root.onClick {
                 getItemByLayoutPosition(holder.layoutPosition)?.let {
-                    callback?.sourceOnClick(it)
+                    it.getBookSource()?.let { source ->
+                        callback?.sourceOnClick(source)
+                    }
                     dismissAllowingStateLoss()
                 }
             }

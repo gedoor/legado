@@ -4,16 +4,17 @@ package io.legado.app.ui.main
 
 import android.os.Bundle
 import android.text.format.DateUtils
-import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.BuildConfig
@@ -71,17 +72,44 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private val fragmentMap = hashMapOf<Int, Fragment>()
     private var bottomMenuCount = 4
     private val realPositions = arrayOf(idBookshelf, idExplore, idRss, idMy)
+    private val adapter by lazy {
+        TabFragmentPageAdapter(supportFragmentManager)
+    }
+    private val onUpBooksBadgeView by lazy {
+        binding.bottomNavigationView.addBadgeView(0)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
         binding.run {
             viewPagerMain.setEdgeEffectColor(primaryColor)
             viewPagerMain.offscreenPageLimit = 3
-            viewPagerMain.adapter = TabFragmentPageAdapter(supportFragmentManager)
+            viewPagerMain.adapter = adapter
             viewPagerMain.addOnPageChangeListener(PageChangeCallback())
             bottomNavigationView.elevation = elevation
             bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
             bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
+        }
+        onBackPressedDispatcher.addCallback(this) {
+            if (pagePosition != 0) {
+                binding.viewPagerMain.currentItem = 0
+                return@addCallback
+            }
+            (fragmentMap[getFragmentId(0)] as? BookshelfFragment2)?.let {
+                if (it.back()) {
+                    return@addCallback
+                }
+            }
+            if (System.currentTimeMillis() - exitTime > 2000) {
+                toastOnUi(R.string.double_click_exit)
+                exitTime = System.currentTimeMillis()
+            } else {
+                if (BaseReadAloudService.pause) {
+                    finish()
+                } else {
+                    moveTaskToBack(true)
+                }
+            }
         }
     }
 
@@ -99,7 +127,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        launch {
+        lifecycleScope.launch {
             //隐私协议
             if (!privacyPolicy()) return@launch
             //版本更新
@@ -125,10 +153,13 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         when (item.itemId) {
             R.id.menu_bookshelf ->
                 viewPagerMain.setCurrentItem(0, false)
+
             R.id.menu_discovery ->
                 viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
+
             R.id.menu_rss ->
                 viewPagerMain.setCurrentItem(realPositions.indexOf(idRss), false)
+
             R.id.menu_my_config ->
                 viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
         }
@@ -144,6 +175,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     (fragmentMap[getFragmentId(0)] as? BaseBookshelfFragment)?.gotoTop()
                 }
             }
+
             R.id.menu_discovery -> {
                 if (System.currentTimeMillis() - exploreReselected > 300) {
                     exploreReselected = System.currentTimeMillis()
@@ -238,7 +270,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
      * 备份同步
      */
     private fun backupSync() {
-        launch {
+        lifecycleScope.launch {
             val lastBackupFile =
                 withContext(IO) { AppWebDav.lastBackUp().getOrNull() } ?: return@launch
             if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {
@@ -251,36 +283,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 }
             }
         }
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        event?.let {
-            when (keyCode) {
-                KeyEvent.KEYCODE_BACK -> if (event.isTracking && !event.isCanceled) {
-                    if (pagePosition != 0) {
-                        binding.viewPagerMain.currentItem = 0
-                        return true
-                    }
-                    (fragmentMap[getFragmentId(0)] as? BookshelfFragment2)?.let {
-                        if (it.back()) {
-                            return true
-                        }
-                    }
-                    if (System.currentTimeMillis() - exitTime > 2000) {
-                        toastOnUi(R.string.double_click_exit)
-                        exitTime = System.currentTimeMillis()
-                    } else {
-                        if (BaseReadAloudService.pause) {
-                            finish()
-                        } else {
-                            moveTaskToBack(true)
-                        }
-                    }
-                    return true
-                }
-            }
-        }
-        return super.onKeyUp(keyCode, event)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -300,14 +302,26 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    /**
+     * 如果重启太快fragment不会重建,这里更新一下书架的排序
+     */
+    override fun recreate() {
+        (fragmentMap[getFragmentId(0)] as? BaseBookshelfFragment)?.run {
+            upSort()
+        }
+        super.recreate()
+    }
+
     override fun observeLiveBus() {
+        viewModel.onUpBooksLiveData.observe(this) {
+            onUpBooksBadgeView.setBadgeCount(it)
+        }
         observeEvent<String>(EventBus.RECREATE) {
             recreate()
         }
         observeEvent<Boolean>(EventBus.NOTIFY_MAIN) {
             binding.apply {
                 upBottomMenu()
-                viewPagerMain.adapter?.notifyDataSetChanged()
                 if (it) {
                     viewPagerMain.setCurrentItem(bottomMenuCount - 1, false)
                 }
@@ -337,6 +351,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         index++
         realPositions[index] = idMy
         bottomMenuCount = index + 1
+        adapter.notifyDataSetChanged()
     }
 
     private fun getFragmentId(position: Int): Int {
@@ -350,9 +365,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private inner class PageChangeCallback : ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
+            val oldPosition = pagePosition
             pagePosition = position
             binding.bottomNavigationView.menu
                 .getItem(realPositions[position]).isChecked = true
+            val callback1 = fragmentMap[getFragmentId(position)] as? Callback
+            val callback2 = fragmentMap[getFragmentId(oldPosition)] as? Callback
+            callback1?.onActive()
+            callback2?.onInactive()
         }
 
     }
@@ -365,17 +385,28 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return getFragmentId(position)
         }
 
-        override fun getItemPosition(`object`: Any): Int {
+        override fun getItemPosition(any: Any): Int {
+            val position = (any as MainFragmentInterface).position
+                ?: return POSITION_NONE
+            val fragmentId = getId(position)
+            if ((fragmentId == idBookshelf1 && any is BookshelfFragment1)
+                || (fragmentId == idBookshelf2 && any is BookshelfFragment2)
+                || (fragmentId == idExplore && any is ExploreFragment)
+                || (fragmentId == idRss && any is RssFragment)
+                || (fragmentId == idMy && any is MyFragment)
+            ) {
+                return POSITION_UNCHANGED
+            }
             return POSITION_NONE
         }
 
         override fun getItem(position: Int): Fragment {
             return when (getId(position)) {
-                idBookshelf1 -> BookshelfFragment1()
-                idBookshelf2 -> BookshelfFragment2()
-                idExplore -> ExploreFragment()
-                idRss -> RssFragment()
-                else -> MyFragment()
+                idBookshelf1 -> BookshelfFragment1(position)
+                idBookshelf2 -> BookshelfFragment2(position)
+                idExplore -> ExploreFragment(position)
+                idRss -> RssFragment(position)
+                else -> MyFragment(position)
             }
         }
 
@@ -388,6 +419,14 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             fragmentMap[getId(position)] = fragment
             return fragment
         }
+
+    }
+
+    interface Callback {
+
+        fun onActive()
+
+        fun onInactive()
 
     }
 

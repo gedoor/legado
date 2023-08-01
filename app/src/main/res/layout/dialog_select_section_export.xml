@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+                android:id="@+id/cb_all_export"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="16dp" />
+
+            <TextView
+                android:id="@+id/tv_all_export"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/export_all"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+                android:id="@+id/cb_select_export"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="16dp" />
+
+            <TextView
+                android:id="@+id/tv_select_export"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/custom_export"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <io.legado.app.ui.widget.text.TextInputLayout
+            android:id="@+id/ly_et_epub_filename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/export_file_name"
+            app:endIconCheckable="true"
+            app:endIconContentDescription="Execute script"
+            app:endIconDrawable="@drawable/ic_play_24dp"
+            app:endIconMode="custom"
+            app:helperText="Variable: name, author, epubIndex">
+
+            <io.legado.app.lib.theme.view.ThemeEditText
+                android:id="@+id/et_epub_filename"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:enabled="false"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        </io.legado.app.ui.widget.text.TextInputLayout>
+
+
+        <io.legado.app.ui.widget.text.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/file_contains_number">
+
+            <io.legado.app.lib.theme.view.ThemeEditText
+                android:id="@+id/et_epub_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="6"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        </io.legado.app.ui.widget.text.TextInputLayout>
+
+        <io.legado.app.ui.widget.text.TextInputLayout
+            android:id="@+id/ly_et_input_scope"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/export_chapter_index">
+
+            <io.legado.app.lib.theme.view.ThemeEditText
+                android:id="@+id/et_input_scope"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        </io.legado.app.ui.widget.text.TextInputLayout>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

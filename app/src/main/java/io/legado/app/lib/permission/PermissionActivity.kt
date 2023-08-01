@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.KeyEvent
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -42,7 +42,8 @@ class PermissionActivity : AppCompatActivity() {
             Request.TYPE_MANAGE_ALL_FILES_ACCESS -> showSettingDialog(permissions, rationale) {
                 try {
                     if (Permissions.isManageExternalStorage()) {
-                        val settingIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                        val settingIntent =
+                            Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
                         settingActivityResult.launch(settingIntent)
                     } else {
                         throw NoStackTraceException("no MANAGE_ALL_FILES_ACCESS_PERMISSION")
@@ -53,6 +54,7 @@ class PermissionActivity : AppCompatActivity() {
                     finish()
                 }
             }
+
             Request.TYPE_REQUEST_NOTIFICATIONS -> showSettingDialog(permissions, rationale) {
                 kotlin.runCatching {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -67,6 +69,9 @@ class PermissionActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+        onBackPressedDispatcher.addCallback(this) {
+
         }
     }
 
@@ -106,12 +111,6 @@ class PermissionActivity : AppCompatActivity() {
         overridePendingTransition(0, 0)
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_BACK) {
-            true
-        } else super.onKeyDown(keyCode, event)
-    }
-
     private fun showSettingDialog(
         permissions: Array<String>,
         rationale: CharSequence?,
@@ -135,6 +134,10 @@ class PermissionActivity : AppCompatActivity() {
                 )
                 finish()
             }.setOnCancelListener {
+                RequestPlugins.sRequestCallback?.onRequestPermissionsResult(
+                    permissions,
+                    IntArray(0)
+                )
                 finish()
             }
             .show()

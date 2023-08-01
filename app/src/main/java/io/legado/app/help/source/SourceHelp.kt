@@ -74,4 +74,20 @@ object SourceHelp {
         return false
     }
 
+    /**
+     * 调整排序序号
+     */
+    fun adjustSortNumber() {
+        if (
+            appDb.bookSourceDao.maxOrder > 99999
+            || appDb.bookSourceDao.minOrder < -99999
+        ) {
+            val sources = appDb.bookSourceDao.allPart
+            sources.forEachIndexed { index, bookSource ->
+                bookSource.customOrder = index
+            }
+            appDb.bookSourceDao.upOrder(sources)
+        }
+    }
+
 }

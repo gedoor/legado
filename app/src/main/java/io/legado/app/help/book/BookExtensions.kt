@@ -236,6 +236,7 @@ fun Book.getExportFileName(suffix: String): String {
         return "$name 作者：${getRealAuthor()}.$suffix"
     }
     val bindings = SimpleBindings()
+    bindings["epubIndex"] = ""// 兼容老版本,修复可能存在的错误
     bindings["name"] = name
     bindings["author"] = getRealAuthor()
     return kotlin.runCatching {
@@ -243,4 +244,39 @@ fun Book.getExportFileName(suffix: String): String {
     }.onFailure {
         AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
     }.getOrDefault("${name} 作者：${getRealAuthor()}.$suffix")
+}
+
+/**
+ * 获取分割文件后的文件名
+ */
+fun Book.getExportFileName(
+    suffix: String,
+    epubIndex: Int,
+    jsStr: String? = AppConfig.episodeExportFileName
+): String {
+    // 默认规则
+    val default = "$name 作者：${getRealAuthor()} [${epubIndex}].$suffix"
+    if (jsStr.isNullOrBlank()) {
+        return default
+    }
+    val bindings = SimpleBindings()
+    bindings["name"] = name
+    bindings["author"] = getRealAuthor()
+    bindings["epubIndex"] = epubIndex
+    return kotlin.runCatching {
+        RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
+    }.onFailure {
+        AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
+    }.getOrDefault(default)
+}
+
+fun tryParesExportFileName(jsStr: String): Boolean {
+    val bindings = SimpleBindings()
+    bindings["name"] = "name"
+    bindings["author"] = "author"
+    bindings["epubIndex"] = "epubIndex"
+    return runCatching {
+        RhinoScriptEngine.eval(jsStr, bindings)
+        true
+    }.getOrDefault(false)
 }

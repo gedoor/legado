@@ -31,6 +31,13 @@
         android:checkable="true"
         app:showAsAction="never" />
 
+    <!--自定义导出章节 选择菜单-->
+    <item
+        android:id="@+id/menu_enable_custom_export"
+        android:title="@string/custom_export_section"
+        android:checkable="true"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/menu_export_web_dav"
         android:title="@string/export_to_web_dav"

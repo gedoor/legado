@@ -16,8 +16,17 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.unCompress
 import io.legado.app.help.source.SourceHelp
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.inputStream
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.isUri
+import io.legado.app.utils.splitNotBlank
 
 
 class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
@@ -127,6 +136,9 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                     }.onFailure {
                         GSON.fromJsonObject<BookSource>(mText).getOrThrow().let {
+                            if (it.bookSourceUrl.isEmpty()) {
+                                throw NoStackTraceException("不是书源")
+                            }
                             allSources.add(it)
                         }
                     }
@@ -134,6 +146,10 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
 
                 mText.isJsonArray() -> GSON.fromJsonArray<BookSource>(mText).getOrThrow()
                     .let { items ->
+                        val source = items.firstOrNull() ?: return@let
+                        if (source.bookSourceUrl.isEmpty()) {
+                            throw NoStackTraceException("不是书源")
+                        }
                         allSources.addAll(items)
                     }
 
@@ -143,8 +159,14 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
 
                 mText.isUri() -> {
                     val uri = Uri.parse(mText)
-                    uri.inputStream(context).getOrThrow().use {
-                        allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
+                    uri.inputStream(context).getOrThrow().use { inputS ->
+                        GSON.fromJsonArray<BookSource>(inputS).getOrThrow().let {
+                            val source = it.firstOrNull() ?: return@let
+                            if (source.bookSourceUrl.isEmpty()) {
+                                throw NoStackTraceException("不是书源")
+                            }
+                            allSources.addAll(it)
+                        }
                     }
                 }
 
@@ -166,8 +188,14 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.byteStream().use {
-            allSources.addAll(GSON.fromJsonArray<BookSource>(it).getOrThrow())
+        }.unCompress {
+            GSON.fromJsonArray<BookSource>(it).getOrThrow().let { list ->
+                val source = list.firstOrNull() ?: return@let
+                if (source.bookSourceUrl.isEmpty()) {
+                    throw NoStackTraceException("不是书源")
+                }
+                allSources.addAll(list)
+            }
         }
     }
 

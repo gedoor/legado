@@ -1,6 +1,6 @@
 [
   {
-    "customOrder": 1,
+    "customOrder": 2,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
@@ -10,7 +10,7 @@
     "sourceUrl": "https://www.yuque.com/legado"
   },
   {
-    "customOrder": 2,
+    "customOrder": 3,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
@@ -20,7 +20,7 @@
     "sourceUrl": "snssdk1128://user/profile/562564899806367"
   },
   {
-    "customOrder": 3,
+    "customOrder": 4,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
@@ -30,7 +30,7 @@
     "sourceUrl": "https://pan.miaogongzi.net"
   },
   {
-    "customOrder": 4,
+    "customOrder": 5,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,

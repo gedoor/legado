@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -28,6 +29,8 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
@@ -84,7 +87,7 @@ class BookSourceEditActivity :
     }
 
     private val softKeyboardTool by lazy {
-        KeyboardToolPop(this, this, binding.root, this)
+        KeyboardToolPop(this, lifecycleScope, binding.root, this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -119,13 +122,13 @@ class BookSourceEditActivity :
                 setResult(Activity.RESULT_OK)
                 finish()
             }
+
             R.id.menu_debug_source -> viewModel.save(getSource()) { source ->
-                viewModel.save(source) {
-                    startActivity<BookSourceDebugActivity> {
-                        putExtra("key", source.bookSourceUrl)
-                    }
+                startActivity<BookSourceDebugActivity> {
+                    putExtra("key", source.bookSourceUrl)
                 }
             }
+
             R.id.menu_clear_cookie -> viewModel.clearCookie(getSource().bookSourceUrl)
             R.id.menu_auto_complete -> viewModel.autoComplete = !viewModel.autoComplete
             R.id.menu_copy_source -> sendToClip(GSON.toJson(getSource()))
@@ -137,6 +140,7 @@ class BookSourceEditActivity :
                 getString(R.string.share_book_source),
                 ErrorCorrectionLevel.L
             )
+
             R.id.menu_help -> showHelp("ruleHelp")
             R.id.menu_login -> viewModel.save(getSource()) { source ->
                 startActivity<SourceLoginActivity> {
@@ -144,7 +148,14 @@ class BookSourceEditActivity :
                     putExtra("key", source.bookSourceUrl)
                 }
             }
+
             R.id.menu_set_source_variable -> setSourceVariable()
+            R.id.menu_search -> viewModel.save(getSource()) { source ->
+                startActivity<SearchActivity> {
+                    putExtra("searchScope", SearchScope(source).toString())
+                }
+            }
+
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -389,20 +400,28 @@ class BookSourceEditActivity :
                 "bookList" -> searchRule.bookList = it.value
                 "name" -> searchRule.name =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
+
                 "author" -> searchRule.author =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
+
                 "kind" -> searchRule.kind =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
+
                 "intro" -> searchRule.intro =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
+
                 "updateTime" -> searchRule.updateTime =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
+
                 "wordCount" -> searchRule.wordCount =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
+
                 "lastChapter" -> searchRule.lastChapter =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
+
                 "coverUrl" -> searchRule.coverUrl =
                     viewModel.ruleComplete(it.value, searchRule.bookList, 3)
+
                 "bookUrl" -> searchRule.bookUrl =
                     viewModel.ruleComplete(it.value, searchRule.bookList, 2)
             }
@@ -413,20 +432,28 @@ class BookSourceEditActivity :
                 "bookList" -> exploreRule.bookList = it.value
                 "name" -> exploreRule.name =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
+
                 "author" -> exploreRule.author =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
+
                 "kind" -> exploreRule.kind =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
+
                 "intro" -> exploreRule.intro =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
+
                 "updateTime" -> exploreRule.updateTime =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
+
                 "wordCount" -> exploreRule.wordCount =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
+
                 "lastChapter" -> exploreRule.lastChapter =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
+
                 "coverUrl" -> exploreRule.coverUrl =
                     viewModel.ruleComplete(it.value, exploreRule.bookList, 3)
+
                 "bookUrl" -> exploreRule.bookUrl =
                     viewModel.ruleComplete(it.value, exploreRule.bookList, 2)
             }
@@ -437,20 +464,28 @@ class BookSourceEditActivity :
                 "name" -> bookInfoRule.name = viewModel.ruleComplete(it.value, bookInfoRule.init)
                 "author" -> bookInfoRule.author =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
+
                 "kind" -> bookInfoRule.kind =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
+
                 "intro" -> bookInfoRule.intro =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
+
                 "updateTime" -> bookInfoRule.updateTime =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
+
                 "wordCount" -> bookInfoRule.wordCount =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
+
                 "lastChapter" -> bookInfoRule.lastChapter =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
+
                 "coverUrl" -> bookInfoRule.coverUrl =
                     viewModel.ruleComplete(it.value, bookInfoRule.init, 3)
+
                 "tocUrl" -> bookInfoRule.tocUrl =
                     viewModel.ruleComplete(it.value, bookInfoRule.init, 2)
+
                 "canReName" -> bookInfoRule.canReName = it.value
                 "downloadUrls" -> bookInfoRule.downloadUrls =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
@@ -495,12 +530,16 @@ class BookSourceEditActivity :
                 "reviewUrl" -> reviewRule.reviewUrl = it.value
                 "avatarRule" -> reviewRule.avatarRule =
                     viewModel.ruleComplete(it.value, reviewRule.reviewUrl, 3)
+
                 "contentRule" -> reviewRule.contentRule =
                     viewModel.ruleComplete(it.value, reviewRule.reviewUrl)
+
                 "postTimeRule" -> reviewRule.postTimeRule =
                     viewModel.ruleComplete(it.value, reviewRule.reviewUrl)
+
                 "reviewQuoteUrl" -> reviewRule.reviewQuoteUrl =
                     viewModel.ruleComplete(it.value, reviewRule.reviewUrl, 2)
+
                 "voteUpUrl" -> reviewRule.voteUpUrl = it.value
                 "voteDownUrl" -> reviewRule.voteDownUrl = it.value
                 "postReviewUrl" -> reviewRule.postReviewUrl = it.value
@@ -518,9 +557,9 @@ class BookSourceEditActivity :
     }
 
     private fun alertGroups() {
-        launch {
+        lifecycleScope.launch {
             val groups = withContext(IO) {
-                appDb.bookSourceDao.allGroups
+                appDb.bookSourceDao.allGroups()
             }
             selector(groups) { _, s, _ ->
                 sendText(s)
@@ -543,6 +582,7 @@ class BookSourceEditActivity :
                         SelectItem("插入分组", "addGroup")
                     )
                 }
+
                 else -> {
                     helpActions.add(
                         SelectItem("选择文件", "selectFile")
@@ -589,8 +629,9 @@ class BookSourceEditActivity :
 
     private fun setSourceVariable() {
         viewModel.save(getSource()) { source ->
-            launch {
-                val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+            lifecycleScope.launch {
+                val comment =
+                    source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
                 val variable = withContext(IO) { source.getVariable() }
                 showDialogFragment(
                     VariableDialog(

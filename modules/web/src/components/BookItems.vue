@@ -62,13 +62,13 @@ const getCover = (coverUrl) => {
 };
 
 const subJustify = computed(() =>
-  props.isSearch ? "space-between" : "flex-start"
+  props.isSearch ? "space-between" : "flex-start",
 );
 </script>
 
 <style lang="scss" scoped>
 .books-wrapper {
-  overflow: scroll;
+  overflow: auto;
 
   .wrapper {
     display: grid;

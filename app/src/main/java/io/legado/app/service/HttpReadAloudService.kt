@@ -2,6 +2,7 @@ package io.legado.app.service
 
 import android.app.PendingIntent
 import android.net.Uri
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -26,7 +27,7 @@ import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
@@ -39,6 +40,7 @@ import java.io.File
 import java.io.InputStream
 import java.net.ConnectException
 import java.net.SocketTimeoutException
+import kotlin.coroutines.coroutineContext
 
 /**
  * 在线朗读
@@ -68,32 +70,21 @@ class HttpReadAloudService : BaseReadAloudService(),
         super.onDestroy()
         downloadTask?.cancel()
         exoPlayer.release()
+        Coroutine.async {
+            removeCacheFile()
+        }
     }
 
     override fun play() {
         pageChanged = false
         exoPlayer.stop()
+        if (!requestFocus()) return
         if (contentList.isEmpty()) {
             AppLog.putDebug("朗读列表为空")
             ReadBook.readAloud()
         } else {
             super.play()
-            kotlin.runCatching {
-                if (nowSpeak == 0) {
-                    downloadAudio()
-                } else {
-                    val fileName = md5SpeakFileName(contentList[nowSpeak])
-                    val file = getSpeakFileAsMd5(fileName)
-                    if (file.exists()) {
-                        playAudio(file)
-                    } else if (!downloadTaskActiveLock.isLocked) {
-                        downloadAudio()
-                    }
-                }
-            }.onFailure {
-                toastOnUi("朗读出错:${it.localizedMessage}")
-                AppLog.put("朗读出错:${it.localizedMessage}", it)
-            }
+            downloadAndPlayAudios()
         }
     }
 
@@ -105,21 +96,21 @@ class HttpReadAloudService : BaseReadAloudService(),
         readAloudNumber += contentList[nowSpeak].length + 1
         if (nowSpeak < contentList.lastIndex) {
             nowSpeak++
-            play()
         } else {
             nextChapter()
         }
     }
 
-    private fun downloadAudio() {
+    private fun downloadAndPlayAudios() {
+        exoPlayer.clearMediaItems()
         downloadTask?.cancel()
         downloadTask = execute {
             downloadTaskActiveLock.withLock {
                 ensureActive()
-                removeCacheFile()
                 val httpTts = ReadAloud.httpTTS ?: throw NoStackTraceException("tts is null")
                 contentList.forEachIndexed { index, content ->
                     ensureActive()
+                    if (index < nowSpeak) return@forEachIndexed
                     val fileName = md5SpeakFileName(content)
                     val speakText = content.replace(AppPattern.notReadAloudRegex, "")
                     if (speakText.isEmpty()) {
@@ -141,18 +132,31 @@ class HttpReadAloudService : BaseReadAloudService(),
                             return@execute
                         }
                     }
-                    if (index == nowSpeak) {
-                        val file = getSpeakFileAsMd5(fileName)
-                        playAudio(file)
+                    val file = getSpeakFileAsMd5(fileName)
+                    val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
+                    launch(Main) {
+                        if (exoPlayer.playbackState == Player.STATE_ENDED) {
+                            exoPlayer.stop()
+                            exoPlayer.clearMediaItems()
+                        }
+                        exoPlayer.addMediaItem(mediaItem)
+                        if (!exoPlayer.isPlaying) {
+                            exoPlayer.playWhenReady = !pause
+                            exoPlayer.prepare()
+                        }
                     }
                 }
             }
-        }.onError(IO) {
+        }.onError {
+            toastOnUi("朗读出错:${it.localizedMessage}")
             AppLog.put("朗读下载出错\n${it.localizedMessage}", it)
         }
     }
 
-    private suspend fun getSpeakStream(httpTts: HttpTTS, speakText: String): InputStream? {
+    private suspend fun getSpeakStream(
+        httpTts: HttpTTS,
+        speakText: String
+    ): InputStream? {
         while (true) {
             try {
                 val analyzeUrl = AnalyzeUrl(
@@ -163,7 +167,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     headerMapF = httpTts.getHeaderMap(true)
                 )
                 var response = analyzeUrl.getResponseAwait()
-                ensureActive()
+                coroutineContext.ensureActive()
                 val checkJs = httpTts.loginCheckJs
                 if (checkJs?.isNotBlank() == true) {
                     response = analyzeUrl.evalJS(checkJs, response) as Response
@@ -178,7 +182,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         }
                     }
                 }
-                ensureActive()
+                coroutineContext.ensureActive()
                 response.body!!.byteStream().let { stream ->
                     downloadErrorNo = 0
                     return stream
@@ -193,6 +197,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         e.printOnDebug()
                         throw e
                     }
+
                     is SocketTimeoutException, is ConnectException -> {
                         downloadErrorNo++
                         if (downloadErrorNo > 5) {
@@ -202,6 +207,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                             throw e
                         }
                     }
+
                     else -> {
                         downloadErrorNo++
                         val msg = "tts下载错误\n${e.localizedMessage}"
@@ -221,22 +227,6 @@ class HttpReadAloudService : BaseReadAloudService(),
             }
         }
         return null
-    }
-
-    @Synchronized
-    private fun playAudio(file: File) {
-        if (requestFocus()) {
-            launch {
-                kotlin.runCatching {
-                    val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
-                    exoPlayer.setMediaItem(mediaItem)
-                    exoPlayer.playWhenReady = true
-                    exoPlayer.prepare()
-                }.onFailure {
-                    it.printOnDebug()
-                }
-            }
-        }
     }
 
     private fun md5SpeakFileName(content: String): String {
@@ -309,7 +299,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private fun upPlayPos() {
         playIndexJob?.cancel()
         val textChapter = textChapter ?: return
-        playIndexJob = launch {
+        playIndexJob = lifecycleScope.launch {
             postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
             if (exoPlayer.duration <= 0) {
                 return@launch
@@ -323,7 +313,9 @@ class HttpReadAloudService : BaseReadAloudService(),
             for (i in start..contentList[nowSpeak].length) {
                 if (readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)) {
                     pageIndex++
-                    ReadBook.moveToNextPage()
+                    if (pageIndex < textChapter.pageSize) {
+                        ReadBook.moveToNextPage()
+                    }
                     postEvent(EventBus.TTS_PROGRESS, readAloudNumber + i)
                 }
                 delay(sleep)
@@ -338,7 +330,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         downloadTask?.cancel()
         exoPlayer.stop()
         speechRate = AppConfig.speechRatePlay + 5
-        downloadAudio()
+        downloadAndPlayAudios()
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
@@ -347,21 +339,30 @@ class HttpReadAloudService : BaseReadAloudService(),
             Player.STATE_IDLE -> {
                 // 空闲
             }
+
             Player.STATE_BUFFERING -> {
                 // 缓冲中
             }
+
             Player.STATE_READY -> {
                 // 准备好
                 if (pause) return
                 exoPlayer.play()
                 upPlayPos()
             }
+
             Player.STATE_ENDED -> {
                 // 结束
                 playErrorNo = 0
                 playNext()
             }
         }
+    }
+
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
+        playNext()
+        upPlayPos()
     }
 
     override fun onPlayerError(error: PlaybackException) {

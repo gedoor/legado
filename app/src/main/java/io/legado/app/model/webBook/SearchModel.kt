@@ -82,12 +82,13 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
                 source,
                 searchKey,
                 searchPage,
-                context = searchPool
+                context = searchPool,
+                executeContext = searchPool
             ).timeout(30000L)
-                .onSuccess(searchPool) {
+                .onSuccess {
                     onSuccess(searchId, it)
                 }
-                .onFinally(searchPool) {
+                .onFinally {
                     onFinally(searchId)
                 }
             tasks.add(task)

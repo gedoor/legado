@@ -23,8 +23,8 @@ object ContentHelp {
             .replace("[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
             .split("\n(\\s*)".toRegex()).toTypedArray()
 
-        //初始化StringBuffer的长度,在原content的长度基础上做冗余
-        var buffer = StringBuffer((content1.length * 1.15).toInt())
+        //初始化StringBuilder的长度,在原content的长度基础上做冗余
+        var buffer = StringBuilder((content1.length * 1.15).toInt())
         //          章节的文本格式为章节标题-空行-首段，所以处理段落时需要略过第一行文本。
         buffer.append(" ")
         if (chapterName.trim { it <= ' ' } != p[0].trim { it <= ' ' }) {
@@ -52,7 +52,7 @@ object ContentHelp {
                 "$1。\n"
             )
             .split("\n".toRegex()).toTypedArray()
-        buffer = StringBuffer((content1.length * 1.15).toInt())
+        buffer = StringBuilder((content1.length * 1.15).toInt())
         for (s in p) {
             buffer.append("\n")
             buffer.append(findNewLines(s, dict))
@@ -76,7 +76,7 @@ object ContentHelp {
      * @param str
      * @return
      */
-    private fun reduceLength(str: StringBuffer): StringBuffer {
+    private fun reduceLength(str: StringBuilder): StringBuilder {
         val p = str.toString().split("\n".toRegex()).toTypedArray()
         val l = p.size
         val b = BooleanArray(l)
@@ -96,7 +96,7 @@ object ContentHelp {
                 }
             }
         }
-        val string = StringBuffer()
+        val string = StringBuilder()
         for (i in 0 until l) {
             string.append('\n')
             string.append(p[i])
@@ -164,7 +164,7 @@ object ContentHelp {
 
     // 对内容重新划分段落.输入参数str已经使用换行符预分割
     private fun findNewLines(str: String, dict: List<String>): String {
-        val string = StringBuffer(str)
+        val string = StringBuilder(str)
         // 标记string中每个引号的位置.特别的，用引号进行列举时视为只有一对引号。 如：“锅”、“碗”视为“锅、碗”，从而避免误断句。
         val arrayQuote: MutableList<Int> = ArrayList()
         //  标记插入换行符的位置，int为插入位置（str的char下标）
@@ -421,7 +421,7 @@ object ContentHelp {
 //     完成字符串拼接（从string复制、插入引号和换行
 //     ins_quote 在引号前插入一个引号。   ins_quote[i]!=0,则array_quote.get(i)的引号前需要前插入'”'
 //     ins_n 插入换行。数组的值表示插入换行符的位置
-        val buffer = StringBuffer((str.length * 1.15).toInt())
+        val buffer = StringBuilder((str.length * 1.15).toInt())
         var j = 0
         var progress = 0
         var nextLine = -1
@@ -502,8 +502,8 @@ object ContentHelp {
      * @param from    从字符串的第几个字符开始匹配
      * @param to      匹配到第几个字符结束
      * @param inOrder 是否按照从前向后的顺序匹配
-     * @return 返回距离构成的ArrayList<Integer>
-    </Integer> */
+     * @return 返回距离构成的ArrayList<Int>
+     */
     private fun seekIndexs(
         str: String,
         key: String,

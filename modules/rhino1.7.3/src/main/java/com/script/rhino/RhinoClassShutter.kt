@@ -37,26 +37,43 @@ import org.mozilla.javascript.ClassShutter
 object RhinoClassShutter : ClassShutter {
 
     private val protectedClasses by lazy {
-        val protectedClasses = HashMap<Any, Any>()
-        protectedClasses["java.lang.Runtime"] = java.lang.Boolean.TRUE
-        protectedClasses["java.io.File"] = java.lang.Boolean.TRUE
-        protectedClasses["java.security.AccessController"] = java.lang.Boolean.TRUE
-        protectedClasses
+        hashSetOf(
+            "dalvik.system",
+            "java.lang.Class",
+            "java.lang.ClassLoader",
+            "java.net.URLClassLoader",
+            "cn.hutool.core.lang.JarClassLoader",
+            "org.mozilla.javascript.DefiningClassLoader",
+            "java.lang.Runtime",
+            "java.io.File",
+            "java.security.AccessController",
+            "java.nio.file.Paths",
+            "java.nio.file.Files",
+            "io.legado.app.data.AppDatabase",
+            "io.legado.app.data.AppDatabaseKt",
+            "io.legado.app.utils.ContextExtensionsKt",
+            "android.content.Intent",
+            "androidx.core.content.FileProvider",
+            "android.provider.Settings",
+            "androidx.sqlite.db",
+            "splitties.init.AppCtxKt",
+            "android.app.ActivityThread",
+            "android.app.AppGlobals"
+        )
     }
 
     override fun visibleToScripts(fullClassName: String): Boolean {
-        val sm = System.getSecurityManager()
-        if (sm != null) {
-            val i = fullClassName.lastIndexOf(".")
-            if (i != -1) {
-                try {
-                    sm.checkPackageAccess(fullClassName.substring(0, i))
-                } catch (var5: SecurityException) {
+        if (!protectedClasses.contains(fullClassName)) {
+            var className = fullClassName
+            while (className.contains(".")) {
+                className = className.substringBeforeLast(".")
+                if (protectedClasses.contains(className)) {
                     return false
                 }
             }
+            return true
         }
-        return protectedClasses[fullClassName] == null
+        return false
     }
 
 }

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import io.legado.app.R
@@ -29,6 +31,8 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
@@ -71,13 +75,15 @@ abstract class BaseReadAloudService : BaseService(),
     private val mediaSessionCompat: MediaSessionCompat by lazy {
         MediaSessionCompat(this, "readAloud")
     }
-    internal val contentList = arrayListOf<String>()
+    internal var contentList = emptyList<String>()
     internal var nowSpeak: Int = 0
     internal var readAloudNumber: Int = 0
     internal var textChapter: TextChapter? = null
     internal var pageIndex = 0
     private var needResumeOnAudioFocusGain = false
     private var dsJob: Job? = null
+    private var cover: Bitmap =
+        BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
     var pageChanged = false
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -100,6 +106,16 @@ abstract class BaseReadAloudService : BaseService(),
         setTimer(AppConfig.ttsTimer)
         if (AppConfig.ttsTimer > 0) {
             toastOnUi("朗读定时 ${AppConfig.ttsTimer} 分钟")
+        }
+        execute {
+            @Suppress("BlockingMethodInNonBlockingContext")
+            ImageLoader
+                .loadBitmap(this@BaseReadAloudService, ReadBook.book?.getDisplayCover())
+                .submit()
+                .get()
+        }.onSuccess {
+            cover = it
+            upNotification()
         }
     }
 
@@ -132,6 +148,7 @@ abstract class BaseReadAloudService : BaseService(),
                 intent.getIntExtra("pageIndex", ReadBook.durPageIndex),
                 intent.getIntExtra("startPos", 0)
             )
+
             IntentAction.pause -> pauseReadAloud()
             IntentAction.resume -> resumeReadAloud()
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
@@ -145,20 +162,19 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private fun newReadAloud(play: Boolean, pageIndex: Int, startPos: Int) {
-        this.pageIndex = pageIndex
-        textChapter = ReadBook.curTextChapter
-        textChapter?.let { textChapter ->
+        lifecycleScope.launch(IO) {
+            this@BaseReadAloudService.pageIndex = pageIndex
+            textChapter = ReadBook.curTextChapter
+            val textChapter = textChapter ?: return@launch
             nowSpeak = 0
             readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
-            contentList.clear()
             val readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
-            textChapter.getNeedReadAloud(pageIndex, readAloudByPage, startPos)
-                .split("\n").forEach { text ->
-                    if (text.isNotEmpty()) {
-                        contentList.add(text)
-                    }
-                }
-            if (play) play() else pageChanged = true
+            contentList = textChapter.getNeedReadAloud(pageIndex, readAloudByPage, startPos)
+                .split("\n")
+                .filter { it.isNotEmpty() }
+            launch(Main) {
+                if (play) play() else pageChanged = true
+            }
         }
     }
 
@@ -191,6 +207,7 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
+        upNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
@@ -242,7 +259,7 @@ abstract class BaseReadAloudService : BaseService(),
         postEvent(EventBus.READ_ALOUD_DS, timeMinute)
         upNotification()
         dsJob?.cancel()
-        dsJob = launch {
+        dsJob = lifecycleScope.launch {
             while (isActive) {
                 delay(60000)
                 if (!pause) {
@@ -335,10 +352,12 @@ abstract class BaseReadAloudService : BaseService(),
                     AppLog.put("音频焦点获得")
                 }
             }
+
             AudioManager.AUDIOFOCUS_LOSS -> {
                 AppLog.put("音频焦点丢失,暂停朗读")
                 pauseReadAloud()
             }
+
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 AppLog.put("音频焦点暂时丢失并会很快再次获得,暂停朗读")
                 if (!pause) {
@@ -346,6 +365,7 @@ abstract class BaseReadAloudService : BaseService(),
                     pauseReadAloud(false)
                 }
             }
+
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 短暂丢失焦点，这种情况是被其他应用申请了短暂的焦点希望其他声音能压低音量（或者关闭声音）凸显这个声音（比如短信提示音），
                 AppLog.put("音频焦点短暂丢失,不做处理")
@@ -364,6 +384,7 @@ abstract class BaseReadAloudService : BaseService(),
                     R.string.read_aloud_timer,
                     timeMinute
                 )
+
                 else -> getString(R.string.read_aloud_t)
             }
             nTitle += ": ${ReadBook.book?.name}"
@@ -380,16 +401,10 @@ abstract class BaseReadAloudService : BaseService(),
                 .setContentIntent(
                     activityPendingIntent<ReadBookActivity>("activity")
                 )
-            kotlin.runCatching {
-                ImageLoader
-                    .loadBitmap(this@BaseReadAloudService, ReadBook.book?.getDisplayCover())
-                    .submit()
-                    .get()
-            }.getOrElse {
-                BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
-            }.let {
-                builder.setLargeIcon(it)
-            }
+                .setVibrate(null)
+                .setSound(null)
+                .setLights(0, 0, 0)
+            builder.setLargeIcon(cover)
             if (pause) {
                 builder.addAction(
                     R.drawable.ic_play_24dp,
@@ -420,7 +435,11 @@ abstract class BaseReadAloudService : BaseService(),
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             builder
         }.onSuccess {
-            startForeground(AppConst.notificationIdRead, it.build())
+            startForeground(NotificationId.ReadAloudService, it.build())
+        }.onError {
+            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
+            //创建通知出错不结束服务就会崩溃,服务必须绑定通知
+            stopSelf()
         }
     }
 
@@ -428,6 +447,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     open fun nextChapter() {
         ReadBook.upReadTime()
+        AppLog.putDebug("${ReadBook.curTextChapter?.chapter?.title} 朗读结束跳转下一章并朗读")
         if (!ReadBook.moveToNextChapter(true)) {
             stopSelf()
         }

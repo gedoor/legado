@@ -21,22 +21,44 @@
 
         <item
             android:id="@+id/menu_split_long_chapter"
-            android:title="@string/split_long_chapter"
             android:checkable="true"
+            android:title="@string/split_long_chapter"
             app:showAsAction="never" />
 
     </group>
 
-    <item
-        android:id="@+id/menu_reverse_toc"
-        android:title="@string/reverse_toc"
-        app:showAsAction="never" />
+    <group
+        android:id="@+id/menu_group_toc"
+        android:visible="true">
 
-    <item
-        android:id="@+id/menu_use_replace"
-        android:checkable="true"
-        android:title="@string/use_replace"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/menu_reverse_toc"
+            android:title="@string/reverse_toc"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/menu_use_replace"
+            android:checkable="true"
+            android:title="@string/use_replace"
+            app:showAsAction="never" />
+
+    </group>
+
+    <group
+        android:id="@+id/menu_group_bookmark"
+        android:visible="false">
+
+        <item
+            android:id="@+id/menu_export_bookmark"
+            android:title="@string/export"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/menu_export_md"
+            android:title="@string/export_md"
+            app:showAsAction="never" />
+
+    </group>
 
     <item
         android:id="@+id/menu_log"

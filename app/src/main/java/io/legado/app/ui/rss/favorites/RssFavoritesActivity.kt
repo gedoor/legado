@@ -1,6 +1,7 @@
 package io.legado.app.ui.rss.favorites
 
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.base.BaseActivity
 import io.legado.app.data.appDb
@@ -36,7 +37,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     }
 
     private fun initData() {
-        launch {
+        lifecycleScope.launch {
             appDb.rssStarDao.liveAll().conflate().collect {
                 adapter.setItems(it)
             }

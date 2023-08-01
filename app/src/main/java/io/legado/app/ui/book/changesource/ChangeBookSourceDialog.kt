@@ -41,6 +41,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -73,13 +74,13 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         if (it) {
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isNotEmpty()) {
-                launch {
+                lifecycleScope.launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         cancelButton()
                         okButton {
                             AppConfig.searchGroup = ""
-                            upGroupMenu()
+                            upGroupMenuName()
                             viewModel.startSearch()
                         }
                     }
@@ -202,7 +203,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 }
             }
         }
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
                 groups.clear()
                 groups.addAll(it)
@@ -248,8 +249,12 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 } else {
                     AppConfig.searchGroup = item.title.toString()
                 }
-                viewModel.startOrStopSearch()
-                viewModel.refresh()
+                upGroupMenuName()
+                lifecycleScope.launch(IO) {
+                    if (viewModel.refresh()) {
+                        viewModel.startOrStopSearch()
+                    }
+                }
             }
         }
         return false
@@ -345,25 +350,43 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
      * 更新分组菜单
      */
     private fun upGroupMenu() {
-        binding.toolBar.menu.findItem(R.id.menu_group)?.subMenu?.let { menu ->
-            val selectedGroup = AppConfig.searchGroup
-            menu.removeGroup(R.id.source_group)
-            val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
-            var hasSelectedGroup = false
-            groups.sortedWith { o1, o2 ->
-                o1.cnCompare(o2)
-            }.forEach { group ->
-                menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
-                    if (group == selectedGroup) {
-                        it.isChecked = true
-                        hasSelectedGroup = true
+        binding.toolBar.menu.findItem(R.id.menu_group)?.run {
+            subMenu?.let { menu ->
+                val selectedGroup = AppConfig.searchGroup
+                menu.removeGroup(R.id.source_group)
+                val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
+                var hasSelectedGroup = false
+                groups.sortedWith { o1, o2 ->
+                    o1.cnCompare(o2)
+                }.forEach { group ->
+                    menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
+                        if (group == selectedGroup) {
+                            it.isChecked = true
+                            hasSelectedGroup = true
+                        }
                     }
                 }
+                menu.setGroupCheckable(R.id.source_group, true, true)
+                if (hasSelectedGroup) {
+                    title = getString(R.string.group) + "(" + AppConfig.searchGroup + ")"
+                } else {
+                    allItem.isChecked = true
+                    title = getString(R.string.group)
+                }
             }
-            menu.setGroupCheckable(R.id.source_group, true, true)
-            if (!hasSelectedGroup) {
-                allItem.isChecked = true
-            }
+        }
+    }
+
+    /**
+     * 更新分组菜单名
+     */
+    private fun upGroupMenuName() {
+        val menuGroup = binding.toolBar.menu.findItem(R.id.menu_group)
+        val searchGroup = AppConfig.searchGroup
+        if (searchGroup.isEmpty()) {
+            menuGroup?.title = getString(R.string.group)
+        } else {
+            menuGroup?.title = getString(R.string.group) + "($searchGroup)"
         }
     }
 

@@ -16,16 +16,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  labelFixedIssue:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Fixed Issues Labeler
-        uses: gh-bot/fix-labeler@master
-        with:
-          label: 已解决
 
   prepare:
     runs-on: ubuntu-latest

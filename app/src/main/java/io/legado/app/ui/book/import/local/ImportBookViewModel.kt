@@ -9,8 +9,11 @@ import io.legado.app.constant.AppPattern.archiveFileRegex
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.PreferKey
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.utils.*
-import kotlinx.coroutines.CoroutineScope
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.list
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.awaitClose
@@ -20,7 +23,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.*
+import java.util.Collections
+import kotlin.coroutines.coroutineContext
 
 class ImportBookViewModel(application: Application) : BaseViewModel(application) {
     var rootDoc: FileDoc? = null
@@ -133,34 +137,35 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun scanDoc(
+    suspend fun scanDoc(
         fileDoc: FileDoc,
         isRoot: Boolean,
-        scope: CoroutineScope,
-        finally: (() -> Unit)? = null
+        finally: (suspend () -> Unit)? = null
     ) {
         if (isRoot) {
             dataCallback?.clear()
         }
-        if (!scope.isActive) {
+        if (!coroutineContext.isActive) {
             finally?.invoke()
             return
         }
         kotlin.runCatching {
             val list = ArrayList<FileDoc>()
             fileDoc.list()!!.forEach { docItem ->
-                if (!scope.isActive) {
+                if (!coroutineContext.isActive) {
                     finally?.invoke()
                     return
                 }
                 if (docItem.isDir) {
-                    scanDoc(docItem, false, scope)
-                } else if (docItem.name.matches(bookFileRegex) || docItem.name.matches(archiveFileRegex)
+                    scanDoc(docItem, false)
+                } else if (docItem.name.matches(bookFileRegex) || docItem.name.matches(
+                        archiveFileRegex
+                    )
                 ) {
                     list.add(docItem)
                 }
             }
-            if (!scope.isActive) {
+            if (!coroutineContext.isActive) {
                 finally?.invoke()
                 return
             }

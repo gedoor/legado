@@ -27,6 +27,7 @@
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
+        android:enableOnBackInvokedCallback="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <!-- 主入口 -->
         <activity
@@ -184,11 +185,6 @@
         <!-- 关于界面 -->
         <activity
             android:name=".ui.about.AboutActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="behind" />
-        <!-- 捐赠界面 -->
-        <activity
-            android:name=".ui.about.DonateActivity"
             android:launchMode="singleTask"
             android:screenOrientation="behind" />
         <!-- 书源管理 -->
@@ -417,6 +413,7 @@
 
         <service android:name=".service.CheckSourceService" />
         <service android:name=".service.CacheBookService" />
+        <service android:name=".service.ExportBookService" />
         <service android:name=".service.WebService" />
         <service
             android:name=".service.WebTileService"

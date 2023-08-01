@@ -220,12 +220,17 @@ object Restore {
                 if (BackupConfig.keyIsNotIgnore(key)) {
                     when (key) {
                         PreferKey.webDavPassword -> {
-                            edit.putString(
-                                key,
-                                kotlin.runCatching {
-                                    aes.decryptStr(value.toString())
-                                }.getOrDefault(value.toString())
-                            )
+                            kotlin.runCatching {
+                                aes.decryptStr(value.toString())
+                            }.getOrNull()?.let {
+                                edit.putString(key, it)
+                            } ?: let {
+                                if (appCtx.getPrefString(PreferKey.webDavPassword)
+                                        .isNullOrBlank()
+                                ) {
+                                    edit.putString(key, value.toString())
+                                }
+                            }
                         }
 
                         else -> when (value) {
@@ -253,7 +258,7 @@ object Restore {
             if (!BuildConfig.DEBUG) {
                 LauncherIconHelp.changeIcon(appCtx.getPrefString(PreferKey.launcherIcon))
             }
-            postEvent(EventBus.RECREATE, "")
+            ThemeConfig.applyDayNight(appCtx)
         }
     }
 

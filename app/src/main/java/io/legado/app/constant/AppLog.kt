@@ -3,6 +3,8 @@ package io.legado.app.constant
 import android.util.Log
 import io.legado.app.BuildConfig
 import io.legado.app.help.config.AppConfig
+import io.legado.app.utils.toastOnUi
+import splitties.init.appCtx
 
 object AppLog {
 
@@ -11,17 +13,18 @@ object AppLog {
     val logs get() = mLogs.toList()
 
     @Synchronized
-    fun put(message: String?, throwable: Throwable? = null) {
+    fun put(message: String?, throwable: Throwable? = null, toast: Boolean = false) {
         message ?: return
+        if (toast) {
+            appCtx.toastOnUi(message)
+        }
         if (mLogs.size > 100) {
             mLogs.removeLastOrNull()
         }
         mLogs.add(0, Triple(System.currentTimeMillis(), message, throwable))
-        if (throwable != null) {
-            if (BuildConfig.DEBUG) {
-                val stackTrace = Thread.currentThread().stackTrace
-                Log.e(stackTrace[3].className, message, throwable)
-            }
+        if (BuildConfig.DEBUG) {
+            val stackTrace = Thread.currentThread().stackTrace
+            Log.e(stackTrace[3].className, message, throwable)
         }
     }
 
@@ -31,7 +34,7 @@ object AppLog {
     }
 
     fun putDebug(message: String?, throwable: Throwable? = null) {
-        if (AppConfig.recordLog || BuildConfig.DEBUG) {
+        if (AppConfig.recordLog) {
             put(message, throwable)
         }
     }

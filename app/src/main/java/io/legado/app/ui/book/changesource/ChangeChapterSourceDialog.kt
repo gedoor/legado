@@ -1,13 +1,11 @@
 package io.legado.app.ui.book.changesource
 
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.KeyEvent.ACTION_UP
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
@@ -54,7 +52,6 @@ import kotlinx.coroutines.launch
 
 class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_change_source),
     Toolbar.OnMenuItemClickListener,
-    DialogInterface.OnKeyListener,
     ChangeChapterSourceAdapter.CallBack,
     ChangeChapterTocAdapter.Callback {
 
@@ -91,7 +88,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         if (it) {
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isNotEmpty()) {
-                launch {
+                lifecycleScope.launch {
                     alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         noButton()
@@ -109,7 +106,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
     override fun onStart() {
         super.onStart()
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog?.setOnKeyListener(this)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -123,6 +119,13 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         initBottomBar()
         initLiveData()
         viewModel.searchFinishCallback = searchFinishCallback
+        activity?.onBackPressedDispatcher?.addCallback(this) {
+            if (binding.clToc.isVisible) {
+                binding.clToc.gone()
+                return@addCallback
+            }
+            dismissAllowingStateLoss()
+        }
     }
 
     private fun showTitle() {
@@ -229,7 +232,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 }
             }
         }
-        launch {
+        lifecycleScope.launch {
             appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
                 groups.clear()
                 groups.addAll(it)
@@ -388,18 +391,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 bundleOf(Pair("upCurSource", oldBookUrl))
             )
         }
-    }
-
-    override fun onKey(dialog: DialogInterface?, keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> event?.let {
-                if (it.action == ACTION_UP && binding.clToc.isVisible) {
-                    binding.clToc.gone()
-                    return true
-                }
-            }
-        }
-        return false
     }
 
     interface CallBack {

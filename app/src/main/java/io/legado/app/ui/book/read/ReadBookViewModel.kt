@@ -23,13 +23,13 @@ import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.ImageProvider
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -155,6 +155,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     is SecurityException, is FileNotFoundException -> {
                         permissionDenialLiveData.postValue(1)
                     }
+
                     else -> {
                         AppLog.put("LoadTocError:${it.localizedMessage}", it)
                         ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
@@ -434,14 +435,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      */
     fun reverseRemoveSameTitle() {
         execute {
-            val book = ReadBook.book
-            val textChapter = ReadBook.curTextChapter
-            if (book != null && textChapter != null) {
-                BookHelp.setRemoveSameTitle(
-                    book, textChapter.chapter, !textChapter.sameTitleRemoved
-                )
-                ReadBook.loadContent(ReadBook.durChapterIndex)
-            }
+            val book = ReadBook.book ?: return@execute
+            val textChapter = ReadBook.curTextChapter ?: return@execute
+            BookHelp.setRemoveSameTitle(
+                book, textChapter.chapter, !textChapter.sameTitleRemoved
+            )
+            ReadBook.loadContent(ReadBook.durChapterIndex)
         }
     }
 

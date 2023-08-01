@@ -232,6 +232,10 @@ fun FileDoc.openInputStream(): Result<InputStream> {
     return uri.inputStream(appCtx)
 }
 
+fun FileDoc.openOutputStream(): Result<OutputStream> {
+    return uri.outputStream(appCtx)
+}
+
 fun FileDoc.exists(
     fileName: String,
     vararg subDirs: String
@@ -308,4 +312,20 @@ fun DocumentFile.readBytes(context: Context): ByteArray {
         it.close()
         return buffer
     } ?: throw NoStackTraceException("打开文件失败\n${uri}")
+}
+
+fun DocumentFile.checkWrite(): Boolean {
+    return try {
+        val filename = System.currentTimeMillis().toString()
+        createFile(FileUtils.getMimeType(filename), filename)?.let {
+            it.openOutputStream()?.let { out ->
+                out.use { }
+                it.delete()
+                return true
+            }
+        }
+        false
+    } catch (e: Exception) {
+        false
+    }
 }

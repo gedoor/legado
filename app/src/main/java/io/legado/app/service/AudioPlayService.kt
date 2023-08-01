@@ -5,14 +5,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Build
+import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.media.AudioFocusRequestCompat
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -36,6 +39,7 @@ import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
+import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
 
@@ -61,6 +65,14 @@ class AudioPlayService : BaseService(),
 
         var url: String = ""
             private set
+
+        private const val MEDIA_SESSION_ACTIONS = (PlaybackStateCompat.ACTION_PLAY
+                or PlaybackStateCompat.ACTION_PAUSE
+                or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                or PlaybackStateCompat.ACTION_SEEK_TO)
+
+        private const val APP_ACTION_STOP = "Stop"
+        private const val APP_ACTION_TIMER = "Timer"
     }
 
     private val useWakeLock = AppConfig.audioPlayUseWakeLock
@@ -74,7 +86,7 @@ class AudioPlayService : BaseService(),
         MediaHelp.buildAudioFocusRequestCompat(this)
     }
     private val exoPlayer: ExoPlayer by lazy {
-       ExoPlayerHelper.createHttpExoPlayer(this)
+        ExoPlayerHelper.createHttpExoPlayer(this)
     }
     private var mediaSessionCompat: MediaSessionCompat? = null
     private var broadcastReceiver: BroadcastReceiver? = null
@@ -83,6 +95,8 @@ class AudioPlayService : BaseService(),
     private var dsJob: Job? = null
     private var upPlayProgressJob: Job? = null
     private var playSpeed: Float = 1f
+    private var cover: Bitmap =
+        BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
 
     override fun onCreate() {
         super.onCreate()
@@ -92,6 +106,16 @@ class AudioPlayService : BaseService(),
         initBroadcastReceiver()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         doDs()
+        execute {
+            @Suppress("BlockingMethodInNonBlockingContext")
+            ImageLoader
+                .loadBitmap(this@AudioPlayService, AudioPlay.book?.getDisplayCover())
+                .submit()
+                .get()
+        }.onSuccess {
+            cover = it
+            upNotification()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -140,26 +164,32 @@ class AudioPlayService : BaseService(),
     private fun play() {
         if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         upNotification()
-        if (requestFocus()) {
-            execute(context = Main) {
-                AudioPlay.status = Status.STOP
-                postEvent(EventBus.AUDIO_STATE, Status.STOP)
-                upPlayProgressJob?.cancel()
-                val analyzeUrl = AnalyzeUrl(
-                    url,
-                    source = AudioPlay.bookSource,
-                    ruleData = AudioPlay.book,
-                    chapter = AudioPlay.durChapter,
-                    headerMapF = AudioPlay.headers(true),
+        if (!requestFocus()) {
+            return
+        }
+        execute(context = Main) {
+            AudioPlay.status = Status.STOP
+            postEvent(EventBus.AUDIO_STATE, Status.STOP)
+            upPlayProgressJob?.cancel()
+            val analyzeUrl = AnalyzeUrl(
+                url,
+                source = AudioPlay.bookSource,
+                ruleData = AudioPlay.book,
+                chapter = AudioPlay.durChapter,
+                headerMapF = AudioPlay.headers(true),
+            )
+            exoPlayer.setMediaItem(
+                ExoPlayerHelper.createMediaItem(
+                    analyzeUrl.url,
+                    analyzeUrl.headerMap
                 )
-                exoPlayer.setMediaItem(ExoPlayerHelper.createMediaItem(analyzeUrl.url,analyzeUrl.headerMap))
-                exoPlayer.playWhenReady = true
-                exoPlayer.prepare()
-            }.onError {
-                AppLog.put("播放出错\n${it.localizedMessage}", it)
-                toastOnUi("$url ${it.localizedMessage}")
-                stopSelf()
-            }
+            )
+            exoPlayer.playWhenReady = true
+            exoPlayer.prepare()
+        }.onError {
+            AppLog.put("播放出错\n${it.localizedMessage}", it)
+            toastOnUi("$url ${it.localizedMessage}")
+            stopSelf()
         }
     }
 
@@ -221,10 +251,10 @@ class AudioPlayService : BaseService(),
     /**
      * 调节速度
      */
-
+    @SuppressLint(value = ["ObsoleteSdkInt"])
     private fun upSpeed(adjust: Float) {
         kotlin.runCatching {
-            @SuppressLint("ObsoleteSdkInt")
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 playSpeed += adjust
                 exoPlayer.setPlaybackSpeed(playSpeed)
@@ -312,7 +342,7 @@ class AudioPlayService : BaseService(),
         postEvent(EventBus.AUDIO_DS, timeMinute)
         upNotification()
         dsJob?.cancel()
-        dsJob = launch {
+        dsJob = lifecycleScope.launch {
             while (isActive) {
                 delay(60000)
                 if (!pause) {
@@ -334,7 +364,7 @@ class AudioPlayService : BaseService(),
      */
     private fun upPlayProgress() {
         upPlayProgressJob?.cancel()
-        upPlayProgressJob = launch {
+        upPlayProgressJob = lifecycleScope.launch {
             while (isActive) {
                 AudioPlay.book?.let {
                     //更新buffer位置
@@ -358,12 +388,10 @@ class AudioPlayService : BaseService(),
                 val book = AudioPlay.book
                 val bookSource = AudioPlay.bookSource
                 if (book != null && bookSource != null) {
-                    WebBook.getContent(this@AudioPlayService, bookSource, book, chapter)
+                    WebBook.getContent(lifecycleScope, bookSource, book, chapter)
                         .onSuccess { content ->
                             if (content.isEmpty()) {
-                                withContext(Main) {
-                                    toastOnUi("未获取到资源链接")
-                                }
+                                toastOnUi("未获取到资源链接")
                             } else {
                                 contentLoadFinish(chapter, content)
                             }
@@ -419,9 +447,19 @@ class AudioPlayService : BaseService(),
     private fun upMediaSessionPlaybackState(state: Int) {
         mediaSessionCompat?.setPlaybackState(
             PlaybackStateCompat.Builder()
-                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                .setActions(MEDIA_SESSION_ACTIONS)
                 .setState(state, exoPlayer.currentPosition, 1f)
                 .setBufferedPosition(exoPlayer.bufferedPosition)
+                .addCustomAction(
+                    APP_ACTION_STOP,
+                    getString(R.string.set_timer),
+                    R.drawable.ic_stop_black_24dp
+                )
+                .addCustomAction(
+                    APP_ACTION_TIMER,
+                    getString(R.string.set_timer),
+                    R.drawable.ic_time_add_24dp
+                )
                 .build()
         )
     }
@@ -440,6 +478,19 @@ class AudioPlayService : BaseService(),
 
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@AudioPlayService, mediaButtonEvent)
+            }
+
+            override fun onPlay() = resume()
+
+            override fun onPause() = pause()
+
+            override fun onCustomAction(action: String?, extras: Bundle?) {
+                action ?: return
+
+                when (action) {
+                    APP_ACTION_STOP -> stopSelf()
+                    APP_ACTION_TIMER -> addTimer()
+                }
             }
         })
         mediaSessionCompat?.setMediaButtonReceiver(
@@ -532,16 +583,7 @@ class AudioPlayService : BaseService(),
                 .setContentIntent(
                     activityPendingIntent<AudioPlayActivity>("activity")
                 )
-            kotlin.runCatching {
-                ImageLoader
-                    .loadBitmap(this@AudioPlayService, AudioPlay.book?.getDisplayCover())
-                    .submit()
-                    .get()
-            }.getOrElse {
-                BitmapFactory.decodeResource(resources, R.drawable.icon_read_book)
-            }.let {
-                builder.setLargeIcon(it)
-            }
+            builder.setLargeIcon(cover)
             if (pause) {
                 builder.addAction(
                     R.drawable.ic_play_24dp,
@@ -573,7 +615,7 @@ class AudioPlayService : BaseService(),
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             builder
         }.onSuccess {
-            startForeground(AppConst.notificationIdAudio, it.build())
+            startForeground(NotificationId.AudioPlayService, it.build())
         }
     }
 

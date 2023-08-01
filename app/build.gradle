@@ -2,7 +2,8 @@ plugins {
     id "com.android.application"
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
-    id 'kotlin-kapt'
+    //id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     //id "com.google.gms.google-services"
 }
 apply from: 'download.gradle'
@@ -104,11 +105,19 @@ android {
         }
     }
 
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
+    android.applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
             def flavor = variant.productFlavors[0].name
             outputFileName = "${name}_${flavor}_${defaultConfig.versionName}.apk"
         }
+    }
+
+    // 设定Room的KSP参数
+    ksp {
+        arg("room.incremental", "true")
+        arg("room.expandProjection", "true")
+        arg("room.schemaLocation", "$projectDir/schemas")
+
     }
 
     compileOptions {
@@ -129,8 +138,10 @@ android {
     lint {
         checkDependencies true
     }
-    tasks.withType(JavaCompile) {
-        //options.compilerArgs << "-Xlint:unchecked"
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            //options.compilerArgs << "-Xlint:unchecked"
+        }
     }
 }
 
@@ -149,7 +160,7 @@ dependencies {
     //noinspection GradleDependency,DifferentStdlibGradleVersion
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
     //协程
-    def coroutines_version = '1.7.1'
+    def coroutines_version = '1.7.3'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
@@ -159,13 +170,13 @@ dependencies {
     //androidX
     implementation('androidx.core:core-ktx:1.10.1')
     implementation('androidx.appcompat:appcompat:1.6.1')
-    implementation('androidx.activity:activity-ktx:1.7.1')
-    implementation('androidx.fragment:fragment-ktx:1.5.7')
+    implementation('androidx.activity:activity-ktx:1.7.2')
+    implementation('androidx.fragment:fragment-ktx:1.6.1')
     implementation('androidx.preference:preference-ktx:1.2.0')
     implementation('androidx.constraintlayout:constraintlayout:2.1.4')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
     implementation('androidx.viewpager2:viewpager2:1.0.0')
-    implementation('androidx.webkit:webkit:1.6.1')
+    implementation('androidx.webkit:webkit:1.7.0')
 
     //google
     implementation('com.google.android.material:material:1.9.0')
@@ -194,7 +205,8 @@ dependencies {
     //room sql语句不高亮解决方法https://issuetracker.google.com/issues/234612964#comment6
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
+    //kapt("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
     androidTestImplementation("androidx.room:room-testing:$room_version")
 
     //liveEventBus
@@ -214,12 +226,13 @@ dependencies {
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.11.0')
     appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    appImplementation 'com.google.protobuf:protobuf-javalite:3.23.1'
+    appImplementation 'com.google.protobuf:protobuf-javalite:3.23.4'
 
     //Glide
     def glideVersion = "4.15.1"
     implementation("com.github.bumptech.glide:glide:$glideVersion")
-    kapt("com.github.bumptech.glide:compiler:$glideVersion")
+    //kapt("com.github.bumptech.glide:compiler:$glideVersion")
+    ksp("com.github.bumptech.glide:ksp:$glideVersion")
 
     //Svg
     implementation("com.caverock:androidsvg-aar:1.4")
@@ -244,7 +257,7 @@ dependencies {
     implementation 'org.tukaani:xz:1.9'
 
     //RAR
-    implementation 'com.github.junrar:junrar:7.5.4'
+    implementation 'com.github.junrar:junrar:7.5.5'
 
     //MarkDown
     def markwonVersion = "4.6.2"
@@ -258,7 +271,7 @@ dependencies {
 
     //加解密类库,有些书源使用
     //noinspection GradleDependency,GradlePackageUpdate
-    implementation('cn.hutool:hutool-crypto:5.8.18')
+    implementation('cn.hutool:hutool-crypto:5.8.21')
 
     //firebase, 崩溃统计和性能统计, 会导致共存版本崩溃
     //implementation platform('com.google.firebase:firebase-bom:30.0.1')

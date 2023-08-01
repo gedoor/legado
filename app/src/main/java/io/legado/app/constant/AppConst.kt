@@ -38,21 +38,6 @@ object AppConst {
         SimpleDateFormat("yy-MM-dd-HH-mm-ss")
     }
 
-    const val rootGroupId = -100L
-    const val bookGroupAllId = -1L
-    const val bookGroupLocalId = -2L
-    const val bookGroupAudioId = -3L
-    const val bookGroupNetNoneId = -4L
-    const val bookGroupLocalNoneId = -5L
-    const val bookGroupErrorId = -11L
-
-    const val notificationIdRead = -1122391
-    const val notificationIdAudio = -1122392
-    const val notificationIdCache = -1122393
-    const val notificationIdWeb = -1122394
-    const val notificationIdDownload = -1122395
-    const val notificationIdCheckSource = -1122395
-
     const val imagePathKey = "imagePath"
 
     val menuViewNames = arrayOf(

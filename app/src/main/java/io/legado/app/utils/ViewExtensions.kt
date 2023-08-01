@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
 import android.text.Html
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.inputmethod.InputMethodManager
@@ -195,4 +196,17 @@ fun PopupMenu.show(x: Int, y: Int) {
     }.onFailure {
         it.printOnDebug()
     }
+}
+
+fun View.shouldHideSoftInput(event: MotionEvent): Boolean {
+    if (this is EditText) {
+        val l = intArrayOf(0, 0)
+        getLocationInWindow(l)
+        val left = l[0]
+        val top = l[1]
+        val bottom = top + getHeight()
+        val right = left + getWidth()
+        return !(event.x > left && event.x < right && event.y > top && event.y < bottom)
+    }
+    return false
 }

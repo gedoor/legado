@@ -1,6 +1,8 @@
 package io.legado.app.model
 
 import android.annotation.SuppressLint
+import android.util.Log
+import io.legado.app.BuildConfig
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.*
 import io.legado.app.help.book.isWebFile
@@ -30,16 +32,19 @@ object Debug {
     @Synchronized
     fun log(
         sourceUrl: String?,
-        msg: String? = "",
+        msg: String = "",
         print: Boolean = true,
         isHtml: Boolean = false,
         showTime: Boolean = true,
         state: Int = 1
     ) {
+        if (BuildConfig.DEBUG) {
+            Log.d("sourceDebug", msg)
+        }
         //调试信息始终要执行
         callback?.let {
             if ((debugSource != sourceUrl || !print)) return
-            var printMsg = msg ?: ""
+            var printMsg = msg
             if (isHtml) {
                 printMsg = HtmlFormatter.format(msg)
             }
@@ -49,8 +54,8 @@ object Debug {
             }
             it.printLog(state, printMsg)
         }
-        if (isChecking && sourceUrl != null && (msg ?: "").length < 30) {
-            var printMsg = msg ?: ""
+        if (isChecking && sourceUrl != null && (msg).length < 30) {
+            var printMsg = msg
             if (isHtml) {
                 printMsg = HtmlFormatter.format(msg)
             }
@@ -66,7 +71,7 @@ object Debug {
 
     @Synchronized
     fun log(msg: String?) {
-        log(debugSource, msg, true)
+        log(debugSource, msg ?: "", true)
     }
 
     fun cancelDebug(destroy: Boolean = false) {
@@ -162,11 +167,13 @@ object Debug {
                 log(bookSource.bookSourceUrl, "⇒开始访问详情页:$key")
                 infoDebug(scope, bookSource, book)
             }
+
             key.contains("::") -> {
                 val url = key.substringAfter("::")
                 log(bookSource.bookSourceUrl, "⇒开始访问发现页:$url")
                 exploreDebug(scope, bookSource, url)
             }
+
             key.startsWith("++") -> {
                 val url = key.substring(2)
                 val book = Book()
@@ -175,6 +182,7 @@ object Debug {
                 log(bookSource.bookSourceUrl, "⇒开始访目录页:$url")
                 tocDebug(scope, bookSource, book)
             }
+
             key.startsWith("--") -> {
                 val url = key.substring(2)
                 val book = Book()
@@ -185,6 +193,7 @@ object Debug {
                 chapter.url = url
                 contentDebug(scope, bookSource, book, chapter, null)
             }
+
             else -> {
                 log(bookSource.bookSourceUrl, "⇒开始搜索关键字:$key")
                 searchDebug(scope, bookSource, key)

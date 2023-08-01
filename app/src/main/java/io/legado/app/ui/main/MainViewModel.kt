@@ -1,6 +1,7 @@
 package io.legado.app.ui.main
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
@@ -12,14 +13,25 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.DefaultData
-import io.legado.app.help.book.*
+import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.addType
+import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.isSameNameAuthor
+import io.legado.app.help.book.isUpError
+import io.legado.app.help.book.removeType
+import io.legado.app.help.book.sync
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.CacheBook
 import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -30,6 +42,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     private val waitUpTocBooks = arrayListOf<String>()
     private val onUpTocBooks = CopyOnWriteArraySet<String>()
+    val onUpBooksLiveData = MutableLiveData<Int>()
     private var upTocJob: Job? = null
     private var cacheBookJob: Job? = null
 
@@ -78,6 +91,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun startUpTocJob() {
+        postUpBooksLiveData()
         upTocJob = viewModelScope.launch(upTocPool) {
             while (isActive) {
                 when {
@@ -85,9 +99,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         upTocJob?.cancel()
                         upTocJob = null
                     }
+
                     onUpTocBooks.size < threadCount -> {
                         updateToc()
                     }
+
                     else -> {
                         delay(500)
                     }
@@ -101,11 +117,13 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         val bookUrl = waitUpTocBooks.firstOrNull() ?: return
         if (onUpTocBooks.contains(bookUrl)) {
             waitUpTocBooks.remove(bookUrl)
+            postUpBooksLiveData()
             return
         }
         val book = appDb.bookDao.getBook(bookUrl)
         if (book == null) {
             waitUpTocBooks.remove(bookUrl)
+            postUpBooksLiveData()
             return
         }
         val source = appDb.bookSourceDao.getBookSource(book.origin)
@@ -115,11 +133,12 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 appDb.bookDao.update(book)
             }
             waitUpTocBooks.remove(book.bookUrl)
+            postUpBooksLiveData()
             return
         }
         waitUpTocBooks.remove(bookUrl)
         upTocAdd(bookUrl)
-        execute(context = upTocPool) {
+        execute(context = upTocPool, executeContext = IO) {
             kotlin.runCatching {
                 val oldBook = book.copy()
                 WebBook.runPreUpdateJs(source, book)
@@ -157,6 +176,15 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }.onFinally(upTocPool) {
             upTocFinally(bookUrl)
             upTocFinally(book.bookUrl)
+            postUpBooksLiveData()
+        }
+    }
+
+    fun postUpBooksLiveData(reset: Boolean = false) {
+        if (AppConfig.showWaitUpCount) {
+            onUpBooksLiveData.postValue(waitUpTocBooks.size + onUpTocBooks.size)
+        } else if (reset) {
+            onUpBooksLiveData.postValue(0)
         }
     }
 

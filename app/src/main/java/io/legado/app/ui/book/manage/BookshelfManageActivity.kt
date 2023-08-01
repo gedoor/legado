@@ -11,11 +11,11 @@ import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -30,6 +30,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.group.GroupManageDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
+import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.max
 
 
 class BookshelfManageActivity :
@@ -71,7 +73,7 @@ class BookshelfManageActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.groupId = intent.getLongExtra("groupId", -1)
-        launch {
+        lifecycleScope.launch {
             viewModel.groupName = withContext(IO) {
                 appDb.bookGroupDao.getByID(viewModel.groupId)?.groupName
                     ?: getString(R.string.no_group)
@@ -183,7 +185,7 @@ class BookshelfManageActivity :
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
-        launch {
+        lifecycleScope.launch {
             appDb.bookGroupDao.flowAll().conflate().collect {
                 groupList.clear()
                 groupList.addAll(it)
@@ -195,27 +197,26 @@ class BookshelfManageActivity :
 
     private fun upBookDataByGroupId() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
-            when (viewModel.groupId) {
-                AppConst.rootGroupId -> appDb.bookDao.flowNetNoGroup()
-                AppConst.bookGroupAllId -> appDb.bookDao.flowAll()
-                AppConst.bookGroupLocalId -> appDb.bookDao.flowLocal()
-                AppConst.bookGroupAudioId -> appDb.bookDao.flowAudio()
-                AppConst.bookGroupNetNoneId -> appDb.bookDao.flowNetNoGroup()
-                AppConst.bookGroupLocalNoneId -> appDb.bookDao.flowLocalNoGroup()
-                AppConst.bookGroupErrorId -> appDb.bookDao.flowUpdateError()
-                else -> appDb.bookDao.flowByGroup(viewModel.groupId)
-            }.conflate().map { list ->
-                when (AppConfig.getBookSortByGroupId(viewModel.groupId)) {
+        booksFlowJob = lifecycleScope.launch {
+            val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
+            appDb.bookDao.flowByGroup(viewModel.groupId).map { list ->
+                when (bookSort) {
                     1 -> list.sortedByDescending {
                         it.latestChapterTime
                     }
+
                     2 -> list.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
+
                     3 -> list.sortedBy {
                         it.order
                     }
+
+                    4 -> list.sortedByDescending {
+                        max(it.latestChapterTime, it.durChapterTime)
+                    }
+
                     else -> list.sortedByDescending {
                         it.durChapterTime
                     }
@@ -224,6 +225,7 @@ class BookshelfManageActivity :
                 .conflate().collect {
                     books = it
                     upBookData()
+                    itemTouchCallback.isCanDrag = bookSort == 3
                 }
         }
     }
@@ -262,8 +264,10 @@ class BookshelfManageActivity :
             R.id.menu_del_selection -> alertDelSelection()
             R.id.menu_update_enable ->
                 viewModel.upCanUpdate(adapter.selection, true)
+
             R.id.menu_update_disable ->
                 viewModel.upCanUpdate(adapter.selection, false)
+
             R.id.menu_add_to_group -> selectGroup(addToGroupRequestCode, 0)
             R.id.menu_change_source -> showDialogFragment<SourcePickerDialog>()
             R.id.menu_check_selected_interval -> adapter.checkSelectedInterval()
@@ -313,11 +317,13 @@ class BookshelfManageActivity :
                 }
                 viewModel.updateBook(*array)
             }
+
             adapter.groupRequestCode -> {
                 adapter.actionItem?.let {
                     viewModel.updateBook(it.copy(group = groupId))
                 }
             }
+
             addToGroupRequestCode -> adapter.selection.let { books ->
                 val array = Array(books.size) { index ->
                     val book = books[index]
@@ -356,6 +362,13 @@ class BookshelfManageActivity :
                 }
                 viewModel.deleteBook(listOf(book), LocalConfig.deleteBookOriginal)
             }
+        }
+    }
+
+    override fun openBook(book: Book) {
+        startActivity<BookInfoActivity> {
+            putExtra("name", book.name)
+            putExtra("author", book.author)
         }
     }
 

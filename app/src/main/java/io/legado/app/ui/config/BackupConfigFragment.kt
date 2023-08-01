@@ -175,14 +175,13 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        context ?: return
         when (key) {
             PreferKey.backupPath -> upPreferenceSummary(key, getPrefString(key))
             PreferKey.webDavUrl,
             PreferKey.webDavAccount,
             PreferKey.webDavPassword,
             PreferKey.webDavDir -> listView.post {
-                upPreferenceSummary(key, getPrefString(key))
+                upPreferenceSummary(key, appCtx.getPrefString(key))
                 viewModel.upWebDavConfig()
             }
 

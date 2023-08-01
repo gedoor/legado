@@ -68,6 +68,13 @@
 
             </io.legado.app.ui.widget.text.TextInputLayout>
 
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_compress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/is_compress" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
@@ -85,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:text="@string/btn_default_s"
+            android:text="@string/test"
             tools:ignore="RtlHardcoded" />
 
         <LinearLayout

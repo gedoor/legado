@@ -196,7 +196,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     val oldBook = book.copy()
                     WebBook.getChapterList(this, bookSource, book, true)
                         .onSuccess(IO) {
-                            if (inBookshelf) {
+                            val dbBook = appDb.bookDao.getBook(book.name, book.author)
+                            if (dbBook?.bookUrl == oldBook.bookUrl) {
                                 if (oldBook.bookUrl == book.bookUrl) {
                                     appDb.bookDao.update(book)
                                 } else {
@@ -241,10 +242,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute(scope) {
             webFiles.clear()
-            val fileNameExcludeExtension = if (book.author.isBlank()) book.name else "${book.name} 作者：${book.author}"
+            val fileNameNoExtension = if (book.author.isBlank()) book.name
+            else "${book.name} 作者：${book.author}"
             book.downloadUrls!!.map {
                 val analyzeUrl = AnalyzeUrl(it, source = bookSource)
-                val mFileName = UrlUtil.getFileName(analyzeUrl) ?: "${fileNameExcludeExtension}.${analyzeUrl.type}"
+                val mFileName = UrlUtil.getFileName(analyzeUrl)
+                    ?: "${fileNameNoExtension}.${analyzeUrl.type}"
                 WebFile(it, mFileName)
             }
         }.onError {

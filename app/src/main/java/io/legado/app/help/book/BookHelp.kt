@@ -10,6 +10,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
+import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
@@ -51,8 +52,19 @@ object BookHelp {
     }
 
     fun updateCacheFolder(oldBook: Book, newBook: Book) {
-        val oldFolderPath = FileUtils.getPath(downloadDir, cacheFolderName, oldBook.getFolderName())
-        val newFolderPath = FileUtils.getPath(downloadDir, cacheFolderName, newBook.getFolderName())
+        val oldFolderName = oldBook.getFolderNameNoCache()
+        val newFolderName = newBook.getFolderNameNoCache()
+        if (oldFolderName == newFolderName) return
+        val oldFolderPath = FileUtils.getPath(
+            downloadDir,
+            cacheFolderName,
+            oldFolderName
+        )
+        val newFolderPath = FileUtils.getPath(
+            downloadDir,
+            cacheFolderName,
+            newFolderName
+        )
         FileUtils.move(oldFolderPath, newFolderPath)
     }
 
@@ -80,6 +92,10 @@ object BookHelp {
                     }
                 }
             FileUtils.delete(ArchiveUtils.TEMP_PATH)
+            val filesDir = appCtx.filesDir
+            FileUtils.delete("$filesDir/shareBookSource.json")
+            FileUtils.delete("$filesDir/shareRssSource.json")
+            FileUtils.delete("$filesDir/books.json")
         }
     }
 
@@ -126,7 +142,7 @@ object BookHelp {
             matcher.group(1)?.let { src ->
                 val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
                 awaitList.add(async {
-                    saveImage(bookSource, book, mSrc)
+                    saveImage(bookSource, book, mSrc, bookChapter)
                 })
             }
         }
@@ -135,7 +151,12 @@ object BookHelp {
         }
     }
 
-    suspend fun saveImage(bookSource: BookSource?, book: Book, src: String) {
+    suspend fun saveImage(
+        bookSource: BookSource?,
+        book: Book,
+        src: String,
+        chapter: BookChapter? = null
+    ) {
         while (downloadImages.contains(src)) {
             delay(100)
         }
@@ -150,8 +171,8 @@ object BookHelp {
             ImageUtils.decode(
                 src, bytes, isCover = false, bookSource, book
             )?.let {
-                if (!checkImage(bytes)) {
-                    AppLog.put("图片 $src 下载错误，数据异常")
+                if (!checkImage(it)) {
+                    throw NoStackTraceException("数据异常")
                 }
                 FileUtils.createFileIfNotExist(
                     downloadDir,
@@ -162,8 +183,10 @@ object BookHelp {
                 ).writeBytes(it)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            AppLog.put("图片 $src 下载错误\n${e.localizedMessage}", e)
+            AppLog.put(
+                "${book.name} ${chapter?.title} 图片 $src 下载失败\n${e.localizedMessage}",
+                e
+            )
         } finally {
             downloadImages.remove(src)
         }
@@ -331,21 +354,25 @@ object BookHelp {
      * 设置是否禁用正文的去除重复标题,针对单个章节
      */
     fun setRemoveSameTitle(book: Book, bookChapter: BookChapter, removeSameTitle: Boolean) {
+        val fileName = bookChapter.getFileName("nr")
+        val contentProcessor = ContentProcessor.get(book)
         if (removeSameTitle) {
             val path = FileUtils.getPath(
                 downloadDir,
                 cacheFolderName,
                 book.getFolderName(),
-                bookChapter.getFileName(".nr")
+                fileName
             )
+            contentProcessor.removeSameTitleCache.remove(fileName)
             File(path).delete()
         } else {
             FileUtils.createFileIfNotExist(
                 downloadDir,
                 cacheFolderName,
                 book.getFolderName(),
-                bookChapter.getFileName(".nr")
+                fileName
             )
+            contentProcessor.removeSameTitleCache.add(fileName)
         }
     }
 
@@ -357,7 +384,7 @@ object BookHelp {
             downloadDir,
             cacheFolderName,
             book.getFolderName(),
-            bookChapter.getFileName(".nr")
+            bookChapter.getFileName("nr")
         )
         return !File(path).exists()
     }

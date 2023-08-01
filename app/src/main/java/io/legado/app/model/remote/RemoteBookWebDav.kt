@@ -40,7 +40,9 @@ class RemoteBookWebDav(
         val remoteWebDavFileList: List<WebDavFile> = WebDav(path, authorization).listFiles()
         //转化远程文件信息到本地对象
         remoteWebDavFileList.forEach { webDavFile ->
-            if (webDavFile.isDir || bookFileRegex.matches(webDavFile.displayName) || archiveFileRegex.matches(webDavFile.displayName)
+            if (webDavFile.isDir
+                || bookFileRegex.matches(webDavFile.displayName)
+                || archiveFileRegex.matches(webDavFile.displayName)
             ) {
                 //扩展名符合阅读的格式则认为是书籍
                 remoteBooks.add(RemoteBook(webDavFile))
@@ -70,7 +72,7 @@ class RemoteBookWebDav(
         if (!NetworkUtils.isAvailable()) throw NoStackTraceException("网络不可用")
         val localBookUri = Uri.parse(book.bookUrl)
         val putUrl = "$rootBookUrl${File.separator}${book.originName}"
-        val webDav =  WebDav(putUrl, authorization)
+        val webDav = WebDav(putUrl, authorization)
         if (localBookUri.isContentScheme()) {
             webDav.upload(
                 byteArray = localBookUri.readBytes(appCtx),
@@ -80,8 +82,8 @@ class RemoteBookWebDav(
             webDav.upload(localBookUri.path!!)
         }
         book.origin = BookType.webDavTag + CustomUrl(putUrl)
-          .putAttribute("serverID", serverID)
-          .toString()
+            .putAttribute("serverID", serverID)
+            .toString()
         book.save()
     }
 

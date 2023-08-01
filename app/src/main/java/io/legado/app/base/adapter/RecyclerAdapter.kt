@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -106,7 +107,11 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     }
 
     @Synchronized
-    fun setItems(items: List<ITEM>?, itemCallback: DiffUtil.ItemCallback<ITEM>) {
+    fun setItems(
+        items: List<ITEM>?,
+        itemCallback: DiffUtil.ItemCallback<ITEM>,
+        skipDiff: Boolean = false
+    ) {
         kotlin.runCatching {
             val oldItems = this.items.toList()
             val callback = object : DiffUtil.Callback() {
@@ -158,6 +163,12 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
                     }
                     diffResult.dispatchUpdatesTo(this@RecyclerAdapter)
                     onCurrentListChanged()
+                }
+            }
+            if (skipDiff) handler.postDelayed(500) {
+                if (diffJob?.isCompleted == false) {
+                    diffJob?.cancel()
+                    setItems(items)
                 }
             }
         }

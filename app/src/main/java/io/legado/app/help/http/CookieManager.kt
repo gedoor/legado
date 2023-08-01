@@ -1,5 +1,6 @@
 package io.legado.app.help.http
 
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.help.CacheManager
 import io.legado.app.utils.NetworkUtils
@@ -49,15 +50,24 @@ object CookieManager {
      * 加载Cookies到请求中
      */
     fun loadRequest(request: Request): Request {
-        val domain = NetworkUtils.getSubDomain(request.url.toString())
+        val url = request.url.toString()
+        val domain = NetworkUtils.getSubDomain(url)
 
         val cookie = CookieStore.getCookie(domain)
         val requestCookie = request.header("Cookie")
 
-        mergeCookies(cookie, requestCookie)?.let {
-            return request.newBuilder()
-                .header("Cookie", it)
-                .build()
+        mergeCookies(cookie, requestCookie)?.let { newCookie ->
+            kotlin.runCatching {
+                return request.newBuilder()
+                    .header("Cookie", newCookie)
+                    .build()
+            }.onFailure {
+                CookieStore.removeCookie(url)
+                AppLog.put(
+                    "设置cookie出错，已清除cookie $domain cookie:$newCookie\n${it.localizedMessage}",
+                    it
+                )
+            }
         }
         return request
     }

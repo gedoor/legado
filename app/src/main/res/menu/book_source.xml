@@ -4,6 +4,66 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/action_sort"
+        android:title="@string/sort"
+        android:icon="@drawable/ic_sort"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_sort_desc"
+                android:checkable="true"
+                android:title="@string/sort_desc" />
+
+            <group
+                android:id="@+id/menu_group_sort"
+                android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/menu_sort_manual"
+                    android:checkable="true"
+                    android:checked="true"
+                    android:title="@string/sort_manual" />
+
+                <item
+                    android:id="@+id/menu_sort_auto"
+                    android:checkable="true"
+                    android:title="@string/sort_auto" />
+
+                <item
+                    android:id="@+id/menu_sort_name"
+                    android:checkable="true"
+                    android:title="@string/sort_by_name" />
+
+                <item
+                    android:id="@+id/menu_sort_url"
+                    android:checkable="true"
+                    android:title="@string/sort_by_url" />
+
+                <item
+                    android:id="@+id/menu_sort_time"
+                    android:checkable="true"
+                    android:title="@string/sort_by_lastUpdateTime" />
+
+                <item
+                    android:id="@+id/menu_sort_respondTime"
+                    android:checkable="true"
+                    android:title="@string/sort_by_respondTime" />
+
+                <item
+                    android:id="@+id/menu_sort_enable"
+                    android:checkable="true"
+                    android:title="@string/is_enabled" />
+
+            </group>
+
+        </menu>
+
+    </item>
+
+    <item
         android:id="@+id/menu_group"
         android:icon="@drawable/ic_groups"
         android:title="@string/menu_action_group"
@@ -15,57 +75,6 @@
             <item
                 android:id="@+id/menu_group_manage"
                 android:title="@string/group_manage" />
-
-            <item
-                android:id="@+id/action_sort"
-                android:title="@string/sort">
-
-                <menu>
-                    <group
-                        android:id="@+id/menu_group_sort"
-                        android:checkableBehavior="single">
-
-                        <item
-                            android:id="@+id/menu_sort_manual"
-                            android:checkable="true"
-                            android:checked="true"
-                            android:title="@string/sort_manual" />
-
-                        <item
-                            android:id="@+id/menu_sort_auto"
-                            android:checkable="true"
-                            android:title="@string/sort_auto" />
-
-                        <item
-                            android:id="@+id/menu_sort_name"
-                            android:checkable="true"
-                            android:title="@string/sort_by_name" />
-
-                        <item
-                            android:id="@+id/menu_sort_url"
-                            android:checkable="true"
-                            android:title="@string/sort_by_url" />
-
-                        <item
-                            android:id="@+id/menu_sort_time"
-                            android:checkable="true"
-                            android:title="@string/sort_by_lastUpdateTime" />
-
-                        <item
-                            android:id="@+id/menu_sort_respondTime"
-                            android:checkable="true"
-                            android:title="@string/sort_by_respondTime" />
-
-                        <item
-                            android:id="@+id/menu_sort_enable"
-                            android:checkable="true"
-                            android:title="@string/is_enabled" />
-
-                    </group>
-
-                </menu>
-
-            </item>
 
             <item
                 android:id="@+id/menu_enabled_group"

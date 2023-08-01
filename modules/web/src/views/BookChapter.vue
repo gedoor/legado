@@ -225,7 +225,7 @@ const checkPageWidth = (readWidth) => {
 };
 watch(
   () => store.config.readWidth,
-  (width) => checkPageWidth(width)
+  (width) => checkPageWidth(width),
 );
 // 顶部底部跳转
 const top = ref();
@@ -285,8 +285,8 @@ const getContent = (index, reloadChapter = true, chapterPos = 0) => {
         chapterData.value.push({ index, content, title });
         store.setShowContent(true);
         throw err;
-      }
-    )
+      },
+    ),
   );
 };
 
@@ -498,8 +498,8 @@ onMounted(() => {
       (err) => {
         ElMessage({ message: "获取书籍目录失败", type: "error" });
         throw err;
-      }
-    )
+      },
+    ),
   );
 });
 
@@ -624,7 +624,9 @@ onUnmounted(() => {
 
 .day {
   :deep(.popup) {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.12),
+      0 0 6px rgba(0, 0, 0, 0.04);
   }
 
   :deep(.tool-icon) {
@@ -645,7 +647,9 @@ onUnmounted(() => {
 
 .night {
   :deep(.popup) {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.48), 0 0 6px rgba(0, 0, 0, 0.16);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.48),
+      0 0 6px rgba(0, 0, 0, 0.16);
   }
 
   :deep(.tool-icon) {

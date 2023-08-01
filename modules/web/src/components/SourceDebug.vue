@@ -31,7 +31,7 @@ watch(
   () => store.isDebuging,
   () => {
     if (store.isDebuging) startDebug();
-  }
+  },
 );
 
 const appendDebugMsg = (msg) => {
@@ -46,7 +46,7 @@ const startDebug = async () => {
     store.currentSourceUrl,
     searchKey.value || store.searchKey,
     appendDebugMsg,
-    store.debugFinish
+    store.debugFinish,
   );
 };
 

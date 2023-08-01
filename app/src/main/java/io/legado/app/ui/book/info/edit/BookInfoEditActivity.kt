@@ -11,6 +11,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityBookInfoEditBinding
+import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isImage
 import io.legado.app.help.book.isLocal
@@ -94,22 +95,23 @@ class BookInfoEditActivity :
     }
 
     private fun saveData() = binding.run {
-        viewModel.book?.let { book ->
-            book.name = tieBookName.text?.toString() ?: ""
-            book.author = tieBookAuthor.text?.toString() ?: ""
-            val local = if (book.isLocal) BookType.local else 0
-            book.type = when (spType.selectedItemPosition) {
-                2 -> BookType.image or local
-                1 -> BookType.audio or local
-                else -> BookType.text or local
-            }
-            val customCoverUrl = tieCoverUrl.text?.toString()
-            book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
-            book.customIntro = tieBookIntro.text?.toString()
-            viewModel.saveBook(book) {
-                setResult(Activity.RESULT_OK)
-                finish()
-            }
+        val book = viewModel.book ?: return@run
+        val oldBook = book.copy()
+        book.name = tieBookName.text?.toString() ?: ""
+        book.author = tieBookAuthor.text?.toString() ?: ""
+        val local = if (book.isLocal) BookType.local else 0
+        book.type = when (spType.selectedItemPosition) {
+            2 -> BookType.image or local
+            1 -> BookType.audio or local
+            else -> BookType.text or local
+        }
+        val customCoverUrl = tieCoverUrl.text?.toString()
+        book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
+        book.customIntro = tieBookIntro.text?.toString()
+        BookHelp.updateCacheFolder(oldBook, book)
+        viewModel.saveBook(book) {
+            setResult(Activity.RESULT_OK)
+            finish()
         }
     }
 

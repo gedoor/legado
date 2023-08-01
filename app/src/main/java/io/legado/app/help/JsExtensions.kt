@@ -146,6 +146,43 @@ interface JsExtensions : JsEncodeUtils {
     }
 
     /**
+     * 使用webView获取资源url
+     */
+    fun webViewGetSource(html: String?, url: String?, js: String?, sourceRegex: String): String? {
+        return runBlocking {
+            BackstageWebView(
+                url = url,
+                html = html,
+                javaScript = js,
+                headerMap = getSource()?.getHeaderMap(true),
+                tag = getSource()?.getKey(),
+                sourceRegex = sourceRegex
+            ).getStrResponse().body
+        }
+    }
+
+    /**
+     * 使用webView获取跳转url
+     */
+    fun webViewGetOverrideUrl(
+        html: String?,
+        url: String?,
+        js: String?,
+        overrideUrlRegex: String
+    ): String? {
+        return runBlocking {
+            BackstageWebView(
+                url = url,
+                html = html,
+                javaScript = js,
+                headerMap = getSource()?.getHeaderMap(true),
+                tag = getSource()?.getKey(),
+                overrideUrlRegex = overrideUrlRegex
+            ).getStrResponse().body
+        }
+    }
+
+    /**
      * 使用内置浏览器打开链接，手动验证网站防爬
      * @param url 要打开的链接
      * @param title 浏览器页面的标题
@@ -502,9 +539,9 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 删除本地文件
      */
-    fun deleteFile(path: String) {
+    fun deleteFile(path: String): Boolean {
         val file = getFile(path)
-        FileUtils.delete(file, true)
+        return FileUtils.delete(file, true)
     }
 
     /**
@@ -727,15 +764,13 @@ interface JsExtensions : JsEncodeUtils {
             var qTTF = CacheManager.getQueryTTF(key)
             if (qTTF != null) return qTTF
             val font: ByteArray? = when {
-                str.isAbsUrl() -> runBlocking {
+                str.isAbsUrl() -> {
                     var x = CacheManager.getByteArray(key)
                     if (x == null) {
                         x = AnalyzeUrl(str, source = getSource()).getByteArray()
-                        x.let {
-                            CacheManager.put(key, it)
-                        }
+                        CacheManager.put(key, x)
                     }
-                    return@runBlocking x
+                    x
                 }
 
                 str.isContentScheme() -> Uri.parse(str).readBytes(appCtx)
@@ -790,6 +825,15 @@ interface JsExtensions : JsEncodeUtils {
         return s
     }
 
+
+    fun toURL(urlStr: String): JsURL {
+        return JsURL(urlStr)
+    }
+
+    fun toURL(url: String, baseUrl: String? = null): JsURL {
+        return JsURL(url, baseUrl)
+    }
+
     /**
      * 弹窗提示
      */
@@ -811,7 +855,7 @@ interface JsExtensions : JsEncodeUtils {
         getSource()?.let {
             Debug.log(it.getKey(), msg.toString())
         } ?: Debug.log(msg.toString())
-        AppLog.putDebug("书源调试输出：$msg")
+        AppLog.putDebug("源调试输出：$msg")
         return msg
     }
 

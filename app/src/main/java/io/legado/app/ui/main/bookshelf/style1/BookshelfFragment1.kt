@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -30,9 +29,15 @@ import kotlin.collections.set
 /**
  * 书架界面
  */
-class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
+class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener {
+
+    constructor(position: Int) : this() {
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+        arguments = bundle
+    }
 
     private val binding by viewBinding(FragmentBookshelf1Binding::bind)
     private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager) }
@@ -80,7 +85,7 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     @Synchronized
     override fun upGroup(data: List<BookGroup>) {
         if (data.isEmpty()) {
-            appDb.bookGroupDao.enableGroup(AppConst.bookGroupAllId)
+            appDb.bookGroupDao.enableGroup(BookGroup.IdAll)
         } else {
             if (data != bookGroups) {
                 bookGroups.clear()
@@ -95,6 +100,10 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
                 }
             }
         }
+    }
+
+    override fun upSort() {
+        adapter.notifyDataSetChanged()
     }
 
     private fun selectLastTab() {
@@ -134,8 +143,8 @@ class BookshelfFragment1 : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
          * 确定视图位置是否更改时调用
          * @return POSITION_NONE 已更改,刷新视图. POSITION_UNCHANGED 未更改,不刷新视图
          */
-        override fun getItemPosition(`object`: Any): Int {
-            val fragment = `object` as BooksFragment
+        override fun getItemPosition(any: Any): Int {
+            val fragment = any as BooksFragment
             val position = fragment.position
             val group = bookGroups.getOrNull(position)
             if (fragment.groupId != group?.groupId) {

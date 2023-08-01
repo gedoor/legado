@@ -94,7 +94,6 @@ object FileUtils {
     }
 
     fun getSdCardPath(): String {
-        @Suppress("DEPRECATION")
         var sdCardDirectory = Environment.getExternalStorageDirectory().absolutePath
         try {
             sdCardDirectory = File(sdCardDirectory).canonicalPath

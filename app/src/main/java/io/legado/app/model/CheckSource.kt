@@ -4,6 +4,7 @@ import android.content.Context
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.help.CacheManager
 import io.legado.app.help.IntentData
 import io.legado.app.service.CheckSourceService
@@ -22,7 +23,7 @@ object CheckSource {
     var checkContent = CacheManager.get("checkContent")?.toBoolean() ?: true
     val summary get() = upSummary()
 
-    fun start(context: Context, sources: List<BookSource>) {
+    fun start(context: Context, sources: List<BookSourcePart>) {
         val selectedIds = sources.map {
             it.bookSourceUrl
         }

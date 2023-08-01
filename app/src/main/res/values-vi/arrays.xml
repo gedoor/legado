@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="book_type">
+        <item>Văn bản</item>
+        <item>Âm thanh</item>
+        <item>Hình ảnh</item>
+        <item>Tập tin</item>
+    </string-array>
+	<string-array name="screen_direction_title">
+		<item>@string/screen_unspecified</item>
+		<item>@string/screen_portrait</item>
+		<item>@string/screen_landscape</item>
+		<item>@string/screen_sensor</item>
+		<item>Đảo ngược màn hình dọc</item>
+	</string-array>
+    <string-array name="group_style">
+        <item>Nhãn</item>
+        <item>Thư mục</item>
+    </string-array>
+
+    <string-array name="theme_mode">
+        <item>Làm theo hệ thống</item>
+        <item>Chủ đề màu sáng</item>
+        <item>Chủ đề tối</item>
+        <item>E-Ink (màn hình mực).</item>
+    </string-array>
+
+    <string-array name="NavBarColors">
+        <item>Tự động</item>
+        <item>Màu đen</item>
+        <item>Màu trắng</item>
+        <item>Làm theo nền</item>
+    </string-array>
+
+    <string-array name="screen_time_out">
+        <item>Mặc định</item>
+        <item>1 phút</item>
+        <item>2 phút</item>
+        <item>3 phút</item>
+        <item>Thường Sáng</item>
+    </string-array>
+
+    <string-array name="chinese_mode">
+        <item>Tắt</item>
+        <item>Phồn thể chuyển đơn thể</item>
+        <item>Giản thể chuyển sang phồn thể</item>
+    </string-array>
+	<string-array name="double_page_title">
+		<item>Trang đơn tất cả các trạm</item>
+		<item>Tất cả các trạm</item>
+		<item>Trang bên</item>
+		<item>Sàn / Màn hình ngang</item>
+	</string-array>
+    <string-array name="progress_bar_behavior_title">
+		<item>Điều chỉnh số trang trong chương này</item>
+		<item>Điều chỉnh vị trí chương</item>
+	</string-array>
+    <string-array name="system_typefaces">
+        <item>Phông chữ mặc định của hệ thống</item>
+        <item>Phông chữ lót hệ thống</item>
+        <item>Phông chữ rộng như hệ thống</item>
+    </string-array>
+
+    <string-array name="read_tip">
+        <item>Không</item>
+        <item>Tiêu đề của cuốn sách</item>
+        <item>Tiêu đề</item>
+        <item>Thời gian</item>
+        <item>Năng lượng</item>
+        <item>Năng lượng%</item>
+        <item>Số trang</item>
+        <item>Tiến độ (%)</item>
+        <item>Tiến độ (xx/yyy)</item>
+        <item>Số trang cùng Tiến độ</item>
+        <item>Thời gian cùng Năng lượng</item>
+        <item>Thời gian cùng Năng lượng%</item>
+    </string-array>
+
+    <string-array name="text_font_weight">
+        <item>Bình thường</item>
+        <item>Đậm</item>
+        <item>Sáng</item>
+    </string-array>
+
+    <string-array name="language">
+        <item>Làm theo hệ thống</item>
+        <item>Tiếng Trung giản thể</item>
+        <item>Tiếng Trung phồn thể</item>
+        <item>Tiếng Anh</item>
+    </string-array>
+
+    <string-array name="rule_type">
+        <item>Nguồn sách</item>
+        <item>Nguồn Rss</item>
+        <item>Thay thế quy tắc</item>
+    </string-array>
+
+</resources>

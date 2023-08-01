@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,7 +69,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     }
 
     private fun initData() {
-        launch {
+        lifecycleScope.launch {
             appDb.bookGroupDao.flowAll().conflate().collect {
                 adapter.setItems(it)
             }

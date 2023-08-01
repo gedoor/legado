@@ -3,17 +3,24 @@ package io.legado.app.help.http
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.GSON
 import io.legado.app.utils.Utf8BomUtils
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import java.nio.charset.Charset
+import java.util.zip.ZipInputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -21,18 +28,16 @@ suspend fun OkHttpClient.newCallResponse(
     retry: Int = 0,
     builder: Request.Builder.() -> Unit
 ): Response {
-    return withContext(IO) {
-        val requestBuilder = Request.Builder()
-        requestBuilder.apply(builder)
-        var response: Response? = null
-        for (i in 0..retry) {
-            response = newCall(requestBuilder.build()).await()
-            if (response.isSuccessful) {
-                return@withContext response
-            }
+    val requestBuilder = Request.Builder()
+    requestBuilder.apply(builder)
+    var response: Response? = null
+    for (i in 0..retry) {
+        response = newCall(requestBuilder.build()).await()
+        if (response.isSuccessful) {
+            return response
         }
-        return@withContext response!!
     }
+    return response!!
 }
 
 suspend fun OkHttpClient.newCallResponseBody(
@@ -72,21 +77,36 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
 }
 
 fun ResponseBody.text(encode: String? = null): String {
-    val responseBytes = Utf8BomUtils.removeUTF8BOM(bytes())
-    var charsetName: String? = encode
+    return unCompress {
+        val responseBytes = Utf8BomUtils.removeUTF8BOM(it.readBytes())
+        var charsetName: String? = encode
 
-    charsetName?.let {
-        return String(responseBytes, Charset.forName(charsetName))
+        charsetName?.let {
+            return@unCompress String(responseBytes, Charset.forName(charsetName))
+        }
+
+        //根据http头判断
+        contentType()?.charset()?.let { charset ->
+            return@unCompress String(responseBytes, charset)
+        }
+
+        //根据内容判断
+        charsetName = EncodingDetect.getHtmlEncode(responseBytes)
+        return@unCompress String(responseBytes, Charset.forName(charsetName))
     }
+}
 
-    //根据http头判断
-    contentType()?.charset()?.let {
-        return String(responseBytes, it)
+fun <T> ResponseBody.unCompress(success: (inputStream: InputStream) -> T): T {
+    return if (contentType() == "application/zip".toMediaType()) {
+        byteStream().use { byteStream ->
+            ZipInputStream(byteStream).use {
+                it.nextEntry
+                success.invoke(it)
+            }
+        }
+    } else {
+        byteStream().use(success)
     }
-
-    //根据内容判断
-    charsetName = EncodingDetect.getHtmlEncode(responseBytes)
-    return String(responseBytes, Charset.forName(charsetName))
 }
 
 fun Request.Builder.addHeaders(headers: Map<String, String>) {
@@ -134,18 +154,22 @@ fun Request.Builder.postMultipart(type: String?, form: Map<String, Any>) {
                     is File -> {
                         file.asRequestBody(mediaType)
                     }
+
                     is ByteArray -> {
                         file.toRequestBody(mediaType)
                     }
+
                     is String -> {
                         file.toRequestBody(mediaType)
                     }
+
                     else -> {
                         GSON.toJson(file).toRequestBody(mediaType)
                     }
                 }
                 multipartBody.addFormDataPart(it.key, fileName, requestBody)
             }
+
             else -> multipartBody.addFormDataPart(it.key, it.value.toString())
         }
     }

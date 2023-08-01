@@ -32,9 +32,11 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
             200 -> {
                 context.setBindings(bindings, 200)
             }
+
             100 -> {
                 context.setBindings(bindings, 100)
             }
+
             else -> {
                 throw IllegalArgumentException("Invalid scope value.")
             }
@@ -84,15 +86,11 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
     }
 
     override fun getScriptContext(bindings: Bindings): ScriptContext {
-        val ctx = SimpleScriptContext()
+        val ctx = SimpleScriptContext(bindings, context.errorWriter, context.reader, context.writer)
         val gs = getBindings(200)
         if (gs != null) {
             ctx.setBindings(gs, 200)
         }
-        ctx.setBindings(bindings, 100)
-        ctx.reader = context.reader
-        ctx.writer = context.writer
-        ctx.errorWriter = context.errorWriter
         return ctx
     }
 }

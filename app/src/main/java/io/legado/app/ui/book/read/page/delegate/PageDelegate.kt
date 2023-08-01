@@ -182,6 +182,13 @@ abstract class PageDelegate(protected val readView: ReadView) {
         return hasNext
     }
 
+    fun dismissSnackBar() {
+        // 判断snackBar是否显示，并关闭
+        if (snackBar.isShown) {
+            snackBar.dismiss()
+        }
+    }
+
     open fun onDestroy() {
         // run on destroy
     }

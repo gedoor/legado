@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -106,7 +107,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     }
 
     private fun initData() {
-        launch {
+        lifecycleScope.launch {
             appDb.txtTocRuleDao.observeAll().conflate().collect { tocRules ->
                 initSelectedName(tocRules)
                 adapter.setItems(tocRules, adapter.diffItemCallBack)

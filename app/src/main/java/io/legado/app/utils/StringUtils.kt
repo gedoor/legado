@@ -2,13 +2,19 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.text.TextUtils.isEmpty
-
+import android.util.Base64
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
 import kotlin.math.abs
+
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object StringUtils {
@@ -44,8 +50,7 @@ object StringUtils {
      * 将日期转换成昨天、今天、明天
      */
     fun dateConvert(source: String, pattern: String): String {
-        @SuppressLint("SimpleDateFormat")
-        val format = SimpleDateFormat(pattern)
+        val format = SimpleDateFormat(pattern, Locale.getDefault())
         val calendar = Calendar.getInstance()
         kotlin.runCatching {
             val date = format.parse(source) ?: return ""
@@ -167,17 +172,20 @@ object StringUtils {
                         result = 0
                         tmp = 0
                     }
+
                     tmpNum == 10000 -> {
                         result += tmp
                         result *= tmpNum
                         tmp = 0
                     }
+
                     tmpNum >= 10 -> {
                         if (tmp == 0)
                             tmp = 1
                         result += tmpNum * tmp
                         tmp = 0
                     }
+
                     else -> {
                         tmp = if (i >= 2 && i == cn.size - 1 && ChnMap[cn[i - 1]]!! > 10)
                             tmpNum * ChnMap[cn[i - 1]]!! / 10
@@ -256,7 +264,7 @@ object StringUtils {
         while (start < end && (s[end].code <= 0x20 || s[end] == '　')) {
             --end
         }
-        if (end < len) ++end
+        ++end
         return if (start > 0 || end < len) s.substring(start, end) else s
     }
 
@@ -285,6 +293,60 @@ object StringUtils {
         }
         m.appendTail(buf)
         return buf.toString()
+    }
+
+    /**
+     * 压缩字符串
+     */
+    fun compress(str: String): Result<String> {
+        return kotlin.runCatching {
+            if (str.isEmpty()) {
+                return@runCatching str
+            }
+            val out = ByteArrayOutputStream()
+            var gzip: GZIPOutputStream? = null
+            return@runCatching try {
+                gzip = GZIPOutputStream(out)
+                gzip.write(str.toByteArray())
+                Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+            } finally {
+                gzip?.runCatching {
+                    close()
+                }
+                out.runCatching {
+                    close()
+                }
+            }
+        }
+    }
+
+    /**
+     * 解压字符串
+     */
+    @Throws(IOException::class)
+    fun unCompress(str: String): Result<String> {
+        return kotlin.runCatching {
+            val outputStream = ByteArrayOutputStream()
+            var inputStream: ByteArrayInputStream? = null
+            var ginZip: GZIPInputStream? = null
+            return@runCatching try {
+                val compressed = Base64.decode(str, Base64.NO_WRAP)
+                inputStream = ByteArrayInputStream(compressed)
+                ginZip = GZIPInputStream(inputStream)
+                ginZip.copyTo(outputStream)
+                outputStream.toString()
+            } finally {
+                ginZip?.runCatching {
+                    close()
+                }
+                inputStream?.runCatching {
+                    close()
+                }
+                outputStream.runCatching {
+                    close()
+                }
+            }
+        }
     }
 
 }

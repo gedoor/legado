@@ -10,6 +10,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.Theme
@@ -62,7 +63,7 @@ class BookInfoActivity :
     private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
         it?.let {
             viewModel.getBook(false)?.let { book ->
-                launch {
+                lifecycleScope.launch {
                     withContext(IO) {
                         book.durChapterIndex = it.first
                         book.durChapterPos = it.second
@@ -247,7 +248,7 @@ class BookInfoActivity :
         book: Book,
         bookWebDav: RemoteBookWebDav? = AppWebDav.defaultBookWebDav
     ) {
-        launch {
+        lifecycleScope.launch {
             waitDialog.setText("上传中.....")
             waitDialog.show()
             try {
@@ -431,13 +432,14 @@ class BookInfoActivity :
     }
 
     private fun setSourceVariable() {
-        launch {
+        lifecycleScope.launch {
             val source = viewModel.bookSource
             if (source == null) {
                 toastOnUi("书源不存在")
                 return@launch
             }
-            val comment = source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
+            val comment =
+                source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
             val variable = withContext(IO) { source.getVariable() }
             showDialogFragment(
                 VariableDialog(
@@ -451,7 +453,7 @@ class BookInfoActivity :
     }
 
     private fun setBookVariable() {
-        launch {
+        lifecycleScope.launch {
             val source = viewModel.bookSource
             if (source == null) {
                 toastOnUi("书源不存在")

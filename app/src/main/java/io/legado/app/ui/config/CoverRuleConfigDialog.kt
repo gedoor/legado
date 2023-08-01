@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogCoverRuleConfigBinding
@@ -53,7 +54,7 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
     }
 
     private fun initData() {
-        launch {
+        lifecycleScope.launch {
             val rule = withContext(IO) {
                 BookCover.getCoverRule()
             }

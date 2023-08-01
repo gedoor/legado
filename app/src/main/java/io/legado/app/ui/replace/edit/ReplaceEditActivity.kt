@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
@@ -49,7 +50,7 @@ class ReplaceEditActivity :
     override val viewModel by viewModels<ReplaceEditViewModel>()
 
     private val softKeyboardTool by lazy {
-        KeyboardToolPop(this, this, binding.root, this)
+        KeyboardToolPop(this, lifecycleScope, binding.root, this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

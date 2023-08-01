@@ -5,33 +5,30 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Base64
 import android.webkit.URLUtil
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.JsExtensions
 import io.legado.app.help.TTS
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
 import splitties.init.appCtx
-import java.io.File
 import java.util.Date
 
 
-class ReadRssViewModel(application: Application) : BaseViewModel(application) {
+class ReadRssViewModel(application: Application) : BaseViewModel(application), JsExtensions {
     var rssSource: RssSource? = null
     var rssArticle: RssArticle? = null
     var tts: TTS? = null
@@ -40,6 +37,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     var rssStar: RssStar? = null
     val upTtsMenuData = MutableLiveData<Boolean>()
     val upStarMenuData = MutableLiveData<Boolean>()
+
+    override fun getSource(): BaseSource? {
+        return rssSource
+    }
 
     fun initData(intent: Intent) {
         execute {
@@ -99,6 +100,8 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                     appDb.rssStarDao.insert(it)
                 }
                 contentLiveData.postValue(body)
+            }.onError {
+                contentLiveData.postValue("加载正文失败\n${it.stackTraceToString()}")
             }
     }
 

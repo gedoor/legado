@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -189,14 +190,16 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private fun observeReplaceRuleData(searchKey: String? = null) {
         dataInit = false
         replaceRuleFlowJob?.cancel()
-        replaceRuleFlowJob = launch {
+        replaceRuleFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrEmpty() -> {
                     appDb.replaceRuleDao.flowAll()
                 }
+
                 searchKey == getString(R.string.no_group) -> {
                     appDb.replaceRuleDao.flowNoGroup()
                 }
+
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
                     appDb.replaceRuleDao.flowGroupSearch("%$key%")
@@ -218,7 +221,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     private fun observeGroupData() {
-        launch {
+        lifecycleScope.launch {
             appDb.replaceRuleDao.flowGroups().collect {
                 groups.clear()
                 groups.addAll(it)

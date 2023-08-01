@@ -1,20 +1,33 @@
 package io.legado.app.data.dao
 
 import androidx.room.*
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookGroup
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao {
+
+    fun flowByGroup(groupId: Long): Flow<List<Book>> {
+        return when (groupId) {
+            BookGroup.IdRoot -> flowRoot()
+            BookGroup.IdAll -> flowAll()
+            BookGroup.IdLocal -> flowLocal()
+            BookGroup.IdAudio -> flowAudio()
+            BookGroup.IdNetNone -> flowNetNoGroup()
+            BookGroup.IdLocalNone -> flowLocalNoGroup()
+            BookGroup.IdError -> flowUpdateError()
+            else -> flowByUserGroup(groupId)
+        }
+    }
 
     @Query(
         """
         select * from books where type & ${BookType.text} > 0
         and type & ${BookType.local} = 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
-        and (select show from book_groups where groupId = ${AppConst.bookGroupNetNoneId}) != 1
+        and (select show from book_groups where groupId = ${BookGroup.IdNetNone}) != 1
         """
     )
     fun flowRoot(): Flow<List<Book>>
@@ -45,7 +58,7 @@ interface BookDao {
     fun flowLocalNoGroup(): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE (`group` & :group) > 0")
-    fun flowByGroup(group: Long): Flow<List<Book>>
+    fun flowByUserGroup(group: Long): Flow<List<Book>>
 
     @Query("SELECT * FROM books WHERE name like '%'||:key||'%' or author like '%'||:key||'%'")
     fun flowSearch(key: String): Flow<List<Book>>
@@ -67,6 +80,9 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE name = :name and author = :author")
     fun getBook(name: String, author: String): Book?
+
+    @Query("SELECT * FROM books WHERE name = :name and origin = :origin")
+    fun getBookByOrigin(name: String, origin: String): Book?
 
     @get:Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups)")
     val noGroupSize: Int

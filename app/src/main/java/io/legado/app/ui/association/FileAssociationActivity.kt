@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -16,13 +17,19 @@ import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.file.HandleFileContract
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.checkWrite
+import io.legado.app.utils.getFile
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.readUri
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-
 import java.io.File
 import java.io.FileOutputStream
 
@@ -62,18 +69,23 @@ class FileAssociationActivity :
                 "bookSource" -> showDialogFragment(
                     ImportBookSourceDialog(it.second, true)
                 )
+
                 "rssSource" -> showDialogFragment(
                     ImportRssSourceDialog(it.second, true)
                 )
+
                 "replaceRule" -> showDialogFragment(
                     ImportReplaceRuleDialog(it.second, true)
                 )
+
                 "httpTts" -> showDialogFragment(
                     ImportHttpTtsDialog(it.second, true)
                 )
+
                 "theme" -> showDialogFragment(
                     ImportThemeDialog(it.second, true)
                 )
+
                 "txtRule" -> showDialogFragment(
                     ImportTxtTocRuleDialog(it.second, true)
                 )
@@ -142,15 +154,18 @@ class FileAssociationActivity :
     }
 
     private fun importBook(treeUri: Uri, uri: Uri) {
-        launch {
+        lifecycleScope.launch {
             runCatching {
                 withContext(IO) {
                     if (treeUri.isContentScheme()) {
                         val treeDoc =
                             DocumentFile.fromTreeUri(this@FileAssociationActivity, treeUri)
+                        if (!treeDoc!!.checkWrite()) {
+                            throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
+                        }
                         readUri(uri) { fileDoc, inputStream ->
                             val name = fileDoc.name
-                            var doc = treeDoc!!.findFile(name)
+                            var doc = treeDoc.findFile(name)
                             if (doc == null || fileDoc.lastModified > doc.lastModified()) {
                                 if (doc == null) {
                                     doc = treeDoc.createFile(FileUtils.getMimeType(name), name)
@@ -165,6 +180,9 @@ class FileAssociationActivity :
                         }
                     } else {
                         val treeFile = File(treeUri.path ?: treeUri.toString())
+                        if (!treeFile.checkWrite()) {
+                            throw SecurityException("请重新设置书籍保存位置\nPermission Denial")
+                        }
                         readUri(uri) { fileDoc, inputStream ->
                             val name = fileDoc.name
                             val file = treeFile.getFile(name)
@@ -184,9 +202,11 @@ class FileAssociationActivity :
                         title = getString(R.string.select_book_folder)
                         mode = HandleFileContract.DIR_SYS
                     }
+
                     else -> {
-                        AppLog.put("导入书籍失败", it)
-                        toastOnUi(it.localizedMessage)
+                        val msg = "导入书籍失败\n${it.localizedMessage}"
+                        AppLog.put(msg, it)
+                        toastOnUi(msg)
                         finish()
                     }
                 }

@@ -21,9 +21,9 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.CheckSource
+import io.legado.app.model.ImageProvider
 import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
-import io.legado.app.ui.book.read.page.provider.ImageProvider
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.*
@@ -135,6 +135,7 @@ class OtherConfigFragment : PreferenceFragment(),
 
             PreferKey.clearWebViewData -> clearWebViewData()
             "localPassword" -> alertLocalPassword()
+            PreferKey.shrinkDatabase -> shrinkDatabase()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -229,6 +230,15 @@ class OtherConfigFragment : PreferenceFragment(),
         ) {
             okButton {
                 viewModel.clearCache()
+            }
+            noButton()
+        }
+    }
+
+    private fun shrinkDatabase() {
+        alert(R.string.sure, R.string.shrink_database) {
+            okButton {
+                viewModel.shrinkDatabase()
             }
             noButton()
         }

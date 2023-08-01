@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -20,7 +21,15 @@ import io.legado.app.databinding.Item1lineTextBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.delete
+import io.legado.app.utils.find
+import io.legado.app.utils.getFile
+import io.legado.app.utils.list
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.isActive
 import java.io.FileFilter
@@ -59,7 +68,7 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun showLogFile(fileDoc: FileDoc) {
         viewModel.readFile(fileDoc) {
-            if (isActive) {
+            if (lifecycleScope.isActive) {
                 showDialogFragment(TextDialog(fileDoc.name, it))
             }
         }

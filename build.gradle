@@ -4,12 +4,12 @@ buildscript {
     ext{
         compile_sdk_version = 33
         build_tool_version = '33.0.1'
-        kotlin_version = '1.8.21'
-        agp_version = '8.0.1'
-        //exoplayer_version = '2.18.6'
-        media3_version = "1.0.2"
+        kotlin_version = '1.9.0'
+        ksp_version="1.0.12"
+        agp_version = '8.1.0'
+        media3_version = "1.1.0"
         splitties_version = '3.0.0'
-        room_version = '2.5.1'
+        room_version = '2.5.2'
     }
 }
 
@@ -17,10 +17,11 @@ plugins {
     id 'com.android.application' version "$agp_version" apply false
     id 'com.android.library' version "$agp_version" apply false
     id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
+    id 'com.google.devtools.ksp' version "$kotlin_version-$ksp_version" apply false
     id "de.undercouch.download" version "5.4.0" apply false
     id "com.google.gms.google-services" version "4.3.15" apply false
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }

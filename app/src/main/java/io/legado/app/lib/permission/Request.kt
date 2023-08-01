@@ -1,5 +1,6 @@
 package io.legado.app.lib.permission
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
@@ -49,6 +50,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         this.rationale = rationale
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     fun start() {
         RequestPlugins.setOnRequestPermissionsCallback(this)
 

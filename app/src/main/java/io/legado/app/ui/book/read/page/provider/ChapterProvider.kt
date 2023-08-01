@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookContent
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.model.ImageProvider
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextLine
@@ -90,7 +91,7 @@ object ChapterProvider {
     private var titleBottomSpacing = 0
 
     @JvmStatic
-    var typeface: Typeface = Typeface.DEFAULT
+    var typeface: Typeface? = Typeface.DEFAULT
         private set
 
     @JvmStatic
@@ -219,7 +220,9 @@ object ChapterProvider {
             bookChapter.index, displayTitle,
             textPages, chapterSize,
             bookContent.sameTitleRemoved,
-            bookChapter.isVip, bookChapter.isPay
+            bookChapter.isVip,
+            bookChapter.isPay,
+            bookContent.effectiveReplaceRules
         )
     }
 
@@ -241,7 +244,7 @@ object ChapterProvider {
             if (durY > visibleHeight) {
                 val textPage = textPages.last()
                 textPage.height = durY
-                textPage.text = stringBuilder.toString()
+                textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                 stringBuilder.clear()
                 textPages.add(TextPage())
                 durY = 0f
@@ -266,7 +269,7 @@ object ChapterProvider {
                     if (durY + height > visibleHeight) {
                         val textPage = textPages.last()
                         textPage.height = durY
-                        textPage.text = stringBuilder.toString()
+                        textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                         stringBuilder.clear()
                         textPages.add(TextPage())
                         durY = 0f
@@ -636,7 +639,7 @@ object ChapterProvider {
         upLayout()
     }
 
-    private fun getTypeface(fontPath: String): Typeface {
+    private fun getTypeface(fontPath: String): Typeface? {
         return kotlin.runCatching {
             when {
                 fontPath.isContentScheme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
@@ -665,7 +668,7 @@ object ChapterProvider {
         } ?: Typeface.DEFAULT
     }
 
-    private fun getPaints(typeface: Typeface): Pair<TextPaint, TextPaint> {
+    private fun getPaints(typeface: Typeface?): Pair<TextPaint, TextPaint> {
         // 字体统一处理
         val bold = Typeface.create(typeface, Typeface.BOLD)
         val normal = Typeface.create(typeface, Typeface.NORMAL)

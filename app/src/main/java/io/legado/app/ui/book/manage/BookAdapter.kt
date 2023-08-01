@@ -89,6 +89,11 @@ class BookAdapter(context: Context, val callBack: CallBack) :
                     callBack.upSelectCount()
                 }
             }
+            tvName.setOnClickListener {
+                getItem(holder.layoutPosition)?.let {
+                    callBack.openBook(it)
+                }
+            }
             tvDelete.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     callBack.deleteBook(it)
@@ -221,9 +226,15 @@ class BookAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         val groupList: List<BookGroup>
+
         fun upSelectCount()
+
         fun updateBook(vararg book: Book)
+
         fun deleteBook(book: Book)
+
         fun selectGroup(requestCode: Int, groupId: Long)
+
+        fun openBook(book: Book)
     }
 }

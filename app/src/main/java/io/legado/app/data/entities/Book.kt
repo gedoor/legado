@@ -135,6 +135,10 @@ data class Book(
     @IgnoredOnParcel
     var downloadUrls: List<String>? = null
 
+    @Ignore
+    @IgnoredOnParcel
+    private var folderName: String? = null
+
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 
     fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
@@ -237,10 +241,18 @@ data class Book(
     }
 
     fun getFolderName(): String {
+        folderName?.let {
+            return it
+        }
         //防止书名过长,只取9位
-        var folderName = name.replace(AppPattern.fileNameRegex, "")
-        folderName = folderName.substring(0, min(9, folderName.length))
-        return folderName + MD5Utils.md5Encode16(bookUrl)
+        folderName = getFolderNameNoCache()
+        return folderName!!
+    }
+
+    fun getFolderNameNoCache(): String {
+        return name.replace(AppPattern.fileNameRegex, "").let {
+            it.substring(0, min(9, it.length)) + MD5Utils.md5Encode16(bookUrl)
+        }
     }
 
     fun toSearchBook() = SearchBook(

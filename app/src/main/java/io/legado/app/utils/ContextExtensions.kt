@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "UnusedReceiverParameter")
 
 package io.legado.app.utils
 
@@ -317,6 +317,7 @@ fun Context.openUrl(uri: Uri) {
     }
 }
 
+@SuppressLint("ObsoleteSdkInt")
 fun Context.openFileUri(uri: Uri, type: String? = null) {
     val intent = Intent()
     intent.action = Intent.ACTION_VIEW

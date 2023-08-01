@@ -2,11 +2,16 @@ package io.legado.app.ui.book.source.manage
 
 import android.app.Application
 import android.text.TextUtils
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
+import io.legado.app.data.entities.toBookSource
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.utils.*
+import splitties.init.appCtx
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
@@ -16,31 +21,31 @@ import java.io.FileOutputStream
  */
 class BookSourceViewModel(application: Application) : BaseViewModel(application) {
 
-    fun topSource(vararg sources: BookSource) {
+    fun topSource(vararg sources: BookSourcePart) {
         execute {
             sources.sortBy { it.customOrder }
             val minOrder = appDb.bookSourceDao.minOrder - 1
-            val array = Array(sources.size) {
-                sources[it].copy(customOrder = minOrder - it)
+            val array = sources.mapIndexed { index, it ->
+                it.copy(customOrder = minOrder - index)
             }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.upOrder(array)
         }
     }
 
-    fun bottomSource(vararg sources: BookSource) {
+    fun bottomSource(vararg sources: BookSourcePart) {
         execute {
             sources.sortBy { it.customOrder }
             val maxOrder = appDb.bookSourceDao.maxOrder + 1
-            val array = Array(sources.size) {
-                sources[it].copy(customOrder = maxOrder + it)
+            val array = sources.mapIndexed { index, it ->
+                it.copy(customOrder = maxOrder + index)
             }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.upOrder(array)
         }
     }
 
-    fun del(vararg sources: BookSource) {
+    fun del(sources: List<BookSourcePart>) {
         execute {
-            appDb.bookSourceDao.delete(*sources)
+            appDb.bookSourceDao.delete(sources)
             sources.forEach {
                 SourceConfig.removeSource(it.bookSourceUrl)
             }
@@ -51,85 +56,188 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute { appDb.bookSourceDao.update(*bookSource) }
     }
 
-    fun upOrder(items: List<BookSource>) {
+    fun upOrder(items: List<BookSourcePart>) {
         if (items.isEmpty()) return
         execute {
-            val firstSortNumber = items[0].customOrder
-            items.forEachIndexed { index, bookSource ->
-                bookSource.customOrder = firstSortNumber + index
-                appDb.bookSourceDao.update(bookSource)
-            }
+            appDb.bookSourceDao.upOrder(items)
         }
     }
 
-    fun enableSelection(sources: List<BookSource>) {
+    fun enable(enable: Boolean, items: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabled = true)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enable(enable, items)
         }
     }
 
-    fun disableSelection(sources: List<BookSource>) {
+    fun enableSelection(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabled = false)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enable(true, sources)
         }
     }
 
-    fun enableSelectExplore(sources: List<BookSource>) {
+    fun disableSelection(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabledExplore = true)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enable(false, sources)
         }
     }
 
-    fun disableSelectExplore(sources: List<BookSource>) {
+    fun enableExplore(enable: Boolean, items: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy(enabledExplore = false)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enableExplore(enable, items)
         }
     }
 
-    fun selectionAddToGroups(sources: List<BookSource>, groups: String) {
+    fun enableSelectExplore(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy().addGroup(groups)
-            }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.enableExplore(true, sources)
         }
     }
 
-    fun selectionRemoveFromGroups(sources: List<BookSource>, groups: String) {
+    fun disableSelectExplore(sources: List<BookSourcePart>) {
         execute {
-            val array = Array(sources.size) {
-                sources[it].copy().removeGroup(groups)
+            appDb.bookSourceDao.enableExplore(false, sources)
+        }
+    }
+
+    fun selectionAddToGroups(sources: List<BookSourcePart>, groups: String) {
+        execute {
+            val array = sources.map {
+                it.copy().apply {
+                    addGroup(groups)
+                }
             }
-            appDb.bookSourceDao.update(*array)
+            appDb.bookSourceDao.upGroup(array)
+        }
+    }
+
+    fun selectionRemoveFromGroups(sources: List<BookSourcePart>, groups: String) {
+        execute {
+            val array = sources.map {
+                it.copy().apply {
+                    removeGroup(groups)
+                }
+            }
+            appDb.bookSourceDao.upGroup(array)
         }
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun saveToFile(sources: List<BookSource>, success: (file: File) -> Unit) {
+    private fun saveToFile(sources: List<BookSource>, success: (file: File) -> Unit) {
         execute {
             val path = "${context.filesDir}/shareBookSource.json"
             FileUtils.delete(path)
             val file = FileUtils.createFileWithReplace(path)
-            FileOutputStream(file).use {
-                GSON.writeToOutputStream(it, sources)
+            FileOutputStream(file).use { out ->
+                BufferedOutputStream(out, 64 * 1024).use {
+                    GSON.writeToOutputStream(it, sources)
+                }
             }
             file
         }.onSuccess {
             success.invoke(it)
         }.onError {
             context.toastOnUi(it.stackTraceStr)
+        }
+    }
+
+    fun saveToFile(
+        adapter: BookSourceAdapter,
+        searchKey: String?,
+        sortAscending: Boolean,
+        sort: BookSourceSort,
+        success: (file: File) -> Unit
+    ) {
+        execute {
+            val selection = adapter.selection
+            val selectedRate = selection.size.toFloat() / adapter.itemCount.toFloat()
+            val sources = if (selectedRate == 1f) {
+                getBookSources(searchKey, sortAscending, sort)
+            } else if (selectedRate < 0.3) {
+                selection.toBookSource()
+            } else {
+                val keys = selection.map { it.bookSourceUrl }.toHashSet()
+                val bookSources = getBookSources(searchKey, sortAscending, sort)
+                bookSources.filter {
+                    keys.contains(it.bookSourceUrl)
+                }
+            }
+            saveToFile(sources, success)
+        }
+    }
+
+    private fun getBookSources(
+        searchKey: String?,
+        sortAscending: Boolean,
+        sort: BookSourceSort
+    ): List<BookSource> {
+        return when {
+            searchKey.isNullOrEmpty() -> {
+                appDb.bookSourceDao.all
+            }
+
+            searchKey == appCtx.getString(R.string.enabled) -> {
+                appDb.bookSourceDao.allEnabled
+            }
+
+            searchKey == appCtx.getString(R.string.disabled) -> {
+                appDb.bookSourceDao.allDisabled
+            }
+
+            searchKey == appCtx.getString(R.string.need_login) -> {
+                appDb.bookSourceDao.allLogin
+            }
+
+            searchKey == appCtx.getString(R.string.no_group) -> {
+                appDb.bookSourceDao.allNoGroup
+            }
+
+            searchKey.startsWith("group:") -> {
+                val key = searchKey.substringAfter("group:")
+                appDb.bookSourceDao.groupSearch(key)
+            }
+
+            else -> {
+                appDb.bookSourceDao.search(searchKey)
+            }
+        }.let { data ->
+            if (sortAscending) when (sort) {
+                BookSourceSort.Weight -> data.sortedBy { it.weight }
+                BookSourceSort.Name -> data.sortedWith { o1, o2 ->
+                    o1.bookSourceName.cnCompare(o2.bookSourceName)
+                }
+
+                BookSourceSort.Url -> data.sortedBy { it.bookSourceUrl }
+                BookSourceSort.Update -> data.sortedByDescending { it.lastUpdateTime }
+                BookSourceSort.Respond -> data.sortedBy { it.respondTime }
+                BookSourceSort.Enable -> data.sortedWith { o1, o2 ->
+                    var sortNum = -o1.enabled.compareTo(o2.enabled)
+                    if (sortNum == 0) {
+                        sortNum = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                    }
+                    sortNum
+                }
+
+                else -> data
+            }
+            else when (sort) {
+                BookSourceSort.Weight -> data.sortedByDescending { it.weight }
+                BookSourceSort.Name -> data.sortedWith { o1, o2 ->
+                    o2.bookSourceName.cnCompare(o1.bookSourceName)
+                }
+
+                BookSourceSort.Url -> data.sortedByDescending { it.bookSourceUrl }
+                BookSourceSort.Update -> data.sortedBy { it.lastUpdateTime }
+                BookSourceSort.Respond -> data.sortedByDescending { it.respondTime }
+                BookSourceSort.Enable -> data.sortedWith { o1, o2 ->
+                    var sortNum = o1.enabled.compareTo(o2.enabled)
+                    if (sortNum == 0) {
+                        sortNum = o1.bookSourceName.cnCompare(o2.bookSourceName)
+                    }
+                    sortNum
+                }
+
+                else -> data.reversed()
+            }
         }
     }
 

@@ -32,6 +32,7 @@
     <string name="replace">取代</string>
     <string name="replace_purify">取代淨化</string>
     <string name="replace_purify_desc">配置取代淨化規則</string>
+    <string name="custom_export_section">自定義Epub導出章節</string>
     <string name="not_available">暫無</string>
     <string name="enable">啟用</string>
     <string name="replace_purify_search">取代淨化-搜尋</string>
@@ -1106,4 +1107,24 @@
     <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
     <string name="format_js_rule">格式化规则(formatJs)</string>
     <string name="adjust_pos">调整位置</string>
+    <string name="select_section_export">選擇待導出章節</string>
+    <string name="error_scope_input">請輸入正確的範圍</string>
+    <string name="custom_export">自定義導出</string>
+    <string name="file_contains_number">每個文件包含的章節數量</string>
+    <string name="export_chapter_index">需要輸出的章節</string>
+    <string name="shrink_database">压缩数据库</string>
+    <string name="shrink_database_summary">减小数据库文件的大小</string>
+    <string name="is_compress">是否压缩</string>
+    <string name="sort_desc">反序</string>
+    <string name="test">测试</string>
+    <string name="show_wait_up_count">显示等待更新数量</string>
+    <string name="exit_app">退出软件</string>
+    <string name="add_all_to_bookshelf">全部加入书架</string>
+    <string name="page_to">页至</string>
+    <string name="result_analyzed">解析示例</string>
+    <string name="bookshelf_px_4" >綜合排序</string>
+    <string name="effective_replaces">起效的替换</string>
+    <string name="export_book">导出书籍</string>
+    <string name="export_book_notification_content">正在导出(%1$s),还有%2$d本待导出</string>
+    <string name="export_md">导出(MD)</string>
 </resources>

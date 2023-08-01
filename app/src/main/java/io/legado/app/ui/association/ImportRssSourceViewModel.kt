@@ -14,8 +14,16 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.unCompress
 import io.legado.app.help.source.SourceHelp
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.jsonPath
+import io.legado.app.utils.splitNotBlank
 
 class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
     var isAddGroup = false
@@ -91,27 +99,38 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
         execute {
             val mText = text.trim()
             when {
-                mText.isJsonObject() -> {
+                mText.isJsonObject() -> kotlin.runCatching {
                     val json = JsonPath.parse(mText)
                     val urls = json.read<List<String>>("$.sourceUrls")
                     if (!urls.isNullOrEmpty()) {
                         urls.forEach {
                             importSourceUrl(it)
                         }
-                    } else {
-                        GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
-                            allSources.addAll(it)
-                        }
                     }
-                }
-                mText.isJsonArray() -> {
+                }.onFailure {
                     GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
+                        val source = it.firstOrNull() ?: return@let
+                        if (source.sourceUrl.isEmpty()) {
+                            throw NoStackTraceException("不是订阅源")
+                        }
                         allSources.addAll(it)
                     }
                 }
+
+                mText.isJsonArray() -> {
+                    GSON.fromJsonArray<RssSource>(mText).getOrThrow().let {
+                        val source = it.firstOrNull() ?: return@let
+                        if (source.sourceUrl.isEmpty()) {
+                            throw NoStackTraceException("不是订阅源")
+                        }
+                        allSources.addAll(it)
+                    }
+                }
+
                 mText.isAbsUrl() -> {
                     importSourceUrl(mText)
                 }
+
                 else -> throw NoStackTraceException(context.getString(R.string.wrong_format))
             }
         }.onError {
@@ -130,9 +149,12 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.byteStream().let { body ->
+        }.unCompress { body ->
             val items: List<Map<String, Any>> = jsonPath.parse(body).read("$")
             for (item in items) {
+                if (!item.containsKey("sourceUrl")) {
+                    throw NoStackTraceException("不是订阅源")
+                }
                 val jsonItem = jsonPath.parse(item)
                 GSON.fromJsonObject<RssSource>(jsonItem.jsonString()).getOrThrow().let { source ->
                     allSources.add(source)

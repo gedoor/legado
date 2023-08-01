@@ -109,6 +109,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_effective_replaces"
+        android:title="@string/effective_replaces"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
         app:showAsAction="never" />

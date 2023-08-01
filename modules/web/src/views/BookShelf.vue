@@ -1,5 +1,5 @@
 <template>
-  <div class="index-wrapper">
+  <div :class="{ 'index-wrapper': true, night: isNight, day: !isNight }">
     <div class="navigation-wrapper">
       <div class="navigation-title-wrapper">
         <div class="navigation-title">阅读</div>
@@ -29,7 +29,7 @@
                   readingRecent.name,
                   readingRecent.author,
                   readingRecent.chapterIndex,
-                  readingRecent.chapterPos
+                  readingRecent.chapterPos,
                 )
               "
               :class="{ 'no-point': readingRecent.url == '' }"
@@ -85,6 +85,11 @@ import API from "@api";
 const store = useBookStore();
 const { connectStatus, connectType, newConnect, shelf } = storeToRefs(store);
 
+const theme = computed(() => {
+  return store.config.theme;
+});
+const isNight = computed(() => theme.value == 6);
+
 const readingRecent = ref({
   name: "尚无阅读记录",
   author: "",
@@ -95,7 +100,7 @@ const readingRecent = ref({
 const shelfWrapper = ref(null);
 const { showLoading, closeLoading, loadingWrapper } = useLoading(
   shelfWrapper,
-  "正在获取书籍信息"
+  "正在获取书籍信息",
 );
 
 const books = ref([]);
@@ -139,7 +144,7 @@ const searchBook = () => {
       if (books.value.length == 0) {
         ElMessage.info("搜索结果为空");
       }
-    }
+    },
   );
 };
 
@@ -190,7 +195,7 @@ onMounted(() => {
     store
       .saveBookProgress()
       //确保各种网络情况下同步请求先完成
-      .finally(fetchBookShelfData)
+      .finally(fetchBookShelfData),
   );
 });
 const fetchBookShelfData = () => {
@@ -204,7 +209,7 @@ const fetchBookShelfData = () => {
             var x = a["durChapterTime"] || 0;
             var y = b["durChapterTime"] || 0;
             return y - x;
-          })
+          }),
         );
       } else {
         ElMessage.error(response.data.errorMsg);
@@ -259,6 +264,11 @@ const fetchBookShelfData = () => {
           border-color: #e3e3e3;
         }
       }
+    }
+
+    .bottom-wrapper {
+      display: flex;
+      flex-direction: column;
     }
 
     .recent-wrapper {
@@ -322,10 +332,12 @@ const fetchBookShelfData = () => {
     width: 100%;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 }
 
-@media screen and (max-width: 428px) {
+@media screen and (max-width: 750px) {
   .index-wrapper {
     overflow-x: hidden;
     flex-direction: column;
@@ -339,17 +351,50 @@ const fetchBookShelfData = () => {
         justify-content: space-between;
         align-items: flex-end;
       }
-      .bottom-wrapper,
+      .bottom-wrapper {
+        flex-direction: row;
+        > * {
+          flex-grow: 1;
+          margin-top: 18px;
+          .reading-recent,
+          .setting-item {
+            margin-bottom: 0px;
+          }
+        }
+      }
       .bottom-icons {
         display: none;
       }
     }
     .shelf-wrapper {
       padding: 0;
+      flex-grow: 1;
       :deep(.el-loading-spinner) {
         display: none;
       }
     }
+  }
+}
+
+.night {
+  :deep(.navigation-wrapper) {
+    background-color: #454545;
+    .navigation-title {
+      color: #aeaeae;
+    }
+    .search-wrapper {
+      .search-input {
+        .el-input__wrapper {
+          background-color: #454545;
+        }
+        .el-input__inner {
+          color: #b1b1b1;
+        }
+      }
+    }
+  }
+  :deep(.shelf-wrapper) {
+    background-color: #161819;
   }
 }
 </style>

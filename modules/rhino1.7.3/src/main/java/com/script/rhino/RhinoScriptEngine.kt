@@ -48,6 +48,12 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     private val indexedProps: MutableMap<Any, Any?>
     private val implementor: InterfaceImplementor
 
+    fun eval(js: String, bindingsConfig: SimpleBindings.() -> Unit = {}): Any? {
+        val bindings = SimpleBindings()
+        bindings.apply(bindingsConfig)
+        return eval(js, bindings)
+    }
+
     @Throws(ScriptException::class)
     override fun eval(reader: Reader, scope: Scriptable): Any? {
         val cx = Context.enter()

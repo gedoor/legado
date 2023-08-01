@@ -11,6 +11,7 @@ import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
 import io.legado.app.constant.PreferKey
 import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.utils.*
@@ -159,7 +160,7 @@ class WebService : BaseService() {
         )
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
-        startForeground(AppConst.notificationIdWeb, notification)
+        startForeground(NotificationId.WebService, notification)
     }
 
     @SuppressLint("ObsoleteSdkInt")
