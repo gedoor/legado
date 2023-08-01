@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivitySourceDebugBinding
@@ -30,7 +31,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
         initRecyclerView()
         initSearchView()
         viewModel.observe { state, msg ->
-            launch {
+            lifecycleScope.launch {
                 adapter.addItem(msg)
                 if (state == -1 || state == 1000) {
                     binding.rotateLoading.gone()

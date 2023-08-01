@@ -14,6 +14,7 @@ import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.BuildConfig
@@ -126,7 +127,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        launch {
+        lifecycleScope.launch {
             //隐私协议
             if (!privacyPolicy()) return@launch
             //版本更新
@@ -269,7 +270,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
      * 备份同步
      */
     private fun backupSync() {
-        launch {
+        lifecycleScope.launch {
             val lastBackupFile =
                 withContext(IO) { AppWebDav.lastBackUp().getOrNull() } ?: return@launch
             if (lastBackupFile.lastModify - LocalConfig.lastBackup > DateUtils.MINUTE_IN_MILLIS) {

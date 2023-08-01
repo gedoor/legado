@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
@@ -50,7 +51,7 @@ class RssSourceEditActivity :
     override val binding by viewBinding(ActivityRssSourceEditBinding::inflate)
     override val viewModel by viewModels<RssSourceEditViewModel>()
     private val softKeyboardTool by lazy {
-        KeyboardToolPop(this, this, binding.root, this)
+        KeyboardToolPop(this, lifecycleScope, binding.root, this)
     }
     private val adapter by lazy { RssSourceEditAdapter() }
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
@@ -328,7 +329,7 @@ class RssSourceEditActivity :
 
     private fun setSourceVariable() {
         viewModel.save(getRssSource()) { source ->
-            launch {
+            lifecycleScope.launch {
                 val comment =
                     source.getDisplayVariableComment("源变量可在js中通过source.getVariable()获取")
                 val variable = withContext(Dispatchers.IO) { source.getVariable() }

@@ -11,6 +11,7 @@ import android.webkit.*
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.size
+import androidx.lifecycle.lifecycleScope
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -263,7 +264,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     private fun upTtsMenu(isPlaying: Boolean) {
-        launch {
+        lifecycleScope.launch {
             if (isPlaying) {
                 ttsMenuItem?.setIcon(R.drawable.ic_stop_black_24dp)
                 ttsMenuItem?.setTitle(R.string.aloud_stop)

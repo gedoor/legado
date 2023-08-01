@@ -13,6 +13,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.size
+import androidx.lifecycle.lifecycleScope
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
@@ -323,7 +324,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     }
                 }
             }
-            launch {
+            lifecycleScope.launch {
                 menu.findItem(R.id.menu_get_progress)?.isVisible = withContext(IO) {
                     AppWebDav.isOk
                 }
@@ -344,7 +345,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 }
             }
 
-            R.id.menu_chapter_change_source -> launch {
+            R.id.menu_chapter_change_source -> lifecycleScope.launch {
                 val book = ReadBook.book ?: return@launch
                 val chapter =
                     appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
@@ -769,7 +770,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun upMenuView() {
-        launch {
+        lifecycleScope.launch {
             upMenu()
             binding.readMenu.upBookView()
         }
@@ -799,7 +800,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         resetPageOffset: Boolean,
         success: (() -> Unit)?
     ) {
-        launch {
+        lifecycleScope.launch {
             autoPageProgress = 0
             binding.readView.upContent(relativePosition, resetPageOffset)
             upSeekBarProgress()
@@ -809,7 +810,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun upPageAnim() {
-        launch {
+        lifecycleScope.launch {
             binding.readView.upPageAnim()
         }
     }
@@ -822,7 +823,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 页面改变
      */
     override fun pageChanged() {
-        launch {
+        lifecycleScope.launch {
             autoPageProgress = 0
             upSeekBarProgress()
             startBackupJob()
@@ -855,7 +856,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             viewModel.changeTo(book, toc)
         } else {
             ReadAloud.stop(this)
-            launch {
+            lifecycleScope.launch {
                 withContext(IO) {
                     ReadBook.book?.migrateTo(book, toc)
                     book.removeType(BookType.updateError)
@@ -925,7 +926,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     private fun autoPagePlus() {
         autoPageJob?.cancel()
-        autoPageJob = launch {
+        autoPageJob = lifecycleScope.launch {
             while (isActive) {
                 var delayMillis = ReadBookConfig.autoReadSpeed * 1000L / binding.readView.height
                 var scrollOffset = 1
@@ -1307,7 +1308,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     private fun startBackupJob() {
         backupJob?.cancel()
-        backupJob = launch(IO) {
+        backupJob = lifecycleScope.launch(IO) {
             delay(300000)
             ReadBook.book?.let {
                 AppWebDav.uploadBookProgress(it)
@@ -1389,7 +1390,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
         observeEventSticky<Int>(EventBus.TTS_PROGRESS) { chapterStart ->
-            launch(IO) {
+            lifecycleScope.launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
                         val pageIndex = ReadBook.durPageIndex
@@ -1432,7 +1433,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun screenOffTimerStart() {
         keepScreenJon?.cancel()
-        keepScreenJon = launch {
+        keepScreenJon = lifecycleScope.launch {
             if (screenTimeOut < 0) {
                 keepScreenOn(true)
                 return@launch

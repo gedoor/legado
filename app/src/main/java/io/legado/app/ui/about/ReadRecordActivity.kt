@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
@@ -126,7 +127,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     }
 
     private fun initAllTime() {
-        launch {
+        lifecycleScope.launch {
             val allTime = withContext(IO) {
                 appDb.readRecordDao.allTime
             }
@@ -135,7 +136,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     }
 
     private fun initData(searchKey: String? = null) {
-        launch {
+        lifecycleScope.launch {
             val readRecords = withContext(IO) {
                 appDb.readRecordDao.search(searchKey ?: "").let { records ->
                     when (sortMode) {
@@ -181,7 +182,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
             binding.apply {
                 root.setOnClickListener {
                     val item = getItem(holder.layoutPosition) ?: return@setOnClickListener
-                    launch {
+                    lifecycleScope.launch {
                         val book = withContext(IO) {
                             appDb.bookDao.findByName(item.bookName).firstOrNull()
                         }

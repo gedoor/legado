@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.appDb
@@ -33,7 +34,7 @@ class AllBookmarkActivity : VMBaseActivity<ActivityAllBookmarkBinding, AllBookma
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
-        launch {
+        lifecycleScope.launch {
             appDb.bookmarkDao.flowAll().collect {
                 adapter.setItems(it)
             }

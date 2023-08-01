@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivitySourceDebugBinding
@@ -47,7 +48,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             initHelpView()
         }
         viewModel.observe { state, msg ->
-            launch {
+            lifecycleScope.launch {
                 adapter.addItem(msg)
                 if (state == -1 || state == 1000) {
                     binding.rotateLoading.gone()
@@ -113,7 +114,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
         binding.textContent.onClick {
             prefixAutoComplete("--")
         }
-        launch {
+        lifecycleScope.launch {
             val exploreKinds = viewModel.bookSource?.exploreKinds()?.filter {
                 !it.url.isNullOrBlank()
             }

@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
@@ -195,7 +196,7 @@ class AudioPlayActivity :
             viewModel.changeTo(source, book, toc)
         } else {
             AudioPlay.stop(this)
-            launch {
+            lifecycleScope.launch {
                 withContext(IO) {
                     AudioPlay.book?.migrateTo(book, toc)
                     book.removeType(BookType.updateError)

@@ -44,7 +44,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 /**
@@ -205,7 +204,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             }
         }
         lifecycleScope.launch {
-            appDb.bookSourceDao.flowEnabledGroups().flowOn(IO).conflate().collect {
+            appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
                 groups.clear()
                 groups.addAll(it)
                 upGroupMenu()

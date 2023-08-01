@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.allViews
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
@@ -172,7 +173,7 @@ class SearchContentActivity :
     }
 
     private fun initCacheFileNames(book: Book) {
-        initJob = async {
+        initJob = lifecycleScope.async {
             withContext(IO) {
                 viewModel.cacheChapterNames.addAll(BookHelp.getChapterFiles(book))
             }
@@ -202,7 +203,7 @@ class SearchContentActivity :
         viewModel.lastQuery = query
         binding.refreshProgressBar.isAutoLoading = true
         binding.fbStop.visible()
-        searchJob = launch(IO) {
+        searchJob = lifecycleScope.launch(IO) {
             initJob?.await()
             kotlin.runCatching {
                 appDb.bookChapterDao.getChapterList(viewModel.bookUrl).forEach { bookChapter ->

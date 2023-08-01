@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -72,7 +73,7 @@ class BookshelfManageActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.groupId = intent.getLongExtra("groupId", -1)
-        launch {
+        lifecycleScope.launch {
             viewModel.groupName = withContext(IO) {
                 appDb.bookGroupDao.getByID(viewModel.groupId)?.groupName
                     ?: getString(R.string.no_group)
@@ -184,7 +185,7 @@ class BookshelfManageActivity :
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
-        launch {
+        lifecycleScope.launch {
             appDb.bookGroupDao.flowAll().conflate().collect {
                 groupList.clear()
                 groupList.addAll(it)
@@ -196,7 +197,7 @@ class BookshelfManageActivity :
 
     private fun upBookDataByGroupId() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
             appDb.bookDao.flowByGroup(viewModel.groupId).map { list ->
                 when (bookSort) {

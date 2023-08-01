@@ -5,9 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.constant.AppConst
@@ -23,9 +25,11 @@ import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.SelectActionBar
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
@@ -49,7 +53,12 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         searchView.queryHint = getString(R.string.screen) + " • " + getString(R.string.local_book)
-        launch {
+        onBackPressedDispatcher.addCallback(this) {
+            if (!goBackDir()) {
+                finish()
+            }
+        }
+        lifecycleScope.launch {
             initView()
             initEvent()
             if (setBookStorage() && AppConfig.importBookPath.isNullOrBlank()) {
@@ -129,7 +138,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         viewModel.dataFlowStart = {
             initRootDoc()
         }
-        launch {
+        lifecycleScope.launch {
             viewModel.dataFlow.conflate().collect { docs ->
                 adapter.setItems(docs)
             }
@@ -235,9 +244,9 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
             val lastDoc = viewModel.subDocs.lastOrNull() ?: doc
             binding.refreshProgressBar.isAutoLoading = true
             scanDocJob?.cancel()
-            scanDocJob = launch(IO) {
-                viewModel.scanDoc(lastDoc, true, this) {
-                    launch {
+            scanDocJob = lifecycleScope.launch(IO) {
+                viewModel.scanDoc(lastDoc, true) {
+                    withContext(Main) {
                         binding.refreshProgressBar.isAutoLoading = false
                     }
                 }
@@ -279,14 +288,6 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
 
     override fun onSearchTextChange(newText: String?) {
         viewModel.updateCallBackFlow(newText)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (!goBackDir()) {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
-        }
     }
 
     override fun upCountView() {

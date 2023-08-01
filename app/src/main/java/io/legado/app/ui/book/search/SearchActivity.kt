@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -22,16 +23,28 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.databinding.ActivityBookSearchBinding
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.*
+import io.legado.app.lib.theme.Selector
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.gone
+import io.legado.app.utils.invisible
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -67,7 +80,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var isManualStopSearch = false
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = searchFinish@{ isEmpty ->
         if (!isEmpty || viewModel.searchScope.isAll()) return@searchFinish
-        launch {
+        lifecycleScope.launch {
             alert("搜索结果为空") {
                 val precisionSearch = appCtx.getPrefBoolean(PreferKey.precisionSearch)
                 if (precisionSearch) {
@@ -280,7 +293,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         viewModel.searchBookLiveData.observe(this) {
             adapter.setItems(it)
         }
-        launch(IO) {
+        lifecycleScope.launch(IO) {
             appDb.bookSourceDao.flowEnabledGroups().collect {
                 groups = it
             }
@@ -337,7 +350,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      */
     private fun upHistory(key: String? = null) {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             if (key.isNullOrBlank()) {
                 binding.tvBookShow.gone()
                 binding.rvBookshelfSearch.gone()
@@ -355,7 +368,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             }
         }
         historyFlowJob?.cancel()
-        historyFlowJob = launch {
+        historyFlowJob = lifecycleScope.launch {
             when {
                 key.isNullOrBlank() -> appDb.searchKeywordDao.flowByTime()
                 else -> appDb.searchKeywordDao.flowSearch(key)
@@ -425,7 +438,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 点击历史关键字
      */
     override fun searchHistory(key: String) {
-        launch {
+        lifecycleScope.launch {
             when {
                 searchView.query.toString() == key -> {
                     searchView.setQuery(key, true)

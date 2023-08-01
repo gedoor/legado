@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
@@ -249,7 +250,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun upBookSource(searchKey: String? = null) {
         this.searchKey = searchKey
         sourceFlowJob?.cancel()
-        sourceFlowJob = launch {
+        sourceFlowJob = lifecycleScope.launch {
             when {
                 searchKey.isNullOrEmpty() -> {
                     appDb.bookSourceDao.flowAll()
@@ -337,8 +338,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun initLiveDataGroup() {
-        launch {
-            appDb.bookSourceDao.flowGroups().flowOn(IO).conflate().collect {
+        lifecycleScope.launch {
+            appDb.bookSourceDao.flowGroups().conflate().collect {
                 groups.clear()
                 groups.addAll(it)
                 upGroupMenu()
@@ -563,7 +564,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     private fun checkMessageRefreshJob(firstItem: Int, lastItem: Int): Job {
-        return async(start = CoroutineStart.LAZY) {
+        return lifecycleScope.async(start = CoroutineStart.LAZY) {
             flow {
                 while (true) {
                     emit(Debug.isChecking)

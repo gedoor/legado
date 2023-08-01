@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import io.legado.app.R
@@ -87,7 +88,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         groupId = intent.getLongExtra("groupId", -1)
-        launch {
+        lifecycleScope.launch {
             binding.titleBar.subtitle = withContext(IO) {
                 appDb.bookGroupDao.getByID(groupId)?.groupName
                     ?: getString(R.string.no_group)
@@ -185,7 +186,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     private fun initBookData() {
         booksFlowJob?.cancel()
-        booksFlowJob = launch {
+        booksFlowJob = lifecycleScope.launch {
             appDb.bookDao.flowByGroup(groupId).map { books ->
                 val booksDownload = books.filter {
                     !it.isAudio
@@ -208,7 +209,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
-        launch {
+        lifecycleScope.launch {
             appDb.bookGroupDao.flowAll().conflate().collect {
                 groupList.clear()
                 groupList.addAll(it)
