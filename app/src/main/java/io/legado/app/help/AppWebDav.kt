@@ -31,6 +31,7 @@ object AppWebDav {
     private const val defaultWebDavUrl = "https://dav.jianguoyun.com/dav/"
     private val bookProgressUrl get() = "${rootWebDavUrl}bookProgress/"
     private val exportsWebDavUrl get() = "${rootWebDavUrl}books/"
+    private val bgWebDavUrl get() = "${rootWebDavUrl}background/"
 
     var authorization: Authorization? = null
         private set
@@ -156,7 +157,21 @@ object AppWebDav {
         }
     }
 
-    @Suppress("unused")
+    /**
+     * 获取云端所有背景名称
+     */
+    suspend fun getAllBgNames(): Result<List<WebDavFile>> {
+        return kotlin.runCatching {
+            if (!NetworkUtils.isAvailable())
+                throw NoStackTraceException("网络未连接")
+            authorization.let {
+                it ?: throw NoStackTraceException("webDav未配置")
+                WebDav(bgWebDavUrl, it).listFiles()
+            }
+        }
+    }
+
+
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         if (!NetworkUtils.isAvailable()) return
         try {
