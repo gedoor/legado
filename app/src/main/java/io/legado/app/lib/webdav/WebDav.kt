@@ -305,9 +305,16 @@ open class WebDav(
         localPath: String,
         contentType: String = "application/octet-stream"
     ) {
+        upload(File(localPath), contentType)
+    }
+
+    @Throws(WebDavException::class)
+    suspend fun upload(
+        file: File,
+        contentType: String = "application/octet-stream"
+    ) {
         kotlin.runCatching {
             withContext(IO) {
-                val file = File(localPath)
                 if (!file.exists()) throw WebDavException("文件不存在")
                 // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
                 val fileBody = file.asRequestBody(contentType.toMediaType())
