@@ -25,7 +25,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     val upAdapterLiveData = MutableLiveData<String>()
     var searchBookLiveData = ConflateLiveData<List<SearchBook>>(1000)
     val searchScope: SearchScope = SearchScope(AppConfig.searchScope)
-    var searchFinishCallback: ((isEmpty: Boolean) -> Unit)? = null
+    var searchFinishLiveData = MutableLiveData<Boolean>()
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchKey: String = ""
     private var searchID = 0L
@@ -45,7 +45,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
 
         override fun onSearchFinish(isEmpty: Boolean) {
             isSearchLiveData.postValue(false)
-            searchFinishCallback?.invoke(isEmpty)
+            searchFinishLiveData.postValue(isEmpty)
         }
 
         override fun onSearchCancel(exception: Exception?) {
