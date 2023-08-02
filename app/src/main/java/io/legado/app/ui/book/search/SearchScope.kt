@@ -31,9 +31,9 @@ data class SearchScope(private var scope: String) {
 
     val stateLiveData = MutableLiveData(scope)
 
-    fun update(scope: String) {
+    fun update(scope: String, postValue: Boolean = true) {
         this.scope = scope
-        stateLiveData.postValue(scope)
+        if (postValue) stateLiveData.postValue(scope)
         save()
     }
 

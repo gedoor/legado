@@ -13,6 +13,7 @@ import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import splitties.init.appCtx
 import java.util.concurrent.Executors
@@ -76,23 +77,24 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
         }
         searchIndex++
         val source = bookSourceList[searchIndex]
-        searchPool?.let { searchPool ->
-            val task = WebBook.searchBook(
-                scope,
-                source,
-                searchKey,
-                searchPage,
-                context = searchPool,
-                executeContext = searchPool
-            ).timeout(30000L)
-                .onSuccess {
-                    onSuccess(searchId, it)
-                }
-                .onFinally {
-                    onFinally(searchId)
-                }
-            tasks.add(task)
-        }
+        val searchPool = searchPool ?: return
+        val task = WebBook.searchBook(
+            scope,
+            source,
+            searchKey,
+            searchPage,
+            context = searchPool,
+            executeContext = searchPool
+        ).timeout(30000L)
+            .onSuccess {
+                ensureActive()
+                onSuccess(searchId, it)
+            }
+            .onFinally {
+                ensureActive()
+                onFinally(searchId)
+            }
+        tasks.add(task)
     }
 
     @Synchronized
