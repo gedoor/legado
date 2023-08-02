@@ -9,7 +9,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.storage.Backup
 import io.legado.app.help.storage.Restore
 import io.legado.app.lib.webdav.Authorization
@@ -202,18 +201,18 @@ object AppWebDav {
         }
     }
 
-    fun uploadBookProgress(book: Book) {
+    suspend fun uploadBookProgress(book: Book) {
         val authorization = authorization ?: return
         if (!AppConfig.syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
-        Coroutine.async {
+        try {
             val bookProgress = BookProgress(book)
             val json = GSON.toJson(bookProgress)
             val url = getProgressUrl(book.name, book.author)
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
             book.syncTime = System.currentTimeMillis()
-        }.onError {
-            AppLog.put("上传进度失败\n${it.localizedMessage}", it)
+        } catch (e: Exception) {
+            AppLog.put("上传进度失败\n${e.localizedMessage}", e)
         }
     }
 

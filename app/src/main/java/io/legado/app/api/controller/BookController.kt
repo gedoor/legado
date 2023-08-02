@@ -201,7 +201,7 @@ object BookController {
     /**
      * 保存书籍
      */
-    fun saveBook(postData: String?): ReturnData {
+    suspend fun saveBook(postData: String?): ReturnData {
         val returnData = ReturnData()
         GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
             AppWebDav.uploadBookProgress(book)
