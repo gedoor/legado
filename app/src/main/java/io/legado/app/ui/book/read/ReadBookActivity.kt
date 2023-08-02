@@ -206,6 +206,9 @@ class ReadBookActivity : BaseReadBookActivity(),
                 autoPageStop()
                 return@addCallback
             }
+            if (getPrefBoolean("disableReturnKey") && !menuLayoutIsVisible) {
+                return@addCallback
+            }
             finish()
         }
     }
