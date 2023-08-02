@@ -159,7 +159,7 @@ object AppWebDav {
     /**
      * 获取云端所有背景名称
      */
-    suspend fun getAllBgNames(): Result<List<WebDavFile>> {
+    suspend fun getAllBgWebDavFiles(): Result<List<WebDavFile>> {
         return kotlin.runCatching {
             if (!NetworkUtils.isAvailable())
                 throw NoStackTraceException("网络未连接")
@@ -170,6 +170,21 @@ object AppWebDav {
         }
     }
 
+    /**
+     * 上传背景图片
+     */
+    suspend fun upBgs(files: List<File>) {
+        val authorization = authorization ?: return
+        if (!NetworkUtils.isAvailable()) return
+    }
+
+    /**
+     * 下载背景图片
+     */
+    suspend fun downBgs(fileNames: String) {
+        val authorization = authorization ?: return
+        if (!NetworkUtils.isAvailable()) return
+    }
 
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         if (!NetworkUtils.isAvailable()) return

@@ -113,7 +113,9 @@ class Coroutine<T>(
         return this@Coroutine
     }
 
-    // 如果协程被取消，有可能会不执行
+    /**
+     * 如果协程被取消，不执行
+     */
     fun onFinally(
         context: CoroutineContext? = null,
         block: suspend CoroutineScope.() -> Unit
@@ -187,7 +189,9 @@ class Coroutine<T>(
 
     private suspend inline fun dispatchVoidCallback(scope: CoroutineScope, callback: VoidCallback) {
         if (null == callback.context) {
-            callback.block.invoke(scope)
+            withContext(scope.coroutineContext) {
+                callback.block.invoke(scope)
+            }
         } else {
             withContext(scope.coroutineContext + callback.context) {
                 callback.block.invoke(this)
