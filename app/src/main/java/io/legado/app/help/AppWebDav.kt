@@ -191,9 +191,12 @@ object AppWebDav {
     /**
      * 下载背景图片
      */
-    suspend fun downBgs(fileNames: String) {
+    suspend fun downBgs() {
         val authorization = authorization ?: return
         if (!NetworkUtils.isAvailable()) return
+        val bgWebDavFiles = getAllBgWebDavFiles().getOrThrow()
+            .map { it.displayName }
+            .toSet()
     }
 
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {

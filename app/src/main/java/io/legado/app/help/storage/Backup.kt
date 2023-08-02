@@ -190,8 +190,14 @@ object Backup {
         FileUtils.delete(backupPath)
         FileUtils.delete(zipFilePath)
         coroutineContext.ensureActive()
-        appCtx.externalFiles.getFile("bg").listFiles()?.let {
-            AppWebDav.upBgs(it)
+        ReadBookConfig.getAllPicBgStr().map {
+            if (it.contains(File.separator)) {
+                File(it)
+            } else {
+                appCtx.externalFiles.getFile("bg", it)
+            }
+        }.let {
+            AppWebDav.upBgs(it.toTypedArray())
         }
     }
 

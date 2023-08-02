@@ -131,6 +131,22 @@ object ReadBookConfig {
         }
     }
 
+    fun getAllPicBgStr(): ArrayList<String> {
+        val list = arrayListOf<String>()
+        configList.forEach {
+            if (it.bgType == 2) {
+                list.add(it.bgStr)
+            }
+            if (it.bgTypeNight == 2) {
+                list.add(it.bgStrNight)
+            }
+            if (it.bgTypeEInk == 2) {
+                list.add(it.bgStrEInk)
+            }
+        }
+        return list
+    }
+
     fun deleteDur(): Boolean {
         if (configList.size > 5) {
             configList.removeAt(styleSelect)
