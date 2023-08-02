@@ -189,6 +189,10 @@ object Backup {
         }
         FileUtils.delete(backupPath)
         FileUtils.delete(zipFilePath)
+        coroutineContext.ensureActive()
+        appCtx.externalFiles.getFile("bg").listFiles()?.let {
+            AppWebDav.upBgs(it)
+        }
     }
 
     private suspend fun writeListToJson(list: List<Any>, fileName: String, path: String) {
