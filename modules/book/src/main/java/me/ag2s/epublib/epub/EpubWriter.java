@@ -59,7 +59,7 @@ public class EpubWriter {
         epubWriterProcessor.setTotalProgress(epubWriterProcessor.getTotalProgress() + book.getResources().size());
         book = processBook(book);
         ZipOutputStream resultStream = new ZipOutputStream(out);
-        resultStream.setLevel(ZipOutputStream.STORED);
+        //resultStream.setLevel(ZipOutputStream.STORED);
         writeMimeType(resultStream);
         writeContainer(resultStream);
         initTOCResource(book);
