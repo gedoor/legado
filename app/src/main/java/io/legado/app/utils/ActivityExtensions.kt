@@ -3,6 +3,7 @@ package io.legado.app.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Insets
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -32,8 +33,11 @@ val WindowManager.windowSize: DisplayMetrics
         val displayMetrics = DisplayMetrics()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics: WindowMetrics = currentWindowMetrics
-            val insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+            val systemBarsInsets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val waterfallInsets = windowMetrics.windowInsets.displayCutout?.waterfallInsets
+                ?: Insets.NONE
+            val insets = Insets.max(systemBarsInsets, waterfallInsets)
             val windowWidth = windowMetrics.bounds.width()
             val windowHeight = windowMetrics.bounds.height()
             var insetsWidth = insets.left + insets.right
