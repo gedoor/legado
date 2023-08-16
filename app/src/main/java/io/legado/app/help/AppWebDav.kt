@@ -181,7 +181,7 @@ object AppWebDav {
             .map { it.displayName }
             .toSet()
         files.forEach {
-            if (!bgWebDavFiles.contains(it.name)) {
+            if (!bgWebDavFiles.contains(it.name) && it.exists()) {
                 WebDav("$bgWebDavUrl${it.name}", authorization)
                     .upload(it)
             }
