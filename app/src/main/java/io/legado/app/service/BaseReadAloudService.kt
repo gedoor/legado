@@ -85,6 +85,7 @@ abstract class BaseReadAloudService : BaseService(),
     private var cover: Bitmap =
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
     var pageChanged = false
+    private var ttsProgress = 0
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -152,6 +153,7 @@ abstract class BaseReadAloudService : BaseService(),
             IntentAction.pause -> pauseReadAloud()
             IntentAction.resume -> resumeReadAloud()
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
+            IntentAction.upTtsProgress -> upTtsProgress(ttsProgress)
             IntentAction.prevParagraph -> prevP()
             IntentAction.nextParagraph -> nextP()
             IntentAction.addTimer -> addTimer()
@@ -213,6 +215,11 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     abstract fun upSpeechRate(reset: Boolean = false)
+
+    fun upTtsProgress(progress: Int) {
+        ttsProgress = progress
+        postEvent(EventBus.TTS_PROGRESS, progress)
+    }
 
     private fun prevP() {
         if (nowSpeak > 0) {

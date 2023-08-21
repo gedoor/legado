@@ -312,12 +312,14 @@ object CacheBook {
         private fun downloadFinish(
             chapter: BookChapter,
             content: String,
-            resetPageOffset: Boolean = false
+            resetPageOffset: Boolean = false,
+            pageChanged: Boolean = false,
         ) {
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.contentLoadFinish(
                     book, chapter, content,
-                    resetPageOffset = resetPageOffset
+                    resetPageOffset = resetPageOffset,
+                    pageChanged = pageChanged
                 )
             }
         }

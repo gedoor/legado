@@ -171,7 +171,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     pageIndex++
                     ReadBook.moveToNextPage()
                 }
-                postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
+                upTtsProgress(readAloudNumber + 1)
             }
         }
 
@@ -193,7 +193,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
                     ReadBook.moveToNextPage()
-                    postEvent(EventBus.TTS_PROGRESS, readAloudNumber + start)
+                    upTtsProgress(readAloudNumber + start)
                 }
             }
         }

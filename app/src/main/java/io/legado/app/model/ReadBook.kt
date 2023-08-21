@@ -186,16 +186,17 @@ object ReadBook : CoroutineScope by MainScope() {
             nextTextChapter = null
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
-                loadContent(durChapterIndex, upContent, false)
+                loadContent(durChapterIndex, upContent, resetPageOffset = false, pageChanged = true)
             } else if (upContent) {
                 AppLog.putDebug("moveToNextChapter-章节已加载,刷新视图")
-                callBack?.upContent()
+                callBack?.upContent {
+                    callBack?.upMenuView()
+                    AppLog.putDebug("moveToNextChapter-curPageChanged()")
+                    curPageChanged()
+                }
             }
             loadContent(durChapterIndex.plus(1), upContent, false)
             saveRead()
-            callBack?.upMenuView()
-            AppLog.putDebug("moveToNextChapter-curPageChanged()")
-            curPageChanged()
             return true
         } else {
             AppLog.putDebug("跳转下一章失败,没有下一章")
@@ -214,14 +215,15 @@ object ReadBook : CoroutineScope by MainScope() {
             curTextChapter = prevTextChapter
             prevTextChapter = null
             if (curTextChapter == null) {
-                loadContent(durChapterIndex, upContent, false)
+                loadContent(durChapterIndex, upContent, resetPageOffset = false, pageChanged = true)
             } else if (upContent) {
-                callBack?.upContent()
+                callBack?.upContent {
+                    callBack?.upMenuView()
+                    curPageChanged()
+                }
             }
             loadContent(durChapterIndex.minus(1), upContent, false)
             saveRead()
-            callBack?.upMenuView()
-            curPageChanged()
             return true
         } else {
             return false
@@ -302,12 +304,14 @@ object ReadBook : CoroutineScope by MainScope() {
      * @param index 章节序号
      * @param upContent 是否更新视图
      * @param resetPageOffset 滚动阅读是否重置滚动位置
+     * @param pageChanged 是否发生了翻页
      * @param success 加载完成回调
      */
     fun loadContent(
         index: Int,
         upContent: Boolean = true,
         resetPageOffset: Boolean = false,
+        pageChanged: Boolean = false,
         success: (() -> Unit)? = null
     ) {
         if (addLoading(index)) {
@@ -315,10 +319,22 @@ object ReadBook : CoroutineScope by MainScope() {
                 val book = book!!
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                     BookHelp.getContent(book, chapter)?.let {
-                        contentLoadFinish(book, chapter, it, upContent, resetPageOffset) {
+                        contentLoadFinish(
+                            book,
+                            chapter,
+                            it,
+                            upContent,
+                            resetPageOffset,
+                            pageChanged
+                        ) {
                             success?.invoke()
                         }
-                    } ?: download(this, chapter, resetPageOffset = resetPageOffset)
+                    } ?: download(
+                        this,
+                        chapter,
+                        resetPageOffset = resetPageOffset,
+                        pageChanged = pageChanged
+                    )
                 } ?: removeLoading(index)
             }.onError {
                 removeLoading(index)
@@ -345,7 +361,7 @@ object ReadBook : CoroutineScope by MainScope() {
                         downloadedChapters.add(chapter.index)
                     } else {
                         delay(1000)
-                        download(this, chapter, false)
+                        download(this, chapter, resetPageOffset = false, pageChanged = false)
                     }
                 } ?: removeLoading(index)
             } catch (e: Exception) {
@@ -361,6 +377,7 @@ object ReadBook : CoroutineScope by MainScope() {
         scope: CoroutineScope,
         chapter: BookChapter,
         resetPageOffset: Boolean,
+        pageChanged: Boolean,
         success: (() -> Unit)? = null
     ) {
         val book = book ?: return removeLoading(chapter.index)
@@ -370,7 +387,11 @@ object ReadBook : CoroutineScope by MainScope() {
         } else {
             val msg = if (book.isLocal) "无内容" else "没有书源"
             contentLoadFinish(
-                book, chapter, "加载正文失败\n$msg", resetPageOffset = resetPageOffset
+                book,
+                chapter,
+                "加载正文失败\n$msg",
+                resetPageOffset = resetPageOffset,
+                pageChanged = pageChanged
             ) {
                 success?.invoke()
             }
@@ -400,6 +421,7 @@ object ReadBook : CoroutineScope by MainScope() {
         content: String,
         upContent: Boolean = true,
         resetPageOffset: Boolean,
+        pageChanged: Boolean,
         success: (() -> Unit)? = null
     ) {
         Coroutine.async {
@@ -419,7 +441,7 @@ object ReadBook : CoroutineScope by MainScope() {
                         curTextChapter = textChapter
                         if (upContent) callBack?.upContent(offset, resetPageOffset)
                         callBack?.upMenuView()
-                        curPageChanged()
+                        if (pageChanged) curPageChanged()
                         callBack?.contentLoadFinish()
                     }
 

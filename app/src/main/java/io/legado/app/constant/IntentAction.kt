@@ -11,6 +11,7 @@ object IntentAction {
     const val prevParagraph = "prevParagraph"
     const val nextParagraph = "nextParagraph"
     const val upTtsSpeechRate = "upTtsSpeechRate"
+    const val upTtsProgress = "upTtsProgress"
     const val adjustProgress = "adjustProgress"
     const val adjustSpeed = "adjustSpeed"
     const val prev = "prev"

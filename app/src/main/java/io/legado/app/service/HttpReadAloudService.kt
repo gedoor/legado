@@ -300,7 +300,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         playIndexJob?.cancel()
         val textChapter = textChapter ?: return
         playIndexJob = lifecycleScope.launch {
-            postEvent(EventBus.TTS_PROGRESS, readAloudNumber + 1)
+            upTtsProgress(readAloudNumber + 1)
             if (exoPlayer.duration <= 0) {
                 return@launch
             }
@@ -316,7 +316,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     if (pageIndex < textChapter.pageSize) {
                         ReadBook.moveToNextPage()
                     }
-                    postEvent(EventBus.TTS_PROGRESS, readAloudNumber + i)
+                    upTtsProgress(readAloudNumber + i.toInt())
                 }
                 delay(sleep)
             }
