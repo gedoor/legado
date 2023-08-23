@@ -90,6 +90,14 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
                 }
             }
         }
+        holder.itemView.setOnLongClickListener {
+            getItem(holder.layoutPosition)?.let { remoteBook ->
+                if (remoteBook.isOnBookShelf) {
+                    callBack.addToBookShelfAgain(remoteBook)
+                }
+            }
+            true
+        }
     }
 
     private fun upCheckableCount() {
@@ -144,5 +152,6 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
         fun openDir(remoteBook: RemoteBook)
         fun upCountView()
         fun startRead(remoteBook: RemoteBook)
+        fun addToBookShelfAgain(remoteBook: RemoteBook)
     }
 }

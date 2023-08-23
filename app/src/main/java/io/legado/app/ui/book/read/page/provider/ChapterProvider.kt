@@ -417,10 +417,23 @@ object ChapterProvider {
                     }
                 }
             }
+            val sbLength = stringBuilder.length
             stringBuilder.append(words)
             if (textLine.isParagraphEnd) {
                 stringBuilder.append("\n")
             }
+            val lastLine = textPages.last().lines.lastOrNull { it.paragraphNum > 0 }
+                ?: textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull { it.paragraphNum > 0 }
+            val paragraphNum = when {
+                lastLine == null -> 1
+                lastLine.isParagraphEnd -> lastLine.paragraphNum + 1
+                else -> lastLine.paragraphNum
+            }
+            textLine.paragraphNum = paragraphNum
+            textLine.chapterPosition = textPages.foldIndexed(sbLength) { index, acc, textPage ->
+                acc + if (index == textPages.lastIndex) 0 else textPage.text.length
+            }
+            textLine.pagePosition = sbLength
             textPages.last().addLine(textLine)
             textLine.upTopBottom(durY, textPaint)
             durY += textPaint.textHeight * lineSpacingExtra

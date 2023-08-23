@@ -177,6 +177,20 @@ object ReadBook : CoroutineScope by MainScope() {
         return hasNextPage
     }
 
+    fun moveToPrevPage(): Boolean {
+        var hasPrevPage = false
+        curTextChapter?.let {
+            val prevPagePos = it.getPrevPageLength(durChapterPos)
+            if (prevPagePos >= 0) {
+                hasPrevPage = true
+                durChapterPos = prevPagePos
+                callBack?.upContent()
+                saveRead()
+            }
+        }
+        return hasPrevPage
+    }
+
     fun moveToNextChapter(upContent: Boolean): Boolean {
         if (durChapterIndex < chapterSize - 1) {
             durChapterPos = 0

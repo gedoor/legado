@@ -36,6 +36,23 @@ data class TextPage(
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
 
+    val paragraphs by lazy {
+        paragraphsInternal
+    }
+
+    val paragraphsInternal: ArrayList<TextParagraph> get() {
+        val paragraphs = arrayListOf<TextParagraph>()
+        val lines = textLines.filter { it.paragraphNum > 0 }
+        val offset = lines.first().paragraphNum - 1
+        lines.forEach { line ->
+            if (paragraphs.lastIndex < line.paragraphNum - offset - 1) {
+                paragraphs.add(TextParagraph(0))
+            }
+            paragraphs[line.paragraphNum - offset - 1].textLines.add(line)
+        }
+        return paragraphs
+    }
+
     fun addLine(line: TextLine) {
         textLines.add(line)
     }

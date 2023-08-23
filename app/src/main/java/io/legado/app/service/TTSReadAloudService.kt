@@ -7,7 +7,6 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.EventBus
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
@@ -100,7 +99,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             val contentList = contentList
             for (i in nowSpeak until contentList.size) {
                 ensureActive()
-                val text = contentList[i]
+                var text = contentList[i]
+                if (paragraphStartPos > 0 && i == nowSpeak) {
+                    text = text.substring(paragraphStartPos)
+                }
                 if (text.matches(AppPattern.notReadAloudRegex)) {
                     continue
                 }
@@ -178,7 +180,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         override fun onDone(s: String) {
             //跳过全标点段落
             do {
-                readAloudNumber += contentList[nowSpeak].length + 1
+                readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
+                paragraphStartPos = 0
                 nowSpeak++
                 if (nowSpeak >= contentList.size) {
                     nextChapter()

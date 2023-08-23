@@ -11,7 +11,6 @@ import com.script.ScriptException
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.exception.ConcurrentException
 import io.legado.app.exception.NoStackTraceException
@@ -22,7 +21,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.postEvent
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
@@ -90,10 +88,12 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun playStop() {
         exoPlayer.stop()
+        playIndexJob?.cancel()
     }
 
     private fun playNext() {
-        readAloudNumber += contentList[nowSpeak].length + 1
+        readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
+        paragraphStartPos = 0
         if (nowSpeak < contentList.lastIndex) {
             nowSpeak++
         } else {
@@ -111,10 +111,14 @@ class HttpReadAloudService : BaseReadAloudService(),
                 contentList.forEachIndexed { index, content ->
                     ensureActive()
                     if (index < nowSpeak) return@forEachIndexed
-                    val fileName = md5SpeakFileName(content)
-                    val speakText = content.replace(AppPattern.notReadAloudRegex, "")
+                    var text = content
+                    if (paragraphStartPos > 0 && index == nowSpeak) {
+                        text = text.substring(paragraphStartPos)
+                    }
+                    val fileName = md5SpeakFileName(text)
+                    val speakText = text.replace(AppPattern.notReadAloudRegex, "")
                     if (speakText.isEmpty()) {
-                        AppLog.put("阅读段落内容为空，使用无声音频代替。\n朗读文本：$content")
+                        AppLog.put("阅读段落内容为空，使用无声音频代替。\n朗读文本：$text")
                         createSilentSound(fileName)
                     } else if (!hasSpeakFile(fileName)) {
                         runCatching {

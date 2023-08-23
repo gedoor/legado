@@ -3,6 +3,7 @@ package io.legado.app.ui.book.manage
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -52,22 +53,21 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
         batchChangeSourceCoroutine?.cancel()
         batchChangeSourceCoroutine = execute {
             books.forEachIndexed { index, book ->
-                batchChangeSourceProcessLiveData.postValue("${index + 1}/${books.size}")
+                batchChangeSourceProcessLiveData.postValue("${index + 1} / ${books.size}")
                 if (book.isLocal) return@forEachIndexed
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
-                WebBook.preciseSearchAwait(this, source, book.name, book.author)
+                val newBook = WebBook.preciseSearchAwait(this, source, book.name, book.author)
                     .onFailure {
-                        context.toastOnUi("获取书籍出错\n${it.localizedMessage}")
-                    }.getOrNull()?.let { newBook ->
-                        WebBook.getChapterListAwait(source, newBook)
-                            .onFailure {
-                                context.toastOnUi("获取目录出错\n${it.localizedMessage}")
-                            }.getOrNull()?.let { toc ->
-                                book.migrateTo(newBook, toc)
-                                book.removeType(BookType.updateError)
-                                appDb.bookDao.insert(newBook)
-                                appDb.bookChapterDao.insert(*toc.toTypedArray())
-                            }
+                        AppLog.put("获取书籍出错\n${it.localizedMessage}", it, true)
+                    }.getOrNull() ?: return@forEachIndexed
+                WebBook.getChapterListAwait(source, newBook)
+                    .onFailure {
+                        AppLog.put("获取目录出错\n${it.localizedMessage}", it, true)
+                    }.getOrNull()?.let { toc ->
+                        book.migrateTo(newBook, toc)
+                        book.removeType(BookType.updateError)
+                        appDb.bookDao.insert(newBook)
+                        appDb.bookChapterDao.insert(*toc.toTypedArray())
                     }
             }
         }.onStart {
