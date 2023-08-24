@@ -186,16 +186,20 @@ abstract class BaseReadAloudService : BaseService(),
                 }
             }
             nowSpeak = textChapter.getParagraphNum(readAloudNumber + 1, readAloudByPage) - 1
-            if (!readAloudByPage && pos == 0) {
+            if (!readAloudByPage && startPos == 0 && !toLast) {
                 pos = page.lines.first().chapterPosition -
                         textChapter.paragraphs[nowSpeak].chapterPosition
             }
-            paragraphStartPos = pos
             if (toLast) {
                 toLast = false
                 readAloudNumber = textChapter.getLastParagraphPosition()
                 nowSpeak = contentList.lastIndex
+                if (page.paragraphs.size == 1) {
+                    pos = page.lines.first().chapterPosition -
+                            textChapter.paragraphs[nowSpeak].chapterPosition
+                }
             }
+            paragraphStartPos = pos
             launch(Main) {
                 if (play) play() else pageChanged = true
             }

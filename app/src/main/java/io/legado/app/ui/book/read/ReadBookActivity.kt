@@ -1135,10 +1135,24 @@ class ReadBookActivity : BaseReadBookActivity(),
         when {
             !BaseReadAloudService.isRun -> {
                 ReadAloud.upReadAloudClass()
-                ReadBook.readAloud()
+                val scrollPageAnim = ReadBook.pageAnim() == 3
+                if (scrollPageAnim) {
+                    val startPos = binding.readView.getCurPagePosition()
+                    ReadBook.readAloud(startPos = startPos)
+                } else {
+                    ReadBook.readAloud()
+                }
             }
 
-            BaseReadAloudService.pause -> ReadAloud.resume(this)
+            BaseReadAloudService.pause -> {
+                val scrollPageAnim = ReadBook.pageAnim() == 3
+                if (scrollPageAnim) {
+                    val startPos = binding.readView.getCurPagePosition()
+                    ReadAloud.play(this, startPos = startPos)
+                } else {
+                    ReadAloud.resume(this)
+                }
+            }
             else -> ReadAloud.pause(this)
         }
     }

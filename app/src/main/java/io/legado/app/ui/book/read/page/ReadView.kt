@@ -626,6 +626,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
         return curPage.getCurVisiblePage()
     }
 
+    fun getCurPagePosition(): Int {
+        return curPage.getCurVisibleFirstLine()?.pagePosition ?: 0
+    }
+
     override val currentChapter: TextChapter?
         get() {
             return if (callBack.isInitFinish) ReadBook.textChapter(0) else null

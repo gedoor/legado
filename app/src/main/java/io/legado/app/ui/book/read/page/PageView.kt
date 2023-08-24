@@ -14,6 +14,7 @@ import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
@@ -350,6 +351,10 @@ class PageView(context: Context) : FrameLayout(context) {
 
     fun getCurVisiblePage(): TextPage {
         return binding.contentTextView.getCurVisiblePage()
+    }
+
+    fun getCurVisibleFirstLine(): TextLine? {
+        return binding.contentTextView.getCurVisibleFirstLine()
     }
 
     fun markAsMainView() {

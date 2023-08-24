@@ -263,7 +263,12 @@ object ReadBook : CoroutineScope by MainScope() {
     private fun curPageChanged() {
         callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
-            readAloud(!BaseReadAloudService.pause)
+            val scrollPageAnim = pageAnim() == 3
+            if (scrollPageAnim) {
+                ReadAloud.pause(appCtx)
+            } else {
+                readAloud(!BaseReadAloudService.pause)
+            }
         }
         upReadTime()
         preDownload()
@@ -272,9 +277,9 @@ object ReadBook : CoroutineScope by MainScope() {
     /**
      * 朗读
      */
-    fun readAloud(play: Boolean = true) {
+    fun readAloud(play: Boolean = true, startPos: Int = 0) {
         book?.let {
-            ReadAloud.play(appCtx, play)
+            ReadAloud.play(appCtx, play, startPos = startPos)
         }
     }
 
