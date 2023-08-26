@@ -20,7 +20,9 @@
             android:id="@+id/tv_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp" />
+            android:gravity="center_horizontal"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="5dp" />
 
     </androidx.cardview.widget.CardView>
 
