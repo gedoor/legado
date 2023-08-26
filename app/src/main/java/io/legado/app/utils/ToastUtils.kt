@@ -4,7 +4,6 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.LayoutInflater
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -14,6 +13,7 @@ import io.legado.app.R
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
+import splitties.views.inflate
 
 private var toast: Toast? = null
 
@@ -31,7 +31,7 @@ fun Context.toastOnUi(message: CharSequence?, duration: Int = Toast.LENGTH_SHORT
             if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
                 toast?.cancel()
                 toast = Toast(this)
-                toast?.view = LayoutInflater.from(this).inflate(R.layout.view_toast, null)
+                toast?.view = inflate(R.layout.view_toast)
             }
             val toastView = toast?.view!!
             val cardView = toastView.findViewById<CardView>(R.id.cv_content)
