@@ -18,6 +18,7 @@ import io.legado.app.utils.postEvent
 
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 
 import java.util.concurrent.ConcurrentHashMap
@@ -243,7 +244,7 @@ object CacheBook {
             waitDownloadSet.remove(chapterIndex)
             onDownloadSet.add(chapterIndex)
             if (BookHelp.hasContent(book, chapter)) {
-                Coroutine.async {
+                Coroutine.async(executeContext = context) {
                     BookHelp.getContent(book, chapter)?.let {
                         BookHelp.saveImages(bookSource, book, chapter, it)
                     }
@@ -266,7 +267,8 @@ object CacheBook {
                 bookSource,
                 book,
                 chapter,
-                context = context
+                context = context,
+                executeContext = context
             ).onSuccess { content ->
                 onSuccess(chapter)
                 downloadFinish(chapter, content)
@@ -295,7 +297,7 @@ object CacheBook {
             postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
             onDownloadSet.add(chapter.index)
             waitDownloadSet.remove(chapter.index)
-            WebBook.getContent(scope, bookSource, book, chapter)
+            WebBook.getContent(scope, bookSource, book, chapter, executeContext = IO)
                 .onSuccess { content ->
                     onSuccess(chapter)
                     downloadFinish(chapter, content, resetPageOffset)

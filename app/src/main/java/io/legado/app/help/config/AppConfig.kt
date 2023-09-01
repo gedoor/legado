@@ -380,10 +380,22 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.changeSourceLoadWordCount, value)
         }
 
+    var openBookInfoByClickTitle: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.openBookInfoByClickTitle, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.openBookInfoByClickTitle, value)
+        }
+
     var contentSelectSpeakMod: Int
         get() = appCtx.getPrefInt(PreferKey.contentSelectSpeakMod)
         set(value) {
             appCtx.putPrefInt(PreferKey.contentSelectSpeakMod, value)
+        }
+
+    var batchChangeSourceDelay: Int
+        get() = appCtx.getPrefInt(PreferKey.batchChangeSourceDelay)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.batchChangeSourceDelay, value)
         }
 
     val importKeepName get() = appCtx.getPrefBoolean(PreferKey.importKeepName)

@@ -120,6 +120,8 @@ class BookshelfManageActivity :
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         this.menu = menu
+        menu.findItem(R.id.menu_open_book_info_by_click_title)?.isChecked =
+            AppConfig.openBookInfoByClickTitle
         upMenu()
         return super.onPrepareOptionsMenu(menu)
     }
@@ -248,6 +250,11 @@ class BookshelfManageActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
+            R.id.menu_open_book_info_by_click_title -> {
+                AppConfig.openBookInfoByClickTitle = !item.isChecked
+                adapter.notifyItemRangeChanged(0, adapter.itemCount)
+            }
+
             else -> if (item.groupId == R.id.menu_group) {
                 viewModel.groupName = item.title.toString()
                 upTitle()

@@ -152,8 +152,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 }
             }
         }.onError {
-            toastOnUi("朗读出错:${it.localizedMessage}")
-            AppLog.put("朗读下载出错\n${it.localizedMessage}", it)
+            AppLog.put("朗读下载出错\n${it.localizedMessage}", it, true)
         }
     }
 
@@ -196,8 +195,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     is CancellationException -> throw e
                     is ConcurrentException -> delay(e.waitTime.toLong())
                     is ScriptException, is WrappedException -> {
-                        AppLog.put("js错误\n${e.localizedMessage}", e)
-                        toastOnUi("js错误\n${e.localizedMessage}")
+                        AppLog.put("js错误\n${e.localizedMessage}", e, true)
                         e.printOnDebug()
                         throw e
                     }
@@ -206,8 +204,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         downloadErrorNo++
                         if (downloadErrorNo > 5) {
                             val msg = "tts超时或连接错误超过5次\n${e.localizedMessage}"
-                            AppLog.put(msg, e)
-                            toastOnUi(msg)
+                            AppLog.put(msg, e, true)
                             throw e
                         }
                     }
@@ -219,8 +216,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                         e.printOnDebug()
                         if (downloadErrorNo > 5) {
                             val msg1 = "TTS服务器连续5次错误，已暂停阅读。"
-                            AppLog.put(msg1)
-                            toastOnUi(msg1)
+                            AppLog.put(msg1, e, true)
                             throw e
                         } else {
                             AppLog.put("TTS下载音频出错，使用无声音频代替。\n朗读文本：$speakText")

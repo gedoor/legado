@@ -20,4 +20,9 @@
 
     </item>
 
+    <item
+        android:id="@+id/menu_open_book_info_by_click_title"
+        android:checkable="true"
+        android:title="@string/open_book_info_by_click_title" />
+
 </menu>

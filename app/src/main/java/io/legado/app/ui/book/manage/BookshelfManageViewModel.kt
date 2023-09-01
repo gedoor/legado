@@ -10,10 +10,11 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.removeType
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.delay
 
 
 class BookshelfManageViewModel(application: Application) : BaseViewModel(application) {
@@ -52,6 +53,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
     fun changeSource(books: List<Book>, source: BookSource) {
         batchChangeSourceCoroutine?.cancel()
         batchChangeSourceCoroutine = execute {
+            val changeSourceDelay = AppConfig.batchChangeSourceDelay * 1000L
             books.forEachIndexed { index, book ->
                 batchChangeSourceProcessLiveData.postValue("${index + 1} / ${books.size}")
                 if (book.isLocal) return@forEachIndexed
@@ -69,6 +71,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                         appDb.bookDao.insert(newBook)
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
                     }
+                delay(changeSourceDelay)
             }
         }.onStart {
             batchChangeSourceState.postValue(true)

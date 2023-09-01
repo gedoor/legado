@@ -117,8 +117,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 }
             }
         }.onError {
-            AppLog.put("tts朗读出错", it)
-            toastOnUi(it.localizedMessage)
+            AppLog.put("tts朗读出错\n${it.localizedMessage}", it, true)
         }
     }
 
