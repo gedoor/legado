@@ -173,7 +173,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         upSort()
                     }
                     if (bookshelfLayout != rgLayout.getCheckedIndex()) {
-                        putPrefInt(PreferKey.bookshelfLayout, rgLayout.getCheckedIndex())
+                        AppConfig.bookshelfLayout = rgLayout.getCheckedIndex()
                         postEvent(EventBus.RECREATE, "")
                     }
                 }
