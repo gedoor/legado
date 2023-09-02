@@ -93,7 +93,6 @@ class ExportBookService : BaseService() {
     )
 
     private val groupKey = "${appCtx.packageName}.exportBook"
-    private val handler = buildMainHandler()
     private val waitExportBooks = linkedMapOf<String, ExportConfig>()
     private var exportJob: Job? = null
     private var notificationContentText = appCtx.getString(R.string.service_starting)
@@ -111,6 +110,8 @@ class ExportBookService : BaseService() {
                         epubScope = intent.getStringExtra("epubScope")
                     )
                     waitExportBooks[bookUrl] = exportConfig
+                    exportMsg[bookUrl] = getString(R.string.export_wait)
+                    postEvent(EventBus.EXPORT_BOOK, bookUrl)
                     export()
                 }
             }.onFailure {
@@ -163,47 +164,44 @@ class ExportBookService : BaseService() {
         if (exportJob?.isActive == true) {
             return
         }
-        val entry = waitExportBooks.firstNotNullOfOrNull { it }
-        if (entry == null) {
-            notificationContentText = "导出完成"
-            upExportNotification()
-            return
-        }
-        val bookUrl = entry.key
-        val exportConfig = entry.value
-        if (exportProgress.contains(bookUrl)) return
-        exportProgress[bookUrl] = 0
-        waitExportBooks.remove(bookUrl)
         exportJob = lifecycleScope.launch(IO) {
-            val book = appDb.bookDao.getBook(bookUrl)
-            try {
-                book ?: throw NoStackTraceException("获取${bookUrl}书籍出错")
-                notificationContentText = getString(
-                    R.string.export_book_notification_content,
-                    book.name,
-                    waitExportBooks.size
-                )
-                upExportNotification()
-                if (exportConfig.type == "epub") {
-                    if (exportConfig.epubScope.isNullOrBlank()) {
-                        exportEPUB(exportConfig.path, book)
-                    } else {
-                        CustomExporter(paresScope(exportConfig.epubScope), exportConfig.epubSize)
-                            .export(exportConfig.path, book)
-                    }
-                } else {
-                    export(exportConfig.path, book)
+            while (true) {
+                val (bookUrl, exportConfig) = waitExportBooks.entries.firstOrNull() ?: let {
+                    notificationContentText = "导出完成"
+                    upExportNotification()
+                    return@launch
                 }
-                exportMsg[book.bookUrl] = getString(R.string.export_success)
-            } catch (e: Throwable) {
-                exportMsg[bookUrl] = e.localizedMessage ?: "ERROR"
-                AppLog.put("导出书籍<${book?.name ?: bookUrl}>出错", e)
-            } finally {
-                exportProgress.remove(bookUrl)
-                postEvent(EventBus.EXPORT_BOOK, bookUrl)
-            }
-            handler.post {
-                export()
+                exportProgress[bookUrl] = 0
+                waitExportBooks.remove(bookUrl)
+                val book = appDb.bookDao.getBook(bookUrl)
+                try {
+                    book ?: throw NoStackTraceException("获取${bookUrl}书籍出错")
+                    notificationContentText = getString(
+                        R.string.export_book_notification_content,
+                        book.name,
+                        waitExportBooks.size
+                    )
+                    upExportNotification()
+                    if (exportConfig.type == "epub") {
+                        if (exportConfig.epubScope.isNullOrBlank()) {
+                            exportEPUB(exportConfig.path, book)
+                        } else {
+                            CustomExporter(
+                                paresScope(exportConfig.epubScope),
+                                exportConfig.epubSize
+                            ).export(exportConfig.path, book)
+                        }
+                    } else {
+                        export(exportConfig.path, book)
+                    }
+                    exportMsg[book.bookUrl] = getString(R.string.export_success)
+                } catch (e: Throwable) {
+                    exportMsg[bookUrl] = e.localizedMessage ?: "ERROR"
+                    AppLog.put("导出书籍<${book?.name ?: bookUrl}>出错", e)
+                } finally {
+                    exportProgress.remove(bookUrl)
+                    postEvent(EventBus.EXPORT_BOOK, bookUrl)
+                }
             }
         }
     }
