@@ -441,11 +441,11 @@ object ReadBook : CoroutineScope by MainScope() {
         pageChanged: Boolean,
         success: (() -> Unit)? = null
     ) {
+        removeLoading(chapter.index)
         if (chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
             return
         }
         Coroutine.async {
-            removeLoading(chapter.index)
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             val displayTitle = chapter.getDisplayTitle(
                 contentProcessor.getTitleReplaceRules(),
