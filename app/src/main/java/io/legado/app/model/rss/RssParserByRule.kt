@@ -106,7 +106,7 @@ object RssParserByRule {
         rssArticle.pubDate = analyzeRule.getString(rulePubDate)
         Debug.log(sourceUrl, "└${rssArticle.pubDate}", log)
         Debug.log(sourceUrl, "┌获取描述", log)
-        if (ruleDescription.isNullOrEmpty()) {
+        if (ruleDescription.isEmpty()) {
             rssArticle.description = null
             Debug.log(sourceUrl, "└描述规则为空，将会解析内容页", log)
         } else {

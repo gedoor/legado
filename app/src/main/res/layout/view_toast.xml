@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp" />
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"/>
 
     </androidx.cardview.widget.CardView>
 
