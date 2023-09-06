@@ -91,6 +91,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
             bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
         }
+        upHomePage()
         onBackPressedDispatcher.addCallback(this) {
             if (pagePosition != 0) {
                 binding.viewPagerMain.currentItem = 0
@@ -367,6 +368,21 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         realPositions[index] = idMy
         bottomMenuCount = index + 1
         adapter.notifyDataSetChanged()
+    }
+
+    private fun upHomePage() {
+        when (AppConfig.defaultHomePage) {
+            "bookshelf" -> {}
+            "explore" -> if (AppConfig.showDiscovery) {
+                binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
+            }
+
+            "rss" -> if (AppConfig.showRSS) {
+                binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idRss), false)
+            }
+
+            "my" -> binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
+        }
     }
 
     private fun getFragmentId(position: Int): Int {

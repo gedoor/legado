@@ -90,7 +90,7 @@
 
         <io.legado.app.lib.prefs.SwitchPreference
             android:key="onlyLatestBackup"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:title="@string/only_latest_backup_t"
             android:summary="@string/only_latest_backup_s"
             app:allowDividerAbove="false"

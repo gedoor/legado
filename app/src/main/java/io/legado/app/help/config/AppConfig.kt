@@ -429,6 +429,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val onlyLatestBackup get() = appCtx.getPrefBoolean(PreferKey.onlyLatestBackup, true)
 
+    val defaultHomePage get() = appCtx.getPrefString(PreferKey.defaultHomePage, "bookshelf")
+
     val doublePageHorizontal: String?
         get() = appCtx.getPrefString(PreferKey.doublePageHorizontal)
 
