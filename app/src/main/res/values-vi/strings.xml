@@ -807,6 +807,7 @@ Còn </string>
     <string name="rule_sub_empty_msg">Thêm địa chỉ nhập quy tắc do các ông chủ cung cấp\\nNhấp để nhập quy tắc sau khi thêm</string>
     <string name="get_book_progress">Kéo tiến độ đám mây</string>
     <string name="current_progress_exceeds_cloud">Tiến độ hiện tại vượt quá tiến độ đám mây. Bạn có muốn đồng bộ hóa?</string>
+    <string name="cloud_progress_exceeds_current">Có nhiều tiến bộ hơn trong đám mây so với hiện tại. Bạn có muốn đồng bộ hóa không?</string>
     <string name="sync_book_progress_t">Tiến độ đọc đồng bộ</string>
     <string name="sync_book_progress_s">Đồng bộ tiến độ đọc khi vào/ra khỏi giao diện đọc</string>
     <string name="create_bookmark_error">Không thể tạo dấu trang</string>

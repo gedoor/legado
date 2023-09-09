@@ -805,6 +805,7 @@
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">Obtener progreso en la nube</string>
     <string name="current_progress_exceeds_cloud">El progreso actual excede el progreso de la nube. ¿Quieres sincronizar?</string>
+    <string name="cloud_progress_exceeds_current">Hay más progreso en la nube que actualmente. ¿Quieres sincronizar?</string>
     <string name="sync_book_progress_t">Progreso de lectura sincronizado</string>
     <string name="sync_book_progress_s">Sincronizar el progreso de la lectura al entrar y salir de la pantalla de lectura</string>
     <string name="create_bookmark_error">No se pudo marcar</string>

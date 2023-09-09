@@ -40,6 +40,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
@@ -174,6 +175,10 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
+    private val networkChangedListener by lazy {
+        NetworkChangedListener(this)
+    }
+    private var justInitData: Boolean = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -216,11 +221,13 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         viewModel.initData(intent)
+        justInitData = true
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         viewModel.initData(intent ?: return)
+        justInitData = true
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -244,6 +251,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             bookChanged = false
             ReadBook.callBack = this
             viewModel.initData(intent)
+            justInitData = true
         } else {
             //web端阅读时，app处于阅读界面，本地记录会覆盖web保存的进度，在此处恢复
             ReadBook.webBookProgress?.let {
@@ -254,6 +262,14 @@ class ReadBookActivity : BaseReadBookActivity(),
         upSystemUiVisibility()
         registerReceiver(timeBatteryReceiver, timeBatteryReceiver.filter)
         binding.readView.upTime()
+        // 网络监听，当从无网切换到网络环境时同步进度（注意注册的同时就会收到监听，因此界面激活时无需重复执行同步操作）
+        networkChangedListener.register()
+        networkChangedListener.onNetworkChanged = {
+            // 当网络是可用状态且无需初始化时同步进度（初始化中已有同步进度逻辑）
+            if (NetworkUtils.isAvailable() && !justInitData) {
+                ReadBook.syncProgress({progress -> sureNewProgress(progress)}, null)
+            }
+        }
     }
 
     override fun onPause() {
@@ -264,9 +280,11 @@ class ReadBookActivity : BaseReadBookActivity(),
         unregisterReceiver(timeBatteryReceiver)
         upSystemUiVisibility()
         if (!BuildConfig.DEBUG) {
-            ReadBook.uploadProgress()
+            ReadBook.syncProgress()
             Backup.autoBack(this)
         }
+        justInitData = false
+        networkChangedListener.unRegister()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -1242,6 +1260,16 @@ class ReadBookActivity : BaseReadBookActivity(),
     private fun sureSyncProgress(progress: BookProgress) {
         alert(R.string.get_book_progress) {
             setMessage(R.string.current_progress_exceeds_cloud)
+            okButton {
+                ReadBook.setProgress(progress)
+            }
+            noButton()
+        }
+    }
+
+    private fun sureNewProgress(progress: BookProgress) {
+        alert(R.string.get_book_progress) {
+            setMessage(R.string.cloud_progress_exceeds_current)
             okButton {
                 ReadBook.setProgress(progress)
             }
