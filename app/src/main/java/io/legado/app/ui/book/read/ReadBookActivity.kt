@@ -237,6 +237,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.readView.upStatusBar()
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
         ReadBook.readStartTime = System.currentTimeMillis()
@@ -1118,8 +1119,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                             }
                         }
                     }.onError {
-                        AppLog.putDebug(it.localizedMessage)
-                        toastOnUi(it.localizedMessage)
+                        AppLog.put("执行购买操作出错\n${it.localizedMessage}", it, true)
                     }
                 }
                 noButton()
@@ -1153,6 +1153,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     ReadAloud.resume(this)
                 }
             }
+
             else -> ReadAloud.pause(this)
         }
     }

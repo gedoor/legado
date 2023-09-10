@@ -99,7 +99,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     private fun upCoverByRule(book: Book) {
         execute {
-            if (book.customCoverUrl.isNullOrBlank()) {
+            if (book.coverUrl.isNullOrBlank() && book.customCoverUrl.isNullOrBlank()) {
                 BookCover.searchCover(book)?.let { coverUrl ->
                     book.customCoverUrl = coverUrl
                     bookData.postValue(book)

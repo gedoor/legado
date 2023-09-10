@@ -146,7 +146,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun upReadTime() {
-        Coroutine.async {
+        Coroutine.async(executeContext = IO) {
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
             readRecord.lastRead = System.currentTimeMillis()
@@ -537,7 +537,7 @@ object ReadBook : CoroutineScope by MainScope() {
             return
         }
         preDownloadTask?.cancel()
-        preDownloadTask = Coroutine.async {
+        preDownloadTask = Coroutine.async(executeContext = IO) {
             //预下载
             launch {
                 val maxChapterIndex = min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
