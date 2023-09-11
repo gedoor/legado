@@ -91,7 +91,6 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
                 onSuccess(searchId, it)
             }
             .onFinally {
-                ensureActive()
                 onFinally(searchId)
             }
         tasks.add(task)
