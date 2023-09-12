@@ -1267,7 +1267,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    private fun sureNewProgress(progress: BookProgress) {
+    override fun sureNewProgress(progress: BookProgress) {
         alert(R.string.get_book_progress) {
             setMessage(R.string.cloud_progress_exceeds_current)
             okButton {
