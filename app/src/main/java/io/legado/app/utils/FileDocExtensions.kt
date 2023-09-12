@@ -6,6 +6,7 @@ import android.app.DownloadManager
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.exception.NoStackTraceException
@@ -234,6 +235,14 @@ fun FileDoc.openInputStream(): Result<InputStream> {
 
 fun FileDoc.openOutputStream(): Result<OutputStream> {
     return uri.outputStream(appCtx)
+}
+
+fun FileDoc.openReadPfd(): Result<ParcelFileDescriptor> {
+    return uri.toReadPfd(appCtx)
+}
+
+fun FileDoc.openWritePfd(): Result<ParcelFileDescriptor> {
+    return uri.toWritePfd(appCtx)
 }
 
 fun FileDoc.exists(
