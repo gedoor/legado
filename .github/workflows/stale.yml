@@ -9,6 +9,7 @@ on:
   schedule:
   # 每5天北京时间9点
   - cron: '30 1 1/5 * *'
+  workflow_dispatch:
 
 jobs:
   stale:
