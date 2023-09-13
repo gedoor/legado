@@ -17,6 +17,7 @@ jobs:
     if: ${{ github.repository == 'gedoor/legado' }}
     permissions:
       issues: write
+      pull-requests: write
 
     steps:
     - uses: actions/stale@v8
