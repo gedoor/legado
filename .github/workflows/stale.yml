@@ -27,3 +27,4 @@ jobs:
         stale-issue-message: '由于长期没有状态更新，该问题将于5天后自动关闭。如有需要可重新打开。'
         days-before-stale: 30
         days-before-close: 5
+        operations-per-run: 100
