@@ -3,6 +3,8 @@ package io.legado.app.utils
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppPattern.archiveFileRegex
+import io.legado.app.help.config.AppConfig
+import io.legado.app.utils.compress.LibArchiveUtils
 import io.legado.app.utils.compress.RarUtils
 import io.legado.app.utils.compress.SevenZipUtils
 import io.legado.app.utils.compress.ZipUtils
@@ -14,6 +16,7 @@ import java.io.File
 object ArchiveUtils {
 
     const val TEMP_FOLDER_NAME = "ArchiveTemp"
+
     // 临时目录 下次启动自动删除
     val TEMP_PATH: String by lazy {
         appCtx.externalCache.getFile(TEMP_FOLDER_NAME).createFolderReplace().absolutePath
@@ -61,19 +64,68 @@ object ArchiveUtils {
         checkAchieve(name)
         val workPathFileDoc = getCacheFolderFileDoc(name, path)
         val workPath = workPathFileDoc.toString()
-        return archiveFileDoc.openInputStream().getOrThrow().use {
-            when {
-                name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(it, workPath, filter)
-                name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(it, workPath, filter)
-                name.endsWith(".7z", ignoreCase = true) -> SevenZipUtils.un7zToPath(it, workPath, filter)
-                else -> throw IllegalArgumentException("Unexpected archive format")
+
+        return if (AppConfig.useLibArchive) {
+            archiveFileDoc.openReadPfd().getOrThrow().use {
+                LibArchiveUtils.unArchive(it, File(workPath), filter)
+            }
+        } else {
+            archiveFileDoc.openInputStream().getOrThrow().use {
+                when {
+                    name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(
+                        it,
+                        workPath,
+                        filter
+                    )
+
+                    name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(
+                        it,
+                        workPath,
+                        filter
+                    )
+
+                    name.endsWith(".7z", ignoreCase = true) -> SevenZipUtils.un7zToPath(
+                        it,
+                        workPath,
+                        filter
+                    )
+
+                    else -> throw IllegalArgumentException("Unexpected archive format")
+                }
             }
         }
+
+
     }
 
     /* 遍历目录获取文件名 */
-    fun getArchiveFilesName(fileUri: Uri, filter: ((String) -> Boolean)? = null): List<String> = getArchiveFilesName(FileDoc.fromUri(fileUri, false), filter)
- 
+    fun getArchiveFilesName(fileUri: Uri, filter: ((String) -> Boolean)? = null): List<String> =
+        if (AppConfig.useLibArchive) {
+            getLibArchiveFilesName(FileDoc.fromUri(fileUri, false), filter)
+        } else {
+            getArchiveFilesName(FileDoc.fromUri(fileUri, false), filter)
+        }
+
+
+    fun getLibArchiveFilesName(
+        fileDoc: FileDoc,
+        filter: ((String) -> Boolean)? = null
+    ): List<String> {
+        val name = fileDoc.name
+        checkAchieve(name)
+
+        return fileDoc.openReadPfd().getOrThrow().use {
+            try {
+                LibArchiveUtils.getFilesName(it, filter)
+            } catch (e: Exception) {
+                emptyList()
+            }
+
+        }
+
+
+    }
+
     fun getArchiveFilesName(
         fileDoc: FileDoc,
         filter: ((String) -> Boolean)? = null
@@ -85,14 +137,17 @@ object ArchiveUtils {
                 name.endsWith(".rar", ignoreCase = true) -> {
                     RarUtils.getFilesName(it, filter)
                 }
+
                 name.endsWith(".zip", ignoreCase = true) -> {
                     ZipUtils.getFilesName(it, filter)
                 }
+
                 name.endsWith(".7z", ignoreCase = true) -> {
                     SevenZipUtils.getFilesName(it, filter)
                 }
+
                 else -> emptyList()
-           }
+            }
         }
     }
 

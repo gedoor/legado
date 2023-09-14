@@ -8,7 +8,7 @@ import androidx.appcompat.widget.AppCompatTextView
 class MultilineTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         calculateLines()
         super.onDraw(canvas)
     }
