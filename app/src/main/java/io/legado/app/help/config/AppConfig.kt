@@ -7,13 +7,25 @@ import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getPrefLong
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.isNightMode
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.putPrefLong
+import io.legado.app.utils.putPrefString
+import io.legado.app.utils.removePref
+import io.legado.app.utils.sysConfiguration
+import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val isCronet = appCtx.getPrefBoolean(PreferKey.cronet)
-    val useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
+    var useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
+    var useLibArchive = appCtx.getPrefBoolean(PreferKey.useLibArchive)
     var userAgent: String = getPrefUserAgent()
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
@@ -63,6 +75,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 appCtx.getPrefBoolean(PreferKey.useZhLayout)
 
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
+
+            PreferKey.antiAlias -> useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
+
+            PreferKey.useLibArchive -> useLibArchive =
+                appCtx.getPrefBoolean(PreferKey.useLibArchive)
         }
     }
 
