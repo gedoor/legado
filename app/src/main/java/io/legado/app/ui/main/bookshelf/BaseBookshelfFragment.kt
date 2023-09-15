@@ -146,6 +146,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         swShowUnread.isChecked = AppConfig.showUnread
                         swShowLastUpdateTime.isChecked = AppConfig.showLastUpdateTime
                         swShowWaitUpBooks.isChecked = AppConfig.showWaitUpCount
+                        swShowBookshelfFastScroller.isChecked = AppConfig.showBookshelfFastScroller
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
                     }
