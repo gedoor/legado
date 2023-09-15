@@ -168,6 +168,10 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         AppConfig.showWaitUpCount = swShowWaitUpBooks.isChecked
                         activityViewModel.postUpBooksLiveData(true)
                     }
+                    if (AppConfig.showBookshelfFastScroller != swShowBookshelfFastScroller.isChecked) {
+                        AppConfig.showBookshelfFastScroller = swShowBookshelfFastScroller.isChecked
+                        postEvent(EventBus.BOOKSHELF_REFRESH, "")
+                    }
                     if (bookshelfSort != rgSort.getCheckedIndex()) {
                         AppConfig.bookshelfSort = rgSort.getCheckedIndex()
                         upSort()
