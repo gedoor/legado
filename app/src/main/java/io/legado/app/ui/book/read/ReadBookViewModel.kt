@@ -56,7 +56,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 初始化
      */
-    fun initData(intent: Intent) {
+    fun initData(intent: Intent, success: (() -> Unit)? = null) {
         execute {
             ReadBook.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             ReadBook.tocChanged = intent.getBooleanExtra("tocChanged", false)
@@ -70,6 +70,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 book != null -> initBook(book)
                 else -> ReadBook.upMsg(context.getString(R.string.no_book))
             }
+        }.onSuccess {
+            success?.invoke()
         }.onError {
             val msg = "初始化数据失败\n${it.localizedMessage}"
             ReadBook.upMsg(msg)
