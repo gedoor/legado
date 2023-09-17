@@ -1375,6 +1375,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         ReadBook.preDownloadTask?.cancel()
         ReadBook.downloadScope.coroutineContext.cancelChildren()
+        ReadBook.coroutineContext.cancelChildren()
         ReadBook.downloadedChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)

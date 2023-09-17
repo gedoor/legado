@@ -502,7 +502,7 @@ object ReadBook : CoroutineScope by MainScope() {
             ) {
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
                 chapterSize = cList.size
-                nextTextChapter ?: loadContent(1)
+                nextTextChapter ?: loadContent(durChapterIndex + 1)
             }
         }
     }
