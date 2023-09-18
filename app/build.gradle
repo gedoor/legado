@@ -229,7 +229,7 @@ dependencies {
     appImplementation 'com.google.protobuf:protobuf-javalite:3.23.4'
 
     //Glide
-    def glideVersion = "4.15.1"
+    def glideVersion = "4.16.0"
     implementation("com.github.bumptech.glide:glide:$glideVersion")
     //kapt("com.github.bumptech.glide:compiler:$glideVersion")
     ksp("com.github.bumptech.glide:ksp:$glideVersion")
