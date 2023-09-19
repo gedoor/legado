@@ -308,8 +308,16 @@ object ReadBook : CoroutineScope by MainScope() {
      * @param resetPageOffset 滚动阅读是否重置滚动位置
      * @param success 当前章节加载完成回调
      */
-    fun loadContent(resetPageOffset: Boolean, success: (() -> Unit)? = null) {
-        loadContent(durChapterIndex, resetPageOffset = resetPageOffset) {
+    fun loadContent(
+        resetPageOffset: Boolean,
+        pageChanged: Boolean = false,
+        success: (() -> Unit)? = null
+    ) {
+        loadContent(
+            durChapterIndex,
+            resetPageOffset = resetPageOffset,
+            pageChanged = pageChanged
+        ) {
             success?.invoke()
         }
         loadContent(durChapterIndex + 1, resetPageOffset = resetPageOffset)
