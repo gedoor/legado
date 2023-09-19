@@ -1394,14 +1394,15 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
-            if (!isInitFinish) return@observeEvent
             upSystemUiVisibility()
             readView.upPageSlopSquare()
             readView.upBg()
             readView.upStyle()
             readView.upBgAlpha()
             if (it) {
-                ReadBook.loadContent(resetPageOffset = false)
+                if (isInitFinish) {
+                    ReadBook.loadContent(resetPageOffset = false)
+                }
             } else {
                 readView.upContent(resetPageOffset = false)
             }
