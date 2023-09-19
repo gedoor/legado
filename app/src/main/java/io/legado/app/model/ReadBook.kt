@@ -151,7 +151,8 @@ object ReadBook : CoroutineScope by MainScope() {
      */
     fun syncProgress(
         newProgressAction: ((progress: BookProgress) -> Unit)? = null,
-        uploadSuccessAction: (() -> Unit)? = null) {
+        uploadSuccessAction: (() -> Unit)? = null,
+        syncSuccessAction: (() -> Unit)? = null) {
         if (!AppConfig.syncBookProgress) return
         book?.let {
             Coroutine.async {
@@ -171,6 +172,8 @@ object ReadBook : CoroutineScope by MainScope() {
                         progress.durChapterPos > it.durChapterPos) {
                     // 进度比服务器慢，执行传入动作
                     newProgressAction?.invoke(progress)
+                } else {
+                    syncSuccessAction?.invoke()
                 }
             }
         }
@@ -605,6 +608,8 @@ object ReadBook : CoroutineScope by MainScope() {
         fun upPageAnim()
 
         fun notifyBookChanged()
+
+        fun sureNewProgress(progress: BookProgress)
     }
 
 }

@@ -433,7 +433,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
             10 -> callBack.openChapterList()
             11 -> callBack.openSearchActivity(null)
             12 -> ReadBook.syncProgress({progress -> callBack.sureNewProgress(progress)},
-                { context.longToastOnUi(context.getString(R.string.upload_book_success)) })
+                { context.longToastOnUi(context.getString(R.string.upload_book_success)) },
+                { context.longToastOnUi(context.getString(R.string.sync_book_progress_success)) })
         }
     }
 
