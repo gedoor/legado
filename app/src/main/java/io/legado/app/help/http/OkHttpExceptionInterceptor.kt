@@ -1,6 +1,5 @@
 package io.legado.app.help.http
 
-import io.legado.app.utils.asIOException
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException

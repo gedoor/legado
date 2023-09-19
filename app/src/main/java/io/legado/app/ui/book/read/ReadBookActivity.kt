@@ -215,12 +215,16 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        viewModel.initData(intent)
+        viewModel.initData(intent) {
+            upMenu()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        viewModel.initData(intent ?: return)
+        viewModel.initData(intent ?: return) {
+            upMenu()
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -244,7 +248,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (bookChanged) {
             bookChanged = false
             ReadBook.callBack = this
-            viewModel.initData(intent)
+            viewModel.initData(intent) {
+                upMenu()
+            }
         } else {
             //web端阅读时，app处于阅读界面，本地记录会覆盖web保存的进度，在此处恢复
             ReadBook.webBookProgress?.let {
@@ -1368,6 +1374,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadBook.callBack = null
         }
         ReadBook.preDownloadTask?.cancel()
+        ReadBook.downloadScope.coroutineContext.cancelChildren()
+        ReadBook.coroutineContext.cancelChildren()
         ReadBook.downloadedChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)

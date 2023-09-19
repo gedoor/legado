@@ -146,6 +146,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         swShowUnread.isChecked = AppConfig.showUnread
                         swShowLastUpdateTime.isChecked = AppConfig.showLastUpdateTime
                         swShowWaitUpBooks.isChecked = AppConfig.showWaitUpCount
+                        swShowBookshelfFastScroller.isChecked = AppConfig.showBookshelfFastScroller
                         rgLayout.checkByIndex(bookshelfLayout)
                         rgSort.checkByIndex(bookshelfSort)
                     }
@@ -167,6 +168,10 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     if (AppConfig.showWaitUpCount != swShowWaitUpBooks.isChecked) {
                         AppConfig.showWaitUpCount = swShowWaitUpBooks.isChecked
                         activityViewModel.postUpBooksLiveData(true)
+                    }
+                    if (AppConfig.showBookshelfFastScroller != swShowBookshelfFastScroller.isChecked) {
+                        AppConfig.showBookshelfFastScroller = swShowBookshelfFastScroller.isChecked
+                        postEvent(EventBus.BOOKSHELF_REFRESH, "")
                     }
                     if (bookshelfSort != rgSort.getCheckedIndex()) {
                         AppConfig.bookshelfSort = rgSort.getCheckedIndex()

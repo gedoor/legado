@@ -53,7 +53,7 @@ jobs:
       VERSION: ${{ needs.prepare.outputs.version }}
       VERSIONL: ${{ needs.prepare.outputs.versionL }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up JDK 17
@@ -113,7 +113,7 @@ jobs:
       # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
       LANZOU_FOLDER_ID: '2670621'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           path: apk/
@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           path: apk/
@@ -157,7 +157,7 @@ jobs:
       CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           path: apk/

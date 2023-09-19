@@ -137,6 +137,7 @@ object PreferKey {
     const val batchChangeSourceDelay = "batchChangeSourceDelay"
     const val openBookInfoByClickTitle = "openBookInfoByClickTitle"
     const val defaultHomePage = "defaultHomePage"
+    const val showBookshelfFastScroller = "showBookshelfFastScroller"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

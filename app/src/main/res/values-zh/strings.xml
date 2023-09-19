@@ -1132,4 +1132,5 @@
     <string name="export_wait">等待导出</string>
     <string name="use_lib_archive">使用LibArchive</string>
     <string name="pref_use_lib_archive_summary">使用libarchive解压文件，支持解压RAR5。</string>
+    <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
 </resources>

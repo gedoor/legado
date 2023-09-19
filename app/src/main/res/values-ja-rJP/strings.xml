@@ -1134,4 +1134,5 @@
     <string name="default_home_page">默认主页</string>
     <string name="use_lib_archive">Use LibArchive</string>
     <string name="pref_use_lib_archive_summary">Using libarchive to extract files, it supports extracting RAR5.</string>
+    <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
 </resources>

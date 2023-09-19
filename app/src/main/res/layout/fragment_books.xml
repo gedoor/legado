@@ -13,7 +13,6 @@
             android:id="@+id/rv_bookshelf"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
             tools:listitem="@layout/item_bookshelf_list" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
