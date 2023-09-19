@@ -478,7 +478,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     /**
      * 翻页动画完成后事件
-     * @param direction 翻页翻页反向
+     * @param direction 翻页方向
      */
     fun fillPage(direction: PageDirection): Boolean {
         return when (direction) {

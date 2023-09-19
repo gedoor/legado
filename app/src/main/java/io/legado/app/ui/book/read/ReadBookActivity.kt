@@ -1377,6 +1377,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         ReadBook.downloadScope.coroutineContext.cancelChildren()
         ReadBook.coroutineContext.cancelChildren()
         ReadBook.downloadedChapters.clear()
+        ReadBook.downloadFailChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
@@ -1393,6 +1394,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
         observeEvent<Boolean>(EventBus.UP_CONFIG) {
+            if (!isInitFinish) return@observeEvent
             upSystemUiVisibility()
             readView.upPageSlopSquare()
             readView.upBg()

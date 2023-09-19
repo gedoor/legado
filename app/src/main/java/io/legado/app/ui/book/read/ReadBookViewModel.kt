@@ -228,7 +228,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadBook.resetData(book)
             ReadBook.upMsg(null)
-            ReadBook.loadContent(resetPageOffset = true, pageChanged = true)
+            ReadBook.loadContent(resetPageOffset = true)
         }.onError {
             context.toastOnUi("换源失败\n${it.localizedMessage}")
             ReadBook.upMsg(null)
@@ -286,7 +286,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.durChapterIndex = index
             ReadBook.durChapterPos = durChapterPos
             ReadBook.saveRead()
-            ReadBook.loadContent(resetPageOffset = true, pageChanged = true) {
+            ReadBook.loadContent(resetPageOffset = true) {
                 success?.invoke()
             }
         }
@@ -315,11 +315,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 ?.let { chapter ->
                     BookHelp.delContent(book, chapter)
-                    ReadBook.loadContent(
-                        ReadBook.durChapterIndex,
-                        resetPageOffset = false,
-                        pageChanged = true
-                    )
+                    ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
         }
     }
