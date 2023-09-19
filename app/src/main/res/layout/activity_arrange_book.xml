@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/bookshelf_management"
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/bookshelf_management" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/title_bar"
-        app:layout_constraintBottom_toTopOf="@id/select_action_bar" />
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/select_action_bar"
+        app:layout_constraintTop_toBottomOf="@id/title_bar" />
 
     <io.legado.app.ui.widget.SelectActionBar
         android:id="@+id/select_action_bar"

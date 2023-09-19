@@ -220,13 +220,17 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        viewModel.initData(intent)
+        viewModel.initData(intent) {
+            upMenu()
+        }
         justInitData = true
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        viewModel.initData(intent ?: return)
+        viewModel.initData(intent ?: return) {
+            upMenu()
+        }
         justInitData = true
     }
 
@@ -244,13 +248,16 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.readView.upStatusBar()
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
         ReadBook.readStartTime = System.currentTimeMillis()
         if (bookChanged) {
             bookChanged = false
             ReadBook.callBack = this
-            viewModel.initData(intent)
+            viewModel.initData(intent) {
+                upMenu()
+            }
             justInitData = true
         } else {
             //web端阅读时，app处于阅读界面，本地记录会覆盖web保存的进度，在此处恢复
@@ -1136,8 +1143,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                             }
                         }
                     }.onError {
-                        AppLog.putDebug(it.localizedMessage)
-                        toastOnUi(it.localizedMessage)
+                        AppLog.put("执行购买操作出错\n${it.localizedMessage}", it, true)
                     }
                 }
                 noButton()
@@ -1171,6 +1177,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     ReadAloud.resume(this)
                 }
             }
+
             else -> ReadAloud.pause(this)
         }
     }
@@ -1396,6 +1403,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadBook.callBack = null
         }
         ReadBook.preDownloadTask?.cancel()
+        ReadBook.downloadScope.coroutineContext.cancelChildren()
+        ReadBook.coroutineContext.cancelChildren()
         ReadBook.downloadedChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)

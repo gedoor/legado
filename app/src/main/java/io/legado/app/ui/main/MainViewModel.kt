@@ -138,7 +138,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
         waitUpTocBooks.remove(bookUrl)
         upTocAdd(bookUrl)
-        execute(context = upTocPool, executeContext = IO) {
+        execute(context = upTocPool, executeContext = upTocPool) {
             kotlin.runCatching {
                 val oldBook = book.copy()
                 WebBook.runPreUpdateJs(source, book)
@@ -170,10 +170,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookDao.update(book)
                 }
             }
-        }.onCancel(upTocPool) {
+        }.onCancel {
             upTocCancel(bookUrl)
             upTocCancel(book.bookUrl)
-        }.onFinally(upTocPool) {
+        }.onFinally {
             upTocFinally(bookUrl)
             upTocFinally(book.bookUrl)
             postUpBooksLiveData()

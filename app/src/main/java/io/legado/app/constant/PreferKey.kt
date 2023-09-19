@@ -89,6 +89,7 @@ object PreferKey {
     const val syncBookProgress = "syncBookProgress"
     const val cronet = "Cronet"
     const val antiAlias = "antiAlias"
+    const val useLibArchive = "useLibArchive"
     const val bitmapCacheSize = "bitmapCacheSize"
     const val preDownloadNum = "preDownloadNum"
     const val autoRefresh = "auto_refresh"
@@ -136,6 +137,7 @@ object PreferKey {
     const val batchChangeSourceDelay = "batchChangeSourceDelay"
     const val openBookInfoByClickTitle = "openBookInfoByClickTitle"
     const val defaultHomePage = "defaultHomePage"
+    const val showBookshelfFastScroller = "showBookshelfFastScroller"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

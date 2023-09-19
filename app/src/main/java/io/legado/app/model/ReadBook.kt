@@ -20,6 +20,7 @@ import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
@@ -55,6 +56,7 @@ object ReadBook : CoroutineScope by MainScope() {
     var preDownloadTask: Coroutine<*>? = null
     val downloadedChapters = hashSetOf<Int>()
     var contentProcessor: ContentProcessor? = null
+    val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
     //暂时保存跳转前进度
     fun saveCurrentBookProcess() {
@@ -180,7 +182,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun upReadTime() {
-        Coroutine.async {
+        Coroutine.async(executeContext = IO) {
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
             readRecord.lastRead = System.currentTimeMillis()
@@ -381,7 +383,7 @@ object ReadBook : CoroutineScope by MainScope() {
                             success?.invoke()
                         }
                     } ?: download(
-                        this,
+                        downloadScope,
                         chapter,
                         resetPageOffset = resetPageOffset,
                         pageChanged = pageChanged
@@ -412,7 +414,12 @@ object ReadBook : CoroutineScope by MainScope() {
                         downloadedChapters.add(chapter.index)
                     } else {
                         delay(1000)
-                        download(this, chapter, resetPageOffset = false, pageChanged = false)
+                        download(
+                            downloadScope,
+                            chapter,
+                            resetPageOffset = false,
+                            pageChanged = false
+                        )
                     }
                 } ?: removeLoading(index)
             } catch (e: Exception) {
@@ -529,7 +536,7 @@ object ReadBook : CoroutineScope by MainScope() {
             ) {
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
                 chapterSize = cList.size
-                nextTextChapter ?: loadContent(1)
+                nextTextChapter ?: loadContent(durChapterIndex + 1)
             }
         }
     }
@@ -547,16 +554,19 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun saveRead() {
-        Coroutine.async {
+        Coroutine.async(executeContext = IO) {
             val book = book ?: return@async
             book.lastCheckCount = 0
             book.durChapterTime = System.currentTimeMillis()
+            val chapterChanged = book.durChapterIndex != durChapterIndex
             book.durChapterIndex = durChapterIndex
             book.durChapterPos = durChapterPos
-            appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let {
-                book.durChapterTitle = it.getDisplayTitle(
-                    ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-                )
+            if (chapterChanged) {
+                appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let {
+                    book.durChapterTitle = it.getDisplayTitle(
+                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+                    )
+                }
             }
             appDb.bookDao.update(book)
         }
@@ -571,7 +581,7 @@ object ReadBook : CoroutineScope by MainScope() {
             return
         }
         preDownloadTask?.cancel()
-        preDownloadTask = Coroutine.async {
+        preDownloadTask = Coroutine.async(executeContext = IO) {
             //预下载
             launch {
                 val maxChapterIndex = min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
