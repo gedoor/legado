@@ -41,7 +41,7 @@ android {
     }
     defaultConfig {
         applicationId "io.legado.app"
-        minSdk 24
+        minSdk 21
         targetSdk 33
         versionCode 10000 + gitCommits
         versionName version
@@ -92,16 +92,6 @@ android {
         app {
             dimension "mode"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "app")
-        }
-        google {
-            dimension "mode"
-            applicationId "io.legado.play"
-            manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
-        }
-        lollipop {
-            dimension "mode"
-            minSdk 21
-            manifestPlaceholders.put("APP_CHANNEL_VALUE", "lollipop")
         }
     }
 
@@ -219,14 +209,12 @@ dependencies {
     implementation(project(path: ':modules:book'))
 
     //JS rhino
-    appImplementation(project(path: ':modules:rhino1.7.3'))
-    googleImplementation(project(path: ':modules:rhino1.7.3'))
-    lollipopImplementation(project(path: ':modules:rhino1.7.3'))
+    implementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.11.0')
-    appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    appImplementation 'com.google.protobuf:protobuf-javalite:3.23.4'
+    implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    implementation 'com.google.protobuf:protobuf-javalite:3.23.4'
 
     //Glide
     def glideVersion = "4.15.1"

@@ -42,18 +42,6 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="mail"
-            android:summary="@string/email"
-            android:title="@string/send_mail"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
-            android:key="git"
-            android:summary="@string/this_github_url"
-            android:title="@string/git_hub"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
             android:key="discord"
             android:summary="@string/discord_url"
             android:title="Discord"
@@ -63,20 +51,6 @@
             android:key="tg"
             android:summary="@string/tg_url"
             android:title="TG"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
-            android:key="sourceRuleSummary"
-            android:summary="@string/source_rule_url"
-            android:title="@string/source_rule_s"
-            app:iconSpaceReserved="false" />
-
-        <io.legado.app.lib.prefs.Preference
-            android:key="home_page"
-            android:summary="@string/home_page_url"
-            android:title="@string/home_page"
-            app:allowDividerAbove="false"
-            app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.lib.prefs.PreferenceCategory>

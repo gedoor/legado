@@ -5,7 +5,13 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.utils.NetworkUtils
-import okhttp3.*
+import okhttp3.ConnectionSpec
+import okhttp3.Cookie
+import okhttp3.CookieJar
+import okhttp3.Credentials
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -89,7 +95,7 @@ val okHttpClient: OkHttpClient by lazy {
             }
             networkResponse
         }
-    if (!AppConst.isPlayChannel && AppConfig.isCronet) {
+    if (AppConfig.isCronet) {
         if (Cronet.loader?.install() == true) {
             Cronet.interceptor?.let {
                 builder.addInterceptor(it)

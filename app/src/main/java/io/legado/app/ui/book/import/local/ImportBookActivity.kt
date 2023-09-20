@@ -12,7 +12,6 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.config.AppConfig
@@ -175,10 +174,6 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
                             binding.tvEmptyMsg.visible()
                             selectFolder.launch()
                         }
-                    }
-                    AppConst.isPlayChannel -> {
-                        binding.tvEmptyMsg.visible()
-                        selectFolder.launch()
                     }
                     else -> initRootPath(rootUri.path!!)
                 }
