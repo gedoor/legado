@@ -87,7 +87,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.upData(book)
         } else {
             ReadBook.resetData(book)
-            ReadAloud.stop(context)
         }
         isInitFinish = true
         if (ReadBook.chapterSize == 0) {
