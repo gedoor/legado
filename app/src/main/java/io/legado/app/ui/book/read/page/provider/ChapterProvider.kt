@@ -127,7 +127,7 @@ object ChapterProvider {
         var absStartX = paddingLeft
         var durY = 0f
         textPages.add(TextPage())
-        if (ReadBookConfig.titleMode != 2) {
+        if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume) {
             //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
                 setTypeText(

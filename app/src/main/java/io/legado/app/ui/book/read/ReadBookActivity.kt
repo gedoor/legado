@@ -1377,6 +1377,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         ReadBook.downloadScope.coroutineContext.cancelChildren()
         ReadBook.coroutineContext.cancelChildren()
         ReadBook.downloadedChapters.clear()
+        ReadBook.downloadFailChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
@@ -1399,7 +1400,9 @@ class ReadBookActivity : BaseReadBookActivity(),
             readView.upStyle()
             readView.upBgAlpha()
             if (it) {
-                ReadBook.loadContent(resetPageOffset = false)
+                if (isInitFinish) {
+                    ReadBook.loadContent(resetPageOffset = false)
+                }
             } else {
                 readView.upContent(resetPageOffset = false)
             }

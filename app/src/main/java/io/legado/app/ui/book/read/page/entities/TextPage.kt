@@ -21,7 +21,7 @@ import kotlin.math.min
 data class TextPage(
     var index: Int = 0,
     var text: String = appCtx.getString(R.string.data_loading),
-    var title: String = "",
+    var title: String = appCtx.getString(R.string.data_loading),
     private val textLines: ArrayList<TextLine> = arrayListOf(),
     var pageSize: Int = 0,
     var chapterSize: Int = 0,

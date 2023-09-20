@@ -303,6 +303,7 @@ object CacheBook {
                     downloadFinish(chapter, content, resetPageOffset)
                 }.onError {
                     onError(chapter, it)
+                    ReadBook.downloadFailChapters.add(chapter.index)
                     downloadFinish(chapter, "获取正文失败\n${it.localizedMessage}", resetPageOffset)
                 }.onCancel {
                     onCancel(chapter.index)
@@ -314,14 +315,12 @@ object CacheBook {
         private fun downloadFinish(
             chapter: BookChapter,
             content: String,
-            resetPageOffset: Boolean = false,
-            pageChanged: Boolean = false,
+            resetPageOffset: Boolean = false
         ) {
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.contentLoadFinish(
                     book, chapter, content,
                     resetPageOffset = resetPageOffset,
-                    pageChanged = pageChanged
                 )
             }
         }
