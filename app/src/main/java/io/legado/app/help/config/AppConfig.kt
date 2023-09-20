@@ -25,7 +25,6 @@ import splitties.init.appCtx
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val isCronet = appCtx.getPrefBoolean(PreferKey.cronet)
     var useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
-    var useLibArchive = appCtx.getPrefBoolean(PreferKey.useLibArchive)
     var userAgent: String = getPrefUserAgent()
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
@@ -78,8 +77,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
             PreferKey.antiAlias -> useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
 
-            PreferKey.useLibArchive -> useLibArchive =
-                appCtx.getPrefBoolean(PreferKey.useLibArchive)
         }
     }
 

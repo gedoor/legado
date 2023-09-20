@@ -89,7 +89,6 @@ object PreferKey {
     const val syncBookProgress = "syncBookProgress"
     const val cronet = "Cronet"
     const val antiAlias = "antiAlias"
-    const val useLibArchive = "useLibArchive"
     const val bitmapCacheSize = "bitmapCacheSize"
     const val preDownloadNum = "preDownloadNum"
     const val autoRefresh = "auto_refresh"

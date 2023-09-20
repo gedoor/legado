@@ -3,11 +3,7 @@ package io.legado.app.utils
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppPattern.archiveFileRegex
-import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.compress.LibArchiveUtils
-import io.legado.app.utils.compress.RarUtils
-import io.legado.app.utils.compress.SevenZipUtils
-import io.legado.app.utils.compress.ZipUtils
 import splitties.init.appCtx
 import java.io.File
 
@@ -65,49 +61,18 @@ object ArchiveUtils {
         val workPathFileDoc = getCacheFolderFileDoc(name, path)
         val workPath = workPathFileDoc.toString()
 
-        return if (AppConfig.useLibArchive) {
-            archiveFileDoc.openReadPfd().getOrThrow().use {
-                LibArchiveUtils.unArchive(it, File(workPath), filter)
-            }
-        } else {
-            archiveFileDoc.openInputStream().getOrThrow().use {
-                when {
-                    name.endsWith(".zip", ignoreCase = true) -> ZipUtils.unZipToPath(
-                        it,
-                        workPath,
-                        filter
-                    )
-
-                    name.endsWith(".rar", ignoreCase = true) -> RarUtils.unRarToPath(
-                        it,
-                        workPath,
-                        filter
-                    )
-
-                    name.endsWith(".7z", ignoreCase = true) -> SevenZipUtils.un7zToPath(
-                        it,
-                        workPath,
-                        filter
-                    )
-
-                    else -> throw IllegalArgumentException("Unexpected archive format")
-                }
-            }
+        return archiveFileDoc.openReadPfd().getOrThrow().use {
+            LibArchiveUtils.unArchive(it, File(workPath), filter)
         }
-
 
     }
 
     /* 遍历目录获取文件名 */
     fun getArchiveFilesName(fileUri: Uri, filter: ((String) -> Boolean)? = null): List<String> =
-        if (AppConfig.useLibArchive) {
-            getLibArchiveFilesName(FileDoc.fromUri(fileUri, false), filter)
-        } else {
-            getArchiveFilesName(FileDoc.fromUri(fileUri, false), filter)
-        }
+        getArchiveFilesName(FileDoc.fromUri(fileUri, false), filter)
 
 
-    fun getLibArchiveFilesName(
+    fun getArchiveFilesName(
         fileDoc: FileDoc,
         filter: ((String) -> Boolean)? = null
     ): List<String> {
@@ -124,31 +89,6 @@ object ArchiveUtils {
         }
 
 
-    }
-
-    fun getArchiveFilesName(
-        fileDoc: FileDoc,
-        filter: ((String) -> Boolean)? = null
-    ): List<String> {
-        val name = fileDoc.name
-        checkAchieve(name)
-        return fileDoc.openInputStream().getOrThrow().use {
-            when {
-                name.endsWith(".rar", ignoreCase = true) -> {
-                    RarUtils.getFilesName(it, filter)
-                }
-
-                name.endsWith(".zip", ignoreCase = true) -> {
-                    ZipUtils.getFilesName(it, filter)
-                }
-
-                name.endsWith(".7z", ignoreCase = true) -> {
-                    SevenZipUtils.getFilesName(it, filter)
-                }
-
-                else -> emptyList()
-            }
-        }
     }
 
     fun isArchive(name: String): Boolean {
