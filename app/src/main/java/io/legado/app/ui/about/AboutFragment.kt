@@ -18,8 +18,6 @@ import splitties.init.appCtx
 
 class AboutFragment : PreferenceFragmentCompat() {
 
-    private val qqChannel = "https://pd.qq.com/s/8qxylhj2s"
-
     private val waitDialog by lazy {
         WaitDialog(requireContext())
     }
@@ -46,9 +44,6 @@ class AboutFragment : PreferenceFragmentCompat() {
             "privacyPolicy" -> showMdFile(getString(R.string.privacy_policy), "privacyPolicy.md")
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "crashLog" -> showDialogFragment<CrashLogsDialog>()
-            "qqChannel" -> context?.openUrl(qqChannel)
-            "tg" -> openUrl(R.string.tg_url)
-            "discord" -> openUrl(R.string.discord_url)
         }
         return super.onPreferenceTreeClick(preference)
     }
