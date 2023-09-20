@@ -73,7 +73,6 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun resetData(book: Book) {
-        ReadAloud.stop(appCtx)
         ReadBook.book = book
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
