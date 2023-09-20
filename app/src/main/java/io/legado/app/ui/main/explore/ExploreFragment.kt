@@ -25,7 +25,6 @@ import io.legado.app.ui.book.explore.ExploreShowActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
-import io.legado.app.ui.main.MainActivity
 import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
@@ -47,8 +46,7 @@ import kotlinx.coroutines.launch
  */
 class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     MainFragmentInterface,
-    ExploreAdapter.CallBack,
-    MainActivity.Callback {
+    ExploreAdapter.CallBack {
 
     constructor(position: Int) : this() {
         val bundle = Bundle()
@@ -69,7 +67,6 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
     private val groups = linkedSetOf<String>()
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
-    private var isActive = false
     private var searchKey: String? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -232,21 +229,6 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                 binding.rvFind.smoothScrollToPosition(0)
             }
         }
-    }
-
-    override fun onActive() {
-        isActive = true
-        upExploreData(searchKey)
-    }
-
-    override fun onInactive() {
-        isActive = false
-        exploreFlowJob?.cancel()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (isActive) upExploreData(searchKey)
     }
 
 }
