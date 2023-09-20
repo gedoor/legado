@@ -61,7 +61,9 @@ class ReadMenu @JvmOverloads constructor(
     private val immersiveMenu: Boolean
         get() = AppConfig.readBarStyleFollowPage && ReadBookConfig.durConfig.curBgType() == 0
     private var bgColor: Int = if (immersiveMenu) {
-        Color.parseColor(ReadBookConfig.durConfig.curBgStr())
+        kotlin.runCatching {
+            Color.parseColor(ReadBookConfig.durConfig.curBgStr())
+        }.getOrDefault(context.bottomBackground)
     } else {
         context.bottomBackground
     }
@@ -224,7 +226,9 @@ class ReadMenu @JvmOverloads constructor(
 
     private fun upColorConfig() {
         bgColor = if (immersiveMenu) {
-            Color.parseColor(ReadBookConfig.durConfig.curBgStr())
+            kotlin.runCatching {
+                Color.parseColor(ReadBookConfig.durConfig.curBgStr())
+            }.getOrDefault(context.bottomBackground)
         } else {
             context.bottomBackground
         }
