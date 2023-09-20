@@ -10,7 +10,7 @@ import io.legado.app.lib.icu4j.CharsetDetector
 import me.zhanghai.android.libarchive.Archive
 import me.zhanghai.android.libarchive.ArchiveEntry
 import me.zhanghai.android.libarchive.ArchiveException
-import splitties.init.appCtx
+import okio.Buffer
 import java.io.File
 import java.io.FileDescriptor
 import java.io.IOException
@@ -23,8 +23,6 @@ import java.nio.charset.StandardCharsets
 
 
 object LibArchiveUtils {
-
-    val cachePath = File(appCtx.cacheDir, "archive")
 
     @Throws(ArchiveException::class)
     fun openArchive(
@@ -153,7 +151,7 @@ object LibArchiveUtils {
                 val buffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE)
                 Archive.readSetReadCallback<Any>(
                     archive
-                ) { _1: Long, fd: Any? ->
+                ) { _: Long, fd: Any? ->
                     buffer.clear()
                     try {
                         Os.read(fd as FileDescriptor?, buffer)
@@ -167,7 +165,7 @@ object LibArchiveUtils {
                 }
                 Archive.readSetSkipCallback<Any>(
                     archive
-                ) { _1: Long, fd: Any?, request: Long ->
+                ) { _: Long, fd: Any?, request: Long ->
                     try {
                         Os.lseek(
                             fd as FileDescriptor?, request, OsConstants.SEEK_CUR
@@ -179,7 +177,7 @@ object LibArchiveUtils {
                 }
                 Archive.readSetSeekCallback<Any>(
                     archive
-                ) { _1: Long, fd: Any?, offset: Long, whence: Int ->
+                ) { _: Long, fd: Any?, offset: Long, whence: Int ->
                     try {
                         return@readSetSeekCallback Os.lseek(
                             fd as FileDescriptor?, offset, whence
@@ -304,18 +302,17 @@ object LibArchiveUtils {
                 }
 
                 if (entryName == path) {
-                    cachePath.mkdirs()
-                    val entryFile = File(cachePath, entry.toString())
-                    entryFile.delete()
-                    entryFile.createNewFile()
-                    entryFile.setReadable(true)
-                    entryFile.setExecutable(true)
-                    ParcelFileDescriptor.open(entryFile, ParcelFileDescriptor.MODE_WRITE_ONLY).use {
-                        Archive.readDataIntoFd(archive, it.fd)
+                    val byteBuffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE)
+                    val buffer = Buffer()
+                    while (true) {
+                        Archive.readData(archive, byteBuffer)
+                        byteBuffer.flip()
+                        if (!byteBuffer.hasRemaining()) {
+                            return buffer.readByteArray()
+                        }
+                        buffer.write(byteBuffer)
+                        byteBuffer.clear()
                     }
-                    val bytes = entryFile.readBytes()
-                    entryFile.delete()
-                    return bytes
                 }
 
                 entry = Archive.readNextHeader(archive)
