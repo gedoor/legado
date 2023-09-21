@@ -300,10 +300,13 @@ object CacheBook {
             WebBook.getContent(scope, bookSource, book, chapter, executeContext = IO)
                 .onSuccess { content ->
                     onSuccess(chapter)
+                    ReadBook.downloadedChapters.add(chapter.index)
+                    ReadBook.downloadFailChapters.remove(chapter.index)
                     downloadFinish(chapter, content, resetPageOffset)
                 }.onError {
                     onError(chapter, it)
-                    ReadBook.downloadFailChapters.add(chapter.index)
+                    ReadBook.downloadFailChapters[chapter.index] =
+                        (ReadBook.downloadFailChapters[chapter.index] ?: 0) + 1
                     downloadFinish(chapter, "获取正文失败\n${it.localizedMessage}", resetPageOffset)
                 }.onCancel {
                     onCancel(chapter.index)

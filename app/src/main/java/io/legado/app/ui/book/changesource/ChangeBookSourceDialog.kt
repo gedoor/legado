@@ -95,6 +95,13 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        context?.obtainStyledAttributes(intArrayOf(android.R.attr.homeAsUpIndicator))?.use {
+            binding.toolBar.navigationIcon = it.getDrawable(0)
+            binding.toolBar.setNavigationContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description)
+            binding.toolBar.setNavigationOnClickListener {
+                dismissAllowingStateLoss()
+            }
+        }
         binding.toolBar.setBackgroundColor(primaryColor)
         viewModel.initData(arguments, callBack?.oldBook, activity is ReadBookActivity)
         showTitle()
@@ -109,6 +116,9 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     private fun showTitle() {
         binding.toolBar.title = viewModel.name
         binding.toolBar.subtitle = viewModel.author
+        context?.obtainStyledAttributes(intArrayOf(android.R.attr.homeAsUpIndicator))?.use {
+            binding.toolBar.navigationIcon = it.getDrawable(0)
+        }
     }
 
     private fun initMenu() {
@@ -152,6 +162,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         searchView.setOnSearchClickListener {
             binding.toolBar.title = ""
             binding.toolBar.subtitle = ""
+            binding.toolBar.navigationIcon = null
         }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

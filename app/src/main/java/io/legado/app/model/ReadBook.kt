@@ -55,7 +55,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
     var preDownloadTask: Coroutine<*>? = null
     val downloadedChapters = hashSetOf<Int>()
-    val downloadFailChapters = hashSetOf<Int>()
+    val downloadFailChapters = hashMapOf<Int, Int>()
     var contentProcessor: ContentProcessor? = null
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
@@ -545,7 +545,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 val maxChapterIndex = min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
                 for (i in durChapterIndex.plus(2)..maxChapterIndex) {
                     if (downloadedChapters.contains(i)) continue
-                    if (downloadFailChapters.contains(i)) continue
+                    if ((downloadFailChapters[i] ?: 0) >= 3) continue
                     downloadIndex(i)
                 }
             }
@@ -553,7 +553,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
                 for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
                     if (downloadedChapters.contains(i)) continue
-                    if (downloadFailChapters.contains(i)) continue
+                    if ((downloadFailChapters[i] ?: 0) >= 3) continue
                     downloadIndex(i)
                 }
             }
