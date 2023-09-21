@@ -64,4 +64,9 @@
         </menu>
 
     </item>
+
+    <item
+        android:id="@+id/menu_close"
+        android:title="@string/close"
+        app:showAsAction="never" />
 </menu>
