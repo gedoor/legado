@@ -231,4 +231,9 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        upExploreData(searchKey)
+    }
+
 }
