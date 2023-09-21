@@ -90,7 +90,7 @@
     <string name="offline_cache_s">快取選擇的章節到本機</string>
     <string name="change_origin">換源</string>
     <string name="about_description">
-        \u3000\u3000這是一款使用Kotlin全新開發的開源的閱讀軟體，歡迎您的加入。關注公眾號[legado-top]！
+        \u3000\u3000這是一款使用Kotlin全新開發的開源的閱讀軟體，歡迎您的加入。
     </string>
     <string name="app_share_description">
         閱讀3.0下載網址：\nhttps://play.google.com/store/apps/details?id=io.legado.play.release
