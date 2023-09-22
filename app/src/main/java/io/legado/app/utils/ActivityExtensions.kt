@@ -16,6 +16,7 @@ import io.legado.app.R
 inline fun <reified T : DialogFragment> AppCompatActivity.showDialogFragment(
     arguments: Bundle.() -> Unit = {}
 ) {
+    @Suppress("DEPRECATION")
     val dialog = T::class.java.newInstance()
     val bundle = Bundle()
     bundle.apply(arguments)
