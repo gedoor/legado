@@ -425,7 +425,9 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
-        jump(0 - document.documentElement.clientHeight + 100);
+        jump(0 - document.documentElement.clientHeight + 100, {
+          duration: store.config.jumpDuration,
+        });
       }
       break;
     case "ArrowDown":
@@ -441,7 +443,9 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
-        jump(document.documentElement.clientHeight - 100);
+        jump(document.documentElement.clientHeight - 100, {
+          duration: store.config.jumpDuration,
+        });
       }
       break;
   }

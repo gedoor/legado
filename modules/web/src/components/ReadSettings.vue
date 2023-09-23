@@ -138,6 +138,21 @@
             >
           </div>
         </li>
+        <li class="paragraph-spacing">
+          <i>翻页速度</i>
+          <div class="resize">
+            <div class="resize">
+              <span class="less" @click="lessJumpDuration">
+                <em class="iconfont">&#xe625;</em>
+              </span>
+              <b></b> <span class="lang">{{ jumpDuration }}</span
+              ><b></b>
+              <span class="more" @click="moreJumpDuration"
+                ><em class="iconfont">&#xe626;</em></span
+              >
+            </div>
+          </div>
+        </li>
         <li class="infinite-loading">
           <i>无限加载</i>
           <span
@@ -302,6 +317,18 @@ const moreReadWidth = () => {
 };
 const lessReadWidth = () => {
   if (config.value.readWidth > 640) config.value.readWidth -= 160;
+  saveConfig(config.value);
+};
+const jumpDuration = computed(() => {
+  return store.config.jumpDuration;
+});
+const moreJumpDuration = () => {
+  store.config.jumpDuration += 100;
+  saveConfig(config.value);
+};
+const lessJumpDuration = () => {
+  if (store.config.jumpDuration === 0) return;
+  store.config.jumpDuration -= 100;
   saveConfig(config.value);
 };
 const infiniteLoading = computed(() => {
