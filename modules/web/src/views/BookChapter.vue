@@ -403,8 +403,10 @@ const onReachBottom = (entries) => {
   }
 };
 
+let canJump = true;
 // 监听方向键
 const handleKeyPress = (event) => {
+  if (!canJump) return;
   switch (event.key) {
     case "ArrowLeft":
       event.stopPropagation();
@@ -425,8 +427,10 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
+        canJump = false;
         jump(0 - document.documentElement.clientHeight + 100, {
           duration: store.config.jumpDuration,
+          callback: () => (canJump = true),
         });
       }
       break;
@@ -443,8 +447,10 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
+        canJump = false;
         jump(document.documentElement.clientHeight - 100, {
           duration: store.config.jumpDuration,
+          callback: () => (canJump = true),
         });
       }
       break;
