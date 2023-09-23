@@ -171,6 +171,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val nextPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.NEXT) } }
     private val prevPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.PREV) } }
     private var bookChanged = false
+    private var pageChanged = false
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -833,6 +834,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 页面改变
      */
     override fun pageChanged() {
+        pageChanged = true
         lifecycleScope.launch {
             autoPageProgress = 0
             upSeekBarProgress()
@@ -1152,9 +1154,10 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             BaseReadAloudService.pause -> {
                 val scrollPageAnim = ReadBook.pageAnim() == 3
-                if (scrollPageAnim) {
+                if (scrollPageAnim && pageChanged) {
+                    pageChanged = false
                     val startPos = binding.readView.getCurPagePosition()
-                    ReadAloud.play(this, startPos = startPos)
+                    ReadBook.readAloud(startPos = startPos)
                 } else {
                     ReadAloud.resume(this)
                 }
