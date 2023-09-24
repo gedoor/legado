@@ -4,7 +4,6 @@ import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
-import android.system.OsConstants.S_IFDIR
 import android.system.OsConstants.S_ISDIR
 import io.legado.app.lib.icu4j.CharsetDetector
 import me.zhanghai.android.libarchive.Archive
@@ -231,8 +230,9 @@ object LibArchiveUtils {
 
 
         try {
-            var entry = Archive.readNextHeader(archive)
-            while (entry != 0L) {
+            var entry: Long
+
+            while (Archive.readNextHeader(archive).also { entry = it } != 0L) {
                 val entryName =
                     getEntryString(ArchiveEntry.pathnameUtf8(entry), ArchiveEntry.pathname(entry))
                         ?: continue
@@ -243,11 +243,10 @@ object LibArchiveUtils {
                 val entryStat = ArchiveEntry.stat(entry)
 
                 //判断是否是文件夹
-                if (S_ISDIR(entryStat.stMode)) {
+                if (entryStat.isDir()) {
                     if (!entryFile.exists()) {
                         entryFile.mkdirs()
                     }
-                    entry = Archive.readNextHeader(archive)
                     continue
                 }
 
@@ -268,8 +267,6 @@ object LibArchiveUtils {
                     files.add(entryFile)
                 }
 
-                entry = Archive.readNextHeader(archive)
-
 
             }
         } finally {
@@ -287,8 +284,8 @@ object LibArchiveUtils {
     fun getByteArrayContent(inputStream: InputStream, path: String): ByteArray? {
         val archive = openArchive(inputStream)
         try {
-            var entry = Archive.readNextHeader(archive)
-            while (entry != 0L) {
+            var entry: Long
+            while (Archive.readNextHeader(archive).also { entry = it } != 0L) {
                 val entryName =
                     getEntryString(ArchiveEntry.pathnameUtf8(entry), ArchiveEntry.pathname(entry))
                         ?: continue
@@ -296,8 +293,7 @@ object LibArchiveUtils {
                 val entryStat = ArchiveEntry.stat(entry)
 
                 //判断是否是文件夹
-                if (S_ISDIR(entryStat.stMode)) {
-                    entry = Archive.readNextHeader(archive)
+                if (entryStat.isDir()) {
                     continue
                 }
 
@@ -315,7 +311,6 @@ object LibArchiveUtils {
                     }
                 }
 
-                entry = Archive.readNextHeader(archive)
 
             }
         } finally {
@@ -331,22 +326,19 @@ object LibArchiveUtils {
     ): List<String> {
         val fileNames = mutableListOf<String>()
         try {
-            //Archive.readOpenFd(archive, pfd.fd, 8192)
 
-            var entry = Archive.readNextHeader(archive)
-            //val formatName: String = newStringFromBytes(Archive.formatName(archive))
-            while (entry != 0L) {
+
+            var entry: Long
+
+            while (Archive.readNextHeader(archive).also { entry = it } != 0L) {
                 val fileName =
                     getEntryString(ArchiveEntry.pathnameUtf8(entry), ArchiveEntry.pathname(entry))
                         ?: continue
 
 
                 val entryStat = ArchiveEntry.stat(entry)
-                val fileType = entryStat.stMode and S_IFDIR
 
-
-                if (S_ISDIR(entryStat.stMode)) {
-                    entry = Archive.readNextHeader(archive)
+                if (entryStat.isDir()) {
                     continue
                 }
 
@@ -363,6 +355,7 @@ object LibArchiveUtils {
         return fileNames
     }
 
+    private fun ArchiveEntry.StructStat.isDir() = S_ISDIR(this.stMode)
 
     private fun getEntryString(utf8: String?, bytes: ByteArray?): String? {
         return utf8 ?: newStringFromBytes(bytes)
