@@ -1,0 +1,1 @@
+import{A as f,u as i}from"./index-a4be7e77.js";import"./vendor-f0c50eaf.js";f.getReadConfig().then(e=>{var t=e.data.data;if(t){const a=i();let o=JSON.parse(t),s=a.config;o=Object.assign(s,o),a.setConfig(o)}});
