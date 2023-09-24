@@ -605,19 +605,36 @@ class ReadBookActivity : BaseReadBookActivity(),
             MotionEvent.ACTION_DOWN -> textActionMenu.dismiss()
             MotionEvent.ACTION_MOVE -> {
                 when (v.id) {
-                    R.id.cursor_left -> readView.curPage.selectStartMove(
-                        event.rawX + cursorLeft.width,
-                        event.rawY - cursorLeft.height
-                    )
+                    R.id.cursor_left -> if (!readView.curPage.getReverseStartCursor()) {
+                        readView.curPage.selectStartMove(
+                            event.rawX + cursorLeft.width,
+                            event.rawY - cursorLeft.height
+                        )
+                    } else {
+                        readView.curPage.selectEndMove(
+                            event.rawX - cursorRight.width,
+                            event.rawY - cursorRight.height
+                        )
+                    }
 
-                    R.id.cursor_right -> readView.curPage.selectEndMove(
-                        event.rawX - cursorRight.width,
-                        event.rawY - cursorRight.height
-                    )
+                    R.id.cursor_right -> if (readView.curPage.getReverseEndCursor()) {
+                        readView.curPage.selectStartMove(
+                            event.rawX + cursorLeft.width,
+                            event.rawY - cursorLeft.height
+                        )
+                    } else {
+                        readView.curPage.selectEndMove(
+                            event.rawX - cursorRight.width,
+                            event.rawY - cursorRight.height
+                        )
+                    }
                 }
             }
 
-            MotionEvent.ACTION_UP -> showTextActionMenu()
+            MotionEvent.ACTION_UP -> {
+                readView.curPage.resetReverseCursor()
+                showTextActionMenu()
+            }
         }
         return true
     }

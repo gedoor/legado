@@ -365,16 +365,60 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.selectStartMove(x, y - headerHeight)
     }
 
-    fun selectStartMoveIndex(relativePagePos: Int, lineIndex: Int, charIndex: Int) {
-        binding.contentTextView.selectStartMoveIndex(relativePagePos, lineIndex, charIndex)
+    fun selectStartMoveIndex(
+        relativePagePos: Int,
+        lineIndex: Int,
+        charIndex: Int,
+        isTouch: Boolean = true,
+        isLast: Boolean = false
+    ) {
+        binding.contentTextView.selectStartMoveIndex(
+            relativePagePos,
+            lineIndex,
+            charIndex,
+            isTouch,
+            isLast
+        )
+    }
+
+    fun selectStartMoveIndex(textPos: TextPos) {
+        binding.contentTextView.selectStartMoveIndex(textPos)
     }
 
     fun selectEndMove(x: Float, y: Float) {
         binding.contentTextView.selectEndMove(x, y - headerHeight)
     }
 
-    fun selectEndMoveIndex(relativePagePos: Int, lineIndex: Int, charIndex: Int) {
-        binding.contentTextView.selectEndMoveIndex(relativePagePos, lineIndex, charIndex)
+    fun selectEndMoveIndex(
+        relativePagePos: Int,
+        lineIndex: Int,
+        charIndex: Int,
+        isTouch: Boolean = true,
+        isLast: Boolean = false
+    ) {
+        binding.contentTextView.selectEndMoveIndex(
+            relativePagePos,
+            lineIndex,
+            charIndex,
+            isTouch,
+            isLast
+        )
+    }
+
+    fun selectEndMoveIndex(textPos: TextPos) {
+        binding.contentTextView.selectEndMoveIndex(textPos)
+    }
+
+    fun getReverseStartCursor(): Boolean {
+        return binding.contentTextView.reverseStartCursor
+    }
+
+    fun getReverseEndCursor(): Boolean {
+        return binding.contentTextView.reverseEndCursor
+    }
+
+    fun resetReverseCursor() {
+        binding.contentTextView.resetReverseCursor()
     }
 
     fun cancelSelect(clearSearchResult: Boolean = false) {

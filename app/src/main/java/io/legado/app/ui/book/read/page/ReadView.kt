@@ -360,16 +360,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
                         }
                     }
                 }
-                curPage.selectStartMoveIndex(
-                    startPos.relativePagePos,
-                    startPos.lineIndex,
-                    startPos.columnIndex
-                )
-                curPage.selectEndMoveIndex(
-                    endPos.relativePagePos,
-                    endPos.lineIndex,
-                    endPos.columnIndex
-                )
+                curPage.selectStartMoveIndex(startPos)
+                curPage.selectEndMoveIndex(endPos)
             }
         }
     }
@@ -441,28 +433,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
             val compare = initialTextPos.compare(textPos)
             when {
                 compare >= 0 -> {
-                    curPage.selectStartMoveIndex(
-                        textPos.relativePagePos,
-                        textPos.lineIndex,
-                        textPos.columnIndex
-                    )
-                    curPage.selectEndMoveIndex(
-                        initialTextPos.relativePagePos,
-                        initialTextPos.lineIndex,
-                        initialTextPos.columnIndex
-                    )
+                    curPage.selectStartMoveIndex(textPos)
+                    curPage.selectEndMoveIndex(initialTextPos)
                 }
                 else -> {
-                    curPage.selectStartMoveIndex(
-                        initialTextPos.relativePagePos,
-                        initialTextPos.lineIndex,
-                        initialTextPos.columnIndex
-                    )
-                    curPage.selectEndMoveIndex(
-                        textPos.relativePagePos,
-                        textPos.lineIndex,
-                        textPos.columnIndex
-                    )
+                    curPage.selectStartMoveIndex(initialTextPos)
+                    curPage.selectEndMoveIndex(textPos)
                 }
             }
         }
