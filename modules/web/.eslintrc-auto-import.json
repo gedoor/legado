@@ -79,6 +79,7 @@
     "watchEffect": true,
     "watchPostEffect": true,
     "watchSyncEffect": true,
-    "toValue": true
+    "toValue": true,
+    "WritableComputedRef": true
   }
 }
