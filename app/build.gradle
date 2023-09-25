@@ -234,7 +234,7 @@ dependencies {
 
     //二维码
     //noinspection GradleDependency
-    implementation('com.github.jenly1314:zxing-lite:2.4.0')
+    implementation('com.github.jenly1314:zxing-lite:3.0.1')
 
     //颜色选择
     implementation('com.jaredrummler:colorpicker:1.1.0')
