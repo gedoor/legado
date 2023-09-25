@@ -13,7 +13,7 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
     protected var prevBitmap: Bitmap? = null
     protected var nextBitmap: Bitmap? = null
     protected var canvas: Canvas = Canvas()
-    private val slopSquare by lazy { readView.slopSquare * readView.slopSquare }
+    private val slopSquare get() = readView.pageSlopSquare2
 
     override fun setDirection(direction: PageDirection) {
         super.setDirection(direction)
@@ -91,6 +91,7 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
                     }
                     setDirection(PageDirection.NEXT)
                 }
+                readView.setStartPoint(event.x, event.y, false)
             }
         }
         if (isMoved) {

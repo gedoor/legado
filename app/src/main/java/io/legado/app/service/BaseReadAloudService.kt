@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
+import splitties.systemservices.notificationManager
 import splitties.systemservices.powerManager
 
 /**
@@ -119,7 +120,7 @@ abstract class BaseReadAloudService : BaseService(),
                 .get()
         }.onSuccess {
             cover = it
-            upNotification()
+            upReadAloudNotification()
         }
     }
 
@@ -213,7 +214,7 @@ abstract class BaseReadAloudService : BaseService(),
         isRun = true
         pause = false
         needResumeOnAudioFocusGain = false
-        upNotification()
+        upReadAloudNotification()
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
 
@@ -226,7 +227,7 @@ abstract class BaseReadAloudService : BaseService(),
         if (abandonFocus) {
             abandonFocus()
         }
-        upNotification()
+        upReadAloudNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
         ReadBook.uploadProgress()
@@ -237,7 +238,7 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
-        upNotification()
+        upReadAloudNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
@@ -309,7 +310,7 @@ abstract class BaseReadAloudService : BaseService(),
     @Synchronized
     private fun doDs() {
         postEvent(EventBus.READ_ALOUD_DS, timeMinute)
-        upNotification()
+        upReadAloudNotification()
         dsJob?.cancel()
         dsJob = lifecycleScope.launch {
             while (isActive) {
@@ -323,7 +324,7 @@ abstract class BaseReadAloudService : BaseService(),
                     }
                 }
                 postEvent(EventBus.READ_ALOUD_DS, timeMinute)
-                upNotification()
+                upReadAloudNotification()
             }
         }
     }
@@ -425,67 +426,80 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
+    private fun upReadAloudNotification() {
+        execute {
+            createNotification()
+        }.onSuccess {
+            notificationManager.notify(NotificationId.ReadAloudService, it.build())
+        }.onError {
+            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
+        }
+    }
+
+    private fun createNotification(): NotificationCompat.Builder {
+        var nTitle: String = when {
+            pause -> getString(R.string.read_aloud_pause)
+            timeMinute > 0 -> getString(
+                R.string.read_aloud_timer,
+                timeMinute
+            )
+
+            else -> getString(R.string.read_aloud_t)
+        }
+        nTitle += ": ${ReadBook.book?.name}"
+        var nSubtitle = ReadBook.curTextChapter?.title
+        if (nSubtitle.isNullOrBlank())
+            nSubtitle = getString(R.string.read_aloud_s)
+        val builder = NotificationCompat
+            .Builder(this@BaseReadAloudService, AppConst.channelIdReadAloud)
+            .setSmallIcon(R.drawable.ic_volume_up)
+            .setSubText(getString(R.string.read_aloud))
+            .setOngoing(true)
+            .setContentTitle(nTitle)
+            .setContentText(nSubtitle)
+            .setContentIntent(
+                activityPendingIntent<ReadBookActivity>("activity")
+            )
+            .setVibrate(null)
+            .setSound(null)
+            .setLights(0, 0, 0)
+        builder.setLargeIcon(cover)
+        if (pause) {
+            builder.addAction(
+                R.drawable.ic_play_24dp,
+                getString(R.string.resume),
+                aloudServicePendingIntent(IntentAction.resume)
+            )
+        } else {
+            builder.addAction(
+                R.drawable.ic_pause_24dp,
+                getString(R.string.pause),
+                aloudServicePendingIntent(IntentAction.pause)
+            )
+        }
+        builder.addAction(
+            R.drawable.ic_stop_black_24dp,
+            getString(R.string.stop),
+            aloudServicePendingIntent(IntentAction.stop)
+        )
+        builder.addAction(
+            R.drawable.ic_time_add_24dp,
+            getString(R.string.set_timer),
+            aloudServicePendingIntent(IntentAction.addTimer)
+        )
+        builder.setStyle(
+            androidx.media.app.NotificationCompat.MediaStyle()
+                .setShowActionsInCompactView(0, 1, 2)
+        )
+        return builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+    }
+
     /**
      * 更新通知
      */
     override fun upNotification() {
         execute {
-            var nTitle: String = when {
-                pause -> getString(R.string.read_aloud_pause)
-                timeMinute > 0 -> getString(
-                    R.string.read_aloud_timer,
-                    timeMinute
-                )
-
-                else -> getString(R.string.read_aloud_t)
-            }
-            nTitle += ": ${ReadBook.book?.name}"
-            var nSubtitle = ReadBook.curTextChapter?.title
-            if (nSubtitle.isNullOrBlank())
-                nSubtitle = getString(R.string.read_aloud_s)
-            val builder = NotificationCompat
-                .Builder(this@BaseReadAloudService, AppConst.channelIdReadAloud)
-                .setSmallIcon(R.drawable.ic_volume_up)
-                .setSubText(getString(R.string.read_aloud))
-                .setOngoing(true)
-                .setContentTitle(nTitle)
-                .setContentText(nSubtitle)
-                .setContentIntent(
-                    activityPendingIntent<ReadBookActivity>("activity")
-                )
-                .setVibrate(null)
-                .setSound(null)
-                .setLights(0, 0, 0)
-            builder.setLargeIcon(cover)
-            if (pause) {
-                builder.addAction(
-                    R.drawable.ic_play_24dp,
-                    getString(R.string.resume),
-                    aloudServicePendingIntent(IntentAction.resume)
-                )
-            } else {
-                builder.addAction(
-                    R.drawable.ic_pause_24dp,
-                    getString(R.string.pause),
-                    aloudServicePendingIntent(IntentAction.pause)
-                )
-            }
-            builder.addAction(
-                R.drawable.ic_stop_black_24dp,
-                getString(R.string.stop),
-                aloudServicePendingIntent(IntentAction.stop)
-            )
-            builder.addAction(
-                R.drawable.ic_time_add_24dp,
-                getString(R.string.set_timer),
-                aloudServicePendingIntent(IntentAction.addTimer)
-            )
-            builder.setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle()
-                    .setShowActionsInCompactView(0, 1, 2)
-            )
-            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            builder
+            createNotification()
         }.onSuccess {
             startForeground(NotificationId.ReadAloudService, it.build())
         }.onError {
