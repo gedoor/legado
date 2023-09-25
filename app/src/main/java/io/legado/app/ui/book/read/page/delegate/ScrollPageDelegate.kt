@@ -17,6 +17,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     //速度追踪器
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
+    private val slopSquare get() = readView.pageSlopSquare2
 
     var noAnim: Boolean = false
 
@@ -77,12 +78,17 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         //多点触控时即最后按下的手指产生的事件点
         val pointX = event.getX(event.pointerCount - 1)
         val pointY = event.getY(event.pointerCount - 1)
-        readView.setTouchPoint(pointX, pointY)
+        if (isMoved) {
+            readView.setTouchPoint(pointX, pointY)
+        }
         if (!isMoved) {
             val deltaX = (pointX - startX).toInt()
             val deltaY = (pointY - startY).toInt()
             val distance = deltaX * deltaX + deltaY * deltaY
-            isMoved = distance > readView.slopSquare
+            isMoved = distance > slopSquare
+            if (isMoved) {
+                readView.setStartPoint(event.x, event.y, false)
+            }
         }
         if (isMoved) {
             isRunning = true
