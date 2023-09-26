@@ -667,7 +667,7 @@ object ChapterProvider {
             titlePaint = it.first
             contentPaint = it.second
             reviewPaint.color = contentPaint.color
-            reviewPaint.textSize = contentPaint.textSize * 0.6f
+            reviewPaint.textSize = contentPaint.textSize * 0.45f
             reviewPaint.textAlign = Paint.Align.CENTER
         }
         //间距
