@@ -13,6 +13,7 @@ import android.view.ViewConfiguration
 import android.view.WindowInsets
 import android.widget.FrameLayout
 import io.legado.app.constant.PageAnim
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.accentColor
@@ -28,6 +29,7 @@ import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.*
+import splitties.init.appCtx
 import java.text.BreakIterator
 import java.util.*
 import kotlin.math.abs
@@ -52,7 +54,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     val prevPage by lazy { PageView(context) }
     val curPage by lazy { PageView(context) }
     val nextPage by lazy { PageView(context) }
-    val defaultAnimationSpeed = 300
+    var defaultAnimationSpeed:Int =300
     private var pressDown = false
     private var isMove = false
     private var isPageMove = false
@@ -517,6 +519,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
         (pageDelegate as? ScrollPageDelegate)?.noAnim = AppConfig.noAnimScrollPage
     }
+    fun updateAnimaSpeed(){
+        defaultAnimationSpeed= appCtx.getPrefInt(PreferKey.animationSpeed,300)
+    }
 
     /**
      * 更新阅读内容
@@ -666,5 +671,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun changeReplaceRuleState()
         fun openSearchActivity(searchWord: String?)
         fun upSystemUiVisibility()
+
+        fun updateAnimaSpeed()
     }
 }

@@ -824,6 +824,11 @@ class ReadBookActivity : BaseReadBookActivity(),
             binding.readView.upPageAnim()
         }
     }
+    override fun updateAnimaSpeed() {
+        lifecycleScope.launch {
+            binding.readView.updateAnimaSpeed()
+        }
+    }
 
     override fun notifyBookChanged() {
         bookChanged = true

@@ -215,6 +215,17 @@ object ReadBookConfig {
             config.setCurPageAnim(value)
         }
 
+    var animSpeed: Int
+        get() = config.animSpeed
+        set(value) {
+           config.animSpeed= when (value) {
+                0 -> 400
+                1 -> 300
+                else -> 200
+            }
+            appCtx.putPrefInt(PreferKey.animationSpeed, config.animSpeed)
+        }
+
     var textFont: String
         get() = config.textFont
         set(value) {
@@ -498,6 +509,7 @@ object ReadBookConfig {
         private var textColorEInk: String = "#000000",
         private var pageAnim: Int = 0,//翻页动画
         private var pageAnimEInk: Int = 3,
+        var animSpeed: Int = 300,
         var textFont: String = "",//字体
         var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小

@@ -14,6 +14,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogReadBookStyleBinding
 import io.legado.app.databinding.ItemReadStyleBinding
 import io.legado.app.help.config.ReadBookConfig
@@ -26,6 +27,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.font.FontSelectDialog
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 import splitties.views.onLongClick
 
 class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
@@ -134,6 +136,10 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             callBack?.upPageAnim()
             ReadBook.loadContent(false)
         }
+        rgPageAnimSpeed.setOnCheckedChangeListener { _, checkedId ->
+            ReadBookConfig.animSpeed = binding.rgPageAnimSpeed.getIndexById(checkedId)
+            callBack?.updateAnimaSpeed()
+        }
         cbShareLayout.onCheckedChangeListener = { _, isChecked ->
             ReadBookConfig.shareLayout = isChecked
             upView()
@@ -182,6 +188,12 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 rgPageAnim.check(rgPageAnim[it].id)
             }
         }
+        val checkedSpeedIndex = when (appCtx.getPrefInt(PreferKey.animationSpeed, 300)) {
+            200 -> 2
+            300 -> 1
+            else -> 0
+        }
+        rgPageAnimSpeed.check(rgPageAnimSpeed[checkedSpeedIndex].id)
         ReadBookConfig.let {
             dsbTextSize.progress = it.textSize - 5
             dsbTextLetterSpacing.progress = (it.letterSpacing * 100).toInt() + 50

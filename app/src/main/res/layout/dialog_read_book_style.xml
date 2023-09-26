@@ -255,6 +255,65 @@
 
     </RadioGroup>
 
+    <TextView
+        android:id="@+id/tv_page_anim_speed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="4dp"
+        android:alpha="0.75"
+        android:text="@string/page_anim_speed"
+        android:textSize="12sp" />
+
+    <RadioGroup
+        android:id="@+id/rg_page_anim_speed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="11dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_speed0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:singleLine="true"
+            android:text="@string/page_anim_slow"
+            app:isBottomBackground="true" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_speed1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:singleLine="true"
+            android:text="@string/page_anim_normal"
+            app:isBottomBackground="true" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_speed2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="5dp"
+            android:singleLine="true"
+            android:text="@string/page_anim_fast"
+            app:isBottomBackground="true" />
+
+    </RadioGroup>
+
     <View
         android:id="@+id/vw_bg_fg1"
         android:layout_width="match_parent"

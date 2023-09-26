@@ -503,6 +503,10 @@ object ReadBook : CoroutineScope by MainScope() {
         return book?.getPageAnim() ?: ReadBookConfig.pageAnim
     }
 
+    fun pageAnimSpeedIndex(): Int {
+        return  ReadBookConfig.pageAnim
+    }
+
     fun setCharset(charset: String) {
         book?.let {
             it.charset = charset
