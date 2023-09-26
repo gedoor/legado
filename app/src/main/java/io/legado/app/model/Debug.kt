@@ -315,8 +315,10 @@ object Debug {
             bookChapter = bookChapter,
         ).onSuccess {reviewCount ->
             log(debugSource, "︽正文段评数列表解析完成", state = 1000)
-            val reviewSegmentId = reviewCount.getOrNull(0)?.reviewSegmentId
-            reviewListDebug(scope, book, bookSource, reviewCount.first(), reviewSegmentId)
+            if (reviewCount.isNotEmpty()) {
+                val reviewSegmentId = reviewCount.getOrNull(0)?.reviewSegmentId
+                reviewListDebug(scope, book, bookSource, reviewCount.first(), reviewSegmentId)
+            }
         }.onError {
             log(debugSource, it.stackTraceStr, state = -1)
         }
