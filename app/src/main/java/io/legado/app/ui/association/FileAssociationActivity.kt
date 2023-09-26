@@ -8,7 +8,6 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.config.AppConfig
@@ -120,7 +119,7 @@ class FileAssociationActivity :
         intent.data?.let { data ->
             if (data.isContentScheme()) {
                 viewModel.dispatchIndent(data)
-            } else if (!AppConst.isPlayChannel || Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 PermissionsCompat.Builder()
                     .addPermissions(*Permissions.Group.STORAGE)
                     .rationale(R.string.tip_perm_request_storage)

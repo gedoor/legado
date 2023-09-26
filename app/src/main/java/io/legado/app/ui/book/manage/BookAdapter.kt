@@ -13,6 +13,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.ItemArrangeBookBinding
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
@@ -89,9 +90,11 @@ class BookAdapter(context: Context, val callBack: CallBack) :
                     callBack.upSelectCount()
                 }
             }
-            tvName.setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
-                    callBack.openBook(it)
+            if (AppConfig.openBookInfoByClickTitle) {
+                tvName.setOnClickListener {
+                    getItem(holder.layoutPosition)?.let {
+                        callBack.openBook(it)
+                    }
                 }
             }
             tvDelete.setOnClickListener {

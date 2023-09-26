@@ -2,53 +2,52 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:divider="@color/transparent"
-    app:allowDividerAbove="false"
     app:allowDividerBelow="false">
 
     <io.legado.app.lib.prefs.Preference
+        android:icon="@drawable/ic_cfg_source"
         android:key="bookSourceManage"
-        android:title="@string/book_source_manage"
         android:summary="@string/book_source_manage_desc"
-        android:icon="@drawable/ic_cfg_source"
+        android:title="@string/book_source_manage"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.Preference
+        android:icon="@drawable/ic_cfg_source"
         android:key="txtTocRuleManage"
-        android:title="@string/txt_toc_rule"
         android:summary="@string/config_txt_toc_rule"
-        android:icon="@drawable/ic_cfg_source"
+        android:title="@string/txt_toc_rule"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.Preference
-        android:key="replaceManage"
-        android:title="@string/replace_purify"
-        android:summary="@string/replace_purify_desc"
         android:icon="@drawable/ic_cfg_replace"
+        android:key="replaceManage"
+        android:summary="@string/replace_purify_desc"
+        android:title="@string/replace_purify"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.Preference
-        android:key="dictRuleManage"
-        android:title="@string/dict_rule"
-        android:summary="@string/config_dict_rule"
         android:icon="@drawable/ic_translate"
+        android:key="dictRuleManage"
+        android:summary="@string/config_dict_rule"
+        android:title="@string/dict_rule"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.NameListPreference
         android:defaultValue="0"
         android:entries="@array/theme_mode"
         android:entryValues="@array/theme_mode_v"
-        android:key="themeMode"
-        android:title="@string/theme_mode"
-        android:summary="@string/theme_mode_desc"
         android:icon="@drawable/ic_cfg_theme"
+        android:key="themeMode"
+        android:summary="@string/theme_mode_desc"
+        android:title="@string/theme_mode"
         app:iconSpaceReserved="false" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:key="webService"
-        android:title="@string/web_service"
-        android:summary="@string/web_service_desc"
         android:icon="@drawable/ic_cfg_web"
+        android:key="webService"
+        android:summary="@string/web_service_desc"
+        android:title="@string/web_service"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
@@ -59,70 +58,68 @@
         app:iconSpaceReserved="false">
 
         <io.legado.app.lib.prefs.Preference
+            android:icon="@drawable/ic_cfg_backup"
             android:key="web_dav_setting"
             android:summary="@string/web_dav_set_import_old"
             android:title="@string/backup_restore"
-            android:icon="@drawable/ic_cfg_backup"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:icon="@drawable/ic_cfg_theme"
             android:key="theme_setting"
             android:summary="@string/theme_setting_s"
             android:title="@string/theme_setting"
-            android:icon="@drawable/ic_cfg_theme"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:icon="@drawable/ic_cfg_other"
             android:key="setting"
             android:summary="@string/other_setting_s"
             android:title="@string/other_setting"
-            android:icon="@drawable/ic_cfg_other"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.lib.prefs.PreferenceCategory>
 
     <io.legado.app.lib.prefs.PreferenceCategory
-        android:title="@string/other"
         android:key="aboutCategory"
+        android:title="@string/other"
         app:allowDividerAbove="true"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false"
         app:layout="@layout/view_preference_category">
 
         <io.legado.app.lib.prefs.Preference
-            android:key="bookmark"
-            android:title="@string/bookmark"
-            android:summary="@string/all_bookmark"
             android:icon="@drawable/ic_bookmark"
+            android:key="bookmark"
+            android:summary="@string/all_bookmark"
+            android:title="@string/bookmark"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="readRecord"
-            android:title="@string/read_record"
-            android:summary="@string/read_record_summary"
             android:icon="@drawable/ic_history"
+            android:key="readRecord"
+            android:summary="@string/read_record_summary"
+            android:title="@string/read_record"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="fileManage"
-            android:title="@string/file_manage"
-            android:summary="@string/file_manage_summary"
             android:icon="@drawable/ic_folder_outline"
+            android:key="fileManage"
+            android:summary="@string/file_manage_summary"
+            android:title="@string/file_manage"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="about"
-            android:summary="@string/about_summary"
-            android:title="@string/about"
             android:icon="@drawable/ic_cfg_about"
+            android:key="about"
+            android:title="@string/about"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="exit"
-            android:summary="@string/exit_app"
-            android:title="@string/exit"
             android:icon="@drawable/ic_exit"
+            android:key="exit"
+            android:title="@string/exit"
             app:iconSpaceReserved="false" />
 
     </io.legado.app.lib.prefs.PreferenceCategory>

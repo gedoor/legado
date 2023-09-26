@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.FileProvider
@@ -55,6 +56,13 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = fileAdapter
+        onBackPressedDispatcher.addCallback(this) {
+            if (viewModel.lastDir != viewModel.rootDoc) {
+                gotoLastDir()
+                return@addCallback
+            }
+            finish()
+        }
     }
 
     private fun initSearchView() {
@@ -85,6 +93,12 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         } else {
             fileAdapter.setItems(currentFiles)
         }
+    }
+
+    private fun gotoLastDir() {
+        viewModel.subDocs.removeLastOrNull()
+        pathAdapter.setItems(viewModel.subDocs)
+        viewModel.upFiles(viewModel.lastDir)
     }
 
     override fun observeLiveBus() {
@@ -155,9 +169,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
                 val item = getItemByLayoutPosition(holder.layoutPosition)
                 item?.let {
                     if (item == viewModel.lastDir) {
-                        viewModel.subDocs.removeLastOrNull()
-                        pathAdapter.setItems(viewModel.subDocs)
-                        viewModel.upFiles(viewModel.subDocs.lastOrNull() ?: viewModel.rootDoc)
+                        gotoLastDir()
                     } else if (item.isDirectory) {
                         viewModel.subDocs.add(item)
                         pathAdapter.setItems(viewModel.subDocs)

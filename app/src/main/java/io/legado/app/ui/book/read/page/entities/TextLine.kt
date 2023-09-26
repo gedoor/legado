@@ -18,6 +18,9 @@ data class TextLine(
     var lineBase: Float = 0f,
     var lineBottom: Float = 0f,
     var indentWidth: Float = 0f,
+    var paragraphNum: Int = 0,
+    var chapterPosition: Int = 0,
+    var pagePosition: Int = 0,
     val isTitle: Boolean = false,
     var isParagraphEnd: Boolean = false,
     var isReadAloud: Boolean = false,
@@ -28,6 +31,7 @@ data class TextLine(
     val charSize: Int get() = textColumns.size
     val lineStart: Float get() = textColumns.firstOrNull()?.start ?: 0f
     val lineEnd: Float get() = textColumns.lastOrNull()?.end ?: 0f
+    val chapterIndices: IntRange get() = chapterPosition..chapterPosition + charSize
 
     fun addColumn(column: BaseColumn) {
         textColumns.add(column)

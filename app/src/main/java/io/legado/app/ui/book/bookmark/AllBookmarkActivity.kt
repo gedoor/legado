@@ -13,6 +13,8 @@ import io.legado.app.databinding.ActivityAllBookmarkBinding
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class AllBookmarkActivity : VMBaseActivity<ActivityAllBookmarkBinding, AllBookmarkViewModel>(),
@@ -35,7 +37,7 @@ class AllBookmarkActivity : VMBaseActivity<ActivityAllBookmarkBinding, AllBookma
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         lifecycleScope.launch {
-            appDb.bookmarkDao.flowAll().collect {
+            appDb.bookmarkDao.flowAll().flowOn(IO).collect {
                 adapter.setItems(it)
             }
         }

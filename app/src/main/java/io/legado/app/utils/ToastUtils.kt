@@ -2,70 +2,85 @@
 
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import io.legado.app.BuildConfig
+import io.legado.app.R
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getPrimaryTextColor
+import splitties.views.inflate
 
 private var toast: Toast? = null
 
-fun Context.toastOnUi(message: Int) {
+private var toastLegacy: Toast? = null
+
+fun Context.toastOnUi(message: Int, duration: Int = Toast.LENGTH_SHORT) {
+    toastOnUi(getString(message), duration)
+}
+
+@SuppressLint("InflateParams")
+@Suppress("DEPRECATION")
+fun Context.toastOnUi(message: CharSequence?, duration: Int = Toast.LENGTH_SHORT) {
     runOnUI {
         kotlin.runCatching {
             if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
-                toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-            } else {
-                toast?.setText(message)
-                toast?.duration = Toast.LENGTH_SHORT
+                toast?.cancel()
+                toast = Toast(this)
+                toast?.view = inflate(R.layout.view_toast)
             }
+            val toastView = toast?.view!!
+            val cardView = toastView.findViewById<CardView>(R.id.cv_content)
+            cardView.setCardBackgroundColor(bottomBackground)
+            val isLight = ColorUtils.isColorLight(bottomBackground)
+            val textView = toastView.findViewById<TextView>(R.id.tv_text)
+            textView.setTextColor(getPrimaryTextColor(isLight))
+            textView.text = message
+            toast?.duration = duration
             toast?.show()
         }
     }
 }
 
-fun Context.toastOnUi(message: CharSequence?) {
+fun Context.toastOnUiLegacy(message: CharSequence) {
     runOnUI {
         kotlin.runCatching {
-            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
-                toast = Toast.makeText(this, message.toString(), Toast.LENGTH_SHORT)
+            if (toastLegacy == null || BuildConfig.DEBUG || AppConfig.recordLog) {
+                toastLegacy = Toast.makeText(this, message, Toast.LENGTH_SHORT)
             } else {
-                toast?.setText(message.toString())
-                toast?.duration = Toast.LENGTH_SHORT
+                toastLegacy?.setText(message)
+                toastLegacy?.duration = Toast.LENGTH_SHORT
             }
-            toast?.show()
+            toastLegacy?.show()
         }
     }
 }
 
 fun Context.longToastOnUi(message: Int) {
-    runOnUI {
-        kotlin.runCatching {
-            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
-                toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
-            } else {
-                toast?.setText(message)
-                toast?.duration = Toast.LENGTH_LONG
-            }
-            toast?.show()
-        }
-    }
+    toastOnUi(message, Toast.LENGTH_LONG)
 }
 
 fun Context.longToastOnUi(message: CharSequence?) {
+    toastOnUi(message, Toast.LENGTH_LONG)
+}
+
+fun Context.longToastOnUiLegacy(message: CharSequence) {
     runOnUI {
         kotlin.runCatching {
-            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
-                toast = Toast.makeText(this, message.toString(), Toast.LENGTH_LONG)
+            if (toastLegacy == null || BuildConfig.DEBUG || AppConfig.recordLog) {
+                toastLegacy = Toast.makeText(this, message, Toast.LENGTH_LONG)
             } else {
-                toast?.setText(message.toString())
-                toast?.duration = Toast.LENGTH_LONG
+                toastLegacy?.setText(message)
+                toastLegacy?.duration = Toast.LENGTH_LONG
             }
-            toast?.show()
+            toastLegacy?.show()
         }
     }
 }
-
 
 fun Fragment.toastOnUi(message: Int) = requireActivity().toastOnUi(message)
 

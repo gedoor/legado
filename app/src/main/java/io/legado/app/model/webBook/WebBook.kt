@@ -265,9 +265,10 @@ object WebBook {
         bookChapter: BookChapter,
         nextChapterUrl: String? = null,
         needSave: Boolean = true,
-        context: CoroutineContext = Dispatchers.IO
+        context: CoroutineContext = Dispatchers.IO,
+        executeContext: CoroutineContext = Dispatchers.Main,
     ): Coroutine<String> {
-        return Coroutine.async(scope, context) {
+        return Coroutine.async(scope, context, executeContext = executeContext) {
             getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
         }
     }

@@ -71,6 +71,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     var bookSort = 0
         private set
     private var upLastUpdateTimeJob: Job? = null
+    private var defaultScrollBarSize = 0
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         this.savedInstanceState = savedInstanceState
@@ -86,6 +87,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     private fun initRecyclerView() {
         binding.rvBookshelf.setEdgeEffectColor(primaryColor)
+        defaultScrollBarSize = binding.rvBookshelf.scrollBarSize
+        upFastScrollerBar()
         binding.refreshLayout.setColorSchemeColors(accentColor)
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
@@ -115,6 +118,16 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             }
         })
         startLastUpdateTimeJob()
+    }
+
+    private fun upFastScrollerBar() {
+        val showBookshelfFastScroller = AppConfig.showBookshelfFastScroller
+        binding.rvBookshelf.setFastScrollEnabled(showBookshelfFastScroller)
+        if (showBookshelfFastScroller) {
+            binding.rvBookshelf.scrollBarSize = 0
+        } else {
+            binding.rvBookshelf.scrollBarSize = defaultScrollBarSize
+        }
     }
 
     fun upBookSort(sort: Int) {
@@ -156,6 +169,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 AppLog.put("书架更新出错", it)
             }.conflate().collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
+                binding.refreshLayout.isEnabled = list.isNotEmpty()
                 booksAdapter.setItems(list)
                 recoverPositionState()
                 delay(100)
@@ -274,6 +288,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         observeEvent<String>(EventBus.BOOKSHELF_REFRESH) {
             booksAdapter.notifyDataSetChanged()
             startLastUpdateTimeJob()
+            upFastScrollerBar()
         }
     }
 }

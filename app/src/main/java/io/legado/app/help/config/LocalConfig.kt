@@ -116,5 +116,10 @@ by appCtx.getSharedPreferences("local", Context.MODE_PRIVATE) {
             putBoolean("deleteBookOriginal", value)
         }
 
+    var appCrash: Boolean
+        get() = getBoolean("appCrash")
+        set(value) {
+            putBoolean("appCrash", value)
+        }
 
 }

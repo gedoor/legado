@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
@@ -11,7 +12,8 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
     protected var curBitmap: Bitmap? = null
     protected var prevBitmap: Bitmap? = null
     protected var nextBitmap: Bitmap? = null
-    protected val slopSquare by lazy { readView.slopSquare * readView.slopSquare }
+    protected var canvas: Canvas = Canvas()
+    private val slopSquare get() = readView.pageSlopSquare2
 
     override fun setDirection(direction: PageDirection) {
         super.setDirection(direction)
@@ -21,17 +23,13 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
     open fun setBitmap() {
         when (mDirection) {
             PageDirection.PREV -> {
-                prevBitmap?.recycle()
-                prevBitmap = prevPage.screenshot()
-                curBitmap?.recycle()
-                curBitmap = curPage.screenshot()
+                prevBitmap = prevPage.screenshot(prevBitmap, canvas)
+                curBitmap = curPage.screenshot(curBitmap, canvas)
             }
 
             PageDirection.NEXT -> {
-                nextBitmap?.recycle()
-                nextBitmap = nextPage.screenshot()
-                curBitmap?.recycle()
-                curBitmap = curPage.screenshot()
+                nextBitmap = nextPage.screenshot(nextBitmap, canvas)
+                curBitmap = curPage.screenshot(curBitmap, canvas)
             }
 
             else -> Unit
@@ -93,6 +91,7 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
                     }
                     setDirection(PageDirection.NEXT)
                 }
+                readView.setStartPoint(event.x, event.y, false)
             }
         }
         if (isMoved) {

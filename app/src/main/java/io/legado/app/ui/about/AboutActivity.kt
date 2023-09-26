@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ActivityAboutBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.filletBackground
@@ -46,7 +45,6 @@ class AboutActivity : BaseActivity<ActivityAboutBinding>() {
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.about, menu)
-        menu.findItem(R.id.menu_share_it)?.isVisible = !AppConst.isPlayChannel
         return super.onCompatCreateOptionsMenu(menu)
     }
 

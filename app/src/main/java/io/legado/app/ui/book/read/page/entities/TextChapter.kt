@@ -40,6 +40,38 @@ data class TextChapter(
 
     val pageSize: Int get() = pages.size
 
+    val paragraphs by lazy {
+        paragraphsInternal
+    }
+
+    val pageParagraphs by lazy {
+        pageParagraphsInternal
+    }
+
+    val paragraphsInternal: ArrayList<TextParagraph>
+        get() {
+            val paragraphs = arrayListOf<TextParagraph>()
+            pages.forEach {
+                it.lines.forEach loop@{ line ->
+                    if (line.paragraphNum <= 0) return@loop
+                    if (paragraphs.lastIndex < line.paragraphNum - 1) {
+                        paragraphs.add(TextParagraph(line.paragraphNum))
+                    }
+                    paragraphs[line.paragraphNum - 1].textLines.add(line)
+                }
+            }
+            return paragraphs
+        }
+
+    val pageParagraphsInternal: List<TextParagraph>
+        get() = pages.map {
+            it.paragraphs
+        }.flatten().also {
+            it.forEachIndexed { index, textParagraph ->
+                textParagraph.num = index + 1
+            }
+        }
+
     /**
      * @param index 页数
      * @return 是否是最后一页
@@ -71,6 +103,18 @@ data class TextChapter(
             return -1
         }
         return getReadLength(pageIndex + 1)
+    }
+
+    /**
+     * @param length 当前页面文字在章节中的位置
+     * @return 上一页位置,如果没有上一页返回-1
+     */
+    fun getPrevPageLength(length: Int): Int {
+        val pageIndex = getPageIndexByCharIndex(length)
+        if (pageIndex - 1 < 0) {
+            return -1
+        }
+        return getReadLength(pageIndex - 1)
     }
 
     /**
@@ -114,6 +158,27 @@ data class TextChapter(
             }
         }
         return stringBuilder.substring(startPos).toString()
+    }
+
+    fun getParagraphNum(
+        position: Int,
+        pageSplit: Boolean,
+    ): Int {
+        val paragraphs = if (pageSplit) {
+            pageParagraphs
+        } else {
+            paragraphs
+        }
+        paragraphs.forEach { paragraph ->
+            if (position in paragraph.chapterIndices) {
+                return paragraph.num
+            }
+        }
+        return -1
+    }
+
+    fun getLastParagraphPosition(): Int {
+        return pageParagraphs.last().chapterPosition
     }
 
     /**

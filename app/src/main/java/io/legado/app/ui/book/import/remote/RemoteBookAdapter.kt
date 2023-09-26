@@ -7,7 +7,6 @@ import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
-import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemImportBookBinding
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.utils.ConvertUtils
@@ -91,6 +90,14 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
                 }
             }
         }
+        holder.itemView.setOnLongClickListener {
+            getItem(holder.layoutPosition)?.let { remoteBook ->
+                if (remoteBook.isOnBookShelf) {
+                    callBack.addToBookShelfAgain(remoteBook)
+                }
+            }
+            true
+        }
     }
 
     private fun upCheckableCount() {
@@ -145,5 +152,6 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
         fun openDir(remoteBook: RemoteBook)
         fun upCountView()
         fun startRead(remoteBook: RemoteBook)
+        fun addToBookShelfAgain(remoteBook: RemoteBook)
     }
 }

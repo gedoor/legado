@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.help.IntentData
@@ -167,7 +166,7 @@ class HandleFileActivity :
     }
 
     private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
-        return if (onlySys || (AppConst.isPlayChannel && Permissions.isManageExternalStorage())) {
+        return if (onlySys) {
             arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
         } else {
             arrayListOf(
@@ -178,14 +177,10 @@ class HandleFileActivity :
     }
 
     private fun getFileActions(): ArrayList<SelectItem<Int>> {
-        return if (AppConst.isPlayChannel && Permissions.isManageExternalStorage()) {
-            arrayListOf(SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE))
-        } else {
-            arrayListOf(
-                SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE),
-                SelectItem(getString(R.string.app_file_picker), 11)
-            )
-        }
+        return arrayListOf(
+            SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE),
+            SelectItem(getString(R.string.app_file_picker), 11)
+        )
     }
 
     private fun checkPermissions(success: (() -> Unit)? = null) {

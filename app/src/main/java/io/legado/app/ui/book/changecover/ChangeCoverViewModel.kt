@@ -28,6 +28,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private var searchPool: ExecutorCoroutineDispatcher? = null
     private val tasks = CompositeCoroutine()
     private var searchSuccess: ((SearchBook) -> Unit)? = null
+    private var upAdapter: (() -> Unit)? = null
     private var bookSourceList = arrayListOf<BookSource>()
     private val defaultCover by lazy {
         listOf(
@@ -42,14 +43,18 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""
     var author: String = ""
-    val dataFlow = callbackFlow<List<SearchBook>> {
-        val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
+    val searchBooks: MutableList<SearchBook> = Collections.synchronizedList(arrayListOf())
+    val dataFlow = callbackFlow {
 
         searchSuccess = { searchBook ->
             if (!searchBooks.contains(searchBook)) {
                 searchBooks.add(searchBook)
                 trySend(defaultCover + searchBooks.sortedBy { it.originOrder })
             }
+        }
+
+        upAdapter = {
+            trySend(defaultCover + searchBooks.sortedBy { it.originOrder })
         }
 
         appDb.searchBookDao.getEnableHasCover(name, author).let {
@@ -64,6 +69,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         awaitClose {
             searchBooks.clear()
             searchSuccess = null
+            upAdapter = null
         }
     }.flowOn(IO)
 
@@ -90,6 +96,8 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private fun startSearch() {
         execute {
             stopSearch()
+            searchBooks.clear()
+            upAdapter?.invoke()
             bookSourceList.clear()
             bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
             searchStateData.postValue(true)
@@ -112,7 +120,13 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             return
         }
         val task = WebBook
-            .searchBook(viewModelScope, source, name, context = searchPool!!)
+            .searchBook(
+                viewModelScope,
+                source,
+                name,
+                context = searchPool!!,
+                executeContext = searchPool!!
+            )
             .timeout(60000L)
             .onSuccess(IO) {
                 it.firstOrNull()?.let { searchBook ->
@@ -124,7 +138,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                     }
                 }
             }
-            .onFinally(searchPool) {
+            .onFinally {
                 searchNext()
             }
         tasks.add(task)

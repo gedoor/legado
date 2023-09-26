@@ -76,7 +76,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tv_sort"
             app:layout_constraintLeft_toRightOf="@+id/tv_sort"
             app:layout_constraintTop_toTopOf="@id/tv_sort"
-            app:theme="@style/Spinner"
+            android:theme="@style/Spinner"
             tools:ignore="RtlHardcoded" />
 
         <io.legado.app.lib.theme.view.ThemeCheckBox

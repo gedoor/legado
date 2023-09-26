@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
             android:id="@+id/rv_bookshelf"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -21,11 +21,11 @@
         android:id="@+id/tv_empty_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:layout_gravity="center"
-        android:visibility="gone"
         android:text="@string/bookshelf_empty"
+        android:visibility="gone"
         tools:text="TextView" />
 
 </FrameLayout>

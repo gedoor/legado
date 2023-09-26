@@ -90,7 +90,7 @@
     <string name="offline_cache_s">缓存选择的章节到本地</string>
     <string name="change_origin">换源</string>
     <string name="about_description">
-        \u3000\u3000这是一款使用 Kotlin 全新开发的开源的阅读软件，欢迎您的加入。关注公众号【开源阅读】！
+        \u3000\u3000这是一款使用 Kotlin 全新开发的开源的阅读软件，欢迎您的加入。
     </string>
     <string name="app_share_description">
         阅读 3.0 下载地址：\nhttps://www.coolapk.com/apk/256030
@@ -1122,9 +1122,14 @@
     <string name="add_all_to_bookshelf">全部加入书架</string>
     <string name="page_to">页至</string>
     <string name="result_analyzed">解析示例</string>
-    <string name="bookshelf_px_4" >综合排序</string>
+    <string name="bookshelf_px_4">综合排序</string>
     <string name="effective_replaces">起效的替换</string>
     <string name="export_book">导出书籍</string>
     <string name="export_book_notification_content">正在导出(%1$s),还有%2$d本待导出</string>
     <string name="export_md">导出(MD)</string>
+    <string name="change_source_delay">换源间隔</string>
+    <string name="open_book_info_by_click_title">点击书名打开详情</string>
+    <string name="export_wait">等待导出</string>
+    <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
+    <string name="export_all_use_book_source">导出所有书的书源</string>
 </resources>

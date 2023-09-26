@@ -3,7 +3,11 @@ package io.legado.app.ui.widget.recycler.scroller
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import androidx.annotation.ColorInt
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 
@@ -149,7 +153,13 @@ class FastScrollRecyclerView : RecyclerView {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         mFastScroller.attachRecyclerView(this)
-        val parent = parent
+        var parent = parent
+        while (parent != null) {
+            when (parent) {
+                is ConstraintLayout, is CoordinatorLayout, is FrameLayout, is RelativeLayout -> break
+                else -> parent = parent.parent
+            }
+        }
         if (parent is ViewGroup && parent.indexOfChild(mFastScroller) == -1) {
             parent.addView(mFastScroller)
             mFastScroller.setLayoutParams(parent)

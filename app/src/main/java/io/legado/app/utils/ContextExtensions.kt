@@ -31,6 +31,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.help.IntentHelp
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.connectivityManager
+import splitties.systemservices.uiModeManager
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.system.exitProcess
@@ -347,6 +348,9 @@ val Context.isPad: Boolean
     get() {
         return (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE
     }
+
+val Context.isTv: Boolean
+    get() = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
 
 @Suppress("DEPRECATION")
 val Context.channel: String

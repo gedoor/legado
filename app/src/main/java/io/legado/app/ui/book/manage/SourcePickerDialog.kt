@@ -2,9 +2,11 @@ package io.legado.app.ui.book.manage
 
 import android.content.Context
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.setPadding
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,8 +19,10 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.DialogSourcePickerBinding
 import io.legado.app.databinding.Item1lineTextBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
+import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
@@ -27,11 +31,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import splitties.views.onClick
 
-class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
+class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
+    Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogSourcePickerBinding::bind)
     private val searchView: SearchView by lazy {
         binding.toolBar.findViewById(R.id.search_view)
+    }
+    private val toolBar: Toolbar by lazy {
+        binding.toolBar.toolbar
     }
     private val adapter by lazy {
         SourceAdapter(requireContext())
@@ -46,6 +54,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initView()
         initData()
+        initMenu()
     }
 
     private fun initView() {
@@ -80,6 +89,26 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker) {
                 adapter.setItems(it)
             }
         }
+    }
+
+    private fun initMenu() {
+        toolBar.setOnMenuItemClickListener(this)
+        toolBar.inflateMenu(R.menu.source_picker)
+        toolBar.menu.applyTint(requireContext())
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_change_source_delay -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.change_source_delay))
+                .setMaxValue(9999)
+                .setMinValue(0)
+                .setValue(AppConfig.batchChangeSourceDelay)
+                .show {
+                    AppConfig.batchChangeSourceDelay = it
+                }
+        }
+        return true
     }
 
     inner class SourceAdapter(context: Context) :

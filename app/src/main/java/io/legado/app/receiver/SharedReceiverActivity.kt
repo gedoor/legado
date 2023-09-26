@@ -1,5 +1,6 @@
 package io.legado.app.receiver
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,7 @@ class SharedReceiverActivity : AppCompatActivity() {
         finish()
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private fun initIntent() {
         when {
             intent.action == Intent.ACTION_SEND && intent.type == receivingType -> {

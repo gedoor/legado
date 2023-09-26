@@ -40,9 +40,16 @@
             android:defaultValue="true"
             android:key="showRss"
             android:title="@string/show_rss"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.NameListPreference
+            android:defaultValue="bookshelf"
+            android:key="defaultHomePage"
+            android:title="@string/default_home_page"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
-            app:iconSpaceReserved="false" />
+            app:entries="@array/default_home_page"
+            app:entryValues="@array/default_home_page_value" />
 
     </io.legado.app.lib.prefs.PreferenceCategory>
 
@@ -54,8 +61,8 @@
 
         <io.legado.app.lib.prefs.Preference
             android:key="localPassword"
-            android:title="@string/set_local_password"
-            android:summary="@string/set_local_password_summary" />
+            android:summary="@string/set_local_password_summary"
+            android:title="@string/set_local_password" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="userAgent"
@@ -64,8 +71,8 @@
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="webServiceWakeLock"
-            android:title="@string/web_service_wake_lock"
-            android:summary="@string/web_service_wake_lock_summary" />
+            android:summary="@string/web_service_wake_lock_summary"
+            android:title="@string/web_service_wake_lock" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="defaultBookTreeUri"

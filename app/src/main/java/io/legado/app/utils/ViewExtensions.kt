@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Build
 import android.text.Html
 import android.view.MotionEvent
@@ -133,12 +134,21 @@ fun View.visible(visible: Boolean) {
     }
 }
 
-fun View.screenshot(): Bitmap? {
+fun View.screenshot(bitmap: Bitmap? = null, canvas: Canvas? = null): Bitmap? {
     return if (width > 0 && height > 0) {
-        val screenshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val c = Canvas(screenshot)
+        val screenshot = if (bitmap != null && bitmap.width == width && bitmap.height == height) {
+            bitmap.eraseColor(Color.TRANSPARENT)
+            bitmap
+        } else {
+            bitmap?.recycle()
+            Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        }
+        val c = canvas ?: Canvas()
+        c.setBitmap(screenshot)
+        c.save()
         c.translate(-scrollX.toFloat(), -scrollY.toFloat())
         this.draw(c)
+        c.restore()
         c.setBitmap(null)
         screenshot.prepareToDraw()
         screenshot

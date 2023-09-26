@@ -403,8 +403,10 @@ const onReachBottom = (entries) => {
   }
 };
 
+let canJump = true;
 // 监听方向键
 const handleKeyPress = (event) => {
+  if (!canJump) return;
   switch (event.key) {
     case "ArrowLeft":
       event.stopPropagation();
@@ -425,7 +427,11 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
-        jump(0 - document.documentElement.clientHeight + 100);
+        canJump = false;
+        jump(0 - document.documentElement.clientHeight + 100, {
+          duration: store.config.jumpDuration,
+          callback: () => (canJump = true),
+        });
       }
       break;
     case "ArrowDown":
@@ -441,11 +447,24 @@ const handleKeyPress = (event) => {
           type: "warn",
         });
       } else {
-        jump(document.documentElement.clientHeight - 100);
+        canJump = false;
+        jump(document.documentElement.clientHeight - 100, {
+          duration: store.config.jumpDuration,
+          callback: () => (canJump = true),
+        });
       }
       break;
   }
 };
+
+// 阻止默认滚动事件
+const ignoreKeyPress = (event) => {
+  if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+};
+
 onMounted(() => {
   //获取书籍数据
   let bookUrl = sessionStorage.getItem("bookUrl");
@@ -484,6 +503,7 @@ onMounted(() => {
 
         getContent(chapterIndex, true, chapterPos);
         window.addEventListener("keyup", handleKeyPress);
+        window.addEventListener("keydown", ignoreKeyPress);
         // 兼容Safari < 14
         document.addEventListener("visibilitychange", onVisibilityChange);
         //监听底部加载
@@ -505,6 +525,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("keyup", handleKeyPress);
+  window.removeEventListener("keydown", ignoreKeyPress);
   window.removeEventListener("resize", onResize);
   // 兼容Safari < 14
   document.removeEventListener("visibilitychange", onVisibilityChange);

@@ -367,7 +367,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 FileOutputStream(file).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
-                ReadBookConfig.durConfig.setCurBg(2, file.absolutePath)
+                ReadBookConfig.durConfig.setCurBg(2, fileName)
                 postEvent(EventBus.UP_CONFIG, false)
             }.onFailure {
                 appCtx.toastOnUi(it.localizedMessage)

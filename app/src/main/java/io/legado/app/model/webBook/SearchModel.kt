@@ -13,6 +13,7 @@ import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import splitties.init.appCtx
 import java.util.concurrent.Executors
@@ -27,6 +28,7 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     private var tasks = CompositeCoroutine()
     private var bookSourceList = arrayListOf<BookSource>()
     private var searchBooks = arrayListOf<SearchBook>()
+    private val emptyBookSource = BookSource()
 
     @Volatile
     private var searchIndex = -1
@@ -75,24 +77,25 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
             return
         }
         searchIndex++
+        val searchIndex = searchIndex
         val source = bookSourceList[searchIndex]
-        searchPool?.let { searchPool ->
-            val task = WebBook.searchBook(
-                scope,
-                source,
-                searchKey,
-                searchPage,
-                context = searchPool,
-                executeContext = searchPool
-            ).timeout(30000L)
-                .onSuccess {
-                    onSuccess(searchId, it)
-                }
-                .onFinally {
-                    onFinally(searchId)
-                }
-            tasks.add(task)
-        }
+        val searchPool = searchPool ?: return
+        val task = WebBook.searchBook(
+            scope,
+            source,
+            searchKey,
+            searchPage,
+            context = searchPool,
+            executeContext = searchPool
+        ).timeout(30000L)
+            .onSuccess {
+                ensureActive()
+                onSuccess(searchId, it)
+            }
+            .onFinally {
+                onFinally(searchId, searchIndex)
+            }
+        tasks.add(task)
     }
 
     @Synchronized
@@ -106,11 +109,14 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     }
 
     @Synchronized
-    private fun onFinally(searchId: Long) {
+    private fun onFinally(searchId: Long, index: Int) {
         if (searchIndex < bookSourceList.lastIndex) {
             search(searchId)
         } else {
             searchIndex++
+        }
+        if (index <= bookSourceList.lastIndex) {
+            bookSourceList[index] = emptyBookSource
         }
         if (searchIndex >= bookSourceList.lastIndex
             + min(bookSourceList.size, threadCount)

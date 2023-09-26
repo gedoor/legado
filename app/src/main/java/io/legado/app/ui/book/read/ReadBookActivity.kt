@@ -171,6 +171,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val nextPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.NEXT) } }
     private val prevPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.PREV) } }
     private var bookChanged = false
+    private var pageChanged = false
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -206,18 +207,25 @@ class ReadBookActivity : BaseReadBookActivity(),
                 autoPageStop()
                 return@addCallback
             }
+            if (getPrefBoolean("disableReturnKey") && !menuLayoutIsVisible) {
+                return@addCallback
+            }
             finish()
         }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        viewModel.initData(intent)
+        viewModel.initData(intent) {
+            upMenu()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        viewModel.initData(intent ?: return)
+        viewModel.initData(intent ?: return) {
+            upMenu()
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -234,13 +242,16 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.readView.upStatusBar()
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
         ReadBook.readStartTime = System.currentTimeMillis()
         if (bookChanged) {
             bookChanged = false
             ReadBook.callBack = this
-            viewModel.initData(intent)
+            viewModel.initData(intent) {
+                upMenu()
+            }
         } else {
             //web端阅读时，app处于阅读界面，本地记录会覆盖web保存的进度，在此处恢复
             ReadBook.webBookProgress?.let {
@@ -302,32 +313,30 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 更新菜单
      */
     private fun upMenu() {
-        val menu = menu
-        val book = ReadBook.book
-        if (menu != null && book != null) {
-            val onLine = !book.isLocal
-            for (i in 0 until menu.size) {
-                val item = menu[i]
-                when (item.groupId) {
-                    R.id.menu_group_on_line -> item.isVisible = onLine
-                    R.id.menu_group_local -> item.isVisible = !onLine
-                    R.id.menu_group_text -> item.isVisible = book.isLocalTxt
-                    else -> when (item.itemId) {
-                        R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
-                        R.id.menu_re_segment -> item.isChecked = book.getReSegment()
-                        R.id.menu_enable_review -> {
-                            item.isVisible = BuildConfig.DEBUG
-                            item.isChecked = AppConfig.enableReview
-                        }
-
-                        R.id.menu_reverse_content -> item.isVisible = onLine
+        val menu = menu ?: return
+        val book = ReadBook.book ?: return
+        val onLine = !book.isLocal
+        for (i in 0 until menu.size) {
+            val item = menu[i]
+            when (item.groupId) {
+                R.id.menu_group_on_line -> item.isVisible = onLine
+                R.id.menu_group_local -> item.isVisible = !onLine
+                R.id.menu_group_text -> item.isVisible = book.isLocalTxt
+                else -> when (item.itemId) {
+                    R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
+                    R.id.menu_re_segment -> item.isChecked = book.getReSegment()
+                    R.id.menu_enable_review -> {
+                        item.isVisible = BuildConfig.DEBUG
+                        item.isChecked = AppConfig.enableReview
                     }
+
+                    R.id.menu_reverse_content -> item.isVisible = onLine
                 }
             }
-            lifecycleScope.launch {
-                menu.findItem(R.id.menu_get_progress)?.isVisible = withContext(IO) {
-                    AppWebDav.isOk
-                }
+        }
+        lifecycleScope.launch {
+            menu.findItem(R.id.menu_get_progress)?.isVisible = withContext(IO) {
+                AppWebDav.isOk
             }
         }
     }
@@ -596,19 +605,36 @@ class ReadBookActivity : BaseReadBookActivity(),
             MotionEvent.ACTION_DOWN -> textActionMenu.dismiss()
             MotionEvent.ACTION_MOVE -> {
                 when (v.id) {
-                    R.id.cursor_left -> readView.curPage.selectStartMove(
-                        event.rawX + cursorLeft.width,
-                        event.rawY - cursorLeft.height
-                    )
+                    R.id.cursor_left -> if (!readView.curPage.getReverseStartCursor()) {
+                        readView.curPage.selectStartMove(
+                            event.rawX + cursorLeft.width,
+                            event.rawY - cursorLeft.height
+                        )
+                    } else {
+                        readView.curPage.selectEndMove(
+                            event.rawX - cursorRight.width,
+                            event.rawY - cursorRight.height
+                        )
+                    }
 
-                    R.id.cursor_right -> readView.curPage.selectEndMove(
-                        event.rawX - cursorRight.width,
-                        event.rawY - cursorRight.height
-                    )
+                    R.id.cursor_right -> if (readView.curPage.getReverseEndCursor()) {
+                        readView.curPage.selectStartMove(
+                            event.rawX + cursorLeft.width,
+                            event.rawY - cursorLeft.height
+                        )
+                    } else {
+                        readView.curPage.selectEndMove(
+                            event.rawX - cursorRight.width,
+                            event.rawY - cursorRight.height
+                        )
+                    }
                 }
             }
 
-            MotionEvent.ACTION_UP -> showTextActionMenu()
+            MotionEvent.ACTION_UP -> {
+                readView.curPage.resetReverseCursor()
+                showTextActionMenu()
+            }
         }
         return true
     }
@@ -771,7 +797,6 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun upMenuView() {
         lifecycleScope.launch {
-            upMenu()
             binding.readMenu.upBookView()
         }
     }
@@ -788,6 +813,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (intent.getBooleanExtra("readAloud", false)) {
             intent.removeExtra("readAloud")
             ReadBook.readAloud()
+        }
+        if (BaseReadAloudService.isRun) {
+            ReadAloud.upTtsProgress(this)
         }
         loadStates = true
     }
@@ -823,6 +851,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 页面改变
      */
     override fun pageChanged() {
+        pageChanged = true
         lifecycleScope.launch {
             autoPageProgress = 0
             upSeekBarProgress()
@@ -1115,8 +1144,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                             }
                         }
                     }.onError {
-                        AppLog.putDebug(it.localizedMessage)
-                        toastOnUi(it.localizedMessage)
+                        AppLog.put("执行购买操作出错\n${it.localizedMessage}", it, true)
                     }
                 }
                 noButton()
@@ -1132,10 +1160,26 @@ class ReadBookActivity : BaseReadBookActivity(),
         when {
             !BaseReadAloudService.isRun -> {
                 ReadAloud.upReadAloudClass()
-                ReadBook.readAloud()
+                val scrollPageAnim = ReadBook.pageAnim() == 3
+                if (scrollPageAnim) {
+                    val startPos = binding.readView.getCurPagePosition()
+                    ReadBook.readAloud(startPos = startPos)
+                } else {
+                    ReadBook.readAloud()
+                }
             }
 
-            BaseReadAloudService.pause -> ReadAloud.resume(this)
+            BaseReadAloudService.pause -> {
+                val scrollPageAnim = ReadBook.pageAnim() == 3
+                if (scrollPageAnim && pageChanged) {
+                    pageChanged = false
+                    val startPos = binding.readView.getCurPagePosition()
+                    ReadBook.readAloud(startPos = startPos)
+                } else {
+                    ReadAloud.resume(this)
+                }
+            }
+
             else -> ReadAloud.pause(this)
         }
     }
@@ -1312,6 +1356,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             delay(300000)
             ReadBook.book?.let {
                 AppWebDav.uploadBookProgress(it)
+                it.save()
                 Backup.autoBack(this@ReadBookActivity)
             }
         }
@@ -1349,7 +1394,10 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadBook.callBack = null
         }
         ReadBook.preDownloadTask?.cancel()
+        ReadBook.downloadScope.coroutineContext.cancelChildren()
+        ReadBook.coroutineContext.cancelChildren()
         ReadBook.downloadedChapters.clear()
+        ReadBook.downloadFailChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
@@ -1372,7 +1420,9 @@ class ReadBookActivity : BaseReadBookActivity(),
             readView.upStyle()
             readView.upBgAlpha()
             if (it) {
-                ReadBook.loadContent(resetPageOffset = false)
+                if (isInitFinish) {
+                    ReadBook.loadContent(resetPageOffset = false)
+                }
             } else {
                 readView.upContent(resetPageOffset = false)
             }

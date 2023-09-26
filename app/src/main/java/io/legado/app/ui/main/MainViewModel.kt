@@ -26,7 +26,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -138,7 +137,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
         waitUpTocBooks.remove(bookUrl)
         upTocAdd(bookUrl)
-        execute(context = upTocPool, executeContext = IO) {
+        execute(context = upTocPool, executeContext = upTocPool) {
             kotlin.runCatching {
                 val oldBook = book.copy()
                 WebBook.runPreUpdateJs(source, book)
@@ -170,10 +169,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookDao.update(book)
                 }
             }
-        }.onCancel(upTocPool) {
+        }.onCancel {
             upTocCancel(bookUrl)
             upTocCancel(book.bookUrl)
-        }.onFinally(upTocPool) {
+        }.onFinally {
             upTocFinally(bookUrl)
             upTocFinally(book.bookUrl)
             postUpBooksLiveData()

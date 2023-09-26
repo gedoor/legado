@@ -35,6 +35,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.ui.about.CrashLogsDialog
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.BookshelfFragment1
 import io.legado.app.ui.main.bookshelf.style2.BookshelfFragment2
@@ -90,6 +91,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
             bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
         }
+        upHomePage()
         onBackPressedDispatcher.addCallback(this) {
             if (pagePosition != 0) {
                 binding.viewPagerMain.currentItem = 0
@@ -134,6 +136,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             upVersion()
             //设置本地密码
             setLocalPassword()
+            notifyAppCrash()
             //备份同步
             backupSync()
             //自动更新书籍
@@ -266,6 +269,19 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    private fun notifyAppCrash() {
+        if (!LocalConfig.appCrash || BuildConfig.DEBUG) {
+            return
+        }
+        LocalConfig.appCrash = false
+        alert(getString(R.string.draw), "检测到阅读发生了崩溃，是否打开崩溃日志以便报告问题？") {
+            yesButton {
+                showDialogFragment<CrashLogsDialog>()
+            }
+            noButton()
+        }
+    }
+
     /**
      * 备份同步
      */
@@ -354,6 +370,21 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         adapter.notifyDataSetChanged()
     }
 
+    private fun upHomePage() {
+        when (AppConfig.defaultHomePage) {
+            "bookshelf" -> {}
+            "explore" -> if (AppConfig.showDiscovery) {
+                binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
+            }
+
+            "rss" -> if (AppConfig.showRSS) {
+                binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idRss), false)
+            }
+
+            "my" -> binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
+        }
+    }
+
     private fun getFragmentId(position: Int): Int {
         val id = realPositions[position]
         if (id == idBookshelf) {
@@ -365,14 +396,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private inner class PageChangeCallback : ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
-            val oldPosition = pagePosition
             pagePosition = position
             binding.bottomNavigationView.menu
                 .getItem(realPositions[position]).isChecked = true
-            val callback1 = fragmentMap[getFragmentId(position)] as? Callback
-            val callback2 = fragmentMap[getFragmentId(oldPosition)] as? Callback
-            callback1?.onActive()
-            callback2?.onInactive()
         }
 
     }
@@ -419,14 +445,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             fragmentMap[getId(position)] = fragment
             return fragment
         }
-
-    }
-
-    interface Callback {
-
-        fun onActive()
-
-        fun onInactive()
 
     }
 

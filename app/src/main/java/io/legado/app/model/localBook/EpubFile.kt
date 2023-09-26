@@ -10,6 +10,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookHelp
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.isXml
 import io.legado.app.utils.printOnDebug
 import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
@@ -246,7 +247,7 @@ class EpubFile(var book: Book) {
                 getElementsByTag("h4").remove()
                 getElementsByTag("h5").remove()
                 getElementsByTag("h6").remove()
-            //getElementsMatchingOwnText(chapter.title)?.remove()
+                //getElementsMatchingOwnText(chapter.title)?.remove()
             }
         }
         return bodyElement
@@ -275,7 +276,12 @@ class EpubFile(var book: Book) {
                 book.author = author
             }
             if (metadata.descriptions.size > 0) {
-                book.intro = Jsoup.parse(metadata.descriptions[0]).text()
+                val desc = metadata.descriptions[0]
+                book.intro = if (desc.isXml()) {
+                    Jsoup.parse(metadata.descriptions[0]).text()
+                } else {
+                    desc
+                }
             }
         }
     }

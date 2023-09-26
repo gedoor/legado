@@ -8,6 +8,7 @@ import android.webkit.WebSettings
 import io.legado.app.constant.AppConst
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.LocalConfig
 import io.legado.app.model.ReadAloud
 import io.legado.app.utils.*
 import splitties.init.appCtx
@@ -20,7 +21,6 @@ import java.util.concurrent.TimeUnit
 /**
  * 异常管理类
  */
-@Suppress("DEPRECATION")
 class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
 
     /**
@@ -47,9 +47,10 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
      */
     private fun handleException(ex: Throwable?) {
         if (ex == null) return
+        LocalConfig.appCrash = true
         //保存日志文件
         saveCrashInfo2File(ex)
-        context.longToastOnUi(ex.stackTraceStr)
+        context.longToastOnUiLegacy(ex.stackTraceStr)
         Thread.sleep(3000)
     }
 

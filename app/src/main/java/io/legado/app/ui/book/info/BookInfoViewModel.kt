@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.github.junrar.exception.UnsupportedRarV5Exception
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
@@ -99,7 +98,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     private fun upCoverByRule(book: Book) {
         execute {
-            if (book.customCoverUrl.isNullOrBlank()) {
+            if (book.coverUrl.isNullOrBlank() && book.customCoverUrl.isNullOrBlank()) {
                 BookCover.searchCover(book)?.let { coverUrl ->
                     book.customCoverUrl = coverUrl
                     bookData.postValue(book)
@@ -299,13 +298,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 AppPattern.bookFileRegex.matches(it)
             }
         }.onError {
-            when (it) {
-                is UnsupportedRarV5Exception -> context.toastOnUi("暂不支持 rar v5 解压")
-                else -> {
-                    AppLog.put("getArchiveEntriesName Error:\n${it.localizedMessage}", it)
-                    context.toastOnUi("getArchiveEntriesName Error:\n${it.localizedMessage}")
-                }
-            }
+            AppLog.put("getArchiveEntriesName Error:\n${it.localizedMessage}", it)
+            context.toastOnUi("getArchiveEntriesName Error:\n${it.localizedMessage}")
         }.onSuccess {
             onSuccess.invoke(it)
         }

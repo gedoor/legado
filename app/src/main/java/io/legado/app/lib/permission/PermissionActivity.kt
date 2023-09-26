@@ -103,11 +103,13 @@ class PermissionActivity : AppCompatActivity() {
 
     override fun startActivity(intent: Intent) {
         super.startActivity(intent)
+        @Suppress("DEPRECATION")
         overridePendingTransition(0, 0)
     }
 
     override fun finish() {
         super.finish()
+        @Suppress("DEPRECATION")
         overridePendingTransition(0, 0)
     }
 

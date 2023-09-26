@@ -94,8 +94,15 @@ class BackupConfigFragment : PreferenceFragment(),
     }
     private val restoreDoc = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            Coroutine.async {
+            waitDialog.setText("恢复中…")
+            waitDialog.show()
+            val task = Coroutine.async {
                 Restore.restore(appCtx, uri)
+            }.onFinally {
+                waitDialog.dismiss()
+            }
+            waitDialog.setOnCancelListener {
+                task.cancel()
             }
         }
     }

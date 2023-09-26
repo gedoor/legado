@@ -78,33 +78,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var booksFlowJob: Job? = null
     private var precisionSearchMenuItem: MenuItem? = null
     private var isManualStopSearch = false
-    private val searchFinishCallback: (isEmpty: Boolean) -> Unit = searchFinish@{ isEmpty ->
-        if (!isEmpty || viewModel.searchScope.isAll()) return@searchFinish
-        lifecycleScope.launch {
-            alert("搜索结果为空") {
-                val precisionSearch = appCtx.getPrefBoolean(PreferKey.precisionSearch)
-                if (precisionSearch) {
-                    setMessage("${viewModel.searchScope.display}分组搜索结果为空，是否关闭精准搜索？")
-                    yesButton {
-                        appCtx.putPrefBoolean(PreferKey.precisionSearch, false)
-                        precisionSearchMenuItem?.isChecked = false
-                        viewModel.searchKey = ""
-                        viewModel.search(searchView.query.toString())
-                    }
-                } else {
-                    setMessage("${viewModel.searchScope.display}分组搜索结果为空，是否切换到全部分组？")
-                    yesButton {
-                        viewModel.searchScope.update("")
-                    }
-                }
-                noButton()
-            }
-        }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llInputHelp.setBackgroundColor(backgroundColor)
-        viewModel.searchFinishCallback = searchFinishCallback
         initRecyclerView()
         initSearchView()
         initOtherView()
@@ -236,6 +212,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         binding.rvHistoryKey.adapter = historyKeyAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.itemAnimator = null
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
@@ -293,7 +270,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         viewModel.searchBookLiveData.observe(this) {
             adapter.setItems(it)
         }
-        lifecycleScope.launch(IO) {
+        lifecycleScope.launch {
             appDb.bookSourceDao.flowEnabledGroups().collect {
                 groups = it
             }
@@ -306,16 +283,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private fun receiptIntent(intent: Intent? = null) {
         val searchScope = intent?.getStringExtra("searchScope")
         searchScope?.let {
-            viewModel.searchScope.update(searchScope)
+            viewModel.searchScope.update(searchScope, false)
         }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {
             searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
                 .requestFocus()
         } else {
-            searchView.post {
-                searchView.setQuery(key, true)
-            }
+            searchView.setQuery(key, true)
         }
     }
 
@@ -402,6 +377,27 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun observeLiveBus() {
         viewModel.upAdapterLiveData.observe(this) {
             adapter.notifyItemRangeChanged(0, adapter.itemCount, it)
+        }
+        viewModel.searchFinishLiveData.observe(this) { isEmpty ->
+            if (!isEmpty || viewModel.searchScope.isAll()) return@observe
+            alert("搜索结果为空") {
+                val precisionSearch = appCtx.getPrefBoolean(PreferKey.precisionSearch)
+                if (precisionSearch) {
+                    setMessage("${viewModel.searchScope.display}分组搜索结果为空，是否关闭精准搜索？")
+                    yesButton {
+                        appCtx.putPrefBoolean(PreferKey.precisionSearch, false)
+                        precisionSearchMenuItem?.isChecked = false
+                        viewModel.searchKey = ""
+                        viewModel.search(searchView.query.toString())
+                    }
+                } else {
+                    setMessage("${viewModel.searchScope.display}分组搜索结果为空，是否切换到全部分组？")
+                    yesButton {
+                        viewModel.searchScope.update("")
+                    }
+                }
+                noButton()
+            }
         }
     }
 

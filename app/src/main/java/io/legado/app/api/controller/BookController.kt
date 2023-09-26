@@ -201,11 +201,11 @@ object BookController {
     /**
      * 保存书籍
      */
-    fun saveBook(postData: String?): ReturnData {
+    suspend fun saveBook(postData: String?): ReturnData {
         val returnData = ReturnData()
         GSON.fromJsonObject<Book>(postData).getOrNull()?.let { book ->
-            book.save()
             AppWebDav.uploadBookProgress(book)
+            book.save()
             return returnData.setData("")
         }
         return returnData.setErrorMsg("格式不对")
@@ -226,7 +226,7 @@ object BookController {
     /**
      * 保存进度
      */
-    fun saveBookProgress(postData: String?): ReturnData {
+    suspend fun saveBookProgress(postData: String?): ReturnData {
         val returnData = ReturnData()
         GSON.fromJsonObject<BookProgress>(postData)
             .onFailure { it.printOnDebug() }
@@ -236,8 +236,10 @@ object BookController {
                     book.durChapterPos = bookProgress.durChapterPos
                     book.durChapterTitle = bookProgress.durChapterTitle
                     book.durChapterTime = bookProgress.durChapterTime
+                    AppWebDav.uploadBookProgress(bookProgress) {
+                        book.syncTime = System.currentTimeMillis()
+                    }
                     appDb.bookDao.update(book)
-                    AppWebDav.uploadBookProgress(bookProgress)
                     ReadBook.book?.let {
                         if (it.name == bookProgress.name &&
                             it.author == bookProgress.author

@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.constant.AppConst
 import io.legado.app.databinding.DialogUpdateBinding
 import io.legado.app.help.AppUpdate
 import io.legado.app.lib.theme.primaryColor
@@ -53,21 +52,19 @@ class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
                 .build()
                 .setMarkdown(binding.textView, updateBody)
         }
-        if (!AppConst.isPlayChannel) {
-            binding.toolBar.inflateMenu(R.menu.app_update)
-            binding.toolBar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.menu_download -> {
-                        val url = arguments?.getString("url")
-                        val name = arguments?.getString("name")
-                        if (url != null && name != null) {
-                            Download.start(requireContext(), url, name)
-                            toastOnUi(R.string.download_start)
-                        }
+        binding.toolBar.inflateMenu(R.menu.app_update)
+        binding.toolBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_download -> {
+                    val url = arguments?.getString("url")
+                    val name = arguments?.getString("name")
+                    if (url != null && name != null) {
+                        Download.start(requireContext(), url, name)
+                        toastOnUi(R.string.download_start)
                     }
                 }
-                return@setOnMenuItemClickListener true
             }
+            return@setOnMenuItemClickListener true
         }
     }
 

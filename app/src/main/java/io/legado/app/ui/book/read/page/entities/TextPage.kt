@@ -21,7 +21,7 @@ import kotlin.math.min
 data class TextPage(
     var index: Int = 0,
     var text: String = appCtx.getString(R.string.data_loading),
-    var title: String = "",
+    var title: String = appCtx.getString(R.string.data_loading),
     private val textLines: ArrayList<TextLine> = arrayListOf(),
     var pageSize: Int = 0,
     var chapterSize: Int = 0,
@@ -35,6 +35,23 @@ data class TextPage(
     val charSize: Int get() = text.length
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
+
+    val paragraphs by lazy {
+        paragraphsInternal
+    }
+
+    val paragraphsInternal: ArrayList<TextParagraph> get() {
+        val paragraphs = arrayListOf<TextParagraph>()
+        val lines = textLines.filter { it.paragraphNum > 0 }
+        val offset = lines.first().paragraphNum - 1
+        lines.forEach { line ->
+            if (paragraphs.lastIndex < line.paragraphNum - offset - 1) {
+                paragraphs.add(TextParagraph(0))
+            }
+            paragraphs[line.paragraphNum - offset - 1].textLines.add(line)
+        }
+        return paragraphs
+    }
 
     fun addLine(line: TextLine) {
         textLines.add(line)

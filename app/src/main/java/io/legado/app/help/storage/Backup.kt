@@ -27,6 +27,7 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.coroutineContext
 
 /**
  * 备份
@@ -92,113 +93,123 @@ object Backup {
 
     suspend fun backup(context: Context, path: String?) {
         LocalConfig.lastBackup = System.currentTimeMillis()
-        withContext(IO) {
-            val aes = BackupAES()
-            FileUtils.delete(backupPath)
-            writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
-            writeListToJson(appDb.bookmarkDao.all, "bookmark.json", backupPath)
-            writeListToJson(appDb.bookGroupDao.all, "bookGroup.json", backupPath)
-            writeListToJson(appDb.bookSourceDao.all, "bookSource.json", backupPath)
-            writeListToJson(appDb.rssSourceDao.all, "rssSources.json", backupPath)
-            writeListToJson(appDb.rssStarDao.all, "rssStar.json", backupPath)
-            ensureActive()
-            writeListToJson(appDb.replaceRuleDao.all, "replaceRule.json", backupPath)
-            writeListToJson(appDb.readRecordDao.all, "readRecord.json", backupPath)
-            writeListToJson(appDb.searchKeywordDao.all, "searchHistory.json", backupPath)
-            writeListToJson(appDb.ruleSubDao.all, "sourceSub.json", backupPath)
-            writeListToJson(appDb.txtTocRuleDao.all, "txtTocRule.json", backupPath)
-            writeListToJson(appDb.httpTTSDao.all, "httpTTS.json", backupPath)
-            writeListToJson(appDb.keyboardAssistsDao.all, "keyboardAssists.json", backupPath)
-            writeListToJson(appDb.dictRuleDao.all, "dictRule.json", backupPath)
-            GSON.toJson(appDb.serverDao.all).let { json ->
-                aes.runCatching {
-                    encryptBase64(json)
-                }.getOrDefault(json).let {
-                    FileUtils.createFileIfNotExist(backupPath + File.separator + "servers.json")
-                        .writeText(it)
-                }
-            }
-            ensureActive()
-            GSON.toJson(ReadBookConfig.configList).let {
-                FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
+        val aes = BackupAES()
+        FileUtils.delete(backupPath)
+        writeListToJson(appDb.bookDao.all, "bookshelf.json", backupPath)
+        writeListToJson(appDb.bookmarkDao.all, "bookmark.json", backupPath)
+        writeListToJson(appDb.bookGroupDao.all, "bookGroup.json", backupPath)
+        writeListToJson(appDb.bookSourceDao.all, "bookSource.json", backupPath)
+        writeListToJson(appDb.rssSourceDao.all, "rssSources.json", backupPath)
+        writeListToJson(appDb.rssStarDao.all, "rssStar.json", backupPath)
+        writeListToJson(appDb.replaceRuleDao.all, "replaceRule.json", backupPath)
+        writeListToJson(appDb.readRecordDao.all, "readRecord.json", backupPath)
+        writeListToJson(appDb.searchKeywordDao.all, "searchHistory.json", backupPath)
+        writeListToJson(appDb.ruleSubDao.all, "sourceSub.json", backupPath)
+        writeListToJson(appDb.txtTocRuleDao.all, "txtTocRule.json", backupPath)
+        writeListToJson(appDb.httpTTSDao.all, "httpTTS.json", backupPath)
+        writeListToJson(appDb.keyboardAssistsDao.all, "keyboardAssists.json", backupPath)
+        writeListToJson(appDb.dictRuleDao.all, "dictRule.json", backupPath)
+        GSON.toJson(appDb.serverDao.all).let { json ->
+            aes.runCatching {
+                encryptBase64(json)
+            }.getOrDefault(json).let {
+                FileUtils.createFileIfNotExist(backupPath + File.separator + "servers.json")
                     .writeText(it)
             }
-            GSON.toJson(ReadBookConfig.shareConfig).let {
-                FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.shareConfigFileName)
-                    .writeText(it)
-            }
-            GSON.toJson(ThemeConfig.configList).let {
-                FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
-                    .writeText(it)
-            }
-            DirectLinkUpload.getConfig()?.let {
-                FileUtils.createFileIfNotExist(backupPath + File.separator + DirectLinkUpload.ruleFileName)
-                    .writeText(GSON.toJson(it))
-            }
-            ensureActive()
-            appCtx.getSharedPreferences(backupPath, "config")?.let { sp ->
-                val edit = sp.edit()
-                appCtx.defaultSharedPreferences.all.forEach { (key, value) ->
-                    if (BackupConfig.keyIsNotIgnore(key)) {
-                        when (key) {
-                            PreferKey.webDavPassword -> {
-                                edit.putString(key, aes.runCatching {
-                                    encryptBase64(value.toString())
-                                }.getOrDefault(value.toString()))
-                            }
+        }
+        coroutineContext.ensureActive()
+        GSON.toJson(ReadBookConfig.configList).let {
+            FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.configFileName)
+                .writeText(it)
+        }
+        GSON.toJson(ReadBookConfig.shareConfig).let {
+            FileUtils.createFileIfNotExist(backupPath + File.separator + ReadBookConfig.shareConfigFileName)
+                .writeText(it)
+        }
+        GSON.toJson(ThemeConfig.configList).let {
+            FileUtils.createFileIfNotExist(backupPath + File.separator + ThemeConfig.configFileName)
+                .writeText(it)
+        }
+        DirectLinkUpload.getConfig()?.let {
+            FileUtils.createFileIfNotExist(backupPath + File.separator + DirectLinkUpload.ruleFileName)
+                .writeText(GSON.toJson(it))
+        }
+        coroutineContext.ensureActive()
+        appCtx.getSharedPreferences(backupPath, "config")?.let { sp ->
+            val edit = sp.edit()
+            appCtx.defaultSharedPreferences.all.forEach { (key, value) ->
+                if (BackupConfig.keyIsNotIgnore(key)) {
+                    when (key) {
+                        PreferKey.webDavPassword -> {
+                            edit.putString(key, aes.runCatching {
+                                encryptBase64(value.toString())
+                            }.getOrDefault(value.toString()))
+                        }
 
-                            else -> when (value) {
-                                is Int -> edit.putInt(key, value)
-                                is Boolean -> edit.putBoolean(key, value)
-                                is Long -> edit.putLong(key, value)
-                                is Float -> edit.putFloat(key, value)
-                                is String -> edit.putString(key, value)
-                            }
+                        else -> when (value) {
+                            is Int -> edit.putInt(key, value)
+                            is Boolean -> edit.putBoolean(key, value)
+                            is Long -> edit.putLong(key, value)
+                            is Float -> edit.putFloat(key, value)
+                            is String -> edit.putString(key, value)
                         }
                     }
                 }
-                edit.commit()
             }
-            ensureActive()
-            val zipFileName = getNowZipFileName()
-            val paths = arrayListOf(*backupFileNames)
-            for (i in 0 until paths.size) {
-                paths[i] = backupPath + File.separator + paths[i]
-            }
-            FileUtils.delete(zipFilePath)
-            FileUtils.delete(zipFilePath.replace("tmp_", ""))
-            val backupFileName = if (AppConfig.onlyLatestBackup) {
-                "backup.zip"
-            } else {
-                zipFileName
-            }
-            if (ZipUtils.zipFiles(paths, zipFilePath)) {
-                when {
-                    path.isNullOrBlank() -> {
-                        copyBackup(context.getExternalFilesDir(null)!!, backupFileName)
-                    }
-
-                    path.isContentScheme() -> {
-                        copyBackup(context, Uri.parse(path), backupFileName)
-                    }
-
-                    else -> {
-                        copyBackup(File(path), backupFileName)
-                    }
+            edit.commit()
+        }
+        coroutineContext.ensureActive()
+        val zipFileName = getNowZipFileName()
+        val paths = arrayListOf(*backupFileNames)
+        for (i in 0 until paths.size) {
+            paths[i] = backupPath + File.separator + paths[i]
+        }
+        FileUtils.delete(zipFilePath)
+        FileUtils.delete(zipFilePath.replace("tmp_", ""))
+        val backupFileName = if (AppConfig.onlyLatestBackup) {
+            "backup.zip"
+        } else {
+            zipFileName
+        }
+        if (ZipUtils.zipFiles(paths, zipFilePath)) {
+            when {
+                path.isNullOrBlank() -> {
+                    copyBackup(context.getExternalFilesDir(null)!!, backupFileName)
                 }
-                AppWebDav.backUpWebDav(zipFileName)
+
+                path.isContentScheme() -> {
+                    copyBackup(context, Uri.parse(path), backupFileName)
+                }
+
+                else -> {
+                    copyBackup(File(path), backupFileName)
+                }
             }
-            FileUtils.delete(backupPath)
-            FileUtils.delete(zipFilePath)
+            AppWebDav.backUpWebDav(zipFileName)
+        }
+        FileUtils.delete(backupPath)
+        FileUtils.delete(zipFilePath)
+        coroutineContext.ensureActive()
+        ReadBookConfig.getAllPicBgStr().map {
+            if (it.contains(File.separator)) {
+                File(it)
+            } else {
+                appCtx.externalFiles.getFile("bg", it)
+            }
+        }.let {
+            AppWebDav.upBgs(it.toTypedArray())
         }
     }
 
-    private fun writeListToJson(list: List<Any>, fileName: String, path: String) {
-        if (list.isNotEmpty()) {
-            val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
-            FileOutputStream(file).use { fos ->
-                BufferedOutputStream(fos, 64 * 1024).use {
-                    GSON.writeToOutputStream(it, list)
+    private suspend fun writeListToJson(list: List<Any>, fileName: String, path: String) {
+        coroutineContext.ensureActive()
+        withContext(IO) {
+            if (list.isNotEmpty()) {
+                val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
+                FileOutputStream(file).use { fos ->
+                    BufferedOutputStream(fos, 64 * 1024).use {
+                        GSON.writeToOutputStream(it, list)
+                    }
                 }
             }
         }
