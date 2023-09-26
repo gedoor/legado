@@ -105,6 +105,42 @@ object RuleBigDataHelp {
         return null
     }
 
+    fun putChapterReviewVariable(
+        bookUrl: String,
+        chapterReviewUrl: String,
+        key: String,
+        value: String?
+    ) {
+        val md5BookUrl = MD5Utils.md5Encode(bookUrl)
+        val md5ChapterReviewUrl = MD5Utils.md5Encode(chapterReviewUrl)
+        val md5Key = MD5Utils.md5Encode(key)
+        if (value == null) {
+            FileUtils.delete(FileUtils.getPath(bookData, md5BookUrl, md5ChapterReviewUrl, "$md5Key.txt"))
+        } else {
+            val valueFile =
+                FileUtils.createFileIfNotExist(bookData, md5BookUrl, md5ChapterReviewUrl, "$md5Key.txt")
+            valueFile.writeText(value)
+            val bookUrlFile = File(FileUtils.getPath(bookData, md5BookUrl, "bookUrl.txt"))
+            if (!bookUrlFile.exists()) {
+                bookUrlFile.writeText(bookUrl)
+            }
+        }
+    }
+
+    fun getChapterReviewVariable(
+        bookUrl: String,
+        chapterReviewUrl: String,
+        key: String
+    ): String? {
+        val md5BookUrl = MD5Utils.md5Encode(bookUrl)
+        val md5ChapterReviewUrl = MD5Utils.md5Encode(chapterReviewUrl)
+        val md5Key = MD5Utils.md5Encode(key)
+        val file = File(FileUtils.getPath(bookData, md5BookUrl, md5ChapterReviewUrl, "$md5Key.txt"))
+        if (file.exists()) {
+            return file.readText()
+        }
+        return null
+    }
     fun putRssVariable(origin: String, link: String, key: String, value: String?) {
         val md5Origin = MD5Utils.md5Encode(origin)
         val md5Link = MD5Utils.md5Encode(link)

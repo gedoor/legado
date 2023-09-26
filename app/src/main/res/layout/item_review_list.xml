@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="7dp"
+    android:id="@+id/item_review_list">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_review"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/iv_post_avatar"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="22dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_post_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:text=""
+            android:textColor="#1b1b1b"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toRightOf="@+id/iv_post_avatar"
+            app:layout_constraintTop_toTopOf="@+id/iv_post_avatar" />
+
+        <TextView
+            android:id="@+id/tv_review_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="14dp"
+            android:textColor="#171717"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_post_avatar"
+            app:layout_constraintTop_toBottomOf="@+id/tv_post_name"
+            tools:text=""/>
+
+        <ImageView
+            android:id="@+id/iv_review_img_url"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/tv_post_time"
+            app:layout_constraintTop_toBottomOf="@+id/tv_review_content"/>
+
+        <TextView
+            android:id="@+id/tv_post_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text=""
+            android:textColor="#802c2c2c"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/tv_review_content"
+            app:layout_constraintTop_toBottomOf="@+id/iv_review_img_url" />
+
+        <LinearLayout
+            android:id="@+id/review_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="19dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/tv_post_time"
+            app:layout_constraintTop_toTopOf="@+id/tv_post_time">
+
+            <ImageView
+                android:id="@+id/iv_review_like"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:layout_marginEnd="3dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_review_like_bg" />
+
+            <TextView
+                android:id="@+id/tv_review_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#6f6f6f"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

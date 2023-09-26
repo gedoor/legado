@@ -33,6 +33,9 @@ data class Book(
     // 目录页Url (toc=table of Contents)
     @ColumnInfo(defaultValue = "")
     var tocUrl: String = "",
+    // 段评页Url (toc=table of Contents)
+    @ColumnInfo(defaultValue = "")
+    var reviewCountUrl: String = "",
     // 书源URL(默认BookType.local)
     @ColumnInfo(defaultValue = BookType.localTag)
     var origin: String = BookType.localTag,

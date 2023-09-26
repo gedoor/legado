@@ -94,8 +94,7 @@
         android:id="@+id/menu_enable_review"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/review"
-        android:visible="false"
+        android:title="@string/enable_review"
         app:showAsAction="never" />
 
     <item

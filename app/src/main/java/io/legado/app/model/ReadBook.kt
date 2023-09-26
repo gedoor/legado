@@ -340,14 +340,13 @@ object ReadBook : CoroutineScope by MainScope() {
                 val book = book!!
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                     BookHelp.getContent(book, chapter)?.let {
-                        contentLoadFinish(
-                            book,
-                            chapter,
-                            it,
-                            upContent,
-                            resetPageOffset
-                        ) {
-                            success?.invoke()
+                        contentReviewLoad(this, bookSource!!, book, chapter) {
+                            contentLoadFinish(
+                                book, chapter, it, upContent,
+                                resetPageOffset
+                            ) {
+                                success?.invoke()
+                            }
                         }
                     } ?: download(
                         downloadScope,
@@ -359,6 +358,30 @@ object ReadBook : CoroutineScope by MainScope() {
                 removeLoading(index)
                 AppLog.put("加载正文出错\n${it.localizedMessage}")
             }
+        }
+    }
+
+    /**
+     * 加载段评
+     */
+    private fun contentReviewLoad(
+        scope: CoroutineScope,
+        bookSource: BookSource,
+        book: Book,
+        chapter: BookChapter,
+        success: (() -> Unit)? = null
+    ) {
+        if (AppConfig.enableReview
+            && book.bookUrl == ReadBook.book?.bookUrl) {
+            WebBook.getReviewCount(scope, bookSource, book, chapter)
+                .onSuccess { rList ->
+                    appDb.bookReviewDao.delByUrl(book.reviewCountUrl)
+                    appDb.bookReviewDao.insert(*rList.toTypedArray())
+                }.onFinally {
+                    success?.invoke()
+                }
+        } else {
+            success?.invoke()
         }
     }
 
@@ -450,10 +473,11 @@ object ReadBook : CoroutineScope by MainScope() {
                 contentProcessor.getTitleReplaceRules(),
                 book.getUseReplaceRule()
             )
+            val bookReviews = appDb.bookReviewDao.getReviewCountList(chapter.getAbsoluteURL())
             val contents = contentProcessor
                 .getContent(book, chapter, content, includeTitle = false)
             val textChapter = ChapterProvider
-                .getTextChapter(book, chapter, displayTitle, contents, chapterSize)
+                .getTextChapter(book, chapter, contents, bookReviews, displayTitle, chapterSize)
             when (val offset = chapter.index - durChapterIndex) {
                 0 -> {
                     curTextChapter = textChapter

@@ -7,18 +7,21 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ReviewRule(
-    var reviewUrl: String? = null,          // 段评URL
-    var avatarRule: String? = null,         // 段评发布者头像
-    var contentRule: String? = null,        // 段评内容
-    var postTimeRule: String? = null,       // 段评发布时间
-    var reviewQuoteUrl: String? = null,     // 获取段评回复URL
+    var reviewCountList: String? = null,    // 段评数量列表
+    var reviewSegmentId: String? = null,    // 段评数量索引
+    var reviewCount: String? = null,        // 段评数量
 
-    // 这些功能将在以上功能完成以后实现
-    var voteUpUrl: String? = null,          // 点赞URL
-    var voteDownUrl: String? = null,        // 点踩URL
-    var postReviewUrl: String? = null,      // 发送回复URL
-    var postQuoteUrl: String? = null,       // 发送回复段评URL
-    var deleteUrl: String? = null,          // 删除段评URL
+    var reviewUrl: String? = null,          // 段评列表URL
+    var reviewList: String? = null,         // 段评列表规则
+    var reviewContent: String? = null,      // 段评内容规则
+    var reviewImgUrl: String? = null,       // 段评配图规则
+    var reviewPostAvatar: String? = null,   // 段评发布者头像
+    var reviewPostName: String? = null,     // 段评发布者名称
+    var reviewPostTime: String? = null,     // 段评发布时间
+    var reviewLikeCount: String? = null,    // 段评点赞数量
+    var quoteReviewDefault: String? = null, // 段评默认展开规则
+    var quoteReviewCount: String? = null,   // 段评展开数量规则
+    var quoteReviewUrl: String? = null,     // 段评展开URL
 ) : Parcelable {
 
     companion object {

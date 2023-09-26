@@ -25,6 +25,7 @@ import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
+import io.legado.app.ui.book.read.page.entities.column.ReviewColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.*
@@ -228,8 +229,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 pressDown = false
                 if (!pageDelegate!!.isMoved && !isMove) {
                     if (!longPressed && !pressOnTextSelected) {
-                        if (!curPage.onClick(startX, startY)) {
-                            onSingleTapUp()
+                        curPage.onClick(startX, startY) { column, _ ->
+                            when (column) {
+                                is ReviewColumn -> {}
+                                else -> onSingleTapUp()
+                            }
                         }
                         return true
                     }
@@ -654,6 +658,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun showTextActionMenu()
         fun autoPageStop()
         fun openChapterList()
+        fun openReviewList(segmentIndex: String, reviewCount: String)
         fun addBookmark()
         fun changeReplaceRuleState()
         fun openSearchActivity(searchWord: String?)

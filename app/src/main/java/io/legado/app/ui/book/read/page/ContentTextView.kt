@@ -202,7 +202,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
 
                 is ImageColumn -> drawImage(canvas, textPage, textLine, it, lineTop, lineBottom)
-                is ReviewColumn -> it.drawToCanvas(canvas, lineBase, textPaint.textSize)
+                is ReviewColumn -> it.drawToCanvas(canvas, lineBase, ChapterProvider.contentPaint.textSize)
             }
         }
     }
@@ -330,27 +330,23 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    /**
-     * 单击
-     * @return true:已处理, false:未处理
-     */
+    /*
+    * 单击
+    */
     @Suppress("UNUSED_ANONYMOUS_PARAMETER")
-    fun click(x: Float, y: Float): Boolean {
-        var handled = false
+    fun click(
+        x: Float, y: Float,
+        select: (column: BaseColumn, textPos: TextPos) -> Unit
+    ) {
         touch(x, y) { _, textPos, textPage, textLine, column ->
             when (column) {
-                is ButtonColumn -> {
-                    context.toastOnUi("Button Pressed!")
-                    handled = true
-                }
-
-                is ReviewColumn -> {
-                    context.toastOnUi("Button Pressed!")
-                    handled = true
-                }
+                is ReviewColumn -> callBack.openReviewList(column.segmentIndex, column.reviewCount)
+                is TextColumn -> {}
+                is ButtonColumn -> {}
             }
+            invalidate()
+            select(column, textPos)
         }
-        return handled
     }
 
     /**
@@ -798,6 +794,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val pageFactory: TextPageFactory
         val isScroll: Boolean
         var isSelectingSearchResult: Boolean
+        fun openReviewList(segmentIndex: String, reviewCount: String)
         fun upSelectedStart(x: Float, y: Float, top: Float)
         fun upSelectedEnd(x: Float, y: Float)
         fun onImageLongPress(x: Float, y: Float, src: String)

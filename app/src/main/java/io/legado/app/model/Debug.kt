@@ -294,10 +294,60 @@ object Debug {
             needSave = false
         ).onSuccess {
             log(debugSource, "︽正文页解析完成", state = 1000)
+            reviewCountDebug(scope, book, bookSource, bookChapter)
         }.onError {
             log(debugSource, it.stackTraceStr, state = -1)
         }
         tasks.add(content)
+    }
+
+    private fun reviewCountDebug(
+        scope: CoroutineScope,
+        book: Book,
+        bookSource: BookSource,
+        bookChapter: BookChapter
+    ) {
+        log(debugSource, "︾开始解析正文段评")
+        val reviewCount = WebBook.getReviewCount(
+            scope = scope,
+            book = book,
+            bookSource = bookSource,
+            bookChapter = bookChapter,
+        ).onSuccess {reviewCount ->
+            log(debugSource, "︽正文段评数列表解析完成", state = 1000)
+            val reviewSegmentId = reviewCount.getOrNull(0)?.reviewSegmentId
+            reviewListDebug(scope, book, bookSource, reviewCount.first(), reviewSegmentId)
+        }.onError {
+            log(debugSource, it.stackTraceStr, state = -1)
+        }
+        tasks.add(reviewCount)
+    }
+
+    private fun reviewListDebug(
+        scope: CoroutineScope,
+        book: Book,
+        bookSource: BookSource,
+        bookReview: BookReview,
+        reviewSegmentId: String?
+    ) {
+        if (reviewSegmentId.isNullOrBlank()) {
+            log(debugSource, "≡段评索引为空,跳过段评列表")
+            log(debugSource, showTime = false)
+            return
+        }
+        log(debugSource, "︾开始解析段评列表")
+        val review = WebBook.getReviewList(
+            scope = scope,
+            book = book,
+            bookSource = bookSource,
+            bookReview = bookReview,
+            segmentIndex = reviewSegmentId.toInt()
+        ).onSuccess {
+            log(debugSource, "︽段评列表完成", state = 1000)
+        }.onError {
+            log(debugSource, it.stackTraceStr, state = -1)
+        }
+        tasks.add(review)
     }
 
     interface Callback {

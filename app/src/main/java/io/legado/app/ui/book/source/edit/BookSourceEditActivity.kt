@@ -179,6 +179,9 @@ class BookSourceEditActivity :
         binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
             setText(R.string.source_tab_content)
         })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.review)
+        })
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
@@ -238,6 +241,7 @@ class BookSourceEditActivity :
             binding.cbIsEnable.isChecked = it.enabled
             binding.cbIsEnableExplore.isChecked = it.enabledExplore
             binding.cbIsEnableCookie.isChecked = it.enabledCookieJar ?: false
+            binding.cbIsEnableReview.isChecked = it.enabledReview ?: false
             binding.spType.setSelection(
                 when (it.bookSourceType) {
                     BookSourceType.file -> 3
@@ -333,6 +337,7 @@ class BookSourceEditActivity :
             add(EditEntity("content", cr.content, R.string.rule_book_content))
             add(EditEntity("title", cr.title, R.string.rule_chapter_name))
             add(EditEntity("nextContentUrl", cr.nextContentUrl, R.string.rule_next_content))
+            add(EditEntity("reviewCountUrl", cr.reviewCountUrl, R.string.rule_review_count_url))
             add(EditEntity("webJs", cr.webJs, R.string.rule_web_js))
             add(EditEntity("sourceRegex", cr.sourceRegex, R.string.rule_source_regex))
             add(EditEntity("replaceRegex", cr.replaceRegex, R.string.rule_replace_regex))
@@ -344,16 +349,20 @@ class BookSourceEditActivity :
         val rr = bs.getReviewRule()
         reviewEntities.clear()
         reviewEntities.apply {
+            add(EditEntity("reviewCountList", rr.reviewCountList, R.string.rule_review_count_list))
+            add(EditEntity("reviewSegmentId", rr.reviewSegmentId, R.string.rule_review_segment_id))
+            add(EditEntity("reviewCount", rr.reviewCount, R.string.rule_review_count))
             add(EditEntity("reviewUrl", rr.reviewUrl, R.string.rule_review_url))
-            add(EditEntity("avatarRule", rr.avatarRule, R.string.rule_avatar))
-            add(EditEntity("contentRule", rr.contentRule, R.string.rule_review_content))
-            add(EditEntity("postTimeRule", rr.postTimeRule, R.string.rule_post_time))
-            add(EditEntity("reviewQuoteUrl", rr.reviewQuoteUrl, R.string.rule_review_quote))
-            add(EditEntity("voteUpUrl", rr.voteUpUrl, R.string.review_vote_up))
-            add(EditEntity("voteDownUrl", rr.voteDownUrl, R.string.review_vote_down))
-            add(EditEntity("postReviewUrl", rr.postReviewUrl, R.string.post_review_url))
-            add(EditEntity("postQuoteUrl", rr.postQuoteUrl, R.string.post_quote_url))
-            add(EditEntity("deleteUrl", rr.deleteUrl, R.string.delete_review_url))
+            add(EditEntity("reviewList", rr.reviewList, R.string.rule_review_list))
+            add(EditEntity("reviewContent", rr.reviewContent, R.string.rule_review_content))
+            add(EditEntity("reviewImgUrl", rr.reviewImgUrl, R.string.rule_review_img_url))
+            add(EditEntity("reviewPostAvatar", rr.reviewPostAvatar, R.string.rule_review_post_avatar))
+            add(EditEntity("reviewPostName", rr.reviewPostName, R.string.rule_review_post_name))
+            add(EditEntity("reviewPostTime", rr.reviewPostTime, R.string.rule_review_post_time))
+            add(EditEntity("reviewLikeCount", rr.reviewLikeCount, R.string.rule_review_like_count))
+            add(EditEntity("quoteReviewDefault", rr.quoteReviewDefault, R.string.rule_quote_review_default))
+            add(EditEntity("quoteReviewCount", rr.quoteReviewCount, R.string.rule_quote_review_count))
+            add(EditEntity("quoteReviewUrl", rr.quoteReviewUrl, R.string.rule_quote_review_url))
         }
         binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         setEditEntities(0)
@@ -364,6 +373,7 @@ class BookSourceEditActivity :
         source.enabled = binding.cbIsEnable.isChecked
         source.enabledExplore = binding.cbIsEnableExplore.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
+        source.enabledReview = binding.cbIsEnableReview.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
             3 -> BookSourceType.file
             2 -> BookSourceType.image
@@ -516,7 +526,8 @@ class BookSourceEditActivity :
                 "title" -> contentRule.title = viewModel.ruleComplete(it.value)
                 "nextContentUrl" -> contentRule.nextContentUrl =
                     viewModel.ruleComplete(it.value, type = 2)
-
+                "reviewCountUrl" ->  contentRule.reviewCountUrl =
+                    viewModel.ruleComplete(it.value, type = 2)
                 "webJs" -> contentRule.webJs = it.value
                 "sourceRegex" -> contentRule.sourceRegex = it.value
                 "replaceRegex" -> contentRule.replaceRegex = it.value
@@ -527,24 +538,28 @@ class BookSourceEditActivity :
         }
         reviewEntities.forEach {
             when (it.key) {
+                "reviewCountList" -> reviewRule.reviewCountList = it.value
+                "reviewSegmentId" -> reviewRule.reviewSegmentId =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewCountList)
+                "reviewCount" -> reviewRule.reviewCount =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewCountList)
                 "reviewUrl" -> reviewRule.reviewUrl = it.value
-                "avatarRule" -> reviewRule.avatarRule =
-                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl, 3)
-
-                "contentRule" -> reviewRule.contentRule =
-                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl)
-
-                "postTimeRule" -> reviewRule.postTimeRule =
-                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl)
-
-                "reviewQuoteUrl" -> reviewRule.reviewQuoteUrl =
-                    viewModel.ruleComplete(it.value, reviewRule.reviewUrl, 2)
-
-                "voteUpUrl" -> reviewRule.voteUpUrl = it.value
-                "voteDownUrl" -> reviewRule.voteDownUrl = it.value
-                "postReviewUrl" -> reviewRule.postReviewUrl = it.value
-                "postQuoteUrl" -> reviewRule.postQuoteUrl = it.value
-                "deleteUrl" -> reviewRule.deleteUrl = it.value
+                "reviewList" -> reviewRule.reviewList = it.value
+                "reviewContent" -> reviewRule.reviewContent =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewList)
+                "reviewImgUrl" -> reviewRule.reviewImgUrl =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewImgUrl)
+                "reviewLikeCount" -> reviewRule.reviewLikeCount =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewList)
+                "reviewPostAvatar" -> reviewRule.reviewPostAvatar =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewList, 3)
+                "reviewPostName" -> reviewRule.reviewPostName =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewList)
+                "reviewPostTime" -> reviewRule.reviewPostTime =
+                    viewModel.ruleComplete(it.value, reviewRule.reviewList)
+                "quoteReviewDefault" -> reviewRule.quoteReviewDefault = it.value
+                "quoteReviewCount" -> reviewRule.quoteReviewCount = it.value
+                "quoteReviewUrl" -> reviewRule.quoteReviewUrl = it.value
             }
         }
         source.ruleSearch = searchRule

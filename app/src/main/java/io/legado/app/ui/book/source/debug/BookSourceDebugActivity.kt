@@ -184,6 +184,8 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             R.id.menu_book_src -> showDialogFragment(TextDialog("html", viewModel.bookSrc))
             R.id.menu_toc_src -> showDialogFragment(TextDialog("html", viewModel.tocSrc))
             R.id.menu_content_src -> showDialogFragment(TextDialog("html", viewModel.contentSrc))
+            R.id.menu_review_count_src -> showDialogFragment(TextDialog("html", viewModel.reviewCountSrc))
+            R.id.menu_review_src -> showDialogFragment(TextDialog("html", viewModel.reviewSrc))
             R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)

@@ -11,6 +11,7 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookReview
 import io.legado.app.help.book.BookContent
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
@@ -117,8 +118,9 @@ object ChapterProvider {
     suspend fun getTextChapter(
         book: Book,
         bookChapter: BookChapter,
-        displayTitle: String,
         bookContent: BookContent,
+        bookReviews: List<BookReview>,
+        displayTitle: String,
         chapterSize: Int,
     ): TextChapter {
         val contents = bookContent.textList
@@ -129,16 +131,24 @@ object ChapterProvider {
         textPages.add(TextPage())
         if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume) {
             //标题非隐藏
+            val reviews = bookReviews.find { it.reviewSegmentId.toInt() == -1 }
             displayTitle.splitNotBlank("\n").forEach { text ->
+                var rText = text
+                if (AppConfig.enableReview
+                    && !bookChapter.isVolume
+                    && reviews != null
+                    && reviews.reviewCount.isNotBlank()
+                ) {
+                    rText = text + reviewChar
+                }
                 setTypeText(
-                    book, absStartX, durY,
-                    if (AppConfig.enableReview) text + reviewChar else text,
-                    textPages,
-                    stringBuilder,
-                    titlePaint,
+                    book, absStartX, durY, rText,
+                    textPages, stringBuilder, titlePaint,
                     isTitle = true,
                     emptyContent = contents.isEmpty(),
-                    isVolumeTitle = bookChapter.isVolume
+                    isVolumeTitle = bookChapter.isVolume,
+                    reviewCount = reviews?.reviewCount,
+                    segmentIndex = reviews?.reviewSegmentId
                 ).let {
                     absStartX = it.first
                     durY = it.second
@@ -146,7 +156,7 @@ object ChapterProvider {
             }
             durY += titleBottomSpacing
         }
-        contents.forEach { content ->
+        contents.forEachIndexed { index, content ->
             if (book.getImageStyle().equals(Book.imgStyleText, true)) {
                 //图片样式为文字嵌入类型
                 var text = content.replace(srcReplaceChar, "▣")
@@ -175,7 +185,8 @@ object ChapterProvider {
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
                         setTypeText(
-                            book, absStartX, durY, text, textPages, stringBuilder, contentPaint
+                            book, absStartX, durY, text,
+                            textPages, stringBuilder, contentPaint
                         ).let {
                             absStartX = it.first
                             durY = it.second
@@ -190,12 +201,16 @@ object ChapterProvider {
                 if (start < content.length) {
                     val text = content.substring(start, content.length)
                     if (text.isNotBlank()) {
+                        var rText = text
+                        val reviews = bookReviews.find { it.reviewSegmentId.toInt() == index }
+                        if (AppConfig.enableReview && !reviews?.reviewCount.isNullOrBlank()) {
+                            rText = text + reviewChar
+                        }
                         setTypeText(
-                            book, absStartX, durY,
-                            if (AppConfig.enableReview) text + reviewChar else text,
-                            textPages,
-                            stringBuilder,
-                            contentPaint
+                            book, absStartX, durY, rText,
+                            textPages, stringBuilder, contentPaint,
+                            reviewCount = reviews?.reviewCount,
+                            segmentIndex = reviews?.reviewSegmentId
                         ).let {
                             absStartX = it.first
                             durY = it.second
@@ -308,7 +323,9 @@ object ChapterProvider {
         isTitle: Boolean = false,
         emptyContent: Boolean = false,
         isVolumeTitle: Boolean = false,
-        srcList: LinkedList<String>? = null
+        srcList: LinkedList<String>? = null,
+        reviewCount: String? = "",
+        segmentIndex: String? = ""
     ): Pair<Int, Float> {
         var absStartX = x
         val layout = if (ReadBookConfig.useZhLayout) {
@@ -373,7 +390,7 @@ object ChapterProvider {
                     textLine.text = words
                     addCharsToLineFirst(
                         book, absStartX, textLine, words.toStringArray(),
-                        textPaint, desiredWidth, srcList
+                        textPaint, desiredWidth, segmentIndex, reviewCount, srcList
                     )
                 }
 
@@ -392,7 +409,8 @@ object ChapterProvider {
                     }
                     addCharsToLineNatural(
                         book, absStartX, textLine, words.toStringArray(), textPaint,
-                        startX, !isTitle && lineIndex == 0, srcList
+                        startX, !isTitle && lineIndex == 0,
+                        segmentIndex, reviewCount, srcList
                     )
                 }
 
@@ -405,14 +423,16 @@ object ChapterProvider {
                         val startX = (visibleWidth - layout.getLineWidth(lineIndex)) / 2
                         addCharsToLineNatural(
                             book, absStartX, textLine, words.toStringArray(),
-                            textPaint, startX, false, srcList
+                            textPaint, startX, false,
+                            segmentIndex, reviewCount, srcList
                         )
                     } else {
                         //中间行
                         textLine.text = words
                         addCharsToLineMiddle(
                             book, absStartX, textLine, words.toStringArray(),
-                            textPaint, desiredWidth, 0f, srcList
+                            textPaint, desiredWidth, 0f,
+                            segmentIndex, reviewCount, srcList
                         )
                     }
                 }
@@ -454,13 +474,15 @@ object ChapterProvider {
         textPaint: TextPaint,
         /**自然排版长度**/
         desiredWidth: Float,
+        segmentIndex: String?,
+        reviewCount: String?,
         srcList: LinkedList<String>?
     ) {
         var x = 0f
         if (!ReadBookConfig.textFullJustify) {
             addCharsToLineNatural(
                 book, absStartX, textLine, words, textPaint,
-                x, true, srcList
+                x, true, segmentIndex, reviewCount, srcList
             )
             return
         }
@@ -482,7 +504,8 @@ object ChapterProvider {
             val words1 = words.copyOfRange(bodyIndent.length, words.size)
             addCharsToLineMiddle(
                 book, absStartX, textLine, words1,
-                textPaint, desiredWidth, x, srcList
+                textPaint, desiredWidth, x,
+                segmentIndex, reviewCount, srcList
             )
         }
     }
@@ -500,12 +523,14 @@ object ChapterProvider {
         desiredWidth: Float,
         /**起始x坐标**/
         startX: Float,
+        segmentIndex: String?,
+        reviewCount: String?,
         srcList: LinkedList<String>?
     ) {
         if (!ReadBookConfig.textFullJustify) {
             addCharsToLineNatural(
                 book, absStartX, textLine, words, textPaint,
-                startX, false, srcList
+                startX, false, segmentIndex, reviewCount, srcList
             )
             return
         }
@@ -523,7 +548,8 @@ object ChapterProvider {
                 }
                 addCharToLine(
                     book, absStartX, textLine, char,
-                    x, x1, index + 1 == words.size, srcList
+                    x, x1, index + 1 == words.size,
+                    segmentIndex, reviewCount, srcList
                 )
                 x = x1
             }
@@ -536,7 +562,8 @@ object ChapterProvider {
                 val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
                 addCharToLine(
                     book, absStartX, textLine, char,
-                    x, x1, index + 1 == words.size, srcList
+                    x, x1, index + 1 == words.size,
+                    segmentIndex, reviewCount, srcList
                 )
                 x = x1
             }
@@ -555,14 +582,20 @@ object ChapterProvider {
         textPaint: TextPaint,
         startX: Float,
         hasIndent: Boolean,
-        srcList: LinkedList<String>?
+        segmentIndex: String?,
+        reviewCount: String?,
+        srcList: LinkedList<String>?,
     ) {
         val indentLength = ReadBookConfig.paragraphIndent.length
         var x = startX
         words.forEachIndexed { index, char ->
             val cw = StaticLayout.getDesiredWidth(char, textPaint)
             val x1 = x + cw
-            addCharToLine(book, absStartX, textLine, char, x, x1, index + 1 == words.size, srcList)
+            addCharToLine(
+                book, absStartX, textLine,
+                char, x, x1, index + 1 == words.size,
+                segmentIndex, reviewCount, srcList
+            )
             x = x1
             if (hasIndent && index == indentLength - 1) {
                 textLine.indentWidth = x
@@ -582,8 +615,11 @@ object ChapterProvider {
         xStart: Float,
         xEnd: Float,
         isLineEnd: Boolean,
+        segmentIndex: String? = "",
+        reviewCount: String? = "",
         srcList: LinkedList<String>?
     ) {
+
         val column = when {
             srcList != null && char == srcReplaceChar -> {
                 val src = srcList.removeFirst()
@@ -599,7 +635,8 @@ object ChapterProvider {
                 ReviewColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    count = 100
+                    reviewCount = reviewCount!!,
+                    segmentIndex = segmentIndex!!
                 )
             }
 

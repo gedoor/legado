@@ -56,6 +56,7 @@ import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
+import io.legado.app.ui.book.read.review.ReadReviewDialog
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -325,11 +326,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 else -> when (item.itemId) {
                     R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
                     R.id.menu_re_segment -> item.isChecked = book.getReSegment()
-                    R.id.menu_enable_review -> {
-                        item.isVisible = BuildConfig.DEBUG
-                        item.isChecked = AppConfig.enableReview
-                    }
-
+                    R.id.menu_enable_review -> item.isChecked = AppConfig.enableReview
                     R.id.menu_reverse_content -> item.isVisible = onLine
                 }
             }
@@ -1006,6 +1003,18 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun openChapterList() {
         ReadBook.book?.let {
             tocActivity.launch(it.bookUrl)
+        }
+    }
+
+    /**
+     * 打开评论区
+     */
+    override fun openReviewList(segmentIndex: String, reviewCount: String) {
+        ReadBook.book?.let {
+            if (reviewCount.toInt() > 0) {
+                //打开评论区
+                showDialogFragment(ReadReviewDialog(segmentIndex, reviewCount))
+            }
         }
     }
 

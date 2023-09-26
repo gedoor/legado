@@ -3,6 +3,7 @@ package io.legado.app.model.webBook
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookReview
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.exception.NoStackTraceException
@@ -328,6 +329,115 @@ object WebBook {
                 body = res.body,
                 nextChapterUrl = nextChapterUrl,
                 needSave = needSave
+            )
+        }
+    }
+
+    /**
+     * 正文段评数量
+     */
+    fun getReviewCount(
+        scope: CoroutineScope,
+        bookSource: BookSource,
+        book: Book,
+        bookChapter: BookChapter,
+        context: CoroutineContext = Dispatchers.IO,
+        executeContext: CoroutineContext = Dispatchers.Main,
+    ): Coroutine<List<BookReview>> {
+        return Coroutine.async(scope, context, executeContext = executeContext) {
+            getReviewCountListAwait(bookSource, book, bookChapter).getOrThrow()
+        }
+    }
+
+    /**
+     * 段评列表
+     */
+    fun getReviewList(
+        scope: CoroutineScope,
+        book: Book,
+        bookSource: BookSource,
+        bookReview: BookReview,
+        page: Int? = 1,
+        segmentIndex: Int = -1,
+        isReviewChild: Boolean = false,
+        context: CoroutineContext = Dispatchers.IO,
+        executeContext: CoroutineContext = Dispatchers.Main,
+    ): Coroutine<List<BookReview>> {
+        return Coroutine.async(scope, context, executeContext = executeContext) {
+            getReviewListAwait(book, bookSource, bookReview, page, segmentIndex, isReviewChild).getOrThrow()
+        }
+    }
+
+    suspend fun getReviewCountListAwait(
+        bookSource: BookSource,
+        book: Book,
+        bookChapter: BookChapter
+    ): Result<List<BookReview>> {
+        return kotlin.runCatching {
+            val reviewCountUrl = book.reviewCountUrl
+            if (reviewCountUrl.isBlank()){
+                Debug.log(bookSource.bookSourceUrl, "⇒段评数量URL为空")
+                return@runCatching emptyList()
+            }
+            val analyzeUrl = AnalyzeUrl(
+                mUrl = reviewCountUrl,
+                baseUrl = book.bookUrl,
+                source = bookSource,
+                ruleData = book,
+                chapter = bookChapter,
+                headerMapF = bookSource.getHeaderMap(true)
+            )
+            val res = analyzeUrl.getStrResponseAwait()
+            checkRedirect(bookSource, res)
+            BookReviewList.analyzeReviewCountList(
+                bookSource = bookSource,
+                book = book,
+                bookChapter = bookChapter,
+                baseUrl = res.url,
+                redirectUrl = res.url,
+                body = res.body
+            )
+        }
+    }
+
+    suspend fun getReviewListAwait(
+        book: Book,
+        bookSource: BookSource,
+        bookReview: BookReview,
+        page: Int? = 1,
+        segmentIndex: Int = -1,
+        isReviewChild: Boolean = false,
+    ): Result<List<BookReview>> {
+        return kotlin.runCatching {
+            val reviewUrl = bookSource.getReviewRule().reviewUrl
+            val quoteReviewUrl = bookSource.getReviewRule().quoteReviewUrl
+            if (!isReviewChild && reviewUrl.isNullOrBlank()
+                || isReviewChild && quoteReviewUrl.isNullOrBlank()
+            ) {
+                throw NoStackTraceException("段评列表URL为空")
+            }
+            val analyzeUrl = AnalyzeUrl(
+                mUrl = if(isReviewChild) quoteReviewUrl!! else reviewUrl!!,
+                page = page,
+                segmentIndex = segmentIndex,
+                baseUrl = bookReview.reviewCountUrl,
+                source = bookSource,
+                ruleData = book,
+                review = bookReview,
+                headerMapF = bookSource.getHeaderMap(true)
+            )
+            val res = analyzeUrl.getStrResponseAwait()
+            checkRedirect(bookSource, res)
+            BookReviewList.analyzeReviewList(
+                book = book,
+                bookSource = bookSource,
+                bookReview = bookReview,
+                segmentIndex = segmentIndex,
+                isReviewChild = isReviewChild,
+                analyzeUrl = analyzeUrl,
+                baseUrl =  res.url,
+                redirectUrl = res.url,
+                body = res.body
             )
         }
     }

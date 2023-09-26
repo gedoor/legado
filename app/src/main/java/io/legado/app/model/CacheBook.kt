@@ -11,16 +11,15 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
-
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
@@ -302,7 +301,9 @@ object CacheBook {
                     onSuccess(chapter)
                     ReadBook.downloadedChapters.add(chapter.index)
                     ReadBook.downloadFailChapters.remove(chapter.index)
-                    downloadFinish(chapter, content, resetPageOffset)
+                    contentReviewLoad(this, bookSource, book, chapter) {
+                        downloadFinish(chapter, content, resetPageOffset)
+                    }
                 }.onError {
                     onError(chapter, it)
                     ReadBook.downloadFailChapters[chapter.index] =
@@ -313,6 +314,27 @@ object CacheBook {
                 }.onFinally {
                     postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
                 }
+        }
+
+        private fun contentReviewLoad(
+            scope: CoroutineScope,
+            bookSource: BookSource,
+            book: Book,
+            chapter: BookChapter,
+            success: (() -> Unit)? = null
+        ) {
+            if (AppConfig.enableReview
+                && book.bookUrl == ReadBook.book?.bookUrl) {
+                WebBook.getReviewCount(scope, bookSource, book, chapter)
+                    .onSuccess { rList ->
+                        appDb.bookReviewDao.delByUrl(book.reviewCountUrl)
+                        appDb.bookReviewDao.insert(*rList.toTypedArray())
+                    }.onFinally {
+                        success?.invoke()
+                    }
+            } else {
+                success?.invoke()
+            }
         }
 
         private fun downloadFinish(

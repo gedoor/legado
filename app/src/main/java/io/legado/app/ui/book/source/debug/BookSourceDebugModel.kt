@@ -15,6 +15,8 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     var bookSrc: String? = null
     var tocSrc: String? = null
     var contentSrc: String? = null
+    var reviewCountSrc: String? = null
+    var reviewSrc: String? = null
 
     fun init(sourceUrl: String?, finally: () -> Unit) {
         sourceUrl?.let {
@@ -48,6 +50,8 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
             20 -> bookSrc = msg
             30 -> tocSrc = msg
             40 -> contentSrc = msg
+            50 -> reviewCountSrc = msg
+            60 -> reviewSrc = msg
             else -> callback?.invoke(state, msg)
         }
     }

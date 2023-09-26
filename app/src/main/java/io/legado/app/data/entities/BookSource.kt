@@ -40,6 +40,9 @@ data class BookSource(
     // 启用发现
     @ColumnInfo(defaultValue = "1")
     var enabledExplore: Boolean = true,
+    // 启用段评
+    @ColumnInfo(defaultValue = "1")
+    var enabledReview: Boolean? = true,
     // js库
     override var jsLib: String? = null,
     // 启用okhttp CookieJAr 自动保存每次请求的cookie
@@ -219,6 +222,7 @@ data class BookSource(
                 && getBookInfoRule() == source.getBookInfoRule()
                 && getTocRule() == source.getTocRule()
                 && getContentRule() == source.getContentRule()
+                && getReviewRule() == source.getReviewRule()
     }
 
     private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())

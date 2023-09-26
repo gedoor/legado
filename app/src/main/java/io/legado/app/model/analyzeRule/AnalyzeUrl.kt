@@ -14,6 +14,7 @@ import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookReview
 import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
@@ -43,17 +44,20 @@ class AnalyzeUrl(
     val mUrl: String,
     val key: String? = null,
     val page: Int? = null,
+    val segmentIndex: Int? = null,
     val speakText: String? = null,
     val speakSpeed: Int? = null,
     var baseUrl: String = "",
     private val source: BaseSource? = null,
     private val ruleData: RuleDataInterface? = null,
     private val chapter: BookChapter? = null,
+    private val review: BookReview? = null,
     headerMapF: Map<String, String>? = null,
 ) : JsExtensions {
     companion object {
         val paramPattern: Pattern = Pattern.compile("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
+        private val segmentIndexPattern = Pattern.compile("<(.*?)>")
         private val concurrentRecordMap = hashMapOf<String, ConcurrentRecord>()
     }
 
@@ -262,6 +266,7 @@ class AnalyzeUrl(
         bindings["cache"] = CacheManager
         bindings["page"] = page
         bindings["key"] = key
+        bindings["segmentIndex"] = segmentIndex
         bindings["speakText"] = speakText
         bindings["speakSpeed"] = speakSpeed
         bindings["book"] = ruleData as? Book
@@ -277,6 +282,7 @@ class AnalyzeUrl(
 
     fun put(key: String, value: String): String {
         chapter?.putVariable(key, value)
+            ?: review?.putVariable(key, value)
             ?: ruleData?.putVariable(key, value)
         return value
     }
@@ -292,6 +298,7 @@ class AnalyzeUrl(
             }
         }
         return chapter?.getVariable(key)?.takeIf { it.isNotEmpty() }
+            ?: review?.getVariable(key)?.takeIf { it.isNotEmpty() }
             ?: ruleData?.getVariable(key)?.takeIf { it.isNotEmpty() }
             ?: ""
     }

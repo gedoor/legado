@@ -141,6 +141,18 @@ object BookContent {
         if (!bookChapter.isVolume && contentStr.isBlank()) {
             throw ContentEmptyException("内容为空")
         }
+        //段评数量链接
+        val reviewCountUrlRule = contentRule.reviewCountUrl
+        if (!reviewCountUrlRule.isNullOrEmpty()) {
+            val reviewCountUrl = analyzeRule.runCatching {
+                getString(reviewCountUrlRule)
+            }.onFailure {
+                Debug.log(bookSource.bookSourceUrl, "获取段评数量链接出错, ${it.localizedMessage}")
+            }.getOrNull()
+            if (!reviewCountUrl.isNullOrBlank()) {
+                book.reviewCountUrl = reviewCountUrl
+            }
+        }
         if (needSave) {
             BookHelp.saveContent(bookSource, book, bookChapter, contentStr)
         }

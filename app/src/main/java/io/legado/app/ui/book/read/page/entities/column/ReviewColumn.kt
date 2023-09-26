@@ -6,6 +6,7 @@ import android.graphics.Path
 import androidx.annotation.Keep
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
+
 /**
  * 评论按钮列
  */
@@ -13,26 +14,27 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 data class ReviewColumn(
     override var start: Float,
     override var end: Float,
-    val count: Int = 0
+    var reviewCount: String,
+    var segmentIndex: String,
 ) : BaseColumn {
 
-    val countText by lazy {
-        if (count > 99) {
+    private val countText by lazy {
+        if (reviewCount.toInt() >= 99) {
             return@lazy "99+"
         }
-        return@lazy count.toString()
+        return@lazy reviewCount
     }
 
     val path by lazy { Path() }
 
     fun drawToCanvas(canvas: Canvas, baseLine: Float, height: Float) {
-        if (count == 0) return
+        if (reviewCount.toInt() == 0) return
         path.reset()
-        path.moveTo(start, baseLine - height / 2)
-        path.lineTo(start + height / 6, baseLine - height)
+        path.moveTo(start - height / 6, baseLine - height / 2)
+        path.lineTo(start + height / 8, baseLine - height)
         path.lineTo(end, baseLine - height)
         path.lineTo(end, baseLine)
-        path.lineTo(start + height / 6, baseLine)
+        path.lineTo(start + height / 8, baseLine)
         path.close()
         ChapterProvider.reviewPaint.style = Paint.Style.STROKE
         canvas.drawPath(path, ChapterProvider.reviewPaint)
@@ -40,7 +42,7 @@ data class ReviewColumn(
         canvas.drawText(
             countText,
             (start + end) / 2,
-            baseLine - height / 6,
+            baseLine - height / 3,
             ChapterProvider.reviewPaint
         )
     }

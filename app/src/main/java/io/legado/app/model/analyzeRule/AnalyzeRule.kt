@@ -31,6 +31,7 @@ class AnalyzeRule(
     val book get() = ruleData as? BaseBook
 
     var chapter: BookChapter? = null
+    var review: BookReview? = null
     var nextChapterUrl: String? = null
     var content: Any? = null
         private set
@@ -717,6 +718,7 @@ class AnalyzeRule(
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
         bindings["chapter"] = chapter
+        bindings["review"] = review
         bindings["title"] = chapter?.title
         bindings["src"] = content
         bindings["nextChapterUrl"] = nextChapterUrl

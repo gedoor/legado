@@ -20,6 +20,7 @@ object DatabaseMigrations {
             migration_31_32, migration_32_33, migration_33_34, migration_34_35,
             migration_35_36, migration_36_37, migration_37_38, migration_38_39,
             migration_39_40, migration_40_41, migration_41_42, migration_42_43,
+            migration_44_45
         )
     }
 
@@ -324,6 +325,12 @@ object DatabaseMigrations {
         }
     }
 
+    private val migration_44_45 = object : Migration(44, 45) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE `books` ADD `reviewCountUrl` TEXT")
+            database.execSQL("ALTER TABLE `book_sources` ADD `enabledReview` TEXT")
+        }
+    }
 
     @Suppress("ClassName")
     class Migration_54_55 : AutoMigrationSpec {

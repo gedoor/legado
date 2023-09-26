@@ -31,6 +31,16 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_review_count_src"
+        android:title="@string/review_count_src"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_review_src"
+        android:title="@string/review_src"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_help"
         android:title="@string/help"
         app:showAsAction="never" />

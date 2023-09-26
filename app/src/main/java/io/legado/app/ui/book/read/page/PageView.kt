@@ -17,6 +17,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
+import io.legado.app.ui.book.read.page.entities.column.BaseColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.*
@@ -323,10 +324,12 @@ class PageView(context: Context) : FrameLayout(context) {
 
     /**
      * 优先处理页面内单击
-     * @return true:已处理, false:未处理
      */
-    fun onClick(x: Float, y: Float): Boolean {
-        return binding.contentTextView.click(x, y - headerHeight)
+    fun onClick(
+        x: Float, y: Float,
+        select: (column: BaseColumn, textPos: TextPos) -> Unit,
+    ) {
+        return binding.contentTextView.click(x, y - headerHeight, select)
     }
 
     /**
