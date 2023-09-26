@@ -92,6 +92,15 @@ object ChapterProvider {
     private var titleBottomSpacing = 0
 
     @JvmStatic
+    private var indentCharWidth = 0f
+
+    @JvmStatic
+    private var titlePaintTextHeight = 0f
+
+    @JvmStatic
+    private var contentPaintTextHeight = 0f
+
+    @JvmStatic
     var typeface: Typeface? = Typeface.DEFAULT
         private set
 
@@ -142,8 +151,12 @@ object ChapterProvider {
                     rText = text + reviewChar
                 }
                 setTypeText(
-                    book, absStartX, durY, rText,
-                    textPages, stringBuilder, titlePaint,
+                    book, absStartX, durY,
+                    rText,
+                    textPages,
+                    stringBuilder,
+                    titlePaint,
+                    titlePaintTextHeight,
                     isTitle = true,
                     emptyContent = contents.isEmpty(),
                     isVolumeTitle = bookChapter.isVolume,
@@ -172,7 +185,14 @@ object ChapterProvider {
                 matcher.appendTail(sb)
                 text = sb.toString()
                 setTypeText(
-                    book, absStartX, durY, text, textPages, stringBuilder, contentPaint,
+                    book,
+                    absStartX,
+                    durY,
+                    text,
+                    textPages,
+                    stringBuilder,
+                    contentPaint,
+                    contentPaintTextHeight,
                     srcList = srcList
                 ).let {
                     absStartX = it.first
@@ -185,8 +205,14 @@ object ChapterProvider {
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
                         setTypeText(
-                            book, absStartX, durY, text,
-                            textPages, stringBuilder, contentPaint
+                            book,
+                            absStartX,
+                            durY,
+                            text,
+                            textPages,
+                            stringBuilder,
+                            contentPaint,
+                            contentPaintTextHeight
                         ).let {
                             absStartX = it.first
                             durY = it.second
@@ -207,8 +233,12 @@ object ChapterProvider {
                             rText = text + reviewChar
                         }
                         setTypeText(
-                            book, absStartX, durY, rText,
-                            textPages, stringBuilder, contentPaint,
+                            book, absStartX, durY,
+                            rText,
+                            textPages,
+                            stringBuilder,
+                            contentPaint,
+                            contentPaintTextHeight,
                             reviewCount = reviews?.reviewCount,
                             segmentIndex = reviews?.reviewSegmentId
                         ).let {
@@ -320,6 +350,7 @@ object ChapterProvider {
         textPages: ArrayList<TextPage>,
         stringBuilder: StringBuilder,
         textPaint: TextPaint,
+        textHeight: Float,
         isTitle: Boolean = false,
         emptyContent: Boolean = false,
         isVolumeTitle: Boolean = false,
@@ -338,10 +369,10 @@ object ChapterProvider {
             emptyContent && textPages.size == 1 -> {
                 val textPage = textPages.last()
                 if (textPage.lineSize == 0) {
-                    val ty = (visibleHeight - layout.lineCount * textPaint.textHeight) / 2
+                    val ty = (visibleHeight - layout.lineCount * textHeight) / 2
                     if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
                 } else {
-                    var textLayoutHeight = layout.lineCount * textPaint.textHeight
+                    var textLayoutHeight = layout.lineCount * textHeight
                     val fistLine = textPage.getLine(0)
                     if (fistLine.lineTop < textLayoutHeight + titleTopSpacing) {
                         textLayoutHeight = fistLine.lineTop - titleTopSpacing
@@ -450,16 +481,17 @@ object ChapterProvider {
                 else -> lastLine.paragraphNum
             }
             textLine.paragraphNum = paragraphNum
-            textLine.chapterPosition = textPages.foldIndexed(sbLength) { index, acc, textPage ->
-                acc + if (index == textPages.lastIndex) 0 else textPage.text.length
-            }
+            textLine.chapterPosition =
+                (textPages.getOrNull(textPages.lastIndex - 1)?.lines?.last()?.run {
+                    chapterPosition + charSize + if (isParagraphEnd) 1 else 0
+                } ?: 0) + sbLength
             textLine.pagePosition = sbLength
             textPages.last().addLine(textLine)
             textLine.upTopBottom(durY, textPaint)
-            durY += textPaint.textHeight * lineSpacingExtra
+            durY += textHeight * lineSpacingExtra
             textPages.last().height = durY
         }
-        durY += textPaint.textHeight * paragraphSpacing / 10f
+        durY += textHeight * paragraphSpacing / 10f
         return Pair(absStartX, durY)
     }
 
@@ -487,9 +519,8 @@ object ChapterProvider {
             return
         }
         val bodyIndent = ReadBookConfig.paragraphIndent
-        val icw = StaticLayout.getDesiredWidth(bodyIndent, textPaint) / bodyIndent.length
         for (char in bodyIndent.toStringArray()) {
-            val x1 = x + icw
+            val x1 = x + indentCharWidth
             textLine.addColumn(
                 TextColumn(
                     charData = char,
@@ -686,6 +717,10 @@ object ChapterProvider {
         paragraphSpacing = ReadBookConfig.paragraphSpacing
         titleTopSpacing = ReadBookConfig.titleTopSpacing.dpToPx()
         titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dpToPx()
+        val bodyIndent = ReadBookConfig.paragraphIndent
+        indentCharWidth = StaticLayout.getDesiredWidth(bodyIndent, contentPaint) / bodyIndent.length
+        titlePaintTextHeight = titlePaint.textHeight
+        contentPaintTextHeight = contentPaint.textHeight
         upLayout()
     }
 
