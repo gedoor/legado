@@ -37,15 +37,15 @@ data class ReviewColumn(
         path.lineTo(start + height / 6, baseLine)
         path.lineTo(start + height / 6, baseLine - height / 4)
         path.close()
-        ChapterProvider.reviewPaint.style = Paint.Style.STROKE
-        canvas.drawPath(path, ChapterProvider.reviewPaint)
-        ChapterProvider.reviewPaint.style = Paint.Style.FILL
-        val textWidth = StaticLayout.getDesiredWidth(countText, ChapterProvider.reviewPaint)
+        val reviewPaint = ChapterProvider.reviewPaint
+        reviewPaint.style = Paint.Style.STROKE
+        canvas.drawPath(path, reviewPaint)
+        reviewPaint.style = Paint.Style.FILL
         canvas.drawText(
             countText,
-            start + height / 6 + textWidth * 0.45f,
-            baseLine - height / 5,
-            ChapterProvider.reviewPaint
+            (start + height / 9 + end) / 2,
+            baseLine - height * 0.23f,
+            reviewPaint
         )
     }
 
