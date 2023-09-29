@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.entities
 
+import android.graphics.Paint.FontMetrics
 import android.text.TextPaint
 import androidx.annotation.Keep
 import io.legado.app.ui.book.read.page.entities.column.BaseColumn
@@ -51,10 +52,10 @@ data class TextLine(
         return textColumns.size
     }
 
-    fun upTopBottom(durY: Float, textPaint: TextPaint) {
+    fun upTopBottom(durY: Float, textHeight: Float, fontMetrics: FontMetrics) {
         lineTop = ChapterProvider.paddingTop + durY
-        lineBottom = lineTop + textPaint.textHeight
-        lineBase = lineBottom - textPaint.fontMetrics.descent
+        lineBottom = lineTop + textHeight
+        lineBase = lineBottom - fontMetrics.descent
     }
 
     fun isTouch(x: Float, y: Float, relativeOffset: Float): Boolean {

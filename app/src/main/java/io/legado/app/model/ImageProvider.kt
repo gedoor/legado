@@ -129,14 +129,14 @@ object ImageProvider {
         bookSource: BookSource?
     ): Size {
         val file = cacheImage(book, src, bookSource)
-        //svg size
-        val size = SvgUtils.getSize(file.absolutePath)
-        if (size != null) return size
         val op = BitmapFactory.Options()
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
         if (op.outWidth < 1 && op.outHeight < 1) {
+            //svg size
+            val size = SvgUtils.getSize(file.absolutePath)
+            if (size != null) return size
             putDebug("ImageProvider: $src Unsupported image type")
             //file.delete() 重复下载
             return Size(errorBitmap.width, errorBitmap.height)
