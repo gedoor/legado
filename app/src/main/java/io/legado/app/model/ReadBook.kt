@@ -212,7 +212,7 @@ object ReadBook : CoroutineScope by MainScope() {
             saveRead()
             callBack?.upMenuView()
             AppLog.putDebug("moveToNextChapter-curPageChanged()")
-            curPageChanged(false)
+            curPageChanged()
             return true
         } else {
             AppLog.putDebug("跳转下一章失败,没有下一章")
@@ -238,7 +238,7 @@ object ReadBook : CoroutineScope by MainScope() {
             loadContent(durChapterIndex.minus(1), upContent, false)
             saveRead()
             callBack?.upMenuView()
-            curPageChanged(false)
+            curPageChanged()
             return true
         } else {
             return false
@@ -257,13 +257,13 @@ object ReadBook : CoroutineScope by MainScope() {
     fun setPageIndex(index: Int) {
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
         saveRead()
-        curPageChanged()
+        curPageChanged(true)
     }
 
     /**
      * 当前页面变化
      */
-    private fun curPageChanged(pauseReadAloud: Boolean = true) {
+    private fun curPageChanged(pauseReadAloud: Boolean = false) {
         callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
             val scrollPageAnim = pageAnim() == 3
