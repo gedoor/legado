@@ -538,6 +538,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         when {
             isPrevKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    binding.readView.cancelSelect()
                     binding.readView.pageDelegate?.keyTurnPage(PageDirection.PREV)
                     return true
                 }
@@ -545,6 +546,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             isNextKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    binding.readView.cancelSelect()
                     binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                     return true
                 }
@@ -563,16 +565,19 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
 
             keyCode == KeyEvent.KEYCODE_PAGE_UP -> {
+                binding.readView.cancelSelect()
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.PREV)
                 return true
             }
 
             keyCode == KeyEvent.KEYCODE_PAGE_DOWN -> {
+                binding.readView.cancelSelect()
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
             }
 
             keyCode == KeyEvent.KEYCODE_SPACE -> {
+                binding.readView.cancelSelect()
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
             }
@@ -786,6 +791,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 if (getPrefBoolean("volumeKeyPageOnPlay")
                     || !BaseReadAloudService.isPlay()
                 ) {
+                    binding.readView.cancelSelect()
                     binding.readView.pageDelegate?.isCancel = false
                     binding.readView.pageDelegate?.keyTurnPage(direction)
                     return true
