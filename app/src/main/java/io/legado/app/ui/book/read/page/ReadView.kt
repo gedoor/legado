@@ -257,6 +257,13 @@ class ReadView(context: Context, attrs: AttributeSet) :
         return true
     }
 
+    fun cancelSelect() {
+        if (isTextSelected) {
+            curPage.cancelSelect()
+            isTextSelected = false
+        }
+    }
+
     /**
      * 更新状态栏
      */

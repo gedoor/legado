@@ -8,7 +8,6 @@ import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.textHeight
 import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
@@ -76,7 +75,7 @@ data class TextPage(
             val lastLine = textLines[leftLineSize - 1]
             if (lastLine.isImage) return@run
             val lastLineHeight = with(lastLine) { lineBottom - lineTop }
-            val pageHeight = lastLine.lineBottom + contentPaint.textHeight * lineSpacingExtra
+            val pageHeight = lastLine.lineBottom + contentPaintTextHeight * lineSpacingExtra
             if (visibleHeight - pageHeight >= lastLineHeight) return@run
             val surplus = (visibleBottom - lastLine.lineBottom)
             if (surplus == 0f) return@run
@@ -94,7 +93,7 @@ data class TextPage(
             val lastLine = textLines.last()
             if (lastLine.isImage) return@run
             val lastLineHeight = with(lastLine) { lineBottom - lineTop }
-            val pageHeight = lastLine.lineBottom + contentPaint.textHeight * lineSpacingExtra
+            val pageHeight = lastLine.lineBottom + contentPaintTextHeight * lineSpacingExtra
             if (visibleHeight - pageHeight >= lastLineHeight) return@run
             val surplus = (visibleBottom - lastLine.lineBottom)
             if (surplus == 0f) return@run
