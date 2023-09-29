@@ -257,17 +257,17 @@ object ReadBook : CoroutineScope by MainScope() {
     fun setPageIndex(index: Int) {
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
         saveRead()
-        curPageChanged()
+        curPageChanged(true)
     }
 
     /**
      * 当前页面变化
      */
-    private fun curPageChanged() {
+    private fun curPageChanged(pauseReadAloud: Boolean = false) {
         callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
             val scrollPageAnim = pageAnim() == 3
-            if (scrollPageAnim) {
+            if (scrollPageAnim && pauseReadAloud) {
                 ReadAloud.pause(appCtx)
             } else {
                 readAloud(!BaseReadAloudService.pause)
