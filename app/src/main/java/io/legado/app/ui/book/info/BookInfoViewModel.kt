@@ -152,6 +152,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 loadChapter(book, scope)
             } else {
                 bookSource?.let { bookSource ->
+                    val oldBook = book.copy()
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
                             appDb.bookDao.getBook(book.name, book.author)?.let {
@@ -160,6 +161,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             bookData.postValue(it)
                             if (inBookshelf) {
                                 appDb.bookDao.update(it)
+                                if (oldBook.name != book.name) {
+                                    BookHelp.updateCacheFolder(oldBook, book)
+                                }
                             }
                             if (it.isWebFile) {
                                 loadWebFile(it, scope)
