@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.page.provider
 import android.graphics.Rect
 import android.text.Layout
 import android.text.TextPaint
-import io.legado.app.utils.toStringArray
 import kotlin.math.max
 
 /**
@@ -16,6 +15,14 @@ class ZhLayout(
     textPaint: TextPaint,
     width: Int
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
+    companion object {
+        private val postPanc = hashSetOf(
+            "，", "。", "：", "？", "！", "、", "”", "’", "）", "》", "}",
+            "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";"
+        )
+        private val prePanc = hashSetOf("“", "（", "《", "【", "‘", "‘", "(", "<", "[", "{", "「")
+    }
+
     private val defaultCapacity = 10
     var lineStart = IntArray(defaultCapacity)
     var lineWidth = FloatArray(defaultCapacity)
@@ -36,12 +43,17 @@ class ZhLayout(
 
     init {
         var line = 0
-        val words = text.toStringArray()
+        val widthsArray = FloatArray(text.length)
+        curPaint.getTextWidths(text as String, widthsArray)
+        val (words, widths) = ChapterProvider.getStringArrayAndTextWidths(
+            text,
+            widthsArray.asList()
+        )
         var lineW = 0f
         var cwPre = 0f
         var length = 0
         words.forEachIndexed { index, s ->
-            val cw = getDesiredWidth(s, curPaint)
+            val cw = widths[index]
             var breakMod: BreakMod
             var breakLine = false
             lineW += cw
@@ -67,13 +79,13 @@ class ZhLayout(
                 var reCheck = false
                 var breakIndex = 0
                 if (breakMod == BreakMod.CPS_1 &&
-                    (inCompressible(words[index]) || inCompressible(words[index - 1]))
+                    (inCompressible(widths[index]) || inCompressible(widths[index - 1]))
                 ) reCheck = true
                 if (breakMod == BreakMod.CPS_2 &&
-                    (inCompressible(words[index - 1]) || inCompressible(words[index - 2]))
+                    (inCompressible(widths[index - 1]) || inCompressible(widths[index - 2]))
                 ) reCheck = true
                 if (breakMod == BreakMod.CPS_3 &&
-                    (inCompressible(words[index]) || inCompressible(words[index - 2]))
+                    (inCompressible(widths[index]) || inCompressible(widths[index - 2]))
                 ) reCheck = true
                 if (breakMod > BreakMod.BREAK_MORE_CHAR
                     && index < words.lastIndex && isPostPanc(words[index + 1])
@@ -90,7 +102,7 @@ class ZhLayout(
                         } else {
                             breakIndex++
                             breakLength += words[i].length
-                            cwPre += getDesiredWidth(words[i], textPaint)
+                            cwPre += widths[i]
                         }
                         if (!isPostPanc(words[i]) && !isPrePanc(words[i - 1])) {
                             breakMod = BreakMod.BREAK_MORE_CHAR
@@ -105,26 +117,31 @@ class ZhLayout(
                         lineStart[line + 1] = length
                         breakCharCnt = 1
                     }
+
                     BreakMod.BREAK_ONE_CHAR -> {//模式1 当前行下移一个字
                         offset = cw + cwPre
                         lineStart[line + 1] = length - words[index - 1].length
                         breakCharCnt = 2
                     }
+
                     BreakMod.BREAK_MORE_CHAR -> {//模式2 当前行下移多个字
                         offset = cw + cwPre
                         lineStart[line + 1] = length - breakLength
                         breakCharCnt = breakIndex + 1
                     }
+
                     BreakMod.CPS_1 -> {//模式3 两个后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
+
                     BreakMod.CPS_2 -> { //模式4 前置标点压缩+前置标点压缩+字
                         offset = 0f
                         lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
+
                     BreakMod.CPS_3 -> {//模式5 前置标点压缩+字+后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = length + s.length
@@ -172,26 +189,15 @@ class ZhLayout(
     }
 
     private fun isPostPanc(string: String): Boolean {
-        val panc = arrayOf(
-            "，", "。", "：", "？", "！", "、", "”", "’", "）", "》", "}",
-            "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";"
-        )
-        panc.forEach {
-            if (it == string) return true
-        }
-        return false
+        return postPanc.contains(string)
     }
 
     private fun isPrePanc(string: String): Boolean {
-        val panc = arrayOf("“", "（", "《", "【", "‘", "‘", "(", "<", "[", "{", "「")
-        panc.forEach {
-            if (it == string) return true
-        }
-        return false
+        return prePanc.contains(string)
     }
 
-    private fun inCompressible(string: String): Boolean {
-        return getDesiredWidth(string, curPaint) < cnCharWitch
+    private fun inCompressible(width: Float): Boolean {
+        return width < cnCharWitch
     }
 
     private val gap = (cnCharWitch / 12.75).toFloat()

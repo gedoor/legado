@@ -621,7 +621,7 @@ object ChapterProvider {
         exceed(absStartX, textLine)
     }
 
-    private fun getStringArrayAndTextWidths(
+    fun getStringArrayAndTextWidths(
         text: String,
         textWidths: List<Float>
     ): Pair<List<String>, List<Float>> {
