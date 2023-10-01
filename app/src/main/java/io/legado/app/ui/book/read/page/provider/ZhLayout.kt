@@ -15,17 +15,20 @@ class ZhLayout(
     textPaint: TextPaint,
     width: Int
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
+    companion object {
+        private val postPanc = hashSetOf(
+            "，", "。", "：", "？", "！", "、", "”", "’", "）", "》", "}",
+            "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";"
+        )
+        private val prePanc = hashSetOf("“", "（", "《", "【", "‘", "‘", "(", "<", "[", "{", "「")
+    }
+
     private val defaultCapacity = 10
     var lineStart = IntArray(defaultCapacity)
     var lineWidth = FloatArray(defaultCapacity)
     private var lineCount = 0
     private val curPaint = textPaint
     private val cnCharWitch = getDesiredWidth("我", textPaint)
-    private val postPanc = hashSetOf(
-        "，", "。", "：", "？", "！", "、", "”", "’", "）", "》", "}",
-        "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";"
-    )
-    private val prePanc = hashSetOf("“", "（", "《", "【", "‘", "‘", "(", "<", "[", "{", "「")
 
     enum class BreakMod { NORMAL, BREAK_ONE_CHAR, BREAK_MORE_CHAR, CPS_1, CPS_2, CPS_3, }
     class Locate {
@@ -42,7 +45,10 @@ class ZhLayout(
         var line = 0
         val widthsArray = FloatArray(text.length)
         curPaint.getTextWidths(text as String, widthsArray)
-        val (words, widths) = ChapterProvider.getStringArrayAndTextWidths(text, widthsArray.asList())
+        val (words, widths) = ChapterProvider.getStringArrayAndTextWidths(
+            text,
+            widthsArray.asList()
+        )
         var lineW = 0f
         var cwPre = 0f
         var length = 0
@@ -111,26 +117,31 @@ class ZhLayout(
                         lineStart[line + 1] = length
                         breakCharCnt = 1
                     }
+
                     BreakMod.BREAK_ONE_CHAR -> {//模式1 当前行下移一个字
                         offset = cw + cwPre
                         lineStart[line + 1] = length - words[index - 1].length
                         breakCharCnt = 2
                     }
+
                     BreakMod.BREAK_MORE_CHAR -> {//模式2 当前行下移多个字
                         offset = cw + cwPre
                         lineStart[line + 1] = length - breakLength
                         breakCharCnt = breakIndex + 1
                     }
+
                     BreakMod.CPS_1 -> {//模式3 两个后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
+
                     BreakMod.CPS_2 -> { //模式4 前置标点压缩+前置标点压缩+字
                         offset = 0f
                         lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
+
                     BreakMod.CPS_3 -> {//模式5 前置标点压缩+字+后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = length + s.length
