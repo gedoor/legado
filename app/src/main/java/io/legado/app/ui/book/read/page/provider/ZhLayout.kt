@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.page.provider
 import android.graphics.Rect
 import android.text.Layout
 import android.text.TextPaint
-import io.legado.app.utils.toStringArray
 import kotlin.math.max
 
 /**
@@ -22,6 +21,11 @@ class ZhLayout(
     private var lineCount = 0
     private val curPaint = textPaint
     private val cnCharWitch = getDesiredWidth("我", textPaint)
+    private val postPanc = hashSetOf(
+        "，", "。", "：", "？", "！", "、", "”", "’", "）", "》", "}",
+        "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";"
+    )
+    private val prePanc = hashSetOf("“", "（", "《", "【", "‘", "‘", "(", "<", "[", "{", "「")
 
     enum class BreakMod { NORMAL, BREAK_ONE_CHAR, BREAK_MORE_CHAR, CPS_1, CPS_2, CPS_3, }
     class Locate {
@@ -36,12 +40,14 @@ class ZhLayout(
 
     init {
         var line = 0
-        val words = text.toStringArray()
+        val widthsArray = FloatArray(text.length)
+        curPaint.getTextWidths(text as String, widthsArray)
+        val (words, widths) = ChapterProvider.getStringArrayAndTextWidths(text, widthsArray.asList())
         var lineW = 0f
         var cwPre = 0f
         var length = 0
         words.forEachIndexed { index, s ->
-            val cw = getDesiredWidth(s, curPaint)
+            val cw = widths[index]
             var breakMod: BreakMod
             var breakLine = false
             lineW += cw
@@ -67,13 +73,13 @@ class ZhLayout(
                 var reCheck = false
                 var breakIndex = 0
                 if (breakMod == BreakMod.CPS_1 &&
-                    (inCompressible(words[index]) || inCompressible(words[index - 1]))
+                    (inCompressible(widths[index]) || inCompressible(widths[index - 1]))
                 ) reCheck = true
                 if (breakMod == BreakMod.CPS_2 &&
-                    (inCompressible(words[index - 1]) || inCompressible(words[index - 2]))
+                    (inCompressible(widths[index - 1]) || inCompressible(widths[index - 2]))
                 ) reCheck = true
                 if (breakMod == BreakMod.CPS_3 &&
-                    (inCompressible(words[index]) || inCompressible(words[index - 2]))
+                    (inCompressible(widths[index]) || inCompressible(widths[index - 2]))
                 ) reCheck = true
                 if (breakMod > BreakMod.BREAK_MORE_CHAR
                     && index < words.lastIndex && isPostPanc(words[index + 1])
@@ -90,7 +96,7 @@ class ZhLayout(
                         } else {
                             breakIndex++
                             breakLength += words[i].length
-                            cwPre += getDesiredWidth(words[i], textPaint)
+                            cwPre += widths[i]
                         }
                         if (!isPostPanc(words[i]) && !isPrePanc(words[i - 1])) {
                             breakMod = BreakMod.BREAK_MORE_CHAR
@@ -172,26 +178,15 @@ class ZhLayout(
     }
 
     private fun isPostPanc(string: String): Boolean {
-        val panc = arrayOf(
-            "，", "。", "：", "？", "！", "、", "”", "’", "）", "》", "}",
-            "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";"
-        )
-        panc.forEach {
-            if (it == string) return true
-        }
-        return false
+        return postPanc.contains(string)
     }
 
     private fun isPrePanc(string: String): Boolean {
-        val panc = arrayOf("“", "（", "《", "【", "‘", "‘", "(", "<", "[", "{", "「")
-        panc.forEach {
-            if (it == string) return true
-        }
-        return false
+        return prePanc.contains(string)
     }
 
-    private fun inCompressible(string: String): Boolean {
-        return getDesiredWidth(string, curPaint) < cnCharWitch
+    private fun inCompressible(width: Float): Boolean {
+        return width < cnCharWitch
     }
 
     private val gap = (cnCharWitch / 12.75).toFloat()
