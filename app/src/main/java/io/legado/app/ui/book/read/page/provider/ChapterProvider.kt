@@ -475,7 +475,7 @@ object ChapterProvider {
             }
             textLine.paragraphNum = paragraphNum
             textLine.chapterPosition =
-                (textPages.getOrNull(textPages.lastIndex - 1)?.lines?.last()?.run {
+                (textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull()?.run {
                     chapterPosition + charSize + if (isParagraphEnd) 1 else 0
                 } ?: 0) + sbLength
             textLine.pagePosition = sbLength
