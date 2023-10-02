@@ -13,7 +13,8 @@ import kotlin.math.max
 class ZhLayout(
     text: CharSequence,
     textPaint: TextPaint,
-    width: Int
+    width: Int,
+    widthsArray: FloatArray
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
     companion object {
         private val postPanc = hashSetOf(
@@ -43,7 +44,6 @@ class ZhLayout(
 
     init {
         var line = 0
-        val widthsArray = FloatArray(text.length)
         curPaint.getTextWidths(text as String, widthsArray)
         val (words, widths) = ChapterProvider.getStringArrayAndTextWidths(
             text,
