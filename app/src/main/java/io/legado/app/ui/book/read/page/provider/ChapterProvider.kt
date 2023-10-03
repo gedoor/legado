@@ -625,16 +625,18 @@ object ChapterProvider {
         text: String,
         textWidths: List<Float>
     ): Pair<List<String>, List<Float>> {
-        val strList = arrayListOf<String>()
-        val textWidthList = arrayListOf<Float>()
+        val charArray = text.toCharArray()
+        val strList = ArrayList<String>()
+        val textWidthList = ArrayList<Float>()
+        val lastIndex = text.lastIndex
         for (i in textWidths.indices) {
-            if (text[i].isLowSurrogate()) {
+            if (charArray[i].isLowSurrogate()) {
                 continue
             }
-            val char = if (i + 1 < text.lastIndex && text[i + 1].isLowSurrogate()) {
-                text.substring(i, i + 2)
+            val char = if (i + 1 < lastIndex && charArray[i + 1].isLowSurrogate()) {
+                charArray[i].toString() + charArray[i + 1].toString()
             } else {
-                text.substring(i, i + 1)
+                charArray[i].toString()
             }
             strList.add(char)
             textWidthList.add(textWidths[i])
