@@ -240,7 +240,7 @@ dependencies {
     implementation('com.jaredrummler:colorpicker:1.1.0')
 
     //压缩解压
-    implementation 'me.zhanghai.android.libarchive:library:1.0.1'
+    implementation 'me.zhanghai.android.libarchive:library:1.0.2'
 
     //apache
     implementation('org.apache.commons:commons-text:1.10.0')
