@@ -89,7 +89,7 @@
     <string name="offline_cache_t">Bộ nhớ cache ngoại tuyến</string>
     <string name="offline_cache_s">cache (các) chương đã chọn vào bộ lưu trữ</string>
     <string name="change_origin">Thay đổi nguồn gốc</string>
-    <string name="about_description">Đây là phần mềm đọc mã nguồn mở mới được phát triển bởi Kotlin, chào mừng bạn tham gia cùng chúng tôi. Theo dõi Tài khoản chính thức WeChat [开源阅读]！\n</string>
+    <string name="about_description">Đây là phần mềm đọc mã nguồn mở mới được phát triển bởi Kotlin, chào mừng bạn tham gia cùng chúng tôi. </string>
     <string name="app_share_description">\n Liên kết tải xuống Legado (YueDu 3.0):\\n https://play.google.com/store/apps/details?id=io.legado.play.release\n</string>
     <string name="version_name">Phiên bản %s</string>
     <string name="pt_background_verification">Xác minh lý lịch</string>
@@ -807,7 +807,6 @@ Còn </string>
     <string name="rule_sub_empty_msg">Thêm địa chỉ nhập quy tắc do các ông chủ cung cấp\\nNhấp để nhập quy tắc sau khi thêm</string>
     <string name="get_book_progress">Kéo tiến độ đám mây</string>
     <string name="current_progress_exceeds_cloud">Tiến độ hiện tại vượt quá tiến độ đám mây. Bạn có muốn đồng bộ hóa?</string>
-    <string name="cloud_progress_exceeds_current">Có nhiều tiến bộ hơn trong đám mây so với hiện tại. Bạn có muốn đồng bộ hóa không?</string>
     <string name="sync_book_progress_t">Tiến độ đọc đồng bộ</string>
     <string name="sync_book_progress_s">Đồng bộ tiến độ đọc khi vào/ra khỏi giao diện đọc</string>
     <string name="create_bookmark_error">Không thể tạo dấu trang</string>
@@ -1129,7 +1128,6 @@ Còn </string>
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
     <string name="sync_book_progress_success">" Đồng bộ hóa tiến trình thành công"</string>
-    <string name="use_lib_archive">Use LibArchive</string>
-    <string name="pref_use_lib_archive_summary">Using libarchive to extract files, it supports extracting RAR5.</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
+    <string name="export_all_use_book_source">导出所有书的书源</string>
 </resources>

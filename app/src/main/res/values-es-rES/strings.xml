@@ -90,7 +90,7 @@
     <string name="offline_cache_t">Caché sin conexión</string>
     <string name="offline_cache_s">precarga el o los capítulos(s) seleccionado(s) en Almacenamiento en caché</string>
     <string name="change_origin">Cambiar origen</string>
-    <string name="about_description">\u3000\u3000 Este es una aplicación de lectura bajo software libre, desarrollado en Kotlin, en que podrás participar. ¡Síguelos en la cuenta oficial de WeChat!</string>
+    <string name="about_description">\u3000\u3000 Este es una aplicación de lectura bajo software libre, desarrollado en Kotlin, en que podrás participar. </string>
     <string name="app_share_description">Legado (YueDu 3.0) disponible para descargar en：\n https://play.google.com/store/apps/details?id=io.legado.play.release</string>
     <string name="version_name">Versión %s</string>
     <string name="pt_background_verification">Verificación en segundo plano</string>
@@ -378,7 +378,7 @@
     <string name="behavior_main_t">Ocultar automáticamente la barra de herramientas</string>
     <string name="behavior_main_s">La barra de herramientas se ocultará automáticamente cuando deslice la Librería</string>
     <string name="login">Iniciar sesión</string>
-    <string name="login_source">Iniciar sesión% s</string>
+    <string name="login_source">Iniciar sesión %s</string>
     <string name="success">Completado</string>
     <string name="source_no_login">La fuente actual no se ha configurado con una dirección de inicio de sesión</string>
     <string name="no_prev_page">Sin página anterior</string>
@@ -450,7 +450,7 @@
     <string name="error_get_book_info">Error al obtener la información del libro</string>
     <string name="error_get_content">Error al obtener el contenido</string>
     <string name="error_get_chapter_list">Error al obtener la lista de capítulos</string>
-    <string name="error_get_web_content">Error al acceder al sitio:% s</string>
+    <string name="error_get_web_content">Error al acceder al sitio: %s</string>
     <string name="error_read_file">Error al leer el archivo</string>
     <string name="error_load_toc">Error al cargar la lista de capítulos</string>
     <string name="error_get_data">Error al obtener los datos</string>
@@ -805,7 +805,6 @@
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">Obtener progreso en la nube</string>
     <string name="current_progress_exceeds_cloud">El progreso actual excede el progreso de la nube. ¿Quieres sincronizar?</string>
-    <string name="cloud_progress_exceeds_current">Hay más progreso en la nube que actualmente. ¿Quieres sincronizar?</string>
     <string name="sync_book_progress_t">Progreso de lectura sincronizado</string>
     <string name="sync_book_progress_s">Sincronizar el progreso de la lectura al entrar y salir de la pantalla de lectura</string>
     <string name="create_bookmark_error">No se pudo marcar</string>
@@ -813,7 +812,7 @@
     <string name="export_bookshelf">Exportar lista de libros</string>
     <string name="import_bookshelf">Importar lista de libros</string>
     <string name="pre_download">Descarga anterior</string>
-    <string name="pre_download_s">Descargue% s capítulos antes</string>
+    <string name="pre_download_s">Descargue %s capítulos antes</string>
     <string name="is_enabled">Está habilitado</string>
     <string name="background_image">Imagen de fondo</string>
     <string name="copy_book_url">Copiar URL del libro</string>
@@ -1131,7 +1130,6 @@
     <string name="export_wait">等待导出</string>
     <string name="default_home_page">默认主页</string>
     <string name="sync_book_progress_success">" Sincronización del progreso exitosa"</string>
-    <string name="use_lib_archive">Use LibArchive</string>
-    <string name="pref_use_lib_archive_summary">Using libarchive to extract files, it supports extracting RAR5.</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
+    <string name="export_all_use_book_source">导出所有书的书源</string>
 </resources>

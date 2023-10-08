@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.github.junrar.exception.UnsupportedRarV5Exception
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
@@ -153,6 +152,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 loadChapter(book, scope)
             } else {
                 bookSource?.let { bookSource ->
+                    val oldBook = book.copy()
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
                             appDb.bookDao.getBook(book.name, book.author)?.let {
@@ -161,6 +161,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             bookData.postValue(it)
                             if (inBookshelf) {
                                 appDb.bookDao.update(it)
+                                if (oldBook.name != book.name) {
+                                    BookHelp.updateCacheFolder(oldBook, book)
+                                }
                             }
                             if (it.isWebFile) {
                                 loadWebFile(it, scope)
@@ -299,13 +302,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 AppPattern.bookFileRegex.matches(it)
             }
         }.onError {
-            when (it) {
-                is UnsupportedRarV5Exception -> context.toastOnUi("暂不支持 rar v5 解压")
-                else -> {
-                    AppLog.put("getArchiveEntriesName Error:\n${it.localizedMessage}", it)
-                    context.toastOnUi("getArchiveEntriesName Error:\n${it.localizedMessage}")
-                }
-            }
+            AppLog.put("getArchiveEntriesName Error:\n${it.localizedMessage}", it)
+            context.toastOnUi("getArchiveEntriesName Error:\n${it.localizedMessage}")
         }.onSuccess {
             onSuccess.invoke(it)
         }

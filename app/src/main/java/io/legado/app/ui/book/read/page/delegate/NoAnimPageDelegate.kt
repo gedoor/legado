@@ -12,6 +12,10 @@ class NoAnimPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) 
         stopScroll()
     }
 
+    override fun setBitmap() {
+        // nothing
+    }
+
     override fun onDraw(canvas: Canvas) {
         // nothing
     }

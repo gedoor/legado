@@ -91,7 +91,7 @@
     <string name="offline_cache_s">salvar o(s) capítulo(s) selecionado(s) no Armazenamento em cache</string>
     <string name="change_origin">Alterar a origem</string>
     <string name="about_description">
-        \u3000\u3000 Este é um App de leitura de software livre, desenvolvido em Kotlin, você é bem-vindo a participar em projeto. Siga a conta oficial de WeChat [开源阅读]！
+        \u3000\u3000 Este é um App de leitura de software livre, desenvolvido em Kotlin, você é bem-vindo a participar em projeto.
     </string>
     <string name="app_share_description">
         Legado (YueDu 3.0) link de download：\n https://play.google.com/store/apps/details?id=io.legado.play.release
@@ -806,7 +806,6 @@
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">Obter o progresso da nuvem</string>
     <string name="current_progress_exceeds_cloud">O progresso atual excede o progresso da nuvem. Você quer sincronizar?</string>
-    <string name="cloud_progress_exceeds_current">Há mais progresso na nuvem do que atualmente. Você deseja sincronizar?</string>
     <string name="sync_book_progress_t">Progresso de leitura sincronizada</string>
     <string name="sync_book_progress_s">Sincronizar o progresso da leitura ao entrar e sair da tela de leitura</string>
     <string name="create_bookmark_error">Falha ao marcar como favorito</string>
@@ -1134,7 +1133,6 @@
     <string name="export_wait">等待导出</string>
     <string name="default_home_page">默认主页</string>
     <string name="sync_book_progress_success">Sincronização de progresso bem-sucedida</string>
-    <string name="use_lib_archive">Use LibArchive</string>
-    <string name="pref_use_lib_archive_summary">Using libarchive to extract files, it supports extracting RAR5.</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
+    <string name="export_all_use_book_source">导出所有书的书源</string>
 </resources>

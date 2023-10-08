@@ -88,7 +88,7 @@
     <string name="offline_cache_s">緩存已選擇的章節到本地</string>
     <string name="change_origin">換源</string>
     <string name="about_description">
-        \u3000\u3000這是一款使用 Kotlin 全新開發的開源的閲讀應用程式，歡迎你的加入。關注公眾號[legado-top]！
+        \u3000\u3000這是一款使用 Kotlin 全新開發的開源的閲讀應用程式，歡迎你的加入。
     </string>
     <string name="app_share_description">
         閲讀3.0下載地址：\nhttps://play.google.com/store/apps/details?id=io.legado.play.release
@@ -806,7 +806,6 @@
     <string name="rule_sub_empty_msg">添加大佬們提供的規則匯入地址 添加後點擊可匯入規則</string>
     <string name="get_book_progress">拉取雲端進度</string>
     <string name="current_progress_exceeds_cloud">目前進度超過雲端進度,係咪同步?</string>
-    <string name="cloud_progress_exceeds_current">雲端進度超過目前進度,係咪同步?</string>
     <string name="sync_book_progress_t">同步閱讀進度</string>
     <string name="sync_book_progress_s">進入退出閱讀介面時同步閱讀進度</string>
     <string name="create_bookmark_error">建立書籤失敗</string>
@@ -1130,7 +1129,6 @@
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
     <string name="sync_book_progress_success">進度同步成功</string>
-    <string name="use_lib_archive">使用LibArchive</string>
-    <string name="pref_use_lib_archive_summary">使用libarchive解壓檔案，支持解壓RAR5。</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
+    <string name="export_all_use_book_source">导出所有书的书源</string>
 </resources>

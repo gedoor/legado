@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-
-    <string name="this_github_url" translatable="false">无</string>
-    <string name="home_page_url" translatable="false">无</string>
-    <string name="contributors_url" translatable="false">无</string>
-
-</resources>

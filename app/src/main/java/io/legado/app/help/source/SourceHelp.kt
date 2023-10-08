@@ -2,7 +2,6 @@ package io.legado.app.help.source
 
 import android.os.Handler
 import android.os.Looper
-import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookSource
@@ -63,7 +62,6 @@ object SourceHelp {
 
     private fun is18Plus(url: String?): Boolean {
         url ?: return false
-        if (AppConst.isPlayChannel) return false
         val baseUrl = NetworkUtils.getBaseUrl(url) ?: return false
         kotlin.runCatching {
             val host = baseUrl.split("//", ".").let {

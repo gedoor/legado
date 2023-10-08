@@ -41,7 +41,7 @@ android {
     }
     defaultConfig {
         applicationId "io.legado.app"
-        minSdk 24
+        minSdk 21
         targetSdk 33
         versionCode 10000 + gitCommits
         versionName version
@@ -92,16 +92,6 @@ android {
         app {
             dimension "mode"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "app")
-        }
-        google {
-            dimension "mode"
-            applicationId "io.legado.play"
-            manifestPlaceholders.put("APP_CHANNEL_VALUE", "google")
-        }
-        lollipop {
-            dimension "mode"
-            minSdk 21
-            manifestPlaceholders.put("APP_CHANNEL_VALUE", "lollipop")
         }
     }
 
@@ -168,15 +158,15 @@ dependencies {
     implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
 
     //androidX
-    implementation('androidx.core:core-ktx:1.10.1')
+    implementation('androidx.core:core-ktx:1.12.0')
     implementation('androidx.appcompat:appcompat:1.6.1')
     implementation('androidx.activity:activity-ktx:1.7.2')
     implementation('androidx.fragment:fragment-ktx:1.6.1')
-    implementation('androidx.preference:preference-ktx:1.2.0')
+    implementation('androidx.preference:preference-ktx:1.2.1')
     implementation('androidx.constraintlayout:constraintlayout:2.1.4')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
     implementation('androidx.viewpager2:viewpager2:1.0.0')
-    implementation('androidx.webkit:webkit:1.7.0')
+    implementation('androidx.webkit:webkit:1.8.0')
 
     //google
     implementation('com.google.android.material:material:1.9.0')
@@ -219,17 +209,15 @@ dependencies {
     implementation(project(path: ':modules:book'))
 
     //JS rhino
-    appImplementation(project(path: ':modules:rhino1.7.3'))
-    googleImplementation(project(path: ':modules:rhino1.7.3'))
-    lollipopImplementation(project(path: ':modules:rhino1.7.3'))
+    implementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
     implementation('com.squareup.okhttp3:okhttp:4.11.0')
-    appImplementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    appImplementation 'com.google.protobuf:protobuf-javalite:3.23.4'
+    implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    implementation 'com.google.protobuf:protobuf-javalite:3.24.3'
 
     //Glide
-    def glideVersion = "4.15.1"
+    def glideVersion = "4.16.0"
     implementation("com.github.bumptech.glide:glide:$glideVersion")
     //kapt("com.github.bumptech.glide:compiler:$glideVersion")
     ksp("com.github.bumptech.glide:ksp:$glideVersion")
@@ -245,22 +233,17 @@ dependencies {
     implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
 
     //二维码
+    //noinspection GradleDependency
     implementation('com.github.jenly1314:zxing-lite:2.4.0')
 
     //颜色选择
     implementation('com.jaredrummler:colorpicker:1.1.0')
 
     //压缩解压
-    implementation 'me.zhanghai.android.libarchive:library:1.0.1'
+    implementation 'me.zhanghai.android.libarchive:library:1.0.2'
 
     //apache
     implementation('org.apache.commons:commons-text:1.10.0')
-    //noinspection GradleDependency,1.23.0对安卓支持不好
-    implementation 'org.apache.commons:commons-compress:1.22'
-    implementation 'org.tukaani:xz:1.9'
-
-    //RAR
-    implementation 'com.github.junrar:junrar:7.5.5'
 
     //MarkDown
     def markwonVersion = "4.6.2"

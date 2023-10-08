@@ -7,16 +7,13 @@ import android.os.Build
 import android.text.TextUtils
 import androidx.annotation.Keep
 import io.legado.app.BuildConfig
-import io.legado.app.constant.AppConst
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.Cronet
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.printOnDebug
-
 import org.chromium.net.CronetEngine
 import org.json.JSONObject
 import splitties.init.appCtx
-
 import java.io.*
 import java.math.BigInteger
 import java.net.HttpURLConnection
@@ -64,9 +61,6 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
             }
         }
 
-        if (AppConst.isPlayChannel) {
-            return false
-        }
         if (md5.length != 32 || !soFile.exists() || md5 != getFileMD5(soFile)) {
             cacheInstall = false
             return cacheInstall
@@ -80,9 +74,6 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
      * 预加载Cronet
      */
     override fun preDownload() {
-        if (AppConst.isPlayChannel) {
-            return
-        }
         Coroutine.async {
             //md5 = getUrlMd5(md5Url)
             if (soFile.exists() && md5 == getFileMD5(soFile)) {
@@ -266,7 +257,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
         downloadTempFile: File,
         destSuccessFile: File
     ) {
-        if (download || AppConst.isPlayChannel) {
+        if (download) {
             return
         }
         download = true

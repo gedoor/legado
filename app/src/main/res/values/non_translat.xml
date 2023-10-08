@@ -4,12 +4,7 @@
     <string name="legado_gzh" translatable="false">开源阅读</string>
     <string name="email" translatable="false">gekunfei@live.com</string>
 
-    <string name="source_rule_url" translatable="false">https://alanskycn.gitee.io/teachme/</string>
-    <string name="this_github_url" translatable="false">https://github.com/gedoor/legado</string>
     <string name="contributors_url" translatable="false">https://github.com/gedoor/legado/graphs/contributors</string>
-    <string name="home_page_url" translatable="false">https://gedoor.github.io</string>
-    <string name="tg_url" translatable="false">https://t.me/legado_channels</string>
-    <string name="discord_url" translatable="false">https://discord.gg/qDE52P5xGW</string>
 
     <string name="http_ip" translatable="false">http://%1$s:%2$d</string>
     <string name="git_hub" translatable="false">GitHub</string>

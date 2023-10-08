@@ -9,18 +9,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
-import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.help.AppUpdate
-import io.legado.app.lib.prefs.PreferenceCategory
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 import splitties.init.appCtx
 
 class AboutFragment : PreferenceFragmentCompat() {
-
-    private val qqChannel = "https://pd.qq.com/s/8qxylhj2s"
 
     private val waitDialog by lazy {
         WaitDialog(requireContext())
@@ -30,12 +26,6 @@ class AboutFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("update_log")?.summary =
             "${getString(R.string.version)} ${appInfo.versionName}"
-        if (AppConst.isPlayChannel) {
-            findPreference<PreferenceCategory>("lx")?.run {
-                removePreferenceRecursively("home_page")
-                removePreferenceRecursively("git")
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,23 +35,15 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            "contributors" -> if (!AppConst.isPlayChannel) {
-                openUrl(R.string.contributors_url)
-            }
+            "contributors" -> openUrl(R.string.contributors_url)
             "update_log" -> showMdFile(getString(R.string.update_log), "updateLog.md")
             "check_update" -> checkUpdate()
             "mail" -> requireContext().sendMail(getString(R.string.email))
-            "sourceRuleSummary" -> openUrl(R.string.source_rule_url)
-            "git" -> openUrl(R.string.this_github_url)
-            "home_page" -> openUrl(R.string.home_page_url)
             "license" -> showMdFile(getString(R.string.license), "LICENSE.md")
             "disclaimer" -> showMdFile(getString(R.string.disclaimer), "disclaimer.md")
             "privacyPolicy" -> showMdFile(getString(R.string.privacy_policy), "privacyPolicy.md")
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "crashLog" -> showDialogFragment<CrashLogsDialog>()
-            "qqChannel" -> context?.openUrl(qqChannel)
-            "tg" -> openUrl(R.string.tg_url)
-            "discord" -> openUrl(R.string.discord_url)
         }
         return super.onPreferenceTreeClick(preference)
     }

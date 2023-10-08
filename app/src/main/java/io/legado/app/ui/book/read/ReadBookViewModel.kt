@@ -83,7 +83,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     private fun initBook(book: Book) {
         val isSameBook = ReadBook.book?.bookUrl == book.bookUrl
-        if (isSameBook) ReadBook.upData(book) else ReadBook.resetData(book)
+        if (isSameBook) {
+            ReadBook.upData(book)
+        } else {
+            ReadBook.resetData(book)
+        }
         isInitFinish = true
         if (ReadBook.chapterSize == 0) {
             if (book.tocUrl.isEmpty()) {
@@ -101,11 +105,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 ReadBook.loadContent(resetPageOffset = true)
             }
+            checkLocalBookFileExist(book)
         } else {
             if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
                 ReadBook.durChapterIndex = ReadBook.chapterSize - 1
             }
             ReadBook.loadContent(resetPageOffset = false)
+            checkLocalBookFileExist(book)
         }
         if (ReadBook.chapterChanged) {
             // 有章节跳转不同步阅读进度
@@ -117,6 +123,18 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!book.isLocal && ReadBook.bookSource == null) {
             autoChangeSource(book.name, book.author)
             return
+        }
+    }
+
+    private fun checkLocalBookFileExist(book: Book) {
+        if (book.isLocal) {
+            execute {
+                LocalBook.getBookInputStream(book)
+            }.onError {
+                if (it is FileNotFoundException) {
+                    permissionDenialLiveData.postValue(0)
+                }
+            }
         }
     }
 

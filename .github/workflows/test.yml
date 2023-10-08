@@ -43,7 +43,7 @@ jobs:
     needs: prepare
     strategy:
       matrix:
-        product: [ app, google, lollipop ]
+        product: [ app ]
         type: [ release, releaseA ]
       fail-fast: false
     runs-on: ubuntu-latest

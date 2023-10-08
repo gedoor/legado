@@ -28,7 +28,7 @@ static def generateMD5(final file) {
 /**
  * 下载Cronet相关的jar
  */
-task downloadJar(type: Download) {
+tasks.register('downloadJar', Download) {
     src([
             BASE_PATH + "cronet_api.jar",
             BASE_PATH + "cronet_impl_common_java.jar",
@@ -42,7 +42,7 @@ task downloadJar(type: Download) {
 /**
  * 下载Cronet的arm64-v8a so
  */
-task downloadARM64(type: Download) {
+tasks.register('downloadARM64', Download) {
     src BASE_PATH + "libs/arm64-v8a/libcronet." + CronetVersion + ".so"
     dest soPath + "/arm64-v8a.so"
     overwrite true
@@ -51,7 +51,7 @@ task downloadARM64(type: Download) {
 /**
  * 下载Cronet的armeabi-v7a so
  */
-task downloadARMv7(type: Download) {
+tasks.register('downloadARMv7', Download) {
     src BASE_PATH + "libs/armeabi-v7a/libcronet." + CronetVersion + ".so"
     dest soPath + "/armeabi-v7a.so"
     overwrite true
@@ -60,7 +60,7 @@ task downloadARMv7(type: Download) {
 /**
  * 下载Cronet的x86_64 so
  */
-task downloadX86_64(type: Download) {
+tasks.register('downloadX86_64', Download) {
     src BASE_PATH + "libs/x86_64/libcronet." + CronetVersion + ".so"
     dest soPath + "/x86_64.so"
     overwrite true
@@ -69,7 +69,7 @@ task downloadX86_64(type: Download) {
 /**
  * 下载Cronet的x86 so
  */
-task downloadX86(type: Download) {
+tasks.register('downloadX86', Download) {
     src BASE_PATH + "libs/x86/libcronet." + CronetVersion + ".so"
     dest soPath + "/x86.so"
     overwrite true
@@ -81,7 +81,7 @@ task downloadX86(type: Download) {
  * 先更改gradle.properties 里面的版本号，然后再执行
  * gradlew app:downloadCronet
  */
-task downloadCronet() {
+tasks.register('downloadCronet') {
     dependsOn downloadJar, downloadARM64, downloadARMv7, downloadX86_64, downloadX86
 
     doLast {

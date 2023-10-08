@@ -172,6 +172,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val nextPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.NEXT) } }
     private val prevPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.PREV) } }
     private var bookChanged = false
+    private var pageChanged = false
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -555,6 +556,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         when {
             isPrevKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    binding.readView.cancelSelect()
                     binding.readView.pageDelegate?.keyTurnPage(PageDirection.PREV)
                     return true
                 }
@@ -562,6 +564,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             isNextKey(keyCode) -> {
                 if (keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+                    binding.readView.cancelSelect()
                     binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                     return true
                 }
@@ -580,16 +583,19 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
 
             keyCode == KeyEvent.KEYCODE_PAGE_UP -> {
+                binding.readView.cancelSelect()
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.PREV)
                 return true
             }
 
             keyCode == KeyEvent.KEYCODE_PAGE_DOWN -> {
+                binding.readView.cancelSelect()
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
             }
 
             keyCode == KeyEvent.KEYCODE_SPACE -> {
+                binding.readView.cancelSelect()
                 binding.readView.pageDelegate?.keyTurnPage(PageDirection.NEXT)
                 return true
             }
@@ -622,19 +628,36 @@ class ReadBookActivity : BaseReadBookActivity(),
             MotionEvent.ACTION_DOWN -> textActionMenu.dismiss()
             MotionEvent.ACTION_MOVE -> {
                 when (v.id) {
-                    R.id.cursor_left -> readView.curPage.selectStartMove(
-                        event.rawX + cursorLeft.width,
-                        event.rawY - cursorLeft.height
-                    )
+                    R.id.cursor_left -> if (!readView.curPage.getReverseStartCursor()) {
+                        readView.curPage.selectStartMove(
+                            event.rawX + cursorLeft.width,
+                            event.rawY - cursorLeft.height
+                        )
+                    } else {
+                        readView.curPage.selectEndMove(
+                            event.rawX - cursorRight.width,
+                            event.rawY - cursorRight.height
+                        )
+                    }
 
-                    R.id.cursor_right -> readView.curPage.selectEndMove(
-                        event.rawX - cursorRight.width,
-                        event.rawY - cursorRight.height
-                    )
+                    R.id.cursor_right -> if (readView.curPage.getReverseEndCursor()) {
+                        readView.curPage.selectStartMove(
+                            event.rawX + cursorLeft.width,
+                            event.rawY - cursorLeft.height
+                        )
+                    } else {
+                        readView.curPage.selectEndMove(
+                            event.rawX - cursorRight.width,
+                            event.rawY - cursorRight.height
+                        )
+                    }
                 }
             }
 
-            MotionEvent.ACTION_UP -> showTextActionMenu()
+            MotionEvent.ACTION_UP -> {
+                readView.curPage.resetReverseCursor()
+                showTextActionMenu()
+            }
         }
         return true
     }
@@ -786,6 +809,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 if (getPrefBoolean("volumeKeyPageOnPlay")
                     || !BaseReadAloudService.isPlay()
                 ) {
+                    binding.readView.cancelSelect()
                     binding.readView.pageDelegate?.isCancel = false
                     binding.readView.pageDelegate?.keyTurnPage(direction)
                     return true
@@ -851,6 +875,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 页面改变
      */
     override fun pageChanged() {
+        pageChanged = true
         lifecycleScope.launch {
             autoPageProgress = 0
             upSeekBarProgress()
@@ -1170,9 +1195,10 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             BaseReadAloudService.pause -> {
                 val scrollPageAnim = ReadBook.pageAnim() == 3
-                if (scrollPageAnim) {
+                if (scrollPageAnim && pageChanged) {
+                    pageChanged = false
                     val startPos = binding.readView.getCurPagePosition()
-                    ReadAloud.play(this, startPos = startPos)
+                    ReadBook.readAloud(startPos = startPos)
                 } else {
                     ReadAloud.resume(this)
                 }
@@ -1406,6 +1432,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         ReadBook.downloadScope.coroutineContext.cancelChildren()
         ReadBook.coroutineContext.cancelChildren()
         ReadBook.downloadedChapters.clear()
+        ReadBook.downloadFailChapters.clear()
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
@@ -1428,7 +1455,9 @@ class ReadBookActivity : BaseReadBookActivity(),
             readView.upStyle()
             readView.upBgAlpha()
             if (it) {
-                ReadBook.loadContent(resetPageOffset = false)
+                if (isInitFinish) {
+                    ReadBook.loadContent(resetPageOffset = false)
+                }
             } else {
                 readView.upContent(resetPageOffset = false)
             }

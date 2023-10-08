@@ -58,14 +58,11 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
     override fun setBitmap() {
         when (mDirection) {
             PageDirection.PREV -> {
-                prevBitmap?.recycle()
-                prevBitmap = prevPage.screenshot()
+                prevBitmap = prevPage.screenshot(prevBitmap, canvas)
             }
             PageDirection.NEXT -> {
-                nextBitmap?.recycle()
-                nextBitmap = nextPage.screenshot()
-                curBitmap?.recycle()
-                curBitmap = curPage.screenshot()
+                nextBitmap = nextPage.screenshot(nextBitmap, canvas)
+                curBitmap = curPage.screenshot(curBitmap, canvas)
             }
             else -> Unit
         }

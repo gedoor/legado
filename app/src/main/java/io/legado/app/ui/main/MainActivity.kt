@@ -396,14 +396,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private inner class PageChangeCallback : ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
-            val oldPosition = pagePosition
             pagePosition = position
             binding.bottomNavigationView.menu
                 .getItem(realPositions[position]).isChecked = true
-            val callback1 = fragmentMap[getFragmentId(position)] as? Callback
-            val callback2 = fragmentMap[getFragmentId(oldPosition)] as? Callback
-            callback1?.onActive()
-            callback2?.onInactive()
         }
 
     }
@@ -450,14 +445,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             fragmentMap[getId(position)] = fragment
             return fragment
         }
-
-    }
-
-    interface Callback {
-
-        fun onActive()
-
-        fun onInactive()
 
     }
 

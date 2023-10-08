@@ -22,6 +22,7 @@ export const useBookStore = defineStore("book", {
         readWidth: 800,
         infiniteLoading: false,
         customFontName: "",
+        jumpDuration: 1000,
         spacing: {
           paragraph: 1,
           line: 0.8,

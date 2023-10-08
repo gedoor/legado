@@ -100,12 +100,6 @@
 
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
-            android:key="useLibArchive"
-            android:summary="@string/pref_use_lib_archive_summary"
-            android:title="@string/use_lib_archive" />
-
-        <io.legado.app.lib.prefs.SwitchPreference
-            android:defaultValue="false"
             android:key="antiAlias"
             android:summary="@string/pref_anti_alias_summary"
             android:title="@string/anti_alias" />

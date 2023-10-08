@@ -91,7 +91,7 @@
     <string name="offline_cache_s">cache the selected chapter(s) to Storage</string>
     <string name="change_origin">Change Origin</string>
     <string name="about_description">
-        \u3000\u3000 This is an open source reading software newly developed by Kotlin, welcome to join us. Follow the WeChat Official Account [开源阅读]！
+        \u3000\u3000 This is an open source reading software newly developed by Kotlin, welcome to join us.
     </string>
     <string name="app_share_description">
         Legado (YueDu 3.0) download link：\n https://play.google.com/store/apps/details?id=io.legado.play.release
@@ -1134,7 +1134,6 @@
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
     <string name="default_home_page">默认主页</string>
-    <string name="use_lib_archive">Use LibArchive</string>
-    <string name="pref_use_lib_archive_summary">Using libarchive to extract files, it supports extracting RAR5.</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
+    <string name="export_all_use_book_source">导出所有书的书源</string>
 </resources>
