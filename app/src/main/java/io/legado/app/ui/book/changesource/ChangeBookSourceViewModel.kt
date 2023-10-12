@@ -51,6 +51,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
     private var searchCallback: SourceCallback? = null
+    private val emptyBookSource = BookSource()
     val bookMap = ConcurrentHashMap<String, Book>()
     val searchDataFlow = callbackFlow {
 
@@ -113,7 +114,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }.flowOn(IO)
 
     @Volatile
-    private var searchIndex = -1
+    private var searchIndex = 0
 
     override fun onCleared() {
         super.onCleared()
@@ -137,7 +138,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private fun initSearchPool() {
         searchPool = Executors
             .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-        searchIndex = -1
+        searchIndex = 0
     }
 
     fun refresh(): Boolean {
@@ -180,13 +181,14 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     private fun search() {
-        synchronized(this) {
+        val searchIndex = synchronized(this) {
             if (searchIndex >= bookSourceList.lastIndex) {
                 return
             }
             searchIndex++
         }
         val source = bookSourceList[searchIndex]
+        bookSourceList[searchIndex] = emptyBookSource
         val task = execute(context = searchPool!!, executeContext = searchPool!!) {
             val resultBooks = WebBook.searchBookAwait(source, name)
             resultBooks.forEach { searchBook ->
@@ -197,13 +199,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                     return@forEach
                 }
                 when {
-                    searchBook.latestChapterTitle.isNullOrEmpty() &&
-                            (AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc) -> {
+                    AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc || AppConfig.changeSourceLoadWordCount -> {
                         loadBookInfo(source, searchBook.toBook())
-                    }
-
-                    AppConfig.changeSourceLoadWordCount -> {
-                        loadBookToc(source, searchBook.toBook())
                     }
 
                     else -> {
