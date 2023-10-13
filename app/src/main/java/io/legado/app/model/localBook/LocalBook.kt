@@ -187,7 +187,6 @@ object LocalBook {
                 name = nameAuthor.first,
                 author = nameAuthor.second,
                 originName = fileName,
-                coverUrl = getCoverPath(bookUrl),
                 latestChapterTime = updateTime,
                 order = appDb.bookDao.minOrder - 1
             )
