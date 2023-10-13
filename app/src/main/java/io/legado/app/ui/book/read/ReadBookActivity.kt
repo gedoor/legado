@@ -172,6 +172,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val prevPageRunnable by lazy { Runnable { mouseWheelPage(PageDirection.PREV) } }
     private var bookChanged = false
     private var pageChanged = false
+    private var reloadContent = false
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -218,6 +219,10 @@ class ReadBookActivity : BaseReadBookActivity(),
         super.onPostCreate(savedInstanceState)
         viewModel.initData(intent) {
             upMenu()
+            if (reloadContent) {
+                reloadContent = false
+                ReadBook.loadContent(resetPageOffset = false)
+            }
         }
     }
 
@@ -225,6 +230,10 @@ class ReadBookActivity : BaseReadBookActivity(),
         super.onNewIntent(intent)
         viewModel.initData(intent ?: return) {
             upMenu()
+            if (reloadContent) {
+                reloadContent = false
+                ReadBook.loadContent(resetPageOffset = false)
+            }
         }
     }
 
@@ -1428,6 +1437,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             if (it) {
                 if (isInitFinish) {
                     ReadBook.loadContent(resetPageOffset = false)
+                } else {
+                    reloadContent = true
                 }
             } else {
                 readView.upContent(resetPageOffset = false)
