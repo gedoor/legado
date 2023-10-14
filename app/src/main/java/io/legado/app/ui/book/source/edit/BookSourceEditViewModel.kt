@@ -41,8 +41,8 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
                 throw NoStackTraceException(context.getString(R.string.non_null_name_url))
             }
-            if (!source.equal(bookSource ?: BookSource())) {
-                source.lastUpdateTime = System.currentTimeMillis()
+            if (source.equal(bookSource ?: BookSource())) {
+                return@execute source
             }
             bookSource?.let {
                 appDb.bookSourceDao.delete(it)
@@ -91,6 +91,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 val text1 = okHttpClient.newCallStrResponse { url(text) }.body
                 importSource(text1!!)
             }
+
             text.isJsonArray() -> {
                 if (text.contains("ruleSearchUrl") || text.contains("ruleFindUrl")) {
                     val items: List<Map<String, Any>> = jsonPath.parse(text).read("$")
@@ -100,6 +101,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                     GSON.fromJsonArray<BookSource>(text).getOrThrow()[0]
                 }
             }
+
             text.isJsonObject() -> {
                 if (text.contains("ruleSearchUrl") || text.contains("ruleFindUrl")) {
                     val jsonItem = jsonPath.parse(text)
@@ -108,6 +110,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                     GSON.fromJsonObject<BookSource>(text).getOrThrow()
                 }
             }
+
             else -> throw NoStackTraceException("格式不对")
         }
     }
