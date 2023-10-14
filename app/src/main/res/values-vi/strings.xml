@@ -1129,4 +1129,5 @@ Còn </string>
     <string name="export_wait">等待导出</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
     <string name="export_all_use_book_source">导出所有书的书源</string>
+    <string name="keep_enable">保留启用状态</string>
 </resources>

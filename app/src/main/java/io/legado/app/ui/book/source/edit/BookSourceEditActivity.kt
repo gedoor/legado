@@ -410,8 +410,8 @@ class BookSourceEditActivity :
                 "intro" -> searchRule.intro =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
 
-                "updateTime" -> searchRule.updateTime =
-                    viewModel.ruleComplete(it.value, searchRule.bookList)
+//                "updateTime" -> searchRule.updateTime =
+//                    viewModel.ruleComplete(it.value, searchRule.bookList)
 
                 "wordCount" -> searchRule.wordCount =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
@@ -442,8 +442,8 @@ class BookSourceEditActivity :
                 "intro" -> exploreRule.intro =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
 
-                "updateTime" -> exploreRule.updateTime =
-                    viewModel.ruleComplete(it.value, exploreRule.bookList)
+//                "updateTime" -> exploreRule.updateTime =
+//                    viewModel.ruleComplete(it.value, exploreRule.bookList)
 
                 "wordCount" -> exploreRule.wordCount =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
@@ -471,8 +471,8 @@ class BookSourceEditActivity :
                 "intro" -> bookInfoRule.intro =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
 
-                "updateTime" -> bookInfoRule.updateTime =
-                    viewModel.ruleComplete(it.value, bookInfoRule.init)
+//                "updateTime" -> bookInfoRule.updateTime =
+//                    viewModel.ruleComplete(it.value, bookInfoRule.init)
 
                 "wordCount" -> bookInfoRule.wordCount =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)

@@ -31,4 +31,10 @@
         android:checkable="true"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_keep_enable"
+        android:title="@string/keep_enable"
+        android:checkable="true"
+        app:showAsAction="never" />
+
 </menu>
