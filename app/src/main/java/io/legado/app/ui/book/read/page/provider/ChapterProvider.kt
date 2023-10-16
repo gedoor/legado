@@ -558,7 +558,7 @@ object ChapterProvider {
         }
         val residualWidth = visibleWidth - desiredWidth
         val spaceSize = text.count { it == ' ' }
-        val (words, widths) = getStringArrayAndTextWidths(text, textWidths)
+        val (words, widths) = getStringArrayAndTextWidths(text, textWidths, textPaint)
         if (spaceSize > 1) {
             val d = residualWidth / spaceSize
             var x = startX
@@ -608,7 +608,7 @@ object ChapterProvider {
     ) {
         val indentLength = ReadBookConfig.paragraphIndent.length
         var x = startX
-        val (words, widths) = getStringArrayAndTextWidths(text, textWidths)
+        val (words, widths) = getStringArrayAndTextWidths(text, textWidths, textPaint)
         words.forEachIndexed { index, char ->
             val cw = widths[index]
             val x1 = x + cw
@@ -623,7 +623,8 @@ object ChapterProvider {
 
     fun getStringArrayAndTextWidths(
         text: String,
-        textWidths: List<Float>
+        textWidths: List<Float>,
+        textPaint: TextPaint
     ): Pair<List<String>, List<Float>> {
         val charArray = text.toCharArray()
         val strList = ArrayList<String>()
@@ -639,7 +640,13 @@ object ChapterProvider {
                 charArray[i].toString()
             }
             strList.add(char)
-            textWidthList.add(textWidths[i])
+            val w = textWidths[i]
+            if (w == 0f && i - 1 >= 0) {
+                textWidthList[i - 1] = textPaint.measureText(strList[i - 1])
+                textWidthList.add(textPaint.measureText(char))
+            } else {
+                textWidthList.add(w)
+            }
         }
         return strList to textWidthList
     }

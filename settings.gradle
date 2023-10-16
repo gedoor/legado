@@ -5,10 +5,11 @@ pluginManagement {
         google()
         mavenCentral()
         //镜像仓库,无法连接源仓库自行启用镜像仓库,不要提交修改
-        //maven {url"https://maven-central-asia.storage-download.googleapis.com/maven2/"}
+        //maven { url "https://maven-central-asia.storage-download.googleapis.com/maven2/" }
         //maven { url 'https://maven.aliyun.com/repository/google' }
         //maven { url 'https://maven.aliyun.com/repository/public' }
         //maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        //maven { url 'https://repo.huaweicloud.com/repository/maven/' }
     }
 }
 
@@ -20,10 +21,10 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url 'https://jitpack.io' }
         //镜像仓库,无法连接源仓库自行启用镜像仓库,不要提交修改
-        //maven {url"https://maven-central-asia.storage-download.googleapis.com/maven2/"}
+        //maven { url "https://maven-central-asia.storage-download.googleapis.com/maven2/" }
         //maven { url 'https://maven.aliyun.com/repository/google' }
         //maven { url 'https://maven.aliyun.com/repository/public' }
-
+        //maven { url 'https://repo.huaweicloud.com/repository/maven/' }
     }
 }
 rootProject.name = 'legado'
