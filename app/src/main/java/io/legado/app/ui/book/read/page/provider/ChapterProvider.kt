@@ -589,7 +589,7 @@ object ChapterProvider {
                 x = x1
             }
         }
-        exceed(absStartX, textLine)
+        exceed(absStartX, textLine, words)
     }
 
     /**
@@ -618,7 +618,7 @@ object ChapterProvider {
                 textLine.indentWidth = x
             }
         }
-        exceed(absStartX, textLine)
+        exceed(absStartX, textLine, words)
     }
 
     fun getStringArrayAndTextWidths(
@@ -690,15 +690,14 @@ object ChapterProvider {
     /**
      * 超出边界处理
      */
-    private fun exceed(absStartX: Int, textLine: TextLine) {
+    private fun exceed(absStartX: Int, textLine: TextLine, words: List<String>) {
         val visibleEnd = absStartX + visibleWidth
-        val columns = textLine.columns
-        val endX = columns.lastOrNull()?.end ?: return
+        val endX = textLine.columns.lastOrNull()?.end ?: return
         if (endX > visibleEnd) {
-            val cc = (endX - visibleEnd) / columns.size
-            for (i in 0..columns.lastIndex) {
+            val cc = (endX - visibleEnd) / words.size
+            for (i in 0..words.lastIndex) {
                 textLine.getColumnReverseAt(i).let {
-                    val py = cc * (columns.size - i)
+                    val py = cc * (words.size - i)
                     it.start = it.start - py
                     it.end = it.end - py
                 }

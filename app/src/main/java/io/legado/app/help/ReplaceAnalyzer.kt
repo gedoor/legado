@@ -26,7 +26,7 @@ object ReplaceAnalyzer {
         return runCatching {
             val replaceRule: ReplaceRule? =
                 GSON.fromJsonObject<ReplaceRule>(json.trim()).getOrNull()
-            if (replaceRule == null || replaceRule.pattern.isBlank()) {
+            if (replaceRule == null || replaceRule.pattern.isEmpty()) {
                 val jsonItem = jsonPath.parse(json.trim())
                 val rule = ReplaceRule()
                 rule.id = jsonItem.readLong("$.id") ?: System.currentTimeMillis()
