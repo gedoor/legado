@@ -61,6 +61,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             val group = groupName?.trim()
             val keepName = AppConfig.importKeepName
             val keepGroup = AppConfig.importKeepGroup
+            val keepEnable = AppConfig.importKeepEnable
             val selectSource = arrayListOf<RssSource>()
             selectStatus.forEachIndexed { index, b ->
                 if (b) {
@@ -71,6 +72,9 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                         if (keepGroup) {
                             source.sourceGroup = it.sourceGroup
+                        }
+                        if (keepEnable) {
+                            source.enabled = it.enabled
                         }
                         source.customOrder = it.customOrder
                     }
