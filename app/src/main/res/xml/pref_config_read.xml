@@ -143,6 +143,13 @@
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="previewImageByClick"
+        android:title="@string/preview_image_by_click"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
     <io.legado.app.lib.prefs.Preference
         android:key="clickRegionalConfig"
         android:title="@string/click_regional_config"

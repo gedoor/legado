@@ -138,6 +138,7 @@ object PreferKey {
     const val defaultHomePage = "defaultHomePage"
     const val showBookshelfFastScroller = "showBookshelfFastScroller"
     const val importKeepEnable = "importKeepEnable"
+    const val previewImageByClick = "previewImageByClick"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

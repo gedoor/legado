@@ -24,6 +24,7 @@ import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.entities.column.*
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
+import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.*
 import kotlin.math.min
 
@@ -346,6 +347,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
                 is ReviewColumn -> {
                     context.toastOnUi("Button Pressed!")
+                    handled = true
+                }
+
+                is ImageColumn -> if (AppConfig.previewImageByClick) {
+                    activity?.showDialogFragment(PhotoDialog(column.src))
                     handled = true
                 }
             }
