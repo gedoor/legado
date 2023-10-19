@@ -1209,6 +1209,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 SelectItem(getString(R.string.show), "show"),
                 SelectItem(getString(R.string.refresh), "refresh"),
                 SelectItem(getString(R.string.action_save), "save"),
+                SelectItem(getString(R.string.menu), "menu"),
                 SelectItem(getString(R.string.select_folder), "selectFolder")
             )
         )
@@ -1227,6 +1228,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     }
                 }
 
+                "menu" -> showActionMenu()
                 "selectFolder" -> selectImageDir.launch()
             }
             popupAction.dismiss()

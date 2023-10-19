@@ -53,7 +53,8 @@ class ZhLayout(
         curPaint.getTextWidths(text as String, widthsArray)
         val (words, widths) = ChapterProvider.getStringArrayAndTextWidths(
             text,
-            widthsArray.asList()
+            widthsArray.asList(),
+            curPaint
         )
         var lineW = 0f
         var cwPre = 0f

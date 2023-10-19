@@ -426,6 +426,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.importKeepEnable, value)
         }
 
+    var previewImageByClick: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.previewImageByClick, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.previewImageByClick, value)
+        }
+
     var preDownloadNum
         get() = appCtx.getPrefInt(PreferKey.preDownloadNum, 10)
         set(value) {

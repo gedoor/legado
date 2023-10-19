@@ -141,6 +141,8 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             AppConfig.importKeepName
         binding.toolBar.menu.findItem(R.id.menu_keep_group)?.isChecked =
             AppConfig.importKeepGroup
+        binding.toolBar.menu.findItem(R.id.menu_keep_enable)?.isChecked =
+            AppConfig.importKeepEnable
         binding.toolBar.menu.findItem(R.id.menu_select_new_source)?.isVisible = false
         binding.toolBar.menu.findItem(R.id.menu_select_update_source)?.isVisible = false
     }
@@ -157,6 +159,11 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             R.id.menu_keep_group -> {
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepGroup, item.isChecked)
+            }
+
+            R.id.menu_keep_enable -> {
+                item.isChecked = !item.isChecked
+                AppConfig.importKeepEnable = item.isChecked
             }
         }
         return false

@@ -558,7 +558,7 @@ object ChapterProvider {
         }
         val residualWidth = visibleWidth - desiredWidth
         val spaceSize = text.count { it == ' ' }
-        val (words, widths) = getStringArrayAndTextWidths(text, textWidths)
+        val (words, widths) = getStringArrayAndTextWidths(text, textWidths, textPaint)
         if (spaceSize > 1) {
             val d = residualWidth / spaceSize
             var x = startX
@@ -589,7 +589,7 @@ object ChapterProvider {
                 x = x1
             }
         }
-        exceed(absStartX, textLine)
+        exceed(absStartX, textLine, words)
     }
 
     /**
@@ -608,7 +608,7 @@ object ChapterProvider {
     ) {
         val indentLength = ReadBookConfig.paragraphIndent.length
         var x = startX
-        val (words, widths) = getStringArrayAndTextWidths(text, textWidths)
+        val (words, widths) = getStringArrayAndTextWidths(text, textWidths, textPaint)
         words.forEachIndexed { index, char ->
             val cw = widths[index]
             val x1 = x + cw
@@ -618,12 +618,13 @@ object ChapterProvider {
                 textLine.indentWidth = x
             }
         }
-        exceed(absStartX, textLine)
+        exceed(absStartX, textLine, words)
     }
 
     fun getStringArrayAndTextWidths(
         text: String,
-        textWidths: List<Float>
+        textWidths: List<Float>,
+        textPaint: TextPaint
     ): Pair<List<String>, List<Float>> {
         val charArray = text.toCharArray()
         val strList = ArrayList<String>()
@@ -639,7 +640,13 @@ object ChapterProvider {
                 charArray[i].toString()
             }
             strList.add(char)
-            textWidthList.add(textWidths[i])
+            val w = textWidths[i]
+            if (w == 0f && i - 1 >= 0) {
+                textWidthList[i - 1] = textPaint.measureText(strList[i - 1])
+                textWidthList.add(textPaint.measureText(char))
+            } else {
+                textWidthList.add(w)
+            }
         }
         return strList to textWidthList
     }
@@ -690,15 +697,14 @@ object ChapterProvider {
     /**
      * 超出边界处理
      */
-    private fun exceed(absStartX: Int, textLine: TextLine) {
+    private fun exceed(absStartX: Int, textLine: TextLine, words: List<String>) {
         val visibleEnd = absStartX + visibleWidth
-        val columns = textLine.columns
-        val endX = columns.lastOrNull()?.end ?: return
+        val endX = textLine.columns.lastOrNull()?.end ?: return
         if (endX > visibleEnd) {
-            val cc = (endX - visibleEnd) / columns.size
-            for (i in 0..columns.lastIndex) {
+            val cc = (endX - visibleEnd) / words.size
+            for (i in 0..words.lastIndex) {
                 textLine.getColumnReverseAt(i).let {
-                    val py = cc * (columns.size - i)
+                    val py = cc * (words.size - i)
                     it.start = it.start - py
                     it.end = it.end - py
                 }

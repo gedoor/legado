@@ -1133,4 +1133,5 @@
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
     <string name="export_all_use_book_source">导出所有书的书源</string>
     <string name="keep_enable">保留启用状态</string>
+    <string name="preview_image_by_click">点击预览图片</string>
 </resources>
