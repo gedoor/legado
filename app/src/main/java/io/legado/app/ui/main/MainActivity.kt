@@ -127,6 +127,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         return try {
             super.dispatchTouchEvent(ev)
         } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
             false
         }
     }

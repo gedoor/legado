@@ -77,6 +77,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
         return try {
             super.dispatchTouchEvent(ev)
         } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
             false
         }
     }

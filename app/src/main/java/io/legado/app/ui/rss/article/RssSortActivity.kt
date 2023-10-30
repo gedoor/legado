@@ -59,6 +59,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         return try {
             super.dispatchTouchEvent(ev)
         } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
             false
         }
     }
