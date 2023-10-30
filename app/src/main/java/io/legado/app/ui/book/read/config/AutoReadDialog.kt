@@ -104,7 +104,9 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
         binding.llCatalog.setOnClickListener { callBack?.openChapterList() }
         binding.llAutoPageStop.setOnClickListener {
             callBack?.autoPageStop()
-            dismissAllowingStateLoss()
+            binding.llAutoPageStop.post {
+                dismissAllowingStateLoss()
+            }
         }
     }
 
