@@ -9,7 +9,7 @@ buildscript {
         agp_version = '8.1.2'
         media3_version = "1.1.1"
         splitties_version = '3.0.0'
-        room_version = '2.5.2'
+        room_version = '2.6.0'
     }
 }
 
