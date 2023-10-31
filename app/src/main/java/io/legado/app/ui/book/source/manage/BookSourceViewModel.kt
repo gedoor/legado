@@ -191,6 +191,14 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
                 appDb.bookSourceDao.allNoGroup
             }
 
+            searchKey == appCtx.getString(R.string.enabled_explore) -> {
+                appDb.bookSourceDao.allEnabledExplore
+            }
+
+            searchKey == appCtx.getString(R.string.disabled_explore) -> {
+                appDb.bookSourceDao.allDisabledExplore
+            }
+
             searchKey.startsWith("group:") -> {
                 val key = searchKey.substringAfter("group:")
                 appDb.bookSourceDao.groupSearch(key)

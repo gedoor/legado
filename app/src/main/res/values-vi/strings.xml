@@ -730,6 +730,8 @@ Còn </string>
     <string name="import_old_summary">Chọn thư mục sao lưu kế thừa</string>
     <string name="enabled">Đã bật</string>
     <string name="disabled">Đã tắt</string>
+    <string name="enabled_explore">Discovery Enabled</string>
+    <string name="disabled_explore">Discovery Disabled</string>
     <string name="starting_download">Bắt đầu tải xuống</string>
     <string name="already_in_download">Cuốn sách này đã có trong danh sách Download</string>
     <string name="click_to_open">Nhấp để mở</string>

@@ -730,6 +730,8 @@
     <string name="import_old_summary">Selecione uma pasta Legado de Backup</string>
     <string name="enabled">Ativado</string>
     <string name="disabled">Desativado</string>
+    <string name="enabled_explore">Discovery Enabled</string>
+    <string name="disabled_explore">Discovery Disabled</string>
     <string name="starting_download">Iniciando o download</string>
     <string name="already_in_download">Este livro já está na lista de download</string>
     <string name="click_to_open">Clique para abrir</string>

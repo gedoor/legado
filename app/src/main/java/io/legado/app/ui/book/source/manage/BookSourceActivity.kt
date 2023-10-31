@@ -217,6 +217,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 searchView.setQuery(getString(R.string.no_group), true)
             }
 
+            R.id.menu_enabled_explore_group -> {
+                searchView.setQuery(getString(R.string.enabled_explore), true)
+            }
+
+            R.id.menu_disabled_explore_group -> {
+                searchView.setQuery(getString(R.string.disabled_explore), true)
+            }
+
             R.id.menu_help -> showHelp()
         }
         if (item.groupId == R.id.source_group) {
@@ -270,6 +278,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
                 searchKey == getString(R.string.no_group) -> {
                     appDb.bookSourceDao.flowNoGroup()
+                }
+
+                searchKey == getString(R.string.enabled_explore) -> {
+                    appDb.bookSourceDao.flowEnabledExplore()
+                }
+
+                searchKey == getString(R.string.disabled_explore) -> {
+                    appDb.bookSourceDao.flowDisabledExplore()
                 }
 
                 searchKey.startsWith("group:") -> {
