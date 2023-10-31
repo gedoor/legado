@@ -260,9 +260,9 @@ dependencies {
     implementation('cn.hutool:hutool-crypto:5.8.21')
 
     //firebase, 崩溃统计和性能统计, 会导致共存版本崩溃
-    //implementation platform('com.google.firebase:firebase-bom:30.0.1')
-    //implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
-    //implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
+    implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.5.0'
+    implementation 'com.google.firebase:firebase-perf-ktx:20.5.0'
 
     //LeakCanary, 内存泄露检测
     //debugImplementation('com.squareup.leakcanary:leakcanary-android:2.7')
