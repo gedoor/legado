@@ -74,7 +74,12 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
                 }
             }
         }
-        return super.dispatchTouchEvent(ev)
+        return try {
+            super.dispatchTouchEvent(ev)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            false
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
