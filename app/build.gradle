@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-parcelize'
     //id 'kotlin-kapt'
     id 'com.google.devtools.ksp'
-    //id "com.google.gms.google-services"
+    id "com.google.gms.google-services"
 }
 apply from: 'download.gradle'
 
@@ -203,7 +203,7 @@ dependencies {
     implementation('io.github.jeremyliao:live-event-bus-x:1.8.0')
 
     //规则相关
-    implementation('org.jsoup:jsoup:1.16.1')
+    implementation('org.jsoup:jsoup:1.16.2')
     implementation('com.jayway.jsonpath:json-path:2.8.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
     implementation(project(path: ':modules:book'))
@@ -240,10 +240,10 @@ dependencies {
     implementation('com.jaredrummler:colorpicker:1.1.0')
 
     //压缩解压
-    implementation 'me.zhanghai.android.libarchive:library:1.0.2'
+    implementation 'me.zhanghai.android.libarchive:library:1.0.3'
 
     //apache
-    implementation('org.apache.commons:commons-text:1.10.0')
+    implementation('org.apache.commons:commons-text:1.11.0')
 
     //MarkDown
     def markwonVersion = "4.6.2"
@@ -257,10 +257,10 @@ dependencies {
 
     //加解密类库,有些书源使用
     //noinspection GradleDependency,GradlePackageUpdate
-    implementation('cn.hutool:hutool-crypto:5.8.21')
+    implementation('cn.hutool:hutool-crypto:5.8.22')
 
     //firebase, 崩溃统计和性能统计, 会导致共存版本崩溃
-    implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    implementation platform('com.google.firebase:firebase-bom:32.5.0')
     implementation 'com.google.firebase:firebase-analytics-ktx:21.5.0'
     implementation 'com.google.firebase:firebase-perf-ktx:20.5.0'
 
