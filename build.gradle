@@ -19,7 +19,7 @@ plugins {
     id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
     id 'com.google.devtools.ksp' version "$kotlin_version-$ksp_version" apply false
     id "de.undercouch.download" version "5.5.0" apply false
-    id "com.google.gms.google-services" version "4.3.15" apply false
+    id "com.google.gms.google-services" version "4.4.0" apply false
 }
 
 tasks.register('clean', Delete) {
