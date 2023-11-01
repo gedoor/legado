@@ -5,8 +5,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.utils.*
 import me.ag2s.umdlib.domain.UmdBook
 import me.ag2s.umdlib.umd.UmdReader
-import splitties.init.appCtx
-
 import java.io.File
 import java.io.InputStream
 

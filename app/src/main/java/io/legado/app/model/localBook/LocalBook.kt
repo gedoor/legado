@@ -24,7 +24,6 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.text.StringEscapeUtils
-import org.jsoup.nodes.Entities
 import splitties.init.appCtx
 import java.io.*
 import java.util.regex.Pattern
