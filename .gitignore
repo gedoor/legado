@@ -1,6 +1,6 @@
 *.iml
 .gradle
-/local.properties
+local.properties
 .DS_Store
 /build
 /captures
@@ -12,5 +12,5 @@ node_modules/
 /app/google
 /app/gradle.properties
 package-lock.json
-.idea/*
+.idea/
 

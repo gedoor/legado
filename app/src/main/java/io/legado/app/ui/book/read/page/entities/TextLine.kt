@@ -1,11 +1,9 @@
 package io.legado.app.ui.book.read.page.entities
 
 import android.graphics.Paint.FontMetrics
-import android.text.TextPaint
 import androidx.annotation.Keep
 import io.legado.app.ui.book.read.page.entities.column.BaseColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.textHeight
 
 /**
  * 行信息
