@@ -51,7 +51,7 @@ open class Preference(context: Context, attrs: AttributeSet) :
             val tvTitle = viewHolder.findViewById(R.id.preference_title) as? TextView
             tvTitle?.let {
                 tvTitle.text = title
-                tvTitle.isVisible = title != null && title.isNotEmpty()
+                tvTitle.isVisible = !title.isNullOrEmpty()
             }
             val tvSummary = viewHolder.findViewById(R.id.preference_desc) as? TextView
             tvSummary?.let {

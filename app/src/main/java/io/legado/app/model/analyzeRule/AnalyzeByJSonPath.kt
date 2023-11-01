@@ -143,7 +143,7 @@ class AnalyzeByJSonPath(json: Any) {
             val results = ArrayList<ArrayList<*>>()
             for (rl in rules) {
                 val temp = getList(rl)
-                if (temp != null && temp.isNotEmpty()) {
+                if (!temp.isNullOrEmpty()) {
                     results.add(temp)
                     if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break

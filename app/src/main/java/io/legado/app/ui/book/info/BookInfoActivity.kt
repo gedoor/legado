@@ -165,6 +165,7 @@ class BookInfoActivity :
                     }
                 }
             }
+
             R.id.menu_share_it -> {
                 viewModel.getBook()?.let {
                     val bookJson = GSON.toJson(it)
@@ -172,24 +173,29 @@ class BookInfoActivity :
                     shareWithQr(shareStr, it.name)
                 }
             }
+
             R.id.menu_refresh -> {
                 refreshBook()
             }
+
             R.id.menu_login -> viewModel.bookSource?.let {
                 startActivity<SourceLoginActivity> {
                     putExtra("type", "bookSource")
                     putExtra("key", it.bookSourceUrl)
                 }
             }
+
             R.id.menu_top -> viewModel.topBook()
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_set_book_variable -> setBookVariable()
             R.id.menu_copy_book_url -> viewModel.getBook()?.bookUrl?.let {
                 sendToClip(it)
             }
+
             R.id.menu_copy_toc_url -> viewModel.getBook()?.tocUrl?.let {
                 sendToClip(it)
             }
+
             R.id.menu_can_update -> {
                 viewModel.getBook()?.let {
                     it.canUpdate = !it.canUpdate
@@ -198,6 +204,7 @@ class BookInfoActivity :
                     }
                 }
             }
+
             R.id.menu_clear_cache -> viewModel.clearCache()
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_split_long_chapter -> {
@@ -210,6 +217,7 @@ class BookInfoActivity :
                 item.isChecked = !item.isChecked
                 if (!item.isChecked) longToastOnUi(R.string.need_more_time_load_content)
             }
+
             R.id.menu_delete_alert -> LocalConfig.bookInfoDeleteAlert = !item.isChecked
             R.id.menu_upload -> {
                 viewModel.getBook()?.let { book ->
@@ -298,12 +306,14 @@ class BookInfoActivity :
             isLoading -> {
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
             }
+
             chapterList.isNullOrEmpty() -> {
                 binding.tvToc.text = getString(
                     R.string.toc_s,
                     getString(R.string.error_load_toc)
                 )
             }
+
             else -> {
                 viewModel.bookData.value?.let {
                     if (it.durChapterIndex < chapterList.size) {
@@ -619,6 +629,7 @@ class BookInfoActivity :
                     .putExtra("bookUrl", book.bookUrl)
                     .putExtra("inBookshelf", viewModel.inBookshelf)
             )
+
             else -> readBookResult.launch(
                 Intent(this, ReadBookActivity::class.java)
                     .putExtra("bookUrl", book.bookUrl)
@@ -654,9 +665,9 @@ class BookInfoActivity :
             if (viewModel.inBookshelf) {
                 viewModel.saveBook(book)
             } else if (groupId > 0) {
-                viewModel.saveBook(book)
-                viewModel.inBookshelf = true
-                upTvBookshelf()
+                viewModel.addToBookshelf {
+                    upTvBookshelf()
+                }
             }
         }
     }

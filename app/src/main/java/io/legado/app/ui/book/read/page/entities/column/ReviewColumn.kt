@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.page.entities.column
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.text.StaticLayout
 import androidx.annotation.Keep
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 

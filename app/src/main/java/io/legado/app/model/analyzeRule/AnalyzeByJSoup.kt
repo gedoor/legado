@@ -303,7 +303,7 @@ class AnalyzeByJSoup(doc: Any) {
                 }
 
             val len = elements.size
-            val lastIndexes = (indexDefault.size - 1).takeIf { it != -1 } ?: indexes.size - 1
+            val lastIndexes = (indexDefault.size - 1).takeIf { it != -1 } ?: (indexes.size - 1)
             val indexSet = mutableSetOf<Int>()
 
             /**

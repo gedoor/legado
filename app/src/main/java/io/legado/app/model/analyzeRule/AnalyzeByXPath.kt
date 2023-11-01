@@ -63,7 +63,7 @@ class AnalyzeByXPath(doc: Any) {
             val results = ArrayList<List<JXNode>>()
             for (rl in rules) {
                 val temp = getElements(rl)
-                if (temp != null && temp.isNotEmpty()) {
+                if (!temp.isNullOrEmpty()) {
                     results.add(temp)
                     if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break

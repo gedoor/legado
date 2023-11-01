@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.ItemTxtTocRuleBinding
 import io.legado.app.lib.theme.backgroundColor
