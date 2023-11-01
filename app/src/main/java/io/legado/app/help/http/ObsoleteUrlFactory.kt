@@ -1,5 +1,7 @@
 package io.legado.app.help.http
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.SSLHelper.unsafeTrustManager
 import okhttp3.Call
@@ -797,6 +799,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
 
         // Should only be invoked on Java 8+ or Android API 24+.
+        @RequiresApi(Build.VERSION_CODES.N)
         override fun getContentLengthLong(): Long {
             return delegate.contentLengthLong
         }
@@ -846,6 +849,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
 
         // Should only be invoked on Java 8+ or Android API 24+.
+        @RequiresApi(Build.VERSION_CODES.N)
         override fun getHeaderFieldLong(field: String, defaultValue: Long): Long {
             return delegate.getHeaderFieldLong(field, defaultValue)
         }

@@ -80,9 +80,7 @@ class PdfFile(var book: Book) {
                 if (!File(book.coverUrl!!).exists()) {
 
                     FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!)).use { out ->
-                        openPdfPage(renderer, 0)?.let { cover ->
-                            cover.compress(Bitmap.CompressFormat.JPEG, 90, out)
-                        }
+                        openPdfPage(renderer, 0)?.compress(Bitmap.CompressFormat.JPEG, 90, out)
                         out.flush()
                     }
                 }
@@ -159,7 +157,7 @@ class PdfFile(var book: Book) {
 
                 buildString {
                     val start = chapter.index * PAGE_SIZE
-                    val end = Math.min((chapter.index + 1) * PAGE_SIZE, renderer.pageCount)
+                    val end = ((chapter.index + 1) * PAGE_SIZE).coerceAtMost(renderer.pageCount)
                     (start until end).forEach {
                         append("<img src=").append('"').append(it).append('"').append(" >")
                             .append('\n')
