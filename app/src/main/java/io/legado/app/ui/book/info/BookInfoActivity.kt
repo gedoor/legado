@@ -402,6 +402,10 @@ class BookInfoActivity :
             }
         }
         tvTocView.setOnClickListener {
+            if (viewModel.chapterListData.value.isNullOrEmpty()) {
+                toastOnUi(R.string.chapter_list_empty)
+                return@setOnClickListener
+            }
             viewModel.getBook()?.let { book ->
                 if (!viewModel.inBookshelf) {
                     viewModel.saveBook(book) {
@@ -533,10 +537,6 @@ class BookInfoActivity :
     }
 
     private fun openChapterList() {
-        if (viewModel.chapterListData.value.isNullOrEmpty()) {
-            toastOnUi(R.string.chapter_list_empty)
-            return
-        }
         viewModel.getBook()?.let {
             tocActivityResult.launch(it.bookUrl)
         }
