@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -137,7 +136,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     @SuppressLint("InflateParams")
     fun configBookshelf() {
         alert(titleResource = R.string.bookshelf_layout) {
-            val bookshelfLayout = getPrefInt(PreferKey.bookshelfLayout)
+            val bookshelfLayout = AppConfig.bookshelfLayout
             val bookshelfSort = AppConfig.bookshelfSort
             val alertBinding =
                 DialogBookshelfConfigBinding.inflate(layoutInflater)

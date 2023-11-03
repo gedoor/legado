@@ -243,7 +243,7 @@ fun Book.getExportFileName(suffix: String): String {
         RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
     }.onFailure {
         AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
-    }.getOrDefault("${name} 作者：${getRealAuthor()}.$suffix")
+    }.getOrDefault("$name 作者：${getRealAuthor()}.$suffix")
 }
 
 /**

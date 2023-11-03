@@ -348,7 +348,10 @@ class EpubFile(var book: Book) {
         durIndex = 0
         while (i < contents.size) {
             val content = contents[i]
-            if (!content.mediaType.toString().contains("htm")) continue
+            if (!content.mediaType.toString().contains("htm")) {
+                i++
+                continue
+            }
             /**
              * 检索到第一章href停止
              * completeHref可能有fragment(#id) 必须去除

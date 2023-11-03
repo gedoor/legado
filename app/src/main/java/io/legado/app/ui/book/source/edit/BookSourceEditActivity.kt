@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.source.edit
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -119,7 +120,7 @@ class BookSourceEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> viewModel.save(getSource()) {
-                setResult(Activity.RESULT_OK)
+                setResult(Activity.RESULT_OK, Intent().putExtra("origin", it.bookSourceUrl))
                 finish()
             }
 
@@ -410,8 +411,8 @@ class BookSourceEditActivity :
                 "intro" -> searchRule.intro =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
 
-                "updateTime" -> searchRule.updateTime =
-                    viewModel.ruleComplete(it.value, searchRule.bookList)
+//                "updateTime" -> searchRule.updateTime =
+//                    viewModel.ruleComplete(it.value, searchRule.bookList)
 
                 "wordCount" -> searchRule.wordCount =
                     viewModel.ruleComplete(it.value, searchRule.bookList)
@@ -442,8 +443,8 @@ class BookSourceEditActivity :
                 "intro" -> exploreRule.intro =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
 
-                "updateTime" -> exploreRule.updateTime =
-                    viewModel.ruleComplete(it.value, exploreRule.bookList)
+//                "updateTime" -> exploreRule.updateTime =
+//                    viewModel.ruleComplete(it.value, exploreRule.bookList)
 
                 "wordCount" -> exploreRule.wordCount =
                     viewModel.ruleComplete(it.value, exploreRule.bookList)
@@ -471,8 +472,8 @@ class BookSourceEditActivity :
                 "intro" -> bookInfoRule.intro =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)
 
-                "updateTime" -> bookInfoRule.updateTime =
-                    viewModel.ruleComplete(it.value, bookInfoRule.init)
+//                "updateTime" -> bookInfoRule.updateTime =
+//                    viewModel.ruleComplete(it.value, bookInfoRule.init)
 
                 "wordCount" -> bookInfoRule.wordCount =
                     viewModel.ruleComplete(it.value, bookInfoRule.init)

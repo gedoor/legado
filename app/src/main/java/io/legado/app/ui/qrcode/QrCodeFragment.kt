@@ -1,16 +1,17 @@
 package io.legado.app.ui.qrcode
 
 import com.google.zxing.Result
-import com.king.zxing.CaptureFragment
+import com.king.camera.scan.AnalyzeResult
+import com.king.camera.scan.CameraScan
+import com.king.zxing.BarcodeCameraScanFragment
 import com.king.zxing.DecodeConfig
 import com.king.zxing.DecodeFormatManager
 import com.king.zxing.analyze.MultiFormatAnalyzer
 
+class QrCodeFragment : BarcodeCameraScanFragment() {
 
-class QrCodeFragment : CaptureFragment() {
-
-    override fun initCameraScan() {
-        super.initCameraScan()
+    override fun initCameraScan(cameraScan: CameraScan<Result>) {
+        super.initCameraScan(cameraScan)
         //初始化解码配置
         val decodeConfig = DecodeConfig()
         //如果只有识别二维码的需求，这样设置效率会更高，不设置默认为DecodeFormatManager.DEFAULT_HINTS
@@ -24,9 +25,9 @@ class QrCodeFragment : CaptureFragment() {
         cameraScan.setAnalyzer(MultiFormatAnalyzer(decodeConfig))
     }
 
-    override fun onScanResultCallback(result: Result?): Boolean {
-        (activity as? QrCodeActivity)?.onScanResultCallback(result)
-        return true
+    override fun onScanResultCallback(result: AnalyzeResult<Result>) {
+        cameraScan.setAnalyzeImage(false)
+        (activity as? QrCodeActivity)?.onScanResultCallback(result.result)
     }
 
 }

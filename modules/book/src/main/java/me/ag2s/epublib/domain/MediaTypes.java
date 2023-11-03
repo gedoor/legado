@@ -1,6 +1,6 @@
 package me.ag2s.epublib.domain;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import me.ag2s.epublib.util.StringUtil;
@@ -60,7 +60,7 @@ public class MediaTypes {
             SMIL, PLS, JAVASCRIPT, MP3, MP4, OGG, UNKNOWN
     };
 
-    public static final Map<String, MediaType> mediaTypesByName = new HashMap<>();
+    public static final Map<String, MediaType> mediaTypesByName = new LinkedHashMap<>();
 
     static {
         for (MediaType mediaType : mediaTypes) {

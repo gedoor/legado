@@ -420,6 +420,17 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val importKeepName get() = appCtx.getPrefBoolean(PreferKey.importKeepName)
     val importKeepGroup get() = appCtx.getPrefBoolean(PreferKey.importKeepGroup)
+    var importKeepEnable: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.importKeepEnable, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.importKeepEnable, value)
+        }
+
+    var previewImageByClick: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.previewImageByClick, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.previewImageByClick, value)
+        }
 
     var preDownloadNum
         get() = appCtx.getPrefInt(PreferKey.preDownloadNum, 10)

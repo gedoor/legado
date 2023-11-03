@@ -38,7 +38,6 @@ import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.activityPendingIntent
-import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.createFolderIfNotExist
 import io.legado.app.utils.isContentScheme

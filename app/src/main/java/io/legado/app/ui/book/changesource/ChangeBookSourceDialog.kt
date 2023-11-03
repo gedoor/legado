@@ -72,7 +72,8 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     private val adapter by lazy { ChangeBookSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
-            viewModel.startSearch()
+            val origin = it.data?.getStringExtra("origin") ?: return@registerForActivityResult
+            viewModel.startSearch(origin)
         }
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
         if (it) {

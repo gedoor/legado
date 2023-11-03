@@ -124,7 +124,12 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 }
             }
         }
-        return super.dispatchTouchEvent(ev)
+        return try {
+            super.dispatchTouchEvent(ev)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            false
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

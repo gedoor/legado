@@ -147,6 +147,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        upNotification()
         when (intent?.action) {
             IntentAction.play -> newReadAloud(
                 intent.getBooleanExtra("play", true),

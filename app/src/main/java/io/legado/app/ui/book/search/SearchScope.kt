@@ -143,9 +143,9 @@ data class SearchScope(private var scope: String) {
 
     fun save() {
         AppConfig.searchScope = scope
-        if (isAll()) {
+        if (isAll() || isSource() || scope.contains(",")) {
             AppConfig.searchGroup = ""
-        } else if (!isSource() && !scope.contains(",")) {
+        } else {
             AppConfig.searchGroup = scope
         }
     }

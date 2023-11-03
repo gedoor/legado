@@ -28,7 +28,6 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     private var tasks = CompositeCoroutine()
     private var bookSourceList = arrayListOf<BookSource>()
     private var searchBooks = arrayListOf<SearchBook>()
-    private val emptyBookSource = BookSource()
 
     @Volatile
     private var searchIndex = -1
@@ -77,7 +76,6 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
             return
         }
         searchIndex++
-        val searchIndex = searchIndex
         val source = bookSourceList[searchIndex]
         val searchPool = searchPool ?: return
         val task = WebBook.searchBook(
@@ -93,7 +91,7 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
                 onSuccess(searchId, it)
             }
             .onFinally {
-                onFinally(searchId, searchIndex)
+                onFinally(searchId)
             }
         tasks.add(task)
     }
@@ -109,14 +107,11 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     }
 
     @Synchronized
-    private fun onFinally(searchId: Long, index: Int) {
+    private fun onFinally(searchId: Long) {
         if (searchIndex < bookSourceList.lastIndex) {
             search(searchId)
         } else {
             searchIndex++
-        }
-        if (index <= bookSourceList.lastIndex) {
-            bookSourceList[index] = emptyBookSource
         }
         if (searchIndex >= bookSourceList.lastIndex
             + min(bookSourceList.size, threadCount)

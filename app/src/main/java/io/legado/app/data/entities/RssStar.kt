@@ -39,6 +39,7 @@ data class RssStar(
         pubDate = pubDate,
         description = description,
         content = content,
-        image = image
+        image = image,
+        variable = variable
     )
 }

@@ -1,6 +1,7 @@
 package io.legado.app.help
 
 import android.net.Uri
+import android.webkit.WebSettings
 import androidx.annotation.Keep
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
@@ -488,6 +489,10 @@ interface JsExtensions : JsEncodeUtils {
 
     fun s2t(text: String): String {
         return ChineseUtils.s2t(text)
+    }
+
+    fun getWebViewUA(): String {
+        return WebSettings.getDefaultUserAgent(appCtx)
     }
 
 //****************文件操作******************//
