@@ -883,8 +883,8 @@
     <string name="export_success">export success</string>
     <string name="path">path</string>
     <string name="direct_link_upload_rule">Straight chain upload rule</string>
-    <string name="direct_link_upload_rule_summary">用于导出书源书单时生成直链url</string>
-    <string name="direct_link_upload_config">Straight-chain upload configuration</string>
+    <string name="direct_link_upload_rule_summary">Used to generate direct link url when exporting book source, book list</string>
+    <string name="direct_link_upload_config">Direct link upload configuration</string>
     <string name="copy_play_url">拷贝播放Url</string>
     <string name="set_source_variable">Set source variable</string>
     <string name="set_book_variable">Set book variable</string>
@@ -933,11 +933,11 @@
     <!-- check source config string -->
     <string name="check_source_config">Check setting</string>
     <string name="check_source_item">Check item</string>
-    <string name="check_source_timeout">单个书源校验超时(秒)</string>
+    <string name="check_source_timeout">Single book source check timeout (seconds)</string>
     <string name="timeout">Timeout</string>
     <string name="seconds">Seconds</string>
     <string name="less_than">Less than</string>
-    <string name="check_source_config_summary">校验超时: %1$s秒\n校验项目:%2$s</string>
+    <string name="check_source_config_summary">Check timeout: %1$ss\nCheck item:%2$s</string>
     <string name="record_debug_log">Record debug log</string>
     <string name="sub_dir">Sub dir</string>
     <string name="general">General</string>
