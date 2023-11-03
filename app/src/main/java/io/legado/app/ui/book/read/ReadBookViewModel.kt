@@ -217,7 +217,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             AppWebDav.getBookProgress(book)
                 ?: throw NoStackTraceException("没有进度")
         }.onError {
-            AppLog.put("拉取阅读进度失败", it)
+            AppLog.put("拉取阅读进度失败《${book.name}》", it)
         }.onSuccess { progress ->
             if (progress.durChapterIndex < book.durChapterIndex ||
                 (progress.durChapterIndex == book.durChapterIndex
@@ -226,7 +226,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 alertSync?.invoke(progress)
             } else {
                 ReadBook.setProgress(progress)
-                AppLog.put("自动同步阅读进度成功")
+                AppLog.put("自动同步阅读进度成功《${book.name}》 ${progress.durChapterTitle}")
             }
         }
 
