@@ -288,14 +288,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             val offset = (ChapterProvider.visibleHeight - textPage.height).toInt()
             pageOffset = min(0, offset)
         } else if (pageOffset > 0) {
-            pageFactory.moveToPrev(true)
+            pageFactory.moveToPrev(false)
             textPage = pageFactory.curPage
             pageOffset -= textPage.height.toInt()
             upView?.invoke(textPage)
             contentDescription = textPage.text
         } else if (pageOffset < -textPage.height) {
             pageOffset += textPage.height.toInt()
-            pageFactory.moveToNext(true)
+            pageFactory.moveToNext(false)
             textPage = pageFactory.curPage
             upView?.invoke(textPage)
             contentDescription = textPage.text
