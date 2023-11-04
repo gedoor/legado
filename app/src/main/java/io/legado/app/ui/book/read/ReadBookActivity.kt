@@ -976,6 +976,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (menuLayoutIsVisible) {
             return
         }
+        if (binding.readView.run { isScroll && pageDelegate?.isRunning == true }) {
+            return
+        }
         val readTime = ReadBookConfig.autoReadSpeed * 1000.0
         val height = binding.readView.height
         val scrollOffset = (height / readTime * frameTime).toInt().coerceAtLeast(1)

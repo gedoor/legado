@@ -85,7 +85,7 @@ data class ReplaceRule(
             try {
                 Pattern.compile(pattern)
             } catch (ex: PatternSyntaxException) {
-                AppLog.put(ex.message)
+                AppLog.put("正则语法错误或不支持：${ex.localizedMessage}", ex)
                 return false
             }
         }

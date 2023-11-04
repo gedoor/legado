@@ -526,12 +526,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
         if (isScroll && !callBack.isAutoPage) {
             curPage.setContent(pageFactory.curPage, resetPageOffset)
         } else {
-            curPage.resetPageOffset()
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
                 1 -> nextPage.setContent(pageFactory.nextPage)
                 else -> {
-                    curPage.setContent(pageFactory.curPage)
+                    curPage.setContent(pageFactory.curPage, resetPageOffset)
                     nextPage.setContent(pageFactory.nextPage)
                     prevPage.setContent(pageFactory.prevPage)
                 }

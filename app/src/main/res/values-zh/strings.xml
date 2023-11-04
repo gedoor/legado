@@ -1130,8 +1130,10 @@
     <string name="change_source_delay">换源间隔</string>
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
+    <string name="default_home_page">默认主页</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
     <string name="export_all_use_book_source">导出所有书的书源</string>
     <string name="keep_enable">保留启用状态</string>
     <string name="preview_image_by_click">点击预览图片</string>
+    <string name="screen_portrait_reversed">反向竖屏</string>
 </resources>
