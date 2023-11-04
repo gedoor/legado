@@ -345,7 +345,6 @@ object LibArchiveUtils {
                 if (filter != null && filter.invoke(fileName))
                     fileNames.add(fileName)
 
-                entry = Archive.readNextHeader(archive)
 
             }
         } finally {
