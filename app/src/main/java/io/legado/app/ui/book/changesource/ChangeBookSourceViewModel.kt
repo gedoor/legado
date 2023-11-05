@@ -118,7 +118,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }.flowOn(IO)
 
     @Volatile
-    private var searchIndex = 0
+    private var searchIndex = -1
 
     override fun onCleared() {
         super.onCleared()
@@ -142,7 +142,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private fun initSearchPool() {
         searchPool = Executors
             .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-        searchIndex = 0
+        searchIndex = -1
     }
 
     fun refresh(): Boolean {
@@ -195,10 +195,10 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private fun search() {
         val searchIndex = synchronized(this) {
-            if (searchIndex > bookSourceList.lastIndex) {
+            if (searchIndex >= bookSourceList.lastIndex) {
                 return
             }
-            searchIndex++
+            ++searchIndex
         }
         val source = bookSourceList[searchIndex]
         bookSourceList[searchIndex] = emptyBookSource

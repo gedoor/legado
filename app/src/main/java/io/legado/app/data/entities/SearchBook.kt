@@ -116,6 +116,6 @@ data class SearchBook(
         variable = variable
     ).apply {
         this.infoHtml = this@SearchBook.infoHtml
-        this.tocUrl = this@SearchBook.tocUrl
+        this.tocHtml = this@SearchBook.tocHtml
     }
 }
