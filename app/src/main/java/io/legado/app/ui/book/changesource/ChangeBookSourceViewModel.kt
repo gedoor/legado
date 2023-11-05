@@ -232,7 +232,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     private suspend fun loadBookInfo(source: BookSource, book: Book) {
-        WebBook.getBookInfoAwait(source, book)
+        if (book.tocUrl.isEmpty()) {
+            WebBook.getBookInfoAwait(source, book)
+        }
         if (AppConfig.changeSourceLoadToc || AppConfig.changeSourceLoadWordCount) {
             loadBookToc(source, book)
         } else {
