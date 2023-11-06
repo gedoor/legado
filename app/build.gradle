@@ -212,7 +212,7 @@ dependencies {
     implementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
-    implementation('com.squareup.okhttp3:okhttp:4.11.0')
+    implementation('com.squareup.okhttp3:okhttp:4.12.0')
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
     implementation 'com.google.protobuf:protobuf-javalite:3.24.3'
 
