@@ -173,6 +173,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var pageChanged = false
     private var reloadContent = false
     private val autoPageRenderer by lazy { SyncedRenderer { doAutoPage(it) } }
+    private var autoPageScrollOffset = 0.0
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -969,6 +970,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     private fun autoPagePlus() {
+        autoPageScrollOffset = 0.0
         autoPageRenderer.start()
     }
 
@@ -981,7 +983,12 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         val readTime = ReadBookConfig.autoReadSpeed * 1000.0
         val height = binding.readView.height
-        val scrollOffset = (height / readTime * frameTime).toInt().coerceAtLeast(1)
+        autoPageScrollOffset += height / readTime * frameTime
+        if (autoPageScrollOffset < 1) {
+            return
+        }
+        val scrollOffset = autoPageScrollOffset.toInt()
+        autoPageScrollOffset -= scrollOffset
         if (binding.readView.isScroll) {
             binding.readView.curPage.scroll(-scrollOffset)
         } else {
