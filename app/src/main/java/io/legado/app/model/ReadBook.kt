@@ -204,6 +204,7 @@ object ReadBook : CoroutineScope by MainScope() {
             nextTextChapter = null
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
+                callBack?.upContent()
                 loadContent(durChapterIndex, upContent, resetPageOffset = false)
             } else if (upContent) {
                 AppLog.putDebug("moveToNextChapter-章节已加载,刷新视图")
@@ -232,6 +233,7 @@ object ReadBook : CoroutineScope by MainScope() {
             curTextChapter = prevTextChapter
             prevTextChapter = null
             if (curTextChapter == null) {
+                callBack?.upContent()
                 loadContent(durChapterIndex, upContent, resetPageOffset = false)
             } else if (upContent) {
                 callBack?.upContent()
