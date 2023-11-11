@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
@@ -97,6 +98,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private val autoPageRect by lazy { Rect() }
     private val autoPagePint by lazy { Paint().apply { color = context.accentColor } }
     private val boundary by lazy { BreakIterator.getWordInstance(Locale.getDefault()) }
+    private var nextPageBitmap: Bitmap? = null
 
     init {
         addView(nextPage)
@@ -141,7 +143,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
         pageDelegate?.onDraw(canvas)
         if (!isInEditMode && callBack.isAutoPage && !isScroll) {
             // 自动翻页
-            nextPage.screenshot()?.let {
+            val bitmap = nextPageBitmap ?: nextPage.screenshot()?.also { nextPageBitmap = it }
+            bitmap?.let {
                 val bottom = callBack.autoPageProgress
                 autoPageRect.set(0, 0, width, bottom)
                 canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
@@ -152,7 +155,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     bottom.toFloat(),
                     autoPagePint
                 )
-                it.recycle()
             }
         }
     }
@@ -526,6 +528,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         if (isScroll && !callBack.isAutoPage) {
             curPage.setContent(pageFactory.curPage, resetPageOffset)
         } else {
+            if (callBack.isAutoPage && relativePosition >= 0) {
+                clearNextPageBitmap()
+            }
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
                 1 -> nextPage.setContent(pageFactory.nextPage)
@@ -626,6 +631,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun getCurPagePosition(): Int {
         return curPage.getCurVisibleFirstLine()?.pagePosition ?: 0
+    }
+
+    fun clearNextPageBitmap() {
+        nextPageBitmap?.recycle()
+        nextPageBitmap = null
     }
 
     override val currentChapter: TextChapter?

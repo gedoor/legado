@@ -845,7 +845,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         success: (() -> Unit)?
     ) {
         lifecycleScope.launch {
-            autoPageProgress = 0
+            if (relativePosition == 0) {
+                autoPageProgress = 0
+            }
             binding.readView.upContent(relativePosition, resetPageOffset)
             upSeekBarProgress()
             loadStates = false
@@ -964,12 +966,14 @@ class ReadBookActivity : BaseReadBookActivity(),
             isAutoPage = false
             autoPageRenderer.stop()
             binding.readView.invalidate()
+            binding.readView.clearNextPageBitmap()
             binding.readMenu.setAutoPage(false)
             upScreenTimeOut()
         }
     }
 
     private fun autoPagePlus() {
+        autoPageProgress = 0
         autoPageScrollOffset = 0.0
         autoPageRenderer.start()
     }
@@ -997,6 +1001,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                 autoPageProgress = 0
                 if (!binding.readView.fillPage(PageDirection.NEXT)) {
                     autoPageStop()
+                } else {
+                    binding.readView.clearNextPageBitmap()
                 }
             } else {
                 binding.readView.invalidate()
