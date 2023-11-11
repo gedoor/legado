@@ -156,7 +156,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 }
                 appDb.bookChapterDao.delByBook(bookUrl)
                 appDb.bookChapterDao.insert(*toc.toTypedArray())
-                if (book.isSameNameAuthor(ReadBook)) {
+                if (book.isSameNameAuthor(ReadBook.book)) {
                     ReadBook.book = book
                     ReadBook.chapterSize = book.totalChapterNum
                 }

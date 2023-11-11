@@ -22,6 +22,7 @@ import okhttp3.internal.notifyAll
 import okhttp3.internal.wait
 import okio.Buffer
 import okio.BufferedSink
+import okio.ByteString.Companion.encode
 import okio.Pipe
 import okio.Timeout
 import okio.buffer
@@ -212,7 +213,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 val headers = headers
                 if (position < 0 || position >= headers.size) null else headers.value(
                     position
-                )
+                ).encode().string(Charsets.ISO_8859_1)
             } catch (e: IOException) {
                 null
             }
