@@ -75,15 +75,17 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
      * 开始搜索
      */
     fun search(key: String) {
-        if ((searchKey == key) || key.isNotEmpty()) {
-            searchModel.cancelSearch()
-            searchID = System.currentTimeMillis()
-            searchKey = key
+        execute {
+            if ((searchKey == key) || key.isNotEmpty()) {
+                searchModel.cancelSearch()
+                searchID = System.currentTimeMillis()
+                searchKey = key
+            }
+            if (searchKey.isEmpty()) {
+                return@execute
+            }
+            searchModel.search(searchID, searchKey)
         }
-        if (searchKey.isEmpty()) {
-            return
-        }
-        searchModel.search(searchID, searchKey)
     }
 
     /**
@@ -116,7 +118,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun deleteHistory(searchKeyword: SearchKeyword) {
-        appDb.searchKeywordDao.delete(searchKeyword)
+        execute {
+            appDb.searchKeywordDao.delete(searchKeyword)
+        }
     }
 
     override fun onCleared() {
