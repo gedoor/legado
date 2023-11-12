@@ -56,7 +56,7 @@ object CookieManager {
         val cookie = CookieStore.getCookie(domain)
         val requestCookie = request.header("Cookie")
 
-        mergeCookies(cookie, requestCookie)?.let { newCookie ->
+        mergeCookies(requestCookie, cookie)?.let { newCookie ->
             kotlin.runCatching {
                 return request.newBuilder()
                     .header("Cookie", newCookie)
