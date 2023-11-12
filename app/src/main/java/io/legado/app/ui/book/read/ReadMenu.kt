@@ -302,6 +302,7 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     private fun bindEvent() = binding.run {
+        vwMenuBg.setOnClickListener { runMenuOut() }
         titleBar.toolbar.setOnClickListener {
             ReadBook.book?.let {
                 context.startActivity<BookInfoActivity> {
