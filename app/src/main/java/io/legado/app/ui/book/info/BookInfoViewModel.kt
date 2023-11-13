@@ -126,6 +126,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                         book.lastCheckTime = remoteBook.lastModify
                     }
                 }
+            } else {
+                val bs = bookSource ?: return@execute
+                if (book.originName != bs.bookSourceName) {
+                    book.originName = bs.bookSourceName
+                }
             }
         }.onError {
             when (it) {

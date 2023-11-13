@@ -104,6 +104,17 @@ class BookInfoActivity :
             viewModel.upEditBook()
         }
     }
+    private val editSourceResult = registerForActivityResult(
+        StartActivityContract(BookSourceEditActivity::class.java)
+    ) {
+        if (it.resultCode == RESULT_CANCELED) {
+            return@registerForActivityResult
+        }
+        book?.let { book ->
+            viewModel.bookSource = appDb.bookSourceDao.getBookSource(book.origin)
+            viewModel.refreshBook(book)
+        }
+    }
     private var tocChanged = false
     private var chapterChanged = false
     private val waitDialog by lazy { WaitDialog(this) }
@@ -396,7 +407,7 @@ class BookInfoActivity :
         tvOrigin.setOnClickListener {
             viewModel.getBook()?.let { book ->
                 if (book.isLocal) return@let
-                startActivity<BookSourceEditActivity> {
+                editSourceResult.launch {
                     putExtra("sourceUrl", book.origin)
                 }
             }

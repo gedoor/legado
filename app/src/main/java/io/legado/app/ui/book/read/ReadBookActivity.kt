@@ -504,12 +504,12 @@ class ReadBookActivity : BaseReadBookActivity(),
         val isDown = action == 0
 
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (isDown && !binding.readMenu.cnaShowMenu) {
+            if (isDown && !binding.readMenu.canShowMenu) {
                 binding.readMenu.runMenuIn()
                 return true
             }
-            if (!isDown && !binding.readMenu.cnaShowMenu) {
-                binding.readMenu.cnaShowMenu = true
+            if (!isDown && !binding.readMenu.canShowMenu) {
+                binding.readMenu.canShowMenu = true
                 return true
             }
         }

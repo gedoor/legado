@@ -31,7 +31,7 @@ data class TextPage(
 
     val lines: List<TextLine> get() = textLines
     val lineSize: Int get() = textLines.size
-    val charSize: Int get() = text.length
+    val charSize: Int get() = text.length.coerceAtLeast(1)
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
 
