@@ -73,6 +73,7 @@ import java.io.FileOutputStream
 import java.nio.charset.Charset
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.coroutineContext
+import kotlin.math.min
 
 /**
  * 导出书籍服务
@@ -363,7 +364,7 @@ class ExportBookService : BaseService() {
      * @author Discut
      */
     @SuppressLint("ObsoleteSdkInt")
-    private fun paresScope(scope: String): IntArray {
+    private fun paresScope(scope: String): Set<Int> {
         val split = scope.split(",")
 
         @Suppress("RemoveExplicitTypeArguments")
@@ -387,7 +388,7 @@ class ExportBookService : BaseService() {
             for (i in left..right)
                 result.add(i - 1)
         }
-        return result.toIntArray()
+        return result
     }
 
     /**
@@ -702,7 +703,7 @@ class ExportBookService : BaseService() {
      * @param scope 导出范围
      * @param size epub 文件包含最大章节数
      */
-    inner class CustomExporter(private val scope: IntArray, private val size: Int) {
+    inner class CustomExporter(private var scope: Set<Int>, private val size: Int) {
 
         /**
          * 导出Epub
@@ -717,6 +718,8 @@ class ExportBookService : BaseService() {
             exportMsg.remove(book.bookUrl)
             postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
             val currentTimeMillis = System.currentTimeMillis()
+            val count = appDb.bookChapterDao.getChapterCount(book.bookUrl)
+            scope = scope.filter { it < count }.toHashSet()
             when (path.isContentScheme()) {
                 true -> {
                     val uri = Uri.parse(path)
@@ -812,7 +815,7 @@ class ExportBookService : BaseService() {
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             var chapterList: MutableList<BookChapter> = ArrayList()
             appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
-                if (scope.indexOf(index) >= 0) {
+                if (scope.contains(index)) {
                     chapterList.add(chapter)
                 }
                 if (scope.size == chapterList.size) {
@@ -825,7 +828,7 @@ class ExportBookService : BaseService() {
             }
             chapterList = chapterList.subList(
                 epubBookIndex * size,
-                if ((epubBookIndex + 1) * size > scope.size) scope.size else (epubBookIndex + 1) * size
+                min(scope.size, (epubBookIndex + 1) * size)
             )
             chapterList.forEachIndexed { index, chapter ->
                 coroutineContext.ensureActive()
