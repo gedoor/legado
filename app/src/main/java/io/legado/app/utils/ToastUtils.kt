@@ -4,6 +4,7 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -28,12 +29,10 @@ fun Context.toastOnUi(message: Int, duration: Int = Toast.LENGTH_SHORT) {
 fun Context.toastOnUi(message: CharSequence?, duration: Int = Toast.LENGTH_SHORT) {
     runOnUI {
         kotlin.runCatching {
-            if (toast == null || BuildConfig.DEBUG || AppConfig.recordLog) {
-                toast?.cancel()
-                toast = Toast(this)
-                toast?.view = inflate(R.layout.view_toast)
-            }
-            val toastView = toast?.view!!
+            toast?.cancel()
+            toast = Toast(this)
+            val toastView: View = inflate(R.layout.view_toast)
+            toast?.view = toastView
             val cardView = toastView.findViewById<CardView>(R.id.cv_content)
             cardView.setCardBackgroundColor(bottomBackground)
             val isLight = ColorUtils.isColorLight(bottomBackground)

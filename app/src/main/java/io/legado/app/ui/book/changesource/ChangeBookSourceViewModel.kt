@@ -202,7 +202,11 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         }
         val source = bookSourceList[searchIndex]
         bookSourceList[searchIndex] = emptyBookSource
-        val task = execute(context = searchPool!!, executeContext = searchPool!!) {
+        val task = execute(
+            context = searchPool!!,
+            start = CoroutineStart.LAZY,
+            executeContext = searchPool!!
+        ) {
             val resultBooks = WebBook.searchBookAwait(source, name)
             resultBooks.forEach { searchBook ->
                 if (searchBook.name != name) {
@@ -228,6 +232,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             .onSuccess {
                 nextSearch()
             }
+        task.start()
         tasks.add(task)
     }
 
