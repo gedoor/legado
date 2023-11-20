@@ -200,7 +200,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             }
             ++searchIndex
         }
-        val source = bookSourceList[searchIndex]
+        val source = bookSourceList.getOrNull(searchIndex) ?: return
         bookSourceList[searchIndex] = emptyBookSource
         val task = execute(
             context = searchPool!!,
@@ -227,9 +227,11 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             }
         }.timeout(60000L)
             .onError {
+                ensureActive()
                 nextSearch()
             }
             .onSuccess {
+                ensureActive()
                 nextSearch()
             }
         task.start()
@@ -298,8 +300,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchCallback?.searchSuccess(searchBook)
     }
 
+    @Synchronized
     private fun nextSearch() {
-        synchronized(this) {
+        kotlin.runCatching {
             if (searchIndex < bookSourceList.lastIndex) {
                 search()
             } else {
