@@ -36,6 +36,7 @@ import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
+import java.util.regex.PatternSyntaxException
 
 /**
  * rss阅读界面
@@ -346,24 +347,32 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             request: WebResourceRequest
         ): WebResourceResponse? {
             val url = request.url.toString()
-            viewModel.rssSource?.let { source ->
-                val blacklist = source.contentBlacklist?.splitNotBlank(",")
-                if (!blacklist.isNullOrEmpty()) {
-                    blacklist.forEach {
+            val source = viewModel.rssSource ?: return super.shouldInterceptRequest(view, request)
+            val blacklist = source.contentBlacklist?.splitNotBlank(",")
+            if (!blacklist.isNullOrEmpty()) {
+                blacklist.forEach {
+                    try {
                         if (url.startsWith(it) || url.matches(it.toRegex())) {
                             return createEmptyResource()
                         }
+                    } catch (e: PatternSyntaxException) {
+                        AppLog.put("黑名单规则正则语法错误 源名称:${source.sourceName} 正则:$it", e)
                     }
-                } else {
-                    val whitelist = source.contentWhitelist?.splitNotBlank(",")
-                    if (!whitelist.isNullOrEmpty()) {
-                        whitelist.forEach {
+                }
+            } else {
+                val whitelist = source.contentWhitelist?.splitNotBlank(",")
+                if (!whitelist.isNullOrEmpty()) {
+                    whitelist.forEach {
+                        try {
                             if (url.startsWith(it) || url.matches(it.toRegex())) {
                                 return super.shouldInterceptRequest(view, request)
                             }
+                        } catch (e: PatternSyntaxException) {
+                            val msg = "白名单规则正则语法错误 源名称:${source.sourceName} 正则:$it"
+                            AppLog.put(msg, e)
                         }
-                        return createEmptyResource()
                     }
+                    return createEmptyResource()
                 }
             }
             return super.shouldInterceptRequest(view, request)

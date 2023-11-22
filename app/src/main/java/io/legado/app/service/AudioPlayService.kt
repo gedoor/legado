@@ -452,7 +452,7 @@ class AudioPlayService : BaseService(),
                 .setBufferedPosition(exoPlayer.bufferedPosition)
                 .addCustomAction(
                     APP_ACTION_STOP,
-                    getString(R.string.set_timer),
+                    getString(R.string.stop),
                     R.drawable.ic_stop_black_24dp
                 )
                 .addCustomAction(
