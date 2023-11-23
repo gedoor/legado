@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogCodeViewBinding
+import io.legado.app.help.IntentData
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.code.addJsPattern
 import io.legado.app.ui.widget.code.addJsonPattern
@@ -20,7 +21,7 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
     constructor(code: String, disableEdit: Boolean = true, requestId: String? = null) : this() {
         arguments = Bundle().apply {
             putBoolean("disableEdit", disableEdit)
-            putString("code", code)
+            putString("code", IntentData.put(code))
             putString("requestId", requestId)
         }
     }
@@ -44,7 +45,7 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
         binding.codeView.addJsonPattern()
         binding.codeView.addJsPattern()
         arguments?.getString("code")?.let {
-            binding.codeView.setText(it)
+            binding.codeView.text = IntentData.get(it)
         }
     }
 
