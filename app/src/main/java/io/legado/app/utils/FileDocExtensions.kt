@@ -39,7 +39,14 @@ data class FileDoc(
     fun asDocumentFile(): DocumentFile? {
         if (isContentScheme) {
             return if (isDir) {
-                DocumentFile.fromTreeUri(appCtx, uri)
+                Class.forName("androidx.documentfile.provider.TreeDocumentFile")
+                    .getDeclaredConstructor(
+                        DocumentFile::class.java,
+                        Context::class.java,
+                        Uri::class.java
+                    ).apply {
+                        isAccessible = true
+                    }.newInstance(null, appCtx, uri) as DocumentFile
             } else {
                 DocumentFile.fromSingleUri(appCtx, uri)
             }
