@@ -249,10 +249,11 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             val fontPath = ReadBookConfig.textFont
             if (fontPath.isNotEmpty()) {
                 val fontName = FileUtils.getName(fontPath)
-                val fontBytes = fontPath.parseToUri().readBytes(requireContext())
-                fontBytes.let {
+                val fontInputStream =
+                    fontPath.parseToUri().inputStream(requireContext()).getOrNull()
+                fontInputStream?.use {
                     val fontExportFile = FileUtils.createFileIfNotExist(configDir, fontName)
-                    fontExportFile.writeBytes(it)
+                    it.copyTo(fontExportFile.outputStream())
                     exportFiles.add(fontExportFile)
                 }
             }
@@ -261,8 +262,10 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 val bgFile = File(ReadBookConfig.durConfig.bgStr)
                 if (bgFile.exists()) {
                     val bgExportFile = File(FileUtils.getPath(configDir, bgName))
-                    bgFile.copyTo(bgExportFile)
-                    exportFiles.add(bgExportFile)
+                    if (!bgExportFile.exists()) {
+                        bgFile.copyTo(bgExportFile)
+                        exportFiles.add(bgExportFile)
+                    }
                 }
             }
             if (ReadBookConfig.durConfig.bgTypeNight == 2) {
@@ -270,8 +273,10 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 val bgFile = File(ReadBookConfig.durConfig.bgStrNight)
                 if (bgFile.exists()) {
                     val bgExportFile = File(FileUtils.getPath(configDir, bgName))
-                    bgFile.copyTo(bgExportFile)
-                    exportFiles.add(bgExportFile)
+                    if (!bgExportFile.exists()) {
+                        bgFile.copyTo(bgExportFile)
+                        exportFiles.add(bgExportFile)
+                    }
                 }
             }
             if (ReadBookConfig.durConfig.bgTypeEInk == 2) {
@@ -279,8 +284,10 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 val bgFile = File(ReadBookConfig.durConfig.bgStrEInk)
                 if (bgFile.exists()) {
                     val bgExportFile = File(FileUtils.getPath(configDir, bgName))
-                    bgFile.copyTo(bgExportFile)
-                    exportFiles.add(bgExportFile)
+                    if (!bgExportFile.exists()) {
+                        bgFile.copyTo(bgExportFile)
+                        exportFiles.add(bgExportFile)
+                    }
                 }
             }
             val configZipPath = FileUtils.getPath(requireContext().externalCache, configFileName)
@@ -288,14 +295,17 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 if (uri.isContentScheme()) {
                     DocumentFile.fromTreeUri(requireContext(), uri)?.let { treeDoc ->
                         treeDoc.findFile(exportFileName)?.delete()
-                        treeDoc.createFile("", exportFileName)
-                            ?.writeBytes(requireContext(), File(configZipPath).readBytes())
+                        val out = treeDoc.createFile("", exportFileName)?.openOutputStream()
+                        out?.use {
+                            File(configZipPath).inputStream().use {
+                                it.copyTo(out)
+                            }
+                        }
                     }
                 } else {
                     val exportPath = FileUtils.getPath(File(uri.path!!), exportFileName)
                     FileUtils.delete(exportPath)
-                    FileUtils.createFileIfNotExist(exportPath)
-                        .writeBytes(File(configZipPath).readBytes())
+                    File(configZipPath).copyTo(FileUtils.createFileIfNotExist(exportPath))
                 }
             }
         }.onSuccess {
