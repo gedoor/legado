@@ -5,7 +5,7 @@ import android.webkit.WebSettings
 import androidx.annotation.Keep
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
-import com.github.liuyueyi.quick.transfer.ChineseUtils
+import io.legado.app.utils.ChineseUtils
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
