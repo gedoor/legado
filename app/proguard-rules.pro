@@ -250,8 +250,8 @@
 ## 对外提供api
 -keep class io.legado.app.api.ReturnData{*;}
 
-# Apache Commons Compress
--keep class org.apache.commons.compress.archivers.** {*;}
+# 繁简转换
+-keep class com.github.liuyueyi.quick.transfer.** {*;}
 
 
 #-------------------Cronet------------------------------------

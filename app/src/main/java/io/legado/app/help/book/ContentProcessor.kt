@@ -1,6 +1,5 @@
 package io.legado.app.help.book
 
-import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.spaceRegex
 import io.legado.app.data.appDb
@@ -10,6 +9,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.utils.ChineseUtils
 import io.legado.app.utils.escapeRegex
 import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr

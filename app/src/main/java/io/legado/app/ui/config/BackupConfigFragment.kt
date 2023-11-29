@@ -274,7 +274,7 @@ class BackupConfigFragment : PreferenceFragment(),
             if (backupPath.isContentScheme()) {
                 val uri = Uri.parse(backupPath)
                 val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                if (doc?.canWrite() == true) {
+                if (doc?.checkWrite() == true) {
                     waitDialog.setText("备份中…")
                     waitDialog.setOnCancelListener {
                         backupJob?.cancel()
