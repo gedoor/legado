@@ -41,6 +41,7 @@ import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.createFolderIfNotExist
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.outputStream
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.readBytes
 import io.legado.app.utils.readText
@@ -140,7 +141,7 @@ class ExportBookService : BaseService() {
         startForeground(NotificationId.ExportBookService, notification.build())
     }
 
-    private fun upExportNotification() {
+    private fun upExportNotification(finish: Boolean = false) {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
             .setSubText(getString(R.string.export_book))
@@ -149,7 +150,7 @@ class ExportBookService : BaseService() {
             .setContentText(notificationContentText)
             .setDeleteIntent(servicePendingIntent<ExportBookService>(IntentAction.stop))
             .setGroup(groupKey)
-        if (exportJob?.isActive == true) {
+        if (!finish) {
             notification.setOngoing(true)
             notification.addAction(
                 R.drawable.ic_stop_black_24dp,
@@ -168,7 +169,7 @@ class ExportBookService : BaseService() {
             while (true) {
                 val (bookUrl, exportConfig) = waitExportBooks.entries.firstOrNull() ?: let {
                     notificationContentText = "导出完成"
-                    upExportNotification()
+                    upExportNotification(true)
                     return@launch
                 }
                 exportProgress[bookUrl] = 0
@@ -230,21 +231,24 @@ class ExportBookService : BaseService() {
         DocumentUtils.delete(doc, filename)
         val bookDoc = DocumentUtils.createFileIfNotExist(doc, filename)
             ?: throw NoStackTraceException("创建文档失败，请尝试重新设置导出文件夹")
+        val charset = Charset.forName(AppConfig.exportCharset)
         contentResolver.openOutputStream(bookDoc.uri, "wa")?.use { bookOs ->
-            getAllContents(book) { text, srcList ->
-                bookOs.write(text.toByteArray(Charset.forName(AppConfig.exportCharset)))
-                srcList?.forEach {
-                    val vFile = BookHelp.getImage(book, it.src)
-                    if (vFile.exists()) {
-                        DocumentUtils.createFileIfNotExist(
-                            doc,
-                            "${it.index}-${MD5Utils.md5Encode16(it.src)}.jpg",
-                            subDirs = arrayOf(
-                                "${book.name}_${book.author}",
-                                "images",
-                                it.chapterTitle
-                            )
-                        )?.writeBytes(this, vFile.readBytes())
+            BufferedOutputStream(bookOs, 64 * 1024).use { bos ->
+                getAllContents(book) { text, srcList ->
+                    bos.write(text.toByteArray(charset))
+                    srcList?.forEach {
+                        val vFile = BookHelp.getImage(book, it.src)
+                        if (vFile.exists()) {
+                            DocumentUtils.createFileIfNotExist(
+                                doc,
+                                "${it.index}-${MD5Utils.md5Encode16(it.src)}.jpg",
+                                subDirs = arrayOf(
+                                    "${book.name}_${book.author}",
+                                    "images",
+                                    it.chapterTitle
+                                )
+                            )?.writeBytes(this, vFile.readBytes())
+                        }
                     }
                 }
             }
@@ -259,18 +263,22 @@ class ExportBookService : BaseService() {
         val filename = book.getExportFileName("txt")
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
-        getAllContents(book) { text, srcList ->
-            bookFile.appendText(text, Charset.forName(AppConfig.exportCharset))
-            srcList?.forEach {
-                val vFile = BookHelp.getImage(book, it.src)
-                if (vFile.exists()) {
-                    FileUtils.createFileIfNotExist(
-                        file,
-                        "${book.name}_${book.author}",
-                        "images",
-                        it.chapterTitle,
-                        "${it.index}-${MD5Utils.md5Encode16(it.src)}.jpg"
-                    ).writeBytes(vFile.readBytes())
+        val charset = Charset.forName(AppConfig.exportCharset)
+        val bos = BufferedOutputStream(bookFile.outputStream(true), 64 * 1024)
+        bos.use {
+            getAllContents(book) { text, srcList ->
+                bos.write(text.toByteArray(charset))
+                srcList?.forEach {
+                    val vFile = BookHelp.getImage(book, it.src)
+                    if (vFile.exists()) {
+                        FileUtils.createFileIfNotExist(
+                            file,
+                            "${book.name}_${book.author}",
+                            "images",
+                            it.chapterTitle,
+                            "${it.index}-${MD5Utils.md5Encode16(it.src)}.jpg"
+                        ).writeBytes(vFile.readBytes())
+                    }
                 }
             }
         }
