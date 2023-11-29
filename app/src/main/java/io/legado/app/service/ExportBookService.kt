@@ -140,7 +140,7 @@ class ExportBookService : BaseService() {
         startForeground(NotificationId.ExportBookService, notification.build())
     }
 
-    private fun upExportNotification() {
+    private fun upExportNotification(finish: Boolean = false) {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
             .setSubText(getString(R.string.export_book))
@@ -149,7 +149,7 @@ class ExportBookService : BaseService() {
             .setContentText(notificationContentText)
             .setDeleteIntent(servicePendingIntent<ExportBookService>(IntentAction.stop))
             .setGroup(groupKey)
-        if (exportJob?.isActive == true) {
+        if (!finish) {
             notification.setOngoing(true)
             notification.addAction(
                 R.drawable.ic_stop_black_24dp,
@@ -168,7 +168,7 @@ class ExportBookService : BaseService() {
             while (true) {
                 val (bookUrl, exportConfig) = waitExportBooks.entries.firstOrNull() ?: let {
                     notificationContentText = "导出完成"
-                    upExportNotification()
+                    upExportNotification(true)
                     return@launch
                 }
                 exportProgress[bookUrl] = 0
