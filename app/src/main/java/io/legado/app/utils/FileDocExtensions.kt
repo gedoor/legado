@@ -287,6 +287,16 @@ fun FileDoc.delete() {
     asDocumentFile()?.delete()
 }
 
+fun FileDoc.checkWrite(): Boolean? {
+    if (!isDir) {
+        throw NoStackTraceException("只能检查目录")
+    }
+    asFile()?.let {
+        return it.checkWrite()
+    }
+    return asDocumentFile()?.checkWrite()
+}
+
 /**
  * DocumentFile 的 listFiles() 非常的慢,尽量不要使用
  */

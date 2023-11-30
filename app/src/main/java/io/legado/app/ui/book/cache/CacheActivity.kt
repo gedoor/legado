@@ -263,6 +263,8 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         val path = ACache.get().getAsString(exportBookPathKey)
         if (path.isNullOrEmpty()) {
             selectExportFolder(position)
+        } else if (FileDoc.fromUri(path.parseToUri(), true).checkWrite() != true) {
+            selectExportFolder(position)
         } else if (enableCustomExport()) {// 启用自定义导出 and 导出类型为Epub
             configExportSection(path, position)
         } else {
