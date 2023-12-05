@@ -411,10 +411,18 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.CheckSourceService" />
-        <service android:name=".service.CacheBookService" />
-        <service android:name=".service.ExportBookService" />
-        <service android:name=".service.WebService" />
+        <service
+            android:name=".service.CheckSourceService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".service.CacheBookService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".service.ExportBookService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".service.WebService"
+            android:foregroundServiceType="connectedDevice" />
         <service
             android:name=".service.WebTileService"
             android:exported="true"
@@ -425,10 +433,18 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-        <service android:name=".service.TTSReadAloudService" />
-        <service android:name=".service.HttpReadAloudService" />
-        <service android:name=".service.AudioPlayService" />
-        <service android:name=".service.DownloadService" />
+        <service
+            android:name=".service.TTSReadAloudService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
+            android:name=".service.HttpReadAloudService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
+            android:name=".service.AudioPlayService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
+            android:name=".service.DownloadService"
+            android:foregroundServiceType="dataSync" />
 
         <receiver
             android:name=".receiver.MediaButtonReceiver"
