@@ -1,25 +1,31 @@
-import requests, os, datetime, sys
+# encoding:utf-8
+# 蓝奏云上传文件
+# Author: celetor
+# Date: 2023-12-05
+
+import datetime
+import os
+import requests
+import sys
+import time
 
 # Cookie 中 phpdisk_info 的值
 cookie_phpdisk_info = os.environ.get('phpdisk_info')
 # Cookie 中 ylogin 的值
 cookie_ylogin = os.environ.get('ylogin')
 
-# 请求头
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36 Edg/89.0.774.45',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0',
     'Accept-Language': 'zh-CN,zh;q=0.9',
     'Referer': 'https://pc.woozooo.com/account.php?action=login'
 }
 
-# 小饼干
 cookie = {
     'ylogin': cookie_ylogin,
     'phpdisk_info': cookie_phpdisk_info
 }
 
 
-# 日志打印
 def log(msg):
     utc_time = datetime.datetime.utcnow()
     china_time = utc_time + datetime.timedelta(hours=8)
@@ -47,18 +53,35 @@ def login_by_cookie():
 # 上传文件
 def upload_file(file_dir, folder_id):
     file_name = os.path.basename(file_dir)
-    url_upload = "https://up.woozooo.com/fileup.php"
+    upload_url = f"https://up.woozooo.com/fileup.php?uid={cookie_ylogin}"
     headers['Referer'] = f'https://up.woozooo.com/mydisk.php?item=files&action=index&u={cookie_ylogin}'
     post_data = {
         "task": "1",
-        "folder_id": folder_id,
+        "folder_id": f'{folder_id}',
         "id": "WU_FILE_0",
         "name": file_name,
     }
     files = {'upload_file': (file_name, open(file_dir, "rb"), 'application/octet-stream')}
-    res = requests.post(url_upload, data=post_data, files=files, headers=headers, cookies=cookie, timeout=120).json()
-    log(f"{file_dir} -> {res['info']}")
-    return res['zt'] == 1
+
+    retry_time = 0
+    retry_time_max = 2  # 最大重试次数
+    while retry_time <= retry_time_max:
+        log(f'开始第{retry_time + 1}次请求')
+        try:
+            response = requests.post(upload_url, data=post_data, files=files,
+                                     headers=headers, cookies=cookie, timeout=3600)
+            res = response.json()
+            log(f"{file_dir} -> {res['info']}")
+            if res['zt'] == 1:
+                break
+            else:
+                log(f'第{retry_time + 1}次请求失败: {response.text}')
+                retry_time += 1
+                time.sleep(2)
+        except Exception as e:
+            log(f'第{retry_time + 1}次请求异常: {e}')
+            retry_time += 1
+            time.sleep(2)
 
 
 # 上传文件夹内的文件
