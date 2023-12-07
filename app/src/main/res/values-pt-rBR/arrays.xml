@@ -59,7 +59,7 @@
 		<item>@string/screen_portrait</item>
 		<item>@string/screen_landscape</item>
 		<item>@string/screen_sensor</item>
-		<item>反向竖屏</item>
+		<item>@string/screen_portrait_reversed</item>
 	</string-array>
 
 	<string-array name="icon_names">
