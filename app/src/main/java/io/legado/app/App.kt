@@ -50,10 +50,10 @@ class App : Application() {
         //预下载Cronet so
         Cronet.preDownload()
         createNotificationChannels()
-        applyDayNight(this)
         LiveEventBus.config()
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
+        applyDayNight(this)
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         DefaultData.upVersion()
