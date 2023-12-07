@@ -42,7 +42,7 @@ android {
     defaultConfig {
         applicationId "io.legado.app"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 10000 + gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -200,7 +200,7 @@ dependencies {
     androidTestImplementation("androidx.room:room-testing:$room_version")
 
     //liveEventBus
-    implementation('io.github.jeremyliao:live-event-bus-x:1.8.0')
+    implementation('com.github.michaellee123:LiveEventBus:1.8.14')
 
     //规则相关
     implementation('org.jsoup:jsoup:1.16.2')

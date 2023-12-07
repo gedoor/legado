@@ -17,6 +17,8 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
         android:name=".App"
@@ -422,12 +424,13 @@
             android:foregroundServiceType="dataSync" />
         <service
             android:name=".service.WebService"
-            android:foregroundServiceType="connectedDevice" />
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".service.WebTileService"
             android:exported="true"
             android:icon="@drawable/ic_web_service_noti"
             android:label="legado Web Service"
+            android:foregroundServiceType="dataSync"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
