@@ -112,7 +112,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                 //确保该图片信息 resource 在原 originItemHrefSet 集合中没有出现过
                 if (!originItemHrefSet.contains(imageHref)) {
                     Element tempElement = packageDocument.createElement("item");
-                    tempElement.setAttribute("id", imageHref.replace("/", ""));
+                    tempElement.setAttribute("id", resource.getId());
                     tempElement.setAttribute("href", imageHref);
                     tempElement.setAttribute("media-type", currentMediaType.getName());
                     fixedElements.add(tempElement);
