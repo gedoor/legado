@@ -89,8 +89,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
         for (int i = 0; i < originItemElements.getLength(); i++) {
             Element itemElement = (Element) originItemElements.item(i);
             fixedElements.add(itemElement);
-            String href = DOMUtil
-                    .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
+            String href = DOMUtil.getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
             try {
                 href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {

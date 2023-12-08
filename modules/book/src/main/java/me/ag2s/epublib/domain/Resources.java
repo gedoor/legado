@@ -26,6 +26,7 @@ public class Resources implements Serializable {
     private static final long serialVersionUID = 2450876953383871451L;
     private static final String IMAGE_PREFIX = "image_";
     private static final String ITEM_PREFIX = "item_";
+    private static final Pattern dataUriRegex = Pattern.compile("data:([\\w/\\-\\.]+);base64,(.*)");
     private int lastId = 1;
 
     private Map<String, Resource> resources = new HashMap<>();
@@ -320,7 +321,6 @@ public class Resources implements Serializable {
         }
         href = StringUtil.substringBefore(href, Constants.FRAGMENT_SEPARATOR_CHAR);
 
-        Pattern dataUriRegex = Pattern.compile("data:([\\w/\\-\\.]+);base64,(.*)");
         Matcher dataUriMatcher = dataUriRegex.matcher(href);
         if (dataUriMatcher.find()) {
             String dataUriMediaTypeString = dataUriMatcher.group(1);
