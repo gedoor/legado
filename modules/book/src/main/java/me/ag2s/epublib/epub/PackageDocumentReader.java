@@ -107,7 +107,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
         //如果有图片资源未定义在 originItemElements ，则加入该图片信息得到 fixedElements 中
         for (Resource resource : resources.getAll()) {
             MediaType currentMediaType = resource.getMediaType();
-            if (currentMediaType == MediaTypes.JPG || currentMediaType == MediaTypes.PNG) {
+            if (MediaTypes.isImage(currentMediaType)) {
                 String imageHref = resource.getHref();
                 //确保该图片信息 resource 在原 originItemHrefSet 集合中没有出现过
                 if (!originItemHrefSet.contains(imageHref)) {
