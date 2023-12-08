@@ -101,13 +101,6 @@ public class LazyResource extends Resource {
                 throw new IOException(
                         "Could not load the contents of resource: " + this.getHref());
             } else {
-                /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
-                if (getHref().endsWith("opf")) {
-                    String string = new String(readData)
-                            .replace(" smlns=\"", " xmlns=\"")
-                            .replace(" mlns=\"", " xmlns=\"");
-                    readData = string.getBytes();
-                }
                 this.data = readData;
             }
 

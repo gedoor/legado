@@ -48,6 +48,12 @@ public class PackageDocumentReader extends PackageDocumentBase {
             Resource packageResource, EpubReader epubReader, EpubBook book,
             Resources resources)
             throws SAXException, IOException {
+        /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
+        String string = new String(packageResource.getData())
+                .replace(" smlns=\"", " xmlns=\"")
+                .replace(" mlns=\"", " xmlns=\"");
+        packageResource.setData(string.getBytes());
+
         Document packageDocument = ResourceUtil.getAsDocument(packageResource);
         String packageHref = packageResource.getHref();
         resources = fixHrefs(packageHref, resources);
