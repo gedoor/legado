@@ -31,6 +31,8 @@ public class Resources implements Serializable {
 
     private Map<String, Resource> resources = new HashMap<>();
 
+    private Map<String, Resource> resourcesById = new HashMap<>();
+
     /**
      * Adds a resource to the resources.
      * <p>
@@ -43,6 +45,7 @@ public class Resources implements Serializable {
         fixResourceHref(resource);
         fixResourceId(resource);
         this.resources.put(resource.getHref(), resource);
+        resourcesById.put(resource.getId(), resource);
         return resource;
     }
 
@@ -129,12 +132,7 @@ public class Resources implements Serializable {
         if (StringUtil.isBlank(id)) {
             return false;
         }
-        for (Resource resource : resources.values()) {
-            if (id.equals(resource.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return resourcesById.containsKey(id);
     }
 
     /**
@@ -147,12 +145,7 @@ public class Resources implements Serializable {
         if (StringUtil.isBlank(id)) {
             return null;
         }
-        for (Resource resource : resources.values()) {
-            if (id.equals(resource.getId())) {
-                return resource;
-            }
-        }
-        return null;
+        return resourcesById.get(id);
     }
 
     public Resource getByProperties(String properties) {
@@ -267,6 +260,7 @@ public class Resources implements Serializable {
      */
     public void set(Collection<Resource> resources) {
         this.resources.clear();
+        resourcesById.clear();
         addAll(resources);
     }
 
@@ -279,6 +273,7 @@ public class Resources implements Serializable {
         for (Resource resource : resources) {
             fixResourceHref(resource);
             this.resources.put(resource.getHref(), resource);
+            resourcesById.put(resource.getId(), resource);
         }
     }
 
@@ -289,6 +284,10 @@ public class Resources implements Serializable {
      */
     public void set(Map<String, Resource> resources) {
         this.resources = new HashMap<>(resources);
+        resourcesById.clear();
+        for (Resource resource : resources.values()) {
+            resourcesById.put(resource.getId(), resource);
+        }
     }
 
 
@@ -320,6 +319,10 @@ public class Resources implements Serializable {
             return null;
         }
         href = StringUtil.substringBefore(href, Constants.FRAGMENT_SEPARATOR_CHAR);
+
+        if (!StringUtil.startsWithIgnoreCase(href, "data")) {
+            return resources.get(href);
+        }
 
         Matcher dataUriMatcher = dataUriRegex.matcher(href);
         if (dataUriMatcher.find()) {
