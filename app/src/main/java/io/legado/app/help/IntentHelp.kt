@@ -3,6 +3,7 @@ package io.legado.app.help
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import io.legado.app.R
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
@@ -16,7 +17,9 @@ object IntentHelp {
 
     fun getBrowserIntent(uri: Uri): Intent {
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.`package` = appCtx.packageName
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            intent.`package` = appCtx.packageName
+        }
         intent.data = uri
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (intent.resolveActivity(appCtx.packageManager) == null) {
