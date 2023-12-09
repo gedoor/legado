@@ -31,7 +31,7 @@ public class Resources implements Serializable {
 
     private Map<String, Resource> resources = new HashMap<>();
 
-    private Map<String, Resource> resourcesById = new HashMap<>();
+    private final Map<String, Resource> resourcesById = new HashMap<>();
 
     /**
      * Adds a resource to the resources.
