@@ -245,6 +245,14 @@ data class Book(
         return config.delTag and tag == tag
     }
 
+    fun addDelTag(tag: Long) {
+        config.delTag = config.delTag and tag
+    }
+
+    fun removeDelTag(tag: Long) {
+        config.delTag = config.delTag and tag.inv()
+    }
+
     fun getFolderName(): String {
         folderName?.let {
             return it

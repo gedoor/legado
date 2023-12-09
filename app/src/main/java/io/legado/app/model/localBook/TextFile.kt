@@ -21,9 +21,9 @@ class TextFile(private val book: Book) {
     companion object {
         private val padRegex = "^[\\n\\s]+".toRegex()
         private const val bufferSize = 8 * 1024 * 1024
+        private var bufferStart = -1
+        private var bufferEnd = -1
         var txtBuffer: ByteArray? = null
-        var bufferStart = -1
-        var bufferEnd = -1
         var bookUrl = ""
 
         @Throws(FileNotFoundException::class)

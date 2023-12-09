@@ -1134,4 +1134,6 @@
     <string name="keep_enable">保留启用状态</string>
     <string name="preview_image_by_click">点击预览图片</string>
     <string name="screen_portrait_reversed">反向竖屏</string>
+    <string name="del_ruby_tag">删除ruby标签</string>
+    <string name="del_h_tag">删除h标签</string>
 </resources>

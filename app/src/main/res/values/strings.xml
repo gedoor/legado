@@ -1137,4 +1137,6 @@
     <string name="preview_image_by_click">Click to preview image</string>
     <string name="default_home_page">Default HomePage</string>
     <string name="screen_portrait_reversed">Portrait Reversed</string>
+    <string name="del_ruby_tag">Delete ruby tag</string>
+    <string name="del_h_tag">Delete h tag</string>
 </resources>
