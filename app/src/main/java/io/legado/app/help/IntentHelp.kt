@@ -22,9 +22,6 @@ object IntentHelp {
         if (intent.resolveActivity(appCtx.packageManager) == null) {
             return Intent.createChooser(intent, "请选择浏览器")
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            intent.`package` = appCtx.packageName
-        }
         return intent
     }
 
