@@ -67,6 +67,10 @@ class EpubFile(var book: Book) {
         override fun upBookInfo(book: Book) {
             return getEFile(book).upBookInfo()
         }
+
+        fun clear() {
+            eFile = null
+        }
     }
 
     private var mCharset: Charset = Charset.defaultCharset()
@@ -182,11 +186,11 @@ class EpubFile(var book: Book) {
             }
             it.attr("src", absSrc)
         }
-        var html = elements.outerHtml()
         val tag = Book.rubyTag
         if (book.getDelTag(tag)) {
-            html = html.replace("<ruby>\\s?([\\u4e00-\\u9fa5])\\s?.*?</ruby>".toRegex(), "$1")
+            elements.select("rp, rt").remove()
         }
+        val html = elements.outerHtml()
         return HtmlFormatter.formatKeepImg(html)
     }
 
@@ -242,12 +246,7 @@ class EpubFile(var book: Book) {
         val tag = Book.hTag
         if (book.getDelTag(tag)) {
             bodyElement.run {
-                getElementsByTag("h1").remove()
-                getElementsByTag("h2").remove()
-                getElementsByTag("h3").remove()
-                getElementsByTag("h4").remove()
-                getElementsByTag("h5").remove()
-                getElementsByTag("h6").remove()
+                select("h1, h2, h3, h4, h5, h6").remove()
                 //getElementsMatchingOwnText(chapter.title)?.remove()
             }
         }

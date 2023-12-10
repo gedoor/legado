@@ -40,6 +40,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.localBook.EpubFile
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
@@ -332,6 +333,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 R.id.menu_group_on_line -> item.isVisible = onLine
                 R.id.menu_group_local -> item.isVisible = !onLine
                 R.id.menu_group_text -> item.isVisible = book.isLocalTxt
+                R.id.menu_group_epub -> item.isVisible = book.isEpub
                 else -> when (item.itemId) {
                     R.id.menu_enable_replace -> item.isChecked = book.getUseReplaceRule()
                     R.id.menu_re_segment -> item.isChecked = book.getReSegment()
@@ -341,6 +343,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                     }
 
                     R.id.menu_reverse_content -> item.isVisible = onLine
+                    R.id.menu_del_ruby_tag -> item.isChecked = book.getDelTag(Book.rubyTag)
+                    R.id.menu_del_h_tag -> item.isChecked = book.getDelTag(Book.hTag)
                 }
             }
         }
@@ -405,9 +409,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     upContent()
                 } else {
                     ReadBook.book?.let {
-                        ReadBook.clearTextChapter()
-                        binding.readView.upContent()
-                        viewModel.refreshContentAll(it)
+                        refreshContentAll(it)
                     }
                 }
             }
@@ -418,6 +420,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_update_toc -> ReadBook.book?.let {
                 if (it.isEpub) {
                     BookHelp.clearCache(it)
+                    EpubFile.clear()
                 }
                 loadChapterList(it)
             }
@@ -425,14 +428,34 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_enable_replace -> changeReplaceRuleState()
             R.id.menu_re_segment -> ReadBook.book?.let {
                 it.setReSegment(!it.getReSegment())
-                menu?.findItem(R.id.menu_re_segment)?.isChecked = it.getReSegment()
+                item.isChecked = it.getReSegment()
                 ReadBook.loadContent(false)
             }
 
             R.id.menu_enable_review -> {
                 AppConfig.enableReview = !AppConfig.enableReview
-                menu?.findItem(R.id.menu_enable_review)?.isChecked = AppConfig.enableReview
+                item.isChecked = AppConfig.enableReview
                 ReadBook.loadContent(false)
+            }
+
+            R.id.menu_del_ruby_tag -> ReadBook.book?.let {
+                item.isChecked = !item.isChecked
+                if (item.isChecked) {
+                    it.addDelTag(Book.rubyTag)
+                } else {
+                    it.removeDelTag(Book.rubyTag)
+                }
+                refreshContentAll(it)
+            }
+
+            R.id.menu_del_h_tag -> ReadBook.book?.let {
+                item.isChecked = !item.isChecked
+                if (item.isChecked) {
+                    it.addDelTag(Book.hTag)
+                } else {
+                    it.removeDelTag(Book.hTag)
+                }
+                refreshContentAll(it)
             }
 
             R.id.menu_page_anim -> showPageAnimConfig {
@@ -489,6 +512,12 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_help -> showReadMenuHelp()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private fun refreshContentAll(book: Book) {
+        ReadBook.clearTextChapter()
+        binding.readView.upContent()
+        viewModel.refreshContentAll(book)
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {

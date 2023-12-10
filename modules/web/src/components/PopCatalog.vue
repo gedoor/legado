@@ -69,6 +69,7 @@ const gotoChapter = (note) => {
   currentChapterIndex.value = chapterIndex;
   store.setPopCataVisible(false);
   store.setContentLoading(true);
+  store.saveBookProgress();
   emit("getContent", chapterIndex);
 };
 

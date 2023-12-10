@@ -84,8 +84,8 @@
 	</string-array>
 
 	<string-array name="progress_bar_behavior_title">
-		<item>Adjust of chapter page</item>
-		<item>Adjust of chapter index</item>
+		<item>@string/adjust_chapter_page</item>
+		<item>@string/adjust_chapter_index</item>
 	</string-array>
 
 	<string-array name="icon_names" tools:ignore="Typos">

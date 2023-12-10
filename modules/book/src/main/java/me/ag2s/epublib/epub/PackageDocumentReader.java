@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.EpubBook;
@@ -42,6 +43,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
     private static final String TAG = PackageDocumentReader.class.getName();
     private static final String[] POSSIBLE_NCX_ITEM_IDS = new String[]{"toc",
             "ncx", "ncxtoc", "htmltoc"};
+    private static final Pattern namespaceRegex = Pattern.compile(" s?mlns=\"");
 
 
     public static void read(
@@ -49,9 +51,8 @@ public class PackageDocumentReader extends PackageDocumentBase {
             Resources resources)
             throws SAXException, IOException {
         /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
-        String string = new String(packageResource.getData())
-                .replace(" smlns=\"", " xmlns=\"")
-                .replace(" mlns=\"", " xmlns=\"");
+        String string = namespaceRegex.matcher(new String(packageResource.getData()))
+                .replaceAll(" xmlns=\"");
         packageResource.setData(string.getBytes());
 
         Document packageDocument = ResourceUtil.getAsDocument(packageResource);

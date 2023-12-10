@@ -17,9 +17,6 @@ object IntentHelp {
 
     fun getBrowserIntent(uri: Uri): Intent {
         val intent = Intent(Intent.ACTION_VIEW)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            intent.`package` = appCtx.packageName
-        }
         intent.data = uri
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (intent.resolveActivity(appCtx.packageManager) == null) {
