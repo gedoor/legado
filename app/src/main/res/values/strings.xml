@@ -1139,4 +1139,6 @@
     <string name="screen_portrait_reversed">Portrait Reversed</string>
     <string name="del_ruby_tag">Delete ruby tag</string>
     <string name="del_h_tag">Delete h tag</string>
+    <string name="adjust_chapter_page">Adjust of chapter page</string>
+    <string name="adjust_chapter_index">Adjust of chapter index</string>
 </resources>
