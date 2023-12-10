@@ -409,7 +409,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     upContent()
                 } else {
                     ReadBook.book?.let {
-                        refreshContentDur(it)
+                        refreshContentAll(it)
                     }
                 }
             }
@@ -445,7 +445,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 } else {
                     it.removeDelTag(Book.rubyTag)
                 }
-                refreshContentDur(it)
+                refreshContentAll(it)
             }
 
             R.id.menu_del_h_tag -> ReadBook.book?.let {
@@ -455,7 +455,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 } else {
                     it.removeDelTag(Book.hTag)
                 }
-                refreshContentDur(it)
+                refreshContentAll(it)
             }
 
             R.id.menu_page_anim -> showPageAnimConfig {
@@ -514,10 +514,10 @@ class ReadBookActivity : BaseReadBookActivity(),
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private fun refreshContentDur(book: Book) {
-        ReadBook.curTextChapter = null
+    private fun refreshContentAll(book: Book) {
+        ReadBook.clearTextChapter()
         binding.readView.upContent()
-        viewModel.refreshContentDur(book)
+        viewModel.refreshContentAll(book)
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
