@@ -19,20 +19,22 @@ fun <T> TrieNode<T>.getChildren(): HashMap<Char, TrieNode<T>> {
 }
 
 fun <T> Trie<T>.remove(value: String) {
-    var node = getRoot()
-    val nodes = arrayListOf<TrieNode<T>>()
-    val chars = value.toCharArray()
-    for (c in chars) {
-        nodes.add(node)
-        node = node.getChildren()[c] ?: break
-        if (!node.isLeaf) {
-            continue
-        }
-        for ((ch, n) in chars.reversed().zip(nodes.reversed())) {
-            val children = n.getChildren()
-            children.remove(ch)
-            if (children.isNotEmpty()) {
-                break
+    kotlin.runCatching {
+        var node = getRoot()
+        val nodes = arrayListOf<TrieNode<T>>()
+        val chars = value.toCharArray()
+        for (c in chars) {
+            nodes.add(node)
+            node = node.getChildren()[c] ?: break
+            if (!node.isLeaf) {
+                continue
+            }
+            for ((ch, n) in chars.reversed().zip(nodes.reversed())) {
+                val children = n.getChildren()
+                children.remove(ch)
+                if (children.isNotEmpty()) {
+                    break
+                }
             }
         }
     }
