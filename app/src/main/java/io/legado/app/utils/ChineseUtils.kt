@@ -2,6 +2,7 @@ package io.legado.app.utils
 
 import com.github.liuyueyi.quick.transfer.ChineseUtils
 import com.github.liuyueyi.quick.transfer.constants.TransType
+import com.github.liuyueyi.quick.transfer.dictionary.BasicDictionary
 import com.github.liuyueyi.quick.transfer.dictionary.DictionaryContainer
 
 object ChineseUtils {
@@ -30,15 +31,20 @@ object ChineseUtils {
 
     fun fixT2sDict() {
         val dict = DictionaryContainer.getInstance().getDictionary(TransType.TRADITIONAL_TO_SIMPLE)
-        dict.chars.run {
-            remove('劈')
-            remove('脊')
+        dict.run {
+            remove("劈")
+            remove("脊")
+            remove("支援")
+            remove("沈默")
+            remove("路易斯")
         }
-        kotlin.runCatching {
-            dict.dict.run {
-                remove("支援")
-                remove("路易斯")
-            }
+    }
+
+    fun BasicDictionary.remove(key: String) {
+        if (key.length == 1) {
+            chars.remove(key[0])
+        } else {
+            dict.remove(key)
         }
     }
 
