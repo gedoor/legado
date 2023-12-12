@@ -74,7 +74,7 @@ object CookieStore : CookieManagerInterface {
         appDb.cookieDao.delete(domain)
         CacheManager.deleteMemory("${domain}_cookie")
         CacheManager.deleteMemory("${domain}_session_cookie")
-        android.webkit.CookieManager.getInstance().removeCookie(domain)
+        android.webkit.CookieManager.getInstance().removeCookie(url)
     }
 
     override fun cookieToMap(cookie: String): MutableMap<String, String> {
