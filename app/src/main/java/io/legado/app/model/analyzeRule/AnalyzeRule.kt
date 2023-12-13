@@ -153,9 +153,9 @@ class AnalyzeRule(
                     sourceRule.rule
                 } else {
                     // 键值直接访问
-                    result[sourceRule.rule]?.toString()
+                    result[sourceRule.rule]
                 }?.let {
-                    replaceRegex(it, sourceRule)
+                    replaceRegex(it.toString(), sourceRule)
                 }
             } else {
                 for (sourceRule in ruleList) {

@@ -36,12 +36,6 @@ export default {
         hint: "描述源作者和状态",
       },
       {
-        title: "书源变量",
-        id: "variableComment",
-        type: "String",
-        hint: "书源变量说明",
-      },
-      {
         title: "登录地址",
         id: "loginUrl",
         type: "String",
@@ -66,6 +60,24 @@ export default {
         hint: "封面解密js",
       },
       {
+        title: "链接验证",
+        id: "bookUrlPattern",
+        type: "String",
+        hint: "书籍URL正则，当详情页URL与源URL的域名不一致时有效，用于添加网址",
+      },
+      {
+        title: "请求头",
+        id: "header",
+        type: "String",
+        hint: "客户端标识",
+      },
+      {
+        title: "变量说明",
+        id: "variableComment",
+        type: "String",
+        hint: "书源变量说明",
+      },
+      {
         title: "并发率",
         id: "concurrentRate",
         type: "String",
@@ -76,18 +88,6 @@ export default {
         id: "jsLib",
         type: "String",
         hint: "js库, 可填写js或者key-value object获取在线js文件",
-      },
-      {
-        title: "请求头",
-        id: "header",
-        type: "String",
-        hint: "客户端标识",
-      },
-      {
-        title: "链接验证",
-        id: "bookUrlPattern",
-        type: "String",
-        hint: "当详情页URL与源URL的域名不一致时有效，用于添加网址",
       },
     ],
   },
@@ -180,12 +180,6 @@ export default {
         id: "exploreUrl",
         type: "String",
         hint: "单个发现格式<name>::<url>或者{url:<url>,title:<name>,style:...}；前者用换行符或者&&连接，后者放在数组内；可用js动态生成",
-      },
-      {
-        title: "发现筛选",
-        id: "exploreScreen",
-        type: "String",
-        hint: "发现筛选规则",
       },
       {
         title: "列表规则",
@@ -319,18 +313,18 @@ export default {
         hint: "选择书籍详情页网址 (规则结果为String类型的url, 与详情页相同时可省略)",
       },
       {
-        title: "下载URL",
-        namespace: "ruleBookInfo",
-        id: "downloadUrls",
-        type: "String",
-        hint: "文件类书源下载地址 (规则结果为String类型的url, 多个链接返回数组)",
-      },
-      {
         title: "修改书籍",
         namespace: "ruleBookInfo",
         id: "canReName",
         type: "String",
         hint: "允许修改书名作者(规则结果为String类型, 默认不允许)",
+      },
+      {
+        title: "下载URL",
+        namespace: "ruleBookInfo",
+        id: "downloadUrls",
+        type: "String",
+        hint: "文件类书源下载地址 (规则结果为String类型的url, 多个链接返回数组)",
       },
     ],
   },
@@ -338,7 +332,7 @@ export default {
     name: "目录",
     children: [
       {
-        title: "预处理",
+        title: "更新前JS",
         namespace: "ruleToc",
         id: "preUpdateJs",
         type: "String",
@@ -380,6 +374,13 @@ export default {
         hint: "章节名称是否是卷名 (规则结果为Bool)",
       },
       {
+        title: "章节信息",
+        namespace: "ruleToc",
+        id: "updateTime",
+        type: "String",
+        hint: "选择章节信息（如更新时间） (规则结果为String)",
+      },
+      {
         title: "收费标识",
         namespace: "ruleToc",
         id: "isVip",
@@ -394,13 +395,6 @@ export default {
         hint: "章节是否为已购买 (规则结果为Bool)",
       },
       {
-        title: "章节信息",
-        namespace: "ruleToc",
-        id: "updateTime",
-        type: "String",
-        hint: "选择章节信息 (规则结果为String)",
-      },
-      {
         title: "翻页规则",
         namespace: "ruleToc",
         id: "nextTocUrl",
@@ -412,13 +406,6 @@ export default {
   content: {
     name: "正文",
     children: [
-      {
-        title: "脚本注入",
-        namespace: "ruleContent",
-        id: "webJs",
-        type: "String",
-        hint: "注入javascript，用于模拟鼠标点击等，必须有返回值，一般为String类型",
-      },
       {
         title: "正文规则",
         namespace: "ruleContent",
@@ -439,6 +426,13 @@ export default {
         id: "nextContentUrl",
         type: "String",
         hint: "选择下一分页(不是下一章)链接 (规则结果为String类型的Url)",
+      },
+      {
+        title: "脚本注入",
+        namespace: "ruleContent",
+        id: "webJs",
+        type: "String",
+        hint: "注入javascript，用于模拟鼠标点击等，必须有返回值，一般为String类型",
       },
       {
         title: "资源正则",
@@ -462,18 +456,18 @@ export default {
         hint: "FULL:铺满 不填:默认样式",
       },
       {
-        title: "购买操作",
-        namespace: "ruleContent",
-        id: "payAction",
-        type: "String",
-        hint: "填写JavaScript 返回购买链接或者调用购买接口",
-      },
-      {
         title: "图片解密",
         namespace: "ruleContent",
         id: "imageDecode",
         type: "String",
         hint: "填写JavaScript 返回解密图片的bytes ",
+      },
+      {
+        title: "购买操作",
+        namespace: "ruleContent",
+        id: "payAction",
+        type: "String",
+        hint: "填写JavaScript 返回购买链接或者调用购买接口",
       },
     ],
   },
@@ -572,7 +566,7 @@ id: "deleteUrl",
       //   type: "Boolean",
       // },
       {
-        title: "Cookie",
+        title: "CookieJar",
         id: "enabledCookieJar",
         type: "Boolean",
       },
