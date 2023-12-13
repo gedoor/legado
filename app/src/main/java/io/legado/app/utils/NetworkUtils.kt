@@ -179,6 +179,13 @@ object NetworkUtils {
         }.getOrDefault(baseUrl)
     }
 
+    fun getDomain(url: String): String {
+        val baseUrl = getBaseUrl(url) ?: return url
+        return kotlin.runCatching {
+            URL(baseUrl).host
+        }.getOrDefault(baseUrl)
+    }
+
     /**
      * Get local Ip address.
      */
