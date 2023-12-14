@@ -49,21 +49,21 @@ class AnalyzeByXPath(doc: Any) {
         }
     }
 
-    internal fun getElements(xPath: String): List<JXNode>? {
+    internal fun getElements(xPath: String): List<JXNode> {
 
-        if (xPath.isEmpty()) return null
+        if (xPath.isEmpty()) return emptyList()
 
         val jxNodes = ArrayList<JXNode>()
         val ruleAnalyzes = RuleAnalyzer(xPath)
         val rules = ruleAnalyzes.splitRule("&&", "||", "%%")
 
         if (rules.size == 1) {
-            return getResult(rules[0])
+            return getResult(rules[0]) ?: emptyList()
         } else {
             val results = ArrayList<List<JXNode>>()
             for (rl in rules) {
                 val temp = getElements(rl)
-                if (!temp.isNullOrEmpty()) {
+                if (temp.isNotEmpty()) {
                     results.add(temp)
                     if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break
@@ -130,19 +130,19 @@ class AnalyzeByXPath(doc: Any) {
         return result
     }
 
-    fun getString(rule: String): String? {
+    fun getString(rule: String): String {
         val ruleAnalyzes = RuleAnalyzer(rule)
         val rules = ruleAnalyzes.splitRule("&&", "||")
         if (rules.size == 1) {
             getResult(rule)?.let {
                 return TextUtils.join("\n", it)
             }
-            return null
+            return ""
         } else {
             val textList = arrayListOf<String>()
             for (rl in rules) {
                 val temp = getString(rl)
-                if (!temp.isNullOrEmpty()) {
+                if (temp.isNotEmpty()) {
                     textList.add(temp)
                     if (ruleAnalyzes.elementsType == "||") {
                         break

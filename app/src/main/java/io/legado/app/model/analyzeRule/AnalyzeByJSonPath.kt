@@ -28,8 +28,8 @@ class AnalyzeByJSonPath(json: Any) {
      * 解决阅读”&&“、”||“与jsonPath支持的”&&“、”||“之间的冲突
      * 解决{$.rule}形式规则可能匹配错误的问题，旧规则用正则解析内容含‘}’的json文本时，用规则中的字段去匹配这种内容会匹配错误.现改用平衡嵌套方法解决这个问题
      * */
-    fun getString(rule: String): String? {
-        if (rule.isEmpty()) return null
+    fun getString(rule: String): String {
+        if (rule.isEmpty()) return ""
         var result: String
         val ruleAnalyzes = RuleAnalyzer(rule, true) //设置平衡组为代码平衡
         val rules = ruleAnalyzes.splitRule("&&", "||")
@@ -57,7 +57,7 @@ class AnalyzeByJSonPath(json: Any) {
             val textList = arrayListOf<String>()
             for (rl in rules) {
                 val temp = getString(rl)
-                if (!temp.isNullOrEmpty()) {
+                if (temp.isNotEmpty()) {
                     textList.add(temp)
                     if (ruleAnalyzes.elementsType == "||") {
                         break
@@ -126,7 +126,7 @@ class AnalyzeByJSonPath(json: Any) {
         return ctx.read(rule)
     }
 
-    internal fun getList(rule: String): ArrayList<Any>? {
+    internal fun getList(rule: String): ArrayList<Any> {
         val result = ArrayList<Any>()
         if (rule.isEmpty()) return result
         val ruleAnalyzes = RuleAnalyzer(rule, true) //设置平衡组为代码平衡
@@ -143,7 +143,7 @@ class AnalyzeByJSonPath(json: Any) {
             val results = ArrayList<ArrayList<*>>()
             for (rl in rules) {
                 val temp = getList(rl)
-                if (!temp.isNullOrEmpty()) {
+                if (temp.isNotEmpty()) {
                     results.add(temp)
                     if (temp.isNotEmpty() && ruleAnalyzes.elementsType == "||") {
                         break
