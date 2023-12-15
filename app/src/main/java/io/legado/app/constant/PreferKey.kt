@@ -1,5 +1,6 @@
 package io.legado.app.constant
 
+@Suppress("ConstPropertyName")
 object PreferKey {
     const val language = "language"
     const val fontScale = "fontScale"

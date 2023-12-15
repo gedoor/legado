@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.net.wifi.WifiManager.WIFI_MODE_FULL_HIGH_PERF
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -42,6 +43,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
+import splitties.systemservices.wifiManager
 
 @UnstableApi
 /**
@@ -81,6 +83,12 @@ class AudioPlayService : BaseService(),
             .apply {
                 this.setReferenceCounted(false)
             }
+    }
+    private val wifiLock by lazy {
+        @Suppress("DEPRECATION")
+        wifiManager?.createWifiLock(WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")?.apply {
+            setReferenceCounted(false)
+        }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
@@ -147,7 +155,10 @@ class AudioPlayService : BaseService(),
 
     override fun onDestroy() {
         super.onDestroy()
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         isRun = false
         abandonFocus()
         exoPlayer.release()
@@ -161,8 +172,12 @@ class AudioPlayService : BaseService(),
     /**
      * 播放音频
      */
+    @SuppressLint("WakelockTimeout")
     private fun play() {
-        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (useWakeLock) {
+            wakeLock.acquire()
+            wifiLock?.acquire()
+        }
         upNotification()
         if (!requestFocus()) {
             return
@@ -197,7 +212,10 @@ class AudioPlayService : BaseService(),
      * 暂停播放
      */
     private fun pause(abandonFocus: Boolean = true) {
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         try {
             pause = true
             if (abandonFocus) {
@@ -218,8 +236,12 @@ class AudioPlayService : BaseService(),
     /**
      * 恢复播放
      */
+    @SuppressLint("WakelockTimeout")
     private fun resume() {
-        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (useWakeLock) {
+            wakeLock.acquire()
+            wifiLock?.acquire()
+        }
         try {
             pause = false
             if (url.isEmpty()) {
