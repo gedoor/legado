@@ -154,8 +154,15 @@ class AnalyzeRule(
                 } else {
                     // 键值直接访问
                     result[sourceRule.rule]
-                }?.let {
-                    replaceRegex(it.toString(), sourceRule)
+                }
+                result?.let {
+                    if (sourceRule.replaceRegex.isNotEmpty() && it is List<*>) {
+                        result = it.map { o ->
+                            replaceRegex(o.toString(), sourceRule)
+                        }
+                    } else if (sourceRule.replaceRegex.isNotEmpty()) {
+                        result = replaceRegex(result.toString(), sourceRule)
+                    }
                 }
             } else {
                 for (sourceRule in ruleList) {
@@ -413,7 +420,7 @@ class AnalyzeRule(
     /**
      * getString 类规则缓存
      */
-    fun splitSourceRuleCacheString(ruleStr: String?) : List<SourceRule> {
+    fun splitSourceRuleCacheString(ruleStr: String?): List<SourceRule> {
         if (ruleStr.isNullOrEmpty()) return emptyList()
         val cacheRule = stringRuleCache[ruleStr]
         return if (cacheRule != null) {
