@@ -201,9 +201,9 @@ public class NCXDocumentV3 {
         if (resource == null) {
             Log.e(TAG, "Resource with href " + href + " in NCX document not found");
         }
-        Log.v(TAG, "label:" + label);
-        Log.v(TAG, "href:" + href);
-        Log.v(TAG, "fragmentId:" + fragmentId);
+//        Log.v(TAG, "label:" + label);
+//        Log.v(TAG, "href:" + href);
+//        Log.v(TAG, "fragmentId:" + fragmentId);
 
         //父级目录
         TOCReference result = new TOCReference(label, resource, fragmentId);
