@@ -268,6 +268,10 @@ object Debug {
                 log(debugSource, "︽目录页解析完成")
                 log(debugSource, showTime = false)
                 val toc = chapters.filter { !(it.isVolume && it.url.startsWith(it.title)) }
+                if (toc.isEmpty()) {
+                    log(debugSource, "≡没有正文章节")
+                    return@onSuccess
+                }
                 val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
                 contentDebug(scope, bookSource, book, toc.first(), nextChapterUrl)
             }
