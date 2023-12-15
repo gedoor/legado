@@ -6,11 +6,11 @@ import java.util.regex.Pattern
 @Keep
 object AnalyzeByRegex {
 
-    fun getElement(res: String, regs: Array<String>, index: Int = 0): List<String> {
+    fun getElement(res: String, regs: Array<String>, index: Int = 0): List<String>? {
         var vIndex = index
         val resM = Pattern.compile(regs[vIndex]).matcher(res)
         if (!resM.find()) {
-            return emptyList()
+            return null
         }
         // 判断索引的规则是最后一个规则
         return if (vIndex + 1 == regs.size) {

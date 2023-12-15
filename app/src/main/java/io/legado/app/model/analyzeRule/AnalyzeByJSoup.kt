@@ -42,8 +42,8 @@ class AnalyzeByJSoup(doc: Any) {
      * 合并内容列表,得到内容
      */
     internal fun getString(ruleStr: String) =
-        if (ruleStr.isEmpty()) ""
-        else getStringList(ruleStr).takeIf { it.isNotEmpty() }?.joinToString("\n") ?: ""
+        if (ruleStr.isEmpty()) null
+        else getStringList(ruleStr).takeIf { it.isNotEmpty() }?.joinToString("\n")
 
     /**
      * 获取一个字符串
