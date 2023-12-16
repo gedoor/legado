@@ -159,6 +159,9 @@ fun Context.getCompatDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.g
 fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
     ContextCompat.getColorStateList(this, id)
 
+fun Context.checkSelfUriPermission(uri: Uri, modeFlags: Int): Int =
+    checkUriPermission(uri, Process.myPid(), Process.myUid(), modeFlags)
+
 fun Context.restart() {
     val intent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
     intent?.let {

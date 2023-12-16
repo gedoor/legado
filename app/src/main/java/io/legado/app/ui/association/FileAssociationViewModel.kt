@@ -15,7 +15,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
     val openBookLiveData = MutableLiveData<String>()
     val notSupportedLiveData = MutableLiveData<Pair<Uri, String>>()
 
-    fun dispatchIndent(uri: Uri) {
+    fun dispatchIntent(uri: Uri) {
         execute {
             lateinit var fileName: String
             //如果是普通的url，需要根据返回的内容判断是什么
