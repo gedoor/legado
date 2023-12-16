@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
@@ -37,6 +38,7 @@ import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.notificationManager
 import splitties.systemservices.powerManager
+import splitties.systemservices.wifiManager
 
 /**
  * 朗读服务
@@ -69,6 +71,12 @@ abstract class BaseReadAloudService : BaseService(),
             .apply {
                 this.setReferenceCounted(false)
             }
+    }
+    private val wifiLock by lazy {
+        @Suppress("DEPRECATION")
+        wifiManager?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")?.apply {
+            setReferenceCounted(false)
+        }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
@@ -135,7 +143,10 @@ abstract class BaseReadAloudService : BaseService(),
 
     override fun onDestroy() {
         super.onDestroy()
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         isRun = false
         pause = true
         abandonFocus()
@@ -210,8 +221,12 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
+    @SuppressLint("WakelockTimeout")
     open fun play() {
-        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (useWakeLock) {
+            wakeLock.acquire()
+            wifiLock?.acquire()
+        }
         isRun = true
         pause = false
         needResumeOnAudioFocusGain = false
@@ -223,7 +238,10 @@ abstract class BaseReadAloudService : BaseService(),
 
     @CallSuper
     open fun pauseReadAloud(abandonFocus: Boolean = true) {
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         pause = true
         if (abandonFocus) {
             abandonFocus()
