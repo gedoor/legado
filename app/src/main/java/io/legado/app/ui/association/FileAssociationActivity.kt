@@ -101,7 +101,9 @@ class FileAssociationActivity :
         viewModel.errorLive.observe(this) {
             binding.rotateLoading.gone()
             toastOnUi(it)
-            finish()
+            handler.postDelayed(2000) {
+                finish()
+            }
         }
         viewModel.openBookLiveData.observe(this) {
             binding.rotateLoading.gone()
@@ -128,31 +130,22 @@ class FileAssociationActivity :
             }
         }
         intent.data?.let { data ->
-            if (data.isContentScheme()) {
-                if (data.canRead()) {
-                    viewModel.dispatchIntent(data)
-                } else {
-                    dispatchWithPermission(data)
-                }
-            } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                dispatchWithPermission(data)
+            if (data.isContentScheme() && data.canRead()) {
+                viewModel.dispatchIntent(data)
             } else {
-                toastOnUi("由于安卓系统限制，请使用系统文件管理重新打开。")
-                finish()
+                PermissionsCompat.Builder()
+                    .addPermissions(*Permissions.Group.STORAGE)
+                    .rationale(R.string.tip_perm_request_storage)
+                    .onGranted {
+                        viewModel.dispatchIntent(data)
+                    }.onDenied {
+                        toastOnUi("请求存储权限失败。")
+                        handler.postDelayed(2000) {
+                            finish()
+                        }
+                    }.request()
             }
         } ?: finish()
-    }
-
-    private fun dispatchWithPermission(data: Uri) {
-        PermissionsCompat.Builder()
-            .addPermissions(*Permissions.Group.STORAGE)
-            .rationale(R.string.tip_perm_request_storage)
-            .onGranted {
-                viewModel.dispatchIntent(data)
-            }.onDenied {
-                toastOnUi("请求存储权限失败。")
-                finish()
-            }.request()
     }
 
     private fun importBook(uri: Uri) {

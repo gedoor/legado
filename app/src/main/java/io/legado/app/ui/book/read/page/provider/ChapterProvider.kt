@@ -31,7 +31,7 @@ import kotlin.collections.ArrayList
 /**
  * 解析内容生成章节和页面
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "ConstPropertyName")
 object ChapterProvider {
     //用于图片字的替换
     private const val srcReplaceChar = "▩"
@@ -372,9 +372,9 @@ object ChapterProvider {
                         textLayoutHeight = fistLine.lineTop - titleTopSpacing
                     }
                     textPage.lines.forEach {
-                        it.lineTop = it.lineTop - textLayoutHeight
-                        it.lineBase = it.lineBase - textLayoutHeight
-                        it.lineBottom = it.lineBottom - textLayoutHeight
+                        it.lineTop -= textLayoutHeight
+                        it.lineBase -= textLayoutHeight
+                        it.lineBottom -= textLayoutHeight
                     }
                     y - textLayoutHeight
                 }
@@ -630,12 +630,15 @@ object ChapterProvider {
         val strList = ArrayList<String>()
         val textWidthList = ArrayList<Float>()
         val lastIndex = charArray.lastIndex
+        var ca: CharArray? = null
         for (i in textWidths.indices) {
             if (charArray[i].isLowSurrogate()) {
                 continue
             }
             val char = if (i + 1 <= lastIndex && charArray[i + 1].isLowSurrogate()) {
-                charArray[i].toString() + charArray[i + 1].toString()
+                if (ca == null) ca = CharArray(2)
+                System.arraycopy(charArray, i, ca, 0, 2)
+                String(ca)
             } else {
                 charArray[i].toString()
             }
@@ -705,8 +708,8 @@ object ChapterProvider {
             for (i in 0..words.lastIndex) {
                 textLine.getColumnReverseAt(i).let {
                     val py = cc * (words.size - i)
-                    it.start = it.start - py
-                    it.end = it.end - py
+                    it.start -= py
+                    it.end -= py
                 }
             }
         }
