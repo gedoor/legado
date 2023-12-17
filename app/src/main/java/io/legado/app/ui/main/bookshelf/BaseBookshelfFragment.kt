@@ -27,6 +27,7 @@ import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.ui.main.MainViewModel
+import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
 
 abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId),
@@ -66,6 +67,13 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     abstract val groupId: Long
     abstract val books: List<Book>
     private var groupsLiveData: LiveData<List<BookGroup>>? = null
+    private val waitDialog by lazy {
+        WaitDialog(requireContext()).apply {
+            setOnCancelListener {
+                viewModel.addBookJob?.cancel()
+            }
+        }
+    }
 
     abstract fun gotoTop()
 
@@ -82,7 +90,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             R.id.menu_bookshelf_layout -> configBookshelf()
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
-            R.id.menu_add_url -> addBookByUrl()
+            R.id.menu_add_url -> showAddBookByUrlAlert()
             R.id.menu_bookshelf_manage -> startActivity<BookshelfManageActivity> {
                 putExtra("groupId", groupId)
             }
@@ -117,8 +125,18 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
 
     abstract fun upSort()
 
+    override fun observeLiveBus() {
+        viewModel.addBookProgressLiveData.observe(this) { count ->
+            if (count < 0) {
+                waitDialog.dismiss()
+            } else {
+                waitDialog.setText("添加中... ($count)")
+            }
+        }
+    }
+
     @SuppressLint("InflateParams")
-    fun addBookByUrl() {
+    fun showAddBookByUrlAlert() {
         alert(titleResource = R.string.add_book_url) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "url"
@@ -126,6 +144,8 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
+                    waitDialog.setText("添加中...")
+                    waitDialog.show()
                     viewModel.addBookByUrl(it)
                 }
             }
