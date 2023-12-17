@@ -16,6 +16,10 @@ import org.seimicrawler.xpath.JXNode
 @Keep
 class AnalyzeByJSoup(doc: Any) {
 
+    companion object {
+        private val nullSet = setOf(null)
+    }
+
     private var element: Element = parse(doc)
 
     private fun parse(doc: Any): Element {
@@ -220,6 +224,7 @@ class AnalyzeByJSoup(doc: Any) {
                     textS.add(text)
                 }
             }
+
             "textNodes" -> for (element in elements) {
                 val tn = arrayListOf<String>()
                 val contentEs = element.textNodes()
@@ -233,12 +238,14 @@ class AnalyzeByJSoup(doc: Any) {
                     textS.add(tn.joinToString("\n"))
                 }
             }
+
             "ownText" -> for (element in elements) {
                 val text = element.ownText()
                 if (text.isNotEmpty()) {
                     textS.add(text)
                 }
             }
+
             "html" -> {
                 elements.select("script").remove()
                 elements.select("style").remove()
@@ -247,6 +254,7 @@ class AnalyzeByJSoup(doc: Any) {
                     textS.add(html)
                 }
             }
+
             "all" -> textS.add(elements.outerHtml())
             else -> for (element in elements) {
 
@@ -359,7 +367,7 @@ class AnalyzeByJSoup(doc: Any) {
 
                 for (pcInt in indexSet) elements[pcInt] = null
 
-                elements.removeAll(listOf(null)) //测试过，这样就行
+                elements.removeAll(nullSet) //测试过，这样就行
 
             } else if (split == '.') { //选择
 

@@ -251,19 +251,23 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 item.isChecked = !item.isChecked
                 viewModel.refresh()
             }
+
             R.id.menu_load_info -> {
                 AppConfig.changeSourceLoadInfo = !item.isChecked
                 item.isChecked = !item.isChecked
             }
+
             R.id.menu_load_toc -> {
                 AppConfig.changeSourceLoadToc = !item.isChecked
                 item.isChecked = !item.isChecked
             }
+
             R.id.menu_load_word_count -> {
                 AppConfig.changeSourceLoadWordCount = !item.isChecked
                 item.isChecked = !item.isChecked
                 viewModel.onLoadWordCountChecked(item.isChecked)
             }
+
             R.id.menu_start_stop -> viewModel.startOrStopSearch()
             R.id.menu_source_manage -> startActivity<BookSourceActivity>()
             else -> if (item?.groupId == R.id.source_group && !item.isChecked) {

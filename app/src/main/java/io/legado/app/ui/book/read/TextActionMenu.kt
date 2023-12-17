@@ -7,7 +7,11 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.annotation.RequiresApi
 import androidx.appcompat.view.SupportMenuInflater
@@ -21,7 +25,14 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
 import io.legado.app.help.config.AppConfig
-import io.legado.app.utils.*
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.gone
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.share
+import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.visible
 
 @SuppressLint("RestrictedApi")
 class TextActionMenu(private val context: Context, private val callBack: CallBack) :
@@ -108,9 +119,11 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         windowHeight - startTopY
                     )
                 }
+
                 endBottomY - startBottomY > 500 -> {
                     showAtLocation(view, Gravity.TOP or Gravity.START, startX, startBottomY)
                 }
+
                 else -> {
                     showAtLocation(view, Gravity.TOP or Gravity.START, endX, endBottomY)
                 }
@@ -130,6 +143,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         startTopY - popupHeight
                     )
                 }
+
                 endBottomY - startBottomY > 500 -> {
                     showAtLocation(
                         view,
@@ -138,6 +152,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         startBottomY
                     )
                 }
+
                 else -> {
                     showAtLocation(
                         view,
@@ -215,6 +230,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                     context.toastOnUi(it.localizedMessage ?: "ERROR")
                 }
             }
+
             else -> item.intent?.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
@@ -233,7 +249,6 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun getSupportedActivities(): List<ResolveInfo> {
-        @Suppress("DEPRECATION")
         return context.packageManager
             .queryIntentActivities(createProcessTextIntent(), 0)
     }

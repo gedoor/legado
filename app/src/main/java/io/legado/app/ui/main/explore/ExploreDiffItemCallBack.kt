@@ -11,10 +11,7 @@ class ExploreDiffItemCallBack : DiffUtil.ItemCallback<BookSource>() {
     }
 
     override fun areContentsTheSame(oldItem: BookSource, newItem: BookSource): Boolean {
-        if (oldItem.bookSourceName != newItem.bookSourceName) {
-            return false
-        }
-        return true
+        return oldItem.bookSourceName == newItem.bookSourceName
     }
 
 }

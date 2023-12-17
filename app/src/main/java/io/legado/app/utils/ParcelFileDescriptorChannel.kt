@@ -9,6 +9,7 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.channels.SeekableByteChannel
 
+@Suppress("unused")
 @SuppressLint("NewApi")
 class ParcelFileDescriptorChannel(private val pfd: ParcelFileDescriptor) : SeekableByteChannel {
     @Throws(IOException::class)

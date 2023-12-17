@@ -63,11 +63,11 @@ class ReaderProvider : ContentProvider() {
         selectionArgs: Array<String>?
     ): Int {
         if (sMatcher.match(uri) < 0) return -1
-        when (RequestCode.values()[sMatcher.match(uri)]) {
+        when (RequestCode.entries[sMatcher.match(uri)]) {
             RequestCode.DeleteBookSources -> BookSourceController.deleteSources(selection)
             RequestCode.DeleteRssSources -> BookSourceController.deleteSources(selection)
             else -> throw IllegalStateException(
-                "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
+                "Unexpected value: " + RequestCode.entries[sMatcher.match(uri)].name
             )
         }
         return 0
@@ -78,7 +78,7 @@ class ReaderProvider : ContentProvider() {
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         if (sMatcher.match(uri) < 0) return null
         runBlocking {
-            when (RequestCode.values()[sMatcher.match(uri)]) {
+            when (RequestCode.entries[sMatcher.match(uri)]) {
                 RequestCode.SaveBookSource -> values?.let {
                     BookSourceController.saveSource(values.getAsString(postBodyKey))
                 }
@@ -104,7 +104,7 @@ class ReaderProvider : ContentProvider() {
                 }
 
                 else -> throw IllegalStateException(
-                    "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
+                    "Unexpected value: " + RequestCode.entries[sMatcher.match(uri)].name
                 )
             }
         }
@@ -125,7 +125,7 @@ class ReaderProvider : ContentProvider() {
         uri.getQueryParameter("path")?.let {
             map["path"] = arrayListOf(it)
         }
-        return if (sMatcher.match(uri) < 0) null else when (RequestCode.values()[sMatcher.match(uri)]) {
+        return if (sMatcher.match(uri) < 0) null else when (RequestCode.entries[sMatcher.match(uri)]) {
             RequestCode.GetBookSource -> SimpleCursor(BookSourceController.getSource(map))
             RequestCode.GetBookSources -> SimpleCursor(BookSourceController.sources)
             RequestCode.GetRssSource -> SimpleCursor(RssSourceController.getSource(map))
@@ -136,7 +136,7 @@ class ReaderProvider : ContentProvider() {
             RequestCode.GetChapterList -> SimpleCursor(BookController.getChapterList(map))
             RequestCode.GetBookCover -> SimpleCursor(BookController.getCover(map))
             else -> throw IllegalStateException(
-                "Unexpected value: " + RequestCode.values()[sMatcher.match(uri)].name
+                "Unexpected value: " + RequestCode.entries[sMatcher.match(uri)].name
             )
         }
     }

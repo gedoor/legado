@@ -1,7 +1,6 @@
 package io.legado.app.ui.association
 
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.os.postDelayed

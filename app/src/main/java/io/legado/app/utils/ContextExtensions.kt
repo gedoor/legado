@@ -5,9 +5,18 @@ package io.legado.app.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
-import android.app.PendingIntent.*
+import android.app.PendingIntent.FLAG_MUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
+import android.app.PendingIntent.getActivity
+import android.app.PendingIntent.getBroadcast
+import android.app.PendingIntent.getService
 import android.app.Service
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ClipData
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -355,7 +364,6 @@ val Context.isPad: Boolean
 val Context.isTv: Boolean
     get() = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
 
-@Suppress("DEPRECATION")
 val Context.channel: String
     get() {
         try {
