@@ -15,13 +15,12 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
     val openBookLiveData = MutableLiveData<String>()
     val notSupportedLiveData = MutableLiveData<Pair<Uri, String>>()
 
-    fun dispatchIndent(uri: Uri) {
+    fun dispatchIntent(uri: Uri) {
         execute {
-            lateinit var fileName: String
             //如果是普通的url，需要根据返回的内容判断是什么
             if (uri.isContentScheme() || uri.isFileScheme()) {
                 val fileDoc = FileDoc.fromUri(uri, false)
-                fileName = fileDoc.name
+                val fileName = fileDoc.name
                 if (fileName.matches(AppPattern.archiveFileRegex)) {
                     ArchiveUtils.deCompress(fileDoc, ArchiveUtils.TEMP_PATH) {
                         it.matches(bookFileRegex)
@@ -36,8 +35,9 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
             }
         }.onError {
             it.printOnDebug()
-            errorLive.postValue(it.localizedMessage)
-            AppLog.put("无法打开文件\n${it.localizedMessage}", it)
+            val msg = "无法打开文件\n${it.localizedMessage}"
+            errorLive.postValue(msg)
+            AppLog.put(msg, it)
         }
     }
 

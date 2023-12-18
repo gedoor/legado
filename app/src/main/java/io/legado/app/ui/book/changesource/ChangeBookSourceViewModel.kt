@@ -8,7 +8,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -22,15 +21,19 @@ import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -319,22 +322,26 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     fun onLoadWordCountChecked(isChecked: Boolean) {
-        postEvent(EventBus.SOURCE_CHANGED, "")
         if (isChecked) {
-            startRefreshList(searchBooks.filter { it.chapterWordCountText == null })
+            startRefreshList(true)
         }
     }
 
     /**
      * 刷新列表
      */
-    fun startRefreshList(refreshList: List<SearchBook> = searchBooks) {
+    fun startRefreshList(onlyRefreshNoWordCountBook: Boolean = false) {
         execute {
-            if (refreshList.isEmpty()) return@execute
             stopSearch()
             searchBookList.clear()
-            searchBookList.addAll(refreshList)
-            searchBooks.removeAll(refreshList)
+            if (onlyRefreshNoWordCountBook) {
+                val noWordCountBook = searchBooks.filter { it.chapterWordCountText == null }
+                searchBookList.addAll(noWordCountBook)
+                searchBooks.removeIf { it.chapterWordCountText == null }
+            } else {
+                searchBookList.addAll(searchBooks)
+                searchBooks.clear()
+            }
             searchCallback?.upAdapter()
             searchStateData.postValue(true)
             initSearchPool()

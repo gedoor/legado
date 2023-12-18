@@ -23,13 +23,13 @@
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
-        android:enableOnBackInvokedCallback="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <!-- 主入口 -->
         <activity
@@ -367,6 +367,7 @@
                 <data android:mimeType="application/epub+zip" />
                 <!-- pdf -->
                 <data android:mimeType="application/pdf" />
+                <data android:mimeType="application/octet-stream" />
             </intent-filter>
             <!-- Works when an app doesn't know the media type, e.g. Dropbox -->
             <intent-filter>
@@ -428,9 +429,9 @@
         <service
             android:name=".service.WebTileService"
             android:exported="true"
+            android:foregroundServiceType="dataSync"
             android:icon="@drawable/ic_web_service_noti"
             android:label="legado Web Service"
-            android:foregroundServiceType="dataSync"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

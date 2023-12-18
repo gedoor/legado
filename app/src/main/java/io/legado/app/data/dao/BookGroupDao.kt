@@ -1,13 +1,18 @@
 package io.legado.app.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.BookGroup
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract interface BookGroupDao {
+interface BookGroupDao {
 
     @Query("select * from book_groups where groupId = :id")
     fun getByID(id: Long): BookGroup?

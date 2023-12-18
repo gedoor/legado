@@ -27,11 +27,11 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
             builder.removeHeader("Accept-Encoding")
 
             val newReq = builder.build()
-            proceedWithCronet(newReq, chain.call())?.let { response ->
+            proceedWithCronet(newReq, chain.call())/*?.let { response ->
                 //从Response 中保存Cookie到CookieJar
                 //cookieJar.receiveHeaders(newReq.url, response.headers)
                 response
-            } ?: chain.proceed(original)
+            }*/ ?: chain.proceed(original)
         } catch (e: Exception) {
             //不能抛出错误,抛出错误会导致应用崩溃
             //遇到Cronet处理有问题时的情况，如证书过期等等，回退到okhttp处理

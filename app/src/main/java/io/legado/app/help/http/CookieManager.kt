@@ -12,6 +12,7 @@ import okhttp3.Request
 import okhttp3.Response
 import org.jsoup.Connection
 
+@Suppress("ConstPropertyName")
 object CookieManager {
     /**
      * <domain>_session_cookie 会话期 cookie，应用重启后失效
