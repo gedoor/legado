@@ -24,7 +24,12 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.*
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
+import io.legado.app.constant.Status
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -37,9 +42,17 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.audio.AudioPlayActivity
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.activityPendingIntent
+import io.legado.app.utils.broadcastPendingIntent
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
@@ -193,12 +206,7 @@ class AudioPlayService : BaseService(),
                 chapter = AudioPlay.durChapter,
                 headerMapF = AudioPlay.headers(true),
             )
-            exoPlayer.setMediaItem(
-                ExoPlayerHelper.createMediaItem(
-                    analyzeUrl.url,
-                    analyzeUrl.headerMap
-                )
-            )
+            exoPlayer.setMediaItem(analyzeUrl.getMediaItem())
             exoPlayer.playWhenReady = true
             exoPlayer.prepare()
         }.onError {

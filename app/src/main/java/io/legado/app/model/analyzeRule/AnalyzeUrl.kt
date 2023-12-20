@@ -3,6 +3,7 @@ package io.legado.app.model.analyzeRule
 import android.annotation.SuppressLint
 import android.util.Base64
 import androidx.annotation.Keep
+import androidx.media3.common.MediaItem
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
 import com.script.SimpleBindings
@@ -18,6 +19,7 @@ import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.help.glide.GlideHeaders
 import io.legado.app.help.http.*
 import io.legado.app.help.http.CookieManager.mergeCookies
@@ -627,6 +629,11 @@ class AnalyzeUrl(
     fun getGlideUrl(): GlideUrl {
         setCookie()
         return GlideUrl(url, GlideHeaders(headerMap))
+    }
+
+    fun getMediaItem(): MediaItem {
+        setCookie()
+        return ExoPlayerHelper.createMediaItem(url, headerMap)
     }
 
     fun getUserAgent(): String {
