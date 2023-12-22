@@ -14,8 +14,8 @@
     <string-array name="screen_time_out_value">
         <item>0</item>
         <item>60</item>
-        <item>120</item>
-        <item>180</item>
+        <item>300</item>
+        <item>600</item>
         <item>-1</item>
     </string-array>
 

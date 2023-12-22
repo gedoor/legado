@@ -21,7 +21,7 @@ import io.legado.app.utils.sysConfiguration
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "ConstPropertyName")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val isCronet = appCtx.getPrefBoolean(PreferKey.cronet)
     var useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
@@ -467,6 +467,15 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val progressBarBehavior: String?
         get() = appCtx.getPrefString(PreferKey.progressBarBehavior, "page")
+
+    val volumeKeyPageOnLongPress
+        get() = appCtx.getPrefBoolean(PreferKey.volumeKeyPageOnLongPress, false)
+
+    val volumeKeyPage
+        get() = appCtx.getPrefBoolean(PreferKey.volumeKeyPage, true)
+
+    val volumeKeyPageOnPlay
+        get() = appCtx.getPrefBoolean(PreferKey.volumeKeyPageOnPlay, true)
 
     var searchScope: String
         get() = appCtx.getPrefString("searchScope") ?: ""

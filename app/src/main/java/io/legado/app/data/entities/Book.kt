@@ -331,6 +331,7 @@ data class Book(
         appDb.bookDao.delete(this)
     }
 
+    @Suppress("ConstPropertyName")
     companion object {
         const val hTag = 2L
         const val rubyTag = 4L
