@@ -138,7 +138,7 @@ object BookList {
         variable: String?
     ): SearchBook? {
         val book = Book(variable = variable)
-        book.bookUrl = analyzeUrl.ruleUrl
+        book.bookUrl = NetworkUtils.getAbsoluteURL(analyzeUrl.url, analyzeUrl.ruleUrl)
         book.origin = bookSource.bookSourceUrl
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
@@ -196,7 +196,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "┌获取分类", log)
             try {
                 searchBook.kind = analyzeRule.getStringList(ruleKind)?.joinToString(",")
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}", log)
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind ?: ""}", log)
             } catch (e: Exception) {
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
@@ -232,7 +232,7 @@ object BookList {
                         searchBook.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
                     }
                 }
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}", log)
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl ?: ""}", log)
             } catch (e: java.lang.Exception) {
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }

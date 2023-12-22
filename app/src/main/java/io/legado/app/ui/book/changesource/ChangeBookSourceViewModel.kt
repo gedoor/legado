@@ -8,7 +8,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -22,15 +21,19 @@ import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -118,7 +121,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }.flowOn(IO)
 
     @Volatile
-    private var searchIndex = 0
+    private var searchIndex = -1
 
     override fun onCleared() {
         super.onCleared()
@@ -142,7 +145,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private fun initSearchPool() {
         searchPool = Executors
             .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-        searchIndex = 0
+        searchIndex = -1
     }
 
     fun refresh(): Boolean {
@@ -195,14 +198,18 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private fun search() {
         val searchIndex = synchronized(this) {
-            if (searchIndex > bookSourceList.lastIndex) {
+            if (searchIndex >= bookSourceList.lastIndex) {
                 return
             }
-            searchIndex++
+            ++searchIndex
         }
-        val source = bookSourceList[searchIndex]
+        val source = bookSourceList.getOrNull(searchIndex) ?: return
         bookSourceList[searchIndex] = emptyBookSource
-        val task = execute(context = searchPool!!, executeContext = searchPool!!) {
+        val task = execute(
+            context = searchPool!!,
+            start = CoroutineStart.LAZY,
+            executeContext = searchPool!!
+        ) {
             val resultBooks = WebBook.searchBookAwait(source, name)
             resultBooks.forEach { searchBook ->
                 if (searchBook.name != name) {
@@ -223,16 +230,21 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             }
         }.timeout(60000L)
             .onError {
+                ensureActive()
                 nextSearch()
             }
             .onSuccess {
+                ensureActive()
                 nextSearch()
             }
+        task.start()
         tasks.add(task)
     }
 
     private suspend fun loadBookInfo(source: BookSource, book: Book) {
-        WebBook.getBookInfoAwait(source, book)
+        if (book.tocUrl.isEmpty()) {
+            WebBook.getBookInfoAwait(source, book)
+        }
         if (AppConfig.changeSourceLoadToc || AppConfig.changeSourceLoadWordCount) {
             loadBookToc(source, book)
         } else {
@@ -291,8 +303,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchCallback?.searchSuccess(searchBook)
     }
 
+    @Synchronized
     private fun nextSearch() {
-        synchronized(this) {
+        kotlin.runCatching {
             if (searchIndex < bookSourceList.lastIndex) {
                 search()
             } else {
@@ -309,22 +322,26 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     fun onLoadWordCountChecked(isChecked: Boolean) {
-        postEvent(EventBus.SOURCE_CHANGED, "")
         if (isChecked) {
-            startRefreshList(searchBooks.filter { it.chapterWordCountText == null })
+            startRefreshList(true)
         }
     }
 
     /**
      * 刷新列表
      */
-    fun startRefreshList(refreshList: List<SearchBook> = searchBooks) {
+    fun startRefreshList(onlyRefreshNoWordCountBook: Boolean = false) {
         execute {
-            if (refreshList.isEmpty()) return@execute
             stopSearch()
             searchBookList.clear()
-            searchBookList.addAll(refreshList)
-            searchBooks.removeAll(refreshList)
+            if (onlyRefreshNoWordCountBook) {
+                val noWordCountBook = searchBooks.filter { it.chapterWordCountText == null }
+                searchBookList.addAll(noWordCountBook)
+                searchBooks.removeIf { it.chapterWordCountText == null }
+            } else {
+                searchBookList.addAll(searchBooks)
+                searchBooks.clear()
+            }
             searchCallback?.upAdapter()
             searchStateData.postValue(true)
             initSearchPool()

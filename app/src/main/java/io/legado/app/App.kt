@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
-import com.github.liuyueyi.quick.transfer.ChineseUtils
 import com.github.liuyueyi.quick.transfer.constants.TransType
 import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.base.AppContextWrapper
@@ -31,6 +30,7 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.model.BookCover
+import io.legado.app.utils.ChineseUtils
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.launch
@@ -50,10 +50,10 @@ class App : Application() {
         //预下载Cronet so
         Cronet.preDownload()
         createNotificationChannels()
-        applyDayNight(this)
         LiveEventBus.config()
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
+        applyDayNight(this)
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         DefaultData.upVersion()
@@ -73,7 +73,10 @@ class App : Application() {
             Backup.clearCache()
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> ChineseUtils.preLoad(true, TransType.TRADITIONAL_TO_SIMPLE)
+                1 -> launch {
+                    ChineseUtils.fixT2sDict()
+                }
+
                 2 -> ChineseUtils.preLoad(true, TransType.SIMPLE_TO_TRADITIONAL)
             }
             //调整排序序号

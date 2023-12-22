@@ -136,18 +136,18 @@ public class NCXDocumentV3 {
     }
 
     private static List<TOCReference> doToc(Node n, EpubBook book) {
-        List<TOCReference> result = new ArrayList<>();
-
         if (n == null || n.getNodeType() != Document.ELEMENT_NODE) {
-            return result;
-        } else {
-            Element el = (Element) n;
-            NodeList nodeList = el.getElementsByTagName(XHTMLTgs.li);
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                result.add(readTOCReference((Element) nodeList.item(i), book));
-            }
+            return new ArrayList<>();
         }
-        return result;
+
+        Element el = (Element) n;
+        Node node = el.getElementsByTagName(XHTMLTgs.ol).item(0);
+
+        if (node == null || node.getNodeType() != Document.ELEMENT_NODE) {
+            return new ArrayList<>();
+        }
+
+        return readTOCReferences(node.getChildNodes(), book);
     }
 
 
@@ -201,9 +201,9 @@ public class NCXDocumentV3 {
         if (resource == null) {
             Log.e(TAG, "Resource with href " + href + " in NCX document not found");
         }
-        Log.v(TAG, "label:" + label);
-        Log.v(TAG, "href:" + href);
-        Log.v(TAG, "fragmentId:" + fragmentId);
+//        Log.v(TAG, "label:" + label);
+//        Log.v(TAG, "href:" + href);
+//        Log.v(TAG, "fragmentId:" + fragmentId);
 
         //父级目录
         TOCReference result = new TOCReference(label, resource, fragmentId);

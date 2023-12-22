@@ -5,7 +5,7 @@
       :label="name"
       :key="name"
     >
-      <el-form label-position="right" label-width="5em">
+      <el-form label-position="right" label-width="auto">
         <el-form-item
           v-for="{
             type,

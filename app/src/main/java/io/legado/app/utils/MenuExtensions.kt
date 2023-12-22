@@ -35,6 +35,7 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
     return menu
 }
 
+@SuppressLint("RestrictedApi")
 fun Menu.applyOpenTint(context: Context) {
     //展开菜单显示图标
     if (this.javaClass.simpleName.equals("MenuBuilder", ignoreCase = true)) {

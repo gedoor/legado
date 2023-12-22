@@ -4,6 +4,7 @@ package io.legado.app.utils
 
 import android.net.Uri
 import java.io.File
+import java.io.FileOutputStream
 
 fun File.getFile(vararg subDirFiles: String): File {
     val path = FileUtils.getPath(this, *subDirFiles)
@@ -78,4 +79,8 @@ fun File.checkWrite(): Boolean {
     } catch (e: Exception) {
         false
     }
+}
+
+fun File.outputStream(append: Boolean = false): FileOutputStream {
+    return FileOutputStream(this, append)
 }

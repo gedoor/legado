@@ -206,7 +206,9 @@ data class BookSource(
                 && enabled == source.enabled
                 && enabledExplore == source.enabledExplore
                 && enabledCookieJar == source.enabledCookieJar
+                && equal(variableComment, source.variableComment)
                 && equal(concurrentRate, source.concurrentRate)
+                && equal(jsLib, source.jsLib)
                 && equal(header, source.header)
                 && equal(loginUrl, source.loginUrl)
                 && equal(loginUi, source.loginUi)

@@ -29,7 +29,10 @@ footer, header, hgroup, menu, nav, section {
 body {
 	line-height: 1;
 	background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),url("../../images/bg.jpg") no-repeat center center fixed;
-	background-size: 100%;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 }
 
 ol, ul {

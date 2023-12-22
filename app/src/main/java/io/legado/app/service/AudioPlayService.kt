@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.net.wifi.WifiManager.WIFI_MODE_FULL_HIGH_PERF
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -23,7 +24,12 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.*
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
+import io.legado.app.constant.Status
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -36,12 +42,21 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.audio.AudioPlayActivity
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.activityPendingIntent
+import io.legado.app.utils.broadcastPendingIntent
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.powerManager
+import splitties.systemservices.wifiManager
 
 @UnstableApi
 /**
@@ -81,6 +96,12 @@ class AudioPlayService : BaseService(),
             .apply {
                 this.setReferenceCounted(false)
             }
+    }
+    private val wifiLock by lazy {
+        @Suppress("DEPRECATION")
+        wifiManager?.createWifiLock(WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")?.apply {
+            setReferenceCounted(false)
+        }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
@@ -147,7 +168,10 @@ class AudioPlayService : BaseService(),
 
     override fun onDestroy() {
         super.onDestroy()
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         isRun = false
         abandonFocus()
         exoPlayer.release()
@@ -161,8 +185,12 @@ class AudioPlayService : BaseService(),
     /**
      * 播放音频
      */
+    @SuppressLint("WakelockTimeout")
     private fun play() {
-        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (useWakeLock) {
+            wakeLock.acquire()
+            wifiLock?.acquire()
+        }
         upNotification()
         if (!requestFocus()) {
             return
@@ -178,12 +206,7 @@ class AudioPlayService : BaseService(),
                 chapter = AudioPlay.durChapter,
                 headerMapF = AudioPlay.headers(true),
             )
-            exoPlayer.setMediaItem(
-                ExoPlayerHelper.createMediaItem(
-                    analyzeUrl.url,
-                    analyzeUrl.headerMap
-                )
-            )
+            exoPlayer.setMediaItem(analyzeUrl.getMediaItem())
             exoPlayer.playWhenReady = true
             exoPlayer.prepare()
         }.onError {
@@ -197,7 +220,10 @@ class AudioPlayService : BaseService(),
      * 暂停播放
      */
     private fun pause(abandonFocus: Boolean = true) {
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         try {
             pause = true
             if (abandonFocus) {
@@ -218,8 +244,12 @@ class AudioPlayService : BaseService(),
     /**
      * 恢复播放
      */
+    @SuppressLint("WakelockTimeout")
     private fun resume() {
-        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (useWakeLock) {
+            wakeLock.acquire()
+            wifiLock?.acquire()
+        }
         try {
             pause = false
             if (url.isEmpty()) {
@@ -452,7 +482,7 @@ class AudioPlayService : BaseService(),
                 .setBufferedPosition(exoPlayer.bufferedPosition)
                 .addCustomAction(
                     APP_ACTION_STOP,
-                    getString(R.string.set_timer),
+                    getString(R.string.stop),
                     R.drawable.ic_stop_black_24dp
                 )
                 .addCustomAction(

@@ -79,8 +79,8 @@
 
     <item
         android:id="@+id/menu_same_title_removed"
-        android:title="@string/same_title_removed"
         android:checkable="true"
+        android:title="@string/same_title_removed"
         app:showAsAction="never" />
 
     <item
@@ -97,6 +97,24 @@
         android:title="@string/review"
         android:visible="false"
         app:showAsAction="never" />
+
+    <group android:id="@+id/menu_group_epub">
+
+        <item
+            android:id="@+id/menu_del_ruby_tag"
+            android:checkable="true"
+            android:checked="false"
+            android:title="@string/del_ruby_tag"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/menu_del_h_tag"
+            android:checkable="true"
+            android:checked="false"
+            android:title="@string/del_h_tag"
+            app:showAsAction="never" />
+
+    </group>
 
     <item
         android:id="@+id/menu_image_style"

@@ -111,6 +111,7 @@ import jump from "@/plugins/jump";
 import settings from "@/config/themeConfig";
 import API from "@api";
 import { useLoading } from "@/hooks/loading";
+import { useThrottleFn } from "@vueuse/shared";
 
 const content = ref();
 // loading spinner
@@ -299,8 +300,13 @@ const toChapterPos = (pos) => {
       chapterRef.value[0].scrollToReadedLength(pos);
   });
 };
+
+// 60秒保存一次进度
+const saveBookProgressThrottle = useThrottleFn(() => store.saveBookProgress(), 60000)
+
 const onReadedLengthChange = (index, pos) => {
   saveReadingBookProgressToBrowser(index, pos);
+  saveBookProgressThrottle();
 };
 
 // 文档标题
@@ -354,6 +360,7 @@ const toNextChapter = () => {
       type: "info",
     });
     getContent(index);
+    store.saveBookProgress();
   } else {
     ElMessage({
       message: "本章是最后一章",
@@ -370,6 +377,7 @@ const toPreChapter = () => {
       type: "info",
     });
     getContent(index);
+    store.saveBookProgress();
   } else {
     ElMessage({
       message: "本章是第一章",
@@ -392,6 +400,7 @@ const loadMore = () => {
   let index = chapterData.value.slice(-1)[0].index;
   if (catalog.value.length - 1 > index) {
     getContent(index + 1, false);
+    store.saveBookProgress(); // 保存的是上一章的进度，不是预载的本章进度
   }
 };
 // IntersectionObserver回调 底部加载

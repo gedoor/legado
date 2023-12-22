@@ -111,6 +111,20 @@ public class StringUtil {
                 .toLowerCase().endsWith(suffix.toLowerCase());
     }
 
+    public static boolean startsWithIgnoreCase(String source, String prefix) {
+        if (isEmpty(prefix)) {
+            return true;
+        }
+        if (isEmpty(source)) {
+            return false;
+        }
+        if (prefix.length() > source.length()) {
+            return false;
+        }
+        return source.substring(0, prefix.length())
+                .toLowerCase().startsWith(prefix.toLowerCase());
+    }
+
     /**
      * If the given text is null return "", the original text otherwise.
      *

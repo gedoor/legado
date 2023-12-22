@@ -12,6 +12,7 @@ import okhttp3.Request
 import okhttp3.Response
 import org.jsoup.Connection
 
+@Suppress("ConstPropertyName")
 object CookieManager {
     /**
      * <domain>_session_cookie 会话期 cookie，应用重启后失效
@@ -56,7 +57,7 @@ object CookieManager {
         val cookie = CookieStore.getCookie(domain)
         val requestCookie = request.header("Cookie")
 
-        mergeCookies(cookie, requestCookie)?.let { newCookie ->
+        mergeCookies(requestCookie, cookie)?.let { newCookie ->
             kotlin.runCatching {
                 return request.newBuilder()
                     .header("Cookie", newCookie)

@@ -41,14 +41,13 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
                 throw NoStackTraceException(context.getString(R.string.non_null_name_url))
             }
-            if (source.equal(bookSource ?: BookSource())) {
-                return@execute source
+            if (!source.equal(bookSource ?: BookSource())) {
+                source.lastUpdateTime = System.currentTimeMillis()
             }
             bookSource?.let {
                 appDb.bookSourceDao.delete(it)
                 SourceConfig.removeSource(it.bookSourceUrl)
             }
-            source.lastUpdateTime = System.currentTimeMillis()
             appDb.bookSourceDao.insert(source)
             bookSource = source
             source

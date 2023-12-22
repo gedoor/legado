@@ -14,6 +14,7 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleData
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlin.coroutines.CoroutineContext
@@ -30,9 +31,10 @@ object WebBook {
         key: String,
         page: Int? = 1,
         context: CoroutineContext = Dispatchers.IO,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
         executeContext: CoroutineContext = Dispatchers.Main,
     ): Coroutine<ArrayList<SearchBook>> {
-        return Coroutine.async(scope, context, executeContext = executeContext) {
+        return Coroutine.async(scope, context, start = start, executeContext = executeContext) {
             searchBookAwait(bookSource, key, page)
         }
     }
@@ -266,9 +268,10 @@ object WebBook {
         nextChapterUrl: String? = null,
         needSave: Boolean = true,
         context: CoroutineContext = Dispatchers.IO,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
         executeContext: CoroutineContext = Dispatchers.Main,
     ): Coroutine<String> {
-        return Coroutine.async(scope, context, executeContext = executeContext) {
+        return Coroutine.async(scope, context, start = start, executeContext = executeContext) {
             getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
         }
     }

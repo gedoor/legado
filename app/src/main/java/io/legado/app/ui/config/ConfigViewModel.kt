@@ -8,7 +8,10 @@ import io.legado.app.data.appDb
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.utils.FileUtils
+import io.legado.app.utils.restart
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.delay
+import splitties.init.appCtx
 
 class ConfigViewModel(application: Application) : BaseViewModel(application) {
 
@@ -30,8 +33,9 @@ class ConfigViewModel(application: Application) : BaseViewModel(application) {
     fun clearWebViewData() {
         execute {
             FileUtils.delete(context.getDir("webview", Context.MODE_PRIVATE))
-        }.onSuccess {
-            context.toastOnUi(R.string.success)
+            context.toastOnUi(R.string.clear_webview_data_success)
+            delay(3000)
+            appCtx.restart()
         }
     }
 

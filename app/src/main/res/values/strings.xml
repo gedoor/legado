@@ -907,7 +907,7 @@
     <string name="disable_source">disable source</string>
     <string name="delete_source">delete source</string>
     <string name="chapter_pay">pay</string>
-    <string name="double_page_horizontal">Flat/Landscape Dual Page</string>
+    <string name="double_page_horizontal">Tablet/Landscape Dual Page</string>
     <string name="open_in_browser">open in browser</string>
     <string name="copy_url">copy url</string>
     <string name="open_fun">open function</string>
@@ -1139,4 +1139,9 @@
     <string name="preview_image_by_click">Click to preview image</string>
     <string name="default_home_page">Default HomePage</string>
     <string name="screen_portrait_reversed">Portrait Reversed</string>
+    <string name="del_ruby_tag">Delete ruby tag</string>
+    <string name="del_h_tag">Delete h tag</string>
+    <string name="adjust_chapter_page">Adjust of chapter page</string>
+    <string name="adjust_chapter_index">Adjust of chapter index</string>
+    <string name="clear_webview_data_success">Cleared successfully, automatically restarts the application after 3 seconds</string>
 </resources>

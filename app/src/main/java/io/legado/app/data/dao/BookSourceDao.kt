@@ -168,7 +168,7 @@ interface BookSourceDao {
     @Query("select * from book_sources where enabled = 1 and bookSourceUrl = :baseUrl")
     fun getBookSourceAddBook(baseUrl: String): BookSource?
 
-    @get:Query("select * from book_sources where enabled = 1 and trim(bookUrlPattern) <> '' and trim(bookUrlPattern) <> 'NONE'  order by enabled desc, customOrder")
+    @get:Query("select * from book_sources where enabled = 1 and trim(bookUrlPattern) <> '' and trim(bookUrlPattern) <> 'NONE' order by customOrder")
     val hasBookUrlPattern: List<BookSource>
 
     @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = ''")

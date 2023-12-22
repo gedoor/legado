@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.view.get
-import com.github.liuyueyi.quick.transfer.ChineseUtils
 import com.github.liuyueyi.quick.transfer.constants.TransType
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -24,7 +23,12 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.font.FontSelectDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.ChineseUtils
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.getIndexById
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onLongClick
 
@@ -103,7 +107,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
 
     private fun initViewEvent() = binding.run {
         chineseConverter.onChanged {
-            ChineseUtils.unLoad(*TransType.values())
+            ChineseUtils.unLoad(*TransType.entries.toTypedArray())
             postEvent(EventBus.UP_CONFIG, true)
         }
         textFontWeightConverter.onChanged {
