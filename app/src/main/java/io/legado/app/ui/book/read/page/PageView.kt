@@ -312,12 +312,7 @@ class PageView(context: Context) : FrameLayout(context) {
                 text = textPage.title
             }
         }
-        tvPage?.apply {
-            val page = "${index.plus(1)}/$pageSize"
-            if (text != page) {
-                text = page
-            }
-        }
+        tvPage?.text = "${index.plus(1)}/$pageSize"
         val readProgress = readProgress
         tvTotalProgress?.apply {
             if (text != readProgress) {
