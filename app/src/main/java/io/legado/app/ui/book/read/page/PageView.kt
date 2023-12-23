@@ -19,9 +19,12 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
-import io.legado.app.utils.*
+import io.legado.app.utils.activity
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.gone
+import io.legado.app.utils.statusBarHeight
 import splitties.views.backgroundColor
-import java.util.*
+import java.util.Date
 
 /**
  * 页面视图
@@ -299,12 +302,40 @@ class PageView(context: Context) : FrameLayout(context) {
      */
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
-        tvBookName?.text = ReadBook.book?.name
-        tvTitle?.text = textPage.title
-        tvPage?.text = "${index.plus(1)}/$pageSize"
-        tvTotalProgress?.text = readProgress
-        tvTotalProgress1?.text = "${textPage.chapterIndex.plus(1)}/${textPage.chapterSize}"
-        tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
+        tvBookName?.apply {
+            if (text != ReadBook.book?.name) {
+                text = ReadBook.book?.name
+            }
+        }
+        tvTitle?.apply {
+            if (text != textPage.title) {
+                text = textPage.title
+            }
+        }
+        tvPage?.apply {
+            val page = "${index.plus(1)}/$pageSize"
+            if (text != page) {
+                text = page
+            }
+        }
+        val readProgress = readProgress
+        tvTotalProgress?.apply {
+            if (text != readProgress) {
+                text = readProgress
+            }
+        }
+        tvTotalProgress1?.apply {
+            val progress = "${chapterIndex.plus(1)}/${chapterSize}"
+            if (text != progress) {
+                text = progress
+            }
+        }
+        tvPageAndTotal?.apply {
+            val pageAndTotal = "${index.plus(1)}/$pageSize  $readProgress"
+            if (text != pageAndTotal) {
+                text = pageAndTotal
+            }
+        }
     }
 
     /**
