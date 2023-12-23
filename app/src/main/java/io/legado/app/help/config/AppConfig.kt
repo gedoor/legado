@@ -1,6 +1,5 @@
 package io.legado.app.help.config
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import io.legado.app.BuildConfig
@@ -36,10 +35,14 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var clickActionBL = appCtx.getPrefInt(PreferKey.clickActionBL, 2)
     var clickActionBC = appCtx.getPrefInt(PreferKey.clickActionBC, 1)
     var clickActionBR = appCtx.getPrefInt(PreferKey.clickActionBR, 1)
+    var themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PreferKey.themeMode -> isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
+            PreferKey.themeMode -> {
+                themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
+                isEInkMode = themeMode == "3"
+            }
             PreferKey.clickActionTL -> clickActionTL =
                 appCtx.getPrefInt(PreferKey.clickActionTL, 2)
 
@@ -80,17 +83,13 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    fun isNightTheme(context: Context): Boolean {
-        return when (context.getPrefString(PreferKey.themeMode, "0")) {
+    var isNightTheme: Boolean
+        get() = when (themeMode) {
             "1" -> false
             "2" -> true
             "3" -> false
             else -> sysConfiguration.isNightMode
         }
-    }
-
-    var isNightTheme: Boolean
-        get() = isNightTheme(appCtx)
         set(value) {
             if (isNightTheme != value) {
                 if (value) {

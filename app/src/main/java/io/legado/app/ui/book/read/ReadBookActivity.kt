@@ -6,7 +6,13 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.InputDevice
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
@@ -17,7 +23,12 @@ import androidx.lifecycle.lifecycleScope
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.legado.app.BuildConfig
 import io.legado.app.R
-import io.legado.app.constant.*
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookType
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.PreferKey
+import io.legado.app.constant.Status
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -27,7 +38,13 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.IntentData
 import io.legado.app.help.TTS
-import io.legado.app.help.book.*
+import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.isAudio
+import io.legado.app.help.book.isEpub
+import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.isLocalTxt
+import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
@@ -74,9 +91,36 @@ import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.PopupAction
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.SyncedRenderer
+import io.legado.app.utils.applyOpenTint
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.hexString
+import io.legado.app.utils.iconItemOnLongClick
+import io.legado.app.utils.invisible
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isTrue
+import io.legado.app.utils.launch
+import io.legado.app.utils.navigationBarGravity
+import io.legado.app.utils.navigationBarHeight
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.observeEventSticky
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.sysScreenOffTime
+import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 阅读界面
@@ -838,7 +882,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             return false
         }
         if (!AppConfig.volumeKeyPageOnLongPress && longPress) {
-            return false
+            return true
         }
         binding.readView.cancelSelect()
         binding.readView.pageDelegate?.isCancel = false
