@@ -324,18 +324,8 @@ class PageView(context: Context) : FrameLayout(context) {
                 text = readProgress
             }
         }
-        tvTotalProgress1?.apply {
-            val progress = "${chapterIndex.plus(1)}/${chapterSize}"
-            if (text != progress) {
-                text = progress
-            }
-        }
-        tvPageAndTotal?.apply {
-            val pageAndTotal = "${index.plus(1)}/$pageSize  $readProgress"
-            if (text != pageAndTotal) {
-                text = pageAndTotal
-            }
-        }
+        tvTotalProgress1?.text = "${chapterIndex.plus(1)}/${chapterSize}"
+        tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
     }
 
     /**

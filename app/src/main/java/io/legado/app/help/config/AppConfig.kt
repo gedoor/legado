@@ -467,14 +467,17 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val progressBarBehavior: String?
         get() = appCtx.getPrefString(PreferKey.progressBarBehavior, "page")
 
-    val volumeKeyPageOnLongPress
-        get() = appCtx.getPrefBoolean(PreferKey.volumeKeyPageOnLongPress, false)
+    val keyPageOnLongPress
+        get() = appCtx.getPrefBoolean(PreferKey.keyPageOnLongPress, false)
 
     val volumeKeyPage
         get() = appCtx.getPrefBoolean(PreferKey.volumeKeyPage, true)
 
     val volumeKeyPageOnPlay
         get() = appCtx.getPrefBoolean(PreferKey.volumeKeyPageOnPlay, true)
+
+    val mouseWheelPage
+        get() = appCtx.getPrefBoolean(PreferKey.mouseWheelPage, true)
 
     var searchScope: String
         get() = appCtx.getPrefString("searchScope") ?: ""
