@@ -178,6 +178,9 @@ class EpubFile(var book: Book) {
         elements.select("title").remove()
         elements.select("img").forEach {
             val src = it.attr("src")
+            if (src == "cover.jpeg") {
+                return@forEach
+            }
             val path = chapter.url.substringBeforeLast("/", "")
             val absSrc = if (path.isEmpty()) {
                 src

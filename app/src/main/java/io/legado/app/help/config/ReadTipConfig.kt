@@ -4,6 +4,7 @@ import android.content.Context
 import io.legado.app.R
 import splitties.init.appCtx
 
+@Suppress("ConstPropertyName")
 object ReadTipConfig {
 
     const val none = 0
