@@ -50,6 +50,10 @@ import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
 import io.legado.app.ui.book.read.config.*
+import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
+import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
+import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_COLOR
+import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_DIVIDER_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
@@ -1358,6 +1362,17 @@ class ReadBookActivity : BaseReadBookActivity(),
             setMessage(R.string.current_progress_exceeds_cloud)
             okButton {
                 ReadBook.setProgress(progress)
+            }
+            noButton()
+        }
+    }
+
+    override fun sureNewProgress(progress: BookProgress) {
+        alert(R.string.get_book_progress) {
+            setMessage(R.string.cloud_progress_exceeds_current)
+            okButton {
+                ReadBook.setProgress(progress)
+                ReadBook.saveRead()
             }
             noButton()
         }
