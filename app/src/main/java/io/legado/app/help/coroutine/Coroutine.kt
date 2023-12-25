@@ -139,7 +139,7 @@ class Coroutine<T>(
             job.cancel(cause)
         }
         cancel?.let {
-            MainScope().launch(executeContext) {
+            DEFAULT.launch(executeContext) {
                 if (null == it.context) {
                     it.block.invoke(scope)
                 } else {

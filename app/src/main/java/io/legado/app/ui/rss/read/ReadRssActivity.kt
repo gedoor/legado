@@ -6,8 +6,19 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
-import android.view.*
-import android.webkit.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
+import android.webkit.JavascriptInterface
+import android.webkit.SslErrorHandler
+import android.webkit.URLUtil
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.size
@@ -29,8 +40,23 @@ import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.get
+import io.legado.app.utils.gone
+import io.legado.app.utils.invisible
+import io.legado.app.utils.isTrue
+import io.legado.app.utils.longSnackbar
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.setDarkeningAllowed
+import io.legado.app.utils.setTintMutate
+import io.legado.app.utils.share
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.textArray
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
@@ -146,7 +172,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     @JavascriptInterface
     fun isNightTheme(): Boolean {
-        return AppConfig.isNightTheme(this)
+        return AppConfig.isNightTheme
     }
 
     @SuppressLint("SetJavaScriptEnabled")

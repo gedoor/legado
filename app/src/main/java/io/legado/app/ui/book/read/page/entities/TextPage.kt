@@ -29,6 +29,10 @@ data class TextPage(
     var leftLineSize: Int = 0
 ) {
 
+    companion object {
+        val readProgressFormatter = DecimalFormat("0.0%")
+    }
+
     val lines: List<TextLine> get() = textLines
     val lineSize: Int get() = textLines.size
     val charSize: Int get() = text.length.coerceAtLeast(1)
@@ -83,9 +87,9 @@ data class TextPage(
             val tj = surplus / (leftLineSize - 1)
             for (i in 1 until leftLineSize) {
                 val line = textLines[i]
-                line.lineTop = line.lineTop + tj * i
-                line.lineBase = line.lineBase + tj * i
-                line.lineBottom = line.lineBottom + tj * i
+                line.lineTop += tj * i
+                line.lineBase += tj * i
+                line.lineBottom += tj * i
             }
         }
         if (leftLineSize == lineSize) return
@@ -101,9 +105,9 @@ data class TextPage(
             for (i in leftLineSize + 1 until textLines.size) {
                 val line = textLines[i]
                 val surplusIndex = i - leftLineSize
-                line.lineTop = line.lineTop + tj * surplusIndex
-                line.lineBase = line.lineBase + tj * surplusIndex
-                line.lineBottom = line.lineBottom + tj * surplusIndex
+                line.lineTop += tj * surplusIndex
+                line.lineBase += tj * surplusIndex
+                line.lineBottom += tj * surplusIndex
             }
         }
     }
@@ -196,7 +200,7 @@ data class TextPage(
      */
     val readProgress: String
         get() {
-            val df = DecimalFormat("0.0%")
+            val df = readProgressFormatter
             if (chapterSize == 0 || pageSize == 0 && chapterIndex == 0) {
                 return "0.0%"
             } else if (pageSize == 0) {

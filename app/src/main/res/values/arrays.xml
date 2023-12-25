@@ -63,8 +63,8 @@
 	<string-array name="screen_time_out">
 		<item>Default</item>
 		<item>1 min</item>
-		<item>2 min</item>
-		<item>3 min</item>
+		<item>5 min</item>
+		<item>10 min</item>
 		<item>Always</item>
 	</string-array>
 

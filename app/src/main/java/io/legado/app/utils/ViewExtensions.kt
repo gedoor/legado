@@ -11,9 +11,16 @@ import android.os.Build
 import android.text.Html
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.EdgeEffect
+import android.widget.EditText
+import android.widget.RadioGroup
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuPopupHelper
@@ -24,7 +31,6 @@ import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.TintHelper
 import splitties.systemservices.inputMethodManager
-
 import java.lang.reflect.Field
 
 
@@ -57,7 +63,7 @@ fun View.disableAutoFill() = run {
 
 fun View.applyTint(
     @ColorInt color: Int,
-    isDark: Boolean = AppConfig.isNightTheme(context)
+    isDark: Boolean = AppConfig.isNightTheme
 ) {
     TintHelper.setTintAuto(this, color, false, isDark)
 }

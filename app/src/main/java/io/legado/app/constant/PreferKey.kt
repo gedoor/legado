@@ -140,6 +140,10 @@ object PreferKey {
     const val showBookshelfFastScroller = "showBookshelfFastScroller"
     const val importKeepEnable = "importKeepEnable"
     const val previewImageByClick = "previewImageByClick"
+    const val keyPageOnLongPress = "keyPageOnLongPress"
+    const val volumeKeyPage = "volumeKeyPage"
+    const val volumeKeyPageOnPlay = "volumeKeyPageOnPlay"
+    const val mouseWheelPage = "mouseWheelPage"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

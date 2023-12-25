@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowInsets
@@ -34,8 +35,19 @@ import io.legado.app.ui.book.read.config.ClickActionConfigDialog
 import io.legado.app.ui.book.read.config.PaddingConfigDialog
 import io.legado.app.ui.book.read.config.PageKeyDialog
 import io.legado.app.ui.file.HandleFileContract
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.find
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.gone
+import io.legado.app.utils.isTv
+import io.legado.app.utils.navigationBarGravity
+import io.legado.app.utils.navigationBarHeight
+import io.legado.app.utils.setLightStatusBar
+import io.legado.app.utils.setNavigationBarColorAuto
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 /**
  * 阅读界面
@@ -303,11 +315,17 @@ abstract class BaseReadBookActivity :
     }
 
     fun isPrevKey(keyCode: Int): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_UNKNOWN) {
+            return false
+        }
         val prevKeysStr = getPrefString(PreferKey.prevKeys)
         return prevKeysStr?.split(",")?.contains(keyCode.toString()) ?: false
     }
 
     fun isNextKey(keyCode: Int): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_UNKNOWN) {
+            return false
+        }
         val nextKeysStr = getPrefString(PreferKey.nextKeys)
         return nextKeysStr?.split(",")?.contains(keyCode.toString()) ?: false
     }

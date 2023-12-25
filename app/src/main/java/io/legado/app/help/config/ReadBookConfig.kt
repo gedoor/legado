@@ -39,6 +39,7 @@ import java.io.File
 /**
  * 阅读界面配置
  */
+@Suppress("ConstPropertyName")
 @Keep
 object ReadBookConfig {
     const val configFileName = "readConfig.json"
