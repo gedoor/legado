@@ -31,7 +31,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -40,7 +40,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private var upTocPool =
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
     private val waitUpTocBooks = arrayListOf<String>()
-    private val onUpTocBooks = CopyOnWriteArraySet<String>()
+    private val onUpTocBooks = ConcurrentHashMap.newKeySet<String>()
     val onUpBooksLiveData = MutableLiveData<Int>()
     private var upTocJob: Job? = null
     private var cacheBookJob: Job? = null

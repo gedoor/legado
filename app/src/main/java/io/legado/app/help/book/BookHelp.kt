@@ -13,9 +13,25 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.ArchiveUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.ImageUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.StringUtils
+import io.legado.app.utils.SvgUtils
+import io.legado.app.utils.UrlUtil
+import io.legado.app.utils.exists
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.getFile
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.postEvent
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
 import java.io.ByteArrayInputStream
@@ -23,20 +39,20 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 import java.util.zip.ZipFile
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-@Suppress("unused")
+@Suppress("unused", "ConstPropertyName")
 object BookHelp {
     private val downloadDir: File = appCtx.externalFiles
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
     private const val cacheEpubFolderName = "epub"
-    private val downloadImages = CopyOnWriteArraySet<String>()
+    private val downloadImages = ConcurrentHashMap.newKeySet<String>()
 
     val cachePath = FileUtils.getPath(downloadDir, cacheFolderName)
 
