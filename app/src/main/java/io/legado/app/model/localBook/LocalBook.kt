@@ -76,7 +76,7 @@ object LocalBook {
             }
             val file = File(uri.path!!)
             if (file.exists()) {
-                return@runCatching File(uri.path!!).lastModified()
+                return@runCatching file.lastModified()
             }
             throw FileNotFoundException("${uri.path} 文件不存在")
         }

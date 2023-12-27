@@ -29,8 +29,10 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.getExportFileName
+import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.OrderCoroutine
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
@@ -177,6 +179,7 @@ class ExportBookService : BaseService() {
                 val book = appDb.bookDao.getBook(bookUrl)
                 try {
                     book ?: throw NoStackTraceException("获取${bookUrl}书籍出错")
+                    refreshChapterList(book)
                     notificationContentText = getString(
                         R.string.export_book_notification_content,
                         book.name,
@@ -204,6 +207,22 @@ class ExportBookService : BaseService() {
                     postEvent(EventBus.EXPORT_BOOK, bookUrl)
                 }
             }
+        }
+    }
+
+    private fun refreshChapterList(book: Book) {
+        if (!book.isLocal) {
+            return
+        }
+        if (LocalBook.getLastModified(book).getOrDefault(0L) < book.latestChapterTime) {
+            return
+        }
+        kotlin.runCatching {
+            LocalBook.getChapterList(book)
+        }.onSuccess {
+            book.latestChapterTime = System.currentTimeMillis()
+            appDb.bookChapterDao.delByBook(book.bookUrl)
+            appDb.bookChapterDao.insert(*it.toTypedArray())
         }
     }
 

@@ -10,13 +10,6 @@ import io.legado.app.help.book.isLocal
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.sendValue
 import kotlinx.coroutines.ensureActive
-import kotlin.collections.HashSet
-import kotlin.collections.List
-import kotlin.collections.contains
-import kotlin.collections.forEach
-import kotlin.collections.hashMapOf
-import kotlin.collections.hashSetOf
-import kotlin.collections.isNotEmpty
 import kotlin.collections.set
 
 
@@ -34,7 +27,9 @@ class CacheViewModel(application: Application) : BaseViewModel(application) {
                     val chapterCaches = hashSetOf<String>()
                     val cacheNames = BookHelp.getChapterFiles(book)
                     if (cacheNames.isNotEmpty()) {
-                        appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                        appDb.bookChapterDao.getChapterList(book.bookUrl).also {
+                            book.totalChapterNum = it.size
+                        }.forEach { chapter ->
                             if (cacheNames.contains(chapter.getFileName()) || chapter.isVolume) {
                                 chapterCaches.add(chapter.url)
                             }

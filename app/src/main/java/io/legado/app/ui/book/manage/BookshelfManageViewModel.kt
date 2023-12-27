@@ -2,12 +2,14 @@ package io.legado.app.ui.book.manage
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
@@ -105,6 +107,16 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
             batchChangeSourceState.postValue(true)
         }.onFinally {
             batchChangeSourceState.postValue(false)
+        }
+    }
+
+    fun clearCache(books: List<Book>) {
+        execute {
+            books.forEach {
+                BookHelp.clearCache(it)
+            }
+        }.onSuccess {
+            context.toastOnUi(R.string.clear_cache_success)
         }
     }
 
