@@ -1,5 +1,6 @@
 package io.legado.app.constant
 
+@Suppress("ConstPropertyName")
 object IntentAction {
     const val start = "start"
     const val play = "play"
