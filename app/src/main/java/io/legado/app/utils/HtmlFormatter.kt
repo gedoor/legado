@@ -17,6 +17,9 @@ object HtmlFormatter {
         "<img[^>]*\\ssrc\\s*=\\s*\"([^\"{>]*\\{(?:[^{}]|\\{[^}>]+\\})+\\})\"[^>]*>|<img[^>]*\\sdata-[^=>]*=\\s*\"([^\">]*)\"[^>]*>|<img[^>]*\\ssrc\\s*=\\s*\"([^\">]*)\"[^>]*>",
         Pattern.CASE_INSENSITIVE
     )
+    private val indent1Regex = "\\s*\\n+\\s*".toRegex()
+    private val indent2Regex = "^[\\n\\s]+".toRegex()
+    private val lastRegex = "[\\n\\s]+$".toRegex()
 
     fun format(html: String?, otherRegex: Regex = otherHtmlRegex): String {
         html ?: return ""
@@ -26,9 +29,9 @@ object HtmlFormatter {
             .replace(wrapHtmlRegex, "\n")
             .replace(commentRegex, "")
             .replace(otherRegex, "")
-            .replace("\\s*\\n+\\s*".toRegex(), "\n　　")
-            .replace("^[\\n\\s]+".toRegex(), "　　")
-            .replace("[\\n\\s]+$".toRegex(), "")
+            .replace(indent1Regex, "\n　　")
+            .replace(indent2Regex, "　　")
+            .replace(lastRegex, "")
     }
 
     fun formatKeepImg(html: String?, redirectUrl: URL? = null): String {

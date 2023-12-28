@@ -5,18 +5,32 @@ import androidx.annotation.Keep
 import com.script.SimpleBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.JS_PATTERN
-import io.legado.app.data.entities.*
+import io.legado.app.data.entities.BaseBook
+import io.legado.app.data.entities.BaseSource
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.isJson
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
+import org.jsoup.nodes.Node
 import org.mozilla.javascript.NativeObject
 import java.net.URL
 import java.util.regex.Pattern
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 /**
  * 解析规则获取结果
@@ -55,7 +69,10 @@ class AnalyzeRule(
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("内容不可空（Content cannot be null）")
         this.content = content
-        isJSON = content.toString().isJson()
+        isJSON = when (content) {
+            is Node -> false
+            else -> content.toString().isJson()
+        }
         setBaseUrl(baseUrl)
         objectChangedXP = true
         objectChangedJS = true
