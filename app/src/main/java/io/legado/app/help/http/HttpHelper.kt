@@ -4,6 +4,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieManager.cookieJarHeader
+import io.legado.app.utils.GzipSourceCompat
 import io.legado.app.utils.NetworkUtils
 import okhttp3.ConnectionSpec
 import okhttp3.Cookie
@@ -12,6 +13,9 @@ import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.internal.http.RealResponseBody
+import okhttp3.internal.http.promisesBody
+import okio.buffer
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -100,6 +104,33 @@ val okHttpClient: OkHttpClient by lazy {
             Cronet.interceptor?.let {
                 builder.addInterceptor(it)
             }
+        }
+    }
+    builder.addInterceptor { chain ->
+        val request = chain.request()
+        val requestBuilder = request.newBuilder()
+        requestBuilder.header("Accept-Encoding", "gzip")
+
+        val response = chain.proceed(requestBuilder.build())
+
+        val responseBody = response.body
+        if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)
+            && response.promisesBody() && responseBody != null
+        ) {
+            val responseBuilder = response.newBuilder()
+            val gzipSource = GzipSourceCompat(responseBody.source())
+            val strippedHeaders = response.headers.newBuilder()
+                .removeAll("Content-Encoding")
+                .removeAll("Content-Length")
+                .build()
+            responseBuilder.run {
+                headers(strippedHeaders)
+                val contentType = response.header("Content-Type")
+                body(RealResponseBody(contentType, -1L, gzipSource.buffer()))
+                build()
+            }
+        } else {
+            response
         }
     }
     builder.build().apply {
