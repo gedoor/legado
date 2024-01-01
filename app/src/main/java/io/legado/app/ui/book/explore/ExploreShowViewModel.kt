@@ -70,18 +70,4 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
             }
     }
 
-    suspend fun loadExploreBooks(start: Int, end: Int): List<SearchBook> {
-        val source = bookSource
-        val url = exploreUrl
-        if (source == null || url == null) return emptyList()
-        val searchBooks = arrayListOf<SearchBook>()
-        for (page in start..end) {
-            val books = WebBook.exploreBookAwait(source, url, page)
-            if (books.isEmpty()) break
-            searchBooks.addAll(books)
-        }
-        searchBooks.reverse()
-        return searchBooks
-    }
-
 }

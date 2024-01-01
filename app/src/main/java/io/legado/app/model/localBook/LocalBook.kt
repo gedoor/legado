@@ -82,7 +82,7 @@ object LocalBook {
         }
     }
 
-    @Throws(Exception::class)
+    @Throws(TocEmptyException::class)
     fun getChapterList(book: Book): ArrayList<BookChapter> {
         val chapters = when {
             book.isEpub -> {

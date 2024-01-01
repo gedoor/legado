@@ -1116,8 +1116,6 @@ Còn </string>
      <string name="test">Kiểm tra</string>
      <string name="show_wait_up_count">Hiển thị số bản cập nhật đang đợi</string>
      <string name="exit_app">Thoát khỏi phần mềm</string>
-     <string name="add_all_to_bookshelf">Thêm tất cả vào giá sách</string>
-    <string name="page_to">Trang tới</string>
     <string name="result_analyzed">Analyzed</string>
     <string name="bookshelf_px_4">Comprehensive</string>
     <string name="effective_replaces">起效的替换</string>
