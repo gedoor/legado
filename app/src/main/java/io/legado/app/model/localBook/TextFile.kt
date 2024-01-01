@@ -113,7 +113,8 @@ class TextFile(private var book: Book) {
         val count = (end - start).toInt()
         val buffer = ByteArray(count)
 
-        if (bufferEnd in start..end || bufferStart in start..end) {
+        @Suppress("ConvertTwoComparisonsToRangeCheck")
+        if (start < bufferEnd && end > bufferEnd || start < bufferStart && end > bufferStart) {
             /** 章节内容在缓冲区交界处 */
             LocalBook.getBookInputStream(book).use { bis ->
                 bis.skip(start)
