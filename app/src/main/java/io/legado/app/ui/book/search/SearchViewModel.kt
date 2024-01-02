@@ -16,12 +16,12 @@ import io.legado.app.utils.ConflateLiveData
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
-import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     val handler = Handler(Looper.getMainLooper())
-    val bookshelf: MutableSet<String> = Collections.synchronizedSet(hashSetOf<String>())
+    val bookshelf: MutableSet<String> = ConcurrentHashMap.newKeySet()
     val upAdapterLiveData = MutableLiveData<String>()
     var searchBookLiveData = ConflateLiveData<List<SearchBook>>(1000)
     val searchScope: SearchScope = SearchScope(AppConfig.searchScope)
@@ -60,7 +60,12 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     init {
         execute {
             appDb.bookDao.flowAll().mapLatest { books ->
-                books.map { "${it.name}-${it.author}" }
+                val keys = arrayListOf<String>()
+                books.forEach {
+                    keys.add("${it.name}-${it.author}")
+                    keys.add(it.name)
+                }
+                keys
             }.collect {
                 bookshelf.clear()
                 bookshelf.addAll(it)
@@ -68,6 +73,14 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onError {
             AppLog.put("加载书架数据失败", it)
+        }
+    }
+
+    fun isInBookShelf(name: String, author: String): Boolean {
+        return if (author.isNotBlank()) {
+            bookshelf.contains("$name-$author")
+        } else {
+            bookshelf.contains(name)
         }
     }
 
@@ -101,7 +114,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     fun saveSearchKey(key: String) {
         execute {
             appDb.searchKeywordDao.get(key)?.let {
-                it.usage = it.usage + 1
+                it.usage += 1
                 it.lastUseTime = System.currentTimeMillis()
                 appDb.searchKeywordDao.update(it)
             } ?: appDb.searchKeywordDao.insert(SearchKeyword(key, 1))
