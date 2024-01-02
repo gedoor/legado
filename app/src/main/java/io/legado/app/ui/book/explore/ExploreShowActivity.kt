@@ -84,11 +84,7 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     }
 
     override fun isInBookshelf(name: String, author: String): Boolean {
-        return if (author.isNotBlank()) {
-            viewModel.bookshelf.contains("$name-$author")
-        } else {
-            viewModel.bookshelf.any { it.startsWith("$name-") }
-        }
+        return viewModel.isInBookShelf(name, author)
     }
 
     override fun showBookInfo(book: Book) {

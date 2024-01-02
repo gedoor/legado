@@ -16,12 +16,12 @@ import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
-import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
-    val bookshelf: MutableSet<String> = Collections.synchronizedSet(hashSetOf<String>())
+    val bookshelf: MutableSet<String> = ConcurrentHashMap.newKeySet()
     val upAdapterLiveData = MutableLiveData<String>()
     val booksData = MutableLiveData<List<SearchBook>>()
     val errorLiveData = MutableLiveData<String>()
@@ -32,7 +32,12 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
     init {
         execute {
             appDb.bookDao.flowAll().mapLatest { books ->
-                books.map { "${it.name}-${it.author}" }
+                val keys = arrayListOf<String>()
+                books.forEach {
+                    keys.add("${it.name}-${it.author}")
+                    keys.add(it.name)
+                }
+                keys
             }.collect {
                 bookshelf.clear()
                 bookshelf.addAll(it)
@@ -68,6 +73,14 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                 it.printOnDebug()
                 errorLiveData.postValue(it.stackTraceStr)
             }
+    }
+
+    fun isInBookShelf(name: String, author: String): Boolean {
+        return if (author.isNotBlank()) {
+            bookshelf.contains("$name-$author")
+        } else {
+            bookshelf.contains(name)
+        }
     }
 
 }
