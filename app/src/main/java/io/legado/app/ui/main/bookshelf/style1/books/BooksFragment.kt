@@ -25,13 +25,21 @@ import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.*
+import io.legado.app.utils.SystemUtils
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**
@@ -69,6 +77,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         private set
     private var upLastUpdateTimeJob: Job? = null
     private var defaultScrollBarSize = 0
+    private var enableRefresh = true
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         this.savedInstanceState = savedInstanceState
@@ -135,8 +144,9 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    fun setEnableRefresh(enableRefresh: Boolean) {
-        binding.refreshLayout.isEnabled = enableRefresh
+    fun setEnableRefresh(enable: Boolean) {
+        enableRefresh = enable
+        binding.refreshLayout.isEnabled = enable
     }
 
     /**
@@ -166,9 +176,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 AppLog.put("书架更新出错", it)
             }.conflate().collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
-                binding.refreshLayout.run {
-                    isEnabled = isEnabled && list.isNotEmpty()
-                }
+                binding.refreshLayout.isEnabled = enableRefresh && list.isNotEmpty()
                 booksAdapter.setItems(list)
                 recoverPositionState()
                 delay(100)
