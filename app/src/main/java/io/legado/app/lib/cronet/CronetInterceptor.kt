@@ -27,7 +27,7 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
             builder.removeHeader("Accept-Encoding")
 
             val newReq = builder.build()
-            proceedWithCronet(newReq, chain.call())/*?.let { response ->
+            proceedWithCronet(newReq, chain.call(), chain.readTimeoutMillis())/*?.let { response ->
                 //从Response 中保存Cookie到CookieJar
                 //cookieJar.receiveHeaders(newReq.url, response.headers)
                 response
@@ -45,11 +45,11 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
     }
 
     @SuppressLint("ObsoleteSdkInt")
-    private fun proceedWithCronet(request: Request, call: Call): Response? {
+    private fun proceedWithCronet(request: Request, call: Call, readTimeoutMillis: Int): Response? {
         val callBack = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            NewCallBack(request, call)
+            NewCallBack(request, call, readTimeoutMillis)
         } else {
-            OldCallback(request, call)
+            OldCallback(request, call, readTimeoutMillis)
         }
         buildRequest(request, callBack)?.runCatching {
             return callBack.waitForDone(this)

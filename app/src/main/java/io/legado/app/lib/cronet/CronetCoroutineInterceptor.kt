@@ -5,7 +5,12 @@ import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.CookieJar
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.internal.http.receiveHeaders
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
@@ -43,12 +48,12 @@ class CronetCoroutineInterceptor(private val cookieJar: CookieJar) : Interceptor
             runBlocking() {
                 if (timeout > 0) {
                     withTimeout(timeout) {
-                        proceedWithCronet(newReq, chain.call()).also { response ->
+                        proceedWithCronet(newReq, chain.call(), chain.readTimeoutMillis()).also { response ->
                             cookieJar.receiveHeaders(newReq.url, response.headers)
                         }
                     }
                 } else {
-                    proceedWithCronet(newReq, chain.call()).also { response ->
+                    proceedWithCronet(newReq, chain.call(), chain.readTimeoutMillis()).also { response ->
                         cookieJar.receiveHeaders(newReq.url, response.headers)
                     }
                 }
@@ -68,10 +73,14 @@ class CronetCoroutineInterceptor(private val cookieJar: CookieJar) : Interceptor
     }
 
 
-    private suspend fun proceedWithCronet(request: Request, call: Call): Response =
+    private suspend fun proceedWithCronet(
+        request: Request,
+        call: Call,
+        readTimeoutMillis: Int
+    ): Response =
         suspendCancellableCoroutine<Response> { coroutine ->
 
-            val callBack = object : AbsCallBack(originalRequest = request, mCall = call) {
+            val callBack = object : AbsCallBack(request, call, readTimeoutMillis) {
                 override fun waitForDone(urlRequest: UrlRequest): Response {
                     TODO("Not yet implemented")
                 }

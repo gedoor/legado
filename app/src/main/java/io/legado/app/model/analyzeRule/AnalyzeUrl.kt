@@ -27,12 +27,15 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import kotlin.math.max
 
 /**
  * Created by GKF on 2018/1/24.
@@ -51,6 +54,7 @@ class AnalyzeUrl(
     private val source: BaseSource? = null,
     private val ruleData: RuleDataInterface? = null,
     private val chapter: BookChapter? = null,
+    private val readTimeout: Long? = null,
     headerMapF: Map<String, String>? = null,
 ) : JsExtensions {
     companion object {
@@ -404,7 +408,7 @@ class AnalyzeUrl(
             if (this.useWebView && useWebView) {
                 strResponse = when (method) {
                     RequestMethod.POST -> {
-                        val res = getProxyClient(proxy).newCallStrResponse(retry) {
+                        val res = getClient().newCallStrResponse(retry) {
                             addHeaders(headerMap)
                             url(urlNoQuery)
                             if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
@@ -432,7 +436,7 @@ class AnalyzeUrl(
                     ).getStrResponse()
                 }
             } else {
-                strResponse = getProxyClient(proxy).newCallStrResponse(retry) {
+                strResponse = getClient().newCallStrResponse(retry) {
                     addHeaders(headerMap)
                     when (method) {
                         RequestMethod.POST -> {
@@ -484,7 +488,7 @@ class AnalyzeUrl(
         val concurrentRecord = getConcurrentRecord()
         try {
             setCookie()
-            val response = getProxyClient(proxy).newCallResponse(retry) {
+            val response = getClient().newCallResponse(retry) {
                 addHeaders(headerMap)
                 when (method) {
                     RequestMethod.POST -> {
@@ -511,15 +515,24 @@ class AnalyzeUrl(
         }
     }
 
+    private fun getClient(): OkHttpClient {
+        val client = getProxyClient(proxy)
+        if (readTimeout == null) {
+            return client
+        }
+        return client.newBuilder()
+            .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+            .callTimeout(max(60 * 1000L, readTimeout * 2), TimeUnit.MILLISECONDS)
+            .build()
+    }
+
     fun getResponse(): Response {
         return runBlocking {
             getResponseAwait()
         }
     }
 
-    @Suppress("UnnecessaryVariable")
     private fun getByteArrayIfDataUri(): ByteArray? {
-        @Suppress("RegExpRedundantEscape")
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
         if (dataUriFindResult != null) {
             val dataUriBase64 = dataUriFindResult.groupValues[1]

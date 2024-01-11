@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 abstract class AbsCallBack(
     var originalRequest: Request,
     val mCall: Call,
+    var readTimeoutMillis: Int,
     private val eventListener: EventListener? = null,
     private val responseCallback: Callback? = null
 ) : UrlRequest.Callback() {
@@ -52,6 +53,9 @@ abstract class AbsCallBack(
     private var redirectRequest: Request? = null
 
     init {
+        if (readTimeoutMillis == 0) {
+            readTimeoutMillis = Int.MAX_VALUE
+        }
         if (originalRequest.header(cookieJarHeader) != null) {
             enableCookieJar = true
             originalRequest = originalRequest.newBuilder()
@@ -411,7 +415,7 @@ abstract class AbsCallBack(
 
         private var buffer = ByteBuffer.allocateDirect(32 * 1024)
         private var closed = false
-        private val timeout = mCall.timeout().timeoutNanos()
+        private val timeout = readTimeoutMillis.toLong()
 
         override fun close() {
             cancelJob?.cancel()
@@ -443,7 +447,7 @@ abstract class AbsCallBack(
 
             request?.read(buffer)
 
-            val result = callbackResults.poll(timeout, TimeUnit.NANOSECONDS)
+            val result = callbackResults.poll(timeout, TimeUnit.MILLISECONDS)
             if (result == null) {
                 request?.cancel()
                 throw IOException("Body Read Timeout")

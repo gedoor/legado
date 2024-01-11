@@ -15,7 +15,8 @@ import java.util.concurrent.TimeUnit
 @SuppressLint("ObsoleteSdkInt")
 @Keep
 @RequiresApi(api = Build.VERSION_CODES.N)
-class NewCallBack(originalRequest: Request, mCall: Call) : AbsCallBack(originalRequest, mCall) {
+class NewCallBack(originalRequest: Request, mCall: Call, readTimeoutMillis: Int) :
+    AbsCallBack(originalRequest, mCall, readTimeoutMillis) {
 
     private val responseFuture = CompletableFuture<Response>()
 
