@@ -9,7 +9,8 @@ import org.chromium.net.UrlRequest
 import java.io.IOException
 
 @Keep
-class OldCallback(originalRequest: Request, mCall: Call) : AbsCallBack(originalRequest, mCall) {
+class OldCallback(originalRequest: Request, mCall: Call, readTimeoutMillis: Int) :
+    AbsCallBack(originalRequest, mCall, readTimeoutMillis) {
 
     private val mResponseCondition = ConditionVariable()
     private var mException: IOException? = null
