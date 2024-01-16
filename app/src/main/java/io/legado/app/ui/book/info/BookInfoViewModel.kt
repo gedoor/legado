@@ -18,7 +18,13 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoBooksDirException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
-import io.legado.app.help.book.*
+import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.getExportFileName
+import io.legado.app.help.book.getRemoteUrl
+import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.isSameNameAuthor
+import io.legado.app.help.book.isWebFile
+import io.legado.app.help.book.removeType
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
 import io.legado.app.model.BookCover
@@ -26,7 +32,11 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.*
+import io.legado.app.utils.ArchiveUtils
+import io.legado.app.utils.UrlUtil
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -157,17 +167,18 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 loadChapter(book, scope)
             } else {
                 bookSource?.let { bookSource ->
-                    val oldBook = book.copy()
                     WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
                         .onSuccess(IO) {
-                            appDb.bookDao.getBook(book.name, book.author)?.let {
+                            val dbBook = appDb.bookDao.getBook(book.name, book.author)
+                            if (dbBook != null) {
+                                dbBook.updateTo(it)
                                 inBookshelf = true
                             }
                             bookData.postValue(it)
                             if (inBookshelf) {
                                 appDb.bookDao.update(it)
-                                if (oldBook.name != book.name) {
-                                    BookHelp.updateCacheFolder(oldBook, book)
+                                if (dbBook!!.name != book.name) {
+                                    BookHelp.updateCacheFolder(dbBook, book)
                                 }
                             }
                             if (it.isWebFile) {
