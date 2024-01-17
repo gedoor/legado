@@ -91,7 +91,7 @@ abstract class AbsCallBack(
             return
         }
         if (mCall.isCanceled()) {
-            onError(IOException("Request Canceled"))
+            onError(IOException("Cronet Request Canceled"))
             request.cancel()
             return
         }
@@ -121,13 +121,6 @@ abstract class AbsCallBack(
 
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
         this.request = request
-
-        cancelJob = Coroutine.async {
-            while (!mCall.isCanceled()) {
-                delay(1000)
-            }
-            request.cancel()
-        }
 
         val response: Response
         try {
@@ -184,6 +177,7 @@ abstract class AbsCallBack(
     //UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
         callbackResults.add(CallbackResult(CallbackStep.ON_FAILED, null, error))
+        cancelJob?.cancel()
         DebugLog.e(javaClass.name, error.message.toString())
         onError(error.asIOException())
         eventListener?.callFailed(mCall, error)
@@ -203,11 +197,20 @@ abstract class AbsCallBack(
         }
         canceled.set(true)
         callbackResults.add(CallbackResult(CallbackStep.ON_CANCELED))
+        cancelJob?.cancel()
         //DebugLog.i(javaClass.simpleName, "cancel[${info?.negotiatedProtocol}]${info?.url}")
         eventListener?.callEnd(mCall)
-        //onError(IOException("Cronet Request Canceled"))
+        onError(IOException("Cronet Request Canceled"))
     }
 
+    fun startCheckCancelJob(request: UrlRequest) {
+        cancelJob = Coroutine.async {
+            while (!mCall.isCanceled()) {
+                delay(1000)
+            }
+            request.cancel()
+        }
+    }
 
     init {
         mResponse = Response.Builder()
@@ -431,7 +434,7 @@ abstract class AbsCallBack(
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         override fun read(sink: Buffer, byteCount: Long): Long {
             if (canceled.get()) {
-                throw IOException("Request Canceled")
+                throw IOException("Cronet Request Canceled")
             }
 
             require(byteCount >= 0L) { "byteCount < 0: $byteCount" }
@@ -450,7 +453,7 @@ abstract class AbsCallBack(
             val result = callbackResults.poll(timeout, TimeUnit.MILLISECONDS)
             if (result == null) {
                 request?.cancel()
-                throw IOException("Body Read Timeout")
+                throw IOException("Cronet request body read timeout after wait $timeout ms")
             }
 
             return when (result.callbackStep) {

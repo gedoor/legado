@@ -20,6 +20,7 @@ class OldCallback(originalRequest: Request, mCall: Call, readTimeoutMillis: Int)
         //获取okhttp call的完整请求的超时时间
         val timeOutMs: Long = mCall.timeout().timeoutNanos() / 1000000
         urlRequest.start()
+        startCheckCancelJob(urlRequest)
         if (timeOutMs > 0) {
             mResponseCondition.block(timeOutMs)
         } else {
