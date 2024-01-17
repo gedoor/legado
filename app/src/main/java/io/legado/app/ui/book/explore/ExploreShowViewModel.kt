@@ -15,6 +15,7 @@ import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
 import java.util.concurrent.ConcurrentHashMap
 
@@ -38,6 +39,8 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
                     keys.add(it.name)
                 }
                 keys
+            }.catch {
+                AppLog.put("发现列表界面获取书籍数据失败\n${it.localizedMessage}", it)
             }.collect {
                 bookshelf.clear()
                 bookshelf.addAll(it)

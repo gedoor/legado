@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.FragmentRssArticlesBinding
@@ -23,7 +24,10 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.fragment_rss_articles),
@@ -99,7 +103,9 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
         val rssUrl = activityViewModel.url ?: return
         articlesFlowJob?.cancel()
         articlesFlowJob = lifecycleScope.launch {
-            appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).collect {
+            appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
+                AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
         }

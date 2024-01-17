@@ -33,9 +33,11 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 
@@ -164,7 +166,7 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
                 else -> appDb.rssSourceDao.flowEnabled(searchKey)
             }.catch {
                 AppLog.put("订阅界面更新数据出错", it)
-            }.collect {
+            }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
         }
