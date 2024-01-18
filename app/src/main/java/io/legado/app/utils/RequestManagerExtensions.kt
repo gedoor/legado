@@ -11,7 +11,6 @@ fun RequestManager.lifecycle(lifecycle: Lifecycle): RequestManager {
         override fun onResume(owner: LifecycleOwner) = onStart()
         override fun onPause(owner: LifecycleOwner) = onStop()
         override fun onDestroy(owner: LifecycleOwner) {
-            onDestroy()
             owner.lifecycle.removeObserver(this)
         }
     }
