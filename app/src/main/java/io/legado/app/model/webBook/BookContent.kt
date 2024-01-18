@@ -169,7 +169,9 @@ object BookContent {
         //获取正文
         var content = analyzeRule.getString(contentRule.content, unescape = false)
         content = HtmlFormatter.formatKeepImg(content, rUrl)
-        content = StringEscapeUtils.unescapeHtml4(content)
+        if (content.indexOf('&') > -1) {
+            content = StringEscapeUtils.unescapeHtml4(content)
+        }
         //获取下一页链接
         if (getNextPageUrl) {
             val nextUrlRule = contentRule.nextContentUrl
