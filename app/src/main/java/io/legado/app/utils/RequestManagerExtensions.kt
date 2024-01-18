@@ -8,8 +8,6 @@ import com.bumptech.glide.RequestManager
 fun RequestManager.lifecycle(lifecycle: Lifecycle): RequestManager {
 
     val observer = object : DefaultLifecycleObserver {
-        override fun onStart(owner: LifecycleOwner) = onStart()
-        override fun onStop(owner: LifecycleOwner) = onStop()
         override fun onResume(owner: LifecycleOwner) = onStart()
         override fun onPause(owner: LifecycleOwner) = onStop()
         override fun onDestroy(owner: LifecycleOwner) {

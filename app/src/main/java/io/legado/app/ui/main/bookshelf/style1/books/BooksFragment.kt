@@ -62,7 +62,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     private val bookshelfLayout by lazy { AppConfig.bookshelfLayout }
     private val booksAdapter: BaseBooksAdapter<*> by lazy {
         if (bookshelfLayout == 0) {
-            BooksAdapterList(requireContext(), this)
+            BooksAdapterList(requireContext(), this, lifecycle)
         } else {
             BooksAdapterGrid(requireContext(), this)
         }

@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf.style1.books
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfListBinding
@@ -12,7 +13,11 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.toTimeAgo
 import splitties.views.onLongClick
 
-class BooksAdapterList(context: Context, private val callBack: CallBack) :
+class BooksAdapterList(
+    context: Context,
+    private val callBack: CallBack,
+    private val lifecycle: Lifecycle
+) :
     BaseBooksAdapter<ItemBookshelfListBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemBookshelfListBinding {
@@ -41,7 +46,15 @@ class BooksAdapterList(context: Context, private val callBack: CallBack) :
                 when (it) {
                     "name" -> tvName.text = item.name
                     "author" -> tvAuthor.text = item.author
-                    "cover" -> ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+                    "cover" -> ivCover.load(
+                        item.getDisplayCover(),
+                        item.name,
+                        item.author,
+                        false,
+                        item.origin,
+                        lifecycle
+                    )
+
                     "refresh" -> upRefresh(binding, item)
                     "lastUpdateTime" -> upLastUpdateTime(binding, item)
                 }
