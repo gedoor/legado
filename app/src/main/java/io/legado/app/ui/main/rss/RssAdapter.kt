@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -14,7 +15,7 @@ import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import splitties.views.onLongClick
 
-class RssAdapter(context: Context, val callBack: CallBack) :
+class RssAdapter(context: Context, val callBack: CallBack, val lifecycle: Lifecycle) :
     RecyclerAdapter<RssSource, ItemRssBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemRssBinding {
@@ -31,7 +32,7 @@ class RssAdapter(context: Context, val callBack: CallBack) :
             tvName.text = item.sourceName
             val options = RequestOptions()
                 .set(OkHttpModelLoader.sourceOriginOption, item.sourceUrl)
-            ImageLoader.load(context, item.sourceIcon)
+            ImageLoader.load(lifecycle, item.sourceIcon)
                 .apply(options)
                 .centerCrop()
                 .placeholder(R.drawable.image_rss)
