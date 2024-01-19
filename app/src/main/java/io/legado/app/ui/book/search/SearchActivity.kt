@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -44,7 +45,9 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
@@ -347,7 +350,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             when {
                 key.isNullOrBlank() -> appDb.searchKeywordDao.flowByTime()
                 else -> appDb.searchKeywordDao.flowSearch(key)
-            }.conflate().collect {
+            }.catch {
+                AppLog.put("搜索界面获取搜索历史数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
                 historyKeyAdapter.setItems(it)
                 if (it.isEmpty()) {
                     binding.tvClearHistory.invisible()

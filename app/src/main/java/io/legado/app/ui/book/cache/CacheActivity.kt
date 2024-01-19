@@ -50,7 +50,9 @@ import io.legado.app.utils.verificationField
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -218,7 +220,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
                     else -> booksDownload.sortedByDescending { it.durChapterTime }
                 }
-            }.conflate().collect { books ->
+            }.catch {
+                AppLog.put("缓存管理界面获取书籍列表失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect { books ->
                 adapter.setItems(books)
                 viewModel.loadCacheFiles(books)
             }
@@ -228,7 +232,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         lifecycleScope.launch {
-            appDb.bookGroupDao.flowAll().conflate().collect {
+            appDb.bookGroupDao.flowAll().catch {
+                AppLog.put("缓存管理界面获取分组数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
                 groupList.clear()
                 groupList.addAll(it)
                 adapter.notifyDataSetChanged()

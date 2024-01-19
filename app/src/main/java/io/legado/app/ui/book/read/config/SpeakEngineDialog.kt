@@ -14,6 +14,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogEditTextBinding
@@ -44,7 +45,10 @@ import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 /**
@@ -163,7 +167,9 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.httpTTSDao.flowAll().conflate().collect {
+            appDb.httpTTSDao.flowAll().catch {
+                AppLog.put("朗读引擎界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
                 adapter.setItems(it)
             }
         }

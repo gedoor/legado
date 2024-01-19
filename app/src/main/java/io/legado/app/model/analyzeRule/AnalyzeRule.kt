@@ -295,9 +295,12 @@ class AnalyzeRule(
             }
         }
         if (result == null) result = ""
-        val str = if (unescape) {
-            StringEscapeUtils.unescapeHtml4(result.toString())
-        } else result.toString()
+        val resultStr = result.toString()
+        val str = if (unescape && resultStr.indexOf('&') > -1) {
+            StringEscapeUtils.unescapeHtml4(resultStr)
+        } else {
+            resultStr
+        }
         if (isUrl) {
             return if (str.isBlank()) {
                 baseUrl ?: ""

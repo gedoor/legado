@@ -33,9 +33,11 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 
@@ -56,7 +58,7 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
 
     private val binding by viewBinding(FragmentRssBinding::bind)
     override val viewModel by viewModels<RssViewModel>()
-    private val adapter by lazy { RssAdapter(requireContext(), this) }
+    private val adapter by lazy { RssAdapter(requireContext(), this, lifecycle) }
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
@@ -141,7 +143,9 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
     private fun initGroupData() {
         groupsFlowJob?.cancel()
         groupsFlowJob = lifecycleScope.launch {
-            appDb.rssSourceDao.flowGroupEnabled().conflate().collect {
+            appDb.rssSourceDao.flowGroupEnabled().catch {
+                AppLog.put("订阅界面获取分组数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
                 groups.clear()
                 it.map { group ->
                     groups.addAll(group.splitNotBlank(AppPattern.splitGroupRegex))
@@ -164,7 +168,7 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
                 else -> appDb.rssSourceDao.flowEnabled(searchKey)
             }.catch {
                 AppLog.put("订阅界面更新数据出错", it)
-            }.collect {
+            }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
         }

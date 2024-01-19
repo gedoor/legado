@@ -125,6 +125,7 @@ object BookList {
                 bookList.reverse()
             }
         }
+        Debug.log(bookSource.bookSourceUrl, "◇书籍总数:${bookList.size}")
         return bookList
     }
 

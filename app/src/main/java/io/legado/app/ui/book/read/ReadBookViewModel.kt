@@ -31,7 +31,12 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.searchContent.SearchResult
-import io.legado.app.utils.*
+import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.toStringArray
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import java.io.File
 import java.io.FileInputStream
@@ -217,7 +222,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             AppWebDav.getBookProgress(book)
                 ?: throw NoStackTraceException("没有进度")
         }.onError {
-            AppLog.put("拉取阅读进度失败《${book.name}》", it)
+            AppLog.put("拉取阅读进度失败《${book.name}》\n${it.localizedMessage}", it)
         }.onSuccess { progress ->
             if (progress.durChapterIndex < book.durChapterIndex ||
                 (progress.durChapterIndex == book.durChapterIndex
