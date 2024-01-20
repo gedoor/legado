@@ -31,6 +31,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.LinkedList
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
@@ -39,7 +40,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private var threadCount = AppConfig.threadCount
     private var upTocPool =
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-    private val waitUpTocBooks = arrayListOf<String>()
+    private val waitUpTocBooks = LinkedList<String>()
     private val onUpTocBooks = ConcurrentHashMap.newKeySet<String>()
     val onUpBooksLiveData = MutableLiveData<Int>()
     private var upTocJob: Job? = null
@@ -113,15 +114,13 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     @Synchronized
     private fun updateToc() {
-        val bookUrl = waitUpTocBooks.firstOrNull() ?: return
+        val bookUrl = waitUpTocBooks.poll() ?: return
         if (onUpTocBooks.contains(bookUrl)) {
-            waitUpTocBooks.remove(bookUrl)
             postUpBooksLiveData()
             return
         }
         val book = appDb.bookDao.getBook(bookUrl)
         if (book == null) {
-            waitUpTocBooks.remove(bookUrl)
             postUpBooksLiveData()
             return
         }
@@ -131,11 +130,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 book.addType(BookType.updateError)
                 appDb.bookDao.update(book)
             }
-            waitUpTocBooks.remove(book.bookUrl)
             postUpBooksLiveData()
             return
         }
-        waitUpTocBooks.remove(bookUrl)
         upTocAdd(bookUrl)
         execute(context = upTocPool, executeContext = upTocPool) {
             kotlin.runCatching {
@@ -202,7 +199,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
     @Synchronized
     private fun upTocFinally(bookUrl: String) {
-        waitUpTocBooks.remove(bookUrl)
         onUpTocBooks.remove(bookUrl)
         postEvent(EventBus.UP_BOOKSHELF, bookUrl)
         if (waitUpTocBooks.isEmpty()
