@@ -23,10 +23,18 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.column.ImageColumn
 import io.legado.app.ui.book.read.page.entities.column.ReviewColumn
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
-import io.legado.app.utils.*
+import io.legado.app.utils.RealPathUtil
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.isPad
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.spToPx
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.textHeight
+import io.legado.app.utils.toStringArray
 import splitties.init.appCtx
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.LinkedList
+import java.util.Locale
 
 /**
  * 解析内容生成章节和页面
@@ -627,8 +635,8 @@ object ChapterProvider {
         textPaint: TextPaint
     ): Pair<List<String>, List<Float>> {
         val charArray = text.toCharArray()
-        val strList = ArrayList<String>()
-        val textWidthList = ArrayList<Float>()
+        val strList = ArrayList<String>(text.length)
+        val textWidthList = ArrayList<Float>(text.length)
         val lastIndex = charArray.lastIndex
         var ca: CharArray? = null
         for (i in textWidths.indices) {
