@@ -327,15 +327,9 @@ class BookInfoActivity :
             }
 
             else -> {
-                viewModel.bookData.value?.let {
-                    if (it.durChapterIndex < chapterList.size) {
-                        binding.tvToc.text =
-                            getString(R.string.toc_s, chapterList[it.durChapterIndex].title)
-                    } else {
-                        binding.tvToc.text = getString(R.string.toc_s, chapterList.last().title)
-                    }
-                    binding.tvLasted.text =
-                        getString(R.string.lasted_show, chapterList.last().title)
+                book?.let {
+                    binding.tvToc.text = getString(R.string.toc_s, it.durChapterTitle)
+                    binding.tvLasted.text = getString(R.string.lasted_show, it.latestChapterTitle)
                 }
             }
         }
