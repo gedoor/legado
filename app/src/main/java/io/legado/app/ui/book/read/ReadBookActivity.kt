@@ -117,7 +117,6 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -235,8 +234,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.cursorRight.setOnTouchListener(this)
         window.setBackgroundDrawable(null)
         upScreenTimeOut()
-        ReadBook.callBack?.notifyBookChanged()
-        ReadBook.callBack = this
+        ReadBook.register(this)
         onBackPressedDispatcher.addCallback(this) {
             if (isShowingSearchResult) {
                 exitSearchMenu()
@@ -267,22 +265,22 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         viewModel.initData(intent) {
-            upMenu()
-            if (reloadContent) {
-                reloadContent = false
-                ReadBook.loadContent(resetPageOffset = false)
-            }
+            initDataSuccess()
         }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         viewModel.initData(intent ?: return) {
-            upMenu()
-            if (reloadContent) {
-                reloadContent = false
-                ReadBook.loadContent(resetPageOffset = false)
-            }
+            initDataSuccess()
+        }
+    }
+
+    private fun initDataSuccess() {
+        upMenu()
+        if (reloadContent) {
+            reloadContent = false
+            ReadBook.loadContent(resetPageOffset = false)
         }
     }
 
@@ -1226,48 +1224,47 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun payAction() {
-        ReadBook.book?.let { book ->
-            if (book.isLocal) return
-            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
-            if (chapter == null) {
-                toastOnUi("no chapter")
-                return
-            }
-            alert(R.string.chapter_pay) {
-                setMessage(chapter.title)
-                yesButton {
-                    Coroutine.async {
-                        val source =
-                            ReadBook.bookSource ?: throw NoStackTraceException("no book source")
-                        val payAction = source.getContentRule().payAction
-                        if (payAction.isNullOrBlank()) {
-                            throw NoStackTraceException("no pay action")
-                        }
-                        val analyzeRule = AnalyzeRule(book, source)
-                        analyzeRule.setBaseUrl(chapter.url)
-                        analyzeRule.chapter = chapter
-                        analyzeRule.evalJS(payAction).toString()
-                    }.onSuccess {
-                        if (it.isAbsUrl()) {
-                            startActivity<WebViewActivity> {
-                                putExtra("title", getString(R.string.chapter_pay))
-                                putExtra("url", it)
-                                IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
-                            }
-                        } else if (it.isTrue()) {
-                            //购买成功后刷新目录
-                            ReadBook.book?.let {
-                                ReadBook.curTextChapter = null
-                                BookHelp.delContent(book, chapter)
-                                viewModel.loadChapterList(book)
-                            }
-                        }
-                    }.onError {
-                        AppLog.put("执行购买操作出错\n${it.localizedMessage}", it, true)
+        val book = ReadBook.book ?: return
+        if (book.isLocal) return
+        val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+        if (chapter == null) {
+            toastOnUi("no chapter")
+            return
+        }
+        alert(R.string.chapter_pay) {
+            setMessage(chapter.title)
+            yesButton {
+                Coroutine.async {
+                    val source =
+                        ReadBook.bookSource ?: throw NoStackTraceException("no book source")
+                    val payAction = source.getContentRule().payAction
+                    if (payAction.isNullOrBlank()) {
+                        throw NoStackTraceException("no pay action")
                     }
+                    val analyzeRule = AnalyzeRule(book, source)
+                    analyzeRule.setBaseUrl(chapter.url)
+                    analyzeRule.chapter = chapter
+                    analyzeRule.evalJS(payAction).toString()
+                }.onSuccess {
+                    if (it.isAbsUrl()) {
+                        startActivity<WebViewActivity> {
+                            putExtra("title", getString(R.string.chapter_pay))
+                            putExtra("url", it)
+                            IntentData.put(it, ReadBook.bookSource?.getHeaderMap(true))
+                        }
+                    } else if (it.isTrue()) {
+                        //购买成功后刷新目录
+                        ReadBook.book?.let {
+                            ReadBook.curTextChapter = null
+                            BookHelp.delContent(book, chapter)
+                            viewModel.loadChapterList(book)
+                        }
+                    }
+                }.onError {
+                    AppLog.put("执行购买操作出错\n${it.localizedMessage}", it, true)
                 }
-                noButton()
             }
+            noButton()
         }
     }
 
@@ -1364,13 +1361,13 @@ class ReadBookActivity : BaseReadBookActivity(),
             TIP_COLOR -> {
                 ReadTipConfig.tipColor = color
                 postEvent(EventBus.TIP_COLOR, "")
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, false)
             }
 
             TIP_DIVIDER_COLOR -> {
                 ReadTipConfig.tipDividerColor = color
                 postEvent(EventBus.TIP_COLOR, "")
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, false)
             }
         }
     }
@@ -1484,24 +1481,24 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun finish() {
-        ReadBook.book?.let {
-            if (!ReadBook.inBookshelf) {
-                if (!AppConfig.showAddToShelfAlert) {
-                    viewModel.removeFromBookshelf { super.finish() }
-                } else {
-                    alert(title = getString(R.string.add_to_bookshelf)) {
-                        setMessage(getString(R.string.check_add_bookshelf, it.name))
-                        okButton {
-                            ReadBook.inBookshelf = true
-                            setResult(Activity.RESULT_OK)
-                        }
-                        noButton { viewModel.removeFromBookshelf { super.finish() } }
-                    }
+        val book = ReadBook.book ?: return super.finish()
+
+        if (ReadBook.inBookshelf) {
+            return super.finish()
+        }
+
+        if (!AppConfig.showAddToShelfAlert) {
+            viewModel.removeFromBookshelf { super.finish() }
+        } else {
+            alert(title = getString(R.string.add_to_bookshelf)) {
+                setMessage(getString(R.string.check_add_bookshelf, book.name))
+                okButton {
+                    ReadBook.inBookshelf = true
+                    setResult(Activity.RESULT_OK)
                 }
-            } else {
-                super.finish()
+                noButton { viewModel.removeFromBookshelf { super.finish() } }
             }
-        } ?: super.finish()
+        }
     }
 
     override fun onDestroy() {
@@ -1510,15 +1507,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         textActionMenu.dismiss()
         popupAction.dismiss()
         binding.readView.onDestroy()
-        ReadBook.msg = null
-        if (ReadBook.callBack === this) {
-            ReadBook.callBack = null
-        }
-        ReadBook.preDownloadTask?.cancel()
-        ReadBook.downloadScope.coroutineContext.cancelChildren()
-        ReadBook.coroutineContext.cancelChildren()
-        ReadBook.downloadedChapters.clear()
-        ReadBook.downloadFailChapters.clear()
+        ReadBook.unregister(this)
         if (!BuildConfig.DEBUG) {
             Backup.autoBack(this)
         }
@@ -1540,7 +1529,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             readView.upBg()
             readView.upStyle()
             readView.upBgAlpha()
-            if (it) {
+            if (it) { // 更新内容排版布局
                 if (isInitFinish) {
                     ReadBook.loadContent(resetPageOffset = false)
                 } else {

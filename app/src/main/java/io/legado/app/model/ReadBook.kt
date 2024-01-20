@@ -25,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
@@ -565,6 +566,29 @@ object ReadBook : CoroutineScope by MainScope() {
                 }
             }
         }
+    }
+
+    /**
+     * 注册回调
+     */
+    fun register(cb: CallBack) {
+        callBack?.notifyBookChanged()
+        callBack = cb
+    }
+
+    /**
+     * 取消注册回调
+     */
+    fun unregister(cb: CallBack) {
+        if (callBack === cb) {
+            callBack = null
+        }
+        msg = null
+        preDownloadTask?.cancel()
+        downloadScope.coroutineContext.cancelChildren()
+        coroutineContext.cancelChildren()
+        downloadedChapters.clear()
+        downloadFailChapters.clear()
     }
 
     interface CallBack {
