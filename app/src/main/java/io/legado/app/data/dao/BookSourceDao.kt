@@ -112,6 +112,20 @@ interface BookSourceDao {
     fun flowNoGroup(): Flow<List<BookSourcePart>>
 
     @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabledExplore = 1 order by customOrder asc"""
+    )
+    fun flowEnabledExplore(): Flow<List<BookSourcePart>>
+
+    @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabledExplore = 0 order by customOrder asc"""
+    )
+    fun flowDisabledExplore(): Flow<List<BookSourcePart>>
+
+    @Query(
         """select * from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
@@ -192,6 +206,12 @@ interface BookSourceDao {
 
     @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = '' or bookSourceGroup like '%未分组%'")
     val allNoGroup: List<BookSource>
+
+    @get:Query("select * from book_sources where enabledExplore = 1 order by customOrder")
+    val allEnabledExplore: List<BookSource>
+
+    @get:Query("select * from book_sources where enabledExplore = 0 order by customOrder")
+    val allDisabledExplore: List<BookSource>
 
     @get:Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
     val allLogin: List<BookSource>
