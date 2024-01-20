@@ -131,6 +131,7 @@ const searchBook = () => {
   API.search(
     search.value,
     (data) => {
+      closeLoading();
       try {
         store.setSearchBooks(JSON.parse(data));
         store.searchBooks.forEach((item) => books.value.push(item));
