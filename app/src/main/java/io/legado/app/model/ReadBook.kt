@@ -109,6 +109,9 @@ object ReadBook : CoroutineScope by MainScope() {
         }
         callBack?.upMenuView()
         upWebBook(book)
+        synchronized(this) {
+            loadingChapters.clear()
+        }
     }
 
     fun upWebBook(book: Book) {
