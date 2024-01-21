@@ -1,6 +1,11 @@
 package io.legado.app.data.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -78,6 +83,9 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE bookUrl = :bookUrl")
     fun getBook(bookUrl: String): Book?
+
+    @Query("SELECT * FROM books WHERE bookUrl = :bookUrl")
+    fun getBookFlow(bookUrl: String): Flow<Book?>
 
     @Query("SELECT * FROM books WHERE name = :name and author = :author")
     fun getBook(name: String, author: String): Book?

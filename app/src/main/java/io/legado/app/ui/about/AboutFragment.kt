@@ -10,11 +10,27 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst.appInfo
+import io.legado.app.constant.AppLog
 import io.legado.app.help.AppUpdate
+import io.legado.app.help.config.AppConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.createFileIfNotExist
+import io.legado.app.utils.createFolderIfNotExist
+import io.legado.app.utils.delete
+import io.legado.app.utils.find
+import io.legado.app.utils.list
+import io.legado.app.utils.openInputStream
+import io.legado.app.utils.openOutputStream
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.sendMail
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
+import java.io.File
 
 class AboutFragment : PreferenceFragmentCompat() {
 
@@ -44,6 +60,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "privacyPolicy" -> showMdFile(getString(R.string.privacy_policy), "privacyPolicy.md")
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "crashLog" -> showDialogFragment<CrashLogsDialog>()
+            "saveLog" -> saveLog()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -97,6 +114,33 @@ class AboutFragment : PreferenceFragmentCompat() {
             toastOnUi("添加失败,请手动添加")
         }
         return false
+    }
+
+    private fun saveLog() {
+        Coroutine.async {
+            val backupPath = AppConfig.backupPath ?: let {
+                toastOnUi("未设置备份目录")
+                return@async
+            }
+            val files = FileDoc.fromFile(File(appCtx.externalCacheDir, "logs")).list()
+            if (files.isNullOrEmpty()) {
+                toastOnUi("没有日志")
+                return@async
+            }
+            val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
+            doc.find("logs")?.delete()
+            val logsDoc = doc.createFolderIfNotExist("logs")
+            files.forEach { file ->
+                file.openInputStream().getOrNull()?.use { input ->
+                    logsDoc.createFileIfNotExist(file.name).openOutputStream().getOrNull()?.use {
+                        input.copyTo(it)
+                    }
+                }
+            }
+            toastOnUi("已保存至备份目录")
+        }.onError {
+            AppLog.put("保存日志出错\n${it.localizedMessage}", it, true)
+        }
     }
 
 }

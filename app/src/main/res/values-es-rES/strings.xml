@@ -1140,4 +1140,5 @@
     <string name="adjust_chapter_index">调整章节位置</string>
     <string name="clear_webview_data_success">清除成功，3秒后自动重启应用</string>
     <string name="key_page_on_long_press">按键长按翻页</string>
+    <string name="save_log">保存日志</string>
 </resources>

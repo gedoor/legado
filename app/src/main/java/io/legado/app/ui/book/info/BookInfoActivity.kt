@@ -53,6 +53,7 @@ import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
@@ -300,6 +301,7 @@ class BookInfoActivity :
 
     private fun showBook(book: Book) = binding.run {
         showCover(book)
+        LogUtils.d("showBook", "latest ${book.latestChapterTitle}")
         tvName.text = book.name
         tvAuthor.text = getString(R.string.author_show, book.getRealAuthor())
         tvOrigin.text = getString(R.string.origin_show, book.originName)
@@ -340,6 +342,8 @@ class BookInfoActivity :
 
             else -> {
                 book?.let {
+                    LogUtils.d("upLoading", "latest ${it.latestChapterTitle}")
+                    LogUtils.d("upLoading", "dur ${it.durChapterTitle}")
                     binding.tvToc.text = getString(R.string.toc_s, it.durChapterTitle)
                     binding.tvLasted.text = getString(R.string.lasted_show, it.latestChapterTitle)
                 }

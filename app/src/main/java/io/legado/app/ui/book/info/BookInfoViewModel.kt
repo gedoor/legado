@@ -33,12 +33,14 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.ArchiveUtils
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.UrlUtil
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
@@ -57,6 +59,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val bookUrl = intent.getStringExtra("bookUrl") ?: ""
             appDb.bookDao.getBook(name, author)?.let {
                 inBookshelf = true
+                LogUtils.d("BookInfoViewModel initData", "book ${it.name}")
                 upBook(it)
                 return@execute
             }
@@ -89,6 +92,16 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
     private fun upBook(book: Book) {
         execute {
+            launch {
+                appDb.bookDao.getBookFlow(book.bookUrl).collect { book ->
+                    book?.let {
+                        LogUtils.d("getBookFlow", "name ${it.name}")
+                        LogUtils.d("getBookFlow", "use replace ${it.getUseReplaceRule()}")
+                        LogUtils.d("getBookFlow", "latest ${it.latestChapterTitle}")
+                        LogUtils.d("getBookFlow", "dur ${it.durChapterTitle}")
+                    }
+                }
+            }
             bookData.postValue(book)
             upCoverByRule(book)
             bookSource = if (book.isLocal) null else
@@ -109,12 +122,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     private fun upCoverByRule(book: Book) {
         execute {
             if (book.coverUrl.isNullOrBlank() && book.customCoverUrl.isNullOrBlank()) {
-                BookCover.searchCover(book)?.let { coverUrl ->
-                    book.customCoverUrl = coverUrl
-                    bookData.postValue(book)
-                    if (inBookshelf) {
-                        saveBook(book)
-                    }
+                val coverUrl = BookCover.searchCover(book)
+                if (coverUrl.isNullOrBlank()) {
+                    return@execute
+                }
+                book.customCoverUrl = coverUrl
+                bookData.postValue(book)
+                if (inBookshelf) {
+                    saveBook(book)
                 }
             }
         }

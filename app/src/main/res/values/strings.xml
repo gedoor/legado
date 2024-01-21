@@ -1143,4 +1143,5 @@
     <string name="adjust_chapter_index">Adjust of chapter index</string>
     <string name="clear_webview_data_success">Cleared successfully, automatically restarts the application after 3 seconds</string>
     <string name="key_page_on_long_press">Press and hold the key to turn the page</string>
+    <string name="save_log">保存日志</string>
 </resources>
