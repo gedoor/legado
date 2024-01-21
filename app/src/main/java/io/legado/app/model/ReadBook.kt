@@ -19,7 +19,6 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.LogUtils
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
@@ -209,7 +208,6 @@ object ReadBook : CoroutineScope by MainScope() {
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
-            LogUtils.d("moveToNextChapter", "title ${curTextChapter?.chapter?.title}")
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
                 callBack?.upContent()
@@ -240,7 +238,6 @@ object ReadBook : CoroutineScope by MainScope() {
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
             prevTextChapter = null
-            LogUtils.d("moveToPrevChapter", "title ${curTextChapter?.chapter?.title}")
             if (curTextChapter == null) {
                 callBack?.upContent()
                 loadContent(durChapterIndex, upContent, resetPageOffset = false)
@@ -538,10 +535,7 @@ object ReadBook : CoroutineScope by MainScope() {
                         book.getUseReplaceRule()
                     )
                 }
-                LogUtils.d("saveRead", "dur ${book.durChapterTitle}")
             }
-            LogUtils.d("bookDao", "saveRead update latest ${book.latestChapterTitle}")
-            LogUtils.d("bookDao", "saveRead update dur ${book.durChapterTitle}")
             appDb.bookDao.update(book)
         }
     }
