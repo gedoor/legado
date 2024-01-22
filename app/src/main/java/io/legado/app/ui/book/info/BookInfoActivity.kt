@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.BookType
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -26,6 +27,7 @@ import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalTxt
 import io.legado.app.help.book.isWebFile
+import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
@@ -224,6 +226,9 @@ class BookInfoActivity :
                 viewModel.getBook()?.let {
                     it.canUpdate = !it.canUpdate
                     if (viewModel.inBookshelf) {
+                        if (!it.canUpdate) {
+                            it.removeType(BookType.updateError)
+                        }
                         viewModel.saveBook(it)
                     }
                 }
