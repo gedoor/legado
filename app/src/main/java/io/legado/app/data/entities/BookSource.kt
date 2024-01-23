@@ -2,10 +2,20 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import android.text.TextUtils
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookSourceType
-import io.legado.app.data.entities.rule.*
+import io.legado.app.data.entities.rule.BookInfoRule
+import io.legado.app.data.entities.rule.ContentRule
+import io.legado.app.data.entities.rule.ExploreRule
+import io.legado.app.data.entities.rule.ReviewRule
+import io.legado.app.data.entities.rule.SearchRule
+import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.splitNotBlank
@@ -268,12 +278,10 @@ data class BookSource(
             GSON.fromJsonObject<ContentRule>(json).getOrNull()
 
         @TypeConverter
-        fun stringToReviewRule(json: String?) =
-            GSON.fromJsonObject<ReviewRule>(json).getOrNull()
+        fun stringToReviewRule(json: String?): ReviewRule? = null
 
         @TypeConverter
-        fun reviewRuleToString(reviewRule: ReviewRule?): String =
-            GSON.toJson(reviewRule)
+        fun reviewRuleToString(reviewRule: ReviewRule?): String = "null"
 
     }
 }

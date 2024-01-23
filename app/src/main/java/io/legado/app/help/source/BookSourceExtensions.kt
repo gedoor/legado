@@ -1,6 +1,7 @@
 package io.legado.app.help.source
 
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.data.entities.rule.ExploreKind
 import io.legado.app.utils.ACache
 import io.legado.app.utils.GSON
@@ -25,6 +26,14 @@ private val aCache by lazy { ACache.get("explore") }
 
 private fun BookSource.getExploreKindsKey(): String {
     return MD5Utils.md5Encode(bookSourceUrl + exploreUrl)
+}
+
+private fun BookSourcePart.getExploreKindsKey(): String {
+    return getBookSource()!!.getExploreKindsKey()
+}
+
+suspend fun BookSourcePart.exploreKinds(): List<ExploreKind> {
+    return getBookSource()!!.exploreKinds()
 }
 
 suspend fun BookSource.exploreKinds(): List<ExploreKind> {
@@ -75,11 +84,11 @@ suspend fun BookSource.exploreKinds(): List<ExploreKind> {
     }
 }
 
-suspend fun BookSource.clearExploreKindsCache() {
+suspend fun BookSourcePart.clearExploreKindsCache() {
     withContext(Dispatchers.IO) {
         val exploreKindsKey = getExploreKindsKey()
         aCache.remove(exploreKindsKey)
-        exploreKindsMap.remove(getExploreKindsKey())
+        exploreKindsMap.remove(exploreKindsKey)
     }
 }
 

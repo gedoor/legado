@@ -15,7 +15,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.FragmentExploreBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
@@ -201,11 +201,11 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
         }
     }
 
-    override fun toTop(source: BookSource) {
+    override fun toTop(source: BookSourcePart) {
         viewModel.topSource(source)
     }
 
-    override fun deleteSource(source: BookSource) {
+    override fun deleteSource(source: BookSourcePart) {
         alert(R.string.draw) {
             setMessage(getString(R.string.sure_del) + "\n" + source.bookSourceName)
             noButton()
@@ -215,7 +215,7 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
         }
     }
 
-    override fun searchBook(bookSource: BookSource) {
+    override fun searchBook(bookSource: BookSourcePart) {
         startActivity<SearchActivity> {
             putExtra("searchScope", SearchScope(bookSource).toString())
         }

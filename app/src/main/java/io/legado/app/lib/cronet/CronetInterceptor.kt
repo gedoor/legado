@@ -49,6 +49,7 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
     }
 
     @SuppressLint("ObsoleteSdkInt")
+    @Throws(IOException::class)
     private fun proceedWithCronet(request: Request, call: Call, readTimeoutMillis: Int): Response? {
         val callBack = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             NewCallBack(request, call, readTimeoutMillis)
