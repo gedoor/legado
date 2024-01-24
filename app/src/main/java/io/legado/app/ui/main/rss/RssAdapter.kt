@@ -1,17 +1,11 @@
 package io.legado.app.ui.main.rss
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Lifecycle
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.gif.GifDrawable
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
@@ -39,35 +33,6 @@ class RssAdapter(context: Context, val callBack: CallBack, val lifecycle: Lifecy
             val options = RequestOptions()
                 .set(OkHttpModelLoader.sourceOriginOption, item.sourceUrl)
             ImageLoader.load(lifecycle, item.sourceIcon)
-                .listener(object : RequestListener<Drawable> {
-
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        if (resource is GifDrawable
-                            && !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
-                        ) {
-                            ivIcon.post {
-                                resource.stop()
-                            }
-                        }
-                        return false
-                    }
-
-                })
                 .apply(options)
                 .centerCrop()
                 .placeholder(R.drawable.image_rss)
