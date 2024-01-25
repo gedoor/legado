@@ -449,6 +449,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val recordLog get() = appCtx.getPrefBoolean(PreferKey.recordLog)
 
+    val recordHeapDump get() = appCtx.getPrefBoolean(PreferKey.recordHeapDump, false)
+
     val loadCoverOnlyWifi get() = appCtx.getPrefBoolean(PreferKey.loadCoverOnlyWifi, false)
 
     val showAddToShelfAlert get() = appCtx.getPrefBoolean(PreferKey.showAddToShelfAlert, true)

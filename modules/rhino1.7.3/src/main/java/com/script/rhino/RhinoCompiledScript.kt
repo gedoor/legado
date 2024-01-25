@@ -69,4 +69,26 @@ internal class RhinoCompiledScript(
         return result
     }
 
+    override fun eval(scope: Scriptable): Any? {
+        val cx = Context.enter()
+        val result: Any?
+        try {
+            val ret = script.exec(cx, scope)
+            result = engine.unwrapReturnValue(ret)
+        } catch (re: RhinoException) {
+            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
+            val msg: String = if (re is JavaScriptException) {
+                re.value.toString()
+            } else {
+                re.toString()
+            }
+            val se = ScriptException(msg, re.sourceName(), line)
+            se.initCause(re)
+            throw se
+        } finally {
+            Context.exit()
+        }
+        return result
+    }
+
 }

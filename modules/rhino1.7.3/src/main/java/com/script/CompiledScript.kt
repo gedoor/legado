@@ -3,12 +3,17 @@
  */
 package com.script
 
+import org.mozilla.javascript.Scriptable
+
 abstract class CompiledScript {
 
     abstract fun getEngine(): ScriptEngine
 
     @Throws(ScriptException::class)
     abstract fun eval(context: ScriptContext): Any?
+
+    @Throws(ScriptException::class)
+    abstract fun eval(scope: Scriptable): Any?
 
     @Throws(ScriptException::class)
     fun eval(bindings: Bindings?): Any? {

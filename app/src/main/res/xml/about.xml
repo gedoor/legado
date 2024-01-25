@@ -40,6 +40,11 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="saveHeapDump"
+            android:title="@string/save_heap_dump"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="privacyPolicy"
             android:title="@string/privacy_policy"
             app:iconSpaceReserved="false" />

@@ -188,6 +188,13 @@
             android:title="@string/record_log"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="recordHeapDump"
+            android:summary="@string/record_heap_dump_s"
+            android:title="@string/record_heap_dump_t"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.lib.prefs.PreferenceCategory>
 
 
