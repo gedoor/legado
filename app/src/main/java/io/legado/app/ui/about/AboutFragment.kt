@@ -163,6 +163,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                 return@async
             }
             toastOnUi("开始创建堆转储")
+            System.gc()
             CrashHandler.doHeapDump()
             val heapFile = FileDoc.fromFile(File(appCtx.externalCacheDir, "heapDump")).list()
                 ?.firstOrNull() ?: let {
