@@ -200,7 +200,8 @@ class DownloadService : BaseService() {
                             downloadInfo.notificationId,
                             "${downloadInfo.fileName} $status",
                             max,
-                            progress
+                            progress,
+                            downloadInfo.startTime
                         )
                     }
                 } while (cursor.moveToNext())
@@ -241,9 +242,10 @@ class DownloadService : BaseService() {
         notificationId: Int,
         content: String,
         max: Int,
-        progress: Int
+        progress: Int,
+        startTime: Long
     ) {
-        val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
+        val notificationBuilder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setSubText(getString(R.string.action_download))
             .setContentTitle(content)
@@ -258,16 +260,19 @@ class DownloadService : BaseService() {
                 }
             )
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setProgress(max, progress, false)
             .setGroup(groupKey)
-            .build()
-        notificationManager.notify(notificationId, notification)
+            .setWhen(startTime)
+        if (progress < max) {
+            notificationBuilder.setProgress(max, progress, false)
+        }
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 
     private data class DownloadInfo(
         val url: String,
         val fileName: String,
-        val notificationId: Int
+        val notificationId: Int,
+        val startTime: Long = System.currentTimeMillis()
     )
 
 }
