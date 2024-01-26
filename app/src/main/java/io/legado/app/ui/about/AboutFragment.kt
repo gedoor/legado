@@ -62,7 +62,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             "gzGzh" -> requireContext().sendToClip(getString(R.string.legado_gzh))
             "crashLog" -> showDialogFragment<CrashLogsDialog>()
             "saveLog" -> saveLog()
-            "saveHeapDump" -> saveHeapDump()
+            "createHeapDump" -> createHeapDump()
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -124,18 +124,17 @@ class AboutFragment : PreferenceFragmentCompat() {
                 toastOnUi("未设置备份目录")
                 return@async
             }
-            val files = FileDoc.fromFile(File(appCtx.externalCacheDir, "logs")).list()
-            if (files.isNullOrEmpty()) {
-                toastOnUi("没有日志")
-                return@async
-            }
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
-            doc.find("logs")?.delete()
-            val logsDoc = doc.createFolderIfNotExist("logs")
-            files.forEach { file ->
-                file.openInputStream().getOrNull()?.use { input ->
-                    logsDoc.createFileIfNotExist(file.name).openOutputStream().getOrNull()?.use {
-                        input.copyTo(it)
+            val files = FileDoc.fromFile(File(appCtx.externalCacheDir, "logs")).list()
+            if (!files.isNullOrEmpty()) {
+                doc.find("logs")?.delete()
+                val logsDoc = doc.createFolderIfNotExist("logs")
+                files.forEach { file ->
+                    file.openInputStream().getOrNull()?.use { input ->
+                        logsDoc.createFileIfNotExist(file.name).openOutputStream().getOrNull()
+                            ?.use {
+                                input.copyTo(it)
+                            }
                     }
                 }
             }
@@ -157,13 +156,13 @@ class AboutFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun saveHeapDump() {
+    private fun createHeapDump() {
         Coroutine.async {
             val backupPath = AppConfig.backupPath ?: let {
                 toastOnUi("未设置备份目录")
                 return@async
             }
-            toastOnUi("开始保存堆转储")
+            toastOnUi("开始创建堆转储")
             CrashHandler.doHeapDump()
             val heapFile = FileDoc.fromFile(File(appCtx.externalCacheDir, "heapDump")).list()
                 ?.firstOrNull() ?: let {

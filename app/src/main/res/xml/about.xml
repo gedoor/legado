@@ -40,7 +40,7 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
-            android:key="saveHeapDump"
+            android:key="createHeapDump"
             android:title="@string/create_heap_dump"
             app:iconSpaceReserved="false" />
 
