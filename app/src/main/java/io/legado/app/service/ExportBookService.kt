@@ -50,12 +50,19 @@ import io.legado.app.utils.readText
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import me.ag2s.epublib.domain.Author
 import me.ag2s.epublib.domain.Date
@@ -133,7 +140,7 @@ class ExportBookService : BaseService() {
     }
 
     @SuppressLint("MissingPermission")
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_export)
             .setSubText(getString(R.string.export_book))
@@ -322,15 +329,23 @@ class ExportBookService : BaseService() {
         }"
         append(qy, null)
         if (AppConfig.parallelExportBook) {
-            val oc =
-                OrderCoroutine<Pair<String, ArrayList<SrcData>?>>(AppConfig.threadCount)
-            appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
-                oc.submit { getExportData(book, chapter, contentProcessor, useReplace) }
-            }
-            oc.collect { index, result ->
-                postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
-                exportProgress[book.bookUrl] = index
-                append.invoke(result.first, result.second)
+            coroutineScope {
+                flow {
+                    appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                        val task = async(Default, start = CoroutineStart.LAZY) {
+                            getExportData(book, chapter, contentProcessor, useReplace)
+                        }
+                        emit(task)
+                    }
+                }.onEach { it.start() }
+                    .buffer(AppConfig.threadCount)
+                    .map { it.await() }
+                    .withIndex()
+                    .collect { (index, result) ->
+                        postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
+                        exportProgress[book.bookUrl] = index
+                        append.invoke(result.first, result.second)
+                    }
             }
         } else {
             appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->

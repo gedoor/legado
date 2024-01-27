@@ -14,7 +14,13 @@ import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
-import io.legado.app.utils.*
+import io.legado.app.utils.ChineseUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.replace
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -110,7 +116,7 @@ data class BookChapter(
                     try {
                         val mDisplayTitle = if (item.isRegex) {
                             displayTitle.replace(
-                                item.pattern.toRegex(),
+                                item.regex,
                                 item.replacement,
                                 item.getValidTimeoutMillisecond()
                             )

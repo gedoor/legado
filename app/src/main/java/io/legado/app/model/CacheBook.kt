@@ -83,6 +83,17 @@ object CacheBook {
         }
     }
 
+    fun clear() {
+        successDownloadSet.clear()
+        errorDownloadMap.clear()
+    }
+
+    fun close() {
+        cacheBookMap.forEach { it.value.stop() }
+        cacheBookMap.clear()
+        clear()
+    }
+
     val downloadSummary: String
         get() {
             return "正在下载:${onDownloadCount}|等待中:${waitCount}|失败:${errorDownloadMap.count()}|成功:${successDownloadSet.size}"

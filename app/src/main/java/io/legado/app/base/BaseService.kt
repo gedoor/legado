@@ -31,7 +31,12 @@ abstract class BaseService : LifecycleService() {
         super.onCreate()
         LifecycleHelp.onServiceCreate(this)
         checkNotificationPermission()
-        upNotification()
+    }
+
+    @CallSuper
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForegroundNotification()
+        return super.onStartCommand(intent, flags, startId)
     }
 
     @CallSuper
@@ -52,9 +57,9 @@ abstract class BaseService : LifecycleService() {
     }
 
     /**
-     * 更新通知
+     * 开启前台服务并发送通知
      */
-    open fun upNotification() {
+    open fun startForegroundNotification() {
 
     }
 
@@ -67,7 +72,7 @@ abstract class BaseService : LifecycleService() {
             .rationale(R.string.notification_permission_rationale)
             .onGranted {
                 if (lifecycleScope.isActive) {
-                    upNotification()
+                    startForegroundNotification()
                 }
             }
             .request()

@@ -21,7 +21,13 @@ import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.*
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
+import io.legado.app.constant.PreferKey
+import io.legado.app.constant.Status
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
@@ -30,10 +36,18 @@ import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.activityPendingIntent
+import io.legado.app.utils.broadcastPendingIntent
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.notificationManager
@@ -158,7 +172,6 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        upNotification()
         when (intent?.action) {
             IntentAction.play -> newReadAloud(
                 intent.getBooleanExtra("play", true),
@@ -516,7 +529,7 @@ abstract class BaseReadAloudService : BaseService(),
     /**
      * 更新通知
      */
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         execute {
             createNotification()
         }.onSuccess {

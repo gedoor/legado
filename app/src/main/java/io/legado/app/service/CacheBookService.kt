@@ -24,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
+import splitties.systemservices.notificationManager
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -59,13 +60,12 @@ class CacheBookService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         isRun = true
-        CacheBook.successDownloadSet.clear()
-        CacheBook.errorDownloadMap.clear()
+        CacheBook.clear()
         lifecycleScope.launch {
             while (isActive) {
                 delay(1000)
                 notificationContent = CacheBook.downloadSummary
-                upNotification()
+                upCacheBookNotification()
                 postEvent(EventBus.UP_DOWNLOAD, "")
             }
         }
@@ -90,10 +90,7 @@ class CacheBookService : BaseService() {
     override fun onDestroy() {
         isRun = false
         cachePool.close()
-        CacheBook.cacheBookMap.forEach { it.value.stop() }
-        CacheBook.cacheBookMap.clear()
-        CacheBook.successDownloadSet.clear()
-        CacheBook.errorDownloadMap.clear()
+        CacheBook.close()
         super.onDestroy()
         postEvent(EventBus.UP_DOWNLOAD, "")
     }
@@ -134,7 +131,7 @@ class CacheBookService : BaseService() {
             }
             cacheBook.addDownload(start, end2)
             notificationContent = CacheBook.downloadSummary
-            upNotification()
+            upCacheBookNotification()
             if (downloadJob == null) {
                 download()
             }
@@ -175,10 +172,16 @@ class CacheBookService : BaseService() {
         }
     }
 
+    private fun upCacheBookNotification() {
+        notificationBuilder.setContentText(notificationContent)
+        val notification = notificationBuilder.build()
+        notificationManager.notify(NotificationId.CacheBookService, notification)
+    }
+
     /**
      * 更新通知
      */
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         notificationBuilder.setContentText(notificationContent)
         val notification = notificationBuilder.build()
         startForeground(NotificationId.CacheBookService, notification)

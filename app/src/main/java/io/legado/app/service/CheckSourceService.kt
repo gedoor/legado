@@ -72,7 +72,7 @@ class CheckSourceService : BaseService() {
                 check(it)
             }
 
-            IntentAction.resume -> upNotification()
+            IntentAction.resume -> startForegroundNotification()
             IntentAction.stop -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -96,7 +96,7 @@ class CheckSourceService : BaseService() {
         processIndex = 0
         threadCount = min(allIds.size, threadCount)
         notificationMsg = getString(R.string.progress_show, "", 0, allIds.size)
-        upNotification()
+        startForegroundNotification()
         for (i in 0 until threadCount) {
             check()
         }
@@ -252,7 +252,7 @@ class CheckSourceService : BaseService() {
             checkedIds.add(sourceUrl)
             notificationMsg =
                 getString(R.string.progress_show, sourceName, checkedIds.size, allIds.size)
-            upNotification()
+            startForegroundNotification()
             if (processIndex > allIds.size + threadCount - 1) {
                 stopSelf()
             }
@@ -262,7 +262,7 @@ class CheckSourceService : BaseService() {
     /**
      * 更新通知
      */
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         notificationBuilder.setContentText(notificationMsg)
         notificationBuilder.setProgress(allIds.size, checkedIds.size, false)
         postEvent(EventBus.CHECK_SOURCE, notificationMsg)

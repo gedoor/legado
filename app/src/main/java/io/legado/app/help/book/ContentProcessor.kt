@@ -152,7 +152,7 @@ class ContentProcessor private constructor(
                     try {
                         val tmp = if (item.isRegex) {
                             mContent.replace(
-                                item.pattern.toRegex(),
+                                item.regex,
                                 item.replacement,
                                 item.getValidTimeoutMillisecond()
                             )

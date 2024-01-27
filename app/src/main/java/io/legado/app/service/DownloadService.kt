@@ -223,7 +223,7 @@ class DownloadService : BaseService() {
         }
     }
 
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setSubText(getString(R.string.action_download))
