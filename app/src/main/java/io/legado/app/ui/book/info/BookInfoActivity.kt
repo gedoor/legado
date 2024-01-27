@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.BookType
 import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -21,7 +22,12 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookInfoBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
-import io.legado.app.help.book.*
+import io.legado.app.help.book.getRemoteUrl
+import io.legado.app.help.book.isAudio
+import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.isLocalTxt
+import io.legado.app.help.book.isWebFile
+import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
@@ -47,8 +53,20 @@ import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.gone
+import io.legado.app.utils.longToastOnUi
+import io.legado.app.utils.openFileUri
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.shareWithQr
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,10 +87,6 @@ class BookInfoActivity :
                         book.durChapterPos = it.second
                         chapterChanged = it.third
                         appDb.bookDao.update(book)
-                    }
-                    viewModel.chapterListData.value?.let { chapterList ->
-                        binding.tvToc.text =
-                            getString(R.string.toc_s, chapterList[book.durChapterIndex].title)
                     }
                     startReadActivity(book)
                 }
@@ -212,6 +226,9 @@ class BookInfoActivity :
                 viewModel.getBook()?.let {
                     it.canUpdate = !it.canUpdate
                     if (viewModel.inBookshelf) {
+                        if (!it.canUpdate) {
+                            it.removeType(BookType.updateError)
+                        }
                         viewModel.saveBook(it)
                     }
                 }
@@ -327,15 +344,9 @@ class BookInfoActivity :
             }
 
             else -> {
-                viewModel.bookData.value?.let {
-                    if (it.durChapterIndex < chapterList.size) {
-                        binding.tvToc.text =
-                            getString(R.string.toc_s, chapterList[it.durChapterIndex].title)
-                    } else {
-                        binding.tvToc.text = getString(R.string.toc_s, chapterList.last().title)
-                    }
-                    binding.tvLasted.text =
-                        getString(R.string.lasted_show, chapterList.last().title)
+                book?.let {
+                    binding.tvToc.text = getString(R.string.toc_s, it.durChapterTitle)
+                    binding.tvLasted.text = getString(R.string.lasted_show, it.latestChapterTitle)
                 }
             }
         }

@@ -309,7 +309,8 @@ data class Book(
         newBook.durChapterIndex = BookHelp
             .getDurChapter(durChapterIndex, durChapterTitle, toc, totalChapterNum)
         newBook.durChapterTitle = toc[newBook.durChapterIndex].getDisplayTitle(
-            ContentProcessor.get(newBook.name, newBook.origin).getTitleReplaceRules()
+            ContentProcessor.get(newBook.name, newBook.origin).getTitleReplaceRules(),
+            getUseReplaceRule()
         )
         newBook.durChapterPos = durChapterPos
         newBook.durChapterTime = durChapterTime

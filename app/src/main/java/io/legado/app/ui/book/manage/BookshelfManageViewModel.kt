@@ -37,7 +37,11 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
     fun upCanUpdate(books: List<Book>, canUpdate: Boolean) {
         execute {
             val array = Array(books.size) {
-                books[it].copy(canUpdate = canUpdate)
+                books[it].copy(canUpdate = canUpdate).apply {
+                    if (!canUpdate) {
+                        removeType(BookType.updateError)
+                    }
+                }
             }
             appDb.bookDao.update(*array)
         }

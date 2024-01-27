@@ -1,6 +1,12 @@
 package io.legado.app.data.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
@@ -92,8 +98,12 @@ interface BookSourceDao {
     )
     fun flowDisabled(): Flow<List<BookSourcePart>>
 
-    @Query("select * from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc")
-    fun flowExplore(): Flow<List<BookSource>>
+    @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabledExplore = 1 and trim(exploreUrl) <> '' order by customOrder asc"""
+    )
+    fun flowExplore(): Flow<List<BookSourcePart>>
 
     @Query(
         """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
@@ -112,17 +122,35 @@ interface BookSourceDao {
     fun flowNoGroup(): Flow<List<BookSourcePart>>
 
     @Query(
-        """select * from book_sources 
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabledExplore = 1 order by customOrder asc"""
+    )
+    fun flowEnabledExplore(): Flow<List<BookSourcePart>>
+
+    @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabledExplore = 0 order by customOrder asc"""
+    )
+    fun flowDisabledExplore(): Flow<List<BookSourcePart>>
+
+    @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
         and (bookSourceGroup like '%' || :key || '%' 
             or bookSourceName like '%' || :key || '%') 
         order by customOrder asc"""
     )
-    fun flowExplore(key: String): Flow<List<BookSource>>
+    fun flowExplore(key: String): Flow<List<BookSourcePart>>
 
     @Query(
-        """select * from book_sources 
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources 
         where enabledExplore = 1 
         and trim(exploreUrl) <> '' 
         and (bookSourceGroup = :key
@@ -131,7 +159,7 @@ interface BookSourceDao {
             or bookSourceGroup like  '%,' || :key || ',%') 
         order by customOrder asc"""
     )
-    fun flowGroupExplore(key: String): Flow<List<BookSource>>
+    fun flowGroupExplore(key: String): Flow<List<BookSourcePart>>
 
     @Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
     fun flowGroupsUnProcessed(): Flow<List<String>>
@@ -192,6 +220,12 @@ interface BookSourceDao {
 
     @get:Query("select * from book_sources where bookSourceGroup is null or bookSourceGroup = '' or bookSourceGroup like '%未分组%'")
     val allNoGroup: List<BookSource>
+
+    @get:Query("select * from book_sources where enabledExplore = 1 order by customOrder")
+    val allEnabledExplore: List<BookSource>
+
+    @get:Query("select * from book_sources where enabledExplore = 0 order by customOrder")
+    val allDisabledExplore: List<BookSource>
 
     @get:Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
     val allLogin: List<BookSource>
@@ -264,6 +298,10 @@ interface BookSourceDao {
         for (bs in bookSources) {
             upOrder(bs.bookSourceUrl, bs.customOrder)
         }
+    }
+
+    fun upOrder(bookSource: BookSourcePart) {
+        upOrder(bookSource.bookSourceUrl, bookSource.customOrder)
     }
 
     @Query("update book_sources set bookSourceGroup = :bookSourceGroup where bookSourceUrl = :bookSourceUrl")

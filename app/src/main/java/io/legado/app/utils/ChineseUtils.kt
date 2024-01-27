@@ -36,7 +36,14 @@ object ChineseUtils {
             remove("脊")
             remove("支援")
             remove("沈默")
+            remove("類比")
+            remove("模擬")
+            remove("划槳")
+            remove("列根")
             remove("路易斯")
+            remove("非同步")
+            remove("出租车")
+            remove("周杰倫")
         }
     }
 

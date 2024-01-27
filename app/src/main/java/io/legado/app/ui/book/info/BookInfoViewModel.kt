@@ -109,12 +109,14 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     private fun upCoverByRule(book: Book) {
         execute {
             if (book.coverUrl.isNullOrBlank() && book.customCoverUrl.isNullOrBlank()) {
-                BookCover.searchCover(book)?.let { coverUrl ->
-                    book.customCoverUrl = coverUrl
-                    bookData.postValue(book)
-                    if (inBookshelf) {
-                        saveBook(book)
-                    }
+                val coverUrl = BookCover.searchCover(book)
+                if (coverUrl.isNullOrBlank()) {
+                    return@execute
+                }
+                book.customCoverUrl = coverUrl
+                bookData.postValue(book)
+                if (inBookshelf) {
+                    saveBook(book)
                 }
             }
         }

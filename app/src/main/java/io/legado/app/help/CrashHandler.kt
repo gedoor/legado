@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.os.Debug
 import android.os.Looper
 import android.webkit.WebSettings
 import io.legado.app.constant.AppConst
@@ -12,13 +13,24 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.model.ReadAloud
-import io.legado.app.utils.*
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.createFileIfNotExist
+import io.legado.app.utils.createFolderReplace
+import io.legado.app.utils.externalCache
+import io.legado.app.utils.getFile
+import io.legado.app.utils.longToastOnUiLegacy
+import io.legado.app.utils.stackTraceStr
+import io.legado.app.utils.writeText
 import splitties.init.appCtx
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 /**
  * 异常管理类
@@ -69,6 +81,9 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         LocalConfig.appCrash = true
         //保存日志文件
         saveCrashInfo2File(ex)
+        if (ex is OutOfMemoryError && AppConfig.recordHeapDump) {
+            doHeapDump()
+        }
         context.longToastOnUiLegacy(ex.stackTraceStr)
         Thread.sleep(3000)
     }
@@ -146,6 +161,19 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                         .writeText(sb.toString())
                 }
             }
+        }
+
+        /**
+         * 进行堆转储
+         */
+        fun doHeapDump() {
+            val heapDir = appCtx
+                .externalCache
+                .getFile("heapDump")
+            heapDir.createFolderReplace()
+            val heapFile = heapDir.getFile("heap-dump-${System.currentTimeMillis()}.hprof")
+            val heapDumpName = heapFile.absolutePath
+            Debug.dumpHprofData(heapDumpName)
         }
 
     }
