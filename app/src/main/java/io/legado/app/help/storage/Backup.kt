@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -206,10 +205,8 @@ object Backup {
         withContext(IO) {
             if (list.isNotEmpty()) {
                 val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
-                FileOutputStream(file).use { fos ->
-                    BufferedOutputStream(fos, 64 * 1024).use {
-                        GSON.writeToOutputStream(it, list)
-                    }
+                file.outputStream().buffered().use {
+                    GSON.writeToOutputStream(it, list)
                 }
             }
         }
