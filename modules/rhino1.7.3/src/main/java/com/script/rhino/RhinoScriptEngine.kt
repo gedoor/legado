@@ -25,6 +25,7 @@
 package com.script.rhino
 
 import com.script.*
+import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.withContext
 import org.mozilla.javascript.*
 import org.mozilla.javascript.Function
@@ -87,7 +88,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     override suspend fun evalSuspend(reader: Reader, scope: Scriptable): Any? {
         val cx = Context.enter()
         var ret: Any?
-        withContext(ContextElement()) {
+        withContext(VMBridgeReflect.contextLocal.asContextElement()) {
             try {
                 var filename = this@RhinoScriptEngine["javax.script.filename"] as? String
                 filename = filename ?: "<Unknown source>"

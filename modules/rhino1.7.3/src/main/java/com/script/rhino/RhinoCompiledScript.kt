@@ -28,6 +28,7 @@ import com.script.CompiledScript
 import com.script.ScriptContext
 import com.script.ScriptEngine
 import com.script.ScriptException
+import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.withContext
 import org.mozilla.javascript.*
 import java.io.IOException
@@ -98,7 +99,7 @@ internal class RhinoCompiledScript(
     override suspend fun evalSuspend(scope: Scriptable): Any? {
         val cx = Context.enter()
         var ret: Any?
-        withContext(ContextElement()) {
+        withContext(VMBridgeReflect.contextLocal.asContextElement()) {
             try {
                 try {
                     ret = cx.executeScriptWithContinuations(script, scope)
