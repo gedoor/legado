@@ -70,6 +70,7 @@ data class ReplaceRule(
         return id.hashCode()
     }
 
+    @delegate:Transient
     @delegate:Ignore
     @IgnoredOnParcel
     val regex: Regex by lazy {

@@ -191,6 +191,29 @@ data class BookSource(
         removeGroup(getInvalidGroupNames())
     }
 
+    fun removeErrorComment() {
+        bookSourceComment = bookSourceComment
+            ?.split("\n\n")
+            ?.filterNot {
+                it.startsWith("// Error: ")
+            }?.joinToString("\n")
+    }
+
+    fun addErrorComment(e: Throwable) {
+        bookSourceComment =
+            "// Error: ${e.localizedMessage}" + if (bookSourceComment.isNullOrBlank())
+                "" else "\n\n${bookSourceComment}"
+    }
+
+    fun getCheckKeyword(default: String): String {
+        ruleSearch?.checkKeyWord?.let {
+            if (it.isNotBlank()) {
+                return it
+            }
+        }
+        return default
+    }
+
     fun getInvalidGroupNames(): String {
         return bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.filter {
             "失效" in it || it == "校验超时"

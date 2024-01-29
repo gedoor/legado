@@ -25,16 +25,23 @@ import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.activityPendingIntent
+import io.legado.app.utils.onEachParallel
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.mozilla.javascript.WrappedException
 import splitties.init.appCtx
+import splitties.systemservices.notificationManager
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -45,10 +52,10 @@ class CheckSourceService : BaseService() {
     private var threadCount = AppConfig.threadCount
     private var searchCoroutine =
         Executors.newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-    private val allIds = ArrayList<String>()
-    private val checkedIds = ArrayList<String>()
-    private var processIndex = 0
     private var notificationMsg = appCtx.getString(R.string.service_starting)
+    private var checkJob: Job? = null
+    private var originSize = 0
+    private var finishCount = 0
 
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
@@ -86,64 +93,48 @@ class CheckSourceService : BaseService() {
     }
 
     private fun check(ids: List<String>) {
-        if (allIds.isNotEmpty()) {
+        if (checkJob?.isActive == true) {
             toastOnUi("已有书源在校验,等完成后再试")
             return
         }
-        allIds.clear()
-        checkedIds.clear()
-        allIds.addAll(ids)
-        processIndex = 0
-        threadCount = min(allIds.size, threadCount)
-        notificationMsg = getString(R.string.progress_show, "", 0, allIds.size)
-        startForegroundNotification()
-        for (i in 0 until threadCount) {
-            check()
-        }
-    }
-
-    /**
-     * 检测
-     */
-    private fun check() {
-        val index = processIndex
-        synchronized(this) {
-            processIndex++
-        }
-        lifecycleScope.launch(IO) {
-            if (index < allIds.size) {
-                val sourceUrl = allIds[index]
-                appDb.bookSourceDao.getBookSource(sourceUrl)?.let { source ->
-                    check(source)
-                } ?: onNext(sourceUrl, "")
-            }
-        }
-    }
-
-    /**
-     *校验书源
-     */
-    private fun check(source: BookSource) {
-        execute(
-            context = searchCoroutine,
-            start = CoroutineStart.LAZY,
-            executeContext = IO
-        ) {
-            Debug.startChecking(source)
-            var searchWord = CheckSource.keyword
-            source.ruleSearch?.checkKeyWord?.let {
-                if (it.isNotBlank()) {
-                    searchWord = it
+        checkJob = lifecycleScope.launch(searchCoroutine) {
+            flow {
+                for (origin in ids) {
+                    appDb.bookSourceDao.getBookSource(origin)?.let {
+                        emit(it)
+                    }
                 }
+            }.onStart {
+                originSize = ids.size
+                finishCount = 0
+                notificationMsg = getString(R.string.progress_show, "", 0, originSize)
+                upNotification()
+            }.onEachParallel(threadCount) {
+                checkSource(it)
+            }.onCompletion {
+                stopSelf()
+            }.buffer(0).collect {
+                finishCount++
+                notificationMsg = getString(
+                    R.string.progress_show,
+                    it.bookSourceName,
+                    finishCount,
+                    originSize
+                )
+                upNotification()
+                appDb.bookSourceDao.update(it)
             }
+        }
+    }
+
+    private suspend fun checkSource(source: BookSource) {
+        kotlin.runCatching {
+            Debug.startChecking(source)
             source.removeInvalidGroups()
-            source.bookSourceComment = source.bookSourceComment
-                ?.split("\n\n")
-                ?.filterNot {
-                    it.startsWith("// Error: ")
-                }?.joinToString("\n")
+            source.removeErrorComment()
             //校验搜索书籍
             if (CheckSource.checkSearch) {
+                val searchWord = source.getCheckKeyword(CheckSource.keyword)
                 if (!source.searchUrl.isNullOrBlank()) {
                     source.removeGroup("搜索链接规则为空")
                     val searchBooks = WebBook.searchBookAwait(source, searchWord)
@@ -159,14 +150,9 @@ class CheckSourceService : BaseService() {
             }
             //校验发现书籍
             if (CheckSource.checkDiscovery && !source.exploreUrl.isNullOrBlank()) {
-                val exs = source.exploreKinds()
-                var url: String? = null
-                for (ex in exs) {
-                    url = ex.url
-                    if (!url.isNullOrBlank()) {
-                        break
-                    }
-                }
+                val url = source.exploreKinds().firstOrNull {
+                    !it.url.isNullOrBlank()
+                }?.url
                 if (url.isNullOrBlank()) {
                     source.addGroup("发现规则为空")
                 } else {
@@ -181,25 +167,22 @@ class CheckSourceService : BaseService() {
                 }
             }
             val finalCheckMessage = source.getInvalidGroupNames()
-            if (finalCheckMessage.isNotBlank()) throw NoStackTraceException(finalCheckMessage)
-        }.timeout(CheckSource.timeout)
-            .onError(searchCoroutine) {
-                when (it) {
-                    is TimeoutCancellationException -> source.addGroup("校验超时")
-                    is ScriptException, is WrappedException -> source.addGroup("js失效")
-                    !is NoStackTraceException -> source.addGroup("网站失效")
-                }
-                source.bookSourceComment =
-                    "// Error: ${it.localizedMessage}" + if (source.bookSourceComment.isNullOrBlank())
-                        "" else "\n\n${source.bookSourceComment}"
-                Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
-            }.onSuccess(searchCoroutine) {
-                Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
-            }.onFinally(IO) {
-                source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
-                appDb.bookSourceDao.update(source)
-                onNext(source.bookSourceUrl, source.bookSourceName)
-            }.start()
+            if (finalCheckMessage.isNotBlank()) {
+                throw NoStackTraceException(finalCheckMessage)
+            }
+        }.onSuccess {
+            Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
+        }.onFailure {
+            currentCoroutineContext().ensureActive()
+            when (it) {
+                is TimeoutCancellationException -> source.addGroup("校验超时")
+                is ScriptException, is WrappedException -> source.addGroup("js失效")
+                !is NoStackTraceException -> source.addGroup("网站失效")
+            }
+            source.addErrorComment(it)
+            Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
+        }
+        source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
     }
 
     /**
@@ -207,31 +190,33 @@ class CheckSourceService : BaseService() {
      */
     private suspend fun checkBook(book: Book, source: BookSource, isSearchBook: Boolean = true) {
         kotlin.runCatching {
-            var mBook = book
-            //校验详情
-            if (CheckSource.checkInfo) {
-                if (mBook.tocUrl.isBlank()) {
-                    mBook = WebBook.getBookInfoAwait(source, mBook)
-                }
-                //校验目录
-                if (CheckSource.checkCategory &&
-                    source.bookSourceType != BookSourceType.file
-                ) {
-                    val toc = WebBook.getChapterListAwait(source, mBook).getOrThrow()
-                        .filter { !(it.isVolume && it.url.startsWith(it.title)) }
-                    val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
-                    //校验正文
-                    if (CheckSource.checkContent) {
-                        WebBook.getContentAwait(
-                            bookSource = source,
-                            book = mBook,
-                            bookChapter = toc.first(),
-                            nextChapterUrl = nextChapterUrl,
-                            needSave = false
-                        )
-                    }
-                }
+            if (!CheckSource.checkInfo) {
+                return
             }
+            //校验详情
+            if (book.tocUrl.isBlank()) {
+                WebBook.getBookInfoAwait(source, book)
+            }
+            if (!CheckSource.checkCategory || source.bookSourceType == BookSourceType.file) {
+                return
+            }
+            //校验目录
+            val toc = WebBook.getChapterListAwait(source, book).getOrThrow().asSequence()
+                .filter { !(it.isVolume && it.url.startsWith(it.title)) }
+                .take(2)
+                .toList()
+            val nextChapterUrl = toc.getOrNull(1)?.url ?: toc.first().url
+            if (!CheckSource.checkContent) {
+                return
+            }
+            //校验正文
+            WebBook.getContentAwait(
+                bookSource = source,
+                book = book,
+                bookChapter = toc.first(),
+                nextChapterUrl = nextChapterUrl,
+                needSave = false
+            )
         }.onFailure {
             val bookType = if (isSearchBook) "搜索" else "发现"
             when (it) {
@@ -246,17 +231,11 @@ class CheckSourceService : BaseService() {
         }
     }
 
-    private fun onNext(sourceUrl: String, sourceName: String) {
-        synchronized(this) {
-            check()
-            checkedIds.add(sourceUrl)
-            notificationMsg =
-                getString(R.string.progress_show, sourceName, checkedIds.size, allIds.size)
-            startForegroundNotification()
-            if (processIndex > allIds.size + threadCount - 1) {
-                stopSelf()
-            }
-        }
+    private fun upNotification() {
+        notificationBuilder.setContentText(notificationMsg)
+        notificationBuilder.setProgress(originSize, finishCount, false)
+        postEvent(EventBus.CHECK_SOURCE, notificationMsg)
+        notificationManager.notify(NotificationId.CheckSourceService, notificationBuilder.build())
     }
 
     /**
@@ -264,7 +243,7 @@ class CheckSourceService : BaseService() {
      */
     override fun startForegroundNotification() {
         notificationBuilder.setContentText(notificationMsg)
-        notificationBuilder.setProgress(allIds.size, checkedIds.size, false)
+        notificationBuilder.setProgress(originSize, finishCount, false)
         postEvent(EventBus.CHECK_SOURCE, notificationMsg)
         startForeground(NotificationId.CheckSourceService, notificationBuilder.build())
     }
