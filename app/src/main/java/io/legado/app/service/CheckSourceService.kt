@@ -90,6 +90,7 @@ class CheckSourceService : BaseService() {
         Debug.finishChecking()
         searchCoroutine.close()
         postEvent(EventBus.CHECK_SOURCE_DONE, 0)
+        notificationManager.cancel(NotificationId.CheckSourceService)
     }
 
     private fun check(ids: List<String>) {
