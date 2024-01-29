@@ -79,7 +79,7 @@ class CheckSourceService : BaseService() {
                 check(it)
             }
 
-            IntentAction.resume -> startForegroundNotification()
+            IntentAction.resume -> upNotification()
             IntentAction.stop -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
