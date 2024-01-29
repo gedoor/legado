@@ -10,7 +10,6 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
-import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.ArchiveUtils
@@ -188,7 +187,10 @@ object BookHelp {
                 src, bytes, isCover = false, bookSource, book
             )?.let {
                 if (!checkImage(it)) {
-                    throw NoStackTraceException("数据异常")
+                    // 如果部分图片失效，每次进入正文都会花很长时间再次获取图片数据
+                    // 所以无论如何都要将数据写入到文件里
+                    // throw NoStackTraceException("数据异常")
+                    AppLog.put("${book.name} ${chapter?.title} 图片 $src 下载错误 数据异常")
                 }
                 FileUtils.createFileIfNotExist(
                     downloadDir,
