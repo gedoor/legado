@@ -58,6 +58,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -338,8 +339,7 @@ class ExportBookService : BaseService() {
         }.onEach { it.start() }
             .buffer(threads)
             .map { it.await() }
-            .withIndex()
-            .collect { (index, result) ->
+            .collectIndexed { index, result ->
                 postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
                 exportProgress[book.bookUrl] = index
                 append.invoke(result.first, result.second)
@@ -685,8 +685,7 @@ class ExportBookService : BaseService() {
         }.onEach { it.start() }
             .buffer(threads)
             .map { it.await() }
-            .withIndex()
-            .collect { (index, exportChapter) ->
+            .collectIndexed { index, exportChapter ->
                 postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
                 exportProgress[book.bookUrl] = index
                 epubBook.resources.addAll(exportChapter.resources)

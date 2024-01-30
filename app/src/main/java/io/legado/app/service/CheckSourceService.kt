@@ -35,8 +35,10 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.mozilla.javascript.WrappedException
@@ -112,9 +114,7 @@ class CheckSourceService : BaseService() {
                 upNotification()
             }.onEachParallel(threadCount) {
                 checkSource(it)
-            }.onCompletion {
-                stopSelf()
-            }.buffer(0).collect {
+            }.buffer(0).onEach {
                 finishCount++
                 notificationMsg = getString(
                     R.string.progress_show,
@@ -124,7 +124,9 @@ class CheckSourceService : BaseService() {
                 )
                 upNotification()
                 appDb.bookSourceDao.update(it)
-            }
+            }.onCompletion {
+                stopSelf()
+            }.collect()
         }
     }
 
