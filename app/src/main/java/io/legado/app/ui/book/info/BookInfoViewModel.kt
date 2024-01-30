@@ -175,14 +175,27 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             WebBook.getBookInfo(scope, bookSource, book, canReName = canReName)
                 .onSuccess(IO) {
                     val dbBook = appDb.bookDao.getBook(book.name, book.author)
-                    if (dbBook != null) {
+                    if (dbBook != null && dbBook.origin == book.origin) {
+                        /**
+                         * book 来自搜索时，搜索的书名不存在于书架，但是加载详情后，书名更新，存在同名书籍
+                         * 此时 book 的数据会与数据库中的不同，需要更新 #3652
+                         * book 加载详情后虽然书名作者相同，但是又可能不是数据库中(书源不同)的那本书 #3149
+                         */
                         dbBook.updateTo(it)
                         inBookshelf = true
                     }
                     bookData.postValue(it)
                     if (inBookshelf) {
-                        appDb.bookDao.update(it)
-                        if (dbBook!!.name != book.name) {
+                        val dbBook1 = appDb.bookDao.getBook(it.bookUrl)
+                        if (dbBook1 == null) {
+                            /**
+                             * 来自搜索，同一本书，不同 bookUrl
+                             */
+                            appDb.bookDao.insert(it)
+                        } else {
+                            appDb.bookDao.update(it)
+                        }
+                        if (dbBook != null && (dbBook.name != book.name || dbBook.bookUrl != book.bookUrl)) {
                             BookHelp.updateCacheFolder(dbBook, book)
                         }
                     }
@@ -222,8 +235,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val oldBook = book.copy()
             WebBook.getChapterList(scope, bookSource, book, true)
                 .onSuccess(IO) {
-                    val dbBook = appDb.bookDao.getBook(book.name, book.author)
-                    if (dbBook?.bookUrl == oldBook.bookUrl) {
+                    /**
+                     * runPreUpdateJs 有可能会修改 book 的书名作者和 bookUrl
+                     */
+                    if (inBookshelf) {
                         if (oldBook.bookUrl == book.bookUrl) {
                             appDb.bookDao.update(book)
                         } else {
@@ -237,6 +252,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             ReadBook.chapterSize = book.totalChapterNum
                         }
                     }
+                    bookData.postValue(book)
                     chapterListData.postValue(it)
                 }.onError {
                     chapterListData.postValue(emptyList())
