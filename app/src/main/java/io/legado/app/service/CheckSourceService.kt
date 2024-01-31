@@ -114,7 +114,7 @@ class CheckSourceService : BaseService() {
                 upNotification()
             }.onEachParallel(threadCount) {
                 checkSource(it)
-            }.buffer(0).onEach {
+            }.onEach {
                 finishCount++
                 notificationMsg = getString(
                     R.string.progress_show,

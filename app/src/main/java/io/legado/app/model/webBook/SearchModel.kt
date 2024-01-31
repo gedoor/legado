@@ -10,14 +10,13 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.mapNotNullParallel
+import io.legado.app.utils.mapParallelSafe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -83,16 +82,11 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
                 }
             }.onStart {
                 callBack.onSearchStart()
-            }.mapNotNullParallel(threadCount) {
-                try {
-                    withTimeout(30000L) {
-                        WebBook.searchBookAwait(it, searchKey, searchPage)
-                    }
-                } catch (e: Throwable) {
-                    currentCoroutineContext().ensureActive()
-                    null
+            }.mapParallelSafe(threadCount) {
+                withTimeout(30000L) {
+                    WebBook.searchBookAwait(it, searchKey, searchPage)
                 }
-            }.buffer(0).onEach { items ->
+            }.onEach { items ->
                 appDb.searchBookDao.insert(*items.toTypedArray())
                 mergeItems(items, precision)
                 currentCoroutineContext().ensureActive()

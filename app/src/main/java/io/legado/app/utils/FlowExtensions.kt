@@ -2,7 +2,11 @@ package io.legado.app.utils
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapMerge
@@ -20,13 +24,57 @@ inline fun <T> Flow<T>.onEachParallel(
         action(value)
         emit(value)
     }
-}
+}.buffer(0)
+
+@OptIn(ExperimentalCoroutinesApi::class)
+inline fun <T> Flow<T>.onEachParallelSafe(
+    concurrency: Int,
+    crossinline action: suspend (T) -> Unit
+): Flow<T> = flatMapMerge(concurrency) { value ->
+    flow {
+        try {
+            action(value)
+        } catch (e: Throwable) {
+            currentCoroutineContext().ensureActive()
+        }
+        emit(value)
+    }
+}.buffer(0)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 inline fun <T, R> Flow<T>.mapParallel(
     concurrency: Int,
     crossinline transform: suspend (T) -> R,
-): Flow<R> = flatMapMerge(concurrency) { value -> flow { emit(transform(value)) } }
+): Flow<R> = flatMapMerge(concurrency) { value -> flow { emit(transform(value)) } }.buffer(0)
+
+
+@OptIn(ExperimentalCoroutinesApi::class)
+inline fun <T, R> Flow<T>.mapParallelSafe(
+    concurrency: Int,
+    crossinline transform: suspend (T) -> R,
+): Flow<R> = flatMapMerge(concurrency) { value ->
+    flow {
+        try {
+            emit(transform(value))
+        } catch (e: Throwable) {
+            currentCoroutineContext().ensureActive()
+        }
+    }
+}.buffer(0)
+
+@OptIn(ExperimentalCoroutinesApi::class)
+inline fun <T, R> Flow<T>.transformParallelSafe(
+    concurrency: Int,
+    crossinline transform: suspend FlowCollector<R>.(T) -> R,
+): Flow<R> = flatMapMerge(concurrency) { value ->
+    flow {
+        try {
+            transform(value)
+        } catch (e: Throwable) {
+            currentCoroutineContext().ensureActive()
+        }
+    }
+}.buffer(0)
 
 inline fun <T, R> Flow<T>.mapNotNullParallel(
     concurrency: Int,
@@ -67,7 +115,7 @@ inline fun <T, R> Flow<T>.mapAsync(
         }.map {
             it.await()
         }.onEach { semaphore.release() }
-    }
+    }.buffer(0)
 }
 
 inline fun <T, R> Flow<T>.mapAsyncIndexed(
@@ -89,7 +137,7 @@ inline fun <T, R> Flow<T>.mapAsyncIndexed(
         }.map {
             it.await()
         }.onEach { semaphore.release() }
-    }
+    }.buffer(0)
 }
 
 inline fun <T> Flow<T>.onEachAsync(
@@ -110,7 +158,7 @@ inline fun <T> Flow<T>.onEachAsync(
         }.map {
             it.await()
         }.onEach { semaphore.release() }
-    }
+    }.buffer(0)
 }
 
 inline fun <T> Flow<T>.onEachAsyncIndexed(
@@ -135,5 +183,5 @@ inline fun <T> Flow<T>.onEachAsyncIndexed(
         }.map {
             it.await()
         }.onEach { semaphore.release() }
-    }
+    }.buffer(0)
 }

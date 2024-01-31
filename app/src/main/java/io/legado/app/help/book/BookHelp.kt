@@ -479,6 +479,15 @@ object BookHelp {
         }
     }
 
+    fun getDurChapter(
+        oldBook: Book,
+        newChapterList: List<BookChapter>
+    ): Int {
+        return oldBook.run {
+            getDurChapter(durChapterIndex, durChapterTitle, newChapterList, totalChapterNum)
+        }
+    }
+
     private val chapterNamePattern1 by lazy {
         Pattern.compile(".*?第([\\d零〇一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+)[章节篇回集话]")
     }

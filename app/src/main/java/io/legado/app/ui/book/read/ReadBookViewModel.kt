@@ -34,10 +34,19 @@ import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.mapParallelSafe
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.take
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -266,39 +275,44 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun autoChangeSource(name: String, author: String) {
         if (!AppConfig.autoChangeSource) return
         execute {
-            val sources = appDb.bookSourceDao.allTextEnabled
-            sources.forEach { source ->
-                WebBook.preciseSearchAwait(this, source, name, author).getOrNull()?.let { book ->
-                    if (book.tocUrl.isEmpty()) {
-                        WebBook.getBookInfoAwait(source, book)
-                    }
-                    val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
-                    val chapter = toc.getOrElse(book.durChapterIndex) {
-                        toc.last()
-                    }
-                    val nextChapter = toc.getOrElse(chapter.index) {
-                        toc.first()
-                    }
-                    kotlin.runCatching {
-                        WebBook.getContentAwait(
-                            bookSource = source,
-                            book = book,
-                            bookChapter = chapter,
-                            nextChapterUrl = nextChapter.url
-                        )
-                        changeTo(book, toc)
-                        return@execute
+            val sources = appDb.bookSourceDao.allTextEnabledPart
+            flow {
+                for (source in sources) {
+                    source.getBookSource()?.let {
+                        emit(it)
                     }
                 }
-            }
-            throw NoStackTraceException("没有合适书源")
-        }.onStart {
-            ReadBook.upMsg(context.getString(R.string.source_auto_changing))
-        }.onError {
-            AppLog.put("自动换源失败\n${it.localizedMessage}", it)
-            context.toastOnUi("自动换源失败\n${it.localizedMessage}")
-        }.onFinally {
-            ReadBook.upMsg(null)
+            }.onStart {
+                ReadBook.upMsg(context.getString(R.string.source_auto_changing))
+            }.mapParallelSafe(AppConfig.threadCount) { source ->
+                val book = WebBook.preciseSearchAwait(this, source, name, author).getOrThrow()
+                if (book.tocUrl.isEmpty()) {
+                    WebBook.getBookInfoAwait(source, book)
+                }
+                val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
+                val chapter = toc.getOrElse(book.durChapterIndex) {
+                    toc.last()
+                }
+                val nextChapter = toc.getOrElse(chapter.index) {
+                    toc.first()
+                }
+                WebBook.getContentAwait(
+                    bookSource = source,
+                    book = book,
+                    bookChapter = chapter,
+                    nextChapterUrl = nextChapter.url
+                )
+                book to toc
+            }.take(1).onEach { (book, toc) ->
+                changeTo(book, toc)
+            }.onEmpty {
+                throw NoStackTraceException("没有合适书源")
+            }.onCompletion {
+                ReadBook.upMsg(null)
+            }.catch {
+                AppLog.put("自动换源失败\n${it.localizedMessage}", it)
+                context.toastOnUi("自动换源失败\n${it.localizedMessage}")
+            }.collect()
         }
     }
 

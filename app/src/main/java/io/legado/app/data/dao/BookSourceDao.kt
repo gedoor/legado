@@ -250,8 +250,12 @@ interface BookSourceDao {
     @get:Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
     val allLogin: List<BookSource>
 
-    @get:Query("select * from book_sources where enabled = 1 and bookSourceType = 0 order by customOrder")
-    val allTextEnabled: List<BookSource>
+    @get:Query(
+        """select  bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabled = 1 and bookSourceType = 0 order by customOrder"""
+    )
+    val allTextEnabledPart: List<BookSourcePart>
 
     @get:Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
     val allGroupsUnProcessed: List<String>
