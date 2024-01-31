@@ -42,6 +42,8 @@ import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.createFolderIfNotExist
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.mapAsync
+import io.legado.app.utils.mapAsyncIndexed
 import io.legado.app.utils.outputStream
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.readBytes
@@ -49,20 +51,14 @@ import io.legado.app.utils.readText
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import me.ag2s.epublib.domain.Author
 import me.ag2s.epublib.domain.Date
@@ -327,23 +323,19 @@ class ExportBookService : BaseService() {
         val threads = if (AppConfig.parallelExportBook) {
             AppConst.MAX_THREAD
         } else {
-            0
+            1
         }
         flow {
             appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
-                val task = async(Default, start = CoroutineStart.LAZY) {
-                    getExportData(book, chapter, contentProcessor, useReplace)
-                }
-                emit(task)
+                emit(chapter)
             }
-        }.onEach { it.start() }
-            .buffer(threads)
-            .map { it.await() }
-            .collectIndexed { index, result ->
-                postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
-                exportProgress[book.bookUrl] = index
-                append.invoke(result.first, result.second)
-            }
+        }.mapAsync(threads) { chapter ->
+            getExportData(book, chapter, contentProcessor, useReplace)
+        }.collectIndexed { index, result ->
+            postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
+            exportProgress[book.bookUrl] = index
+            append.invoke(result.first, result.second)
+        }
 
     }
 
@@ -641,56 +633,52 @@ class ExportBookService : BaseService() {
         val threads = if (AppConfig.parallelExportBook) {
             AppConst.MAX_THREAD
         } else {
-            0
+            1
         }
         flow {
-            appDb.bookChapterDao.getChapterList(book.bookUrl).forEachIndexed { index, chapter ->
-                val task = async(Default, start = CoroutineStart.LAZY) {
-                    val content = BookHelp.getContent(book, chapter)
-                    val (contentFix, resources) = fixPic(
-                        book,
-                        content ?: if (chapter.isVolume) "" else "null",
-                        chapter
-                    )
-                    // 不导出vip标识
-                    chapter.isVip = false
-                    val content1 = contentProcessor
-                        .getContent(
-                            book,
-                            chapter,
-                            contentFix,
-                            includeTitle = false,
-                            useReplace = useReplace,
-                            chineseConvert = false,
-                            reSegment = false
-                        ).toString()
-                    val title = chapter.run {
-                        // 不导出vip标识
-                        isVip = false
-                        getDisplayTitle(
-                            contentProcessor.getTitleReplaceRules(),
-                            useReplace = useReplace
-                        )
-                    }
-                    val chapterResource = ResourceUtil.createChapterResource(
-                        title.replace("\uD83D\uDD12", ""),
-                        content1,
-                        contentModel,
-                        "Text/chapter_${index}.html"
-                    )
-                    ExportChapter(title, chapterResource, resources)
-                }
-                emit(task)
+            appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                emit(chapter)
             }
-        }.onEach { it.start() }
-            .buffer(threads)
-            .map { it.await() }
-            .collectIndexed { index, exportChapter ->
-                postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
-                exportProgress[book.bookUrl] = index
-                epubBook.resources.addAll(exportChapter.resources)
-                epubBook.addSection(exportChapter.title, exportChapter.chapterResource)
+        }.mapAsyncIndexed(threads) { index, chapter ->
+            val content = BookHelp.getContent(book, chapter)
+            val (contentFix, resources) = fixPic(
+                book,
+                content ?: if (chapter.isVolume) "" else "null",
+                chapter
+            )
+            // 不导出vip标识
+            chapter.isVip = false
+            val content1 = contentProcessor
+                .getContent(
+                    book,
+                    chapter,
+                    contentFix,
+                    includeTitle = false,
+                    useReplace = useReplace,
+                    chineseConvert = false,
+                    reSegment = false
+                ).toString()
+            val title = chapter.run {
+                // 不导出vip标识
+                isVip = false
+                getDisplayTitle(
+                    contentProcessor.getTitleReplaceRules(),
+                    useReplace = useReplace
+                )
             }
+            val chapterResource = ResourceUtil.createChapterResource(
+                title.replace("\uD83D\uDD12", ""),
+                content1,
+                contentModel,
+                "Text/chapter_${index}.html"
+            )
+            ExportChapter(title, chapterResource, resources)
+        }.collectIndexed { index, exportChapter ->
+            postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
+            exportProgress[book.bookUrl] = index
+            epubBook.resources.addAll(exportChapter.resources)
+            epubBook.addSection(exportChapter.title, exportChapter.chapterResource)
+        }
     }
 
     data class ExportChapter(
