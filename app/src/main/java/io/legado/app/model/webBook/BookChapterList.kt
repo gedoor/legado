@@ -17,10 +17,8 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.isTrue
 import io.legado.app.utils.mapAsync
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
 
@@ -88,25 +86,23 @@ object BookChapterList {
                     bookSource.bookSourceUrl,
                     "◇并发解析目录,总页数:${chapterData.second.size}"
                 )
-                withContext(IO) {
-                    flow {
-                        for (urlStr in chapterData.second) {
-                            emit(urlStr)
-                        }
-                    }.mapAsync(AppConfig.threadCount) { urlStr ->
-                        val res = AnalyzeUrl(
-                            mUrl = urlStr,
-                            source = bookSource,
-                            ruleData = book,
-                            headerMapF = bookSource.getHeaderMap()
-                        ).getStrResponseAwait() //控制并发访问
-                        analyzeChapterList(
-                            book, urlStr, res.url,
-                            res.body!!, tocRule, listRule, bookSource, false
-                        ).first
-                    }.collect {
-                        chapterList.addAll(it)
+                flow {
+                    for (urlStr in chapterData.second) {
+                        emit(urlStr)
                     }
+                }.mapAsync(AppConfig.threadCount) { urlStr ->
+                    val res = AnalyzeUrl(
+                        mUrl = urlStr,
+                        source = bookSource,
+                        ruleData = book,
+                        headerMapF = bookSource.getHeaderMap()
+                    ).getStrResponseAwait() //控制并发访问
+                    analyzeChapterList(
+                        book, urlStr, res.url,
+                        res.body!!, tocRule, listRule, bookSource, false
+                    ).first
+                }.collect {
+                    chapterList.addAll(it)
                 }
             }
         }

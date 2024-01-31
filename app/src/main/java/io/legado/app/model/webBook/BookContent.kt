@@ -16,11 +16,9 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapAsync
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 import org.apache.commons.text.StringEscapeUtils
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
@@ -107,28 +105,26 @@ object BookContent {
             Debug.log(bookSource.bookSourceUrl, "◇本章总页数:${nextUrlList.size}")
         } else if (contentData.second.size > 1) {
             Debug.log(bookSource.bookSourceUrl, "◇并发解析正文,总页数:${contentData.second.size}")
-            withContext(IO) {
-                flow {
-                    for (urlStr in contentData.second) {
-                        emit(urlStr)
-                    }
-                }.mapAsync(AppConfig.threadCount) { urlStr ->
-                    val res = AnalyzeUrl(
-                        mUrl = urlStr,
-                        source = bookSource,
-                        ruleData = book,
-                        headerMapF = bookSource.getHeaderMap()
-                    ).getStrResponseAwait() //控制并发访问
-                    analyzeContent(
-                        book, urlStr, res.url, res.body!!, contentRule,
-                        bookChapter, bookSource, mNextChapterUrl,
-                        getNextPageUrl = false,
-                        printLog = false
-                    ).first
-                }.collect {
-                    currentCoroutineContext().ensureActive()
-                    contentList.add(it)
+            flow {
+                for (urlStr in contentData.second) {
+                    emit(urlStr)
                 }
+            }.mapAsync(AppConfig.threadCount) { urlStr ->
+                val res = AnalyzeUrl(
+                    mUrl = urlStr,
+                    source = bookSource,
+                    ruleData = book,
+                    headerMapF = bookSource.getHeaderMap()
+                ).getStrResponseAwait() //控制并发访问
+                analyzeContent(
+                    book, urlStr, res.url, res.body!!, contentRule,
+                    bookChapter, bookSource, mNextChapterUrl,
+                    getNextPageUrl = false,
+                    printLog = false
+                ).first
+            }.collect {
+                currentCoroutineContext().ensureActive()
+                contentList.add(it)
             }
         }
         var contentStr = contentList.joinToString("\n")
