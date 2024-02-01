@@ -80,7 +80,7 @@ jobs:
           cp -rf ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk ${{ github.workspace }}/apk/
           
       - name: Upload App To Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: legado_${{ env.product }}
           path: ${{ github.workspace }}/apk/*.apk
