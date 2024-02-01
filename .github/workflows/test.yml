@@ -114,7 +114,7 @@ jobs:
       LANZOU_FOLDER_ID: '2670621'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: apk/
       - working-directory: apk/
@@ -132,7 +132,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: apk/
       - working-directory: apk/
@@ -158,7 +158,7 @@ jobs:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: apk/
       - working-directory: apk/
