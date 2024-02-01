@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 object HtmlFormatter {
     private val nbspRegex = "(&nbsp;)+".toRegex()
     private val espRegex = "(&ensp;|&emsp;)".toRegex()
-    private val noPrintRegex = "(&thinsp;|&zwnj;|&zwj;)".toRegex()
+    private val noPrintRegex = "(&thinsp;|&zwnj;|&zwj;|\u2009|\u200C|\u200D)".toRegex()
     private val wrapHtmlRegex = "</?(?:div|p|br|hr|h\\d|article|dd|dl)[^>]*>".toRegex()
     private val commentRegex = "<!--[^>]*-->".toRegex() //注释
     private val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
