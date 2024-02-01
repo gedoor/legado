@@ -34,13 +34,13 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import org.mozilla.javascript.WrappedException
 import splitties.init.appCtx
 import splitties.systemservices.notificationManager
@@ -132,46 +132,8 @@ class CheckSourceService : BaseService() {
 
     private suspend fun checkSource(source: BookSource) {
         kotlin.runCatching {
-            Debug.startChecking(source)
-            source.removeInvalidGroups()
-            source.removeErrorComment()
-            //校验搜索书籍
-            if (CheckSource.checkSearch) {
-                val searchWord = source.getCheckKeyword(CheckSource.keyword)
-                if (!source.searchUrl.isNullOrBlank()) {
-                    source.removeGroup("搜索链接规则为空")
-                    val searchBooks = WebBook.searchBookAwait(source, searchWord)
-                    if (searchBooks.isEmpty()) {
-                        source.addGroup("搜索失效")
-                    } else {
-                        source.removeGroup("搜索失效")
-                        checkBook(searchBooks.first().toBook(), source)
-                    }
-                } else {
-                    source.addGroup("搜索链接规则为空")
-                }
-            }
-            //校验发现书籍
-            if (CheckSource.checkDiscovery && !source.exploreUrl.isNullOrBlank()) {
-                val url = source.exploreKinds().firstOrNull {
-                    !it.url.isNullOrBlank()
-                }?.url
-                if (url.isNullOrBlank()) {
-                    source.addGroup("发现规则为空")
-                } else {
-                    source.removeGroup("发现规则为空")
-                    val exploreBooks = WebBook.exploreBookAwait(source, url)
-                    if (exploreBooks.isEmpty()) {
-                        source.addGroup("发现失效")
-                    } else {
-                        source.removeGroup("发现失效")
-                        checkBook(exploreBooks.first().toBook(), source, false)
-                    }
-                }
-            }
-            val finalCheckMessage = source.getInvalidGroupNames()
-            if (finalCheckMessage.isNotBlank()) {
-                throw NoStackTraceException(finalCheckMessage)
+            withTimeout(CheckSource.timeout) {
+                doCheckSource(source)
             }
         }.onSuccess {
             Debug.updateFinalMessage(source.bookSourceUrl, "校验成功")
@@ -186,6 +148,50 @@ class CheckSourceService : BaseService() {
             Debug.updateFinalMessage(source.bookSourceUrl, "校验失败:${it.localizedMessage}")
         }
         source.respondTime = Debug.getRespondTime(source.bookSourceUrl)
+    }
+
+    private suspend fun doCheckSource(source: BookSource) {
+        Debug.startChecking(source)
+        source.removeInvalidGroups()
+        source.removeErrorComment()
+        //校验搜索书籍
+        if (CheckSource.checkSearch) {
+            val searchWord = source.getCheckKeyword(CheckSource.keyword)
+            if (!source.searchUrl.isNullOrBlank()) {
+                source.removeGroup("搜索链接规则为空")
+                val searchBooks = WebBook.searchBookAwait(source, searchWord)
+                if (searchBooks.isEmpty()) {
+                    source.addGroup("搜索失效")
+                } else {
+                    source.removeGroup("搜索失效")
+                    checkBook(searchBooks.first().toBook(), source)
+                }
+            } else {
+                source.addGroup("搜索链接规则为空")
+            }
+        }
+        //校验发现书籍
+        if (CheckSource.checkDiscovery && !source.exploreUrl.isNullOrBlank()) {
+            val url = source.exploreKinds().firstOrNull {
+                !it.url.isNullOrBlank()
+            }?.url
+            if (url.isNullOrBlank()) {
+                source.addGroup("发现规则为空")
+            } else {
+                source.removeGroup("发现规则为空")
+                val exploreBooks = WebBook.exploreBookAwait(source, url)
+                if (exploreBooks.isEmpty()) {
+                    source.addGroup("发现失效")
+                } else {
+                    source.removeGroup("发现失效")
+                    checkBook(exploreBooks.first().toBook(), source, false)
+                }
+            }
+        }
+        val finalCheckMessage = source.getInvalidGroupNames()
+        if (finalCheckMessage.isNotBlank()) {
+            throw NoStackTraceException(finalCheckMessage)
+        }
     }
 
     /**
