@@ -5,7 +5,6 @@ import android.webkit.WebSettings
 import androidx.annotation.Keep
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
-import io.legado.app.utils.ChineseUtils
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -21,8 +20,30 @@ import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
-import io.legado.app.utils.*
+import io.legado.app.utils.ArchiveUtils
+import io.legado.app.utils.ChineseUtils
+import io.legado.app.utils.EncoderUtils
+import io.legado.app.utils.EncodingDetect
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.JsURL
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.StringUtils
+import io.legado.app.utils.UrlUtil
 import io.legado.app.utils.compress.LibArchiveUtils
+import io.legado.app.utils.createFileReplace
+import io.legado.app.utils.externalCache
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.isUri
+import io.legado.app.utils.longToastOnUi
+import io.legado.app.utils.readBytes
+import io.legado.app.utils.readText
+import io.legado.app.utils.stackTraceStr
+import io.legado.app.utils.toStringArray
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -37,7 +58,10 @@ import java.io.FileOutputStream
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.SimpleTimeZone
+import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -314,7 +338,6 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * js实现重定向拦截,网络访问get
      */
-    @Suppress("UnnecessaryVariable")
     fun get(urlStr: String, headers: Map<String, String>): Connection.Response {
         val requestHeaders = if (getSource()?.enabledCookieJar == true) {
             headers.toMutableMap().apply { put(cookieJarHeader, "1") }
@@ -332,7 +355,6 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * js实现重定向拦截,网络访问head,不返回Response Body更省流量
      */
-    @Suppress("UnnecessaryVariable")
     fun head(urlStr: String, headers: Map<String, String>): Connection.Response {
         val requestHeaders = if (getSource()?.enabledCookieJar == true) {
             headers.toMutableMap().apply { put(cookieJarHeader, "1") }
@@ -350,7 +372,6 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 网络访问post
      */
-    @Suppress("UnnecessaryVariable")
     fun post(urlStr: String, body: String, headers: Map<String, String>): Connection.Response {
         val requestHeaders = if (getSource()?.enabledCookieJar == true) {
             headers.toMutableMap().apply { put(cookieJarHeader, "1") }
