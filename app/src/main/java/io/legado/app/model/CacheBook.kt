@@ -36,7 +36,7 @@ object CacheBook {
         var cacheBook = cacheBookMap[bookUrl]
         if (cacheBook != null) {
             //存在时更新,书源可能会变化,必须更新
-            cacheBook.bookSource = bookSource
+            updateBookSource(bookSource)
             cacheBook.book = book
             return cacheBook
         }
@@ -50,13 +50,22 @@ object CacheBook {
         var cacheBook = cacheBookMap[book.bookUrl]
         if (cacheBook != null) {
             //存在时更新,书源可能会变化,必须更新
-            cacheBook.bookSource = bookSource
+            updateBookSource(bookSource)
             cacheBook.book = book
             return cacheBook
         }
         cacheBook = CacheBookModel(bookSource, book)
         cacheBookMap[book.bookUrl] = cacheBook
         return cacheBook
+    }
+
+    private fun updateBookSource(newBookSource: BookSource) {
+        cacheBookMap.forEach {
+            val model = it.value
+            if (model.bookSource.bookSourceUrl == newBookSource.bookSourceUrl) {
+                model.bookSource = newBookSource
+            }
+        }
     }
 
     fun start(context: Context, book: Book, start: Int, end: Int) {
