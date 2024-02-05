@@ -33,10 +33,10 @@ object CacheBook {
     fun getOrCreate(bookUrl: String): CacheBookModel? {
         val book = appDb.bookDao.getBook(bookUrl) ?: return null
         val bookSource = appDb.bookSourceDao.getBookSource(book.origin) ?: return null
+        updateBookSource(bookSource)
         var cacheBook = cacheBookMap[bookUrl]
         if (cacheBook != null) {
             //存在时更新,书源可能会变化,必须更新
-            updateBookSource(bookSource)
             cacheBook.book = book
             return cacheBook
         }
@@ -47,10 +47,10 @@ object CacheBook {
 
     @Synchronized
     fun getOrCreate(bookSource: BookSource, book: Book): CacheBookModel {
+        updateBookSource(bookSource)
         var cacheBook = cacheBookMap[book.bookUrl]
         if (cacheBook != null) {
             //存在时更新,书源可能会变化,必须更新
-            updateBookSource(bookSource)
             cacheBook.book = book
             return cacheBook
         }
