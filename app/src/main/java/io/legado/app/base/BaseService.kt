@@ -10,6 +10,7 @@ import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
+import io.legado.app.utils.LogUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,8 @@ import kotlinx.coroutines.isActive
 import kotlin.coroutines.CoroutineContext
 
 abstract class BaseService : LifecycleService() {
+
+    private val simpleName = this::class.simpleName.toString()
 
     fun <T> execute(
         scope: CoroutineScope = lifecycleScope,
@@ -35,12 +38,14 @@ abstract class BaseService : LifecycleService() {
 
     @CallSuper
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        LogUtils.d(simpleName, "onStartCommand $intent")
         startForegroundNotification()
         return super.onStartCommand(intent, flags, startId)
     }
 
     @CallSuper
     override fun onTaskRemoved(rootIntent: Intent?) {
+        LogUtils.d(simpleName, "onTaskRemoved")
         super.onTaskRemoved(rootIntent)
         stopSelf()
     }
