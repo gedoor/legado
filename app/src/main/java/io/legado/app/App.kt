@@ -31,6 +31,7 @@ import io.legado.app.help.source.SourceHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.model.BookCover
 import io.legado.app.utils.ChineseUtils
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        LogUtils.d("App", "onCreate")
         oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so
@@ -53,6 +55,7 @@ class App : Application() {
         LiveEventBus.config()
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
+            .enableLogger(BuildConfig.DEBUG || AppConfig.recordLog)
         applyDayNight(this)
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
