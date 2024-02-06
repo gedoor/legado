@@ -40,12 +40,12 @@ class BooksAdapterList(
             upRefresh(binding, item)
             upLastUpdateTime(binding, item)
         } else {
-            tvRead.text = item.durChapterTitle
-            tvLast.text = item.latestChapterTitle
             bundle.keySet().forEach {
                 when (it) {
                     "name" -> tvName.text = item.name
                     "author" -> tvAuthor.text = item.author
+                    "dur" -> tvRead.text = item.durChapterTitle
+                    "last" -> tvLast.text = item.latestChapterTitle
                     "cover" -> ivCover.load(
                         item.getDisplayCover(),
                         item.name,

@@ -7,7 +7,7 @@ import io.legado.app.BuildConfig
 import io.legado.app.help.config.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.LogRecord
@@ -40,7 +40,8 @@ object LogUtils {
     private val fileHandler by lazy {
         val root = appCtx.externalCacheDir ?: return@lazy null
         val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
-        val logPath = FileUtils.getPath(root = logFolder, "appLog")
+        val date = getCurrentDateStr(TIME_PATTERN)
+        val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
         FileHandler(logPath, 10240, 10).apply {
             formatter = object : java.util.logging.Formatter() {
                 override fun format(record: LogRecord): String {
