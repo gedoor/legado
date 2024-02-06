@@ -79,7 +79,10 @@ class BooksAdapterList(
 
     private fun upLastUpdateTime(binding: ItemBookshelfListBinding, item: Book) {
         if (AppConfig.showLastUpdateTime && !item.isLocal) {
-            binding.tvLastUpdateTime.text = item.latestChapterTime.toTimeAgo()
+            val time = item.latestChapterTime.toTimeAgo()
+            if (binding.tvLastUpdateTime.text != time) {
+                binding.tvLastUpdateTime.text = time
+            }
         } else {
             binding.tvLastUpdateTime.text = ""
         }
