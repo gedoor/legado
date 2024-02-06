@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
@@ -12,6 +13,7 @@
         android:layout_margin="8dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
+        android:scrollbars="none"
         android:src="@drawable/image_cover_default"
         android:transitionName="img_cover"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,6 +27,7 @@
         android:layout_height="8dp"
         android:layout_margin="8dp"
         android:scaleType="centerCrop"
+        android:scrollbars="none"
         android:src="@color/md_green_600"
         android:visibility="invisible"
         app:layout_constraintLeft_toRightOf="@id/iv_cover"
@@ -35,14 +38,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:scrollbars="none"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/app_name"
         android:textColor="@color/primaryText"
@@ -55,8 +60,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:orientation="vertical"
         android:layout_marginTop="3dp"
+        android:orientation="vertical"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="@id/iv_cover"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toRightOf="@id/tv_name"
@@ -68,6 +74,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
+            android:scrollbars="none"
             android:text="@string/author"
             android:textColor="@color/primaryText"
             android:textSize="12sp" />
@@ -76,7 +83,8 @@
             android:id="@+id/ll_kind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:scrollbars="none" />
 
         <TextView
             android:id="@+id/tv_lasted"
@@ -84,6 +92,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
+            android:scrollbars="none"
             android:text="@string/last_read"
             android:textColor="@color/primaryText"
             android:textSize="12sp" />
@@ -93,6 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ellipsize="end"
+            android:scrollbars="none"
             android:text="@string/book_intro"
             android:textColor="@color/primaryText"
             android:textSize="12sp" />

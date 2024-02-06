@@ -12,6 +12,7 @@ import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
+import kotlin.time.Duration.Companion.days
 
 @SuppressLint("SimpleDateFormat")
 @Suppress("unused")
@@ -40,6 +41,12 @@ object LogUtils {
     private val fileHandler by lazy {
         val root = appCtx.externalCacheDir ?: return@lazy null
         val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
+        val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
+        logFolder.listFiles()?.forEach {
+            if (it.lastModified() < expiredTime) {
+                it.delete()
+            }
+        }
         val date = getCurrentDateStr(TIME_PATTERN)
         val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
         FileHandler(logPath, 10240, 10).apply {
