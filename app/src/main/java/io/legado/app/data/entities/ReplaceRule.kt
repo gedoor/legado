@@ -4,11 +4,13 @@ import android.os.Parcelable
 import android.text.TextUtils
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import splitties.init.appCtx
 import java.util.regex.Pattern
@@ -66,6 +68,13 @@ data class ReplaceRule(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    @delegate:Transient
+    @delegate:Ignore
+    @IgnoredOnParcel
+    val regex: Regex by lazy {
+        pattern.toRegex()
     }
 
     fun getDisplayNameGroup(): String {

@@ -15,6 +15,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst.DEFAULT_WEBDAV_ID
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Server
 import io.legado.app.databinding.DialogRecyclerViewBinding
@@ -29,8 +30,14 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
+/**
+ * 服务器配置
+ */
 class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
 
@@ -79,7 +86,9 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.serverDao.observeAll().collect {
+            appDb.serverDao.observeAll().catch {
+                AppLog.put("服务器配置界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
         }

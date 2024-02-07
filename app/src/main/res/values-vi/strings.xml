@@ -730,6 +730,8 @@ Còn </string>
     <string name="import_old_summary">Chọn thư mục sao lưu kế thừa</string>
     <string name="enabled">Đã bật</string>
     <string name="disabled">Đã tắt</string>
+    <string name="enabled_explore">Discovery Enabled</string>
+    <string name="disabled_explore">Discovery Disabled</string>
     <string name="starting_download">Bắt đầu tải xuống</string>
     <string name="already_in_download">Cuốn sách này đã có trong danh sách Download</string>
     <string name="click_to_open">Nhấp để mở</string>
@@ -1035,7 +1037,7 @@ Còn </string>
     <string name="cover_decode_js">Giải mã Bìa Js(coverDecodeJs)</string>
     <string name="net_no_group">Đã tách nhóm mạng</string>
     <string name="local_no_group">Đã tách nhóm cục bộ</string>
-    <string name="parallel_export_book">XT xuất đa luồng</string>
+    <string name="parallel_export_book">Xuất đa luồng</string>
     <string name="progress_bar_behavior">Hành vi của thanh tiến trình</string>
     <string name="source_edit_text_max_line">Số hàng tối đa trong hộp chỉnh sửa nguồn</string>
     <string name="source_edit_max_line_summary">%s,Đặt số hàng ít hơn số hàng tối đa có thể hiển thị trên màn hình giúp trượt sang các trường khác để chỉnh sửa dễ dàng hơn.</string>
@@ -1116,8 +1118,6 @@ Còn </string>
      <string name="test">Kiểm tra</string>
      <string name="show_wait_up_count">Hiển thị số bản cập nhật đang đợi</string>
      <string name="exit_app">Thoát khỏi phần mềm</string>
-     <string name="add_all_to_bookshelf">Thêm tất cả vào giá sách</string>
-    <string name="page_to">Trang tới</string>
     <string name="result_analyzed">Analyzed</string>
     <string name="bookshelf_px_4">Comprehensive</string>
     <string name="effective_replaces">起效的替换</string>
@@ -1141,4 +1141,8 @@ Còn </string>
     <string name="adjust_chapter_index">调整章节位置</string>
     <string name="clear_webview_data_success">清除成功，3秒后自动重启应用</string>
     <string name="key_page_on_long_press">按键长按翻页</string>
+    <string name="save_log">保存日志</string>
+    <string name="create_heap_dump">创建堆转储</string>
+    <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
+    <string name="record_heap_dump_t">记录堆转储</string>
 </resources>

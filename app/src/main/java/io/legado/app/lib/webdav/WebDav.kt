@@ -30,6 +30,7 @@ import java.net.URLEncoder
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class WebDav(
@@ -97,6 +98,7 @@ open class WebDav(
             chain.proceed(request)
         }
         okHttpClient.newBuilder().run {
+            callTimeout(0, TimeUnit.SECONDS)
             interceptors().add(0, authInterceptor)
             addNetworkInterceptor(authInterceptor)
             build()

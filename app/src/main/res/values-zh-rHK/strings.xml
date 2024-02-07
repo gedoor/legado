@@ -723,6 +723,8 @@
     <string name="import_old_summary">選擇舊版備份文件夾</string>
     <string name="enabled">已啓用</string>
     <string name="disabled">已禁用</string>
+    <string name="enabled_explore">已啟用發現</string>
+    <string name="disabled_explore">已禁用發現</string>
     <string name="text_bottom_justify">文字底部對齊</string>
     <string name="starting_download">正在啟動下載</string>
     <string name="already_in_download">該書已在下載列表</string>
@@ -1036,7 +1038,7 @@
     <string name="cover_decode_js">封面解密（coverDecodeJs）</string>
     <string name="net_no_group">网络未分组</string>
     <string name="local_no_group">本地未分组</string>
-    <string name="parallel_export_book">多线程导出TXT</string>
+    <string name="parallel_export_book">多线程导出</string>
     <string name="progress_bar_behavior">进度条行为</string>
     <string name="source_edit_text_max_line">源编辑框最大行数</string>
     <string name="source_edit_max_line_summary">%s,设置行数小于屏幕可显示的最大行数可以更方便的滑动到其他的字段进行编辑</string>
@@ -1117,8 +1119,6 @@
     <string name="test">测试</string>
     <string name="show_wait_up_count">显示等待更新数量</string>
     <string name="exit_app">退出软件</string>
-    <string name="add_all_to_bookshelf">全部加入书架</string>
-    <string name="page_to">页至</string>
     <string name="result_analyzed">解析示例</string>
     <string name="bookshelf_px_4">綜合排序</string>
     <string name="effective_replaces">起效的替换</string>
@@ -1142,4 +1142,8 @@
     <string name="adjust_chapter_index">调整章节位置</string>
     <string name="clear_webview_data_success">清除成功，3秒后自动重启应用</string>
     <string name="key_page_on_long_press">按键长按翻页</string>
+    <string name="save_log">保存日志</string>
+    <string name="create_heap_dump">创建堆转储</string>
+    <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
+    <string name="record_heap_dump_t">记录堆转储</string>
 </resources>

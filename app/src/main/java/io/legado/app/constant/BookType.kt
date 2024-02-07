@@ -6,6 +6,7 @@ import androidx.annotation.IntDef
  * 以二进制位来区分,可能一本书籍包含多个类型,每一位代表一个类型,数值为2的n次方
  * 以二进制位来区分,数据库查询更高效, 数值>=8和老版本类型区分开
  */
+@Suppress("ConstPropertyName")
 object BookType {
     /**
      * 8 文本

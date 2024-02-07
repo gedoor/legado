@@ -7,11 +7,16 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.webBook.SearchModel
 import io.legado.app.ui.book.search.SearchScope
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.isJson
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
-
 import java.io.IOException
 
 class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
@@ -81,12 +86,12 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
 
     }
 
-    override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
+    override fun onSearchSuccess(searchBooks: List<SearchBook>) {
         send(GSON.toJson(searchBooks))
     }
 
     override fun onSearchFinish(isEmpty: Boolean) = close(normalClosure, SEARCH_FINISH, false)
 
-    override fun onSearchCancel(exception: Exception?) = close(normalClosure, exception?.toString() ?: SEARCH_FINISH, false)
+    override fun onSearchCancel(exception: Throwable?) = close(normalClosure, exception?.toString() ?: SEARCH_FINISH, false)
 
 }

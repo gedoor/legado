@@ -18,8 +18,6 @@ import io.legado.app.utils.visible
 class CacheAdapter(context: Context, private val callBack: CallBack) :
     RecyclerAdapter<Book, ItemDownloadBinding>(context) {
 
-
-
     override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding {
         return ItemDownloadBinding.inflate(inflater, parent, false)
     }
@@ -71,10 +69,10 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                         if (!it.isStop()) {
                             CacheBook.remove(context, book.bookUrl)
                         } else {
-                            CacheBook.start(context, book, 0, book.totalChapterNum)
+                            CacheBook.start(context, book, 0, book.lastChapterIndex)
                         }
                     } ?: let {
-                        CacheBook.start(context, book, 0, book.totalChapterNum)
+                        CacheBook.start(context, book, 0, book.lastChapterIndex)
                     }
                 }
             }

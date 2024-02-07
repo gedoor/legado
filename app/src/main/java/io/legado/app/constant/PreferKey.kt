@@ -144,6 +144,7 @@ object PreferKey {
     const val volumeKeyPage = "volumeKeyPage"
     const val volumeKeyPageOnPlay = "volumeKeyPageOnPlay"
     const val mouseWheelPage = "mouseWheelPage"
+    const val recordHeapDump = "recordHeapDump"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

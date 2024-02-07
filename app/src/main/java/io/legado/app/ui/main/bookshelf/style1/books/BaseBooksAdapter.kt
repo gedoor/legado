@@ -10,8 +10,8 @@ import io.legado.app.data.entities.Book
 abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
     DiffRecyclerAdapter<Book, VB>(context) {
 
-    override val diffItemCallback: DiffUtil.ItemCallback<Book>
-        get() = object : DiffUtil.ItemCallback<Book>() {
+    override val diffItemCallback: DiffUtil.ItemCallback<Book> =
+        object : DiffUtil.ItemCallback<Book>() {
 
             override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
                 return oldItem.name == newItem.name

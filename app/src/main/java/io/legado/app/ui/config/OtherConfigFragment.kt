@@ -10,6 +10,7 @@ import androidx.core.view.postDelayed
 import androidx.fragment.app.activityViewModels
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import com.jeremyliao.liveeventbus.LiveEventBus
 import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
@@ -25,7 +26,14 @@ import io.legado.app.receiver.SharedReceiverActivity
 import io.legado.app.service.WebService
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.putPrefString
+import io.legado.app.utils.removePref
+import io.legado.app.utils.restart
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
 import splitties.init.appCtx
 
 /**
@@ -80,6 +88,7 @@ class OtherConfigFragment : PreferenceFragment(),
                 title = getString(R.string.select_book_folder)
                 mode = HandleFileContract.DIR_SYS
             }
+
             PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.pre_download))
                 .setMaxValue(9999)
@@ -88,6 +97,7 @@ class OtherConfigFragment : PreferenceFragment(),
                 .show {
                     AppConfig.preDownloadNum = it
                 }
+
             PreferKey.threadCount -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.threads_num_title))
                 .setMaxValue(999)
@@ -96,6 +106,7 @@ class OtherConfigFragment : PreferenceFragment(),
                 .show {
                     AppConfig.threadCount = it
                 }
+
             PreferKey.webPort -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.web_port_title))
                 .setMaxValue(60000)
@@ -104,6 +115,7 @@ class OtherConfigFragment : PreferenceFragment(),
                 .show {
                     AppConfig.webPort = it
                 }
+
             PreferKey.cleanCache -> clearCache()
             PreferKey.uploadRule -> showDialogFragment<DirectLinkUploadConfig>()
             PreferKey.checkSource -> showDialogFragment<CheckSourceConfig>()
@@ -118,6 +130,7 @@ class OtherConfigFragment : PreferenceFragment(),
                         ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
                     }
             }
+
             PreferKey.sourceEditMaxLine -> {
                 NumberPickerDialog(requireContext())
                     .setTitle(getString(R.string.source_edit_text_max_line))
@@ -141,10 +154,12 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.preDownloadNum -> {
                 upPreferenceSummary(key, AppConfig.preDownloadNum.toString())
             }
+
             PreferKey.threadCount -> {
                 upPreferenceSummary(key, AppConfig.threadCount.toString())
                 postEvent(PreferKey.threadCount, "")
             }
+
             PreferKey.webPort -> {
                 upPreferenceSummary(key, AppConfig.webPort.toString())
                 if (WebService.isRun) {
@@ -152,26 +167,37 @@ class OtherConfigFragment : PreferenceFragment(),
                     WebService.start(requireContext())
                 }
             }
+
             PreferKey.defaultBookTreeUri -> {
                 upPreferenceSummary(key, AppConfig.defaultBookTreeUri)
             }
-            PreferKey.recordLog -> LogUtils.upLevel()
+
+            PreferKey.recordLog -> {
+                LogUtils.upLevel()
+                LiveEventBus.config().enableLogger(AppConfig.recordLog)
+            }
+
             PreferKey.processText -> sharedPreferences?.let {
                 setProcessTextEnable(it.getBoolean(key, true))
             }
+
             PreferKey.showDiscovery, PreferKey.showRss -> postEvent(EventBus.NOTIFY_MAIN, true)
             PreferKey.language -> listView.postDelayed(1000) {
                 appCtx.restart()
             }
+
             PreferKey.userAgent -> listView.post {
                 upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
             }
+
             PreferKey.checkSource -> listView.post {
                 upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
             }
+
             PreferKey.bitmapCacheSize -> {
                 upPreferenceSummary(key, AppConfig.bitmapCacheSize.toString())
             }
+
             PreferKey.sourceEditMaxLine -> {
                 upPreferenceSummary(key, AppConfig.sourceEditMaxLine.toString())
             }
@@ -183,12 +209,15 @@ class OtherConfigFragment : PreferenceFragment(),
         when (preferenceKey) {
             PreferKey.preDownloadNum -> preference.summary =
                 getString(R.string.pre_download_s, value)
+
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
             PreferKey.bitmapCacheSize -> preference.summary =
                 getString(R.string.bitmap_cache_size_summary, value)
+
             PreferKey.sourceEditMaxLine -> preference.summary =
                 getString(R.string.source_edit_max_line_summary, value)
+
             else -> if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(value)
                 // Set the summary to reflect the new value.

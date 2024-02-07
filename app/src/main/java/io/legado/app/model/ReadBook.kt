@@ -2,7 +2,11 @@ package io.legado.app.model
 
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.*
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookProgress
+import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.ReadRecord
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
@@ -21,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
@@ -88,7 +93,7 @@ object ReadBook : CoroutineScope by MainScope() {
         upWebBook(book)
         lastBookPress = null
         webBookProgress = null
-        TextFile.txtBuffer = null
+        TextFile.clear()
         synchronized(this) {
             loadingChapters.clear()
         }
@@ -104,6 +109,9 @@ object ReadBook : CoroutineScope by MainScope() {
         }
         callBack?.upMenuView()
         upWebBook(book)
+        synchronized(this) {
+            loadingChapters.clear()
+        }
     }
 
     fun upWebBook(book: Book) {
@@ -184,13 +192,14 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun upReadTime() {
+        if (!AppConfig.enableReadRecord) {
+            return
+        }
         Coroutine.async(executeContext = IO) {
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
             readRecord.lastRead = System.currentTimeMillis()
-            if (AppConfig.enableReadRecord) {
-                appDb.readRecordDao.insert(readRecord)
-            }
+            appDb.readRecordDao.insert(readRecord)
         }
     }
 
@@ -209,7 +218,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 hasNextPage = true
                 durChapterPos = nextPagePos
                 callBack?.upContent()
-                saveRead()
+                saveRead(true)
             }
         }
         return hasNextPage
@@ -223,7 +232,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 hasPrevPage = true
                 durChapterPos = prevPagePos
                 callBack?.upContent()
-                saveRead()
+                saveRead(true)
             }
         }
         return hasPrevPage
@@ -288,12 +297,12 @@ object ReadBook : CoroutineScope by MainScope() {
             success?.invoke()
         }
         curPageChanged()
-        saveRead()
+        saveRead(true)
     }
 
     fun setPageIndex(index: Int) {
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
-        saveRead()
+        saveRead(true)
         curPageChanged(true)
     }
 
@@ -548,7 +557,7 @@ object ReadBook : CoroutineScope by MainScope() {
         saveRead()
     }
 
-    fun saveRead() {
+    fun saveRead(pageChanged: Boolean = false) {
         Coroutine.async(executeContext = IO) {
             val book = book ?: return@async
             book.lastCheckCount = 0
@@ -556,10 +565,11 @@ object ReadBook : CoroutineScope by MainScope() {
             val chapterChanged = book.durChapterIndex != durChapterIndex
             book.durChapterIndex = durChapterIndex
             book.durChapterPos = durChapterPos
-            if (chapterChanged) {
+            if (!pageChanged || chapterChanged) {
                 appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)?.let {
                     book.durChapterTitle = it.getDisplayTitle(
-                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
+                        book.getUseReplaceRule()
                     )
                 }
             }
@@ -595,6 +605,29 @@ object ReadBook : CoroutineScope by MainScope() {
                 }
             }
         }
+    }
+
+    /**
+     * 注册回调
+     */
+    fun register(cb: CallBack) {
+        callBack?.notifyBookChanged()
+        callBack = cb
+    }
+
+    /**
+     * 取消注册回调
+     */
+    fun unregister(cb: CallBack) {
+        if (callBack === cb) {
+            callBack = null
+        }
+        msg = null
+        preDownloadTask?.cancel()
+        downloadScope.coroutineContext.cancelChildren()
+        coroutineContext.cancelChildren()
+        downloadedChapters.clear()
+        downloadFailChapters.clear()
     }
 
     interface CallBack {

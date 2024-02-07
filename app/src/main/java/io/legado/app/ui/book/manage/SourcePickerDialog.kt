@@ -14,6 +14,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
@@ -27,10 +28,16 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import splitties.views.onClick
 
+/**
+ * 书源选择
+ */
 class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
     Toolbar.OnMenuItemClickListener {
 
@@ -85,7 +92,9 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
             when {
                 searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
                 else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)
-            }.collect {
+            }.catch {
+                AppLog.put("书源选择界面获取书源数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
         }

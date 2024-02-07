@@ -4,12 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import io.legado.app.R
-import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.book.isImage
@@ -56,15 +54,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     var textPage: TextPage = TextPage()
         private set
     var isMainView = false
-    private var drawVisibleImageOnly = false
-    private var cacheIncreased = false
     private var longScreenshot = false
-    private val increaseSize = 8 * 1024 * 1024
-    private val maxCacheSize = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-        min(128 * 1024 * 1024, Runtime.getRuntime().maxMemory())
-    } else {
-        256 * 1024 * 1024
-    }
     var reverseStartCursor = false
     var reverseEndCursor = false
 
@@ -119,8 +109,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
         canvas.clipRect(visibleRect)
         drawPage(canvas)
-        drawVisibleImageOnly = false
-        cacheIncreased = false
     }
 
     /**
@@ -212,7 +200,13 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     }
                     canvas.drawText(column.charData, column.start, lineBase, textPaint)
                     if (column.selected) {
-                        canvas.drawRect(column.start, lineTop, column.end, lineBottom, selectedPaint)
+                        canvas.drawRect(
+                            column.start,
+                            lineTop,
+                            column.end,
+                            lineBottom,
+                            selectedPaint
+                        )
                     }
                 }
 
@@ -236,37 +230,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     ) {
 
         val book = ReadBook.book ?: return
-        val isVisible = when {
-            lineTop > 0 -> lineTop < height
-            lineTop < 0 -> lineBottom > 0
-            else -> true
-        }
-        if (drawVisibleImageOnly && !isVisible) {
-            return
-        }
-        if (drawVisibleImageOnly &&
-            !cacheIncreased &&
-            ImageProvider.isTriggerRecycled() &&
-            !ImageProvider.isImageAlive(book, column.src)
-        ) {
-            val newSize = ImageProvider.bitmapLruCache.maxSize() + increaseSize
-            if (newSize < maxCacheSize) {
-                ImageProvider.bitmapLruCache.resize(newSize)
-                AppLog.put("图片缓存不够大，自动扩增至${(newSize / 1024 / 1024)}MB。")
-                cacheIncreased = true
-            }
-            return
-        }
+
         val bitmap = ImageProvider.getImage(
             book,
             column.src,
             (column.end - column.start).toInt(),
             (lineBottom - lineTop).toInt()
         ) {
-            if (!drawVisibleImageOnly && isVisible) {
-                drawVisibleImageOnly = true
-                invalidate()
-            }
+            invalidate()
         } ?: return
 
         val rectF = if (textLine.isImage) {
