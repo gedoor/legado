@@ -93,14 +93,24 @@ jobs:
           ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
           echo "修改文件名"
           mkdir -p ${{ github.workspace }}/apk/
+          mkdir -p ${{ github.workspace }}/mapping/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
             mv "$file" ${{ github.workspace }}/apk/legado_${{ env.product }}_${{ env.VERSIONL }}_$typeName.apk
+          done
+          for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/mapping.txt`; do
+            mv "$file" ${{ github.workspace }}/mapping/mapping.txt
           done
       - name: Upload App To Artifact
         uses: actions/upload-artifact@v4
         with:
           name: legado.${{ env.product }}.${{ env.type }}
           path: ${{ github.workspace }}/apk/*.apk
+
+      - name: Upload Mapping File To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legado.${{ env.product }}.${{ env.type }}.mapping
+          path: ${{ github.workspace }}/mapping/mapping.txt
 
   lanzou:
     needs: [ prepare, build ]
