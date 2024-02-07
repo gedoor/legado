@@ -148,11 +148,16 @@ object ReadBook : CoroutineScope by MainScope() {
         nextTextChapter = null
     }
 
-    fun uploadProgress() {
+    fun uploadProgress(successAction: (() -> Unit)? = null,
+                       failAction: (() -> Unit)? = null) {
         book?.let {
             Coroutine.async {
                 AppWebDav.uploadBookProgress(it)
                 it.save()
+            }.onError {
+                failAction?.invoke()
+            }.onSuccess {
+                successAction?.invoke()
             }
         }
     }

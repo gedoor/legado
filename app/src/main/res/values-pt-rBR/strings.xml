@@ -807,6 +807,7 @@
     <string name="rule_subscription">Assinatura de regras</string>
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">Obter o progresso da nuvem</string>
+    <string name="cover_book_progress">Phủ sóng tiến độ trên đám mây</string>
     <string name="current_progress_exceeds_cloud">O progresso atual excede o progresso da nuvem. Você quer sincronizar?</string>
     <string name="sync_book_progress_t">Progresso de leitura sincronizada</string>
     <string name="sync_book_progress_s">Sincronizar o progresso da leitura ao entrar e sair da tela de leitura</string>

@@ -76,6 +76,7 @@ import io.legado.app.ui.widget.PopupAction
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.*
 
 /**
@@ -372,6 +373,9 @@ class ReadBookActivity : BaseReadBookActivity(),
             menu.findItem(R.id.menu_get_progress)?.isVisible = withContext(IO) {
                 AppWebDav.isOk
             }
+            menu.findItem(R.id.menu_cover_progress)?.isVisible = withContext(IO) {
+                AppWebDav.isOk
+            }
         }
     }
 
@@ -509,6 +513,12 @@ class ReadBookActivity : BaseReadBookActivity(),
                 viewModel.syncBookProgress(it) { progress ->
                     sureSyncProgress(progress)
                 }
+            }
+
+            R.id.menu_cover_progress -> ReadBook.book?.let {
+                ReadBook.uploadProgress(
+                    { toastOnUi(R.string.upload_book_success) },
+                    { toastOnUi(R.string.upload_book_fail)})
             }
 
             R.id.menu_same_title_removed -> {
@@ -1451,6 +1461,16 @@ class ReadBookActivity : BaseReadBookActivity(),
                 it.save()
                 Backup.autoBack(this@ReadBookActivity)
             }
+        }
+    }
+    override fun sureNewProgress(progress: BookProgress) {
+        alert(R.string.get_book_progress) {
+            setMessage(R.string.cloud_progress_exceeds_current)
+            okButton {
+                ReadBook.setProgress(progress)
+                ReadBook.saveRead()
+            }
+            noButton()
         }
     }
 
