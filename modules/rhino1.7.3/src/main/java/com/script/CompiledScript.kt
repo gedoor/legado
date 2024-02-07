@@ -16,6 +16,9 @@ abstract class CompiledScript {
     abstract fun eval(scope: Scriptable): Any?
 
     @Throws(ScriptException::class)
+    abstract suspend fun evalSuspend(scope: Scriptable): Any?
+
+    @Throws(ScriptException::class)
     fun eval(bindings: Bindings?): Any? {
         var ctxt = getEngine().context
         if (bindings != null) {

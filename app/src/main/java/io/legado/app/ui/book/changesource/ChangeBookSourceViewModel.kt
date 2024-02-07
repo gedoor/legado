@@ -273,12 +273,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     ) = coroutineScope {
         val chapterIndex = if (fromReadBookActivity) {
             oldBook?.let {
-                BookHelp.getDurChapter(
-                    it.durChapterIndex,
-                    it.durChapterTitle,
-                    chapters,
-                    it.totalChapterNum
-                )
+                BookHelp.getDurChapter(it, chapters)
             } ?: chapters.lastIndex
         } else chapters.lastIndex
         val bookChapter = chapters[chapterIndex]

@@ -2,6 +2,7 @@ package io.legado.app.constant
 
 import androidx.annotation.IntDef
 
+@Suppress("ConstPropertyName")
 object BookSourceType {
 
     const val default = 0           // 0 文本

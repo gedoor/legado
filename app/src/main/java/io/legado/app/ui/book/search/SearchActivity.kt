@@ -306,6 +306,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
         if (viewModel.isSearchLiveData.value == false
             && viewModel.searchKey.isNotEmpty()
+            && viewModel.searchBookLiveData.value?.isNotEmpty() == true
         ) {
             viewModel.search("")
         }
@@ -367,6 +368,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 开始搜索
      */
     private fun startSearch() {
+        binding.refreshProgressBar.visible()
         binding.refreshProgressBar.isAutoLoading = true
         binding.fbStop.visible()
     }
@@ -376,6 +378,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      */
     private fun searchFinally() {
         binding.refreshProgressBar.isAutoLoading = false
+        binding.refreshProgressBar.gone()
         binding.fbStop.invisible()
     }
 

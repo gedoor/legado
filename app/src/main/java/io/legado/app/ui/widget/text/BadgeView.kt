@@ -106,6 +106,10 @@ class BadgeView @JvmOverloads constructor(
     }
 
     override fun setBackgroundColor(color: Int) {
+        val background = background
+        if (background is ShapeDrawable && background.paint.color == color) {
+            return
+        }
         setBackground(radius, color)
     }
 

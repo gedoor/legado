@@ -1037,7 +1037,7 @@ Còn </string>
     <string name="cover_decode_js">Giải mã Bìa Js(coverDecodeJs)</string>
     <string name="net_no_group">Đã tách nhóm mạng</string>
     <string name="local_no_group">Đã tách nhóm cục bộ</string>
-    <string name="parallel_export_book">XT xuất đa luồng</string>
+    <string name="parallel_export_book">Xuất đa luồng</string>
     <string name="progress_bar_behavior">Hành vi của thanh tiến trình</string>
     <string name="source_edit_text_max_line">Số hàng tối đa trong hộp chỉnh sửa nguồn</string>
     <string name="source_edit_max_line_summary">%s,Đặt số hàng ít hơn số hàng tối đa có thể hiển thị trên màn hình giúp trượt sang các trường khác để chỉnh sửa dễ dàng hơn.</string>

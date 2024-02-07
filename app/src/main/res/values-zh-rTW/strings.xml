@@ -1040,7 +1040,7 @@
     <string name="cover_decode_js">封面解密（coverDecodeJs）</string>
     <string name="net_no_group">網路未分組</string>
     <string name="local_no_group">本機未分組</string>
-    <string name="parallel_export_book">多執行緒匯出TXT</string>
+    <string name="parallel_export_book">多執行緒匯出</string>
     <string name="progress_bar_behavior">進度條行為</string>
     <string name="source_edit_text_max_line">源編輯框最大行數</string>
     <string name="source_edit_max_line_summary">%s，設定行數小於螢幕可顯示的最大行數可以更方便的滑動到其他的欄位進行編輯</string>

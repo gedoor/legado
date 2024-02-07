@@ -123,7 +123,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun refreshBook(book: Book) {
-        execute {
+        execute(executeContext = IO) {
             if (book.isLocal) {
                 book.tocUrl = ""
                 book.getRemoteUrl()?.let {
@@ -164,39 +164,50 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         canReName: Boolean = true,
         scope: CoroutineScope = viewModelScope
     ) {
-        execute(scope) {
-            if (book.isLocal) {
-                loadChapter(book, scope)
-            } else {
-                bookSource?.let { bookSource ->
-                    WebBook.getBookInfo(this, bookSource, book, canReName = canReName)
-                        .onSuccess(IO) {
-                            val dbBook = appDb.bookDao.getBook(book.name, book.author)
-                            if (dbBook != null) {
-                                dbBook.updateTo(it)
-                                inBookshelf = true
-                            }
-                            bookData.postValue(it)
-                            if (inBookshelf) {
-                                appDb.bookDao.update(it)
-                                if (dbBook!!.name != book.name) {
-                                    BookHelp.updateCacheFolder(dbBook, book)
-                                }
-                            }
-                            if (it.isWebFile) {
-                                loadWebFile(it, scope)
-                            } else {
-                                loadChapter(it, scope)
-                            }
-                        }.onError {
-                            AppLog.put("获取书籍信息失败\n${it.localizedMessage}", it)
-                            context.toastOnUi(R.string.error_get_book_info)
-                        }
-                } ?: let {
-                    chapterListData.postValue(emptyList())
-                    context.toastOnUi(R.string.error_no_source)
-                }
+        if (book.isLocal) {
+            loadChapter(book, scope)
+        } else {
+            val bookSource = bookSource ?: let {
+                chapterListData.postValue(emptyList())
+                context.toastOnUi(R.string.error_no_source)
+                return
             }
+            WebBook.getBookInfo(scope, bookSource, book, canReName = canReName)
+                .onSuccess(IO) {
+                    val dbBook = appDb.bookDao.getBook(book.name, book.author)
+                    if (dbBook != null && dbBook.origin == book.origin) {
+                        /**
+                         * book 来自搜索时，搜索的书名不存在于书架，但是加载详情后，书名更新，存在同名书籍
+                         * 此时 book 的数据会与数据库中的不同，需要更新 #3652
+                         * book 加载详情后虽然书名作者相同，但是又可能不是数据库中(书源不同)的那本书 #3149
+                         */
+                        dbBook.updateTo(it)
+                        inBookshelf = true
+                    }
+                    bookData.postValue(it)
+                    if (inBookshelf) {
+                        val dbBook1 = appDb.bookDao.getBook(it.bookUrl)
+                        if (dbBook1 == null) {
+                            /**
+                             * 来自搜索，同一本书，不同 bookUrl
+                             */
+                            appDb.bookDao.insert(it)
+                        } else {
+                            appDb.bookDao.update(it)
+                        }
+                        if (dbBook != null && (dbBook.name != book.name || dbBook.bookUrl != book.bookUrl)) {
+                            BookHelp.updateCacheFolder(dbBook, book)
+                        }
+                    }
+                    if (it.isWebFile) {
+                        loadWebFile(it, scope)
+                    } else {
+                        loadChapter(it, scope)
+                    }
+                }.onError {
+                    AppLog.put("获取书籍信息失败\n${it.localizedMessage}", it)
+                    context.toastOnUi(R.string.error_get_book_info)
+                }
         }
     }
 
@@ -204,47 +215,50 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         scope: CoroutineScope = viewModelScope
     ) {
-        execute(scope) {
-            if (book.isLocal) {
+        if (book.isLocal) {
+            execute(scope) {
                 LocalBook.getChapterList(book).let {
                     appDb.bookDao.update(book)
                     appDb.bookChapterDao.delByBook(book.bookUrl)
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     chapterListData.postValue(it)
                 }
-            } else {
-                bookSource?.let { bookSource ->
-                    val oldBook = book.copy()
-                    WebBook.getChapterList(this, bookSource, book, true)
-                        .onSuccess(IO) {
-                            val dbBook = appDb.bookDao.getBook(book.name, book.author)
-                            if (dbBook?.bookUrl == oldBook.bookUrl) {
-                                if (oldBook.bookUrl == book.bookUrl) {
-                                    appDb.bookDao.update(book)
-                                } else {
-                                    appDb.bookDao.insert(book)
-                                    BookHelp.updateCacheFolder(oldBook, book)
-                                }
-                                appDb.bookChapterDao.delByBook(oldBook.bookUrl)
-                                appDb.bookChapterDao.insert(*it.toTypedArray())
-                                if (book.isSameNameAuthor(ReadBook.book)) {
-                                    ReadBook.book = book
-                                    ReadBook.chapterSize = book.totalChapterNum
-                                }
-                            }
-                            chapterListData.postValue(it)
-                        }.onError {
-                            chapterListData.postValue(emptyList())
-                            AppLog.put("获取目录失败\n${it.localizedMessage}", it)
-                            context.toastOnUi(R.string.error_get_chapter_list)
-                        }
-                } ?: let {
-                    chapterListData.postValue(emptyList())
-                    context.toastOnUi(R.string.error_no_source)
-                }
+            }.onError {
+                context.toastOnUi("LoadTocError:${it.localizedMessage}")
             }
-        }.onError {
-            context.toastOnUi("LoadTocError:${it.localizedMessage}")
+        } else {
+            val bookSource = bookSource ?: let {
+                chapterListData.postValue(emptyList())
+                context.toastOnUi(R.string.error_no_source)
+                return
+            }
+            val oldBook = book.copy()
+            WebBook.getChapterList(scope, bookSource, book, true)
+                .onSuccess(IO) {
+                    /**
+                     * runPreUpdateJs 有可能会修改 book 的书名作者和 bookUrl
+                     */
+                    if (inBookshelf) {
+                        if (oldBook.bookUrl == book.bookUrl) {
+                            appDb.bookDao.update(book)
+                        } else {
+                            appDb.bookDao.insert(book)
+                            BookHelp.updateCacheFolder(oldBook, book)
+                        }
+                        appDb.bookChapterDao.delByBook(oldBook.bookUrl)
+                        appDb.bookChapterDao.insert(*it.toTypedArray())
+                        if (book.isSameNameAuthor(ReadBook.book)) {
+                            ReadBook.book = book
+                            ReadBook.chapterSize = book.totalChapterNum
+                        }
+                    }
+                    bookData.postValue(book)
+                    chapterListData.postValue(it)
+                }.onError {
+                    chapterListData.postValue(emptyList())
+                    AppLog.put("获取目录失败\n${it.localizedMessage}", it)
+                    context.toastOnUi(R.string.error_get_chapter_list)
+                }
         }
     }
 

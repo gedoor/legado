@@ -40,7 +40,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             isSearchLiveData.postValue(true)
         }
 
-        override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
+        override fun onSearchSuccess(searchBooks: List<SearchBook>) {
             searchBookLiveData.postValue(searchBooks)
         }
 
@@ -49,7 +49,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchFinishLiveData.postValue(isEmpty)
         }
 
-        override fun onSearchCancel(exception: Exception?) {
+        override fun onSearchCancel(exception: Throwable?) {
             isSearchLiveData.postValue(false)
             exception?.let {
                 context.toastOnUi(it.localizedMessage)
@@ -95,6 +95,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             if ((searchKey == key) || key.isNotEmpty()) {
                 searchModel.cancelSearch()
                 searchID = System.currentTimeMillis()
+                searchBookLiveData.postValue(emptyList())
                 searchKey = key
             }
             if (searchKey.isEmpty()) {

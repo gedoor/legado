@@ -36,6 +36,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var clickActionBC = appCtx.getPrefInt(PreferKey.clickActionBC, 1)
     var clickActionBR = appCtx.getPrefInt(PreferKey.clickActionBR, 1)
     var themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
+    var useDefaultCover = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
@@ -43,6 +44,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
                 isEInkMode = themeMode == "3"
             }
+
             PreferKey.clickActionTL -> clickActionTL =
                 appCtx.getPrefInt(PreferKey.clickActionTL, 2)
 
@@ -79,6 +81,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
 
             PreferKey.antiAlias -> useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
+
+            PreferKey.useDefaultCover -> useDefaultCover =
+                appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
 
         }
     }
@@ -131,9 +136,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 appCtx.putPrefInt(PreferKey.brightness, value)
             }
         }
-
-    val useDefaultCover: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
 
     val isTransparentStatusBar: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.transparentStatusBar, true)

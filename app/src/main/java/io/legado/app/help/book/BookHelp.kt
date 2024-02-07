@@ -10,7 +10,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
-import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.ArchiveUtils
@@ -25,12 +25,13 @@ import io.legado.app.utils.exists
 import io.legado.app.utils.externalFiles
 import io.legado.app.utils.getFile
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.onEachParallel
 import io.legado.app.utils.postEvent
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
@@ -152,19 +153,16 @@ object BookHelp {
         bookChapter: BookChapter,
         content: String
     ) = coroutineScope {
-        val awaitList = arrayListOf<Deferred<Unit>>()
-        val matcher = AppPattern.imgPattern.matcher(content)
-        while (matcher.find()) {
-            matcher.group(1)?.let { src ->
+        flow {
+            val matcher = AppPattern.imgPattern.matcher(content)
+            while (matcher.find()) {
+                val src = matcher.group(1) ?: continue
                 val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                awaitList.add(async {
-                    saveImage(bookSource, book, mSrc, bookChapter)
-                })
+                emit(mSrc)
             }
-        }
-        awaitList.forEach {
-            it.await()
-        }
+        }.onEachParallel(AppConfig.threadCount) { mSrc ->
+            saveImage(bookSource, book, mSrc, bookChapter)
+        }.collect()
     }
 
     suspend fun saveImage(
@@ -188,7 +186,10 @@ object BookHelp {
                 src, bytes, isCover = false, bookSource, book
             )?.let {
                 if (!checkImage(it)) {
-                    throw NoStackTraceException("数据异常")
+                    // 如果部分图片失效，每次进入正文都会花很长时间再次获取图片数据
+                    // 所以无论如何都要将数据写入到文件里
+                    // throw NoStackTraceException("数据异常")
+                    AppLog.put("${book.name} ${chapter?.title} 图片 $src 下载错误 数据异常")
                 }
                 FileUtils.createFileIfNotExist(
                     downloadDir,
@@ -475,6 +476,15 @@ object BookHelp {
             newIndex
         } else {
             min(max(0, newChapterList.size - 1), oldDurChapterIndex)
+        }
+    }
+
+    fun getDurChapter(
+        oldBook: Book,
+        newChapterList: List<BookChapter>
+    ): Int {
+        return oldBook.run {
+            getDurChapter(durChapterIndex, durChapterTitle, newChapterList, totalChapterNum)
         }
     }
 

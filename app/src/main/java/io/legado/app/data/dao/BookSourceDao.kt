@@ -190,6 +190,19 @@ interface BookSourceDao {
     )
     fun getEnabledByGroup(group: String): List<BookSource>
 
+    @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources 
+        where enabled = 1 
+        and (bookSourceGroup = :group
+            or bookSourceGroup like :group || ',%' 
+            or bookSourceGroup like  '%,' || :group
+            or bookSourceGroup like  '%,' || :group || ',%')
+        order by customOrder asc"""
+    )
+    fun getEnabledPartByGroup(group: String): List<BookSourcePart>
+
     @Query("select * from book_sources where bookUrlPattern != 'NONE' and bookSourceType = :type order by customOrder asc")
     fun getEnabledByType(type: Int): List<BookSource>
 
@@ -215,6 +228,13 @@ interface BookSourceDao {
     @get:Query("select * from book_sources where enabled = 1 order by customOrder")
     val allEnabled: List<BookSource>
 
+    @get:Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabled = 1 order by customOrder asc"""
+    )
+    val allEnabledPart: List<BookSourcePart>
+
     @get:Query("select * from book_sources where enabled = 0 order by customOrder")
     val allDisabled: List<BookSource>
 
@@ -230,8 +250,12 @@ interface BookSourceDao {
     @get:Query("select * from book_sources where loginUrl is not null and loginUrl != ''")
     val allLogin: List<BookSource>
 
-    @get:Query("select * from book_sources where enabled = 1 and bookSourceType = 0 order by customOrder")
-    val allTextEnabled: List<BookSource>
+    @get:Query(
+        """select  bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where enabled = 1 and bookSourceType = 0 order by customOrder"""
+    )
+    val allTextEnabledPart: List<BookSourcePart>
 
     @get:Query("select distinct bookSourceGroup from book_sources where trim(bookSourceGroup) <> ''")
     val allGroupsUnProcessed: List<String>
@@ -241,6 +265,13 @@ interface BookSourceDao {
 
     @Query("select * from book_sources where bookSourceUrl = :key")
     fun getBookSource(key: String): BookSource?
+
+    @Query(
+        """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore,
+        trim(loginUrl) <> '' hasLoginUrl, lastUpdateTime, respondTime, weight, trim(exploreUrl) <> '' hasExploreUrl
+        from book_sources where bookSourceUrl = :key"""
+    )
+    fun getBookSourcePart(key: String): BookSourcePart?
 
     @Query("select count(*) from book_sources")
     fun allCount(): Int
