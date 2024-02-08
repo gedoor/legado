@@ -104,7 +104,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         addView(nextPage)
         addView(curPage)
         addView(prevPage)
-        nextPage.invisible()
         prevPage.invisible()
         curPage.markAsMainView()
         if (!isInEditMode) {
@@ -516,6 +515,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
             }
         }
         (pageDelegate as? ScrollPageDelegate)?.noAnim = AppConfig.noAnimScrollPage
+        pageDelegate?.setViewSize(width, height)
+        if (pageDelegate is NoAnimPageDelegate) {
+            nextPage.invisible()
+        } else {
+            nextPage.visible()
+        }
     }
 
     /**

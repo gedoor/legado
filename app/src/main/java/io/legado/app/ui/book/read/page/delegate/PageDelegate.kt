@@ -90,6 +90,7 @@ abstract class PageDelegate(protected val readView: ReadView) {
         }
     }
 
+    @CallSuper
     open fun setViewSize(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
