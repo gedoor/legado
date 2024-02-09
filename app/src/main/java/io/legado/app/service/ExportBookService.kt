@@ -3,7 +3,6 @@ package io.legado.app.service
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.util.ArraySet
@@ -11,8 +10,6 @@ import androidx.core.app.NotificationCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -36,7 +33,6 @@ import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
-import io.legado.app.utils.LogUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.activityPendingIntent
@@ -419,7 +415,6 @@ class ExportBookService : BaseService() {
     private suspend fun exportEPUB(path: String, book: Book) {
         exportMsg.remove(book.bookUrl)
         postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
-        LogUtils.d("ExportBookService", "exportEPUB start ${book.name} $path")
         if (path.isContentScheme()) {
             val uri = Uri.parse(path)
             val doc = DocumentFile.fromTreeUri(this@ExportBookService, uri)
@@ -428,7 +423,6 @@ class ExportBookService : BaseService() {
         } else {
             exportEpub(File(path).createFolderIfNotExist(), book)
         }
-        LogUtils.d("ExportBookService", "exportEPUB finish")
     }
 
     private suspend fun exportEpub(doc: DocumentFile, book: Book) {
@@ -607,40 +601,20 @@ class ExportBookService : BaseService() {
     }
 
     private fun setCover(book: Book, epubBook: EpubBook) {
-        LogUtils.d(
-            "ExportBookService",
-            "${epubBook.metadata.firstTitle} setCover"
-        )
-        LogUtils.d("ExportBookService", "cover url ${book.getDisplayCover()}")
-        Glide.with(this)
-            .asBitmap()
-            .load(book.getDisplayCover())
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap>?
-                ) {
-                    val stream = ByteArrayOutputStream()
-                    resource.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                    val byteArray: ByteArray = stream.toByteArray()
-                    stream.close()
-                    epubBook.coverImage = Resource(byteArray, "Images/cover.jpg")
-                    LogUtils.d(
-                        "ExportBookService",
-                        "${epubBook.metadata.firstTitle} setCover success"
-                    )
-                }
-
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                    LogUtils.d(
-                        "ExportBookService",
-                        "${epubBook.metadata.firstTitle} setCover fail"
-                    )
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                }
-            })
+        kotlin.runCatching {
+            val bitmap = Glide.with(this)
+                .asBitmap()
+                .load(book.getDisplayCover())
+                .submit()
+                .get()
+            val byteArray = ByteArrayOutputStream().use {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                it.toByteArray()
+            }
+            epubBook.coverImage = Resource(byteArray, "Images/cover.jpg")
+        }.onFailure {
+            AppLog.put("获取书籍封面出错\n${it.localizedMessage}", it)
+        }
     }
 
     private suspend fun setEpubContent(
