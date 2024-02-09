@@ -87,7 +87,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
             bookSort = it.getInt("bookSort", 0)
-            binding.refreshLayout.isEnabled = it.getBoolean("enableRefresh", true)
+            enableRefresh = it.getBoolean("enableRefresh", true)
+            binding.refreshLayout.isEnabled = enableRefresh
         }
         initRecyclerView()
         upRecyclerData()

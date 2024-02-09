@@ -498,6 +498,7 @@ object ReadBook : CoroutineScope by MainScope() {
     fun upToc() {
         val bookSource = bookSource ?: return
         val book = book ?: return
+        if (!book.canUpdate) return
         if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
         book.lastCheckTime = System.currentTimeMillis()
         WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->

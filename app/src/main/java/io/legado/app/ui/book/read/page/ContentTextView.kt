@@ -3,11 +3,15 @@ package io.legado.app.ui.book.read.page
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Picture
 import android.graphics.RectF
+import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.record
 import io.legado.app.R
+import io.legado.app.constant.PageAnim
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.book.isImage
@@ -61,6 +65,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     //滚动参数
     private val pageFactory: TextPageFactory get() = callBack.pageFactory
     private var pageOffset = 0
+    private lateinit var picture: Picture
+    private var pictureIsDirty = true
+    private val atLeastApi23 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+    private val isNoAnim get() = ReadBook.pageAnim() == PageAnim.noAnim
 
     //绘制图片的paint
     private val imagePaint by lazy {
@@ -71,6 +79,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     init {
         callBack = activity as CallBack
+        if (atLeastApi23) {
+            picture = Picture()
+        }
     }
 
     /**
@@ -108,7 +119,17 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             canvas.translate(0f, scrollY.toFloat())
         }
         canvas.clipRect(visibleRect)
-        drawPage(canvas)
+        if (atLeastApi23 && !callBack.isScroll && !isNoAnim) {
+            if (pictureIsDirty) {
+                pictureIsDirty = false
+                picture.record(width, height) {
+                    drawPage(this)
+                }
+            }
+            canvas.drawPicture(picture)
+        } else {
+            drawPage(canvas)
+        }
     }
 
     /**
@@ -286,6 +307,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             contentDescription = textPage.text
         }
         invalidate()
+    }
+
+    override fun invalidate() {
+        super.invalidate()
+        invalidatePicture()
+    }
+
+    private fun invalidatePicture() {
+        pictureIsDirty = true
     }
 
     /**

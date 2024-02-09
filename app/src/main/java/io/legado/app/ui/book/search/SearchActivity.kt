@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import kotlin.math.abs
 
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
     BookAdapter.CallBack,
@@ -235,7 +236,20 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1)) {
-                    scrollToBottom()
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                    if (lastPosition == RecyclerView.NO_POSITION) {
+                        return
+                    }
+                    val lastView = layoutManager.findViewByPosition(lastPosition)
+                    if (lastView == null) {
+                        scrollToBottom()
+                        return
+                    }
+                    val bottom = abs(lastView.bottom - recyclerView.height)
+                    if (bottom <= 1) {
+                        scrollToBottom()
+                    }
                 }
             }
         })
@@ -306,7 +320,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
         if (viewModel.isSearchLiveData.value == false
             && viewModel.searchKey.isNotEmpty()
-            && viewModel.searchBookLiveData.value?.isNotEmpty() == true
         ) {
             viewModel.search("")
         }
