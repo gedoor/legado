@@ -469,7 +469,9 @@ class ExportBookService : BaseService() {
         val bookFile = FileUtils.createFileWithReplace(bookPath)
         //设置正文
         setEpubContent(contentModel, book, epubBook)
-        EpubWriter().write(epubBook, bookFile.outputStream().buffered())
+        bookFile.outputStream().buffered().use {
+            EpubWriter().write(epubBook, it)
+        }
         if (AppConfig.exportToWebDav) {
             // 导出到webdav
             AppWebDav.exportWebDav(Uri.fromFile(bookFile), filename)
