@@ -121,7 +121,7 @@ class AboutFragment : PreferenceFragmentCompat() {
     private fun saveLog() {
         Coroutine.async {
             val backupPath = AppConfig.backupPath ?: let {
-                toastOnUi("未设置备份目录")
+                appCtx.toastOnUi("未设置备份目录")
                 return@async
             }
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
@@ -150,7 +150,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                         }
                 }
             }
-            toastOnUi("已保存至备份目录")
+            appCtx.toastOnUi("已保存至备份目录")
         }.onError {
             AppLog.put("保存日志出错\n${it.localizedMessage}", it, true)
         }
@@ -159,15 +159,15 @@ class AboutFragment : PreferenceFragmentCompat() {
     private fun createHeapDump() {
         Coroutine.async {
             val backupPath = AppConfig.backupPath ?: let {
-                toastOnUi("未设置备份目录")
+                appCtx.toastOnUi("未设置备份目录")
                 return@async
             }
-            toastOnUi("开始创建堆转储")
+            appCtx.toastOnUi("开始创建堆转储")
             System.gc()
             CrashHandler.doHeapDump()
             val heapFile = FileDoc.fromFile(File(appCtx.externalCacheDir, "heapDump")).list()
                 ?.firstOrNull() ?: let {
-                toastOnUi("未找到堆转储文件")
+                appCtx.toastOnUi("未找到堆转储文件")
                 return@async
             }
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
@@ -179,7 +179,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                         input.copyTo(it)
                     }
             }
-            toastOnUi("已保存至备份目录")
+            appCtx.toastOnUi("已保存至备份目录")
         }.onError {
             AppLog.put("保存堆转储失败\n${it.localizedMessage}", it)
         }
