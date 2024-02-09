@@ -36,6 +36,7 @@ import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.utils.DocumentUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.activityPendingIntent
@@ -418,6 +419,7 @@ class ExportBookService : BaseService() {
     private suspend fun exportEPUB(path: String, book: Book) {
         exportMsg.remove(book.bookUrl)
         postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
+        LogUtils.d("ExportBookService", "exportEPUB start ${book.name} $path")
         if (path.isContentScheme()) {
             val uri = Uri.parse(path)
             val doc = DocumentFile.fromTreeUri(this@ExportBookService, uri)
@@ -426,6 +428,7 @@ class ExportBookService : BaseService() {
         } else {
             exportEpub(File(path).createFolderIfNotExist(), book)
         }
+        LogUtils.d("ExportBookService", "exportEPUB finish")
     }
 
     private suspend fun exportEpub(doc: DocumentFile, book: Book) {
@@ -604,6 +607,11 @@ class ExportBookService : BaseService() {
     }
 
     private fun setCover(book: Book, epubBook: EpubBook) {
+        LogUtils.d(
+            "ExportBookService",
+            "${epubBook.metadata.firstTitle} setCover"
+        )
+        LogUtils.d("ExportBookService", "cover url ${book.getDisplayCover()}")
         Glide.with(this)
             .asBitmap()
             .load(book.getDisplayCover())
@@ -617,6 +625,17 @@ class ExportBookService : BaseService() {
                     val byteArray: ByteArray = stream.toByteArray()
                     stream.close()
                     epubBook.coverImage = Resource(byteArray, "Images/cover.jpg")
+                    LogUtils.d(
+                        "ExportBookService",
+                        "${epubBook.metadata.firstTitle} setCover success"
+                    )
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    LogUtils.d(
+                        "ExportBookService",
+                        "${epubBook.metadata.firstTitle} setCover fail"
+                    )
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {

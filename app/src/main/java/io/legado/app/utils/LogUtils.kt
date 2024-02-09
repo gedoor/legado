@@ -49,7 +49,7 @@ object LogUtils {
         }
         val date = getCurrentDateStr(TIME_PATTERN)
         val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
-        FileHandler(logPath, 10240, 10).apply {
+        FileHandler(logPath).apply {
             formatter = object : java.util.logging.Formatter() {
                 override fun format(record: LogRecord): String {
                     // 设置文件输出格式
