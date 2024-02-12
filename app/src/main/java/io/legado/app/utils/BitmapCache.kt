@@ -11,6 +11,33 @@ object BitmapCache {
 
     fun add(bitmap: Bitmap) {
         reusableBitmaps.add(SoftReference(bitmap))
+        trimSize()
+    }
+
+    fun clear() {
+        if (reusableBitmaps.isEmpty()) {
+            return
+        }
+        val iterator = reusableBitmaps.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next().get() ?: continue
+            item.recycle()
+            iterator.remove()
+        }
+    }
+
+    private fun trimSize() {
+        var byteCount = 0
+        val iterator = reusableBitmaps.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next().get() ?: continue
+            if (byteCount > 128 * 1024 * 1024) {
+                item.recycle()
+                iterator.remove()
+            } else {
+                byteCount += item.byteCount
+            }
+        }
     }
 
     fun addInBitmapOptions(options: BitmapFactory.Options) {

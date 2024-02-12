@@ -186,17 +186,19 @@ data class TextChapter(
      */
     fun getPageIndexByCharIndex(charIndex: Int): Int {
         var length = 0
-        pages.forEach {
-            length += it.charSize
+        for (i in pages.indices) {
+            val page = pages[i]
+            length += page.charSize
             if (length > charIndex) {
-                return it.index
+                return page.index
             }
         }
         return pages.lastIndex
     }
 
     fun clearSearchResult() {
-        pages.forEach { page ->
+        for (i in pages.indices) {
+            val page = pages[i]
             page.searchResult.forEach {
                 it.selected = false
                 it.isSearchResult = false

@@ -204,7 +204,7 @@ object ReadBook : CoroutineScope by MainScope() {
         return hasPrevPage
     }
 
-    fun moveToNextChapter(upContent: Boolean): Boolean {
+    fun moveToNextChapter(upContent: Boolean, upContentInPlace: Boolean = true): Boolean {
         if (durChapterIndex < chapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
@@ -213,11 +213,11 @@ object ReadBook : CoroutineScope by MainScope() {
             nextTextChapter = null
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
-                callBack?.upContent()
+                if (upContentInPlace) callBack?.upContent(resetPageOffset = false)
                 loadContent(durChapterIndex, upContent, resetPageOffset = false)
-            } else if (upContent) {
+            } else if (upContent && upContentInPlace) {
                 AppLog.putDebug("moveToNextChapter-章节已加载,刷新视图")
-                callBack?.upContent()
+                callBack?.upContent(resetPageOffset = false)
             }
             loadContent(durChapterIndex.plus(1), upContent, false)
             saveRead()
@@ -233,7 +233,8 @@ object ReadBook : CoroutineScope by MainScope() {
 
     fun moveToPrevChapter(
         upContent: Boolean,
-        toLast: Boolean = true
+        toLast: Boolean = true,
+        upContentInPlace: Boolean = true
     ): Boolean {
         if (durChapterIndex > 0) {
             durChapterPos = if (toLast) prevTextChapter?.lastReadLength ?: Int.MAX_VALUE else 0
@@ -242,10 +243,10 @@ object ReadBook : CoroutineScope by MainScope() {
             curTextChapter = prevTextChapter
             prevTextChapter = null
             if (curTextChapter == null) {
-                callBack?.upContent()
+                if (upContentInPlace) callBack?.upContent(resetPageOffset = false)
                 loadContent(durChapterIndex, upContent, resetPageOffset = false)
-            } else if (upContent) {
-                callBack?.upContent()
+            } else if (upContent && upContentInPlace) {
+                callBack?.upContent(resetPageOffset = false)
             }
             loadContent(durChapterIndex.minus(1), upContent, false)
             saveRead()
@@ -267,6 +268,16 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun setPageIndex(index: Int) {
+        val textChapter = curTextChapter
+        if (textChapter != null) {
+            val pageIndex = durPageIndex
+            if (index > pageIndex) {
+                textChapter.getPage(index - 2)?.recyclePictures()
+            }
+            if (index < pageIndex) {
+                textChapter.getPage(index + 2)?.recyclePictures()
+            }
+        }
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
         saveRead(true)
         curPageChanged(true)
@@ -595,6 +606,7 @@ object ReadBook : CoroutineScope by MainScope() {
         coroutineContext.cancelChildren()
         downloadedChapters.clear()
         downloadFailChapters.clear()
+        ImageProvider.clear()
     }
 
     interface CallBack {

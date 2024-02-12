@@ -13,6 +13,8 @@ interface DataSource {
 
     val prevChapter: TextChapter?
 
+    val isScroll: Boolean
+
     fun hasNextChapter(): Boolean
 
     fun hasPrevChapter(): Boolean

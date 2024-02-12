@@ -21,16 +21,25 @@ import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ContentEditDialog
 import io.legado.app.ui.book.read.page.api.DataSource
-import io.legado.app.ui.book.read.page.delegate.*
+import io.legado.app.ui.book.read.page.delegate.CoverPageDelegate
+import io.legado.app.ui.book.read.page.delegate.NoAnimPageDelegate
+import io.legado.app.ui.book.read.page.delegate.PageDelegate
+import io.legado.app.ui.book.read.page.delegate.ScrollPageDelegate
+import io.legado.app.ui.book.read.page.delegate.SimulationPageDelegate
+import io.legado.app.ui.book.read.page.delegate.SlidePageDelegate
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
-import io.legado.app.utils.*
+import io.legado.app.utils.activity
+import io.legado.app.utils.invisible
+import io.legado.app.utils.screenshot
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.visible
 import java.text.BreakIterator
-import java.util.*
+import java.util.Locale
 import kotlin.math.abs
 
 /**
@@ -49,7 +58,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
             field = value
             upContent()
         }
-    var isScroll = false
+    override var isScroll = false
     val prevPage by lazy { PageView(context) }
     val curPage by lazy { PageView(context) }
     val nextPage by lazy { PageView(context) }
@@ -529,7 +538,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
      * @param resetPageOffset 滚动阅读是是否重置位置
      */
     override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
-        curPage.setContentDescription(pageFactory.curPage.text)
+        post {
+            curPage.setContentDescription(pageFactory.curPage.text)
+        }
         if (isScroll && !callBack.isAutoPage) {
             curPage.setContent(pageFactory.curPage, resetPageOffset)
         } else {
@@ -641,6 +652,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
     fun clearNextPageBitmap() {
         nextPageBitmap?.recycle()
         nextPageBitmap = null
+    }
+
+    fun invalidateTextPage() {
+        pageFactory.run {
+            prevPage.invalidateAll()
+            curPage.invalidateAll()
+            nextPage.invalidateAll()
+            nextPlusPage.invalidateAll()
+        }
     }
 
     override val currentChapter: TextChapter?

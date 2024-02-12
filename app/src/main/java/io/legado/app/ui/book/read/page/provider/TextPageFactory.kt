@@ -34,9 +34,12 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun moveToNext(upContent: Boolean): Boolean = with(dataSource) {
-        return if (hasNext() && currentChapter != null) {
-            if (currentChapter?.isLastIndex(pageIndex) == true) {
-                ReadBook.moveToNextChapter(upContent)
+        return if (hasNext()) {
+            if (currentChapter == null || currentChapter?.isLastIndex(pageIndex) == true) {
+                if ((currentChapter == null || isScroll) && nextChapter == null) {
+                    return@with false
+                }
+                ReadBook.moveToNextChapter(upContent, false)
             } else {
                 ReadBook.setPageIndex(pageIndex.plus(1))
             }
@@ -47,10 +50,16 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun moveToPrev(upContent: Boolean): Boolean = with(dataSource) {
-        return if (hasPrev() && currentChapter != null) {
+        return if (hasPrev()) {
             if (pageIndex <= 0) {
-                ReadBook.moveToPrevChapter(upContent)
+                if (currentChapter == null && prevChapter == null) {
+                    return@with false
+                }
+                ReadBook.moveToPrevChapter(upContent, upContentInPlace = false)
             } else {
+                if (currentChapter == null) {
+                    return@with false
+                }
                 ReadBook.setPageIndex(pageIndex.minus(1))
             }
             if (upContent) upContent(resetPageOffset = false)

@@ -57,9 +57,6 @@ class PageView(context: Context) : FrameLayout(context) {
         if (!isInEditMode) {
             upStyle()
         }
-        binding.contentTextView.upView = {
-            setProgress(it)
-        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

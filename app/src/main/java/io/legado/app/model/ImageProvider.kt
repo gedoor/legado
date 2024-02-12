@@ -212,4 +212,9 @@ object ImageProvider {
         }.getOrDefault(errorBitmap)
     }
 
+    fun clear() {
+        bitmapLruCache.evictAll()
+        BitmapCache.clear()
+    }
+
 }
