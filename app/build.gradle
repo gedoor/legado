@@ -257,7 +257,7 @@ dependencies {
 
     //加解密类库,有些书源使用
     //noinspection GradleDependency,GradlePackageUpdate
-    implementation('cn.hutool:hutool-crypto:5.8.22')
+    implementation('cn.hutool:hutool-crypto:5.8.26')
 
     //firebase, 崩溃统计和性能统计
     implementation platform('com.google.firebase:firebase-bom:32.5.0')
