@@ -96,7 +96,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (!isMainView) return
-        ChapterProvider.upViewSize(w, h, oldw, oldh)
+        ChapterProvider.upViewSize(w, h)
         upVisibleRect()
         textPage.format()
     }
@@ -106,6 +106,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (longScreenshot) {
             canvas.translate(0f, scrollY.toFloat())
         }
+        check(!visibleRect.isEmpty) { "visibleRect 为空" }
         canvas.clipRect(visibleRect)
         if (!callBack.isScroll && !isNoAnim) {
             pictureMirror.draw(canvas, width, height) {
