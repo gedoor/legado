@@ -219,6 +219,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val prevPageDebounce by lazy { Debounce { keyPage(PageDirection.PREV) } }
     private var bookChanged = false
     private var pageChanged = false
+    private var reloadContent = false
     private val autoPageRenderer by lazy { SyncedRenderer { doAutoPage(it) } }
     private var autoPageScrollOffset = 0.0
     private val handler by lazy { buildMainHandler() }
@@ -267,14 +268,22 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         viewModel.initData(intent) {
-            upMenu()
+            initDataSuccess()
         }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         viewModel.initData(intent ?: return) {
-            upMenu()
+            initDataSuccess()
+        }
+    }
+
+    private fun initDataSuccess() {
+        upMenu()
+        if (reloadContent) {
+            reloadContent = false
+            ReadBook.loadContent(resetPageOffset = false)
         }
     }
 
@@ -1526,6 +1535,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             if (it) { // 更新内容排版布局
                 if (isInitFinish) {
                     ReadBook.loadContent(resetPageOffset = false)
+                } else {
+                    reloadContent = true
                 }
             } else {
                 readView.upContent(resetPageOffset = false)
