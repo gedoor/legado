@@ -404,6 +404,11 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
+    override fun onNightModeChanged(mode: Int) {
+        super.onNightModeChanged(mode)
+        binding.readView.invalidateTextPage()
+    }
+
     /**
      * 菜单
      */
@@ -1584,9 +1589,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         observeEvent<Boolean>(EventBus.UP_SEEK_BAR) {
             binding.readMenu.upSeekBar()
-        }
-        observeEvent<String>(EventBus.RECREATE) {
-            binding.readView.invalidateTextPage()
         }
     }
 
