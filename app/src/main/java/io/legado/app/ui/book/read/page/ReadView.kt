@@ -537,10 +537,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         if (isScroll && !isAutoPage) {
             curPage.setContent(pageFactory.curPage, resetPageOffset)
         } else {
-//            if (isAutoPage && relativePosition >= 0) {
-////                clearNextPageBitmap()
-//                autoPager.clear()
-//            }
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
                 1 -> nextPage.setContent(pageFactory.nextPage)

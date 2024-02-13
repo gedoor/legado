@@ -48,6 +48,7 @@ class AutoPager(private val readView: ReadView) {
         readView.curPage.upSelectAble(AppConfig.textSelectAble)
         readView.invalidate()
         reset()
+        picture = null
     }
 
     fun pause() {
