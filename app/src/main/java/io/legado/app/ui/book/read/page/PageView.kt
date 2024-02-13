@@ -101,7 +101,6 @@ class PageView(context: Context) : FrameLayout(context) {
             vwTopDivider.gone(llHeader.isGone || !it.showHeaderLine)
             vwBottomDivider.gone(llFooter.isGone || !it.showFooterLine)
         }
-        contentTextView.upVisibleRect()
         upTime()
         upBattery(battery)
     }

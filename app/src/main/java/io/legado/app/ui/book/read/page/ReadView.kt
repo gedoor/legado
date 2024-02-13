@@ -168,7 +168,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
 
     override fun computeScroll() {
-        pageDelegate?.scroll()
+        pageDelegate?.computeScroll()
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {

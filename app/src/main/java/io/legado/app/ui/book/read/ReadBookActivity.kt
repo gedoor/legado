@@ -76,7 +76,6 @@ import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_DIVIDER_C
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
-import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -212,7 +211,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val timeBatteryReceiver = TimeBatteryReceiver()
     private var screenTimeOut: Long = 0
     private var loadStates: Boolean = false
-    override val pageFactory: TextPageFactory get() = binding.readView.pageFactory
+    override val pageFactory get() = binding.readView.pageFactory
+    override val pageDelegate get() = binding.readView.pageDelegate
     override val headerHeight: Int get() = binding.readView.curPage.headerHeight
     private val menuLayoutIsVisible get() = bottomDialog > 0 || binding.readMenu.isVisible
     private val nextPageDebounce by lazy { Debounce { keyPage(PageDirection.NEXT) } }

@@ -3,7 +3,6 @@ package io.legado.app.ui.book.read.page
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -14,6 +13,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.read.page.delegate.PageDelegate
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
@@ -45,7 +45,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
     private var callBack: CallBack
-    private val visibleRect = RectF()
+    private val visibleRect = ChapterProvider.visibleRect
     val selectStart = TextPos(0, 0, 0)
     private val selectEnd = TextPos(0, 0, 0)
     var textPage: TextPage = TextPage()
@@ -56,7 +56,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     var reverseEndCursor = false
 
     //滚动参数
-    private val pageFactory: TextPageFactory get() = callBack.pageFactory
+    private val pageFactory get() = callBack.pageFactory
+    private val pageDelegate get() = callBack.pageDelegate
     private var pageOffset = 0
     private val pictureMirror = PictureMirror()
     private val isNoAnim get() = ReadBook.pageAnim() == PageAnim.noAnim
@@ -81,23 +82,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         invalidate()
     }
 
-    /**
-     * 更新绘制区域
-     */
-    fun upVisibleRect() {
-        visibleRect.set(
-            ChapterProvider.paddingLeft.toFloat(),
-            ChapterProvider.paddingTop.toFloat(),
-            ChapterProvider.visibleRight.toFloat(),
-            ChapterProvider.visibleBottom.toFloat()
-        )
-    }
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (!isMainView) return
         ChapterProvider.upViewSize(w, h)
-        upVisibleRect()
         textPage.format()
     }
 
@@ -159,17 +147,20 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
         if (!pageFactory.hasPrev() && pageOffset > 0) {
             pageOffset = 0
+            pageDelegate?.abortAnim()
         } else if (!pageFactory.hasNext()
             && pageOffset < 0
             && pageOffset + textPage.height < ChapterProvider.visibleHeight
         ) {
             val offset = (ChapterProvider.visibleHeight - textPage.height).toInt()
             pageOffset = min(0, offset)
+            pageDelegate?.abortAnim()
         } else if (pageOffset > 0) {
             if (pageFactory.moveToPrev(true)) {
                 pageOffset -= textPage.height.toInt()
             } else {
                 pageOffset = 0
+                pageDelegate?.abortAnim()
             }
         } else if (pageOffset < -textPage.height) {
             val height = textPage.height
@@ -177,6 +168,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 pageOffset += height.toInt()
             } else {
                 pageOffset = -height.toInt()
+                pageDelegate?.abortAnim()
             }
         }
         invalidate()
@@ -699,6 +691,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     interface CallBack {
         val headerHeight: Int
         val pageFactory: TextPageFactory
+        val pageDelegate: PageDelegate?
         val isScroll: Boolean
         var isSelectingSearchResult: Boolean
         fun upSelectedStart(x: Float, y: Float, top: Float)

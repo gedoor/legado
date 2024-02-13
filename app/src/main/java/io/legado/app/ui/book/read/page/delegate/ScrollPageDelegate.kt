@@ -9,7 +9,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
-@Suppress("UnnecessaryVariable")
 class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     // 滑动追踪的时间

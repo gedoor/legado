@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Paint.FontMetrics
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -132,6 +133,9 @@ object ChapterProvider {
     @JvmStatic
     var doublePage = false
         private set
+
+    @JvmStatic
+    var visibleRect = RectF()
 
     private val titleMeasureHelper = TextMeasure(titlePaint)
     private val contentMeasureHelper = TextMeasure(contentPaint)
@@ -911,6 +915,14 @@ object ChapterProvider {
             visibleRight = viewWidth - paddingRight
             visibleBottom = paddingTop + visibleHeight
         }
+
+        visibleRect.set(
+            paddingLeft.toFloat(),
+            paddingTop.toFloat(),
+            visibleRight.toFloat(),
+            visibleBottom.toFloat()
+        )
+
     }
 
 }
