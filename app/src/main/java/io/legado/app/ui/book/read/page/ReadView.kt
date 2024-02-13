@@ -2,10 +2,7 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Build
 import android.util.AttributeSet
@@ -16,7 +13,6 @@ import android.widget.FrameLayout
 import io.legado.app.constant.PageAnim
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ContentEditDialog
@@ -36,7 +32,6 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.invisible
 import io.legado.app.utils.showDialogFragment
-import io.legado.app.utils.visible
 import java.text.BreakIterator
 import java.util.Locale
 import kotlin.math.abs
@@ -103,10 +98,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private val blRect = RectF()
     private val bcRect = RectF()
     private val brRect = RectF()
-    private val autoPageRect by lazy { Rect() }
-    private val autoPagePint by lazy { Paint().apply { color = context.accentColor } }
     private val boundary by lazy { BreakIterator.getWordInstance(Locale.getDefault()) }
-    private var nextPageBitmap: Bitmap? = null
     val autoPager = AutoPager(this)
     val isAutoPage get() = autoPager.isRunning
 
@@ -115,6 +107,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         addView(curPage)
         addView(prevPage)
         prevPage.invisible()
+        nextPage.invisible()
         curPage.markAsMainView()
         if (!isInEditMode) {
             upBg()
@@ -512,11 +505,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
         (pageDelegate as? ScrollPageDelegate)?.noAnim = AppConfig.noAnimScrollPage
         pageDelegate?.setViewSize(width, height)
-        if (pageDelegate is NoAnimPageDelegate) {
-            nextPage.invisible()
-        } else {
-            nextPage.visible()
-        }
         if (isScroll) {
             curPage.setAutoPager(autoPager)
         } else {
@@ -637,11 +625,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun getCurPagePosition(): Int {
         return curPage.getCurVisibleFirstLine()?.pagePosition ?: 0
-    }
-
-    fun clearNextPageBitmap() {
-        nextPageBitmap?.recycle()
-        nextPageBitmap = null
     }
 
     fun invalidateTextPage() {

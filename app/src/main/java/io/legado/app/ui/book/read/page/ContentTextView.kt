@@ -190,7 +190,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val view = this
         pageFactory.run {
             prevPage.preRender(view)
-            prevPage.preRender(view)
+            curPage.preRender(view)
             nextPage.preRender(view)
             nextPlusPage.preRender(view)
         }
