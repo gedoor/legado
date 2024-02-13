@@ -35,7 +35,6 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.invisible
-import io.legado.app.utils.screenshot
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.visible
 import java.text.BreakIterator
@@ -108,6 +107,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private val autoPagePint by lazy { Paint().apply { color = context.accentColor } }
     private val boundary by lazy { BreakIterator.getWordInstance(Locale.getDefault()) }
     private var nextPageBitmap: Bitmap? = null
+    val autoPager = AutoPager(this)
+    val isAutoPage get() = autoPager.isRunning
 
     init {
         addView(nextPage)
@@ -149,22 +150,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         pageDelegate?.onDraw(canvas)
-        if (!isInEditMode && callBack.isAutoPage && !isScroll) {
-            // 自动翻页
-            val bitmap = nextPageBitmap ?: nextPage.screenshot()?.also { nextPageBitmap = it }
-            bitmap?.let {
-                val bottom = callBack.autoPageProgress
-                autoPageRect.set(0, 0, width, bottom)
-                canvas.drawBitmap(it, autoPageRect, autoPageRect, null)
-                canvas.drawRect(
-                    0f,
-                    bottom.toFloat() - 1,
-                    width.toFloat(),
-                    bottom.toFloat(),
-                    autoPagePint
-                )
-            }
-        }
+        autoPager.onDraw(canvas)
     }
 
     override fun computeScroll() {
@@ -262,6 +248,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     pageDelegate?.onTouch(event)
                 }
                 pressOnTextSelected = false
+                autoPager.resume()
             }
         }
         return true
@@ -530,6 +517,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
         } else {
             nextPage.visible()
         }
+        if (isScroll) {
+            curPage.setAutoPager(autoPager)
+        } else {
+            curPage.setAutoPager(null)
+        }
+        curPage.isScroll = isScroll
     }
 
     /**
@@ -541,12 +534,13 @@ class ReadView(context: Context, attrs: AttributeSet) :
         post {
             curPage.setContentDescription(pageFactory.curPage.text)
         }
-        if (isScroll && !callBack.isAutoPage) {
+        if (isScroll && !isAutoPage) {
             curPage.setContent(pageFactory.curPage, resetPageOffset)
         } else {
-            if (callBack.isAutoPage && relativePosition >= 0) {
-                clearNextPageBitmap()
-            }
+//            if (isAutoPage && relativePosition >= 0) {
+////                clearNextPageBitmap()
+//                autoPager.clear()
+//            }
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
                 1 -> nextPage.setContent(pageFactory.nextPage)
@@ -663,6 +657,24 @@ class ReadView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    fun onScrollAnimStart() {
+        autoPager.pause()
+    }
+
+    fun onScrollAnimStop() {
+        autoPager.resume()
+    }
+
+    override fun onPageChange() {
+        autoPager.reset()
+        curPage.submitPreRenderTask()
+    }
+
+    fun onContentLoadFinish() {
+        autoPager.reset()
+        curPage.submitPreRenderTask()
+    }
+
     override val currentChapter: TextChapter?
         get() {
             return if (callBack.isInitFinish) ReadBook.textChapter(0) else null
@@ -688,8 +700,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     interface CallBack {
         val isInitFinish: Boolean
-        val isAutoPage: Boolean
-        val autoPageProgress: Int
         fun showActionMenu()
         fun screenOffTimerStart()
         fun showTextActionMenu()

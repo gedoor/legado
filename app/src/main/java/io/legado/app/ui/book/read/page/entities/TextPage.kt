@@ -263,7 +263,7 @@ data class TextPage(
         return null
     }
 
-    fun draw(view: ContentTextView, canvas: Canvas) {
+    fun draw(view: ContentTextView, canvas: Canvas?) {
         pictureMirror.draw(canvas, view.width, height.toInt()) {
             drawPage(view, this)
         }
@@ -276,6 +276,15 @@ data class TextPage(
                 line.draw(view, this)
             }
         }
+    }
+
+    fun preRender(view: ContentTextView) {
+        if (!pictureMirror.isDirty) return
+        draw(view, null)
+    }
+
+    fun isDirty(): Boolean {
+        return pictureMirror.isDirty
     }
 
     fun invalidate() {

@@ -20,4 +20,6 @@ interface DataSource {
     fun hasPrevChapter(): Boolean
 
     fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
+
+    fun onPageChange()
 }

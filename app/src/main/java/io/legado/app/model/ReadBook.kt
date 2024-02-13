@@ -275,7 +275,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 textChapter.getPage(index - 2)?.recyclePictures()
             }
             if (index < pageIndex) {
-                textChapter.getPage(index + 2)?.recyclePictures()
+                textChapter.getPage(index + 3)?.recyclePictures()
             }
         }
         durChapterPos = curTextChapter?.getReadLength(index) ?: index

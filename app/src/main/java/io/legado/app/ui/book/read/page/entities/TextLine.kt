@@ -121,7 +121,7 @@ data class TextLine(
         return visible
     }
 
-    fun draw(view: ContentTextView, canvas: Canvas) {
+    fun draw(view: ContentTextView, canvas: Canvas?) {
         pictureMirror.draw(canvas, view.width, height.toInt()) {
             drawTextLine(view, this)
         }

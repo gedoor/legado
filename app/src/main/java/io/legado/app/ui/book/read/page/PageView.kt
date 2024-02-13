@@ -45,6 +45,8 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
+    private var isMainView = false
+    var isScroll = false
 
     val headerHeight: Int
         get() {
@@ -272,7 +274,13 @@ class PageView(context: Context) : FrameLayout(context) {
      * 设置内容
      */
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
-        setProgress(textPage)
+        if (isMainView && !isScroll) {
+            setProgress(textPage)
+        } else {
+            post {
+                setProgress(textPage)
+            }
+        }
         if (resetPageOffset) {
             resetPageOffset()
         }
@@ -322,6 +330,14 @@ class PageView(context: Context) : FrameLayout(context) {
             }
         }
         tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
+    }
+
+    fun setAutoPager(autoPager: AutoPager?) {
+        binding.contentTextView.setAutoPager(autoPager)
+    }
+
+    fun submitPreRenderTask() {
+        binding.contentTextView.submitPreRenderTask()
     }
 
     /**
@@ -375,6 +391,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun markAsMainView() {
+        isMainView = true
         binding.contentTextView.isMainView = true
     }
 

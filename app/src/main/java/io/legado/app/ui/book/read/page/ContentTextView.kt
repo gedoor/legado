@@ -9,7 +9,6 @@ import android.view.View
 import androidx.core.graphics.withTranslation
 import io.legado.app.R
 import io.legado.app.constant.PageAnim
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.ReadBook
@@ -28,16 +27,16 @@ import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.PictureMirror
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
+import java.util.concurrent.Executors
 import kotlin.math.min
 
 /**
  * 阅读内容视图
  */
 class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-    var selectAble = context.getPrefBoolean(PreferKey.textSelectAble, true)
+    var selectAble = AppConfig.textSelectAble
     val selectedPaint by lazy {
         Paint().apply {
             color = context.getCompatColor(R.color.btn_bg_press_2)
@@ -61,6 +60,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var pageOffset = 0
     private val pictureMirror = PictureMirror()
     private val isNoAnim get() = ReadBook.pageAnim() == PageAnim.noAnim
+    private var autoPager: AutoPager? = null
+    private val renderThread by lazy { Executors.newSingleThreadExecutor() }
+    private val renderRunnable by lazy { Runnable { preRenderPage() } }
 
     //绘制图片的paint
     val imagePaint by lazy {
@@ -91,6 +93,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        autoPager?.onDraw(canvas)
         if (longScreenshot) {
             canvas.translate(0f, scrollY.toFloat())
         }
@@ -177,6 +180,20 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     override fun invalidate() {
         super.invalidate()
         pictureMirror.invalidate()
+    }
+
+    fun submitPreRenderTask() {
+        renderThread.submit(renderRunnable)
+    }
+
+    private fun preRenderPage() {
+        val view = this
+        pageFactory.run {
+            prevPage.preRender(view)
+            prevPage.preRender(view)
+            nextPage.preRender(view)
+            nextPlusPage.preRender(view)
+        }
     }
 
     /**
@@ -667,6 +684,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             1 -> pageFactory.nextPage
             else -> pageFactory.nextPlusPage
         }
+    }
+
+    fun setAutoPager(autoPager: AutoPager?) {
+        this.autoPager = autoPager
     }
 
     override fun canScrollVertically(direction: Int): Boolean {

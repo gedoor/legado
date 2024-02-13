@@ -137,6 +137,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             }
         }
 
+    val textSelectAble: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.textSelectAble, true)
+
     val isTransparentStatusBar: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.transparentStatusBar, true)
 

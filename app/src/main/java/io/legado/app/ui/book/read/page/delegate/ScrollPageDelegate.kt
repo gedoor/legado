@@ -21,6 +21,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     var noAnim: Boolean = false
 
     override fun onAnimStart(animationSpeed: Int) {
+        readView.onScrollAnimStart()
         //惯性滚动
         fling(
             0, touchY.toInt(), 0, mVelocity.yVelocity.toInt(),
@@ -29,7 +30,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     }
 
     override fun onAnimStop() {
-        // nothing
+        readView.onScrollAnimStop()
     }
 
     override fun onTouch(event: MotionEvent) {

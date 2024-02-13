@@ -94,7 +94,6 @@ import io.legado.app.utils.ACache
 import io.legado.app.utils.Debounce
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.StartActivityContract
-import io.legado.app.utils.SyncedRenderer
 import io.legado.app.utils.applyOpenTint
 import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.getPrefBoolean
@@ -201,8 +200,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
     override val isInitFinish: Boolean get() = viewModel.isInitFinish
     override val isScroll: Boolean get() = binding.readView.isScroll
-    override var autoPageProgress = 0
-    override var isAutoPage = false
+    private val isAutoPage get() = binding.readView.isAutoPage
     override var isShowingSearchResult = false
     override var isSelectingSearchResult = false
         set(value) {
@@ -220,8 +218,6 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var bookChanged = false
     private var pageChanged = false
     private var reloadContent = false
-    private val autoPageRenderer by lazy { SyncedRenderer { doAutoPage(it) } }
-    private var autoPageScrollOffset = 0.0
     private val handler by lazy { buildMainHandler() }
     private val screenOffRunnable by lazy { Runnable { keepScreenOn(false) } }
 
@@ -934,6 +930,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadAloud.upTtsProgress(this)
         }
         loadStates = true
+        binding.readView.onContentLoadFinish()
     }
 
     /**
@@ -945,9 +942,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         success: (() -> Unit)?
     ) {
         lifecycleScope.launch {
-            if (relativePosition == 0) {
-                autoPageProgress = 0
-            }
             binding.readView.upContent(relativePosition, resetPageOffset)
             upSeekBarProgress()
             loadStates = false
@@ -970,8 +964,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun pageChanged() {
         pageChanged = true
-        lifecycleScope.launch {
-            autoPageProgress = 0
+        handler.post {
             upSeekBarProgress()
             startBackupJob()
         }
@@ -1053,8 +1046,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (isAutoPage) {
             autoPageStop()
         } else {
-            isAutoPage = true
-            autoPagePlus()
+            binding.readView.autoPager.start()
             binding.readMenu.setAutoPage(true)
             screenTimeOut = -1L
             screenOffTimerStart()
@@ -1063,50 +1055,9 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun autoPageStop() {
         if (isAutoPage) {
-            isAutoPage = false
-            autoPageRenderer.stop()
-            binding.readView.invalidate()
-            binding.readView.clearNextPageBitmap()
+            binding.readView.autoPager.stop()
             binding.readMenu.setAutoPage(false)
             upScreenTimeOut()
-        }
-    }
-
-    private fun autoPagePlus() {
-        autoPageProgress = 0
-        autoPageScrollOffset = 0.0
-        autoPageRenderer.start()
-    }
-
-    private fun doAutoPage(frameTime: Double) {
-        if (menuLayoutIsVisible) {
-            return
-        }
-        if (binding.readView.run { isScroll && pageDelegate?.isRunning == true }) {
-            return
-        }
-        val readTime = ReadBookConfig.autoReadSpeed * 1000.0
-        val height = binding.readView.height
-        autoPageScrollOffset += height / readTime * frameTime
-        if (autoPageScrollOffset < 1) {
-            return
-        }
-        val scrollOffset = autoPageScrollOffset.toInt()
-        autoPageScrollOffset -= scrollOffset
-        if (binding.readView.isScroll) {
-            binding.readView.curPage.scroll(-scrollOffset)
-        } else {
-            autoPageProgress += scrollOffset
-            if (autoPageProgress >= height) {
-                autoPageProgress = 0
-                if (!binding.readView.fillPage(PageDirection.NEXT)) {
-                    autoPageStop()
-                } else {
-                    binding.readView.clearNextPageBitmap()
-                }
-            } else {
-                binding.readView.invalidate()
-            }
         }
     }
 
@@ -1412,6 +1363,14 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun navigateToSearch(searchResult: SearchResult, index: Int) {
         viewModel.searchResultIndex = index
         skipToSearch(searchResult)
+    }
+
+    override fun onMenuShow() {
+        binding.readView.autoPager.pause()
+    }
+
+    override fun onMenuHide() {
+        binding.readView.autoPager.resume()
     }
 
     /* 全文搜索跳转 */
