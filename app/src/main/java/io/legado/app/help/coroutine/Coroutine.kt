@@ -1,6 +1,5 @@
 package io.legado.app.help.coroutine
 
-import android.os.Looper
 import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletionHandler
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -35,9 +33,6 @@ class Coroutine<T>(
     companion object {
 
         private val DEFAULT = MainScope()
-        private val launchExecutor = Executors.newSingleThreadExecutor()
-        private val mainThread = Looper.getMainLooper().thread
-        private val isMainThread inline get() = mainThread === Thread.currentThread()
 
         fun <T> async(
             scope: CoroutineScope = DEFAULT,
@@ -51,7 +46,7 @@ class Coroutine<T>(
 
     }
 
-    private val job: Job by lazy { executeInternal(context, block) }
+    private val job: Job
 
     private var start: VoidCallback? = null
     private var success: Callback<T>? = null
@@ -72,13 +67,7 @@ class Coroutine<T>(
         get() = job.isCompleted
 
     init {
-        if (context == Dispatchers.Main.immediate && isMainThread) {
-            job
-        } else {
-            launchExecutor.execute {
-                job
-            }
-        }
+        this.job = executeInternal(context, block)
     }
 
     fun timeout(timeMillis: () -> Long): Coroutine<T> {

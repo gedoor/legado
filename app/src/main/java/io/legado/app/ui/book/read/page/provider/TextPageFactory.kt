@@ -44,7 +44,6 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 ReadBook.setPageIndex(pageIndex.plus(1))
             }
             if (upContent) upContent(resetPageOffset = false)
-            dataSource.onPageChange()
             true
         } else
             false
@@ -64,7 +63,6 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 ReadBook.setPageIndex(pageIndex.minus(1))
             }
             if (upContent) upContent(resetPageOffset = false)
-            dataSource.onPageChange()
             true
         } else
             false

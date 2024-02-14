@@ -116,6 +116,7 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -220,6 +221,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var reloadContent = false
     private val handler by lazy { buildMainHandler() }
     private val screenOffRunnable by lazy { Runnable { keepScreenOn(false) } }
+    private val executor = IO.asExecutor()
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -908,7 +910,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun upMenuView() {
-        lifecycleScope.launch {
+        handler.post {
             binding.readMenu.upBookView()
         }
     }
@@ -930,7 +932,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadAloud.upTtsProgress(this)
         }
         loadStates = true
-        binding.readView.onContentLoadFinish()
     }
 
     /**
@@ -964,8 +965,13 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun pageChanged() {
         pageChanged = true
+        runOnUiThread {
+            binding.readView.onPageChange()
+        }
         handler.post {
             upSeekBarProgress()
+        }
+        executor.execute {
             startBackupJob()
         }
     }

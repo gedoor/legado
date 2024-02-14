@@ -644,12 +644,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         autoPager.resume()
     }
 
-    override fun onPageChange() {
-        autoPager.reset()
-        curPage.submitPreRenderTask()
-    }
-
-    fun onContentLoadFinish() {
+    fun onPageChange() {
         autoPager.reset()
         curPage.submitPreRenderTask()
     }

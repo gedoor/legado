@@ -8,7 +8,6 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withTranslation
 import io.legado.app.R
-import io.legado.app.constant.PageAnim
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.ReadBook
@@ -24,12 +23,12 @@ import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.widget.dialog.PhotoDialog
-import io.legado.app.utils.PictureMirror
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
 import kotlin.math.min
 
 /**
@@ -58,10 +57,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val pageFactory get() = callBack.pageFactory
     private val pageDelegate get() = callBack.pageDelegate
     private var pageOffset = 0
-    private val pictureMirror = PictureMirror()
-    private val isNoAnim get() = ReadBook.pageAnim() == PageAnim.noAnim
     private var autoPager: AutoPager? = null
-    private val renderThread by lazy { Executors.newSingleThreadExecutor() }
+    private val renderThread by lazy {
+        Executors.newSingleThreadExecutor {
+            Thread(it, "TextPageRender")
+        }
+    }
     private val renderRunnable by lazy { Runnable { preRenderPage() } }
 
     //绘制图片的paint
@@ -99,13 +100,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
         check(!visibleRect.isEmpty) { "visibleRect 为空" }
         canvas.clipRect(visibleRect)
-        if (!callBack.isScroll && !isNoAnim) {
-            pictureMirror.draw(canvas, width, height) {
-                drawPage(this)
-            }
-        } else {
-            drawPage(canvas)
-        }
+        drawPage(canvas)
     }
 
     /**
@@ -175,11 +170,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
         }
         invalidate()
-    }
-
-    override fun invalidate() {
-        super.invalidate()
-        pictureMirror.invalidate()
     }
 
     fun submitPreRenderTask() {

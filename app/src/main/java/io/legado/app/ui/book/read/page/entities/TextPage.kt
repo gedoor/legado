@@ -264,7 +264,7 @@ data class TextPage(
     }
 
     fun draw(view: ContentTextView, canvas: Canvas?) {
-        pictureMirror.draw(canvas, view.width, height.toInt()) {
+        pictureMirror.drawLocked(canvas, view.width, height.toInt(), view) {
             drawPage(view, this)
         }
     }

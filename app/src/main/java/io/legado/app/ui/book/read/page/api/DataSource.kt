@@ -21,5 +21,4 @@ interface DataSource {
 
     fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
 
-    fun onPageChange()
 }
