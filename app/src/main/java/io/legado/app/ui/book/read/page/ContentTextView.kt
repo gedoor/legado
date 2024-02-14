@@ -28,7 +28,6 @@ import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
 import kotlin.math.min
 
 /**
@@ -58,11 +57,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val pageDelegate get() = callBack.pageDelegate
     private var pageOffset = 0
     private var autoPager: AutoPager? = null
-    private val renderThread by lazy {
-        Executors.newSingleThreadExecutor {
-            Thread(it, "TextPageRender")
-        }
-    }
     private val renderRunnable by lazy { Runnable { preRenderPage() } }
 
     //绘制图片的paint
@@ -697,6 +691,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             }
         }
         return callBack.onLongScreenshotTouchEvent(event)
+    }
+
+    companion object {
+        private val renderThread by lazy {
+            Executors.newSingleThreadExecutor {
+                Thread(it, "TextPageRender")
+            }
+        }
     }
 
     interface CallBack {
