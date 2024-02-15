@@ -180,6 +180,8 @@ object ChapterProvider {
                     durY = it.second
                 }
             }
+            textPages.last().lines.last().isParagraphEnd = true
+            stringBuilder.append("\n")
             durY += titleBottomSpacing
         }
         contents.forEach { content ->
@@ -269,6 +271,8 @@ object ChapterProvider {
                     }
                 }
             }
+            textPages.last().lines.last().isParagraphEnd = true
+            stringBuilder.append("\n")
         }
         val textPage = textPages.last()
         val endPadding = 20.dpToPx()
@@ -481,7 +485,6 @@ object ChapterProvider {
                 lineIndex == layout.lineCount - 1 -> {
                     //最后一行
                     textLine.text = lineText
-                    textLine.isParagraphEnd = true
                     //标题x轴居中
                     val startX = if (
                         isTitle &&
@@ -523,9 +526,6 @@ object ChapterProvider {
             }
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(lineText)
-            if (textLine.isParagraphEnd) {
-                stringBuilder.append("\n")
-            }
             textLine.upTopBottom(durY, textHeight, fontMetrics)
             val textPage = textPages.last()
             textPage.addLine(textLine)
