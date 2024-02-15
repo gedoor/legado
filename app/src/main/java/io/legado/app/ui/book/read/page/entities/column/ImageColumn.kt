@@ -32,10 +32,7 @@ data class ImageColumn(
             src,
             (end - start).toInt(),
             height.toInt()
-        ) {
-            textLine.invalidate()
-            view.invalidate()
-        } ?: return
+        )
 
         val rectF = if (textLine.isImage) {
             RectF(start, 0f, end, height)

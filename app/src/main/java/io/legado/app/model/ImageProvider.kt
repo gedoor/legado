@@ -6,9 +6,7 @@ import android.os.Build
 import android.util.Size
 import androidx.collection.LruCache
 import io.legado.app.R
-import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppLog.putDebug
-import io.legado.app.constant.PageAnim
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
@@ -16,10 +14,8 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isPdf
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.PdfFile
-import io.legado.app.utils.BitmapCache
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.SvgUtils
@@ -70,8 +66,7 @@ object ImageProvider {
         ) {
             //错误图片不能释放,占位用,防止一直重复获取图片
             if (oldBitmap != errorBitmap) {
-                BitmapCache.add(oldBitmap)
-                //oldBitmap.recycle()
+                oldBitmap.recycle()
                 //putDebug("ImageProvider: trigger bitmap recycle. URI: $filePath")
                 //putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
             }
@@ -160,9 +155,8 @@ object ImageProvider {
         book: Book,
         src: String,
         width: Int,
-        height: Int? = null,
-        block: (() -> Unit)? = null
-    ): Bitmap? {
+        height: Int? = null
+    ): Bitmap {
         //src为空白时 可能被净化替换掉了 或者规则失效
         if (book.getUseReplaceRule() && src.isBlank()) {
             book.setUseReplaceRule(false)
@@ -174,32 +168,6 @@ object ImageProvider {
         //bitmapLruCache的key同一改成缓存文件的路径
         val cacheBitmap = getNotRecycled(vFile.absolutePath)
         if (cacheBitmap != null) return cacheBitmap
-        if (height != null && AppConfig.asyncLoadImage && ReadBook.pageAnim() == PageAnim.scrollPageAnim) {
-            if (asyncLoadingImages.contains(vFile.absolutePath)) {
-                return null
-            }
-            asyncLoadingImages.add(vFile.absolutePath)
-            Coroutine.async {
-                BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
-                    ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
-                    ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
-            }.onSuccess {
-                bitmapLruCache.run {
-                    if (maxSize() < maxCacheSize && size() + it.byteCount > maxSize() && putCount() - evictionCount() < 5) {
-                        resize(min(maxCacheSize, maxSize() + it.byteCount))
-                        AppLog.put("图片缓存太小，自动扩增至${(maxSize() / M)}MB。")
-                    }
-                }
-                bitmapLruCache.put(vFile.absolutePath, it)
-            }.onError {
-                //错误图片占位,防止重复获取
-                bitmapLruCache.put(vFile.absolutePath, errorBitmap)
-            }.onFinally {
-                asyncLoadingImages.remove(vFile.absolutePath)
-                block?.invoke()
-            }
-            return null
-        }
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
                 ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
@@ -214,7 +182,6 @@ object ImageProvider {
 
     fun clear() {
         bitmapLruCache.evictAll()
-        BitmapCache.clear()
     }
 
 }

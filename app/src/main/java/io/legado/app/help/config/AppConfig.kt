@@ -460,8 +460,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val showAddToShelfAlert get() = appCtx.getPrefBoolean(PreferKey.showAddToShelfAlert, true)
 
-    val asyncLoadImage get() = appCtx.getPrefBoolean(PreferKey.asyncLoadImage, false)
-
     val ignoreAudioFocus get() = appCtx.getPrefBoolean(PreferKey.ignoreAudioFocus, false)
 
     val onlyLatestBackup get() = appCtx.getPrefBoolean(PreferKey.onlyLatestBackup, true)

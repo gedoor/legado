@@ -138,13 +138,6 @@
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:key="asyncLoadImage"
-        android:title="@string/async_load_image"
-        app:iconSpaceReserved="false"
-        app:isBottomBackground="true" />
-
-    <io.legado.app.lib.prefs.SwitchPreference
-        android:defaultValue="false"
         android:key="noAnimScrollPage"
         android:title="@string/no_anim_scroll_page"
         app:iconSpaceReserved="false"

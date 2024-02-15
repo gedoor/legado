@@ -117,7 +117,6 @@ object PreferKey {
     const val welcomeShowIconDark = "welcomeShowIconDark"
     const val pageTouchSlop = "pageTouchSlop"
     const val showAddToShelfAlert = "showAddToShelfAlert"
-    const val asyncLoadImage = "asyncLoadImage"
     const val ignoreAudioFocus = "ignoreAudioFocus"
     const val parallelExportBook = "parallelExportBook"
     const val progressBarBehavior = "progressBarBehavior"

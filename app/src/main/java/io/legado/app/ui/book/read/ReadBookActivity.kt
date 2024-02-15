@@ -964,9 +964,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      */
     override fun pageChanged() {
         pageChanged = true
-        runOnUiThread {
-            binding.readView.onPageChange()
-        }
+        binding.readView.onPageChange()
         handler.post {
             upSeekBarProgress()
         }
