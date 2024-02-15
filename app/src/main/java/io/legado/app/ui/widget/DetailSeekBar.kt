@@ -30,6 +30,7 @@ class DetailSeekBar @JvmOverloads constructor(
         get() = binding.seekBar.progress
         set(value) {
             binding.seekBar.progress = value
+            upValue()
         }
     var max: Int
         get() = binding.seekBar.max
