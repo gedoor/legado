@@ -172,11 +172,23 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     private fun preRenderPage() {
         val view = this
+        var invalidate = false
         pageFactory.run {
-            prevPage.preRender(view)
-            curPage.preRender(view)
-            nextPage.preRender(view)
-            nextPlusPage.preRender(view)
+            hasPrev() && prevPage.preRender(view)
+            if (curPage.preRender(view)) {
+                invalidate = true
+            }
+            if (hasNext() && nextPage.preRender(view) && callBack.isScroll) {
+                invalidate = true
+            }
+            if (hasNextPlus() && nextPlusPage.preRender(view) && callBack.isScroll
+                && relativeOffset(2) < ChapterProvider.visibleHeight
+            ) {
+                invalidate = true
+            }
+            if (invalidate) {
+                postInvalidate()
+            }
         }
     }
 

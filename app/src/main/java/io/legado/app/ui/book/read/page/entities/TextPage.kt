@@ -264,7 +264,7 @@ data class TextPage(
     }
 
     fun draw(view: ContentTextView, canvas: Canvas?) {
-        pictureMirror.drawLocked(canvas, view.width, height.toInt(), view) {
+        pictureMirror.drawLocked(canvas, view.width, height.toInt()) {
             drawPage(view, this)
         }
     }
@@ -278,9 +278,10 @@ data class TextPage(
         }
     }
 
-    fun preRender(view: ContentTextView) {
-        if (!pictureMirror.isDirty) return
+    fun preRender(view: ContentTextView): Boolean {
+        if (!pictureMirror.isDirty) return false
         draw(view, null)
+        return true
     }
 
     fun isDirty(): Boolean {
