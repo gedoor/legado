@@ -2,7 +2,6 @@ package io.legado.app.model
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Build
 import android.util.Size
 import androidx.collection.LruCache
 import io.legado.app.R
@@ -25,8 +24,6 @@ import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.min
 
 object ImageProvider {
 
@@ -46,12 +43,6 @@ object ImageProvider {
             }
             return AppConfig.bitmapCacheSize * M
         }
-    private val maxCacheSize = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-        min(128 * M, Runtime.getRuntime().maxMemory().toInt())
-    } else {
-        256 * M
-    }
-    private val asyncLoadingImages = ConcurrentHashMap.newKeySet<String>()
     val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
 
         override fun sizeOf(filePath: String, bitmap: Bitmap): Int {
