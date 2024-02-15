@@ -380,6 +380,8 @@ object ChapterProvider {
             textLine.addColumn(
                 ImageColumn(start = x + start, end = x + end, src = src)
             )
+            calcTextLinePosition(textPages, textLine, stringBuilder.length)
+            stringBuilder.append(" ") // 确保翻页时索引计算正确
             textPages.last().addLine(textLine)
         }
         return absStartX to durY + textHeight * paragraphSpacing / 10f
@@ -519,24 +521,11 @@ object ChapterProvider {
             if (doublePage) {
                 textLine.isLeftLine = absStartX < viewWidth / 2
             }
-            val sbLength = stringBuilder.length
+            calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(lineText)
             if (textLine.isParagraphEnd) {
                 stringBuilder.append("\n")
             }
-            val lastLine = textPages.last().lines.lastOrNull { it.paragraphNum > 0 }
-                ?: textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull { it.paragraphNum > 0 }
-            val paragraphNum = when {
-                lastLine == null -> 1
-                lastLine.isParagraphEnd -> lastLine.paragraphNum + 1
-                else -> lastLine.paragraphNum
-            }
-            textLine.paragraphNum = paragraphNum
-            textLine.chapterPosition =
-                (textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull()?.run {
-                    chapterPosition + charSize + if (isParagraphEnd) 1 else 0
-                } ?: 0) + sbLength
-            textLine.pagePosition = sbLength
             textLine.upTopBottom(durY, textHeight, fontMetrics)
             val textPage = textPages.last()
             textPage.addLine(textLine)
@@ -547,6 +536,26 @@ object ChapterProvider {
         }
         durY += textHeight * paragraphSpacing / 10f
         return Pair(absStartX, durY)
+    }
+
+    private fun calcTextLinePosition(
+        textPages: ArrayList<TextPage>,
+        textLine: TextLine,
+        sbLength: Int
+    ) {
+        val lastLine = textPages.last().lines.lastOrNull { it.paragraphNum > 0 }
+            ?: textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull { it.paragraphNum > 0 }
+        val paragraphNum = when {
+            lastLine == null -> 1
+            lastLine.isParagraphEnd -> lastLine.paragraphNum + 1
+            else -> lastLine.paragraphNum
+        }
+        textLine.paragraphNum = paragraphNum
+        textLine.chapterPosition =
+            (textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull()?.run {
+                chapterPosition + charSize + if (isParagraphEnd) 1 else 0
+            } ?: 0) + sbLength
+        textLine.pagePosition = sbLength
     }
 
     /**

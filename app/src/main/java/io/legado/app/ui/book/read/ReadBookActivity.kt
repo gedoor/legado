@@ -191,7 +191,6 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
     private var menu: Menu? = null
     private var backupJob: Job? = null
-    private var keepScreenJon: Job? = null
     private var tts: TTS? = null
     val textActionMenu: TextActionMenu by lazy {
         TextActionMenu(this, this)
@@ -221,7 +220,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var reloadContent = false
     private val handler by lazy { buildMainHandler() }
     private val screenOffRunnable by lazy { Runnable { keepScreenOn(false) } }
-    private val executor = IO.asExecutor()
+    private val executor = ReadBook.executor
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null

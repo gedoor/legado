@@ -29,6 +29,8 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import splitties.init.appCtx
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import kotlin.math.min
 
 
@@ -63,6 +65,7 @@ object ReadBook : CoroutineScope by MainScope() {
     val downloadFailChapters = hashMapOf<Int, Int>()
     var contentProcessor: ContentProcessor? = null
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
+    val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
     //暂时保存跳转前进度
     fun saveCurrentBookProcess() {
@@ -158,10 +161,10 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun upReadTime() {
-        if (!AppConfig.enableReadRecord) {
-            return
-        }
-        Coroutine.async(executeContext = IO) {
+        executor.execute {
+            if (!AppConfig.enableReadRecord) {
+                return@execute
+            }
             readRecord.readTime = readRecord.readTime + System.currentTimeMillis() - readStartTime
             readStartTime = System.currentTimeMillis()
             readRecord.lastRead = System.currentTimeMillis()
@@ -536,8 +539,8 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun saveRead(pageChanged: Boolean = false) {
-        Coroutine.async(executeContext = IO) {
-            val book = book ?: return@async
+        executor.execute {
+            val book = book ?: return@execute
             book.lastCheckCount = 0
             book.durChapterTime = System.currentTimeMillis()
             val chapterChanged = book.durChapterIndex != durChapterIndex
@@ -560,26 +563,29 @@ object ReadBook : CoroutineScope by MainScope() {
      */
     private fun preDownload() {
         if (book?.isLocal == true) return
-        if (AppConfig.preDownloadNum < 2) {
-            return
-        }
-        preDownloadTask?.cancel()
-        preDownloadTask = Coroutine.async(executeContext = IO) {
-            //预下载
-            launch {
-                val maxChapterIndex = min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
-                for (i in durChapterIndex.plus(2)..maxChapterIndex) {
-                    if (downloadedChapters.contains(i)) continue
-                    if ((downloadFailChapters[i] ?: 0) >= 3) continue
-                    downloadIndex(i)
-                }
+        executor.execute {
+            if (AppConfig.preDownloadNum < 2) {
+                return@execute
             }
-            launch {
-                val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
-                for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
-                    if (downloadedChapters.contains(i)) continue
-                    if ((downloadFailChapters[i] ?: 0) >= 3) continue
-                    downloadIndex(i)
+            preDownloadTask?.cancel()
+            preDownloadTask = Coroutine.async(executeContext = IO) {
+                //预下载
+                launch {
+                    val maxChapterIndex =
+                        min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
+                    for (i in durChapterIndex.plus(2)..maxChapterIndex) {
+                        if (downloadedChapters.contains(i)) continue
+                        if ((downloadFailChapters[i] ?: 0) >= 3) continue
+                        downloadIndex(i)
+                    }
+                }
+                launch {
+                    val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
+                    for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
+                        if (downloadedChapters.contains(i)) continue
+                        if ((downloadFailChapters[i] ?: 0) >= 3) continue
+                        downloadIndex(i)
+                    }
                 }
             }
         }
