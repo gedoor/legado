@@ -7,12 +7,14 @@ import androidx.core.graphics.record
 import java.util.concurrent.locks.ReentrantLock
 
 class PictureMirror {
-
+    @Volatile
     var picture: Picture? = null
 
     @Volatile
-    var isDirty = true
     var lock: ReentrantLock? = null
+
+    @Volatile
+    var isDirty = true
 
     inline fun drawLocked(
         canvas: Canvas?,
