@@ -12,7 +12,7 @@ class PictureMirror {
 
     @Volatile
     var isDirty = true
-    val lock = ReentrantLock()
+    var lock: ReentrantLock? = null
 
     inline fun drawLocked(
         canvas: Canvas?,
@@ -21,8 +21,22 @@ class PictureMirror {
         block: Canvas.() -> Unit
     ) {
         if (atLeastApi23) {
-            if (picture == null) picture = Picture()
+            if (picture == null) {
+                synchronized(this) {
+                    if (picture == null) {
+                        picture = Picture()
+                    }
+                }
+            }
+            if (lock == null) {
+                synchronized(this) {
+                    if (lock == null) {
+                        lock = ReentrantLock()
+                    }
+                }
+            }
             val picture = picture!!
+            val lock = lock!!
             if (isDirty) {
                 if (!lock.tryLock()) return
                 try {
