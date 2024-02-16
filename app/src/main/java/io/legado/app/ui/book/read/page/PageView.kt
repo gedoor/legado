@@ -22,6 +22,7 @@ import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.activity
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
+import io.legado.app.utils.setTextIfNotEqual
 import io.legado.app.utils.statusBarHeight
 import splitties.views.backgroundColor
 import java.util.Date
@@ -306,30 +307,13 @@ class PageView(context: Context) : FrameLayout(context) {
      */
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
-        tvBookName?.apply {
-            if (text != ReadBook.book?.name) {
-                text = ReadBook.book?.name
-            }
-        }
-        tvTitle?.apply {
-            if (text != textPage.title) {
-                text = textPage.title
-            }
-        }
-        tvPage?.text = "${index.plus(1)}/$pageSize"
+        tvBookName?.setTextIfNotEqual(ReadBook.book?.name)
+        tvTitle?.setTextIfNotEqual(textPage.title)
+        tvPage?.setTextIfNotEqual("${index.plus(1)}/$pageSize")
         val readProgress = readProgress
-        tvTotalProgress?.apply {
-            if (text != readProgress) {
-                text = readProgress
-            }
-        }
-        tvTotalProgress1?.apply {
-            val progress = "${chapterIndex.plus(1)}/${chapterSize}"
-            if (text != progress) {
-                text = progress
-            }
-        }
-        tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
+        tvTotalProgress?.setTextIfNotEqual(readProgress)
+        tvTotalProgress1?.setTextIfNotEqual("${chapterIndex.plus(1)}/${chapterSize}")
+        tvPageAndTotal?.setTextIfNotEqual("${index.plus(1)}/$pageSize  $readProgress")
     }
 
     fun setAutoPager(autoPager: AutoPager?) {
