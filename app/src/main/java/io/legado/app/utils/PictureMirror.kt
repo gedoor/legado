@@ -23,15 +23,11 @@ class PictureMirror {
         block: Canvas.() -> Unit
     ) {
         if (atLeastApi23) {
-            if (picture == null) {
+            if (picture == null || lock == null) {
                 synchronized(this) {
                     if (picture == null) {
                         picture = Picture()
                     }
-                }
-            }
-            if (lock == null) {
-                synchronized(this) {
                     if (lock == null) {
                         lock = ReentrantLock()
                     }

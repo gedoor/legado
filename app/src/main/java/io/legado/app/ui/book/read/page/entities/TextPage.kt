@@ -45,6 +45,7 @@ data class TextPage(
     var isMsgPage: Boolean = false
     var pictureMirror: PictureMirror = PictureMirror()
     var doublePage = false
+    var paddingTop = 0
 
     val paragraphs by lazy {
         paragraphsInternal
@@ -159,6 +160,7 @@ data class TextPage(
                 addLine(textLine)
             }
             height = ChapterProvider.visibleHeight.toFloat()
+            invalidate()
         }
         return this
     }
@@ -180,7 +182,8 @@ data class TextPage(
     fun upPageAloudSpan(aloudSpanStart: Int) {
         removePageAloudSpan()
         var lineStart = 0
-        for ((index, textLine) in textLines.withIndex()) {
+        for (index in textLines.indices) {
+            val textLine = textLines[index]
             val lineLength = textLine.text.length + if (textLine.isParagraphEnd) 1 else 0
             if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + lineLength) {
                 for (i in index - 1 downTo 0) {
@@ -263,16 +266,19 @@ data class TextPage(
         return null
     }
 
-    fun draw(view: ContentTextView, canvas: Canvas?) {
-        pictureMirror.drawLocked(canvas, view.width, height.toInt()) {
-            drawPage(view, this)
+    fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
+        val height = height.toInt()
+        canvas.withTranslation(0f, relativeOffset + paddingTop) {
+            pictureMirror.drawLocked(canvas, view.width, height) {
+                drawPage(view, this)
+            }
         }
     }
 
     private fun drawPage(view: ContentTextView, canvas: Canvas) {
         for (i in lines.indices) {
             val line = lines[i]
-            canvas.withTranslation(0f, line.lineTop) {
+            canvas.withTranslation(0f, line.lineTop - paddingTop) {
                 line.draw(view, this)
             }
         }
@@ -280,7 +286,9 @@ data class TextPage(
 
     fun preRender(view: ContentTextView): Boolean {
         if (!pictureMirror.isDirty) return false
-        draw(view, null)
+        pictureMirror.drawLocked(null, view.width, height.toInt()) {
+            drawPage(view, this)
+        }
         return true
     }
 

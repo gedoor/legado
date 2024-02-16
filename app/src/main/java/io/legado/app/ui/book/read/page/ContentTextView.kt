@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.graphics.withTranslation
 import io.legado.app.R
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.help.config.AppConfig
@@ -23,6 +22,7 @@ import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.widget.dialog.PhotoDialog
+import io.legado.app.utils.PictureMirror
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.showDialogFragment
@@ -102,25 +102,18 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     private fun drawPage(canvas: Canvas) {
         var relativeOffset = relativeOffset(0)
-        val view = this
-        canvas.withTranslation(0f, relativeOffset) {
-            textPage.draw(view, this)
-        }
+        textPage.draw(this, canvas, relativeOffset)
         if (!callBack.isScroll) return
         //滚动翻页
         if (!pageFactory.hasNext()) return
         val textPage1 = relativePage(1)
         relativeOffset = relativeOffset(1)
-        canvas.withTranslation(0f, relativeOffset) {
-            textPage1.draw(view, this)
-        }
+        textPage1.draw(this, canvas, relativeOffset)
         if (!pageFactory.hasNextPlus()) return
         relativeOffset = relativeOffset(2)
         if (relativeOffset < ChapterProvider.visibleHeight) {
             val textPage2 = relativePage(2)
-            canvas.withTranslation(0f, relativeOffset) {
-                textPage2.draw(view, this)
-            }
+            textPage2.draw(this, canvas, relativeOffset)
         }
     }
 
@@ -167,7 +160,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun submitPreRenderTask() {
-        renderThread.submit(renderRunnable)
+        if (PictureMirror.atLeastApi23) {
+            renderThread.submit(renderRunnable)
+        }
     }
 
     private fun preRenderPage() {

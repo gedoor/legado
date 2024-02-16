@@ -12,7 +12,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     }
 
     override fun hasNext(): Boolean = with(dataSource) {
-        return hasNextChapter() || currentChapter?.isLastIndex(pageIndex) != true
+        return hasNextChapter() || (currentChapter != null && currentChapter?.isLastIndex(pageIndex) != true)
     }
 
     override fun hasNextPlus(): Boolean = with(dataSource) {
@@ -85,13 +85,11 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 return@with TextPage(text = it).format()
             }
             currentChapter?.let {
+                val pageIndex = pageIndex
                 if (pageIndex < it.pageSize - 1) {
                     return@with it.getPage(pageIndex + 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
                 }
-            }
-            if (!hasNextChapter()) {
-                return@with TextPage(text = "")
             }
             nextChapter?.let {
                 return@with it.getPage(0)?.removePageAloudSpan()
@@ -105,8 +103,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
             ReadBook.msg?.let {
                 return@with TextPage(text = it).format()
             }
-            if (pageIndex > 0) {
-                currentChapter?.let {
+            currentChapter?.let {
+                val pageIndex = pageIndex
+                if (pageIndex > 0) {
                     return@with it.getPage(pageIndex - 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
                 }
@@ -121,6 +120,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
     override val nextPlusPage: TextPage
         get() = with(dataSource) {
             currentChapter?.let {
+                val pageIndex = pageIndex
                 if (pageIndex < it.pageSize - 2) {
                     return@with it.getPage(pageIndex + 2)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
@@ -133,7 +133,6 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                     return@with nc.getPage(1)?.removePageAloudSpan()
                         ?: TextPage(text = "继续滑动以加载下一章…").format()
                 }
-
             }
             return TextPage().format()
         }

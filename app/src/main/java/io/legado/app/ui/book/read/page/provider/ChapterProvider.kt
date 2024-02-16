@@ -290,6 +290,7 @@ object ChapterProvider {
             item.chapterSize = chapterSize
             item.title = displayTitle
             item.doublePage = doublePage
+            item.paddingTop = paddingTop
             item.upLinesPosition()
         }
 
