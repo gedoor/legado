@@ -85,7 +85,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        ChapterProvider.upViewSize(w, h, isMainView)
+        ChapterProvider.upViewSize(w, h)
         textPage.format()
     }
 

@@ -850,12 +850,12 @@ object ChapterProvider {
     /**
      * 更新View尺寸
      */
-    fun upViewSize(width: Int, height: Int, postEvent: Boolean) {
+    fun upViewSize(width: Int, height: Int) {
         if (width > 0 && height > 0 && (width != viewWidth || height != viewHeight)) {
             viewWidth = width
             viewHeight = height
             upLayout()
-            if (postEvent) postEvent(EventBus.UP_CONFIG, arrayOf(2))
+            postEvent(EventBus.UP_CONFIG, arrayOf(5))
         }
     }
 
