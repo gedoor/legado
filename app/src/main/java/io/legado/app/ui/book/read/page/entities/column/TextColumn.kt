@@ -42,15 +42,15 @@ data class TextColumn(
         } else {
             ChapterProvider.contentPaint
         }
-        val textColor = if (textLine.isReadAloud || isSearchResult) {
-            ThemeStore.accentColor
+        if (textLine.isReadAloud || isSearchResult) {
+            synchronized(textPaint) {
+                textPaint.color = ThemeStore.accentColor
+                canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, textPaint)
+                textPaint.color = ReadBookConfig.textColor
+            }
         } else {
-            ReadBookConfig.textColor
+            canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, textPaint)
         }
-        if (textPaint.color != textColor) {
-            textPaint.color = textColor
-        }
-        canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, textPaint)
         if (selected) {
             canvas.drawRect(start, 0f, end, textLine.height, view.selectedPaint)
         }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.view.Gravity
 import android.view.InputDevice
 import android.view.KeyEvent
@@ -76,6 +77,7 @@ import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_DIVIDER_C
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
+import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -116,7 +118,6 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -217,7 +218,6 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val prevPageDebounce by lazy { Debounce { keyPage(PageDirection.PREV) } }
     private var bookChanged = false
     private var pageChanged = false
-    private var reloadContent = false
     private val handler by lazy { buildMainHandler() }
     private val screenOffRunnable by lazy { Runnable { keepScreenOn(false) } }
     private val executor = ReadBook.executor
@@ -264,23 +264,9 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        viewModel.initData(intent) {
-            initDataSuccess()
-        }
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        viewModel.initData(intent ?: return) {
-            initDataSuccess()
-        }
-    }
-
-    private fun initDataSuccess() {
-        upMenu()
-        if (reloadContent) {
-            reloadContent = false
-            ReadBook.loadContent(resetPageOffset = false)
+        Looper.myQueue().addIdleHandler {
+            viewModel.initData(intent) { upMenu() }
+            false
         }
     }
 
@@ -1312,24 +1298,24 @@ class ReadBookActivity : BaseReadBookActivity(),
         when (dialogId) {
             TEXT_COLOR -> {
                 setCurTextColor(color)
-                postEvent(EventBus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
             }
 
             BG_COLOR -> {
                 setCurBg(0, "#${color.hexString}")
-                postEvent(EventBus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, arrayOf(1))
             }
 
             TIP_COLOR -> {
                 ReadTipConfig.tipColor = color
                 postEvent(EventBus.TIP_COLOR, "")
-                postEvent(EventBus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
 
             TIP_DIVIDER_COLOR -> {
                 ReadTipConfig.tipDividerColor = color
                 postEvent(EventBus.TIP_COLOR, "")
-                postEvent(EventBus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
     }
@@ -1493,22 +1479,21 @@ class ReadBookActivity : BaseReadBookActivity(),
                 ReadBook.readAloud(!BaseReadAloudService.pause)
             }
         }
-        observeEvent<Boolean>(EventBus.UP_CONFIG) {
-            upSystemUiVisibility()
-            readView.upPageSlopSquare()
-            readView.upBg()
-            readView.upStyle()
-            readView.upBgAlpha()
-            if (it) { // 更新内容排版布局
-                if (isInitFinish) {
-                    ReadBook.loadContent(resetPageOffset = false)
-                } else {
-                    reloadContent = true
+        observeEvent<Array<Int>>(EventBus.UP_CONFIG) {
+            it.forEach { value ->
+                when (value) {
+                    0 -> upSystemUiVisibility()
+                    1 -> readView.upBg()
+                    2 -> readView.upStyle()
+                    3 -> readView.upBgAlpha()
+                    4 -> readView.upPageSlopSquare()
+                    5 -> if (isInitFinish) ReadBook.loadContent(resetPageOffset = false)
+                    6 -> readView.upContent(resetPageOffset = false)
+                    8 -> ChapterProvider.upStyle()
+                    9 -> binding.readView.invalidateTextPage()
+                    10 -> ChapterProvider.upLayout()
                 }
-            } else {
-                readView.upContent(resetPageOffset = false)
             }
-            binding.readMenu.reset()
         }
         observeEvent<Int>(EventBus.ALOUD_STATE) {
             if (it == Status.STOP || it == Status.PAUSE) {

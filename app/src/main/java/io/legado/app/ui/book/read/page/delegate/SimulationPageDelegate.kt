@@ -1,13 +1,27 @@
 package io.legado.app.ui.book.read.page.delegate
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.Region
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.MotionEvent
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
-import kotlin.math.*
+import io.legado.app.utils.screenshot
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.min
+import kotlin.math.sin
 
 @Suppress("DEPRECATION")
 class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
@@ -86,6 +100,11 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
 
     private val mPaint: Paint = Paint().apply { style = Paint.Style.FILL }
 
+    private var curBitmap: Bitmap? = null
+    private var prevBitmap: Bitmap? = null
+    private var nextBitmap: Bitmap? = null
+    private var canvas: Canvas = Canvas()
+
     init {
         //设置颜色数组
         val color = intArrayOf(0x333333, -0x4fcccccd)
@@ -122,6 +141,22 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
         mFrontShadowDrawableHBT.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
+    override fun setBitmap() {
+        when (mDirection) {
+            PageDirection.PREV -> {
+                prevBitmap = prevPage.screenshot(prevBitmap, canvas)
+                curBitmap = curPage.screenshot(curBitmap, canvas)
+            }
+
+            PageDirection.NEXT -> {
+                nextBitmap = nextPage.screenshot(nextBitmap, canvas)
+                curBitmap = curPage.screenshot(curBitmap, canvas)
+            }
+
+            else -> Unit
+        }
+    }
+
     override fun setViewSize(width: Int, height: Int) {
         super.setViewSize(width, height)
         mMaxLength = hypot(viewWidth.toDouble(), viewHeight.toDouble()).toFloat()
@@ -133,6 +168,7 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
             MotionEvent.ACTION_DOWN -> {
                 calcCornerXY(event.x, event.y)
             }
+
             MotionEvent.ACTION_MOVE -> {
                 if ((startY > viewHeight / 3 && startY < viewHeight * 2 / 3)
                     || mDirection == PageDirection.PREV
@@ -159,10 +195,12 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
                 } else {
                     calcCornerXY(viewWidth - startX, viewHeight.toFloat())
                 }
+
             PageDirection.NEXT ->
                 if (viewWidth / 2 > startX) {
                     calcCornerXY(viewWidth - startX, startY)
                 }
+
             else -> Unit
         }
     }
@@ -216,6 +254,7 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, curBitmap)
             }
+
             PageDirection.PREV -> {
                 calcPoints()
                 drawCurrentPageArea(canvas, prevBitmap)
@@ -223,6 +262,7 @@ class SimulationPageDelegate(readView: ReadView) : HorizontalPageDelegate(readVi
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, prevBitmap)
             }
+
             else -> return
         }
     }

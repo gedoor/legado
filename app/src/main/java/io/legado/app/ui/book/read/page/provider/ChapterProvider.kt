@@ -690,39 +690,6 @@ object ChapterProvider {
         exceed(absStartX, textLine, words)
     }
 
-    fun getStringArrayAndTextWidths(
-        text: String,
-        textWidths: List<Float>,
-        textPaint: TextPaint
-    ): Pair<List<String>, List<Float>> {
-        val charArray = text.toCharArray()
-        val strList = ArrayList<String>(text.length)
-        val textWidthList = ArrayList<Float>(text.length)
-        val lastIndex = charArray.lastIndex
-        var ca: CharArray? = null
-        for (i in textWidths.indices) {
-            if (charArray[i].isLowSurrogate()) {
-                continue
-            }
-            val char = if (i + 1 <= lastIndex && charArray[i + 1].isLowSurrogate()) {
-                if (ca == null) ca = CharArray(2)
-                System.arraycopy(charArray, i, ca, 0, 2)
-                String(ca)
-            } else {
-                charArray[i].toString()
-            }
-            val w = textWidths[i]
-            if (w == 0f && textWidthList.size > 0) {
-                textWidthList[textWidthList.lastIndex] = textPaint.measureText(strList.last())
-                textWidthList.add(textPaint.measureText(char))
-            } else {
-                textWidthList.add(w)
-            }
-            strList.add(char)
-        }
-        return strList to textWidthList
-    }
-
     /**
      * 添加字符
      */
@@ -883,12 +850,12 @@ object ChapterProvider {
     /**
      * 更新View尺寸
      */
-    fun upViewSize(width: Int, height: Int) {
+    fun upViewSize(width: Int, height: Int, postEvent: Boolean) {
         if (width > 0 && height > 0 && (width != viewWidth || height != viewHeight)) {
             viewWidth = width
             viewHeight = height
             upLayout()
-            postEvent(EventBus.UP_CONFIG, true)
+            if (postEvent) postEvent(EventBus.UP_CONFIG, arrayOf(2))
         }
     }
 

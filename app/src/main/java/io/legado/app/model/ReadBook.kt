@@ -274,10 +274,10 @@ object ReadBook : CoroutineScope by MainScope() {
         if (textChapter != null) {
             val pageIndex = durPageIndex
             if (index > pageIndex) {
-                textChapter.getPage(index - 2)?.recyclePictures()
+                textChapter.getPage(index - 2)?.recycleRecorders()
             }
             if (index < pageIndex) {
-                textChapter.getPage(index + 3)?.recyclePictures()
+                textChapter.getPage(index + 3)?.recycleRecorders()
             }
         }
         durChapterPos = curTextChapter?.getReadLength(index) ?: index

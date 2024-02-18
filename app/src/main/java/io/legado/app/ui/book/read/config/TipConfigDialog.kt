@@ -11,7 +11,12 @@ import io.legado.app.databinding.DialogTipConfigBinding
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.lib.dialogs.selector
-import io.legado.app.utils.*
+import io.legado.app.utils.checkByIndex
+import io.legado.app.utils.getIndexById
+import io.legado.app.utils.hexString
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
@@ -89,26 +94,26 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
     private fun initEvent() = binding.run {
         rgTitleMode.setOnCheckedChangeListener { _, checkedId ->
             ReadBookConfig.titleMode = rgTitleMode.getIndexById(checkedId)
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayOf(5))
         }
         dsbTitleSize.onChanged = {
             ReadBookConfig.titleSize = it
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayOf(8, 5))
         }
         dsbTitleTop.onChanged = {
             ReadBookConfig.titleTopSpacing = it
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayOf(8, 5))
         }
         dsbTitleBottom.onChanged = {
             ReadBookConfig.titleBottomSpacing = it
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayOf(8, 5))
         }
         llHeaderShow.setOnClickListener {
             val headerModes = ReadTipConfig.getHeaderModes(requireContext())
             context?.selector(items = headerModes.values.toList()) { _, i ->
                 ReadTipConfig.headerMode = headerModes.keys.toList()[i]
                 tvHeaderShow.text = headerModes[ReadTipConfig.headerMode]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llFooterShow.setOnClickListener {
@@ -116,7 +121,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             context?.selector(items = footerModes.values.toList()) { _, i ->
                 ReadTipConfig.footerMode = footerModes.keys.toList()[i]
                 tvFooterShow.text = footerModes[ReadTipConfig.footerMode]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llHeaderLeft.setOnClickListener {
@@ -125,7 +130,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipHeaderLeft = tipValue
                 tvHeaderLeft.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llHeaderMiddle.setOnClickListener {
@@ -134,7 +139,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipHeaderMiddle = tipValue
                 tvHeaderMiddle.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llHeaderRight.setOnClickListener {
@@ -143,7 +148,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipHeaderRight = tipValue
                 tvHeaderRight.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llFooterLeft.setOnClickListener {
@@ -152,7 +157,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipFooterLeft = tipValue
                 tvFooterLeft.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llFooterMiddle.setOnClickListener {
@@ -161,7 +166,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipFooterMiddle = tipValue
                 tvFooterMiddle.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llFooterRight.setOnClickListener {
@@ -170,7 +175,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipFooterRight = tipValue
                 tvFooterRight.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(2))
             }
         }
         llTipColor.setOnClickListener {
@@ -179,7 +184,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                     0 -> {
                         ReadTipConfig.tipColor = 0
                         upTvTipColor()
-                        postEvent(EventBus.UP_CONFIG, true)
+                        postEvent(EventBus.UP_CONFIG, arrayOf(2))
                     }
                     1 -> ColorPickerDialog.newBuilder()
                         .setShowAlphaSlider(false)
@@ -195,7 +200,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                     0, 1 -> {
                         ReadTipConfig.tipDividerColor = i - 1
                         upTvTipDividerColor()
-                        postEvent(EventBus.UP_CONFIG, true)
+                        postEvent(EventBus.UP_CONFIG, arrayOf(2))
                     }
                     2 -> ColorPickerDialog.newBuilder()
                         .setShowAlphaSlider(false)

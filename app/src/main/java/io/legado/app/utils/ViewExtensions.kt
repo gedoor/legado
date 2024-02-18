@@ -37,6 +37,8 @@ import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.globalExecutor
 import io.legado.app.lib.theme.TintHelper
+import io.legado.app.utils.canvasrecorder.CanvasRecorder
+import io.legado.app.utils.canvasrecorder.record
 import splitties.systemservices.inputMethodManager
 import java.lang.reflect.Field
 
@@ -173,6 +175,16 @@ fun View.screenshot(bitmap: Bitmap? = null, canvas: Canvas? = null): Bitmap? {
 fun View.screenshot(picture: Picture) {
     if (width > 0 && height > 0) {
         picture.record(width, height) {
+            withTranslation(-scrollX.toFloat(), -scrollY.toFloat()) {
+                draw(this)
+            }
+        }
+    }
+}
+
+fun View.screenshot(canvasRecorder: CanvasRecorder) {
+    if (width > 0 && height > 0) {
+        canvasRecorder.record(width, height) {
             withTranslation(-scrollX.toFloat(), -scrollY.toFloat()) {
                 draw(this)
             }

@@ -11,7 +11,8 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.PictureMirror
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
+import io.legado.app.utils.canvasrecorder.recordIfNeeded
 import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
@@ -43,7 +44,7 @@ data class TextPage(
     val charSize: Int get() = text.length.coerceAtLeast(1)
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
-    var pictureMirror: PictureMirror = PictureMirror()
+    var canvasRecorder = CanvasRecorderFactory.create(true)
     var doublePage = false
     var paddingTop = 0
 
@@ -267,11 +268,9 @@ data class TextPage(
     }
 
     fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
-        val height = height.toInt()
+        render(view)
         canvas.withTranslation(0f, relativeOffset + paddingTop) {
-            pictureMirror.drawLocked(canvas, view.width, height) {
-                drawPage(view, this)
-            }
+            canvasRecorder.draw(this)
         }
     }
 
@@ -284,20 +283,14 @@ data class TextPage(
         }
     }
 
-    fun preRender(view: ContentTextView): Boolean {
-        if (!pictureMirror.isDirty) return false
-        pictureMirror.drawLocked(null, view.width, height.toInt()) {
+    fun render(view: ContentTextView): Boolean {
+        return canvasRecorder.recordIfNeeded(view.width, height.toInt()) {
             drawPage(view, this)
         }
-        return true
-    }
-
-    fun isDirty(): Boolean {
-        return pictureMirror.isDirty
     }
 
     fun invalidate() {
-        pictureMirror.invalidate()
+        canvasRecorder.invalidate()
     }
 
     fun invalidateAll() {
@@ -307,10 +300,10 @@ data class TextPage(
         invalidate()
     }
 
-    fun recyclePictures() {
-        pictureMirror.recycle()
+    fun recycleRecorders() {
+        canvasRecorder.recycle()
         for (i in lines.indices) {
-            lines[i].recyclePicture()
+            lines[i].recycleRecorder()
         }
     }
 

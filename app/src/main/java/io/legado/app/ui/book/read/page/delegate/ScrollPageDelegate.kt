@@ -79,7 +79,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         val pointX = event.getX(event.pointerCount - 1)
         val pointY = event.getY(event.pointerCount - 1)
         if (isMoved) {
-            readView.setTouchPoint(pointX, pointY)
+            readView.setTouchPoint(pointX, pointY, false)
         }
         if (!isMoved) {
             val deltaX = (pointX - startX).toInt()
@@ -95,12 +95,22 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         }
     }
 
+    override fun computeScroll() {
+        if (scroller.computeScrollOffset()) {
+            readView.setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat(), false)
+        } else if (isStarted) {
+            onAnimStop()
+            stopScroll()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mVelocity.recycle()
     }
 
     override fun abortAnim() {
+        readView.onScrollAnimStop()
         isStarted = false
         isMoved = false
         isRunning = false

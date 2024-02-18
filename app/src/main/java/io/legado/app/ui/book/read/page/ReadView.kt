@@ -148,6 +148,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     override fun computeScroll() {
         pageDelegate?.computeScroll()
+        autoPager.computeOffset()
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
@@ -510,7 +511,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         } else {
             curPage.setAutoPager(null)
         }
-        curPage.isScroll = isScroll
+        curPage.setIsScroll(isScroll)
     }
 
     /**
@@ -634,6 +635,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
             nextPage.invalidateAll()
             nextPlusPage.invalidateAll()
         }
+        upContent()
     }
 
     fun onScrollAnimStart() {

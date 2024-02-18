@@ -10,6 +10,8 @@ import android.text.StaticLayout
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
+import io.legado.app.utils.canvasrecorder.recordIfNeededThenDraw
 import io.legado.app.utils.dpToPx
 
 class BatteryView @JvmOverloads constructor(
@@ -22,6 +24,7 @@ class BatteryView @JvmOverloads constructor(
     private val batteryPaint = Paint()
     private val outFrame = Rect()
     private val polar = Rect()
+    private val canvasRecorder = CanvasRecorderFactory.create()
     var isBattery = false
         set(value) {
             field = value
@@ -62,31 +65,40 @@ class BatteryView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        if (!isBattery) return
-        layout.getLineBounds(0, outFrame)
-        val batteryStart = layout
-            .getPrimaryHorizontal(text.length - battery.toString().length)
-            .toInt() + 2.dpToPx()
-        val batteryEnd = batteryStart +
-                StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dpToPx()
-        outFrame.set(
-            batteryStart,
-            2.dpToPx(),
-            batteryEnd,
-            height - 2.dpToPx()
-        )
-        val dj = (outFrame.bottom - outFrame.top) / 3
-        polar.set(
-            batteryEnd,
-            outFrame.top + dj,
-            batteryEnd + 2.dpToPx(),
-            outFrame.bottom - dj
-        )
-        batteryPaint.style = Paint.Style.STROKE
-        canvas.drawRect(outFrame, batteryPaint)
-        batteryPaint.style = Paint.Style.FILL
-        canvas.drawRect(polar, batteryPaint)
+        canvasRecorder.recordIfNeededThenDraw(canvas, width, height) {
+            super.onDraw(this)
+            if (!isBattery) return@recordIfNeededThenDraw
+            layout.getLineBounds(0, outFrame)
+            val batteryStart = layout
+                .getPrimaryHorizontal(text.length - battery.toString().length)
+                .toInt() + 2.dpToPx()
+            val batteryEnd = batteryStart +
+                    StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dpToPx()
+            outFrame.set(
+                batteryStart,
+                2.dpToPx(),
+                batteryEnd,
+                height - 2.dpToPx()
+            )
+            val dj = (outFrame.bottom - outFrame.top) / 3
+            polar.set(
+                batteryEnd,
+                outFrame.top + dj,
+                batteryEnd + 2.dpToPx(),
+                outFrame.bottom - dj
+            )
+            batteryPaint.style = Paint.Style.STROKE
+            drawRect(outFrame, batteryPaint)
+            batteryPaint.style = Paint.Style.FILL
+            drawRect(polar, batteryPaint)
+        }
+    }
+
+    override fun invalidate() {
+        super.invalidate()
+        kotlin.runCatching {
+            canvasRecorder.invalidate()
+        }
     }
 
 }

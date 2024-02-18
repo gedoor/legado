@@ -321,7 +321,12 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun submitPreRenderTask() {
-        binding.contentTextView.submitPreRenderTask()
+        binding.contentTextView.submitRenderTask()
+    }
+
+    fun setIsScroll(value: Boolean) {
+        isScroll = value
+        binding.contentTextView.setIsScroll(value)
     }
 
     /**
