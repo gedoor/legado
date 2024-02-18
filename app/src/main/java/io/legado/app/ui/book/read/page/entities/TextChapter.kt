@@ -4,6 +4,8 @@ package io.legado.app.ui.book.read.page.entities
 import androidx.annotation.Keep
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.utils.fastBinarySearchBy
+import kotlin.math.abs
 import kotlin.math.min
 
 /**
@@ -85,12 +87,15 @@ data class TextChapter(
      * @return 已读长度
      */
     fun getReadLength(pageIndex: Int): Int {
+        return pages[min(pageIndex, lastIndex)].lines.first().chapterPosition
+        /*
         var length = 0
         val maxIndex = min(pageIndex, pages.size)
         for (index in 0 until maxIndex) {
             length += pages[index].charSize
         }
         return length
+        */
     }
 
     /**
@@ -185,18 +190,30 @@ data class TextChapter(
      * @return 根据索引位置获取所在页
      */
     fun getPageIndexByCharIndex(charIndex: Int): Int {
+        val index = pages.fastBinarySearchBy(charIndex) {
+            it.lines.first().chapterPosition
+        }
+        return if (index >= 0) {
+            index
+        } else {
+            abs(index + 1) - 1
+        }
+        /* 相当于以下实现
         var length = 0
-        pages.forEach {
-            length += it.charSize
+        for (i in pages.indices) {
+            val page = pages[i]
+            length += page.charSize
             if (length > charIndex) {
-                return it.index
+                return page.index
             }
         }
         return pages.lastIndex
+        */
     }
 
     fun clearSearchResult() {
-        pages.forEach { page ->
+        for (i in pages.indices) {
+            val page = pages[i]
             page.searchResult.forEach {
                 it.selected = false
                 it.isSearchResult = false

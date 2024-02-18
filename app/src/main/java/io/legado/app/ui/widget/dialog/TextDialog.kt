@@ -12,6 +12,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setHtml
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.setTextAsync
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.tables.TablePlugin
@@ -75,8 +76,9 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
                         .build()
                         .setMarkdown(binding.textView, content)
                 }
+
                 Mode.HTML.name -> binding.textView.setHtml(content)
-                else -> binding.textView.text = content
+                else -> binding.textView.setTextAsync(content)
             }
             time = it.getLong("time", 0L)
         }

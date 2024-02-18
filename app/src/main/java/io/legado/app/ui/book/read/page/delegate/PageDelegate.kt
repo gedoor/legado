@@ -96,7 +96,7 @@ abstract class PageDelegate(protected val readView: ReadView) {
         viewHeight = height
     }
 
-    fun scroll() {
+    fun computeScroll() {
         if (scroller.computeScrollOffset()) {
             readView.setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {

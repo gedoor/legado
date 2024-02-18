@@ -9,7 +9,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
-@Suppress("UnnecessaryVariable")
 class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     // 滑动追踪的时间
@@ -22,6 +21,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     var noAnim: Boolean = false
 
     override fun onAnimStart(animationSpeed: Int) {
+        readView.onScrollAnimStart()
         //惯性滚动
         fling(
             0, touchY.toInt(), 0, mVelocity.yVelocity.toInt(),
@@ -30,7 +30,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     }
 
     override fun onAnimStop() {
-        // nothing
+        readView.onScrollAnimStop()
     }
 
     override fun onTouch(event: MotionEvent) {

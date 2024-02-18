@@ -91,7 +91,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         playIndexJob?.cancel()
     }
 
-    private fun playNext() {
+    private fun updateNextPos() {
         readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
         paragraphStartPos = 0
         if (nowSpeak < contentList.lastIndex) {
@@ -355,14 +355,14 @@ class HttpReadAloudService : BaseReadAloudService(),
             Player.STATE_ENDED -> {
                 // 结束
                 playErrorNo = 0
-                playNext()
+                updateNextPos()
             }
         }
     }
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
-        playNext()
+        updateNextPos()
         upPlayPos()
     }
 
@@ -375,7 +375,8 @@ class HttpReadAloudService : BaseReadAloudService(),
             AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
             ReadAloud.pause(this)
         } else {
-            playNext()
+            updateNextPos()
+            exoPlayer.seekToNextMediaItem()
         }
     }
 
