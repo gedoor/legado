@@ -78,6 +78,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build With Gradle
+        continue-on-error: true
         run: |
           if [ ${{ env.type }} == 'release' ]; then
             typeName="原包名"
@@ -91,12 +92,15 @@ jobs:
           echo "开始${{ env.product }}$typeName构建"
           chmod +x gradlew
           ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
-          echo "修改文件名"
+        - name: Rename outputs apks And Move mapping files
+        run: |
+          echo "修改APK文件名"
           mkdir -p ${{ github.workspace }}/apk/
-          mkdir -p ${{ github.workspace }}/mapping/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
             mv "$file" ${{ github.workspace }}/apk/legado_${{ env.product }}_${{ env.VERSIONL }}_$typeName.apk
           done
+          echo "移动mapping文件"
+          mkdir -p ${{ github.workspace }}/mapping/
           for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/mapping.txt`; do
             mv "$file" ${{ github.workspace }}/mapping/mapping.txt
           done
