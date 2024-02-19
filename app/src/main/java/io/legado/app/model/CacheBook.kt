@@ -15,13 +15,11 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
-
 import io.legado.app.utils.startService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
@@ -33,6 +31,7 @@ object CacheBook {
     fun getOrCreate(bookUrl: String): CacheBookModel? {
         val book = appDb.bookDao.getBook(bookUrl) ?: return null
         val bookSource = appDb.bookSourceDao.getBookSource(book.origin) ?: return null
+        updateBookSource(bookSource)
         var cacheBook = cacheBookMap[bookUrl]
         if (cacheBook != null) {
             //存在时更新,书源可能会变化,必须更新
@@ -47,6 +46,7 @@ object CacheBook {
 
     @Synchronized
     fun getOrCreate(bookSource: BookSource, book: Book): CacheBookModel {
+        updateBookSource(bookSource)
         var cacheBook = cacheBookMap[book.bookUrl]
         if (cacheBook != null) {
             //存在时更新,书源可能会变化,必须更新
@@ -57,6 +57,15 @@ object CacheBook {
         cacheBook = CacheBookModel(bookSource, book)
         cacheBookMap[book.bookUrl] = cacheBook
         return cacheBook
+    }
+
+    private fun updateBookSource(newBookSource: BookSource) {
+        cacheBookMap.forEach {
+            val model = it.value
+            if (model.bookSource.bookSourceUrl == newBookSource.bookSourceUrl) {
+                model.bookSource = newBookSource
+            }
+        }
     }
 
     fun start(context: Context, book: Book, start: Int, end: Int) {
@@ -81,6 +90,17 @@ object CacheBook {
         context.startService<CacheBookService> {
             action = IntentAction.stop
         }
+    }
+
+    fun clear() {
+        successDownloadSet.clear()
+        errorDownloadMap.clear()
+    }
+
+    fun close() {
+        cacheBookMap.forEach { it.value.stop() }
+        cacheBookMap.clear()
+        clear()
     }
 
     val downloadSummary: String

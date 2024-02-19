@@ -14,12 +14,8 @@ import io.legado.app.web.utils.AssetsWeb
 import kotlinx.coroutines.runBlocking
 import okio.Pipe
 import okio.buffer
-import java.io.BufferedWriter
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.OutputStreamWriter
-import kotlin.collections.HashMap
-import kotlin.collections.List
 import kotlin.collections.set
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
@@ -115,10 +111,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 if (data is List<*> && data.size > 3000) {
                     val pipe = Pipe(16 * 1024)
                     Coroutine.async {
-                        pipe.sink.buffer().outputStream().use { out ->
-                            BufferedWriter(OutputStreamWriter(out, "UTF-8")).use {
-                                GSON.toJson(returnData, it)
-                            }
+                        pipe.sink.buffer().outputStream().bufferedWriter(Charsets.UTF_8).use {
+                            GSON.toJson(returnData, it)
                         }
                     }
                     newChunkedResponse(

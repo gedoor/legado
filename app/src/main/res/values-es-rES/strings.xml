@@ -729,6 +729,8 @@
     <string name="import_old_summary">Seleccione una carpeta de respaldo heredada</string>
     <string name="enabled">Activado</string>
     <string name="disabled">Desactivado</string>
+    <string name="enabled_explore">Discovery Enabled</string>
+    <string name="disabled_explore">Discovery Disabled</string>
     <string name="starting_download">Iniciando descarga</string>
     <string name="already_in_download">Este libro ya está en la lista de descargas</string>
     <string name="click_to_open">Haga clic para abrir</string>
@@ -1036,7 +1038,7 @@
     <string name="cover_decode_js">Decode Cover Js(coverDecodeJs)</string>
     <string name="net_no_group">网络未分组</string>
     <string name="local_no_group">本地未分组</string>
-    <string name="parallel_export_book">多线程导出TXT</string>
+    <string name="parallel_export_book">多线程导出</string>
     <string name="progress_bar_behavior">进度条行为</string>
     <string name="source_edit_text_max_line">源编辑框最大行数</string>
     <string name="source_edit_max_line_summary">%s,设置行数小于屏幕可显示的最大行数可以更方便的滑动到其他的字段进行编辑</string>
@@ -1138,4 +1140,8 @@
     <string name="adjust_chapter_index">调整章节位置</string>
     <string name="clear_webview_data_success">清除成功，3秒后自动重启应用</string>
     <string name="key_page_on_long_press">按键长按翻页</string>
+    <string name="save_log">保存日志</string>
+    <string name="create_heap_dump">创建堆转储</string>
+    <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
+    <string name="record_heap_dump_t">记录堆转储</string>
 </resources>

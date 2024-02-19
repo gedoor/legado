@@ -1,13 +1,18 @@
 package io.legado.app.ui.book.read.page.entities
 
+import android.graphics.Canvas
 import android.text.Layout
 import android.text.StaticLayout
 import androidx.annotation.Keep
+import androidx.core.graphics.withTranslation
 import io.legado.app.R
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
+import io.legado.app.utils.canvasrecorder.recordIfNeeded
 import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
@@ -31,6 +36,7 @@ data class TextPage(
 
     companion object {
         val readProgressFormatter = DecimalFormat("0.0%")
+        val emptyTextPage = TextPage()
     }
 
     val lines: List<TextLine> get() = textLines
@@ -38,25 +44,30 @@ data class TextPage(
     val charSize: Int get() = text.length.coerceAtLeast(1)
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
+    var canvasRecorder = CanvasRecorderFactory.create(true)
+    var doublePage = false
+    var paddingTop = 0
 
     val paragraphs by lazy {
         paragraphsInternal
     }
 
-    val paragraphsInternal: ArrayList<TextParagraph> get() {
-        val paragraphs = arrayListOf<TextParagraph>()
-        val lines = textLines.filter { it.paragraphNum > 0 }
-        val offset = lines.first().paragraphNum - 1
-        lines.forEach { line ->
-            if (paragraphs.lastIndex < line.paragraphNum - offset - 1) {
-                paragraphs.add(TextParagraph(0))
+    val paragraphsInternal: ArrayList<TextParagraph>
+        get() {
+            val paragraphs = arrayListOf<TextParagraph>()
+            val lines = textLines.filter { it.paragraphNum > 0 }
+            val offset = lines.first().paragraphNum - 1
+            lines.forEach { line ->
+                if (paragraphs.lastIndex < line.paragraphNum - offset - 1) {
+                    paragraphs.add(TextParagraph(0))
+                }
+                paragraphs[line.paragraphNum - offset - 1].textLines.add(line)
             }
-            paragraphs[line.paragraphNum - offset - 1].textLines.add(line)
+            return paragraphs
         }
-        return paragraphs
-    }
 
     fun addLine(line: TextLine) {
+        line.textPage = this
         textLines.add(line)
     }
 
@@ -147,9 +158,10 @@ data class TextPage(
                     )
                     x = x1
                 }
-                textLines.add(textLine)
+                addLine(textLine)
             }
             height = ChapterProvider.visibleHeight.toFloat()
+            invalidate()
         }
         return this
     }
@@ -158,8 +170,8 @@ data class TextPage(
      * 移除朗读标志
      */
     fun removePageAloudSpan(): TextPage {
-        textLines.forEach { textLine ->
-            textLine.isReadAloud = false
+        for (i in textLines.indices) {
+            textLines[i].isReadAloud = false
         }
         return this
     }
@@ -171,7 +183,8 @@ data class TextPage(
     fun upPageAloudSpan(aloudSpanStart: Int) {
         removePageAloudSpan()
         var lineStart = 0
-        for ((index, textLine) in textLines.withIndex()) {
+        for (index in textLines.indices) {
+            val textLine = textLines[index]
             val lineLength = textLine.text.length + if (textLine.isParagraphEnd) 1 else 0
             if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + lineLength) {
                 for (i in index - 1 downTo 0) {
@@ -252,6 +265,46 @@ data class TextPage(
             }
         }
         return null
+    }
+
+    fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
+        render(view)
+        canvas.withTranslation(0f, relativeOffset + paddingTop) {
+            canvasRecorder.draw(this)
+        }
+    }
+
+    private fun drawPage(view: ContentTextView, canvas: Canvas) {
+        for (i in lines.indices) {
+            val line = lines[i]
+            canvas.withTranslation(0f, line.lineTop - paddingTop) {
+                line.draw(view, this)
+            }
+        }
+    }
+
+    fun render(view: ContentTextView): Boolean {
+        return canvasRecorder.recordIfNeeded(view.width, height.toInt()) {
+            drawPage(view, this)
+        }
+    }
+
+    fun invalidate() {
+        canvasRecorder.invalidate()
+    }
+
+    fun invalidateAll() {
+        for (i in lines.indices) {
+            lines[i].invalidateSelf()
+        }
+        invalidate()
+    }
+
+    fun recycleRecorders() {
+        canvasRecorder.recycle()
+        for (i in lines.indices) {
+            lines[i].recycleRecorder()
+        }
     }
 
     fun hasImageOrEmpty(): Boolean {

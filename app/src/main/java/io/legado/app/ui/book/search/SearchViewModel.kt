@@ -15,6 +15,7 @@ import io.legado.app.model.webBook.SearchModel
 import io.legado.app.utils.ConflateLiveData
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
 import java.util.concurrent.ConcurrentHashMap
 
@@ -39,7 +40,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             isSearchLiveData.postValue(true)
         }
 
-        override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
+        override fun onSearchSuccess(searchBooks: List<SearchBook>) {
             searchBookLiveData.postValue(searchBooks)
         }
 
@@ -48,7 +49,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchFinishLiveData.postValue(isEmpty)
         }
 
-        override fun onSearchCancel(exception: Exception?) {
+        override fun onSearchCancel(exception: Throwable?) {
             isSearchLiveData.postValue(false)
             exception?.let {
                 context.toastOnUi(it.localizedMessage)
@@ -66,6 +67,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                     keys.add(it.name)
                 }
                 keys
+            }.catch {
+                AppLog.put("搜索界面获取书籍列表失败\n${it.localizedMessage}", it)
             }.collect {
                 bookshelf.clear()
                 bookshelf.addAll(it)
@@ -92,6 +95,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             if ((searchKey == key) || key.isNotEmpty()) {
                 searchModel.cancelSearch()
                 searchID = System.currentTimeMillis()
+                searchBookLiveData.postValue(emptyList())
                 searchKey = key
             }
             if (searchKey.isEmpty()) {

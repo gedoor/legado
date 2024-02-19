@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import io.legado.app.base.BaseService
+import io.legado.app.utils.LogUtils
 import java.lang.ref.WeakReference
 
 /**
@@ -11,6 +12,8 @@ import java.lang.ref.WeakReference
  */
 @Suppress("unused")
 object LifecycleHelp : Application.ActivityLifecycleCallbacks {
+
+    private const val TAG = "LifecycleHelp"
 
     private val activities: MutableList<WeakReference<Activity>> = arrayListOf()
     private val services: MutableList<WeakReference<BaseService>> = arrayListOf()
@@ -55,16 +58,19 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityPaused(activity: Activity) {
+        LogUtils.d(TAG, "${activity::class.simpleName} onPause")
     }
 
     override fun onActivityResumed(activity: Activity) {
+        LogUtils.d(TAG, "${activity::class.simpleName} onResume")
     }
 
     override fun onActivityStarted(activity: Activity) {
-
+        LogUtils.d(TAG, "${activity::class.simpleName} onStart")
     }
 
     override fun onActivityDestroyed(activity: Activity) {
+        LogUtils.d(TAG, "${activity::class.simpleName} onDestroy")
         for (temp in activities) {
             if (temp.get() != null && temp.get() === activity) {
                 activities.remove(temp)
@@ -77,22 +83,27 @@ object LifecycleHelp : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+        LogUtils.d(TAG, "${activity::class.simpleName} onSaveInstanceState")
     }
 
     override fun onActivityStopped(activity: Activity) {
+        LogUtils.d(TAG, "${activity::class.simpleName} onStop")
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        LogUtils.d(TAG, "${activity::class.simpleName} onCreate")
         activities.add(WeakReference(activity))
     }
 
     @Synchronized
     fun onServiceCreate(service: BaseService) {
+        LogUtils.d(TAG, "${service::class.simpleName} onCreate")
         services.add(WeakReference(service))
     }
 
     @Synchronized
     fun onServiceDestroy(service: BaseService) {
+        LogUtils.d(TAG, "${service::class.simpleName} onDestroy")
         for (temp in services) {
             if (temp.get() != null && temp.get() === service) {
                 services.remove(temp)

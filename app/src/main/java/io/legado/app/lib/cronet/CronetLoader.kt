@@ -14,13 +14,21 @@ import io.legado.app.utils.printOnDebug
 import org.chromium.net.CronetEngine
 import org.json.JSONObject
 import splitties.init.appCtx
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.OutputStream
 import java.math.BigInteger
 import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
-import java.util.*
+import java.util.Objects
 
+@Suppress("ConstPropertyName")
 @Keep
 object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterface {
     //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.159/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so

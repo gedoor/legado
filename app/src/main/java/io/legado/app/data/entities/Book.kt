@@ -309,8 +309,24 @@ data class Book(
         newBook.durChapterIndex = BookHelp
             .getDurChapter(durChapterIndex, durChapterTitle, toc, totalChapterNum)
         newBook.durChapterTitle = toc[newBook.durChapterIndex].getDisplayTitle(
-            ContentProcessor.get(newBook.name, newBook.origin).getTitleReplaceRules()
+            ContentProcessor.get(newBook.name, newBook.origin).getTitleReplaceRules(),
+            getUseReplaceRule()
         )
+        newBook.durChapterPos = durChapterPos
+        newBook.durChapterTime = durChapterTime
+        newBook.group = group
+        newBook.order = order
+        newBook.customCoverUrl = customCoverUrl
+        newBook.customIntro = customIntro
+        newBook.customTag = customTag
+        newBook.canUpdate = canUpdate
+        newBook.readConfig = readConfig
+        return newBook
+    }
+
+    fun updateTo(newBook: Book): Book {
+        newBook.durChapterIndex = durChapterIndex
+        newBook.durChapterTitle = durChapterTitle
         newBook.durChapterPos = durChapterPos
         newBook.durChapterTime = durChapterTime
         newBook.group = group

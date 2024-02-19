@@ -80,11 +80,11 @@ class WebService : BaseService() {
             if (address == null) {
                 hostAddress = getString(R.string.network_connection_unavailable)
                 notificationContent = hostAddress
-                upNotification()
+                startForegroundNotification()
             } else {
                 hostAddress = getString(R.string.http_ip, address.hostAddress, getPort())
                 notificationContent = hostAddress
-                upNotification()
+                startForegroundNotification()
             }
             postEvent(EventBus.WEB_SERVICE, hostAddress)
         }
@@ -142,7 +142,7 @@ class WebService : BaseService() {
                 isRun = true
                 postEvent(EventBus.WEB_SERVICE, hostAddress)
                 notificationContent = hostAddress
-                upNotification()
+                startForegroundNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
                 e.printOnDebug()
@@ -165,7 +165,7 @@ class WebService : BaseService() {
     /**
      * 更新通知
      */
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdWeb)
             .setSmallIcon(R.drawable.ic_web_service_noti)
             .setOngoing(true)

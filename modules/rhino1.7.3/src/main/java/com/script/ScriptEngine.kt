@@ -15,6 +15,12 @@ interface ScriptEngine {
     fun eval(reader: Reader, scope: Scriptable): Any?
 
     @Throws(ScriptException::class)
+    suspend fun evalSuspend(reader: Reader, scope: Scriptable): Any?
+
+    @Throws(ScriptException::class)
+    suspend fun evalSuspend(script: String, scope: Scriptable): Any?
+
+    @Throws(ScriptException::class)
     fun eval(script: String, scope: Scriptable): Any?
 
     @Throws(ScriptException::class)

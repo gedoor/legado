@@ -90,12 +90,13 @@ abstract class PageDelegate(protected val readView: ReadView) {
         }
     }
 
+    @CallSuper
     open fun setViewSize(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
     }
 
-    fun scroll() {
+    open fun computeScroll() {
         if (scroller.computeScrollOffset()) {
             readView.setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat())
         } else if (isStarted) {
@@ -186,6 +187,15 @@ abstract class PageDelegate(protected val readView: ReadView) {
         // 判断snackBar是否显示，并关闭
         if (snackBar.isShown) {
             snackBar.dismiss()
+        }
+    }
+
+    fun postInvalidate() {
+        if (isRunning && this is HorizontalPageDelegate) {
+            readView.post {
+                setBitmap()
+                readView.invalidate()
+            }
         }
     }
 

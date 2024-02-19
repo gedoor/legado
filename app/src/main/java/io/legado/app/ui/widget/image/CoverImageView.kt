@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
+import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -180,7 +181,8 @@ class CoverImageView @JvmOverloads constructor(
         name: String? = null,
         author: String? = null,
         loadOnlyWifi: Boolean = false,
-        sourceOrigin: String? = null
+        sourceOrigin: String? = null,
+        lifecycle: Lifecycle? = null
     ) {
         this.bitmapPath = path
         this.name = name?.replace(AppPattern.bdRegex, "")?.trim()
@@ -195,8 +197,12 @@ class CoverImageView @JvmOverloads constructor(
             if (sourceOrigin != null) {
                 options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
             }
-            ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
-                .apply(options)
+            val builder = if (lifecycle != null) {
+                ImageLoader.load(lifecycle, path)
+            } else {
+                ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
+            }
+            builder.apply(options)
                 .placeholder(BookCover.defaultDrawable)
                 .error(BookCover.defaultDrawable)
                 .listener(glideListener)

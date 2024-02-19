@@ -7,11 +7,12 @@ import io.legado.app.BuildConfig
 import io.legado.app.help.config.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
+import kotlin.time.Duration.Companion.days
 
 @SuppressLint("SimpleDateFormat")
 @Suppress("unused")
@@ -40,8 +41,15 @@ object LogUtils {
     private val fileHandler by lazy {
         val root = appCtx.externalCacheDir ?: return@lazy null
         val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
-        val logPath = FileUtils.getPath(root = logFolder, "appLog")
-        FileHandler(logPath, 10240, 10).apply {
+        val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
+        logFolder.listFiles()?.forEach {
+            if (it.lastModified() < expiredTime) {
+                it.delete()
+            }
+        }
+        val date = getCurrentDateStr(TIME_PATTERN)
+        val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
+        FileHandler(logPath).apply {
             formatter = object : java.util.logging.Formatter() {
                 override fun format(record: LogRecord): String {
                     // 设置文件输出格式

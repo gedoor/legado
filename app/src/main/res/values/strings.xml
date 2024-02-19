@@ -734,6 +734,8 @@
     <string name="import_old_summary">Select a legacy backup folder</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="enabled_explore">Discovery Enabled</string>
+    <string name="disabled_explore">Discovery Disabled</string>
     <string name="starting_download">Starting download</string>
     <string name="already_in_download">This book is already in Download list</string>
     <string name="click_to_open">Click to open</string>
@@ -1039,7 +1041,7 @@
     <string name="cover_decode_js">Decode Cover Js(coverDecodeJs)</string>
     <string name="net_no_group">Network ungrouped</string>
     <string name="local_no_group">Local ungrouped</string>
-    <string name="parallel_export_book">Multithreaded export TXT</string>
+    <string name="parallel_export_book">Multithreaded export</string>
     <string name="progress_bar_behavior">Progress bar behavior</string>
     <string name="source_edit_text_max_line">Maximum number of rows in the source edit box</string>
     <string name="source_edit_max_line_summary">%s,Setting the number of rows less than the maximum number of rows that can be displayed on the screen makes it easier to slide to other fields for editing.</string>
@@ -1141,4 +1143,8 @@
     <string name="adjust_chapter_index">Adjust of chapter index</string>
     <string name="clear_webview_data_success">Cleared successfully, automatically restarts the application after 3 seconds</string>
     <string name="key_page_on_long_press">Press and hold the key to turn the page</string>
+    <string name="save_log">保存日志</string>
+    <string name="create_heap_dump">创建堆转储</string>
+    <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
+    <string name="record_heap_dump_t">记录堆转储</string>
 </resources>

@@ -137,8 +137,11 @@ object LocalBook {
             "获取本地书籍内容失败\n${e.localizedMessage}"
         }
         if (book.isEpub) {
-            content = content?.replace("&lt;img", "&lt; img", true) ?: return null
-            return StringEscapeUtils.unescapeHtml4(content)
+            content ?: return null
+            if (content.indexOf('&') > -1) {
+                content = content.replace("&lt;img", "&lt; img", true)
+                return StringEscapeUtils.unescapeHtml4(content)
+            }
         }
         return content
     }

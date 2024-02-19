@@ -98,12 +98,12 @@ const readingRecent = ref({
   chapterPos: 0,
 });
 const shelfWrapper = ref(null);
-const { showLoading, closeLoading, loadingWrapper } = useLoading(
+const { showLoading, closeLoading, loadingWrapper, isLoading } = useLoading(
   shelfWrapper,
   "正在获取书籍信息",
 );
 
-const books = ref([]);
+const books = shallowRef([]);
 
 const search = ref("");
 const isSearching = ref(false);
@@ -131,9 +131,13 @@ const searchBook = () => {
   API.search(
     search.value,
     (data) => {
+      if (isLoading) {
+        closeLoading();
+      }
       try {
         store.setSearchBooks(JSON.parse(data));
-        store.searchBooks.forEach((item) => books.value.push(item));
+        books.value = store.searchBooks
+        //store.searchBooks.forEach((item) => books.value.push(item));
       } catch (e) {
         ElMessage.error("后端数据错误");
         throw e;

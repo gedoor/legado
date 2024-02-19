@@ -36,6 +36,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var clickActionBC = appCtx.getPrefInt(PreferKey.clickActionBC, 1)
     var clickActionBR = appCtx.getPrefInt(PreferKey.clickActionBR, 1)
     var themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
+    var useDefaultCover = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
@@ -43,6 +44,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
                 isEInkMode = themeMode == "3"
             }
+
             PreferKey.clickActionTL -> clickActionTL =
                 appCtx.getPrefInt(PreferKey.clickActionTL, 2)
 
@@ -79,6 +81,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
 
             PreferKey.antiAlias -> useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
+
+            PreferKey.useDefaultCover -> useDefaultCover =
+                appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
 
         }
     }
@@ -132,8 +137,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             }
         }
 
-    val useDefaultCover: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
+    val textSelectAble: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.textSelectAble, true)
 
     val isTransparentStatusBar: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.transparentStatusBar, true)
@@ -449,11 +454,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val recordLog get() = appCtx.getPrefBoolean(PreferKey.recordLog)
 
+    val recordHeapDump get() = appCtx.getPrefBoolean(PreferKey.recordHeapDump, false)
+
     val loadCoverOnlyWifi get() = appCtx.getPrefBoolean(PreferKey.loadCoverOnlyWifi, false)
 
     val showAddToShelfAlert get() = appCtx.getPrefBoolean(PreferKey.showAddToShelfAlert, true)
-
-    val asyncLoadImage get() = appCtx.getPrefBoolean(PreferKey.asyncLoadImage, false)
 
     val ignoreAudioFocus get() = appCtx.getPrefBoolean(PreferKey.ignoreAudioFocus, false)
 

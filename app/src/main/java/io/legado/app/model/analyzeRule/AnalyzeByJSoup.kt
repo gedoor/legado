@@ -45,9 +45,20 @@ class AnalyzeByJSoup(doc: Any) {
     /**
      * 合并内容列表,得到内容
      */
-    internal fun getString(ruleStr: String) =
-        if (ruleStr.isEmpty()) null
-        else getStringList(ruleStr).takeIf { it.isNotEmpty() }?.joinToString("\n")
+    internal fun getString(ruleStr: String): String? {
+        if (ruleStr.isEmpty()) {
+            return null
+        }
+        val list = getStringList(ruleStr)
+        if (list.isEmpty()) {
+            return null
+        }
+        if (list.size == 1){
+            return list.first()
+        }
+        return list.joinToString("\n")
+    }
+
 
     /**
      * 获取一个字符串
