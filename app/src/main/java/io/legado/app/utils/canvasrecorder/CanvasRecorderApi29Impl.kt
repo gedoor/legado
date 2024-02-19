@@ -24,6 +24,12 @@ class CanvasRecorderApi29Impl : BaseCanvasRecorder() {
         }
     }
 
+    private fun flushRenderNode() {
+        val rc = renderNode!!.beginRecording()
+        rc.drawPicture(picture!!)
+        renderNode!!.endRecording()
+    }
+
     override fun beginRecording(width: Int, height: Int): Canvas {
         init()
         renderNode!!.setPosition(0, 0, width, height)
@@ -32,9 +38,7 @@ class CanvasRecorderApi29Impl : BaseCanvasRecorder() {
 
     override fun endRecording() {
         picture!!.endRecording()
-        val rc = renderNode!!.beginRecording()
-        rc.drawPicture(picture!!)
-        renderNode!!.endRecording()
+        flushRenderNode()
         super.endRecording()
     }
 
@@ -42,9 +46,7 @@ class CanvasRecorderApi29Impl : BaseCanvasRecorder() {
         if (renderNode == null || picture == null) return
         if (canvas.isHardwareAccelerated) {
             if (!renderNode!!.hasDisplayList()) {
-                val rc = renderNode!!.beginRecording()
-                rc.drawPicture(picture!!)
-                renderNode!!.endRecording()
+                flushRenderNode()
             }
             canvas.drawRenderNode(renderNode!!)
         } else {
