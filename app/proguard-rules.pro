@@ -396,6 +396,13 @@
 # https://android.googlesource.com/platform/sdk/+/marshmallow-mr1-release/files/proguard-android.txt#54
 -dontwarn android.support.**
 
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn android.util.StatsEvent$Builder
+-dontwarn android.util.StatsEvent
+-dontwarn org.chromium.base.FeatureList
+-dontwarn org.chromium.base.FeatureMap
+
 #-------------------Cronet------------------------------------
 
 # Class.forName调用
