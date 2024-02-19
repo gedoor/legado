@@ -92,7 +92,7 @@ jobs:
           echo "开始${{ env.product }}$typeName构建"
           chmod +x gradlew
           ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
-      - name: Rename outputs apks And Move mapping files
+      - name: Rename outputs apks And Move files
         run: |
           echo "修改APK文件名"
           mkdir -p ${{ github.workspace }}/apk/
@@ -103,6 +103,10 @@ jobs:
           mkdir -p ${{ github.workspace }}/mapping/
           for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/mapping.txt`; do
             mv "$file" ${{ github.workspace }}/mapping/mapping.txt
+          done
+          echo "移动missing_rules.txt文件"
+          for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/missing_rules.txt`; do
+            mv "$file" ${{ github.workspace }}/mapping/missing_rules.txt
           done
       - name: Upload App To Artifact
         uses: actions/upload-artifact@v4
@@ -115,6 +119,12 @@ jobs:
         with:
           name: legado.${{ env.product }}.${{ env.type }}.mapping
           path: ${{ github.workspace }}/mapping/mapping.txt
+
+      - name: Upload Missing Rules File To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legado.${{ env.product }}.${{ env.type }}.mapping.missing_rules
+          path: ${{ github.workspace }}/mapping/missing_rules.txt
 
   lanzou:
     needs: [ prepare, build ]
