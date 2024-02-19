@@ -92,7 +92,7 @@ jobs:
           echo "开始${{ env.product }}$typeName构建"
           chmod +x gradlew
           ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
-        - name: Rename outputs apks And Move mapping files
+      - name: Rename outputs apks And Move mapping files
         run: |
           echo "修改APK文件名"
           mkdir -p ${{ github.workspace }}/apk/
