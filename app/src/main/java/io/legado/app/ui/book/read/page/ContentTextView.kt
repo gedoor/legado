@@ -81,6 +81,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         } else {
             invalidate()
         }
+        submitRenderTask()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -216,7 +217,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 is TextColumn -> {
                     if (!selectAble) return@touch
                     column.selected = true
-                    invalidate()
                     select(textPos)
                 }
             }
@@ -601,7 +601,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
             }
         }
-        invalidate()
+        submitRenderTask()
         callBack.onCancelSelect()
     }
 

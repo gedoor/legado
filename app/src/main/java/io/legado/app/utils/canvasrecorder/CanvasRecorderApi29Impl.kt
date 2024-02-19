@@ -5,6 +5,9 @@ import android.graphics.Picture
 import android.graphics.RenderNode
 import android.os.Build
 import androidx.annotation.RequiresApi
+import io.legado.app.utils.canvasrecorder.objectpool.synchronized
+import io.legado.app.utils.canvasrecorder.pools.PicturePool
+import io.legado.app.utils.canvasrecorder.pools.RenderNodePool
 
 @RequiresApi(Build.VERSION_CODES.Q)
 class CanvasRecorderApi29Impl : BaseCanvasRecorder() {
@@ -17,10 +20,10 @@ class CanvasRecorderApi29Impl : BaseCanvasRecorder() {
 
     private fun init() {
         if (renderNode == null) {
-            renderNode = RenderNode("CanvasRecorder")
+            renderNode = renderNodePool.obtain()
         }
         if (picture == null) {
-            picture = Picture()
+            picture = picturePool.obtain()
         }
     }
 
@@ -56,9 +59,16 @@ class CanvasRecorderApi29Impl : BaseCanvasRecorder() {
 
     override fun recycle() {
         super.recycle()
-        renderNode?.discardDisplayList()
+        if (renderNode == null || picture == null) return
+        renderNodePool.recycle(renderNode!!)
         renderNode = null
+        picturePool.recycle(picture!!)
         picture = null
+    }
+
+    companion object {
+        private val picturePool = PicturePool().synchronized()
+        private val renderNodePool = RenderNodePool().synchronized()
     }
 
 }

@@ -31,7 +31,7 @@ class CanvasRecorderLocked(private val delegate: CanvasRecorder) :
 
     override fun draw(canvas: Canvas) {
         if (lock == null) return
-        if (!lock!!.tryLock()) return
+        lock!!.lock()
         try {
             delegate.draw(canvas)
         } finally {

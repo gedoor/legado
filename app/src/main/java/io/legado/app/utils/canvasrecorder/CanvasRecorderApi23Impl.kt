@@ -2,6 +2,8 @@ package io.legado.app.utils.canvasrecorder
 
 import android.graphics.Canvas
 import android.graphics.Picture
+import io.legado.app.utils.canvasrecorder.objectpool.synchronized
+import io.legado.app.utils.canvasrecorder.pools.PicturePool
 
 class CanvasRecorderApi23Impl : BaseCanvasRecorder() {
 
@@ -12,7 +14,7 @@ class CanvasRecorderApi23Impl : BaseCanvasRecorder() {
 
     private fun initPicture() {
         if (picture == null) {
-            picture = Picture()
+            picture = picturePool.obtain()
         }
     }
 
@@ -33,7 +35,13 @@ class CanvasRecorderApi23Impl : BaseCanvasRecorder() {
 
     override fun recycle() {
         super.recycle()
+        if (picture == null) return
+        picturePool.recycle(picture!!)
         picture = null
+    }
+
+    companion object {
+        private val picturePool = PicturePool().synchronized()
     }
 
 }

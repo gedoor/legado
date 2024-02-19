@@ -3,6 +3,8 @@ package io.legado.app.utils.canvasrecorder
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import io.legado.app.utils.canvasrecorder.pools.BitmapPool
+import io.legado.app.utils.canvasrecorder.pools.CanvasPool
 
 class CanvasRecorderImpl : BaseCanvasRecorder() {
 
@@ -14,19 +16,15 @@ class CanvasRecorderImpl : BaseCanvasRecorder() {
 
     private fun init(width: Int, height: Int) {
         if (bitmap == null) {
-            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        }
-        if (canvas == null) {
-            canvas = Canvas(bitmap!!)
+            bitmap = bitmapPool.obtain(width, height)
         }
         if (bitmap!!.width != width || bitmap!!.height != height) {
             if (canReconfigure(width, height)) {
                 bitmap!!.reconfigure(width, height, Bitmap.Config.ARGB_8888)
             } else {
-                bitmap!!.recycle()
-                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                bitmapPool.recycle(bitmap!!)
+                bitmap = bitmapPool.obtain(width, height)
             }
-            canvas!!.setBitmap(bitmap!!)
         }
     }
 
@@ -37,12 +35,15 @@ class CanvasRecorderImpl : BaseCanvasRecorder() {
     override fun beginRecording(width: Int, height: Int): Canvas {
         init(width, height)
         bitmap!!.eraseColor(Color.TRANSPARENT)
+        canvas = canvasPool.obtain().apply { setBitmap(bitmap!!) }
         return canvas!!
     }
 
     override fun endRecording() {
         bitmap!!.prepareToDraw()
         super.endRecording()
+        canvasPool.recycle(canvas!!)
+        canvas = null
     }
 
     override fun draw(canvas: Canvas) {
@@ -52,8 +53,14 @@ class CanvasRecorderImpl : BaseCanvasRecorder() {
 
     override fun recycle() {
         super.recycle()
-        bitmap?.recycle()
-        bitmap = null
+        val bitmap = bitmap ?: return
+        bitmapPool.recycle(bitmap)
+        this.bitmap = null
+    }
+
+    companion object {
+        private val canvasPool = CanvasPool(2)
+        private val bitmapPool = BitmapPool()
     }
 
 }
