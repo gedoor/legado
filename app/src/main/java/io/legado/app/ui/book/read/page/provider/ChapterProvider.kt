@@ -137,9 +137,6 @@ object ChapterProvider {
     @JvmStatic
     var visibleRect = RectF()
 
-    private val titleMeasureHelper = TextMeasure(titlePaint)
-    private val contentMeasureHelper = TextMeasure(contentPaint)
-
     init {
         upStyle()
     }
@@ -169,7 +166,6 @@ object ChapterProvider {
                     textPages,
                     stringBuilder,
                     titlePaint,
-                    titleMeasureHelper,
                     titlePaintTextHeight,
                     titlePaintFontMetrics,
                     isTitle = true,
@@ -207,7 +203,6 @@ object ChapterProvider {
                     textPages,
                     stringBuilder,
                     contentPaint,
-                    contentMeasureHelper,
                     contentPaintTextHeight,
                     contentPaintFontMetrics,
                     srcList = srcList
@@ -229,7 +224,6 @@ object ChapterProvider {
                             textPages,
                             stringBuilder,
                             contentPaint,
-                            contentMeasureHelper,
                             contentPaintTextHeight,
                             contentPaintFontMetrics
                         ).let {
@@ -261,7 +255,6 @@ object ChapterProvider {
                             textPages,
                             stringBuilder,
                             contentPaint,
-                            contentMeasureHelper,
                             contentPaintTextHeight,
                             contentPaintFontMetrics
                         ).let {
@@ -403,7 +396,6 @@ object ChapterProvider {
         textPages: ArrayList<TextPage>,
         stringBuilder: StringBuilder,
         textPaint: TextPaint,
-        measureHelper: TextMeasure,
         textHeight: Float,
         fontMetrics: FontMetrics,
         isTitle: Boolean = false,
@@ -413,7 +405,7 @@ object ChapterProvider {
     ): Pair<Int, Float> {
         var absStartX = x
         val layout = if (ReadBookConfig.useZhLayout) {
-            ZhLayout(text, textPaint, visibleWidth, measureHelper)
+            ZhLayout(text, textPaint, visibleWidth)
         } else {
             StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
         }
@@ -471,7 +463,7 @@ object ChapterProvider {
             val lineStart = layout.getLineStart(lineIndex)
             val lineEnd = layout.getLineEnd(lineIndex)
             val lineText = text.substring(lineStart, lineEnd)
-            val (words, widths) = measureHelper.measureTextSplit(lineText)
+            val (words, widths) = measureTextSplit(lineText, textPaint)
             val desiredWidth = widths.fastSum()
             when {
                 lineIndex == 0 && layout.lineCount > 1 && !isTitle -> {
@@ -751,6 +743,28 @@ object ChapterProvider {
         }
     }
 
+    fun measureTextSplit(
+        text: String,
+        paint: TextPaint
+    ): Pair<ArrayList<String>, ArrayList<Float>> {
+        val length = text.length
+        val widthsArray = FloatArray(length)
+        paint.getTextWidths(text, widthsArray)
+        val clusterCount = widthsArray.count { it > 0f }
+        val widths = ArrayList<Float>(clusterCount)
+        val stringList = ArrayList<String>(clusterCount)
+        var i = 0
+        while (i < length) {
+            val clusterBaseIndex = i++
+            widths.add(widthsArray[clusterBaseIndex])
+            while (i < length && widthsArray[i] == 0f) {
+                i++
+            }
+            stringList.add(text.substring(clusterBaseIndex, i))
+        }
+        return stringList to widths
+    }
+
     /**
      * 更新样式
      */
@@ -759,8 +773,6 @@ object ChapterProvider {
         getPaints(typeface).let {
             titlePaint = it.first
             contentPaint = it.second
-            titleMeasureHelper.setPaint(titlePaint)
-            contentMeasureHelper.setPaint(contentPaint)
 //            reviewPaint.color = contentPaint.color
 //            reviewPaint.textSize = contentPaint.textSize * 0.45f
 //            reviewPaint.textAlign = Paint.Align.CENTER
