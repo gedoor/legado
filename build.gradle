@@ -4,8 +4,8 @@ buildscript {
     ext{
         compile_sdk_version = 34
         build_tool_version = '34.0.0'
-        kotlin_version = '1.9.20'
-        ksp_version = "1.0.13"
+        kotlin_version = '1.9.22'
+        ksp_version = "1.0.17"
         agp_version = '8.2.0'
         media3_version = "1.2.0"
         splitties_version = '3.0.0'
