@@ -112,19 +112,23 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: legado.${{ env.product }}.${{ env.type }}
+          if-no-files-found: ignore
           path: ${{ github.workspace }}/apk/*.apk
 
       - name: Upload Mapping File To Artifact
         uses: actions/upload-artifact@v4
         with:
           name: legado.${{ env.product }}.${{ env.type }}.mapping
+          if-no-files-found: ignore
           path: ${{ github.workspace }}/mapping/mapping.txt
 
       - name: Upload Missing Rules File To Artifact
         uses: actions/upload-artifact@v4
         with:
           name: legado.${{ env.product }}.${{ env.type }}.mapping.missing_rules
+          if-no-files-found: ignore
           path: ${{ github.workspace }}/mapping/missing_rules.txt
+
       - name: Check Build production
         run: |
           cd ${{ github.workspace }}/apk/
