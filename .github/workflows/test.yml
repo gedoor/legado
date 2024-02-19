@@ -92,8 +92,6 @@ jobs:
           echo "开始${{ env.product }}$typeName构建"
           chmod +x gradlew
           ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
-      - name: Rename outputs apks And Move files
-        run: |
           echo "修改APK文件名"
           mkdir -p ${{ github.workspace }}/apk/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
@@ -104,23 +102,14 @@ jobs:
           for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/mapping.txt`; do
             mv "$file" ${{ github.workspace }}/mapping/mapping.txt
           done
+
+      - name: Move Missing Rules Files
+        run: |
           echo "移动missing_rules.txt文件"
+          mkdir -p ${{ github.workspace }}/mapping/
           for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/missing_rules.txt`; do
             mv "$file" ${{ github.workspace }}/mapping/missing_rules.txt
           done
-      - name: Upload App To Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: legado.${{ env.product }}.${{ env.type }}
-          if-no-files-found: ignore
-          path: ${{ github.workspace }}/apk/*.apk
-
-      - name: Upload Mapping File To Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: legado.${{ env.product }}.${{ env.type }}.mapping
-          if-no-files-found: ignore
-          path: ${{ github.workspace }}/mapping/mapping.txt
 
       - name: Upload Missing Rules File To Artifact
         uses: actions/upload-artifact@v4
@@ -136,6 +125,20 @@ jobs:
             echo "Build production not found! Check gradle logs."
             exit 1
           fi
+
+      - name: Upload App To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legado.${{ env.product }}.${{ env.type }}
+          if-no-files-found: ignore
+          path: ${{ github.workspace }}/apk/*.apk
+
+      - name: Upload Mapping File To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legado.${{ env.product }}.${{ env.type }}.mapping
+          if-no-files-found: ignore
+          path: ${{ github.workspace }}/mapping/mapping.txt
 
   lanzou:
     needs: [ prepare, build ]
