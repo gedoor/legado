@@ -1,9 +1,18 @@
 package io.legado.app.ui.book.read.page.entities
 
+import android.graphics.Canvas
 import android.graphics.Paint.FontMetrics
 import androidx.annotation.Keep
+import io.legado.app.help.book.isImage
+import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.read.page.ContentTextView
+import io.legado.app.ui.book.read.page.entities.TextPage.Companion.emptyTextPage
 import io.legado.app.ui.book.read.page.entities.column.BaseColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
+import io.legado.app.utils.canvasrecorder.recordIfNeededThenDraw
+import io.legado.app.utils.dpToPx
 
 /**
  * 行信息
@@ -22,8 +31,7 @@ data class TextLine(
     var pagePosition: Int = 0,
     val isTitle: Boolean = false,
     var isParagraphEnd: Boolean = false,
-    var isReadAloud: Boolean = false,
-    var isImage: Boolean = false
+    var isImage: Boolean = false,
 ) {
 
     val columns: List<BaseColumn> get() = textColumns
@@ -31,8 +39,20 @@ data class TextLine(
     val lineStart: Float get() = textColumns.firstOrNull()?.start ?: 0f
     val lineEnd: Float get() = textColumns.lastOrNull()?.end ?: 0f
     val chapterIndices: IntRange get() = chapterPosition..chapterPosition + charSize
+    val height: Float inline get() = lineBottom - lineTop
+    val canvasRecorder = CanvasRecorderFactory.create()
+    var isReadAloud: Boolean = false
+        set(value) {
+            if (field != value) {
+                invalidate()
+            }
+            field = value
+        }
+    var textPage: TextPage = emptyTextPage
+    var isLeftLine = true
 
     fun addColumn(column: BaseColumn) {
+        column.textLine = this
         textColumns.add(column)
     }
 
@@ -100,6 +120,52 @@ data class TextLine(
             else -> false
         }
         return visible
+    }
+
+    fun draw(view: ContentTextView, canvas: Canvas) {
+        canvasRecorder.recordIfNeededThenDraw(canvas, view.width, height.toInt()) {
+            drawTextLine(view, this)
+        }
+    }
+
+    private fun drawTextLine(view: ContentTextView, canvas: Canvas) {
+        for (i in columns.indices) {
+            columns[i].draw(view, canvas)
+        }
+        if (ReadBookConfig.underline && !isImage && ReadBook.book?.isImage != true) {
+            drawUnderline(canvas)
+        }
+    }
+
+    /**
+     * 绘制下划线
+     */
+    private fun drawUnderline(canvas: Canvas) {
+        val lineY = height - 1.dpToPx()
+        canvas.drawLine(
+            lineStart + indentWidth,
+            lineY,
+            lineEnd,
+            lineY,
+            ChapterProvider.contentPaint
+        )
+    }
+
+    fun invalidate() {
+        invalidateSelf()
+        textPage.invalidate()
+    }
+
+    fun invalidateSelf() {
+        canvasRecorder.invalidate()
+    }
+
+    fun recycleRecorder() {
+        canvasRecorder.recycle()
+    }
+
+    companion object {
+        val emptyTextLine = TextLine()
     }
 
 }

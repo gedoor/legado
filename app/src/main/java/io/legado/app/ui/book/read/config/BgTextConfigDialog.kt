@@ -33,11 +33,32 @@ import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.compress.ZipUtils
+import io.legado.app.utils.createFileReplace
+import io.legado.app.utils.createFolderReplace
+import io.legado.app.utils.externalCache
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.getFile
+import io.legado.app.utils.inputStream
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.launch
+import io.legado.app.utils.longToast
+import io.legado.app.utils.openOutputStream
+import io.legado.app.utils.outputStream
+import io.legado.app.utils.parseToUri
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.readBytes
+import io.legado.app.utils.readUri
+import io.legado.app.utils.stackTraceStr
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.init.appCtx
-
 import java.io.File
 import java.io.FileOutputStream
 
@@ -168,7 +189,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 if (i >= 0) {
                     ReadBookConfig.durConfig = defaultConfigs[i].copy()
                     initData()
-                    postEvent(EventBus.UP_CONFIG, true)
+                    postEvent(EventBus.UP_CONFIG, arrayOf(1, 2, 5))
                 }
             }
         }
@@ -178,7 +199,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         binding.swUnderline.setOnCheckedChangeListener { _, isChecked ->
             underline = isChecked
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayOf(9))
         }
         binding.tvTextColor.setOnClickListener {
             ColorPickerDialog.newBuilder()
@@ -214,7 +235,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         binding.ivDelete.setOnClickListener {
             if (ReadBookConfig.deleteDur()) {
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayOf(1, 2, 5))
                 dismissAllowingStateLoss()
             } else {
                 toastOnUi("数量已是最少,不能删除.")
@@ -223,11 +244,11 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         binding.sbBgAlpha.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 ReadBookConfig.bgAlpha = progress
-                postEvent(EventBus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, arrayOf(3))
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                postEvent(EventBus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, arrayOf(3))
             }
         })
     }
@@ -357,7 +378,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             ReadBookConfig.import(byteArray).getOrThrow()
         }.onSuccess {
             ReadBookConfig.durConfig = it
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayOf(1, 2, 5))
             toastOnUi("导入成功")
         }.onError {
             it.printOnDebug()
@@ -378,7 +399,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                     inputStream.copyTo(outputStream)
                 }
                 ReadBookConfig.durConfig.setCurBg(2, fileName)
-                postEvent(EventBus.UP_CONFIG, false)
+                postEvent(EventBus.UP_CONFIG, arrayOf(1))
             }.onFailure {
                 appCtx.toastOnUi(it.localizedMessage)
             }

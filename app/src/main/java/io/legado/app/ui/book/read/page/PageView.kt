@@ -22,6 +22,7 @@ import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.activity
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
+import io.legado.app.utils.setTextIfNotEqual
 import io.legado.app.utils.statusBarHeight
 import splitties.views.backgroundColor
 import java.util.Date
@@ -45,6 +46,8 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
+    private var isMainView = false
+    var isScroll = false
 
     val headerHeight: Int
         get() {
@@ -56,9 +59,6 @@ class PageView(context: Context) : FrameLayout(context) {
     init {
         if (!isInEditMode) {
             upStyle()
-        }
-        binding.contentTextView.upView = {
-            setProgress(it)
         }
     }
 
@@ -104,7 +104,6 @@ class PageView(context: Context) : FrameLayout(context) {
             vwTopDivider.gone(llHeader.isGone || !it.showHeaderLine)
             vwBottomDivider.gone(llFooter.isGone || !it.showFooterLine)
         }
-        contentTextView.upVisibleRect()
         upTime()
         upBattery(battery)
     }
@@ -276,7 +275,13 @@ class PageView(context: Context) : FrameLayout(context) {
      * 设置内容
      */
     fun setContent(textPage: TextPage, resetPageOffset: Boolean = true) {
-        setProgress(textPage)
+        if (isMainView && !isScroll) {
+            setProgress(textPage)
+        } else {
+            post {
+                setProgress(textPage)
+            }
+        }
         if (resetPageOffset) {
             resetPageOffset()
         }
@@ -302,30 +307,26 @@ class PageView(context: Context) : FrameLayout(context) {
      */
     @SuppressLint("SetTextI18n")
     fun setProgress(textPage: TextPage) = textPage.apply {
-        tvBookName?.apply {
-            if (text != ReadBook.book?.name) {
-                text = ReadBook.book?.name
-            }
-        }
-        tvTitle?.apply {
-            if (text != textPage.title) {
-                text = textPage.title
-            }
-        }
-        tvPage?.text = "${index.plus(1)}/$pageSize"
+        tvBookName?.setTextIfNotEqual(ReadBook.book?.name)
+        tvTitle?.setTextIfNotEqual(textPage.title)
+        tvPage?.setTextIfNotEqual("${index.plus(1)}/$pageSize")
         val readProgress = readProgress
-        tvTotalProgress?.apply {
-            if (text != readProgress) {
-                text = readProgress
-            }
-        }
-        tvTotalProgress1?.apply {
-            val progress = "${chapterIndex.plus(1)}/${chapterSize}"
-            if (text != progress) {
-                text = progress
-            }
-        }
-        tvPageAndTotal?.text = "${index.plus(1)}/$pageSize  $readProgress"
+        tvTotalProgress?.setTextIfNotEqual(readProgress)
+        tvTotalProgress1?.setTextIfNotEqual("${chapterIndex.plus(1)}/${chapterSize}")
+        tvPageAndTotal?.setTextIfNotEqual("${index.plus(1)}/$pageSize  $readProgress")
+    }
+
+    fun setAutoPager(autoPager: AutoPager?) {
+        binding.contentTextView.setAutoPager(autoPager)
+    }
+
+    fun submitPreRenderTask() {
+        binding.contentTextView.submitRenderTask()
+    }
+
+    fun setIsScroll(value: Boolean) {
+        isScroll = value
+        binding.contentTextView.setIsScroll(value)
     }
 
     /**
@@ -379,6 +380,7 @@ class PageView(context: Context) : FrameLayout(context) {
     }
 
     fun markAsMainView() {
+        isMainView = true
         binding.contentTextView.isMainView = true
     }
 

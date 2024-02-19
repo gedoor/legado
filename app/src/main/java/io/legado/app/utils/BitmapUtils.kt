@@ -34,7 +34,6 @@ object BitmapUtils {
             BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
             op.inSampleSize = calculateInSampleSize(op, width, height)
             op.inJustDecodeBounds = false
-            BitmapCache.addInBitmapOptions(op)
             BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
         }
     }

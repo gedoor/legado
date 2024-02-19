@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: 简繁转化
+    url: https://github.com/liuyueyi/quick-chinese-transfer/issues/new
+    about: 简繁转化问题请优先到quick-chinese-transfer反馈
   - name: 讨论 / Discussions
     url: https://github.com/gedoor/legado/discussions
     about: Please ask and answer questions here.

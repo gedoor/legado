@@ -58,6 +58,12 @@ abstract class BaseReadBookActivity :
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
     override val viewModel by viewModels<ReadBookViewModel>()
     var bottomDialog = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                onBottomDialogChange()
+            }
+        }
     private val selectBookFolderResult = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             ReadBook.book?.let { book ->
@@ -92,6 +98,21 @@ abstract class BaseReadBookActivity :
                 showClickRegionalConfig()
             }
         }
+    }
+
+    private fun onBottomDialogChange() {
+        when (bottomDialog) {
+            0 -> onMenuHide()
+            1 -> onMenuShow()
+        }
+    }
+
+    open fun onMenuShow() {
+
+    }
+
+    open fun onMenuHide() {
+
     }
 
     fun showPaddingConfig() {

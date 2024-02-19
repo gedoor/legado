@@ -1,10 +1,7 @@
 package io.legado.app.ui.book.read.page.delegate
 
 import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.Picture
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import androidx.core.graphics.withClip
 import androidx.core.graphics.withTranslation
 import io.legado.app.ui.book.read.page.ReadView
@@ -12,14 +9,7 @@ import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.utils.screenshot
 
 class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
-    private val bitmapMatrix = Matrix()
     private val shadowDrawableR: GradientDrawable
-
-    private lateinit var curPicture: Picture
-    private lateinit var prevPicture: Picture
-    private lateinit var nextPicture: Picture
-
-    private val atLeastApi23 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
     init {
         val shadowColors = intArrayOf(0x66111111, 0x00000000)
@@ -27,11 +17,6 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
             GradientDrawable.Orientation.LEFT_RIGHT, shadowColors
         )
         shadowDrawableR.gradientType = GradientDrawable.LINEAR_GRADIENT
-        if (atLeastApi23) {
-            curPicture = Picture()
-            prevPicture = Picture()
-            nextPicture = Picture()
-        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -47,42 +32,21 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
         val distanceX = if (offsetX > 0) offsetX - viewWidth else offsetX + viewWidth
         if (mDirection == PageDirection.PREV) {
             if (offsetX <= viewWidth) {
-                if (!atLeastApi23) {
-                    bitmapMatrix.setTranslate(distanceX, 0.toFloat())
-                    prevBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
-                } else {
-                    canvas.withTranslation(distanceX) {
-                        drawPicture(prevPicture)
-                    }
+                canvas.withTranslation(distanceX) {
+                    prevRecorder.draw(canvas)
                 }
                 addShadow(distanceX, canvas)
             } else {
-                if (!atLeastApi23) {
-                    prevBitmap?.let { canvas.drawBitmap(it, 0f, 0f, null) }
-                } else {
-                    canvas.drawPicture(prevPicture)
-                }
+                prevRecorder.draw(canvas)
             }
         } else if (mDirection == PageDirection.NEXT) {
-            if (!atLeastApi23) {
-                bitmapMatrix.setTranslate(distanceX - viewWidth, 0.toFloat())
-                nextBitmap?.let {
-                    val width = it.width.toFloat()
-                    val height = it.height.toFloat()
-                    canvas.withClip(width + offsetX, 0f, width, height) {
-                        drawBitmap(it, 0f, 0f, null)
-                    }
-                }
-                curBitmap?.let { canvas.drawBitmap(it, bitmapMatrix, null) }
-            } else {
-                val width = nextPicture.width.toFloat()
-                val height = nextPicture.height.toFloat()
-                canvas.withClip(width + offsetX, 0f, width, height) {
-                    drawPicture(nextPicture)
-                }
-                canvas.withTranslation(distanceX - viewWidth) {
-                    drawPicture(curPicture)
-                }
+            val width = nextRecorder.width.toFloat()
+            val height = nextRecorder.height.toFloat()
+            canvas.withClip(width + offsetX, 0f, width, height) {
+                nextRecorder.draw(this)
+            }
+            canvas.withTranslation(distanceX - viewWidth) {
+                curRecorder.draw(this)
             }
             addShadow(distanceX, canvas)
         }
@@ -90,18 +54,13 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
 
     override fun setBitmap() {
         when (mDirection) {
-            PageDirection.PREV -> if (!atLeastApi23) {
-                prevBitmap = prevPage.screenshot(prevBitmap, canvas)
-            } else {
-                prevPage.screenshot(prevPicture)
+            PageDirection.PREV -> {
+                prevPage.screenshot(prevRecorder)
             }
 
-            PageDirection.NEXT -> if (!atLeastApi23) {
-                nextBitmap = nextPage.screenshot(nextBitmap, canvas)
-                curBitmap = curPage.screenshot(curBitmap, canvas)
-            } else {
-                nextPage.screenshot(nextPicture)
-                curPage.screenshot(curPicture)
+            PageDirection.NEXT -> {
+                nextPage.screenshot(nextRecorder)
+                curPage.screenshot(curRecorder)
             }
 
             else -> Unit
