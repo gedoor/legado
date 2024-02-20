@@ -1293,7 +1293,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         when (dialogId) {
             TEXT_COLOR -> {
                 setCurTextColor(color)
-                postEvent(EventBus.UP_CONFIG, arrayOf(2, 9))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 9, 11))
             }
 
             BG_COLOR -> {
