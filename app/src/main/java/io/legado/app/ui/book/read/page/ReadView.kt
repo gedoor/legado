@@ -635,7 +635,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
             nextPage.invalidateAll()
             nextPlusPage.invalidateAll()
         }
-        upContent()
     }
 
     fun onScrollAnimStart() {
@@ -648,7 +647,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun onPageChange() {
         autoPager.reset()
-        curPage.submitPreRenderTask()
+        submitRenderTask()
+    }
+
+    fun submitRenderTask() {
+        curPage.submitRenderTask()
     }
 
     override val currentChapter: TextChapter?

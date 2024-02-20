@@ -14,8 +14,8 @@ inline fun CanvasRecorder.recordIfNeeded(
 }
 
 inline fun CanvasRecorder.record(width: Int, height: Int, block: Canvas.() -> Unit) {
-    val canvas = beginRecording(width, height)
     try {
+        val canvas = beginRecording(width, height)
         canvas.withSave {
             block()
         }

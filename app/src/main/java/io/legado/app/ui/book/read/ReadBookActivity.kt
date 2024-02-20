@@ -387,11 +387,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    override fun onNightModeChanged(mode: Int) {
-        super.onNightModeChanged(mode)
-        binding.readView.invalidateTextPage()
-    }
-
     /**
      * 菜单
      */
@@ -1298,7 +1293,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         when (dialogId) {
             TEXT_COLOR -> {
                 setCurTextColor(color)
-                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 9))
             }
 
             BG_COLOR -> {
@@ -1492,6 +1487,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     8 -> ChapterProvider.upStyle()
                     9 -> binding.readView.invalidateTextPage()
                     10 -> ChapterProvider.upLayout()
+                    11 -> binding.readView.submitRenderTask()
                 }
             }
         }

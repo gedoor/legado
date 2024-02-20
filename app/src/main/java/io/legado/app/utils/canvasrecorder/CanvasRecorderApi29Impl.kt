@@ -46,7 +46,9 @@ class CanvasRecorderApi29Impl : BaseCanvasRecorder() {
     }
 
     override fun draw(canvas: Canvas) {
-        if (renderNode == null || picture == null) return
+        if (renderNode == null || picture == null) {
+            return
+        }
         if (canvas.isHardwareAccelerated) {
             if (!renderNode!!.hasDisplayList()) {
                 flushRenderNode()

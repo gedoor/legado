@@ -42,8 +42,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
     private var callBack: CallBack
     private val visibleRect = ChapterProvider.visibleRect
-    val selectStart = TextPos(0, 0, 0)
-    private val selectEnd = TextPos(0, 0, 0)
+    val selectStart = TextPos(0, -1, -1)
+    private val selectEnd = TextPos(0, -1, -1)
     var textPage: TextPage = TextPage()
         private set
     var isMainView = false
@@ -81,7 +81,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         } else {
             invalidate()
         }
-        submitRenderTask()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -564,8 +563,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
             }
         }
-        // 由后台线程完成渲染后通知视图重绘
-        submitRenderTask()
+        postInvalidate()
     }
 
     private fun upSelectedStart(x: Float, y: Float, top: Float) {
@@ -601,7 +599,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
             }
         }
-        submitRenderTask()
+        selectStart.reset()
+        selectEnd.reset()
+        postInvalidate()
         callBack.onCancelSelect()
     }
 

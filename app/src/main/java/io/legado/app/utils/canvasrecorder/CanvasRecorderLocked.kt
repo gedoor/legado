@@ -30,7 +30,9 @@ class CanvasRecorderLocked(private val delegate: CanvasRecorder) :
     }
 
     override fun draw(canvas: Canvas) {
-        if (lock == null) return
+        if (lock == null) {
+            return
+        }
         lock!!.lock()
         try {
             delegate.draw(canvas)
@@ -40,12 +42,22 @@ class CanvasRecorderLocked(private val delegate: CanvasRecorder) :
     }
 
     override fun isLocked(): Boolean {
-        if (lock == null) return false
+        if (lock == null) {
+            return false
+        }
         return lock!!.isLocked
     }
 
     override fun recycle() {
-        delegate.recycle()
+        if (lock == null) {
+            return
+        }
+        lock!!.lock()
+        try {
+            delegate.recycle()
+        } finally {
+            lock!!.unlock()
+        }
         lock = null
     }
 

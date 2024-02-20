@@ -187,7 +187,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             val layoutNames = defaultConfigs.map { it.name }
             context?.selector("选择预设布局", layoutNames) { _, i ->
                 if (i >= 0) {
-                    ReadBookConfig.durConfig = defaultConfigs[i].copy()
+                    ReadBookConfig.durConfig = defaultConfigs[i].copy().apply { initColorInt() }
                     initData()
                     postEvent(EventBus.UP_CONFIG, arrayOf(1, 2, 5))
                 }
@@ -199,7 +199,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         binding.swUnderline.setOnCheckedChangeListener { _, isChecked ->
             underline = isChecked
-            postEvent(EventBus.UP_CONFIG, arrayOf(9))
+            postEvent(EventBus.UP_CONFIG, arrayOf(9, 11))
         }
         binding.tvTextColor.setOnClickListener {
             ColorPickerDialog.newBuilder()

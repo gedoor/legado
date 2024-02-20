@@ -320,7 +320,7 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.setAutoPager(autoPager)
     }
 
-    fun submitPreRenderTask() {
+    fun submitRenderTask() {
         binding.contentTextView.submitRenderTask()
     }
 
