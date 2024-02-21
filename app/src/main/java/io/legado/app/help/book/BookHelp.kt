@@ -124,7 +124,7 @@ object BookHelp {
     ) {
         try {
             saveText(book, bookChapter, content)
-            saveImages(bookSource, book, bookChapter, content)
+            //saveImages(bookSource, book, bookChapter, content)
             postEvent(EventBus.SAVE_CONTENT, Pair(book, bookChapter))
         } catch (e: Exception) {
             e.printStackTrace()

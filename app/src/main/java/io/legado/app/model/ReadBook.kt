@@ -145,6 +145,9 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun clearTextChapter() {
+        prevTextChapter?.cancelLayout()
+        curTextChapter?.cancelLayout()
+        nextTextChapter?.cancelLayout()
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
@@ -210,6 +213,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex < chapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
+            prevTextChapter?.cancelLayout()
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
@@ -226,6 +230,7 @@ object ReadBook : CoroutineScope by MainScope() {
             callBack?.upMenuView()
             AppLog.putDebug("moveToNextChapter-curPageChanged()")
             curPageChanged()
+            curTextChapter?.let { callBack?.onCurrentTextChapterChanged(it) }
             return true
         } else {
             AppLog.putDebug("跳转下一章失败,没有下一章")
@@ -241,6 +246,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex > 0) {
             durChapterPos = if (toLast) prevTextChapter?.lastReadLength ?: Int.MAX_VALUE else 0
             durChapterIndex--
+            nextTextChapter?.cancelLayout()
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
             prevTextChapter = null
@@ -254,6 +260,7 @@ object ReadBook : CoroutineScope by MainScope() {
             saveRead()
             callBack?.upMenuView()
             curPageChanged()
+            curTextChapter?.let { callBack?.onCurrentTextChapterChanged(it) }
             return true
         } else {
             return false
@@ -477,23 +484,33 @@ object ReadBook : CoroutineScope by MainScope() {
             )
             val contents = contentProcessor
                 .getContent(book, chapter, content, includeTitle = false)
-            val textChapter = ChapterProvider
-                .getTextChapter(book, chapter, displayTitle, contents, chapterSize)
+            val textChapter = ChapterProvider.getTextChapterAsync(
+                book,
+                chapter,
+                displayTitle,
+                contents,
+                chapterSize,
+                this@ReadBook
+            )
             when (val offset = chapter.index - durChapterIndex) {
                 0 -> {
+                    curTextChapter?.cancelLayout()
                     curTextChapter = textChapter
                     if (upContent) callBack?.upContent(offset, resetPageOffset)
                     callBack?.upMenuView()
                     curPageChanged()
                     callBack?.contentLoadFinish()
+                    callBack?.onCurrentTextChapterChanged(textChapter)
                 }
 
                 -1 -> {
+                    prevTextChapter?.cancelLayout()
                     prevTextChapter = textChapter
                     if (upContent) callBack?.upContent(offset, resetPageOffset)
                 }
 
                 1 -> {
+                    nextTextChapter?.cancelLayout()
                     nextTextChapter = textChapter
                     if (upContent) callBack?.upContent(offset, resetPageOffset)
                 }
@@ -632,6 +649,8 @@ object ReadBook : CoroutineScope by MainScope() {
         fun upPageAnim()
 
         fun notifyBookChanged()
+
+        fun onCurrentTextChapterChanged(textChapter: TextChapter)
     }
 
 }

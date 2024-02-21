@@ -77,7 +77,10 @@ import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_DIVIDER_C
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
+import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -112,8 +115,10 @@ import io.legado.app.utils.observeEvent
 import io.legado.app.utils.observeEventSticky
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.sysScreenOffTime
+import io.legado.app.utils.throttle
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
@@ -139,7 +144,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     ReadBook.CallBack,
     AutoReadDialog.CallBack,
     TxtTocRuleDialog.CallBack,
-    ColorPickerDialogListener {
+    ColorPickerDialogListener,
+    LayoutProgressListener {
 
     private val tocActivity =
         registerForActivityResult(TocActivityResult()) {
@@ -221,6 +227,12 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val handler by lazy { buildMainHandler() }
     private val screenOffRunnable by lazy { Runnable { keepScreenOn(false) } }
     private val executor = ReadBook.executor
+    private val upSeekBarThrotle = throttle(200) {
+        runOnUiThread {
+            upSeekBarProgress()
+            binding.readMenu.upSeekBar()
+        }
+    }
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -1355,6 +1367,25 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onMenuHide() {
         binding.readView.autoPager.resume()
+    }
+
+    override fun onCurrentTextChapterChanged(textChapter: TextChapter) {
+        textChapter.setProgressListener(this)
+    }
+
+    override fun onLayoutPageCompleted(index: Int, page: TextPage) {
+        upSeekBarThrotle.invoke()
+        binding.readView.onLayoutPageCompleted(index, page)
+    }
+
+    override fun onLayoutCompleted() {
+        binding.readView.onLayoutCompleted()
+    }
+
+    override fun onLayoutException(e: Throwable) {
+        AppLog.put("ChapterProvider ERROR", e)
+        toastOnUi("ChapterProvider ERROR:\n${e.stackTraceStr}")
+        binding.readView.onLayoutException(e)
     }
 
     /* 全文搜索跳转 */

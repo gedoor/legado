@@ -282,6 +282,10 @@ data class Book(
         }
     }
 
+    fun getBookSource(): BookSource? {
+        return appDb.bookSourceDao.getBookSource(origin)
+    }
+
     fun toSearchBook() = SearchBook(
         name = name,
         author = author,

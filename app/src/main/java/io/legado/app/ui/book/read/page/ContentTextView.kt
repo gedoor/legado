@@ -655,7 +655,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     fun createBookmark(): Bookmark? {
         val page = relativePage(selectStart.relativePagePos)
-        page.getTextChapter()?.let { chapter ->
+        page.getTextChapter().let { chapter ->
             ReadBook.book?.let { book ->
                 return book.createBookMark().apply {
                     chapterIndex = page.chapterIndex

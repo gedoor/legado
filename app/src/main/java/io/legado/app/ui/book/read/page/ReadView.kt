@@ -28,10 +28,12 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.invisible
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.throttle
 import java.text.BreakIterator
 import java.util.Locale
 import kotlin.math.abs
@@ -41,7 +43,7 @@ import kotlin.math.abs
  */
 class ReadView(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs),
-    DataSource {
+    DataSource, LayoutProgressListener {
 
     val callBack: CallBack get() = activity as CallBack
     var pageFactory: TextPageFactory = TextPageFactory(this)
@@ -99,6 +101,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private val bcRect = RectF()
     private val brRect = RectF()
     private val boundary by lazy { BreakIterator.getWordInstance(Locale.getDefault()) }
+    private val upProgressThrottle = throttle(200) { post { upProgress() } }
     val autoPager = AutoPager(this)
     val isAutoPage get() = autoPager.isRunning
 
@@ -539,6 +542,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
         callBack.screenOffTimerStart()
     }
 
+    private fun upProgress() {
+        curPage.setProgress(pageFactory.curPage)
+    }
+
     /**
      * 更新滑动距离
      */
@@ -652,6 +659,37 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun submitRenderTask() {
         curPage.submitRenderTask()
+    }
+
+    override fun onLayoutPageCompleted(index: Int, page: TextPage) {
+        val line = page.lines.first()
+        val durChapterPos = ReadBook.durChapterPos
+        val startPos = line.chapterPosition
+        val endPos = line.chapterPosition + line.charSize
+        if (durChapterPos in startPos..<endPos) {
+            post {
+                upContent(resetPageOffset = false)
+            }
+        }
+        if (isScroll) {
+            val pageIndex = ReadBook.durPageIndex
+            if (index - 3 < pageIndex) {
+                post {
+                    upContent(resetPageOffset = false)
+                }
+            }
+        }
+        upProgressThrottle.invoke()
+    }
+
+    override fun onLayoutCompleted() {
+        post {
+            upContent(resetPageOffset = false)
+        }
+    }
+
+    override fun onLayoutException(e: Throwable) {
+        // no op
     }
 
     override val currentChapter: TextChapter?

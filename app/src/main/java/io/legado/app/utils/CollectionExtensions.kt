@@ -13,6 +13,12 @@ inline fun <T> List<T>.fastBinarySearch(
     toIndex: Int = size,
     comparison: (T) -> Int
 ): Int {
+    when {
+        fromIndex > toIndex -> throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex).")
+        fromIndex < 0 -> throw IndexOutOfBoundsException("fromIndex ($fromIndex) is less than zero.")
+        toIndex > size -> throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
+    }
+
     var low = fromIndex
     var high = toIndex - 1
 

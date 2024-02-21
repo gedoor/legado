@@ -35,12 +35,16 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
 
     override fun moveToNext(upContent: Boolean): Boolean = with(dataSource) {
         return if (hasNext()) {
+            val pageIndex = pageIndex
             if (currentChapter == null || currentChapter?.isLastIndex(pageIndex) == true) {
                 if ((currentChapter == null || isScroll) && nextChapter == null) {
                     return@with false
                 }
                 ReadBook.moveToNextChapter(upContent, false)
             } else {
+                if (pageIndex < 0 || currentChapter?.isLastIndexCurrent(pageIndex) == true) {
+                    return@with false
+                }
                 ReadBook.setPageIndex(pageIndex.plus(1))
             }
             if (upContent) upContent(resetPageOffset = false)
@@ -53,6 +57,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
         return if (hasPrev()) {
             if (pageIndex <= 0) {
                 if (currentChapter == null && prevChapter == null) {
+                    return@with false
+                }
+                if (prevChapter != null && prevChapter?.isCompleted == false) {
                     return@with false
                 }
                 ReadBook.moveToPrevChapter(upContent, upContentInPlace = false)
@@ -74,7 +81,8 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 return@with TextPage(text = it).format()
             }
             currentChapter?.let {
-                return@with it.getPage(pageIndex) ?: TextPage(title = it.title).format()
+                return@with it.getPage(pageIndex)
+                    ?: TextPage(title = it.title).apply { textChapter = it }.format()
             }
             return TextPage().format()
         }
@@ -89,6 +97,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 if (pageIndex < it.pageSize - 1) {
                     return@with it.getPage(pageIndex + 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
+                }
+                if (!it.isCompleted) {
+                    return@with TextPage(title = it.title).format()
                 }
             }
             nextChapter?.let {
@@ -109,6 +120,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                     return@with it.getPage(pageIndex - 1)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
                 }
+                if (!it.isCompleted) {
+                    return@with TextPage(title = it.title).format()
+                }
             }
             prevChapter?.let {
                 return@with it.lastPage?.removePageAloudSpan()
@@ -124,6 +138,9 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                 if (pageIndex < it.pageSize - 2) {
                     return@with it.getPage(pageIndex + 2)?.removePageAloudSpan()
                         ?: TextPage(title = it.title).format()
+                }
+                if (!it.isCompleted) {
+                    return@with TextPage(title = it.title).format()
                 }
                 nextChapter?.let { nc ->
                     if (pageIndex < it.pageSize - 1) {

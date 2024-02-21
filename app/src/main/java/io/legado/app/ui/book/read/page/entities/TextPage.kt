@@ -7,8 +7,8 @@ import androidx.annotation.Keep
 import androidx.core.graphics.withTranslation
 import io.legado.app.R
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ContentTextView
+import io.legado.app.ui.book.read.page.entities.TextChapter.Companion.emptyTextChapter
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
@@ -27,7 +27,6 @@ data class TextPage(
     var text: String = appCtx.getString(R.string.data_loading),
     var title: String = appCtx.getString(R.string.data_loading),
     private val textLines: ArrayList<TextLine> = arrayListOf(),
-    var pageSize: Int = 0,
     var chapterSize: Int = 0,
     var chapterIndex: Int = 0,
     var height: Float = 0f,
@@ -47,6 +46,10 @@ data class TextPage(
     var canvasRecorder = CanvasRecorderFactory.create(true)
     var doublePage = false
     var paddingTop = 0
+    var isCompleted = false
+    @JvmField
+    var textChapter = emptyTextChapter
+    val pageSize get() = textChapter.pageSize
 
     val paragraphs by lazy {
         paragraphsInternal
@@ -162,6 +165,7 @@ data class TextPage(
             }
             height = ChapterProvider.visibleHeight.toFloat()
             invalidate()
+            isCompleted = true
         }
         return this
     }
@@ -248,23 +252,8 @@ data class TextPage(
     /**
      * @return 页面所在章节
      */
-    fun getTextChapter(): TextChapter? {
-        ReadBook.curTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
-        }
-        ReadBook.nextTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
-        }
-        ReadBook.prevTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
-        }
-        return null
+    fun getTextChapter(): TextChapter {
+        return textChapter
     }
 
     fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
@@ -284,6 +273,7 @@ data class TextPage(
     }
 
     fun render(view: ContentTextView): Boolean {
+        if (!isCompleted) return false
         return canvasRecorder.recordIfNeeded(view.width, height.toInt()) {
             drawPage(view, this)
         }
