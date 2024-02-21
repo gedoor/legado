@@ -665,7 +665,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         val line = page.lines.first()
         val durChapterPos = ReadBook.durChapterPos
         val startPos = line.chapterPosition
-        val endPos = line.chapterPosition + line.charSize
+        val endPos = startPos + line.charSize
         if (durChapterPos in startPos..<endPos) {
             post {
                 upContent(resetPageOffset = false)

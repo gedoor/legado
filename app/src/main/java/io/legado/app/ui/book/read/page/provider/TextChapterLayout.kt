@@ -66,12 +66,12 @@ class TextChapterLayout(
     private val stringBuilder = StringBuilder()
 
     private var isCompleted = false
-    private var exception: Throwable? = null
     private val job: Coroutine<*>
     private val bookChapter inline get() = textChapter.chapter
     private val displayTitle inline get() = textChapter.title
     private val chaptersSize inline get() = textChapter.chaptersSize
 
+    var exception: Throwable? = null
 
     init {
         job = Coroutine.async(scope) {

@@ -267,6 +267,8 @@ data class TextChapter(
     fun setProgressListener(l: LayoutProgressListener) {
         if (isCompleted) {
             l.onLayoutCompleted()
+        } else if (layout?.exception != null) {
+            l.onLayoutException(layout?.exception!!)
         } else {
             listener = l
         }
