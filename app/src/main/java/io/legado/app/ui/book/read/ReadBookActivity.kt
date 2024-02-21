@@ -227,7 +227,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     private val handler by lazy { buildMainHandler() }
     private val screenOffRunnable by lazy { Runnable { keepScreenOn(false) } }
     private val executor = ReadBook.executor
-    private val upSeekBarThrotle = throttle(200) {
+    private val upSeekBarThrottle = throttle(200) {
         runOnUiThread {
             upSeekBarProgress()
             binding.readMenu.upSeekBar()
@@ -1374,7 +1374,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {
-        upSeekBarThrotle.invoke()
+        upSeekBarThrottle.invoke()
         binding.readView.onLayoutPageCompleted(index, page)
     }
 
