@@ -26,9 +26,11 @@ import io.legado.app.utils.fastSum
 import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import java.util.LinkedList
 import java.util.Locale
+import kotlin.coroutines.coroutineContext
 
 class TextChapterLayout(
     scope: CoroutineScope,
@@ -187,6 +189,7 @@ class TextChapterLayout(
         }
         val sb = StringBuffer()
         contents.forEach { content ->
+            coroutineContext.ensureActive()
             if (book.getImageStyle().equals(Book.imgStyleText, true)) {
                 //图片样式为文字嵌入类型
                 var text = content.replace(ChapterProvider.srcReplaceChar, "▣")
@@ -218,6 +221,7 @@ class TextChapterLayout(
                 val matcher = AppPattern.imgPattern.matcher(content)
                 var start = 0
                 while (matcher.find()) {
+                    coroutineContext.ensureActive()
                     val text = content.substring(start, matcher.start())
                     if (text.isNotBlank()) {
                         setTypeText(
@@ -420,6 +424,7 @@ class TextChapterLayout(
             else -> y
         }
         for (lineIndex in 0 until layout.lineCount) {
+            coroutineContext.ensureActive()
             val textLine = TextLine(isTitle = isTitle)
             if (durY + textHeight > visibleHeight) {
                 val textPage = textPages.last()
