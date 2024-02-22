@@ -107,6 +107,7 @@ class TextChapterLayout(
 
     fun cancel() {
         job.cancel()
+        listener = null
     }
 
     private fun onPageCompleted() {

@@ -295,6 +295,7 @@ data class TextChapter(
     fun cancelLayout() {
         layout?.cancel()
         isCompleted = true
+        listener = null
     }
 
     companion object {

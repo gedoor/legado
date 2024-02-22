@@ -216,7 +216,6 @@ object ReadBook : CoroutineScope by MainScope() {
             durChapterPos = 0
             durChapterIndex++
             prevTextChapter?.cancelLayout()
-            curTextChapter?.setProgressListener(null)
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
@@ -250,7 +249,6 @@ object ReadBook : CoroutineScope by MainScope() {
             durChapterPos = if (toLast) prevTextChapter?.lastReadLength ?: Int.MAX_VALUE else 0
             durChapterIndex--
             nextTextChapter?.cancelLayout()
-            curTextChapter?.setProgressListener(null)
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
             prevTextChapter = null
@@ -493,7 +491,6 @@ object ReadBook : CoroutineScope by MainScope() {
             when (val offset = chapter.index - durChapterIndex) {
                 0 -> {
                     curTextChapter?.cancelLayout()
-                    curTextChapter?.setProgressListener(null)
                     curTextChapter = textChapter
                     if (resetPageOffset) {
                         callBack?.resetPageOffset()
