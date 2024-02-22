@@ -527,7 +527,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
             curPage.setContentDescription(pageFactory.curPage.text)
         }
         if (isScroll && !isAutoPage) {
-            curPage.setContent(pageFactory.curPage, resetPageOffset)
+            if (relativePosition == 0) {
+                curPage.setContent(pageFactory.curPage, resetPageOffset)
+            } else {
+                curPage.invalidateContentView()
+            }
         } else {
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)

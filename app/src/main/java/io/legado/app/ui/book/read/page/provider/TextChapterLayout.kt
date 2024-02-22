@@ -13,7 +13,6 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.globalExecutor
 import io.legado.app.model.ImageProvider
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
@@ -69,7 +68,7 @@ class TextChapterLayout(
     private val stringBuilder = StringBuilder()
 
     private var isCompleted = false
-    private var job: Coroutine<*>? = null
+    private val job: Coroutine<*>
     private val bookChapter inline get() = textChapter.chapter
     private val displayTitle inline get() = textChapter.title
     private val chaptersSize inline get() = textChapter.chaptersSize
@@ -77,19 +76,17 @@ class TextChapterLayout(
     var exception: Throwable? = null
 
     init {
-        globalExecutor.submit {
-            job = Coroutine.async(scope) {
-                launch {
-                    val bookSource = book.getBookSource() ?: return@launch
-                    BookHelp.saveImages(bookSource, book, bookChapter, bookContent.toString())
-                }
-                getTextChapter(book, bookChapter, displayTitle, bookContent)
-            }.onError {
-                exception = it
-                onException(it)
-            }.onFinally {
-                isCompleted = true
+        job = Coroutine.async(scope) {
+            launch {
+                val bookSource = book.getBookSource() ?: return@launch
+                BookHelp.saveImages(bookSource, book, bookChapter, bookContent.toString())
             }
+            getTextChapter(book, bookChapter, displayTitle, bookContent)
+        }.onError {
+            exception = it
+            onException(it)
+        }.onFinally {
+            isCompleted = true
         }
     }
 
@@ -109,7 +106,7 @@ class TextChapterLayout(
     }
 
     fun cancel() {
-        job?.cancel()
+        job.cancel()
     }
 
     private fun onPageCompleted() {

@@ -32,7 +32,6 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.spToPx
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.textHeight
-import kotlinx.coroutines.CoroutineScope
 import splitties.init.appCtx
 import java.util.LinkedList
 import java.util.Locale
@@ -307,12 +306,10 @@ object ChapterProvider {
     }
 
     fun getTextChapterAsync(
-        book: Book,
         bookChapter: BookChapter,
         displayTitle: String,
         bookContent: BookContent,
         chapterSize: Int,
-        scope: CoroutineScope
     ): TextChapter {
 
         val textChapter = TextChapter(
@@ -323,9 +320,7 @@ object ChapterProvider {
             bookChapter.isVip,
             bookChapter.isPay,
             bookContent.effectiveReplaceRules
-        ).apply {
-            createLayout(scope, book, bookContent)
-        }
+        )
 
         return textChapter
     }

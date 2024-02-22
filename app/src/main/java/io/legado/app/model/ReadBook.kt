@@ -488,22 +488,14 @@ object ReadBook : CoroutineScope by MainScope() {
             )
             val contents = contentProcessor
                 .getContent(book, chapter, content, includeTitle = false)
-            val textChapter = ChapterProvider.getTextChapterAsync(
-                book,
-                chapter,
-                displayTitle,
-                contents,
-                chapterSize,
-                this@ReadBook
-            )
+            val textChapter =
+                ChapterProvider.getTextChapterAsync(chapter, displayTitle, contents, chapterSize)
             when (val offset = chapter.index - durChapterIndex) {
                 0 -> {
                     curTextChapter?.cancelLayout()
                     curTextChapter?.setProgressListener(null)
                     curTextChapter = textChapter
-                    if (textChapter.isCompleted) {
-                        if (upContent) callBack?.upContent(offset, resetPageOffset)
-                    } else if (resetPageOffset) {
+                    if (resetPageOffset) {
                         callBack?.resetPageOffset()
                     }
                     callBack?.upMenuView()
@@ -516,15 +508,11 @@ object ReadBook : CoroutineScope by MainScope() {
                     prevTextChapter?.cancelLayout()
                     prevTextChapter = textChapter
                     if (upContent) {
-                        if (textChapter.isCompleted) {
-                            callBack?.upContent(offset, resetPageOffset)
-                        } else {
-                            textChapter.setProgressListener(object : LayoutProgressListener {
-                                override fun onLayoutCompleted() {
-                                    callBack?.upContent(offset, resetPageOffset)
-                                }
-                            })
-                        }
+                        textChapter.setProgressListener(object : LayoutProgressListener {
+                            override fun onLayoutCompleted() {
+                                callBack?.upContent(offset, resetPageOffset)
+                            }
+                        })
                     }
                 }
 
@@ -532,22 +520,18 @@ object ReadBook : CoroutineScope by MainScope() {
                     nextTextChapter?.cancelLayout()
                     nextTextChapter = textChapter
                     if (upContent) {
-                        if (textChapter.isCompleted) {
-                            callBack?.upContent(offset, resetPageOffset)
-                        } else {
-                            textChapter.setProgressListener(object : LayoutProgressListener {
-                                override fun onLayoutPageCompleted(index: Int, page: TextPage) {
-                                    if (index > 1) {
-                                        return
-                                    }
-                                    callBack?.upContent(offset, resetPageOffset)
+                        textChapter.setProgressListener(object : LayoutProgressListener {
+                            override fun onLayoutPageCompleted(index: Int, page: TextPage) {
+                                if (index > 1) {
+                                    return
                                 }
-                            })
-                        }
+                                callBack?.upContent(offset, resetPageOffset)
+                            }
+                        })
                     }
                 }
             }
-            Unit
+            textChapter.createLayout(this@ReadBook, book, contents)
         }.onError {
             AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.stackTraceStr}")
