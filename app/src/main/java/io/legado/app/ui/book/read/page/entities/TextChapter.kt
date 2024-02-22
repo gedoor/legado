@@ -222,8 +222,9 @@ data class TextChapter(
         }
         // 判断是否已经排版到 charIndex ，没有则返回 -1
         if (!isCompleted && index == size - 1) {
-            val line = pages[index].lines.first()
-            val pageEndPos = line.chapterPosition + line.charSize
+            val page = pages[index]
+            val line = page.lines.first()
+            val pageEndPos = line.chapterPosition + page.charSize
             if (charIndex > pageEndPos) {
                 return -1
             }

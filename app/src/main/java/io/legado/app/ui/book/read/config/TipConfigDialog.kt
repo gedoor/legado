@@ -130,7 +130,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipHeaderLeft = tipValue
                 tvHeaderLeft.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
             }
         }
         llHeaderMiddle.setOnClickListener {
@@ -139,7 +139,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipHeaderMiddle = tipValue
                 tvHeaderMiddle.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
             }
         }
         llHeaderRight.setOnClickListener {
@@ -148,7 +148,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipHeaderRight = tipValue
                 tvHeaderRight.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
             }
         }
         llFooterLeft.setOnClickListener {
@@ -157,7 +157,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipFooterLeft = tipValue
                 tvFooterLeft.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
             }
         }
         llFooterMiddle.setOnClickListener {
@@ -166,7 +166,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipFooterMiddle = tipValue
                 tvFooterMiddle.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
             }
         }
         llFooterRight.setOnClickListener {
@@ -175,7 +175,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                 clearRepeat(tipValue)
                 ReadTipConfig.tipFooterRight = tipValue
                 tvFooterRight.text = ReadTipConfig.tipNames[i]
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayOf(2, 6))
             }
         }
         llTipColor.setOnClickListener {
