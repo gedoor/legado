@@ -527,7 +527,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
             curPage.setContentDescription(pageFactory.curPage.text)
         }
         if (isScroll && !isAutoPage) {
-            curPage.setContent(pageFactory.curPage, resetPageOffset)
+            if (relativePosition == 0) {
+                curPage.setContent(pageFactory.curPage, resetPageOffset)
+            } else {
+                curPage.invalidateContentView()
+            }
         } else {
             when (relativePosition) {
                 -1 -> prevPage.setContent(pageFactory.prevPage)
@@ -662,34 +666,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
 
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {
-        val line = page.lines.first()
-        val durChapterPos = ReadBook.durChapterPos
-        val startPos = line.chapterPosition
-        val endPos = startPos + line.charSize
-        if (durChapterPos in startPos..<endPos) {
-            post {
-                upContent(resetPageOffset = false)
-            }
-        }
-        if (isScroll) {
-            val pageIndex = ReadBook.durPageIndex
-            if (index - 3 < pageIndex) {
-                post {
-                    upContent(resetPageOffset = false)
-                }
-            }
-        }
         upProgressThrottle.invoke()
     }
 
-    override fun onLayoutCompleted() {
-        post {
-            upContent(resetPageOffset = false)
-        }
-    }
-
-    override fun onLayoutException(e: Throwable) {
-        // no op
+    fun resetPageOffset() {
+        curPage.resetPageOffset()
     }
 
     override val currentChapter: TextChapter?

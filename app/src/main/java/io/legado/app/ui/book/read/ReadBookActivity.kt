@@ -126,6 +126,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.max
 
 /**
  * 阅读界面
@@ -233,6 +234,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             binding.readMenu.upSeekBar()
         }
     }
+    private var upContent = true
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -936,7 +938,9 @@ class ReadBookActivity : BaseReadBookActivity(),
     ) {
         lifecycleScope.launch {
             binding.readView.upContent(relativePosition, resetPageOffset)
-            upSeekBarProgress()
+            if (relativePosition == 0) {
+                upSeekBarProgress()
+            }
             loadStates = false
             success?.invoke()
         }
@@ -1369,16 +1373,38 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.readView.autoPager.resume()
     }
 
-    override fun onCurrentTextChapterChanged(textChapter: TextChapter) {
+    override fun onCurrentTextChapterChanged(textChapter: TextChapter, upContent: Boolean) {
+        this.upContent = upContent
         textChapter.setProgressListener(this)
     }
 
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {
         upSeekBarThrottle.invoke()
+        if (upContent) {
+            val durChapterPos = ReadBook.durChapterPos
+            if (page.containPos(durChapterPos)) {
+                runOnUiThread {
+                    binding.readView.upContent(0, resetPageOffset = false)
+                }
+            }
+            if (isScroll) {
+                val pageIndex = ReadBook.durPageIndex
+                if (max(index - 3, 0) < pageIndex) {
+                    runOnUiThread {
+                        binding.readView.upContent(0, resetPageOffset = false)
+                    }
+                }
+            }
+        }
         binding.readView.onLayoutPageCompleted(index, page)
     }
 
     override fun onLayoutCompleted() {
+        if (upContent) {
+            runOnUiThread {
+                binding.readView.upContent(0, resetPageOffset = false)
+            }
+        }
         binding.readView.onLayoutCompleted()
     }
 
@@ -1386,6 +1412,10 @@ class ReadBookActivity : BaseReadBookActivity(),
         AppLog.put("ChapterProvider ERROR", e)
         toastOnUi("ChapterProvider ERROR:\n${e.stackTraceStr}")
         binding.readView.onLayoutException(e)
+    }
+
+    override fun resetPageOffset() {
+        binding.readView.resetPageOffset()
     }
 
     /* 全文搜索跳转 */

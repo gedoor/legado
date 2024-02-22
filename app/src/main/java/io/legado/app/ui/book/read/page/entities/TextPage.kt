@@ -47,6 +47,7 @@ data class TextPage(
     var doublePage = false
     var paddingTop = 0
     var isCompleted = false
+
     @JvmField
     var textChapter = emptyTextChapter
     val pageSize get() = textChapter.pageSize
@@ -254,6 +255,19 @@ data class TextPage(
      */
     fun getTextChapter(): TextChapter {
         return textChapter
+    }
+
+    /**
+     * 判断章节字符位置是否在这一页中
+     *
+     * @param chapterPos 章节字符位置
+     * @return
+     */
+    fun containPos(chapterPos: Int): Boolean {
+        val line = lines.first()
+        val startPos = line.chapterPosition
+        val endPos = startPos + charSize
+        return chapterPos in startPos..<endPos
     }
 
     fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {

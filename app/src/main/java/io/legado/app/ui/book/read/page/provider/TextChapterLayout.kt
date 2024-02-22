@@ -90,12 +90,12 @@ class TextChapterLayout(
         }
     }
 
-    fun setProgressListener(l: LayoutProgressListener) {
+    fun setProgressListener(l: LayoutProgressListener?) {
         try {
             if (isCompleted) {
                 // no op
             } else if (exception != null) {
-                l.onLayoutException(exception!!)
+                l?.onLayoutException(exception!!)
             } else {
                 listener = l
             }
@@ -107,6 +107,7 @@ class TextChapterLayout(
 
     fun cancel() {
         job.cancel()
+        listener = null
     }
 
     private fun onPageCompleted() {
@@ -141,6 +142,7 @@ class TextChapterLayout(
 
     private fun onException(e: Throwable) {
         if (e is CancellationException) {
+            listener = null
             return
         }
         try {
@@ -280,6 +282,7 @@ class TextChapterLayout(
             textPage.height += endPadding
         }
         textPage.text = stringBuilder.toString()
+        coroutineContext.ensureActive()
         onPageCompleted()
         onCompleted()
     }
@@ -308,6 +311,7 @@ class TextChapterLayout(
                 }
                 textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                 stringBuilder.clear()
+                coroutineContext.ensureActive()
                 onPageCompleted()
                 textPages.add(TextPage())
                 durY = 0f
@@ -342,6 +346,7 @@ class TextChapterLayout(
                             }
                             textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                             stringBuilder.clear()
+                            coroutineContext.ensureActive()
                             onPageCompleted()
                             textPages.add(TextPage())
                         }
@@ -424,7 +429,6 @@ class TextChapterLayout(
             else -> y
         }
         for (lineIndex in 0 until layout.lineCount) {
-            coroutineContext.ensureActive()
             val textLine = TextLine(isTitle = isTitle)
             if (durY + textHeight > visibleHeight) {
                 val textPage = textPages.last()
@@ -438,6 +442,7 @@ class TextChapterLayout(
                         textPage.leftLineSize = textPage.lineSize
                     }
                     textPage.text = stringBuilder.toString()
+                    coroutineContext.ensureActive()
                     onPageCompleted()
                     //新建页面
                     textPages.add(TextPage())

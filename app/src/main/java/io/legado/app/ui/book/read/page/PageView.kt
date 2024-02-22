@@ -288,6 +288,10 @@ class PageView(context: Context) : FrameLayout(context) {
         binding.contentTextView.setContent(textPage)
     }
 
+    fun invalidateContentView() {
+        binding.contentTextView.invalidate()
+    }
+
     /**
      * 设置无障碍文本
      */

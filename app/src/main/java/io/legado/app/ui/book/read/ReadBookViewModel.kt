@@ -317,16 +317,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
-        if (index < ReadBook.chapterSize) {
-            ReadBook.clearTextChapter()
-            ReadBook.callBack?.upContent()
-            ReadBook.durChapterIndex = index
-            ReadBook.durChapterPos = durChapterPos
-            ReadBook.saveRead()
-            ReadBook.loadContent(resetPageOffset = true) {
-                success?.invoke()
-            }
-        }
+        ReadBook.openChapter(index, durChapterPos, success)
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {

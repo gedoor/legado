@@ -266,11 +266,11 @@ data class TextChapter(
         )
     }
 
-    fun setProgressListener(l: LayoutProgressListener) {
+    fun setProgressListener(l: LayoutProgressListener?) {
         if (isCompleted) {
             // no op
         } else if (layout?.exception != null) {
-            l.onLayoutException(layout?.exception!!)
+            l?.onLayoutException(layout?.exception!!)
         } else {
             listener = l
         }
@@ -287,12 +287,15 @@ data class TextChapter(
     }
 
     override fun onLayoutException(e: Throwable) {
+        isCompleted = true
         listener?.onLayoutException(e)
         listener = null
     }
 
     fun cancelLayout() {
         layout?.cancel()
+        isCompleted = true
+        listener = null
     }
 
     companion object {
