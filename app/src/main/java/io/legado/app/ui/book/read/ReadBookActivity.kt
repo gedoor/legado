@@ -1381,11 +1381,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {
         upSeekBarThrottle.invoke()
         if (upContent) {
-            val line = page.lines.first()
             val durChapterPos = ReadBook.durChapterPos
-            val startPos = line.chapterPosition
-            val endPos = startPos + line.charSize
-            if (durChapterPos in startPos..<endPos) {
+            if (page.containPos(durChapterPos)) {
                 runOnUiThread {
                     binding.readView.upContent(0, resetPageOffset = false)
                 }

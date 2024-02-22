@@ -294,14 +294,27 @@ object ReadBook : CoroutineScope by MainScope() {
         curPageChanged(true)
     }
 
+    fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
+        if (index < chapterSize) {
+            clearTextChapter()
+            callBack?.upContent()
+            durChapterIndex = index
+            ReadBook.durChapterPos = durChapterPos
+            saveRead()
+            loadContent(resetPageOffset = true) {
+                success?.invoke()
+            }
+        }
+    }
+
     /**
      * 当前页面变化
      */
-    private fun curPageChanged(pauseReadAloud: Boolean = false) {
+    private fun curPageChanged(pageChanged: Boolean = false) {
         callBack?.pageChanged()
         if (BaseReadAloudService.isRun) {
             val scrollPageAnim = pageAnim() == 3
-            if (scrollPageAnim && pauseReadAloud) {
+            if (scrollPageAnim && pageChanged) {
                 ReadAloud.pause(appCtx)
             } else {
                 readAloud(!BaseReadAloudService.pause)
