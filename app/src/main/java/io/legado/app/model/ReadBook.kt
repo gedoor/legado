@@ -19,7 +19,9 @@ import io.legado.app.model.localBook.TextFile
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
@@ -214,6 +216,7 @@ object ReadBook : CoroutineScope by MainScope() {
             durChapterPos = 0
             durChapterIndex++
             prevTextChapter?.cancelLayout()
+            curTextChapter?.setProgressListener(null)
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
@@ -230,7 +233,7 @@ object ReadBook : CoroutineScope by MainScope() {
             callBack?.upMenuView()
             AppLog.putDebug("moveToNextChapter-curPageChanged()")
             curPageChanged()
-            curTextChapter?.let { callBack?.onCurrentTextChapterChanged(it) }
+            curTextChapter?.let { callBack?.onCurrentTextChapterChanged(it, upContent) }
             return true
         } else {
             AppLog.putDebug("跳转下一章失败,没有下一章")
@@ -247,6 +250,7 @@ object ReadBook : CoroutineScope by MainScope() {
             durChapterPos = if (toLast) prevTextChapter?.lastReadLength ?: Int.MAX_VALUE else 0
             durChapterIndex--
             nextTextChapter?.cancelLayout()
+            curTextChapter?.setProgressListener(null)
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
             prevTextChapter = null
@@ -260,7 +264,7 @@ object ReadBook : CoroutineScope by MainScope() {
             saveRead()
             callBack?.upMenuView()
             curPageChanged()
-            curTextChapter?.let { callBack?.onCurrentTextChapterChanged(it) }
+            curTextChapter?.let { callBack?.onCurrentTextChapterChanged(it, upContent) }
             return true
         } else {
             return false
@@ -495,24 +499,52 @@ object ReadBook : CoroutineScope by MainScope() {
             when (val offset = chapter.index - durChapterIndex) {
                 0 -> {
                     curTextChapter?.cancelLayout()
+                    curTextChapter?.setProgressListener(null)
                     curTextChapter = textChapter
-                    if (upContent) callBack?.upContent(offset, resetPageOffset)
+                    if (textChapter.isCompleted) {
+                        if (upContent) callBack?.upContent(offset, resetPageOffset)
+                    } else if (resetPageOffset) {
+                        callBack?.resetPageOffset()
+                    }
                     callBack?.upMenuView()
                     curPageChanged()
                     callBack?.contentLoadFinish()
-                    callBack?.onCurrentTextChapterChanged(textChapter)
+                    callBack?.onCurrentTextChapterChanged(textChapter, upContent)
                 }
 
                 -1 -> {
                     prevTextChapter?.cancelLayout()
                     prevTextChapter = textChapter
-                    if (upContent) callBack?.upContent(offset, resetPageOffset)
+                    if (upContent) {
+                        if (textChapter.isCompleted) {
+                            callBack?.upContent(offset, resetPageOffset)
+                        } else {
+                            textChapter.setProgressListener(object : LayoutProgressListener {
+                                override fun onLayoutCompleted() {
+                                    callBack?.upContent(offset, resetPageOffset)
+                                }
+                            })
+                        }
+                    }
                 }
 
                 1 -> {
                     nextTextChapter?.cancelLayout()
                     nextTextChapter = textChapter
-                    if (upContent) callBack?.upContent(offset, resetPageOffset)
+                    if (upContent) {
+                        if (textChapter.isCompleted) {
+                            callBack?.upContent(offset, resetPageOffset)
+                        } else {
+                            textChapter.setProgressListener(object : LayoutProgressListener {
+                                override fun onLayoutPageCompleted(index: Int, page: TextPage) {
+                                    if (index > 1) {
+                                        return
+                                    }
+                                    callBack?.upContent(offset, resetPageOffset)
+                                }
+                            })
+                        }
+                    }
                 }
             }
             Unit
@@ -650,7 +682,9 @@ object ReadBook : CoroutineScope by MainScope() {
 
         fun notifyBookChanged()
 
-        fun onCurrentTextChapterChanged(textChapter: TextChapter)
+        fun onCurrentTextChapterChanged(textChapter: TextChapter, upContent: Boolean = true)
+
+        fun resetPageOffset()
     }
 
 }
