@@ -74,10 +74,12 @@ class BatteryView @JvmOverloads constructor(
         }
     }
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        canvasRecorder.invalidate()
+    }
+
     override fun onDraw(canvas: Canvas) {
-        if (canvas.isHardwareAccelerated) {
-            canvasRecorder.invalidate()
-        }
         canvasRecorder.recordIfNeededThenDraw(canvas, width, height) {
             super.onDraw(this)
             if (!isBattery) return@recordIfNeededThenDraw
