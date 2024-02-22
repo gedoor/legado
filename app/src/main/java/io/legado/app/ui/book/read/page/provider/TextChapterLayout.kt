@@ -93,7 +93,7 @@ class TextChapterLayout(
     fun setProgressListener(l: LayoutProgressListener) {
         try {
             if (isCompleted) {
-                l.onLayoutCompleted()
+                // no op
             } else if (exception != null) {
                 l.onLayoutException(exception!!)
             } else {

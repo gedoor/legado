@@ -33,7 +33,7 @@ data class TextChapter(
     private val textPages = arrayListOf<TextPage>()
     val pages: List<TextPage> get() = textPages
 
-    var layout: TextChapterLayout? = null
+    private var layout: TextChapterLayout? = null
 
     fun getPage(index: Int): TextPage? {
         return pages.getOrNull(index)
@@ -254,7 +254,9 @@ data class TextChapter(
     }
 
     fun createLayout(scope: CoroutineScope, book: Book, bookContent: BookContent) {
-        textPages.clear()
+        if (layout != null) {
+            throw IllegalStateException("已经排版过了")
+        }
         layout = TextChapterLayout(
             scope,
             this,
@@ -266,7 +268,7 @@ data class TextChapter(
 
     fun setProgressListener(l: LayoutProgressListener) {
         if (isCompleted) {
-            l.onLayoutCompleted()
+            // no op
         } else if (layout?.exception != null) {
             l.onLayoutException(layout?.exception!!)
         } else {
