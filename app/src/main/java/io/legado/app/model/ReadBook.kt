@@ -88,7 +88,7 @@ object ReadBook : CoroutineScope by MainScope() {
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         contentProcessor = ContentProcessor.get(book)
-        durChapterIndex = book.durChapterIndex
+        durChapterIndex = min(book.durChapterIndex, chapterSize - 1)
         durChapterPos = book.durChapterPos
         isLocalBook = book.isLocal
         clearTextChapter()
@@ -110,6 +110,15 @@ object ReadBook : CoroutineScope by MainScope() {
             durChapterIndex = book.durChapterIndex
             durChapterPos = book.durChapterPos
             clearTextChapter()
+        }
+        if (curTextChapter?.isCompleted == false) {
+            curTextChapter = null
+        }
+        if (nextTextChapter?.isCompleted == false) {
+            nextTextChapter = null
+        }
+        if (prevTextChapter?.isCompleted == false) {
+            prevTextChapter = null
         }
         callBack?.upMenuView()
         upWebBook(book)
@@ -369,6 +378,20 @@ object ReadBook : CoroutineScope by MainScope() {
         loadContent(durChapterIndex - 1, resetPageOffset = resetPageOffset)
     }
 
+    fun loadOrUpContent() {
+        if (curTextChapter == null) {
+            loadContent(durChapterIndex)
+        } else {
+            callBack?.upContent()
+        }
+        if (nextTextChapter == null) {
+            loadContent(durChapterIndex + 1)
+        }
+        if (prevTextChapter == null) {
+            loadContent(durChapterIndex - 1)
+        }
+    }
+
     /**
      * 加载章节内容
      * @param index 章节序号
@@ -392,10 +415,9 @@ object ReadBook : CoroutineScope by MainScope() {
                             chapter,
                             it,
                             upContent,
-                            resetPageOffset
-                        ) {
-                            success?.invoke()
-                        }
+                            resetPageOffset,
+                            success
+                        )
                     } ?: download(
                         downloadScope,
                         chapter,
@@ -456,9 +478,8 @@ object ReadBook : CoroutineScope by MainScope() {
                 chapter,
                 "加载正文失败\n$msg",
                 resetPageOffset = resetPageOffset,
-            ) {
-                success?.invoke()
-            }
+                success = success
+            )
         }
     }
 
@@ -655,6 +676,7 @@ object ReadBook : CoroutineScope by MainScope() {
         downloadedChapters.clear()
         downloadFailChapters.clear()
         ImageProvider.clear()
+        curTextChapter?.cancelLayout()
     }
 
     interface CallBack {

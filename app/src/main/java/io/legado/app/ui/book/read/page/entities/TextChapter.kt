@@ -288,14 +288,12 @@ data class TextChapter(
     }
 
     override fun onLayoutException(e: Throwable) {
-        isCompleted = true
         listener?.onLayoutException(e)
         listener = null
     }
 
     fun cancelLayout() {
         layout?.cancel()
-        isCompleted = true
         listener = null
     }
 
