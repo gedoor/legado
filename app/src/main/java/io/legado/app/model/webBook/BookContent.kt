@@ -1,6 +1,7 @@
 package io.legado.app.model.webBook
 
 import io.legado.app.R
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -131,7 +132,10 @@ object BookContent {
         //全文替换
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
+            contentStr = contentStr.split(AppPattern.LFRegex)
+                .joinToString("\n") { it.trim { c -> c <= ' ' || c == '　' } }
             contentStr = analyzeRule.getString(replaceRegex, contentStr)
+            contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { "　　$it" }
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
