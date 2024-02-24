@@ -232,11 +232,11 @@ object ReadBook : CoroutineScope by MainScope() {
             nextTextChapter = null
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
-                if (upContentInPlace) callBack?.upContent(resetPageOffset = false)
+                if (upContentInPlace) callBack?.upContent()
                 loadContent(durChapterIndex, upContent, resetPageOffset = false)
             } else if (upContent && upContentInPlace) {
                 AppLog.putDebug("moveToNextChapter-章节已加载,刷新视图")
-                callBack?.upContent(resetPageOffset = false)
+                callBack?.upContent()
             }
             loadContent(durChapterIndex.plus(1), upContent, false)
             saveRead()
@@ -263,10 +263,10 @@ object ReadBook : CoroutineScope by MainScope() {
             curTextChapter = prevTextChapter
             prevTextChapter = null
             if (curTextChapter == null) {
-                if (upContentInPlace) callBack?.upContent(resetPageOffset = false)
+                if (upContentInPlace) callBack?.upContent()
                 loadContent(durChapterIndex, upContent, resetPageOffset = false)
             } else if (upContent && upContentInPlace) {
-                callBack?.upContent(resetPageOffset = false)
+                callBack?.upContent()
             }
             loadContent(durChapterIndex.minus(1), upContent, false)
             saveRead()

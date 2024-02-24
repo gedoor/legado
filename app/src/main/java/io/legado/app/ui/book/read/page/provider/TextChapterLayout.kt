@@ -336,6 +336,10 @@ class TextChapterLayout(
                     }
                     if (durY + height > visibleHeight) {
                         val textPage = pendingTextPage
+                        // 双页的 durY 不正确，可能会小于实际高度
+                        if (textPage.height < durY) {
+                            textPage.height = durY
+                        }
                         if (doublePage && absStartX < viewWidth / 2) {
                             //当前页面左列结束
                             textPage.leftLineSize = textPage.lineSize
@@ -351,10 +355,6 @@ class TextChapterLayout(
                             coroutineContext.ensureActive()
                             onPageCompleted()
                             pendingTextPage = TextPage()
-                        }
-                        // 双页的 durY 不正确，可能会小于实际高度
-                        if (textPage.height < durY) {
-                            textPage.height = durY
                         }
                         durY = 0f
                     }
@@ -434,6 +434,9 @@ class TextChapterLayout(
             val textLine = TextLine(isTitle = isTitle)
             if (durY + textHeight > visibleHeight) {
                 val textPage = pendingTextPage
+                if (textPage.height < durY) {
+                    textPage.height = durY
+                }
                 if (doublePage && absStartX < viewWidth / 2) {
                     //当前页面左列结束
                     textPage.leftLineSize = textPage.lineSize
@@ -451,9 +454,6 @@ class TextChapterLayout(
                     pendingTextPage = TextPage()
                     stringBuilder.clear()
                     absStartX = paddingLeft
-                }
-                if (textPage.height < durY) {
-                    textPage.height = durY
                 }
                 durY = 0f
             }
