@@ -104,6 +104,7 @@ data class TextChapter(
      * @return 已读长度
      */
     fun getReadLength(pageIndex: Int): Int {
+        if (pageIndex < 0) return 0
         return pages[min(pageIndex, lastIndex)].lines.first().chapterPosition
         /*
         var length = 0

@@ -69,4 +69,8 @@ data class TextPos(
         isLast = false
     }
 
+    fun isSelected(): Boolean {
+        return lineIndex >= 0 && columnIndex >= 0
+    }
+
 }
