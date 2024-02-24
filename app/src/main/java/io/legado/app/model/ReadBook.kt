@@ -90,9 +90,7 @@ object ReadBook : CoroutineScope by MainScope() {
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         contentProcessor = ContentProcessor.get(book)
-        if (chapterSize > 0) {
-            durChapterIndex = min(book.durChapterIndex, chapterSize - 1)
-        }
+        durChapterIndex = min(book.durChapterIndex, chapterSize - 1).coerceAtLeast(0)
         durChapterPos = book.durChapterPos
         isLocalBook = book.isLocal
         clearTextChapter()
