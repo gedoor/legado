@@ -529,8 +529,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 .getContent(book, chapter, content, includeTitle = false)
             val textChapter =
                 ChapterProvider.getTextChapterAsync(chapter, displayTitle, contents, chapterSize)
-            val offset = chapter.index - durChapterIndex
-            when (offset) {
+            when (val offset = chapter.index - durChapterIndex) {
                 0 -> {
                     curTextChapter?.cancelLayout()
                     curTextChapter = textChapter
@@ -551,8 +550,7 @@ object ReadBook : CoroutineScope by MainScope() {
                                 available = true
                             }
                             if (upContent && isScroll) {
-                                val pageIndex = durPageIndex
-                                if (max(index - 3, 0) < pageIndex) {
+                                if (max(index - 3, 0) < durPageIndex) {
                                     callBack?.upContent(offset, resetPageOffset)
                                 }
                             }
