@@ -1375,10 +1375,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.readView.onLayoutPageCompleted(index, page)
     }
 
-    override fun resetPageOffset() {
-        binding.readView.resetPageOffset()
-    }
-
     /* 全文搜索跳转 */
     private fun skipToSearch(searchResult: SearchResult) {
         val previousResult = binding.searchMenu.previousSearchResult

@@ -90,7 +90,9 @@ object ReadBook : CoroutineScope by MainScope() {
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         contentProcessor = ContentProcessor.get(book)
-        durChapterIndex = min(book.durChapterIndex, chapterSize - 1)
+        if (chapterSize > 0) {
+            durChapterIndex = min(book.durChapterIndex, chapterSize - 1)
+        }
         durChapterPos = book.durChapterPos
         isLocalBook = book.isLocal
         clearTextChapter()
@@ -533,20 +535,17 @@ object ReadBook : CoroutineScope by MainScope() {
                 0 -> {
                     curTextChapter?.cancelLayout()
                     curTextChapter = textChapter
-                    if (resetPageOffset) {
-                        callBack?.resetPageOffset()
-                    }
                     callBack?.upMenuView()
                     textChapter.setProgressListener(object : LayoutProgressListener {
                         var available = false
 
                         override fun onLayoutPageCompleted(index: Int, page: TextPage) {
                             if (!available && page.containPos(durChapterPos)) {
-                                curPageChanged()
-                                callBack?.contentLoadFinish()
                                 if (upContent) {
                                     callBack?.upContent(offset, resetPageOffset)
                                 }
+                                curPageChanged()
+                                callBack?.contentLoadFinish()
                                 available = true
                             }
                             if (upContent && isScroll) {
@@ -742,8 +741,6 @@ object ReadBook : CoroutineScope by MainScope() {
         fun upPageAnim()
 
         fun notifyBookChanged()
-
-        fun resetPageOffset()
     }
 
 }
