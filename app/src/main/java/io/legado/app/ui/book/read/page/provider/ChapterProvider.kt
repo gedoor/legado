@@ -879,6 +879,7 @@ object ChapterProvider {
         tPaint.typeface = titleFont
         tPaint.textSize = with(ReadBookConfig) { textSize + titleSize }.toFloat().spToPx()
         tPaint.isAntiAlias = true
+        tPaint.isLinearText = true
         //正文
         val cPaint = TextPaint()
         cPaint.color = ReadBookConfig.textColor
@@ -886,6 +887,7 @@ object ChapterProvider {
         cPaint.typeface = textFont
         cPaint.textSize = ReadBookConfig.textSize.toFloat().spToPx()
         cPaint.isAntiAlias = true
+        cPaint.isLinearText = true
         return Pair(tPaint, cPaint)
     }
 
