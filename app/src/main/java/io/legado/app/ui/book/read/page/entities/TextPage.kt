@@ -45,7 +45,7 @@ data class TextPage(
     var isMsgPage: Boolean = false
     var canvasRecorder = CanvasRecorderFactory.create(true)
     var doublePage = false
-    var paddingTop = 0
+    var paddingTop = ChapterProvider.paddingTop
     var isCompleted = false
 
     @JvmField
