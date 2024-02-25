@@ -109,21 +109,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 loadChapterList(book)
             }
-        } else if (book.isLocal
-            && LocalBook.getLastModified(book).getOrDefault(0L) > book.latestChapterTime
-        ) {
+        } else if (book.isLocalModified()) {
             loadChapterList(book)
         } else if (isSameBook) {
-            if (ReadBook.curTextChapter != null) {
-                ReadBook.callBack?.upContent(resetPageOffset = false)
-            } else {
-                ReadBook.loadContent(resetPageOffset = true)
-            }
+            ReadBook.loadOrUpContent()
             checkLocalBookFileExist(book)
         } else {
-            if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
-                ReadBook.durChapterIndex = ReadBook.chapterSize - 1
-            }
             ReadBook.loadContent(resetPageOffset = false)
             checkLocalBookFileExist(book)
         }

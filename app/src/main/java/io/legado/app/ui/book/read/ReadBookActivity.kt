@@ -77,7 +77,6 @@ import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_DIVIDER_C
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
-import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
@@ -115,7 +114,6 @@ import io.legado.app.utils.observeEvent
 import io.legado.app.utils.observeEventSticky
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.showDialogFragment
-import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.sysScreenOffTime
 import io.legado.app.utils.throttle
@@ -126,7 +124,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.max
 
 /**
  * 阅读界面
@@ -1373,49 +1370,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.readView.autoPager.resume()
     }
 
-    override fun onCurrentTextChapterChanged(textChapter: TextChapter, upContent: Boolean) {
-        this.upContent = upContent
-        textChapter.setProgressListener(this)
-    }
-
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {
         upSeekBarThrottle.invoke()
-        if (upContent) {
-            val durChapterPos = ReadBook.durChapterPos
-            if (page.containPos(durChapterPos)) {
-                runOnUiThread {
-                    binding.readView.upContent(0, resetPageOffset = false)
-                }
-            }
-            if (isScroll) {
-                val pageIndex = ReadBook.durPageIndex
-                if (max(index - 3, 0) < pageIndex) {
-                    runOnUiThread {
-                        binding.readView.upContent(0, resetPageOffset = false)
-                    }
-                }
-            }
-        }
         binding.readView.onLayoutPageCompleted(index, page)
-    }
-
-    override fun onLayoutCompleted() {
-        if (upContent) {
-            runOnUiThread {
-                binding.readView.upContent(0, resetPageOffset = false)
-            }
-        }
-        binding.readView.onLayoutCompleted()
-    }
-
-    override fun onLayoutException(e: Throwable) {
-        AppLog.put("ChapterProvider ERROR", e)
-        toastOnUi("ChapterProvider ERROR:\n${e.stackTraceStr}")
-        binding.readView.onLayoutException(e)
-    }
-
-    override fun resetPageOffset() {
-        binding.readView.resetPageOffset()
     }
 
     /* 全文搜索跳转 */

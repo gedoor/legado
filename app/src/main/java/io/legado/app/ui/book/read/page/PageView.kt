@@ -320,7 +320,7 @@ class PageView(context: Context) : FrameLayout(context) {
             tvPageAndTotal?.setTextIfNotEqual("${index.plus(1)}/$pageSize  $readProgress")
             tvPage?.setTextIfNotEqual("${index.plus(1)}/$pageSize")
         } else {
-            val pageSizeInt = pageSize - 1
+            val pageSizeInt = pageSize
             val pageSize = if (pageSizeInt <= 0) "-" else "~$pageSizeInt"
             tvPageAndTotal?.setTextIfNotEqual("${index.plus(1)}/$pageSize  $readProgress")
             tvPage?.setTextIfNotEqual("${index.plus(1)}/$pageSize")

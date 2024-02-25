@@ -67,6 +67,8 @@ class TextChapterLayout(
     private val indentCharWidth = ChapterProvider.indentCharWidth
     private val stringBuilder = StringBuilder()
 
+    private var pendingTextPage = TextPage()
+
     private var isCompleted = false
     private val job: Coroutine<*>
     private val bookChapter inline get() = textChapter.chapter
@@ -167,7 +169,6 @@ class TextChapterLayout(
         val contents = bookContent.textList
         var absStartX = paddingLeft
         var durY = 0f
-        textPages.add(TextPage())
         if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume) {
             //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
@@ -185,7 +186,7 @@ class TextChapterLayout(
                     durY = it.second
                 }
             }
-            textPages.last().lines.last().isParagraphEnd = true
+            pendingTextPage.lines.last().isParagraphEnd = true
             stringBuilder.append("\n")
             durY += titleBottomSpacing
         }
@@ -244,7 +245,6 @@ class TextChapterLayout(
                         matcher.group(1)!!,
                         absStartX,
                         durY,
-                        textPages,
                         contentPaintTextHeight,
                         stringBuilder,
                         book.getImageStyle()
@@ -270,10 +270,11 @@ class TextChapterLayout(
                     }
                 }
             }
-            textPages.last().lines.last().isParagraphEnd = true
+            pendingTextPage.lines.last().isParagraphEnd = true
             stringBuilder.append("\n")
         }
-        val textPage = textPages.last()
+        textPages.add(pendingTextPage)
+        val textPage = pendingTextPage
         val endPadding = 20.dpToPx()
         val durYPadding = durY + endPadding
         if (textPage.height < durYPadding) {
@@ -295,7 +296,6 @@ class TextChapterLayout(
         src: String,
         x: Int,
         y: Float,
-        textPages: ArrayList<TextPage>,
         textHeight: Float,
         stringBuilder: StringBuilder,
         imageStyle: String?,
@@ -305,15 +305,16 @@ class TextChapterLayout(
         val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
         if (size.width > 0 && size.height > 0) {
             if (durY > visibleHeight) {
-                val textPage = textPages.last()
+                val textPage = pendingTextPage
                 if (textPage.height < durY) {
                     textPage.height = durY
                 }
                 textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                 stringBuilder.clear()
+                textPages.add(textPage)
                 coroutineContext.ensureActive()
                 onPageCompleted()
-                textPages.add(TextPage())
+                pendingTextPage = TextPage()
                 durY = 0f
             }
             var height = size.height
@@ -334,7 +335,11 @@ class TextChapterLayout(
                         height = visibleHeight
                     }
                     if (durY + height > visibleHeight) {
-                        val textPage = textPages.last()
+                        val textPage = pendingTextPage
+                        // 双页的 durY 不正确，可能会小于实际高度
+                        if (textPage.height < durY) {
+                            textPage.height = durY
+                        }
                         if (doublePage && absStartX < viewWidth / 2) {
                             //当前页面左列结束
                             textPage.leftLineSize = textPage.lineSize
@@ -346,13 +351,10 @@ class TextChapterLayout(
                             }
                             textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
                             stringBuilder.clear()
+                            textPages.add(textPage)
                             coroutineContext.ensureActive()
                             onPageCompleted()
-                            textPages.add(TextPage())
-                        }
-                        // 双页的 durY 不正确，可能会小于实际高度
-                        if (textPage.height < durY) {
-                            textPage.height = durY
+                            pendingTextPage = TextPage()
                         }
                         durY = 0f
                     }
@@ -373,7 +375,7 @@ class TextChapterLayout(
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
-            textPages.last().addLine(textLine)
+            pendingTextPage.addLine(textLine)
         }
         return absStartX to durY + textHeight * paragraphSpacing / 10f
     }
@@ -403,8 +405,8 @@ class TextChapterLayout(
         }
         var durY = when {
             //标题y轴居中
-            emptyContent && textPages.size == 1 -> {
-                val textPage = textPages.last()
+            emptyContent && textPages.isEmpty() -> {
+                val textPage = pendingTextPage
                 if (textPage.lineSize == 0) {
                     val ty = (visibleHeight - layout.lineCount * textHeight) / 2
                     if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
@@ -423,7 +425,7 @@ class TextChapterLayout(
                 }
             }
 
-            isTitle && textPages.size == 1 && textPages.last().lines.isEmpty() ->
+            isTitle && textPages.isEmpty() && pendingTextPage.lines.isEmpty() ->
                 y + titleTopSpacing
 
             else -> y
@@ -431,7 +433,10 @@ class TextChapterLayout(
         for (lineIndex in 0 until layout.lineCount) {
             val textLine = TextLine(isTitle = isTitle)
             if (durY + textHeight > visibleHeight) {
-                val textPage = textPages.last()
+                val textPage = pendingTextPage
+                if (textPage.height < durY) {
+                    textPage.height = durY
+                }
                 if (doublePage && absStartX < viewWidth / 2) {
                     //当前页面左列结束
                     textPage.leftLineSize = textPage.lineSize
@@ -442,15 +447,13 @@ class TextChapterLayout(
                         textPage.leftLineSize = textPage.lineSize
                     }
                     textPage.text = stringBuilder.toString()
+                    textPages.add(textPage)
                     coroutineContext.ensureActive()
                     onPageCompleted()
                     //新建页面
-                    textPages.add(TextPage())
+                    pendingTextPage = TextPage()
                     stringBuilder.clear()
                     absStartX = paddingLeft
-                }
-                if (textPage.height < durY) {
-                    textPage.height = durY
                 }
                 durY = 0f
             }
@@ -514,7 +517,7 @@ class TextChapterLayout(
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(lineText)
             textLine.upTopBottom(durY, textHeight, fontMetrics)
-            val textPage = textPages.last()
+            val textPage = pendingTextPage
             textPage.addLine(textLine)
             durY += textHeight * lineSpacingExtra
             if (textPage.height < durY) {
@@ -530,8 +533,8 @@ class TextChapterLayout(
         textLine: TextLine,
         sbLength: Int
     ) {
-        val lastLine = textPages.last().lines.lastOrNull { it.paragraphNum > 0 }
-            ?: textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull { it.paragraphNum > 0 }
+        val lastLine = pendingTextPage.lines.lastOrNull { it.paragraphNum > 0 }
+            ?: textPages.lastOrNull()?.lines?.lastOrNull { it.paragraphNum > 0 }
         val paragraphNum = when {
             lastLine == null -> 1
             lastLine.isParagraphEnd -> lastLine.paragraphNum + 1
@@ -539,7 +542,7 @@ class TextChapterLayout(
         }
         textLine.paragraphNum = paragraphNum
         textLine.chapterPosition =
-            (textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull()?.run {
+            (textPages.lastOrNull()?.lines?.lastOrNull()?.run {
                 chapterPosition + charSize + if (isParagraphEnd) 1 else 0
             } ?: 0) + sbLength
         textLine.pagePosition = sbLength

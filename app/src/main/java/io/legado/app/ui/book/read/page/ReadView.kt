@@ -669,10 +669,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         upProgressThrottle.invoke()
     }
 
-    fun resetPageOffset() {
-        curPage.resetPageOffset()
-    }
-
     override val currentChapter: TextChapter?
         get() {
             return if (callBack.isInitFinish) ReadBook.textChapter(0) else null

@@ -16,10 +16,12 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isImage
+import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isPdf
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
+import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
@@ -284,6 +286,10 @@ data class Book(
 
     fun getBookSource(): BookSource? {
         return appDb.bookSourceDao.getBookSource(origin)
+    }
+
+    fun isLocalModified(): Boolean {
+        return isLocal && LocalBook.getLastModified(this).getOrDefault(0L) > latestChapterTime
     }
 
     fun toSearchBook() = SearchBook(

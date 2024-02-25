@@ -6,7 +6,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.StaticLayout
+import android.text.style.LineHeightSpan
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
@@ -25,6 +28,13 @@ class BatteryView @JvmOverloads constructor(
     private val outFrame = Rect()
     private val polar = Rect()
     private val canvasRecorder = CanvasRecorderFactory.create()
+    private val batterySpan = LineHeightSpan { _, _, _, _, _, fm ->
+        fm.top = -22
+        fm.ascent = -28
+        fm.descent = 7
+        fm.bottom = 1
+        fm.leading = 0
+    }
     var isBattery = false
         set(value) {
             field = value
@@ -58,41 +68,61 @@ class BatteryView @JvmOverloads constructor(
     fun setBattery(battery: Int, text: String? = null) {
         this.battery = battery
         if (text.isNullOrEmpty()) {
-            setText(battery.toString())
+            setText(getBatteryText(battery.toString()))
         } else {
-            setText("$text  $battery")
+            setText(getBatteryText("$text  $battery"))
         }
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        canvasRecorder.invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         canvasRecorder.recordIfNeededThenDraw(canvas, width, height) {
             super.onDraw(this)
             if (!isBattery) return@recordIfNeededThenDraw
-            layout.getLineBounds(0, outFrame)
-            val batteryStart = layout
-                .getPrimaryHorizontal(text.length - battery.toString().length)
-                .toInt() + 2.dpToPx()
-            val batteryEnd = batteryStart +
-                    StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dpToPx()
-            outFrame.set(
-                batteryStart,
-                2.dpToPx(),
-                batteryEnd,
-                height - 2.dpToPx()
-            )
-            val dj = (outFrame.bottom - outFrame.top) / 3
-            polar.set(
-                batteryEnd,
-                outFrame.top + dj,
-                batteryEnd + 2.dpToPx(),
-                outFrame.bottom - dj
-            )
-            batteryPaint.style = Paint.Style.STROKE
-            drawRect(outFrame, batteryPaint)
-            batteryPaint.style = Paint.Style.FILL
-            drawRect(polar, batteryPaint)
+            drawBattery(this)
         }
     }
+
+    private fun drawBattery(canvas: Canvas) {
+        layout.getLineBounds(0, outFrame)
+        val batteryStart = layout
+            .getPrimaryHorizontal(text.length - battery.toString().length)
+            .toInt() + 2.dpToPx()
+        val batteryEnd = batteryStart +
+                StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dpToPx()
+        outFrame.set(
+            batteryStart,
+            2.dpToPx(),
+            batteryEnd,
+            height - 2.dpToPx()
+        )
+        val dj = (outFrame.bottom - outFrame.top) / 3
+        polar.set(
+            batteryEnd,
+            outFrame.top + dj,
+            batteryEnd + 2.dpToPx(),
+            outFrame.bottom - dj
+        )
+        batteryPaint.style = Paint.Style.STROKE
+        canvas.drawRect(outFrame, batteryPaint)
+        batteryPaint.style = Paint.Style.FILL
+        canvas.drawRect(polar, batteryPaint)
+    }
+
+    private fun getBatteryText(text: CharSequence?): SpannableStringBuilder? {
+        if (text == null) {
+            return null
+        }
+
+        return SpannableStringBuilder(text).apply {
+            setSpan(batterySpan, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
+
 
     override fun invalidate() {
         super.invalidate()

@@ -96,8 +96,7 @@ data class TextChapter(
     }
 
     fun isLastIndexCurrent(index: Int): Boolean {
-        // 未完成排版时，最后一页是正在排版中的，需要去掉
-        return index >= if (isCompleted) pages.size - 1 else pages.size - 2
+        return index >= pages.size - 1
     }
 
     /**
@@ -105,6 +104,7 @@ data class TextChapter(
      * @return 已读长度
      */
     fun getReadLength(pageIndex: Int): Int {
+        if (pageIndex < 0) return 0
         return pages[min(pageIndex, lastIndex)].lines.first().chapterPosition
         /*
         var length = 0
@@ -212,18 +212,15 @@ data class TextChapter(
         if (pageSize == 0) {
             return -1
         }
-        val size = if (isCompleted) pageSize else pageSize - 1
-        val bIndex = pages.fastBinarySearchBy(charIndex, 0, size) {
+        val bIndex = pages.fastBinarySearchBy(charIndex, 0, pageSize) {
             it.lines.first().chapterPosition
         }
         val index = abs(bIndex + 1) - 1
-        if (index == -1) {
-            return -1
-        }
         // 判断是否已经排版到 charIndex ，没有则返回 -1
-        if (!isCompleted && index == size - 1) {
-            val line = pages[index].lines.first()
-            val pageEndPos = line.chapterPosition + line.charSize
+        if (!isCompleted && index == pageSize - 1) {
+            val page = pages[index]
+            val line = page.lines.first()
+            val pageEndPos = line.chapterPosition + page.charSize
             if (charIndex > pageEndPos) {
                 return -1
             }
@@ -287,14 +284,12 @@ data class TextChapter(
     }
 
     override fun onLayoutException(e: Throwable) {
-        isCompleted = true
         listener?.onLayoutException(e)
         listener = null
     }
 
     fun cancelLayout() {
         layout?.cancel()
-        isCompleted = true
         listener = null
     }
 
