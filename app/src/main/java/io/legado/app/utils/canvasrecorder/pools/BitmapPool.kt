@@ -1,15 +1,46 @@
 package io.legado.app.utils.canvasrecorder.pools
 
 import android.graphics.Bitmap
-import java.lang.ref.SoftReference
+import io.legado.app.help.globalExecutor
 import java.util.concurrent.ConcurrentHashMap
 
-class BitmapPool {
+object BitmapPool {
 
-    private val reusableBitmaps: MutableSet<SoftReference<Bitmap>> = ConcurrentHashMap.newKeySet()
+    private val reusableBitmaps: MutableSet<Bitmap> = ConcurrentHashMap.newKeySet()
 
     fun recycle(bitmap: Bitmap) {
-        reusableBitmaps.add(SoftReference(bitmap))
+        reusableBitmaps.add(bitmap)
+        trimSize()
+    }
+
+    fun clear() {
+        if (reusableBitmaps.isEmpty()) {
+            return
+        }
+        globalExecutor.execute {
+            val iterator = reusableBitmaps.iterator()
+            while (iterator.hasNext()) {
+                val item = iterator.next()
+                iterator.remove()
+                item.recycle()
+            }
+        }
+    }
+
+    private fun trimSize() {
+        globalExecutor.execute {
+            var byteCount = 0
+            val iterator = reusableBitmaps.iterator()
+            while (iterator.hasNext()) {
+                val item = iterator.next()
+                if (byteCount > 64 * 1024 * 1024) {
+                    iterator.remove()
+                    item.recycle()
+                } else {
+                    byteCount += item.byteCount
+                }
+            }
+        }
     }
 
     fun obtain(width: Int, height: Int): Bitmap {
@@ -18,7 +49,7 @@ class BitmapPool {
         }
         val iterator = reusableBitmaps.iterator()
         while (iterator.hasNext()) {
-            val item = iterator.next().get() ?: continue
+            val item = iterator.next()
             if (item.isMutable) {
                 // Check to see it the item can be used for inBitmap.
                 if (canReconfigure(item, width, height)) {

@@ -31,6 +31,7 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
+import io.legado.app.utils.canvasrecorder.pools.BitmapPool
 import io.legado.app.utils.invisible
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.throttle
@@ -461,6 +462,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         pageDelegate?.onDestroy()
         curPage.cancelSelect()
         invalidateTextPage()
+        BitmapPool.clear()
     }
 
     /**
