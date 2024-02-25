@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import java.util.LinkedList
 import java.util.Locale
 import kotlin.coroutines.coroutineContext
+import kotlin.math.roundToInt
 
 class TextChapterLayout(
     scope: CoroutineScope,
@@ -467,7 +468,7 @@ class TextChapterLayout(
                     //第一行 非标题
                     textLine.text = lineText
                     addCharsToLineFirst(
-                        book, absStartX, textLine, words,
+                        book, absStartX, textLine, words, textPaint,
                         desiredWidth, widths, srcList
                     )
                 }
@@ -505,7 +506,7 @@ class TextChapterLayout(
                         //中间行
                         textLine.text = lineText
                         addCharsToLineMiddle(
-                            book, absStartX, textLine, words,
+                            book, absStartX, textLine, words, textPaint,
                             desiredWidth, 0f, widths, srcList
                         )
                     }
@@ -556,6 +557,7 @@ class TextChapterLayout(
         absStartX: Int,
         textLine: TextLine,
         words: List<String>,
+        textPaint: TextPaint,
         /**自然排版长度**/
         desiredWidth: Float,
         textWidths: List<Float>,
@@ -582,11 +584,12 @@ class TextChapterLayout(
             x = x1
             textLine.indentWidth = x
         }
+        textLine.indentSize = bodyIndent.length
         if (words.size > bodyIndent.length) {
             val text1 = words.subList(bodyIndent.length, words.size)
             val textWidths1 = textWidths.subList(bodyIndent.length, textWidths.size)
             addCharsToLineMiddle(
-                book, absStartX, textLine, text1,
+                book, absStartX, textLine, text1, textPaint,
                 desiredWidth, x, textWidths1, srcList
             )
         }
@@ -600,6 +603,7 @@ class TextChapterLayout(
         absStartX: Int,
         textLine: TextLine,
         words: List<String>,
+        textPaint: TextPaint,
         /**自然排版长度**/
         desiredWidth: Float,
         /**起始x坐标**/
@@ -616,8 +620,10 @@ class TextChapterLayout(
         }
         val residualWidth = visibleWidth - desiredWidth
         val spaceSize = words.count { it == " " }
+        textLine.startX = absStartX + startX
         if (spaceSize > 1) {
-            val d = residualWidth / spaceSize
+            val d = residualWidth / (spaceSize - 1)
+            textLine.wordSpacing = d
             var x = startX
             for (index in words.indices) {
                 val char = words[index]
@@ -636,6 +642,8 @@ class TextChapterLayout(
         } else {
             val gapCount: Int = words.lastIndex
             val d = residualWidth / gapCount
+            textLine.extraLetterSpacingOffsetX = -d / 2
+            textLine.extraLetterSpacing = d / textPaint.textSize
             var x = startX
             for (index in words.indices) {
                 val char = words[index]
@@ -666,6 +674,7 @@ class TextChapterLayout(
     ) {
         val indentLength = ReadBookConfig.paragraphIndent.length
         var x = startX
+        textLine.startX = absStartX + startX
         for (index in words.indices) {
             val char = words[index]
             val cw = textWidths[index]
@@ -727,8 +736,9 @@ class TextChapterLayout(
      */
     private fun exceed(absStartX: Int, textLine: TextLine, words: List<String>) {
         val visibleEnd = absStartX + visibleWidth
-        val endX = textLine.columns.lastOrNull()?.end ?: return
+        val endX = textLine.columns.lastOrNull()?.end?.roundToInt() ?: return
         if (endX > visibleEnd) {
+            textLine.exceed = true
             val cc = (endX - visibleEnd) / words.size
             for (i in 0..words.lastIndex) {
                 textLine.getColumnReverseAt(i).let {
