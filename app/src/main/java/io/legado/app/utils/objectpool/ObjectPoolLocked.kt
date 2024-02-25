@@ -1,4 +1,4 @@
-package io.legado.app.utils.canvasrecorder.objectpool
+package io.legado.app.utils.objectpool
 
 class ObjectPoolLocked<T>(private val delegate: ObjectPool<T>) : ObjectPool<T> by delegate {
 

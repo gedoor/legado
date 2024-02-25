@@ -460,6 +460,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
     fun onDestroy() {
         pageDelegate?.onDestroy()
         curPage.cancelSelect()
+        invalidateTextPage()
     }
 
     /**
