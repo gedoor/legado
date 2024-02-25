@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.read.page.entities
 
+import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Paint.FontMetrics
 import android.os.Build
@@ -157,6 +158,7 @@ data class TextLine(
         }
     }
 
+    @SuppressLint("NewApi")
     private fun fastDrawTextLine(view: ContentTextView, canvas: Canvas) {
         val textPaint = if (isTitle) {
             ChapterProvider.titlePaint
@@ -174,7 +176,7 @@ data class TextLine(
             paint.letterSpacing += extraLetterSpacing
         }
         if (wordSpacing != 0f) {
-            paint.wordSpacing += wordSpacing
+            paint.wordSpacing = wordSpacing
         }
         if (paint.color != textColor) {
             paint.color = textColor
