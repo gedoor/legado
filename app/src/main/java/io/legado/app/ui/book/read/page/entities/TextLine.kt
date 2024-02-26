@@ -79,8 +79,8 @@ data class TextLine(
         }
     }
 
-    fun getColumnReverseAt(index: Int): BaseColumn {
-        return textColumns[textColumns.lastIndex - index]
+    fun getColumnReverseAt(index: Int, offset: Int = 0): BaseColumn {
+        return textColumns[textColumns.lastIndex - offset - index]
     }
 
     fun getColumnsCount(): Int {
