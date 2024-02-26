@@ -2,13 +2,19 @@
   {
     "uploadUrl": "https://sy.mgz6.cc/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
     "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.mgz6.cc/shuyuan/' + result",
-    "summary": "喵公子网盘(有效期7天)",
+    "summary": "喵公子网盘①(有效期7天)",
+    "compress": false
+  },
+  {
+    "uploadUrl": "https://sy.miaogongzi.cc/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
+    "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.miaogongzi.cc/shuyuan/' + result",
+    "summary": "喵公子网盘②(有效期7天)",
     "compress": false
   },
   {
     "uploadUrl": "http://v2.jt12.de/up-v2.php,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
     "downloadUrlRule": "$.msg",
-    "summary": "橘涂网盘(永久有效)",
+    "summary": "橘涂网盘·过于卡顿，如非需要永久链接。否则不建议使用(永久有效)",
     "compress": false
   }
 ]
