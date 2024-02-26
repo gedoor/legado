@@ -1,14 +1,20 @@
 package io.legado.app.ui.book.read.page.entities
 
+import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Paint.FontMetrics
+import android.os.Build
 import androidx.annotation.Keep
+import androidx.core.graphics.withTranslation
+import io.legado.app.help.PaintPool
 import io.legado.app.help.book.isImage
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.entities.TextPage.Companion.emptyTextPage
 import io.legado.app.ui.book.read.page.entities.column.BaseColumn
+import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
 import io.legado.app.utils.canvasrecorder.recordIfNeededThenDraw
@@ -32,6 +38,13 @@ data class TextLine(
     val isTitle: Boolean = false,
     var isParagraphEnd: Boolean = false,
     var isImage: Boolean = false,
+    var startX: Float = 0f,
+    var indentSize: Int = 0,
+    var extraLetterSpacing: Float = 0f,
+    var extraLetterSpacingOffsetX: Float = 0f,
+    var wordSpacing: Float = 0f,
+    var exceed: Boolean = false,
+    var onlyTextColumn: Boolean = true,
 ) {
 
     val columns: List<BaseColumn> get() = textColumns
@@ -41,6 +54,7 @@ data class TextLine(
     val chapterIndices: IntRange get() = chapterPosition..chapterPosition + charSize
     val height: Float inline get() = lineBottom - lineTop
     val canvasRecorder = CanvasRecorderFactory.create()
+    var searchResultColumnCount = 0
     var isReadAloud: Boolean = false
         set(value) {
             if (field != value) {
@@ -52,6 +66,9 @@ data class TextLine(
     var isLeftLine = true
 
     fun addColumn(column: BaseColumn) {
+        if (column !is TextColumn) {
+            onlyTextColumn = false
+        }
         column.textLine = this
         textColumns.add(column)
     }
@@ -129,11 +146,54 @@ data class TextLine(
     }
 
     private fun drawTextLine(view: ContentTextView, canvas: Canvas) {
-        for (i in columns.indices) {
-            columns[i].draw(view, canvas)
+        if (checkFastDraw()) {
+            fastDrawTextLine(view, canvas)
+        } else {
+            for (i in columns.indices) {
+                columns[i].draw(view, canvas)
+            }
         }
         if (ReadBookConfig.underline && !isImage && ReadBook.book?.isImage != true) {
             drawUnderline(canvas)
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun fastDrawTextLine(view: ContentTextView, canvas: Canvas) {
+        val textPaint = if (isTitle) {
+            ChapterProvider.titlePaint
+        } else {
+            ChapterProvider.contentPaint
+        }
+        val textColor = if (isReadAloud) {
+            ThemeStore.accentColor
+        } else {
+            ReadBookConfig.textColor
+        }
+        val paint = PaintPool.obtain()
+        paint.set(textPaint)
+        if (extraLetterSpacing != 0f) {
+            paint.letterSpacing += extraLetterSpacing
+        }
+        if (wordSpacing != 0f) {
+            paint.wordSpacing = wordSpacing
+        }
+        if (paint.color != textColor) {
+            paint.color = textColor
+        }
+        if (extraLetterSpacingOffsetX != 0f) {
+            canvas.withTranslation(extraLetterSpacingOffsetX) {
+                canvas.drawText(text, indentSize, text.length, startX, lineBase - lineTop, paint)
+            }
+        } else {
+            canvas.drawText(text, indentSize, text.length, startX, lineBase - lineTop, paint)
+        }
+        PaintPool.recycle(paint)
+        for (i in columns.indices) {
+            val column = columns[i] as TextColumn
+            if (column.selected) {
+                canvas.drawRect(column.start, 0f, column.end, height, view.selectedPaint)
+            }
         }
     }
 
@@ -151,6 +211,16 @@ data class TextLine(
         )
     }
 
+    fun checkFastDraw(): Boolean {
+        if (exceed || !onlyTextColumn || textPage.isMsgPage) {
+            return false
+        }
+        if (!atLeastApi29 && wordSpacing != 0f) {
+            return false
+        }
+        return searchResultColumnCount == 0
+    }
+
     fun invalidate() {
         invalidateSelf()
         textPage.invalidate()
@@ -166,6 +236,7 @@ data class TextLine(
 
     companion object {
         val emptyTextLine = TextLine()
+        private val atLeastApi29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     }
 
 }

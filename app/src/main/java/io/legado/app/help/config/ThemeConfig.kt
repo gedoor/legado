@@ -55,7 +55,6 @@ object ThemeConfig {
         initNightMode()
         BookCover.upDefaultCover()
         postEvent(EventBus.RECREATE, "")
-        postEvent(EventBus.UP_CONFIG, arrayOf(2, 9))
     }
 
     private fun initNightMode() {
@@ -74,10 +73,12 @@ object ThemeConfig {
                 context.getPrefString(PreferKey.bgImage),
                 context.getPrefInt(PreferKey.bgImageBlurring, 0)
             )
+
             Theme.Dark -> Pair(
                 context.getPrefString(PreferKey.bgImageN),
                 context.getPrefInt(PreferKey.bgImageNBlurring, 0)
             )
+
             else -> null
         } ?: return null
         if (bgCfg.first.isNullOrBlank()) return null
@@ -218,6 +219,7 @@ object ThemeConfig {
                     .bottomBackground(Color.WHITE)
                     .apply()
             }
+
             AppConfig.isNightTheme -> {
                 val primary =
                     getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
@@ -238,6 +240,7 @@ object ThemeConfig {
                     .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
                     .apply()
             }
+
             else -> {
                 val primary =
                     getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))

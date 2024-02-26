@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.entities.column
 
 import android.graphics.Canvas
 import androidx.annotation.Keep
+import io.legado.app.help.PaintPool
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.book.read.page.ContentTextView
@@ -32,6 +33,11 @@ data class TextColumn(
         set(value) {
             if (field != value) {
                 textLine.invalidate()
+                if (value) {
+                    textLine.searchResultColumnCount++
+                } else {
+                    textLine.searchResultColumnCount--
+                }
             }
             field = value
         }
@@ -42,15 +48,18 @@ data class TextColumn(
         } else {
             ChapterProvider.contentPaint
         }
-        if (textLine.isReadAloud || isSearchResult) {
-            synchronized(textPaint) {
-                textPaint.color = ThemeStore.accentColor
-                canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, textPaint)
-                textPaint.color = ReadBookConfig.textColor
-            }
+        val textColor = if (textLine.isReadAloud || isSearchResult) {
+            ThemeStore.accentColor
         } else {
-            canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, textPaint)
+            ReadBookConfig.textColor
         }
+        val paint = PaintPool.obtain()
+        paint.set(textPaint)
+        if (paint.color != textColor) {
+            paint.color = textColor
+        }
+        canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, paint)
+        PaintPool.recycle(paint)
         if (selected) {
             canvas.drawRect(start, 0f, end, textLine.height, view.selectedPaint)
         }

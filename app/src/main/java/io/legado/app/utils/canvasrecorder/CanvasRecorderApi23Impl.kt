@@ -2,8 +2,8 @@ package io.legado.app.utils.canvasrecorder
 
 import android.graphics.Canvas
 import android.graphics.Picture
-import io.legado.app.utils.canvasrecorder.objectpool.synchronized
 import io.legado.app.utils.canvasrecorder.pools.PicturePool
+import io.legado.app.utils.objectpool.synchronized
 
 class CanvasRecorderApi23Impl : BaseCanvasRecorder() {
 

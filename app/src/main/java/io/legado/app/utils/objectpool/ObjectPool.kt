@@ -1,4 +1,4 @@
-package io.legado.app.utils.canvasrecorder.objectpool
+package io.legado.app.utils.objectpool
 
 interface ObjectPool<T> {
 

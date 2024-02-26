@@ -422,7 +422,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         var curLine = curTextLines[lineIndex]
         length = length - currentPage.text.length + curLine.text.length
         if (curLine.isParagraphEnd) length++
-        while (length < contentPosition && lineIndex + 1 < curTextLines.size) {
+        while (length <= contentPosition && lineIndex + 1 < curTextLines.size) {
             lineIndex += 1
             curLine = curTextLines[lineIndex]
             length += curLine.text.length
