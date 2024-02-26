@@ -42,7 +42,7 @@ interface JsEncodeUtils {
         key: ByteArray?,
         iv: ByteArray?
     ): SymmetricCrypto {
-        val symmetricCrypto = SymmetricCrypto(transformation, key)
+        val symmetricCrypto = SymmetricCryptoAndroid(transformation, key)
         return if (iv != null && iv.isNotEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto
     }
 
