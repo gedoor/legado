@@ -204,7 +204,7 @@ dependencies {
 
     //规则相关
     implementation('org.jsoup:jsoup:1.16.2')
-    implementation('com.jayway.jsonpath:json-path:2.8.0')
+    implementation('com.jayway.jsonpath:json-path:2.9.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
     implementation(project(path: ':modules:book'))
 
