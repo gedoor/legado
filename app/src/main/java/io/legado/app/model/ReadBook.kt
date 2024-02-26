@@ -288,19 +288,24 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun setPageIndex(index: Int) {
-        val textChapter = curTextChapter
-        if (textChapter != null) {
-            val pageIndex = durPageIndex
-            if (index > pageIndex) {
-                textChapter.getPage(index - 2)?.recycleRecorders()
-            }
-            if (index < pageIndex) {
-                textChapter.getPage(index + 3)?.recycleRecorders()
-            }
-        }
+        recycleRecorders(durPageIndex, index)
         durChapterPos = curTextChapter?.getReadLength(index) ?: index
         saveRead(true)
         curPageChanged(true)
+    }
+
+    fun recycleRecorders(beforeIndex: Int, afterIndex: Int) {
+        executor.execute {
+            val textChapter = curTextChapter
+            if (textChapter != null) {
+                if (afterIndex > beforeIndex) {
+                    textChapter.getPage(afterIndex - 2)?.recycleRecorders()
+                }
+                if (afterIndex < beforeIndex) {
+                    textChapter.getPage(afterIndex + 3)?.recycleRecorders()
+                }
+            }
+        }
     }
 
     fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
