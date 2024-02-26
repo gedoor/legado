@@ -622,7 +622,7 @@ class TextChapterLayout(
         val spaceSize = words.count { it == " " }
         textLine.startX = absStartX + startX
         if (spaceSize > 1) {
-            val d = residualWidth / (spaceSize - 1)
+            val d = residualWidth / spaceSize
             textLine.wordSpacing = d
             var x = startX
             for (index in words.indices) {
@@ -735,14 +735,25 @@ class TextChapterLayout(
      * 超出边界处理
      */
     private fun exceed(absStartX: Int, textLine: TextLine, words: List<String>) {
+        var size = words.size
+        if (size < 2) return
         val visibleEnd = absStartX + visibleWidth
-        val endX = textLine.columns.lastOrNull()?.end?.roundToInt() ?: return
+        val columns = textLine.columns
+        var offset = 0
+        val endColumn = if (words.last() == " ") {
+            size--
+            offset++
+            columns[columns.lastIndex - 1]
+        } else {
+            columns.last()
+        }
+        val endX = endColumn.end.roundToInt()
         if (endX > visibleEnd) {
             textLine.exceed = true
-            val cc = (endX - visibleEnd) / words.size
-            for (i in 0..words.lastIndex) {
-                textLine.getColumnReverseAt(i).let {
-                    val py = cc * (words.size - i)
+            val cc = (endX - visibleEnd) / size
+            for (i in 0..<size) {
+                textLine.getColumnReverseAt(i, offset).let {
+                    val py = cc * (size - i)
                     it.start -= py
                     it.end -= py
                 }
