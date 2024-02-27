@@ -132,8 +132,7 @@ object BookContent {
         //全文替换
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
-            contentStr = contentStr.split(AppPattern.LFRegex)
-                .joinToString("\n") { it.trim { c -> c <= ' ' || c == '　' } }
+            contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { it.trim() }
             contentStr = analyzeRule.getString(replaceRegex, contentStr)
             contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { "　　$it" }
         }

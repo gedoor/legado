@@ -809,11 +809,8 @@ object ChapterProvider {
         paragraphSpacing = ReadBookConfig.paragraphSpacing
         titleTopSpacing = ReadBookConfig.titleTopSpacing.dpToPx()
         titleBottomSpacing = ReadBookConfig.titleBottomSpacing.dpToPx()
-        var bodyIndent = ReadBookConfig.paragraphIndent
-        val indentLength = bodyIndent.length
-        // 有些字体的中文空格宽度不对
-        bodyIndent = "一".repeat(indentLength)
-        indentCharWidth = StaticLayout.getDesiredWidth(bodyIndent, contentPaint) / indentLength
+        val bodyIndent = ReadBookConfig.paragraphIndent
+        indentCharWidth = StaticLayout.getDesiredWidth(bodyIndent, contentPaint) / bodyIndent.length
         titlePaintTextHeight = titlePaint.textHeight
         contentPaintTextHeight = contentPaint.textHeight
         titlePaintFontMetrics = titlePaint.fontMetrics
