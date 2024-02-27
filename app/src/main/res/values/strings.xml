@@ -288,10 +288,10 @@
     <string name="bottom">Bottom</string>
     <string name="top">Top</string>
     <string name="padding">Padding</string>
-    <string name="padding_top">Padding top</string>
-    <string name="padding_bottom">Padding bottom</string>
-    <string name="padding_left">Padding left</string>
-    <string name="padding_right">Padding right</string>
+    <string name="padding_top">Top</string>
+    <string name="padding_bottom">Bottom</string>
+    <string name="padding_left">Left</string>
+    <string name="padding_right">Right</string>
     <string name="check_book_source">Check book sources</string>
     <string name="check_select_source">Check the selected source</string>
     <string name="progress_show">%1$s      Progress %2$d/%3$d</string>
@@ -808,7 +808,7 @@
     <string name="non_action">None</string>
     <string name="body_title">Title</string>
     <string name="show_hide">Show/Hide</string>
-    <string name="header_footer">footer <![CDATA[&]]> header</string>
+    <string name="header_footer">Footer <![CDATA[&]]> Header</string>
     <string name="rule_subscription">Rule Subscription</string>
     <string name="rule_sub_empty_msg">Add the rule import address provided by the bosses\nClick to import rules after adding</string>
     <string name="get_book_progress">Pull the cloud  progress</string>
@@ -854,7 +854,7 @@
     <string name="list_src">List source code</string>
     <string name="title_font_size">Font size</string>
     <string name="title_margin_top">Margin top</string>
-    <string name="title_margin_bottom">Marigin bottom</string>
+    <string name="title_margin_bottom">Margin bottom</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
@@ -1064,7 +1064,7 @@
     <string name="replace_state_change">Replace (enable / disable)</string>
     <string name="show_last_update_time">Show last updated time</string>
     <string name="refresh_list">Refresh list</string>
-    <string name="tip_divider_color">Separator color</string>
+    <string name="tip_divider_color">Divider color</string>
     <string name="same_title_removed">Remove duplicate title</string>
     <string name="update_book_fail">Update failed</string>
     <string name="notification_permission_rationale">Reading requires sending notifications to show reading control and download progress</string>
@@ -1147,4 +1147,5 @@
     <string name="create_heap_dump">创建堆转储</string>
     <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
     <string name="record_heap_dump_t">记录堆转储</string>
+    <string name="font_weight_text">N/B/L</string>
 </resources>

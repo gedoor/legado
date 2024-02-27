@@ -75,19 +75,21 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
     }
 
     private fun upTvTipColor() {
-        binding.tvTipColor.text =
-            if (ReadTipConfig.tipColor == 0) {
-                "跟随正文"
-            } else {
-                "#${ReadTipConfig.tipColor.hexString}"
-            }
+        val tipColorNames = ReadTipConfig.tipColorNames
+        val tipColor = ReadTipConfig.tipColor
+        binding.tvTipColor.text = if (tipColor == 0) {
+            tipColorNames.first()
+        } else {
+            "#${tipColor.hexString}"
+        }
     }
 
     private fun upTvTipDividerColor() {
-        binding.tvTipDividerColor.text = when (ReadTipConfig.tipDividerColor) {
-            -1 -> "默认"
-            0 -> "跟随文字颜色"
-            else -> "#${ReadTipConfig.tipDividerColor.hexString}"
+        val tipDividerColorNames = ReadTipConfig.tipDividerColorNames
+        val tipDividerColor = ReadTipConfig.tipDividerColor
+        binding.tvTipDividerColor.text = when (tipDividerColor) {
+            -1, 0 -> tipDividerColorNames[tipDividerColor + 1]
+            else -> "#${tipDividerColor.hexString}"
         }
     }
 
@@ -179,13 +181,14 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             }
         }
         llTipColor.setOnClickListener {
-            context?.selector(items = arrayListOf("跟随正文", "自定义")) { _, i ->
+            context?.selector(items = ReadTipConfig.tipColorNames) { _, i ->
                 when (i) {
                     0 -> {
                         ReadTipConfig.tipColor = 0
                         upTvTipColor()
                         postEvent(EventBus.UP_CONFIG, arrayOf(2))
                     }
+
                     1 -> ColorPickerDialog.newBuilder()
                         .setShowAlphaSlider(false)
                         .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
@@ -195,13 +198,14 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             }
         }
         llTipDividerColor.setOnClickListener {
-            context?.selector(items = arrayListOf("默认", "跟随文字颜色", "自定义")) { _, i ->
+            context?.selector(items = ReadTipConfig.tipDividerColorNames) { _, i ->
                 when (i) {
                     0, 1 -> {
                         ReadTipConfig.tipDividerColor = i - 1
                         upTvTipDividerColor()
                         postEvent(EventBus.UP_CONFIG, arrayOf(2))
                     }
+
                     2 -> ColorPickerDialog.newBuilder()
                         .setShowAlphaSlider(false)
                         .setDialogType(ColorPickerDialog.TYPE_CUSTOM)

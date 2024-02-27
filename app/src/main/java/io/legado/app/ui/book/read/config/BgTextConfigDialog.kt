@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.SeekBar
+import androidx.appcompat.widget.TooltipCompat
 import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
@@ -219,6 +220,9 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
                 .setDialogId(BG_COLOR)
                 .show(requireActivity())
+        }
+        binding.tvBgColor.apply {
+            TooltipCompat.setTooltipText(this, text)
         }
         binding.ivImport.setOnClickListener {
             selectImportDoc.launch {

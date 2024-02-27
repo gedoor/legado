@@ -1143,4 +1143,5 @@ Còn </string>
     <string name="create_heap_dump">创建堆转储</string>
     <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
     <string name="record_heap_dump_t">记录堆转储</string>
+    <string name="font_weight_text">中/粗/细</string>
 </resources>
