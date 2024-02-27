@@ -1,7 +1,7 @@
 # 源规则帮助
 
-* [书源帮助文档](https://celetor.github.io/teachme/Rule/source.html)
-* [订阅源帮助文档](https://celetor.github.io/teachme/Rule/rss.html)
+* [书源帮助文档](https://alanskycn.gitee.io/teachme/Rule/source.html)
+* [订阅源帮助文档](https://alanskycn.gitee.io/teachme/Rule/rss.html)
 * 辅助键盘❓中可插入URL参数模板,打开帮助,js教程,正则教程,选择文件
 * 规则标志, {{......}}内使用规则必须有明显的规则标志,没有规则标志当作js执行
 ```
