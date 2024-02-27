@@ -1,11 +1,15 @@
 package io.legado.app.ui.book.read.page.provider
 
+import io.legado.app.R
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.api.DataSource
 import io.legado.app.ui.book.read.page.api.PageFactory
 import io.legado.app.ui.book.read.page.entities.TextPage
+import splitties.init.appCtx
 
 class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource) {
+
+    private val keepSwipeTip = appCtx.getString(R.string.keep_swipe_tip)
 
     override fun hasPrev(): Boolean = with(dataSource) {
         return hasPrevChapter() || pageIndex > 0
@@ -148,7 +152,7 @@ class TextPageFactory(dataSource: DataSource) : PageFactory<TextPage>(dataSource
                             ?: TextPage(title = nc.title).format()
                     }
                     return@with nc.getPage(1)?.removePageAloudSpan()
-                        ?: TextPage(text = "继续滑动以加载下一章…").format()
+                        ?: TextPage(text = keepSwipeTip).format()
                 }
             }
             return TextPage().format()
