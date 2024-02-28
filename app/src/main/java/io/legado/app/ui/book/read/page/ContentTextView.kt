@@ -22,7 +22,6 @@ import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.widget.dialog.PhotoDialog
-import io.legado.app.utils.PictureMirror
 import io.legado.app.utils.activity
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.showDialogFragment
@@ -43,8 +42,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
     private var callBack: CallBack
     private val visibleRect = ChapterProvider.visibleRect
-    val selectStart = TextPos(0, 0, 0)
-    private val selectEnd = TextPos(0, 0, 0)
+    val selectStart = TextPos(0, -1, -1)
+    private val selectEnd = TextPos(0, -1, -1)
     var textPage: TextPage = TextPage()
         private set
     var isMainView = false
@@ -57,6 +56,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private val pageDelegate get() = callBack.pageDelegate
     private var pageOffset = 0
     private var autoPager: AutoPager? = null
+    private var isScroll = false
     private val renderRunnable by lazy { Runnable { preRenderPage() } }
 
     //绘制图片的paint
@@ -75,13 +75,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      */
     fun setContent(textPage: TextPage) {
         this.textPage = textPage
-        imagePaint.isAntiAlias = AppConfig.useAntiAlias
-        invalidate()
+        // 非滑动翻页动画需要同步重绘，不然翻页可能会出现闪烁
+        if (isScroll) {
+            postInvalidate()
+        } else {
+            invalidate()
+        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        if (!isMainView) return
         ChapterProvider.upViewSize(w, h)
         textPage.format()
     }
@@ -107,14 +110,19 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         //滚动翻页
         if (!pageFactory.hasNext()) return
         val textPage1 = relativePage(1)
-        relativeOffset = relativeOffset(1)
+        relativeOffset += textPage.height
         textPage1.draw(this, canvas, relativeOffset)
         if (!pageFactory.hasNextPlus()) return
-        relativeOffset = relativeOffset(2)
+        relativeOffset += textPage1.height
         if (relativeOffset < ChapterProvider.visibleHeight) {
             val textPage2 = relativePage(2)
             textPage2.draw(this, canvas, relativeOffset)
         }
+    }
+
+    override fun computeScroll() {
+        pageDelegate?.computeScroll()
+        autoPager?.computeOffset()
     }
 
     /**
@@ -125,7 +133,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * pageOffset + textPage.height 为 textPage 下方的高度
      */
     fun scroll(mOffset: Int) {
-        if (mOffset == 0) return
         pageOffset += mOffset
         if (longScreenshot) {
             scrollY += -mOffset
@@ -156,33 +163,34 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 pageDelegate?.abortAnim()
             }
         }
-        invalidate()
+        postInvalidate()
     }
 
-    fun submitPreRenderTask() {
-        if (PictureMirror.atLeastApi23) {
-            renderThread.submit(renderRunnable)
-        }
+    fun submitRenderTask() {
+        renderThread.submit(renderRunnable)
     }
 
     private fun preRenderPage() {
         val view = this
         var invalidate = false
         pageFactory.run {
-            hasPrev() && prevPage.preRender(view)
-            if (curPage.preRender(view)) {
+            if (hasPrev() && prevPage.render(view)) {
                 invalidate = true
             }
-            if (hasNext() && nextPage.preRender(view) && callBack.isScroll) {
+            if (curPage.render(view)) {
                 invalidate = true
             }
-            if (hasNextPlus() && nextPlusPage.preRender(view) && callBack.isScroll
+            if (hasNext() && nextPage.render(view) && callBack.isScroll) {
+                invalidate = true
+            }
+            if (hasNextPlus() && nextPlusPage.render(view) && callBack.isScroll
                 && relativeOffset(2) < ChapterProvider.visibleHeight
             ) {
                 invalidate = true
             }
             if (invalidate) {
                 postInvalidate()
+                pageDelegate?.postInvalidate()
             }
         }
     }
@@ -208,7 +216,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 is TextColumn -> {
                     if (!selectAble) return@touch
                     column.selected = true
-                    invalidate()
                     select(textPos)
                 }
             }
@@ -254,7 +261,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         touchRough(x, y) { _, textPos, _, _, column ->
             if (column is TextColumn) {
                 column.selected = true
-                invalidate()
                 select(textPos)
             }
         }
@@ -530,6 +536,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     private fun upSelectChars() {
+        if (!selectStart.isSelected() || !selectEnd.isSelected()) {
+            return
+        }
         val last = if (callBack.isScroll) 2 else 0
         val textPos = TextPos(0, 0, 0)
         for (relativePos in 0..last) {
@@ -557,7 +566,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
             }
         }
-        invalidate()
+        postInvalidate()
     }
 
     private fun upSelectedStart(x: Float, y: Float, top: Float) {
@@ -593,7 +602,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 }
             }
         }
-        invalidate()
+        selectStart.reset()
+        selectEnd.reset()
+        postInvalidate()
         callBack.onCancelSelect()
     }
 
@@ -647,7 +658,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     fun createBookmark(): Bookmark? {
         val page = relativePage(selectStart.relativePagePos)
-        page.getTextChapter()?.let { chapter ->
+        page.getTextChapter().let { chapter ->
             ReadBook.book?.let { book ->
                 return book.createBookMark().apply {
                     chapterIndex = page.chapterIndex
@@ -679,6 +690,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
     fun setAutoPager(autoPager: AutoPager?) {
         this.autoPager = autoPager
+    }
+
+    fun setIsScroll(value: Boolean) {
+        isScroll = value
     }
 
     override fun canScrollVertically(direction: Int): Boolean {

@@ -3,13 +3,11 @@ package io.legado.app.ui.book.read.page.provider
 import android.text.TextPaint
 import android.util.SparseArray
 import androidx.core.util.getOrDefault
-import java.util.BitSet
 import kotlin.math.ceil
 
 class TextMeasure(private var paint: TextPaint) {
 
     private var chineseCommonWidth = paint.measureText("一")
-    private val chineseCommonWidthBitSet = BitSet()
     private val asciiWidths = FloatArray(128) { -1f }
     private val codePointWidths = SparseArray<Float>()
 
@@ -17,7 +15,8 @@ class TextMeasure(private var paint: TextPaint) {
         if (codePoint < 128) {
             return asciiWidths[codePoint]
         }
-        if (chineseCommonWidthBitSet[codePoint]) {
+        // 中文 Unicode 范围 U+4E00 - U+9FA5
+        if (codePoint in 19968 .. 40869) {
             return chineseCommonWidth
         }
         return codePointWidths.getOrDefault(codePoint, -1f)
@@ -33,7 +32,8 @@ class TextMeasure(private var paint: TextPaint) {
             if (charArray[i].isLowSurrogate()) continue
             val width = ceil(widths[i])
             widthsList.add(width)
-            if (width == 0f && widthsList.size > 0) {
+            // 可能需要检查是否不可见字符
+            if (width == 0f && widthsList.size > 1) {
                 val lastIndex = widthsList.lastIndex
                 buf[0] = codePoints[lastIndex - 1]
                 widthsList[lastIndex - 1] = paint.measureText(String(buf, 0, 1))
@@ -46,8 +46,6 @@ class TextMeasure(private var paint: TextPaint) {
             val width = widthsList[i]
             if (codePoint < 128) {
                 asciiWidths[codePoint] = width
-            } else if (width == chineseCommonWidth) {
-                chineseCommonWidthBitSet.set(codePoint)
             } else {
                 codePointWidths[codePoint] = width
             }
@@ -138,7 +136,6 @@ class TextMeasure(private var paint: TextPaint) {
 
     private fun invalidate() {
         chineseCommonWidth = paint.measureText("一")
-        chineseCommonWidthBitSet.clear()
         codePointWidths.clear()
         asciiWidths.fill(-1f)
     }

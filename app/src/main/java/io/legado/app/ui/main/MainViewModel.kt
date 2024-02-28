@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.LinkedList
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.math.min
 
@@ -46,7 +47,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private var poolSize = min(threadCount, AppConst.MAX_THREAD)
     private var upTocPool = Executors.newFixedThreadPool(poolSize).asCoroutineDispatcher()
     private val waitUpTocBooks = LinkedList<String>()
-    private val onUpTocBooks = hashSetOf<String>()
+    private val onUpTocBooks = ConcurrentHashMap.newKeySet<String>()
     val onUpBooksLiveData = MutableLiveData<Int>()
     private var upTocJob: Job? = null
     private var cacheBookJob: Job? = null
@@ -110,10 +111,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 while (true) {
                     emit(waitUpTocBooks.poll() ?: break)
                 }
-            }.onEach {
+            }.onEachParallel(threadCount) {
                 onUpTocBooks.add(it)
                 postEvent(EventBus.UP_BOOKSHELF, it)
-            }.onEachParallel(threadCount) {
                 updateToc(it)
             }.onEach {
                 onUpTocBooks.remove(it)

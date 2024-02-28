@@ -1,17 +1,21 @@
 package io.legado.app.ui.book.read.page.entities
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.text.Layout
 import android.text.StaticLayout
 import androidx.annotation.Keep
 import androidx.core.graphics.withTranslation
 import io.legado.app.R
+import io.legado.app.help.PaintPool
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ContentTextView
+import io.legado.app.ui.book.read.page.entities.TextChapter.Companion.emptyTextChapter
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
-import io.legado.app.utils.PictureMirror
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
+import io.legado.app.utils.canvasrecorder.recordIfNeeded
+import io.legado.app.utils.dpToPx
 import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
@@ -26,7 +30,6 @@ data class TextPage(
     var text: String = appCtx.getString(R.string.data_loading),
     var title: String = appCtx.getString(R.string.data_loading),
     private val textLines: ArrayList<TextLine> = arrayListOf(),
-    var pageSize: Int = 0,
     var chapterSize: Int = 0,
     var chapterIndex: Int = 0,
     var height: Float = 0f,
@@ -43,9 +46,14 @@ data class TextPage(
     val charSize: Int get() = text.length.coerceAtLeast(1)
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
-    var pictureMirror: PictureMirror = PictureMirror()
+    var canvasRecorder = CanvasRecorderFactory.create(true)
     var doublePage = false
-    var paddingTop = 0
+    var paddingTop = ChapterProvider.paddingTop
+    var isCompleted = false
+
+    @JvmField
+    var textChapter = emptyTextChapter
+    val pageSize get() = textChapter.pageSize
 
     val paragraphs by lazy {
         paragraphsInternal
@@ -161,6 +169,7 @@ data class TextPage(
             }
             height = ChapterProvider.visibleHeight.toFloat()
             invalidate()
+            isCompleted = true
         }
         return this
     }
@@ -247,31 +256,42 @@ data class TextPage(
     /**
      * @return 页面所在章节
      */
-    fun getTextChapter(): TextChapter? {
-        ReadBook.curTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
-        }
-        ReadBook.nextTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
-        }
-        ReadBook.prevTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
-        }
-        return null
+    fun getTextChapter(): TextChapter {
+        return textChapter
+    }
+
+    /**
+     * 判断章节字符位置是否在这一页中
+     *
+     * @param chapterPos 章节字符位置
+     * @return
+     */
+    fun containPos(chapterPos: Int): Boolean {
+        val line = lines.first()
+        val startPos = line.chapterPosition
+        val endPos = startPos + charSize
+        return chapterPos in startPos..<endPos
     }
 
     fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
-        val height = height.toInt()
+        render(view)
         canvas.withTranslation(0f, relativeOffset + paddingTop) {
-            pictureMirror.drawLocked(canvas, view.width, height) {
-                drawPage(view, this)
-            }
+            canvasRecorder.draw(this)
+        }
+    }
+
+    private fun drawDebugInfo(canvas: Canvas) {
+        ChapterProvider.run {
+            val paint = PaintPool.obtain()
+            paint.style = Paint.Style.STROKE
+            canvas.drawRect(
+                paddingLeft.toFloat(),
+                0f,
+                (paddingLeft + visibleWidth).toFloat(),
+                height - 1.dpToPx(),
+                paint
+            )
+            PaintPool.recycle(paint)
         }
     }
 
@@ -284,20 +304,15 @@ data class TextPage(
         }
     }
 
-    fun preRender(view: ContentTextView): Boolean {
-        if (!pictureMirror.isDirty) return false
-        pictureMirror.drawLocked(null, view.width, height.toInt()) {
+    fun render(view: ContentTextView): Boolean {
+        if (!isCompleted) return false
+        return canvasRecorder.recordIfNeeded(view.width, height.toInt()) {
             drawPage(view, this)
         }
-        return true
-    }
-
-    fun isDirty(): Boolean {
-        return pictureMirror.isDirty
     }
 
     fun invalidate() {
-        pictureMirror.invalidate()
+        canvasRecorder.invalidate()
     }
 
     fun invalidateAll() {
@@ -307,10 +322,10 @@ data class TextPage(
         invalidate()
     }
 
-    fun recyclePictures() {
-        pictureMirror.recycle()
+    fun recycleRecorders() {
+        canvasRecorder.recycle()
         for (i in lines.indices) {
-            lines[i].recyclePicture()
+            lines[i].recycleRecorder()
         }
     }
 

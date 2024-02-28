@@ -42,12 +42,12 @@ import java.util.Locale
 @Suppress("DEPRECATION", "ConstPropertyName")
 object ChapterProvider {
     //用于图片字的替换
-    private const val srcReplaceChar = "▩"
+    const val srcReplaceChar = "▩"
 
     //用于评论按钮的替换
-    private const val reviewChar = "▨"
+    const val reviewChar = "▨"
 
-    private const val indentChar = "　"
+    const val indentChar = "　"
 
     @JvmStatic
     var viewWidth = 0
@@ -94,25 +94,31 @@ object ChapterProvider {
         private set
 
     @JvmStatic
-    private var paragraphSpacing = 0
+    var paragraphSpacing = 0
+        private set
 
     @JvmStatic
-    private var titleTopSpacing = 0
+    var titleTopSpacing = 0
+        private set
 
     @JvmStatic
-    private var titleBottomSpacing = 0
+    var titleBottomSpacing = 0
+        private set
 
     @JvmStatic
-    private var indentCharWidth = 0f
+    var indentCharWidth = 0f
+        private set
 
     @JvmStatic
     var titlePaintTextHeight = 0f
+        private set
 
     @JvmStatic
     var contentPaintTextHeight = 0f
+        private set
 
     @JvmStatic
-    private var titlePaintFontMetrics = FontMetrics()
+    var titlePaintFontMetrics = FontMetrics()
 
     @JvmStatic
     var contentPaintFontMetrics = FontMetrics()
@@ -136,9 +142,6 @@ object ChapterProvider {
 
     @JvmStatic
     var visibleRect = RectF()
-
-    private val titleMeasureHelper = TextMeasure(titlePaint)
-    private val contentMeasureHelper = TextMeasure(contentPaint)
 
     init {
         upStyle()
@@ -169,7 +172,6 @@ object ChapterProvider {
                     textPages,
                     stringBuilder,
                     titlePaint,
-                    titleMeasureHelper,
                     titlePaintTextHeight,
                     titlePaintFontMetrics,
                     isTitle = true,
@@ -207,7 +209,6 @@ object ChapterProvider {
                     textPages,
                     stringBuilder,
                     contentPaint,
-                    contentMeasureHelper,
                     contentPaintTextHeight,
                     contentPaintFontMetrics,
                     srcList = srcList
@@ -229,7 +230,6 @@ object ChapterProvider {
                             textPages,
                             stringBuilder,
                             contentPaint,
-                            contentMeasureHelper,
                             contentPaintTextHeight,
                             contentPaintFontMetrics
                         ).let {
@@ -261,7 +261,6 @@ object ChapterProvider {
                             textPages,
                             stringBuilder,
                             contentPaint,
-                            contentMeasureHelper,
                             contentPaintTextHeight,
                             contentPaintFontMetrics
                         ).let {
@@ -285,7 +284,7 @@ object ChapterProvider {
         textPage.text = stringBuilder.toString()
         textPages.forEachIndexed { index, item ->
             item.index = index
-            item.pageSize = textPages.size
+            //item.pageSize = textPages.size
             item.chapterIndex = bookChapter.index
             item.chapterSize = chapterSize
             item.title = displayTitle
@@ -297,12 +296,33 @@ object ChapterProvider {
         return TextChapter(
             bookChapter,
             bookChapter.index, displayTitle,
-            textPages, chapterSize,
+            //textPages,
+            chapterSize,
             bookContent.sameTitleRemoved,
             bookChapter.isVip,
             bookChapter.isPay,
             bookContent.effectiveReplaceRules
         )
+    }
+
+    fun getTextChapterAsync(
+        bookChapter: BookChapter,
+        displayTitle: String,
+        bookContent: BookContent,
+        chapterSize: Int,
+    ): TextChapter {
+
+        val textChapter = TextChapter(
+            bookChapter,
+            bookChapter.index, displayTitle,
+            chapterSize,
+            bookContent.sameTitleRemoved,
+            bookChapter.isVip,
+            bookChapter.isPay,
+            bookContent.effectiveReplaceRules
+        )
+
+        return textChapter
     }
 
     /**
@@ -403,7 +423,6 @@ object ChapterProvider {
         textPages: ArrayList<TextPage>,
         stringBuilder: StringBuilder,
         textPaint: TextPaint,
-        measureHelper: TextMeasure,
         textHeight: Float,
         fontMetrics: FontMetrics,
         isTitle: Boolean = false,
@@ -413,7 +432,7 @@ object ChapterProvider {
     ): Pair<Int, Float> {
         var absStartX = x
         val layout = if (ReadBookConfig.useZhLayout) {
-            ZhLayout(text, textPaint, visibleWidth, measureHelper)
+            ZhLayout(text, textPaint, visibleWidth, emptyList(), emptyList())
         } else {
             StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
         }
@@ -471,7 +490,7 @@ object ChapterProvider {
             val lineStart = layout.getLineStart(lineIndex)
             val lineEnd = layout.getLineEnd(lineIndex)
             val lineText = text.substring(lineStart, lineEnd)
-            val (words, widths) = measureHelper.measureTextSplit(lineText)
+            val (words, widths) = measureTextSplit(lineText, textPaint)
             val desiredWidth = widths.fastSum()
             when {
                 lineIndex == 0 && layout.lineCount > 1 && !isTitle -> {
@@ -690,39 +709,6 @@ object ChapterProvider {
         exceed(absStartX, textLine, words)
     }
 
-    fun getStringArrayAndTextWidths(
-        text: String,
-        textWidths: List<Float>,
-        textPaint: TextPaint
-    ): Pair<List<String>, List<Float>> {
-        val charArray = text.toCharArray()
-        val strList = ArrayList<String>(text.length)
-        val textWidthList = ArrayList<Float>(text.length)
-        val lastIndex = charArray.lastIndex
-        var ca: CharArray? = null
-        for (i in textWidths.indices) {
-            if (charArray[i].isLowSurrogate()) {
-                continue
-            }
-            val char = if (i + 1 <= lastIndex && charArray[i + 1].isLowSurrogate()) {
-                if (ca == null) ca = CharArray(2)
-                System.arraycopy(charArray, i, ca, 0, 2)
-                String(ca)
-            } else {
-                charArray[i].toString()
-            }
-            val w = textWidths[i]
-            if (w == 0f && textWidthList.size > 0) {
-                textWidthList[textWidthList.lastIndex] = textPaint.measureText(strList.last())
-                textWidthList.add(textPaint.measureText(char))
-            } else {
-                textWidthList.add(w)
-            }
-            strList.add(char)
-        }
-        return strList to textWidthList
-    }
-
     /**
      * 添加字符
      */
@@ -784,6 +770,28 @@ object ChapterProvider {
         }
     }
 
+    fun measureTextSplit(
+        text: String,
+        paint: TextPaint
+    ): Pair<ArrayList<String>, ArrayList<Float>> {
+        val length = text.length
+        val widthsArray = FloatArray(length)
+        paint.getTextWidths(text, widthsArray)
+        val clusterCount = widthsArray.count { it > 0f }
+        val widths = ArrayList<Float>(clusterCount)
+        val stringList = ArrayList<String>(clusterCount)
+        var i = 0
+        while (i < length) {
+            val clusterBaseIndex = i++
+            widths.add(widthsArray[clusterBaseIndex])
+            while (i < length && widthsArray[i] == 0f) {
+                i++
+            }
+            stringList.add(text.substring(clusterBaseIndex, i))
+        }
+        return stringList to widths
+    }
+
     /**
      * 更新样式
      */
@@ -792,8 +800,6 @@ object ChapterProvider {
         getPaints(typeface).let {
             titlePaint = it.first
             contentPaint = it.second
-            titleMeasureHelper.setPaint(titlePaint)
-            contentMeasureHelper.setPaint(contentPaint)
 //            reviewPaint.color = contentPaint.color
 //            reviewPaint.textSize = contentPaint.textSize * 0.45f
 //            reviewPaint.textAlign = Paint.Align.CENTER
@@ -870,6 +876,7 @@ object ChapterProvider {
         tPaint.typeface = titleFont
         tPaint.textSize = with(ReadBookConfig) { textSize + titleSize }.toFloat().spToPx()
         tPaint.isAntiAlias = true
+        tPaint.isLinearText = true
         //正文
         val cPaint = TextPaint()
         cPaint.color = ReadBookConfig.textColor
@@ -877,6 +884,7 @@ object ChapterProvider {
         cPaint.typeface = textFont
         cPaint.textSize = ReadBookConfig.textSize.toFloat().spToPx()
         cPaint.isAntiAlias = true
+        cPaint.isLinearText = true
         return Pair(tPaint, cPaint)
     }
 
@@ -888,7 +896,7 @@ object ChapterProvider {
             viewWidth = width
             viewHeight = height
             upLayout()
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayOf(5))
         }
     }
 

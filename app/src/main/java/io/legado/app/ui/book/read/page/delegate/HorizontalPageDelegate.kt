@@ -1,18 +1,16 @@
 package io.legado.app.ui.book.read.page.delegate
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.view.MotionEvent
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
 import io.legado.app.utils.screenshot
 
 abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
-    protected var curBitmap: Bitmap? = null
-    protected var prevBitmap: Bitmap? = null
-    protected var nextBitmap: Bitmap? = null
-    protected var canvas: Canvas = Canvas()
+    protected val curRecorder = CanvasRecorderFactory.create()
+    protected val prevRecorder = CanvasRecorderFactory.create()
+    protected val nextRecorder = CanvasRecorderFactory.create()
     private val slopSquare get() = readView.pageSlopSquare2
 
     override fun setDirection(direction: PageDirection) {
@@ -23,13 +21,13 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
     open fun setBitmap() {
         when (mDirection) {
             PageDirection.PREV -> {
-                prevBitmap = prevPage.screenshot(prevBitmap, canvas)
-                curBitmap = curPage.screenshot(curBitmap, canvas)
+                prevPage.screenshot(prevRecorder)
+                curPage.screenshot(curRecorder)
             }
 
             PageDirection.NEXT -> {
-                nextBitmap = nextPage.screenshot(nextBitmap, canvas)
-                curBitmap = curPage.screenshot(curBitmap, canvas)
+                nextPage.screenshot(nextRecorder)
+                curPage.screenshot(curRecorder)
             }
 
             else -> Unit
@@ -140,12 +138,9 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
 
     override fun onDestroy() {
         super.onDestroy()
-        prevBitmap?.recycle()
-        prevBitmap = null
-        curBitmap?.recycle()
-        curBitmap = null
-        nextBitmap?.recycle()
-        nextBitmap = null
+        prevRecorder.recycle()
+        curRecorder.recycle()
+        nextRecorder.recycle()
     }
 
 }

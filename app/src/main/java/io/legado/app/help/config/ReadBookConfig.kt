@@ -567,7 +567,6 @@ object ReadBookConfig {
                     textColorInt = color
                 }
             }
-            ChapterProvider.upStyle()
         }
 
         fun curTextColor(): Int {

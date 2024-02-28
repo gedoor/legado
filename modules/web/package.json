@@ -26,16 +26,16 @@
     "vue3-virtual-scroll-list": "^0.2.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue": "^5.0.4",
     "eslint": "^8.40.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vue": "^9.12.0",
     "prettier": "^3.0.0",
     "sass": "^1.62.1",
-    "unplugin-auto-import": "^0.16.0",
-    "unplugin-icons": "^0.16.1",
-    "unplugin-vue-components": "^0.25.0",
-    "vite": "^4.3.5"
+    "unplugin-auto-import": "^0.17.5",
+    "unplugin-icons": "^0.18.5",
+    "unplugin-vue-components": "^0.26.0",
+    "vite": "^5.1.3"
   }
 }

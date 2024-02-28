@@ -4,7 +4,7 @@
 * js参数
 ```
 speakText //朗读文本
-speakSpeed //朗读速度,0-45
+speakSpeed //朗读速度,5-50
 ```
 * 例:
 ```

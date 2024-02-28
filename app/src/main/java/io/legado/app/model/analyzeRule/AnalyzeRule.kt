@@ -197,7 +197,7 @@ class AnalyzeRule(
                         }
                         if (sourceRule.replaceRegex.isNotEmpty() && result is List<*>) {
                             val newList = ArrayList<String>()
-                            for (item in result as List<*>) {
+                            for (item in result) {
                                 newList.add(replaceRegex(item.toString(), sourceRule))
                             }
                             result = newList
@@ -210,12 +210,12 @@ class AnalyzeRule(
         }
         if (result == null) return null
         if (result is String) {
-            result = (result as String).split("\n")
+            result = result.split("\n")
         }
         if (isUrl) {
             val urlList = ArrayList<String>()
             if (result is List<*>) {
-                for (url in result as List<*>) {
+                for (url in result) {
                     val absoluteURL = NetworkUtils.getAbsoluteURL(redirectUrl, url.toString())
                     if (absoluteURL.isNotEmpty() && !urlList.contains(absoluteURL)) {
                         urlList.add(absoluteURL)

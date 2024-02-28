@@ -82,7 +82,6 @@ class AutoPager(private val readView: ReadView) {
         }
 
         if (readView.isScroll) {
-            computeOffset()
             if (!isPausing) readView.curPage.scroll(-scrollOffset)
         } else {
             val bottom = progress
@@ -112,13 +111,15 @@ class AutoPager(private val readView: ReadView) {
                 bottom.toFloat(),
                 paint
             )
-            if (!isPausing) readView.invalidate()
-            computeOffset()
+            if (!isPausing) readView.postInvalidate()
         }
 
     }
 
-    private fun computeOffset() {
+    fun computeOffset() {
+        if (!isRunning) {
+            return
+        }
 
         val currentTime = SystemClock.uptimeMillis()
         val elapsedTime = currentTime - lastTimeMillis

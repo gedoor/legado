@@ -8,6 +8,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
+import io.legado.app.help.SymmetricCryptoAndroid
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.SharedJsScope
@@ -106,6 +107,7 @@ interface BaseSource : JsExtensions {
                             it.lastIndexOf("<")
                         )
                     ).toString()
+
                     else -> it
                 }
             ).getOrNull()?.let { map ->
@@ -176,7 +178,7 @@ interface BaseSource : JsExtensions {
     fun putLoginInfo(info: String): Boolean {
         return try {
             val key = (AppConst.androidId).encodeToByteArray(0, 16)
-            val encodeStr = AES(key).encryptBase64(info)
+            val encodeStr = SymmetricCryptoAndroid("AES", key).encryptBase64(info)
             CacheManager.put("userInfo_${getKey()}", encodeStr)
             true
         } catch (e: Exception) {

@@ -109,21 +109,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 loadChapterList(book)
             }
-        } else if (book.isLocal
-            && LocalBook.getLastModified(book).getOrDefault(0L) > book.latestChapterTime
-        ) {
+        } else if (book.isLocalModified()) {
             loadChapterList(book)
         } else if (isSameBook) {
-            if (ReadBook.curTextChapter != null) {
-                ReadBook.callBack?.upContent(resetPageOffset = false)
-            } else {
-                ReadBook.loadContent(resetPageOffset = true)
-            }
+            ReadBook.loadOrUpContent()
             checkLocalBookFileExist(book)
         } else {
-            if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
-                ReadBook.durChapterIndex = ReadBook.chapterSize - 1
-            }
             ReadBook.loadContent(resetPageOffset = false)
             checkLocalBookFileExist(book)
         }
@@ -317,16 +308,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
-        if (index < ReadBook.chapterSize) {
-            ReadBook.clearTextChapter()
-            ReadBook.callBack?.upContent()
-            ReadBook.durChapterIndex = index
-            ReadBook.durChapterPos = durChapterPos
-            ReadBook.saveRead()
-            ReadBook.loadContent(resetPageOffset = true) {
-                success?.invoke()
-            }
-        }
+        ReadBook.openChapter(index, durChapterPos, success)
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
@@ -440,7 +422,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         var curLine = curTextLines[lineIndex]
         length = length - currentPage.text.length + curLine.text.length
         if (curLine.isParagraphEnd) length++
-        while (length < contentPosition && lineIndex + 1 < curTextLines.size) {
+        while (length <= contentPosition && lineIndex + 1 < curTextLines.size) {
             lineIndex += 1
             curLine = curTextLines[lineIndex]
             length += curLine.text.length

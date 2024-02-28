@@ -138,7 +138,7 @@ android {
 dependencies {
     compileOnly "com.android.tools.build:gradle:$agp_version"
     //noinspection GradleDependency,GradlePackageUpdate
-    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.3')
+    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.4')
     testImplementation('junit:junit:4.13.2')
     androidTestImplementation('androidx.test:runner:1.5.2')
     androidTestImplementation('androidx.test.ext:junit:1.1.5')
@@ -174,7 +174,7 @@ dependencies {
     implementation('com.google.code.gson:gson:2.10.1')
 
     //lifecycle
-    def lifecycle_version = '2.6.2'
+    def lifecycle_version = '2.7.0'
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
 
@@ -204,7 +204,7 @@ dependencies {
 
     //规则相关
     implementation('org.jsoup:jsoup:1.16.2')
-    implementation('com.jayway.jsonpath:json-path:2.8.0')
+    implementation('com.jayway.jsonpath:json-path:2.9.0')
     implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
     implementation(project(path: ':modules:book'))
 
@@ -212,9 +212,9 @@ dependencies {
     implementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
-    implementation('com.squareup.okhttp3:okhttp:4.11.0')
+    implementation('com.squareup.okhttp3:okhttp:4.12.0')
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    implementation 'com.google.protobuf:protobuf-javalite:3.24.3'
+    implementation 'com.google.protobuf:protobuf-javalite:3.25.3'
 
     //Glide
     def glideVersion = "4.16.0"

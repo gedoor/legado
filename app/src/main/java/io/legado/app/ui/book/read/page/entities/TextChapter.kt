@@ -2,9 +2,14 @@ package io.legado.app.ui.book.read.page.entities
 
 
 import androidx.annotation.Keep
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.ReplaceRule
+import io.legado.app.help.book.BookContent
+import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
+import io.legado.app.ui.book.read.page.provider.TextChapterLayout
 import io.legado.app.utils.fastBinarySearchBy
+import kotlinx.coroutines.CoroutineScope
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -17,14 +22,18 @@ data class TextChapter(
     val chapter: BookChapter,
     val position: Int,
     val title: String,
-    val pages: List<TextPage>,
     val chaptersSize: Int,
     val sameTitleRemoved: Boolean,
     val isVip: Boolean,
     val isPay: Boolean,
     //起效的替换规则
     val effectiveReplaceRules: List<ReplaceRule>?
-) {
+) : LayoutProgressListener {
+
+    private val textPages = arrayListOf<TextPage>()
+    val pages: List<TextPage> get() = textPages
+
+    private var layout: TextChapterLayout? = null
 
     fun getPage(index: Int): TextPage? {
         return pages.getOrNull(index)
@@ -41,6 +50,10 @@ data class TextChapter(
     val lastReadLength: Int get() = getReadLength(lastIndex)
 
     val pageSize: Int get() = pages.size
+
+    var listener: LayoutProgressListener? = null
+
+    var isCompleted = false
 
     val paragraphs by lazy {
         paragraphsInternal
@@ -79,6 +92,10 @@ data class TextChapter(
      * @return 是否是最后一页
      */
     fun isLastIndex(index: Int): Boolean {
+        return isCompleted && index >= pages.size - 1
+    }
+
+    fun isLastIndexCurrent(index: Int): Boolean {
         return index >= pages.size - 1
     }
 
@@ -87,6 +104,7 @@ data class TextChapter(
      * @return 已读长度
      */
     fun getReadLength(pageIndex: Int): Int {
+        if (pageIndex < 0) return 0
         return pages[min(pageIndex, lastIndex)].lines.first().chapterPosition
         /*
         var length = 0
@@ -190,15 +208,25 @@ data class TextChapter(
      * @return 根据索引位置获取所在页
      */
     fun getPageIndexByCharIndex(charIndex: Int): Int {
-        val index = pages.fastBinarySearchBy(charIndex) {
+        val pageSize = pages.size
+        if (pageSize == 0) {
+            return -1
+        }
+        val bIndex = pages.fastBinarySearchBy(charIndex, 0, pageSize) {
             it.lines.first().chapterPosition
         }
-        return if (index >= 0) {
-            index
-        } else {
-            abs(index + 1) - 1
+        val index = abs(bIndex + 1) - 1
+        // 判断是否已经排版到 charIndex ，没有则返回 -1
+        if (!isCompleted && index == pageSize - 1) {
+            val page = pages[index]
+            val line = page.lines.first()
+            val pageEndPos = line.chapterPosition + page.charSize
+            if (charIndex > pageEndPos) {
+                return -1
+            }
         }
-        /* 相当于以下实现
+        return index
+        /*
         var length = 0
         for (i in pages.indices) {
             val page = pages[i]
@@ -220,6 +248,59 @@ data class TextChapter(
             }
             page.searchResult.clear()
         }
+    }
+
+    fun createLayout(scope: CoroutineScope, book: Book, bookContent: BookContent) {
+        if (layout != null) {
+            throw IllegalStateException("已经排版过了")
+        }
+        layout = TextChapterLayout(
+            scope,
+            this,
+            textPages,
+            book,
+            bookContent,
+        )
+    }
+
+    fun setProgressListener(l: LayoutProgressListener?) {
+        if (isCompleted) {
+            // no op
+        } else if (layout?.exception != null) {
+            l?.onLayoutException(layout?.exception!!)
+        } else {
+            listener = l
+        }
+    }
+
+    override fun onLayoutPageCompleted(index: Int, page: TextPage) {
+        listener?.onLayoutPageCompleted(index, page)
+    }
+
+    override fun onLayoutCompleted() {
+        isCompleted = true
+        listener?.onLayoutCompleted()
+        listener = null
+    }
+
+    override fun onLayoutException(e: Throwable) {
+        listener?.onLayoutException(e)
+        listener = null
+    }
+
+    fun cancelLayout() {
+        layout?.cancel()
+        listener = null
+    }
+
+    companion object {
+        val emptyTextChapter = TextChapter(
+            BookChapter(), -1, "emptyTextChapter", -1,
+            sameTitleRemoved = false,
+            isVip = false,
+            isPay = false,
+            null
+        ).apply { isCompleted = true }
     }
 
 }

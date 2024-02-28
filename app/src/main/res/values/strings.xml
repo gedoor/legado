@@ -42,7 +42,7 @@
     <string name="favorite">Favorite</string>
     <string name="in_favorites">in Favorites</string>
     <string name="out_favorites">Not in Favorites</string>
-    <string name="rss">Subscription</string>
+    <string name="rss">RSS feeds</string>
     <string name="all">All</string>
     <string name="recent_reading">Recent reading</string>
     <string name="last_read">Last reading</string>
@@ -173,7 +173,7 @@
     <string name="edit_book_source">Edit Book source</string>
     <string name="disable_book_source">Disable Book source</string>
     <string name="add_book_source">Add Book source</string>
-    <string name="add_rss_source">Add subscription source</string>
+    <string name="add_rss_source">Add RSS source</string>
     <string name="book_file_selector">Add books</string>
     <string name="scan_book_source">Scan</string>
     <string name="copy_source">Copy source</string>
@@ -276,7 +276,7 @@
     <string name="bookshelf_management">Bookshelf management</string>
     <string name="clear_bookshelf_s">It will delete all books. Be careful,please.</string>
     <string name="search_book_source">Search book sources</string>
-    <string name="search_rss_source">Search subscription sources</string>
+    <string name="search_rss_source">Search RSS sources</string>
     <string name="search_book_source_num">Search( %d sources in total)</string>
     <string name="chapter_list_size">Chapters(%d)</string>
     <string name="text_bold">Bold</string>
@@ -288,10 +288,10 @@
     <string name="bottom">Bottom</string>
     <string name="top">Top</string>
     <string name="padding">Padding</string>
-    <string name="padding_top">Padding top</string>
-    <string name="padding_bottom">Padding bottom</string>
-    <string name="padding_left">Padding left</string>
-    <string name="padding_right">Padding right</string>
+    <string name="padding_top">Top</string>
+    <string name="padding_bottom">Bottom</string>
+    <string name="padding_left">Left</string>
+    <string name="padding_right">Right</string>
     <string name="check_book_source">Check book sources</string>
     <string name="check_select_source">Check the selected source</string>
     <string name="progress_show">%1$s      Progress %2$d/%3$d</string>
@@ -600,8 +600,8 @@
     <string name="web_dav_url">WebDav server address</string>
     <string name="web_dav_account">WebDav account</string>
     <string name="web_dav_account_s">Input your WebDav account</string>
-    <string name="rss_source">Subscription source</string>
-    <string name="rss_source_edit">Edit Subscription source</string>
+    <string name="rss_source">RSS source</string>
+    <string name="rss_source_edit">Edit RSS source</string>
     <string name="screen">Filter</string>
     <string name="screen_find">Search Discovery sources</string>
     <string name="dur_pos">Current location：</string>
@@ -627,14 +627,14 @@
     <string name="next_sentence">Next sentence</string>
     <string name="other_folder">Other folder</string>
     <string name="text_too_long_qr_error">There are too many words to create a QR code</string>
-    <string name="share_rss_source">Subscription sources sharing</string>
+    <string name="share_rss_source">RSS sources sharing</string>
     <string name="share_book_source">Book sources sharing</string>
     <string name="auto_dark_mode">Automatic switching dark mode</string>
     <string name="auto_dark_mode_s">Following system dark mode</string>
     <string name="go_back">Go back</string>
     <string name="tone_colour">Online Speech tone</string>
     <string name="select_count">(%1$d/%2$d)</string>
-    <string name="show_rss">Display Subscription</string>
+    <string name="show_rss">Show RSS feeds</string>
     <string name="service_stop">Service stopped</string>
     <string name="service_start">Starting service\nChecking notification bar for details</string>
     <string name="default_path">Default path</string>
@@ -808,7 +808,7 @@
     <string name="non_action">None</string>
     <string name="body_title">Title</string>
     <string name="show_hide">Show/Hide</string>
-    <string name="header_footer">footer <![CDATA[&]]> header</string>
+    <string name="header_footer">Footer <![CDATA[&]]> Header</string>
     <string name="rule_subscription">Rule Subscription</string>
     <string name="rule_sub_empty_msg">Add the rule import address provided by the bosses\nClick to import rules after adding</string>
     <string name="get_book_progress">Pull the cloud  progress</string>
@@ -854,12 +854,12 @@
     <string name="list_src">List source code</string>
     <string name="title_font_size">Font size</string>
     <string name="title_margin_top">Margin top</string>
-    <string name="title_margin_bottom">Marigin bottom</string>
+    <string name="title_margin_bottom">Margin bottom</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
     <string name="reverse_toc">Reverse toc</string>
-    <string name="show_discovery">Show</string>
+    <string name="show_discovery">Show Discovery</string>
     <string name="style">Style</string>
     <string name="group_style">Group style</string>
     <string name="export_file_name">Export file name</string>
@@ -1064,7 +1064,7 @@
     <string name="replace_state_change">Replace (enable / disable)</string>
     <string name="show_last_update_time">Show last updated time</string>
     <string name="refresh_list">Refresh list</string>
-    <string name="tip_divider_color">Separator color</string>
+    <string name="tip_divider_color">Divider color</string>
     <string name="same_title_removed">Remove duplicate title</string>
     <string name="update_book_fail">Update failed</string>
     <string name="notification_permission_rationale">Reading requires sending notifications to show reading control and download progress</string>
@@ -1143,8 +1143,10 @@
     <string name="adjust_chapter_index">Adjust of chapter index</string>
     <string name="clear_webview_data_success">Cleared successfully, automatically restarts the application after 3 seconds</string>
     <string name="key_page_on_long_press">Press and hold the key to turn the page</string>
-    <string name="save_log">保存日志</string>
-    <string name="create_heap_dump">创建堆转储</string>
-    <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
-    <string name="record_heap_dump_t">记录堆转储</string>
+    <string name="save_log">Save logs</string>
+    <string name="create_heap_dump">Create heap dump</string>
+    <string name="record_heap_dump_s">Saving a heap dump when the application crashes by OOM</string>
+    <string name="record_heap_dump_t">Capture heap dump</string>
+    <string name="font_weight_text">N/B/L</string>
+    <string name="keep_swipe_tip">Keep swiping to load the next chapter…</string>
 </resources>
