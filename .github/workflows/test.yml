@@ -149,7 +149,9 @@ jobs:
       ylogin: ${{ secrets.LANZOU_ID }}
       phpdisk_info: ${{ secrets.LANZOU_PSD }}
       # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
-      LANZOU_FOLDER_ID: '8782634'
+      LANZOU_FOLDER_ID: ${{ secrets.LANZOU_FOLDER_ID }}
+      #蓝奏云分享链接
+      LANZOU_URL: ${{ secrets.LANZOU_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -162,7 +164,7 @@ jobs:
         run: |
           path="$GITHUB_WORKSPACE/apk/"
           python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
-          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://miaogongzi.lanzout.com/b01rgkhhe"
+          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: $LANZOU_URL"
 
   test_Branch:
     needs: [ prepare, build ]
