@@ -399,8 +399,11 @@ class TextChapterLayout(
         srcList: LinkedList<String>? = null
     ): Pair<Int, Float> {
         var absStartX = x
+        val widthsArray = FloatArray(text.length)
+        textPaint.getTextWidths(text, widthsArray)
         val layout = if (ReadBookConfig.useZhLayout) {
-            ZhLayout(text, textPaint, visibleWidth)
+            val (words, widths) = measureTextSplit(text, widthsArray)
+            ZhLayout(text, textPaint, visibleWidth, words, widths)
         } else {
             StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
         }
@@ -431,7 +434,6 @@ class TextChapterLayout(
 
             else -> y
         }
-        val (strList, widthList) = measureTextSplit(text, textPaint)
         for (lineIndex in 0 until layout.lineCount) {
             val textLine = TextLine(isTitle = isTitle)
             if (durY + textHeight > visibleHeight) {
@@ -462,8 +464,7 @@ class TextChapterLayout(
             val lineStart = layout.getLineStart(lineIndex)
             val lineEnd = layout.getLineEnd(lineIndex)
             val lineText = text.substring(lineStart, lineEnd)
-            val words = strList.subList(lineStart, lineEnd)
-            val widths = widthList.subList(lineStart, lineEnd)
+            val (words, widths) = measureTextSplit(lineText, widthsArray, lineStart)
             val desiredWidth = widths.fastSum()
             textLine.text = lineText
             when {
@@ -763,22 +764,24 @@ class TextChapterLayout(
 
     private fun measureTextSplit(
         text: String,
-        paint: TextPaint
+        widthsArray: FloatArray,
+        start: Int = 0
     ): Pair<ArrayList<String>, ArrayList<Float>> {
         val length = text.length
-        val widthsArray = FloatArray(length)
-        paint.getTextWidths(text, widthsArray)
-        val clusterCount = widthsArray.count { it > 0f }
+        var clusterCount = 0
+        for (i in start..<start + length) {
+            if (widthsArray[i] > 0) clusterCount++
+        }
         val widths = ArrayList<Float>(clusterCount)
         val stringList = ArrayList<String>(clusterCount)
-        var i = 0
-        while (i < length) {
+        var i = start
+        while (i < start + length) {
             val clusterBaseIndex = i++
             widths.add(widthsArray[clusterBaseIndex])
             while (i < length && widthsArray[i] == 0f) {
                 i++
             }
-            stringList.add(text.substring(clusterBaseIndex, i))
+            stringList.add(text.substring(clusterBaseIndex - start, i - start))
         }
         return stringList to widths
     }
