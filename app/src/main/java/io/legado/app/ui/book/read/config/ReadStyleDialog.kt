@@ -111,7 +111,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             postEvent(EventBus.UP_CONFIG, arrayOf(5))
         }
         textFontWeightConverter.onChanged {
-            postEvent(EventBus.UP_CONFIG, arrayOf(8))
+            postEvent(EventBus.UP_CONFIG, arrayOf(8, 9, 6))
         }
         tvTextFont.setOnClickListener {
             showDialogFragment<FontSelectDialog>()
