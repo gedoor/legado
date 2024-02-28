@@ -432,7 +432,7 @@ object ChapterProvider {
     ): Pair<Int, Float> {
         var absStartX = x
         val layout = if (ReadBookConfig.useZhLayout) {
-            ZhLayout(text, textPaint, visibleWidth)
+            ZhLayout(text, textPaint, visibleWidth, emptyList(), emptyList())
         } else {
             StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
         }

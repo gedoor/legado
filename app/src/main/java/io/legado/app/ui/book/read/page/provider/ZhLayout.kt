@@ -16,6 +16,8 @@ class ZhLayout(
     text: CharSequence,
     textPaint: TextPaint,
     width: Int,
+    words: List<String>,
+    widths: List<Float>
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
     companion object {
         private val postPanc = hashSetOf(
@@ -49,7 +51,6 @@ class ZhLayout(
 
     init {
         var line = 0
-        val (words, widths) = ChapterProvider.measureTextSplit(text as String, textPaint)
         var lineW = 0f
         var cwPre = 0f
         var length = 0
