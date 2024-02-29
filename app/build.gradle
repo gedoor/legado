@@ -260,7 +260,7 @@ dependencies {
     implementation('cn.hutool:hutool-crypto:5.8.22')
 
     //firebase, 崩溃统计和性能统计
-    implementation platform('com.google.firebase:firebase-bom:32.5.0')
+    implementation platform('com.google.firebase:firebase-bom:32.7.3')
     implementation 'com.google.firebase:firebase-analytics:21.5.0'
     implementation 'com.google.firebase:firebase-perf:20.5.1'
 
