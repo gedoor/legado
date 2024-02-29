@@ -33,6 +33,6 @@ android {
 dependencies {
     api(fileTree(dir: 'lib', include: ['rhino-1.7.13-2.jar']))
 
-    def coroutines_version = '1.7.3'
+    def coroutines_version = '1.8.0'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
 }
