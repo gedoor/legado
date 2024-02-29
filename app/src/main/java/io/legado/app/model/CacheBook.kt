@@ -68,13 +68,14 @@ object CacheBook {
         }
     }
 
-    fun start(context: Context, book: Book, start: Int, end: Int) {
+    fun start(context: Context, book: Book, start: Int, end: Int, startDownload: Boolean = true) {
         if (!book.isLocal) {
             context.startService<CacheBookService> {
                 action = IntentAction.start
                 putExtra("bookUrl", book.bookUrl)
                 putExtra("start", start)
                 putExtra("end", end)
+                putExtra("startDownload", startDownload)
             }
         }
     }
@@ -177,6 +178,7 @@ object CacheBook {
                     waitDownloadSet.add(i)
                 }
             }
+            cacheBookMap[book.bookUrl] = this
             postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
         }
 

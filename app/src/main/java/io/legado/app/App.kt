@@ -1,6 +1,7 @@
 package io.legado.app
 
 import android.app.Application
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -142,7 +143,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
-            importance = NotificationManager.IMPORTANCE_LOW
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
 
         val readAloudChannel = NotificationChannel(
@@ -153,7 +154,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
-            importance = NotificationManager.IMPORTANCE_LOW
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
 
         val webChannel = NotificationChannel(
@@ -164,7 +165,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
-            importance = NotificationManager.IMPORTANCE_LOW
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
 
         //向notification manager 提交channel

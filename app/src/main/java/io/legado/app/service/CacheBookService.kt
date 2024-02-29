@@ -80,7 +80,8 @@ class CacheBookService : BaseService() {
                 IntentAction.start -> addDownloadData(
                     intent.getStringExtra("bookUrl"),
                     intent.getIntExtra("start", 0),
-                    intent.getIntExtra("end", 0)
+                    intent.getIntExtra("end", 0),
+                    intent.getBooleanExtra("startDownload", true)
                 )
 
                 IntentAction.remove -> removeDownload(intent.getStringExtra("bookUrl"))
@@ -98,7 +99,7 @@ class CacheBookService : BaseService() {
         postEvent(EventBus.UP_DOWNLOAD, "")
     }
 
-    private fun addDownloadData(bookUrl: String?, start: Int, end: Int) {
+    private fun addDownloadData(bookUrl: String?, start: Int, end: Int, startDownload: Boolean) {
         bookUrl ?: return
         execute {
             val cacheBook = CacheBook.getOrCreate(bookUrl) ?: return@execute
