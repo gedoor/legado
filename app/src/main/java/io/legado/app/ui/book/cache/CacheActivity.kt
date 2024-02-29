@@ -158,14 +158,12 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         when (item.itemId) {
             R.id.menu_download -> {
                 if (!CacheBook.isRun) {
-                    val lastIndex = adapter.itemCount - 1
-                    adapter.getItems().forEachIndexed { index, book ->
+                    adapter.getItems().forEach { book ->
                         CacheBook.start(
                             this@CacheActivity,
                             book,
                             book.durChapterIndex,
-                            book.lastChapterIndex,
-                            index == lastIndex
+                            book.lastChapterIndex
                         )
                     }
                 } else {

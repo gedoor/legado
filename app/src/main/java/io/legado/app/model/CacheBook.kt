@@ -68,14 +68,13 @@ object CacheBook {
         }
     }
 
-    fun start(context: Context, book: Book, start: Int, end: Int, startDownload: Boolean = true) {
+    fun start(context: Context, book: Book, start: Int, end: Int) {
         if (!book.isLocal) {
             context.startService<CacheBookService> {
                 action = IntentAction.start
                 putExtra("bookUrl", book.bookUrl)
                 putExtra("start", start)
                 putExtra("end", end)
-                putExtra("startDownload", startDownload)
             }
         }
     }
