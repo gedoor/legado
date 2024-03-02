@@ -188,9 +188,9 @@ data class TextChapter(
         pageSplit: Boolean,
     ): Int {
         val paragraphs = if (pageSplit) {
-            pageParagraphs
+            if (isCompleted) pageParagraphs else pageParagraphsInternal
         } else {
-            paragraphs
+            if (isCompleted) paragraphs else pageParagraphsInternal
         }
         paragraphs.forEach { paragraph ->
             if (position in paragraph.chapterIndices) {
