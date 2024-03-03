@@ -121,7 +121,8 @@ class CacheBookService : BaseService() {
                             book.totalChapterNum = 0
                             book.save()
                         }
-                        AppLog.put("《$name》目录为空且加载目录失败\n${it.localizedMessage}", it, true)
+                        val msg = "《$name》目录为空且加载目录失败\n${it.localizedMessage}"
+                        AppLog.put(msg, it, true)
                         return@execute
                     }.getOrNull()?.let { toc ->
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
@@ -137,8 +138,10 @@ class CacheBookService : BaseService() {
             cacheBook.addDownload(start, end2)
             notificationContent = CacheBook.downloadSummary
             upCacheBookNotification()
-            if (downloadJob == null) {
-                download()
+            synchronized(this) {
+                if (downloadJob == null) {
+                    download()
+                }
             }
         }
     }

@@ -177,6 +177,7 @@ object CacheBook {
                     waitDownloadSet.add(i)
                 }
             }
+            cacheBookMap[book.bookUrl] = this
             postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
         }
 

@@ -624,7 +624,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
             pagePos--
         }
         val startPos = curPage.textPage.getPosByLineColumn(line, column)
-        ReadAloud.play(context, startPos = startPos)
+        ReadBook.readAloud(startPos = startPos)
     }
 
     /**

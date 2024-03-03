@@ -32,7 +32,7 @@ object ChineseUtils {
     fun fixT2sDict() {
         val dict = DictionaryContainer.getInstance().getDictionary(TransType.TRADITIONAL_TO_SIMPLE)
         dict.run {
-            remove("劈", "脊")
+            remove("劈", "脊", "槃")
             remove("支援", "沈默", "類比", "模擬", "划槳", "列根", "先進")
             remove("路易斯", "非同步", "出租车", "周杰倫")
         }

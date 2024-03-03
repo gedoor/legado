@@ -38,7 +38,9 @@ abstract class BaseService : LifecycleService() {
 
     @CallSuper
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        LogUtils.d(simpleName, "onStartCommand $intent")
+        LogUtils.d(simpleName) {
+            "onStartCommand $intent ${intent?.toUri(0)}"
+        }
         startForegroundNotification()
         return super.onStartCommand(intent, flags, startId)
     }

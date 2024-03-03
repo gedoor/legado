@@ -342,7 +342,8 @@ object ReadBook : CoroutineScope by MainScope() {
      * 朗读
      */
     fun readAloud(play: Boolean = true, startPos: Int = 0) {
-        book?.let {
+        book ?: return
+        if (isLayoutAvailable) {
             ReadAloud.play(appCtx, play, startPos = startPos)
         }
     }

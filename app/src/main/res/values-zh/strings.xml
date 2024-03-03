@@ -194,7 +194,7 @@
     <string name="replace_rule">替换规则</string>
     <string name="replace_to">替换为</string>
     <string name="img_cover">封面</string>
-    <string name="book">书</string>
+   <string name="book">书</string>
     <string name="volume_key_page">音量键翻页</string>
     <string name="mouse_wheel_page">鼠标滚轮翻页</string>
     <string name="click_turn_page">点击翻页</string>

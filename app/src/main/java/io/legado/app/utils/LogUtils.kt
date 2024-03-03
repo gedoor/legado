@@ -25,12 +25,18 @@ object LogUtils {
         logger.log(Level.INFO, "$tag $msg")
     }
 
+    inline fun d(tag: String, lazyMsg: () -> String) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.log(Level.INFO, "$tag ${lazyMsg()}")
+        }
+    }
+
     @JvmStatic
     fun e(tag: String, msg: String) {
         logger.log(Level.WARNING, "$tag $msg")
     }
 
-    private val logger: Logger by lazy {
+    val logger: Logger by lazy {
         Logger.getGlobal().apply {
             fileHandler?.let {
                 addHandler(it)
