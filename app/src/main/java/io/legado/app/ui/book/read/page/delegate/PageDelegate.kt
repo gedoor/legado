@@ -83,11 +83,9 @@ abstract class PageDelegate(protected val readView: ReadView) {
 
     protected fun stopScroll() {
         isStarted = false
-        readView.post {
-            isMoved = false
-            isRunning = false
-            readView.invalidate()
-        }
+        isMoved = false
+        isRunning = false
+        readView.postInvalidate()
     }
 
     @CallSuper
@@ -193,8 +191,10 @@ abstract class PageDelegate(protected val readView: ReadView) {
     fun postInvalidate() {
         if (isRunning && this is HorizontalPageDelegate) {
             readView.post {
-                setBitmap()
-                readView.invalidate()
+                if (isRunning) {
+                    setBitmap()
+                    readView.invalidate()
+                }
             }
         }
     }
