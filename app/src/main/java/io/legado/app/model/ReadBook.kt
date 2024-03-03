@@ -560,7 +560,11 @@ object ReadBook : CoroutineScope by MainScope() {
                         }
                         callBack?.onLayoutPageCompleted(index, page)
                     }
-                    if (upContent) callBack?.upContent(offset, false)
+                    if (upContent) callBack?.upContent(offset, !available && resetPageOffset)
+                    if (!available) {
+                        curPageChanged()
+                        callBack?.contentLoadFinish()
+                    }
                 }
 
                 -1 -> {
