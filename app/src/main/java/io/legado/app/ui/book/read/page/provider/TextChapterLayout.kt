@@ -26,6 +26,7 @@ import io.legado.app.utils.fastSum
 import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import java.util.LinkedList
@@ -78,6 +79,8 @@ class TextChapterLayout(
 
     var exception: Throwable? = null
 
+    var channel = Channel<TextPage>(Int.MAX_VALUE)
+
     init {
         job = Coroutine.async(scope) {
             launch {
@@ -124,6 +127,7 @@ class TextChapterLayout(
         textPage.isCompleted = true
         textPage.textChapter = textChapter
         textPage.upLinesPosition()
+        channel.trySend(textPage)
         try {
             listener?.onLayoutPageCompleted(textPages.lastIndex, textPage)
         } catch (e: Exception) {
@@ -133,6 +137,7 @@ class TextChapterLayout(
     }
 
     private fun onCompleted() {
+        channel.close()
         try {
             listener?.onLayoutCompleted()
         } catch (e: Exception) {
@@ -144,6 +149,7 @@ class TextChapterLayout(
     }
 
     private fun onException(e: Throwable) {
+        channel.close(e)
         if (e is CancellationException) {
             listener = null
             return
