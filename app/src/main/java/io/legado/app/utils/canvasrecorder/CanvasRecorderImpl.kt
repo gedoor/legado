@@ -15,6 +15,9 @@ class CanvasRecorderImpl : BaseCanvasRecorder() {
     override val height get() = bitmap?.height ?: -1
 
     private fun init(width: Int, height: Int) {
+        if (width <= 0 || height <= 0) {
+            return
+        }
         if (bitmap == null) {
             bitmap = BitmapPool.obtain(width, height)
         }
@@ -34,13 +37,13 @@ class CanvasRecorderImpl : BaseCanvasRecorder() {
 
     override fun beginRecording(width: Int, height: Int): Canvas {
         init(width, height)
-        bitmap!!.eraseColor(Color.TRANSPARENT)
-        canvas = canvasPool.obtain().apply { setBitmap(bitmap!!) }
+        bitmap?.eraseColor(Color.TRANSPARENT)
+        canvas = canvasPool.obtain().apply { setBitmap(bitmap) }
         return canvas!!
     }
 
     override fun endRecording() {
-        bitmap!!.prepareToDraw()
+        bitmap?.prepareToDraw()
         super.endRecording()
         canvasPool.recycle(canvas!!)
         canvas = null

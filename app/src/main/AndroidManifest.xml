@@ -179,7 +179,7 @@
         <!-- 配置界面 -->
         <activity
             android:name=".ui.config.ConfigActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="standard" />
         <!-- 搜索界面 -->
         <activity
             android:name=".ui.book.search.SearchActivity"

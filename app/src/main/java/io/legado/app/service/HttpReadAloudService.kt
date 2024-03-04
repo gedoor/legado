@@ -12,7 +12,6 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.HttpTTS
-import io.legado.app.exception.ConcurrentException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -194,7 +193,6 @@ class HttpReadAloudService : BaseReadAloudService(),
             } catch (e: Exception) {
                 when (e) {
                     is CancellationException -> throw e
-                    is ConcurrentException -> delay(e.waitTime.toLong())
                     is ScriptException, is WrappedException -> {
                         AppLog.put("js错误\n${e.localizedMessage}", e, true)
                         e.printOnDebug()
