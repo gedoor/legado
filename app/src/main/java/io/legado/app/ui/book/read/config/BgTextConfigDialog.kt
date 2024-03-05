@@ -190,7 +190,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 if (i >= 0) {
                     ReadBookConfig.durConfig = defaultConfigs[i].copy().apply { initColorInt() }
                     initData()
-                    postEvent(EventBus.UP_CONFIG, arrayOf(1, 2, 5))
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
                 }
             }
         }
@@ -200,7 +200,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         binding.swUnderline.setOnCheckedChangeListener { _, isChecked ->
             underline = isChecked
-            postEvent(EventBus.UP_CONFIG, arrayOf(9, 11))
+            postEvent(EventBus.UP_CONFIG, arrayListOf(9, 11))
         }
         binding.tvTextColor.setOnClickListener {
             ColorPickerDialog.newBuilder()
@@ -239,7 +239,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         binding.ivDelete.setOnClickListener {
             if (ReadBookConfig.deleteDur()) {
-                postEvent(EventBus.UP_CONFIG, arrayOf(1, 2, 5))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
                 dismissAllowingStateLoss()
             } else {
                 toastOnUi("数量已是最少,不能删除.")
@@ -248,11 +248,11 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         binding.sbBgAlpha.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 ReadBookConfig.bgAlpha = progress
-                postEvent(EventBus.UP_CONFIG, arrayOf(3))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(3))
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                postEvent(EventBus.UP_CONFIG, arrayOf(3))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(3))
             }
         })
     }
@@ -382,7 +382,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             ReadBookConfig.import(byteArray).getOrThrow()
         }.onSuccess {
             ReadBookConfig.durConfig = it
-            postEvent(EventBus.UP_CONFIG, arrayOf(1, 2, 5))
+            postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
             toastOnUi("导入成功")
         }.onError {
             it.printOnDebug()
@@ -403,7 +403,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                     inputStream.copyTo(outputStream)
                 }
                 ReadBookConfig.durConfig.setCurBg(2, fileName)
-                postEvent(EventBus.UP_CONFIG, arrayOf(1))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(1))
             }.onFailure {
                 appCtx.toastOnUi(it.localizedMessage)
             }

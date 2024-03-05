@@ -107,12 +107,12 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.readBodyToLh -> activity?.recreate()
                 PreferKey.hideStatusBar -> {
                     ReadBookConfig.hideStatusBar = getPrefBoolean(PreferKey.hideStatusBar)
-                    postEvent(EventBus.UP_CONFIG, arrayOf(0))
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(0))
                 }
 
                 PreferKey.hideNavigationBar -> {
                     ReadBookConfig.hideNavigationBar = getPrefBoolean(PreferKey.hideNavigationBar)
-                    postEvent(EventBus.UP_CONFIG, arrayOf(0))
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(0))
                 }
 
                 PreferKey.keepLight -> postEvent(key, true)
@@ -124,7 +124,7 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.textFullJustify,
                 PreferKey.textBottomJustify,
                 PreferKey.useZhLayout -> {
-                    postEvent(EventBus.UP_CONFIG, arrayOf(5))
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(5))
                 }
 
                 PreferKey.showBrightnessView -> {
@@ -170,7 +170,7 @@ class MoreConfigDialog : DialogFragment() {
                         .setValue(AppConfig.pageTouchSlop)
                         .show {
                             AppConfig.pageTouchSlop = it
-                            postEvent(EventBus.UP_CONFIG, arrayOf(4))
+                            postEvent(EventBus.UP_CONFIG, arrayListOf(4))
                         }
                 }
             }

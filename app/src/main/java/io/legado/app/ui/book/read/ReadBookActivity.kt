@@ -1306,24 +1306,24 @@ class ReadBookActivity : BaseReadBookActivity(),
         when (dialogId) {
             TEXT_COLOR -> {
                 setCurTextColor(color)
-                postEvent(EventBus.UP_CONFIG, arrayOf(2, 9, 11))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(2, 9, 11))
             }
 
             BG_COLOR -> {
                 setCurBg(0, "#${color.hexString}")
-                postEvent(EventBus.UP_CONFIG, arrayOf(1))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(1))
             }
 
             TIP_COLOR -> {
                 ReadTipConfig.tipColor = color
                 postEvent(EventBus.TIP_COLOR, "")
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(2))
             }
 
             TIP_DIVIDER_COLOR -> {
                 ReadTipConfig.tipDividerColor = color
                 postEvent(EventBus.TIP_COLOR, "")
-                postEvent(EventBus.UP_CONFIG, arrayOf(2))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(2))
             }
         }
     }
@@ -1492,7 +1492,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 ReadBook.readAloud(!BaseReadAloudService.pause)
             }
         }
-        observeEvent<Array<Int>>(EventBus.UP_CONFIG) {
+        observeEvent<ArrayList<Int>>(EventBus.UP_CONFIG) {
             it.forEach { value ->
                 when (value) {
                     0 -> upSystemUiVisibility()
