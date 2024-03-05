@@ -343,11 +343,7 @@ object ReadBook : CoroutineScope by MainScope() {
     fun readAloud(play: Boolean = true, startPos: Int = 0) {
         book ?: return
         if (isLayoutAvailable) {
-            if (!BaseReadAloudService.isRun) {
-                ReadAloud.play(appCtx, play, startPos = startPos)
-            } else {
-                ReadAloud.playByEventBus(play, startPos = startPos)
-            }
+            ReadAloud.play(appCtx, play, startPos = startPos)
         }
     }
 
