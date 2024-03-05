@@ -376,15 +376,14 @@ class HttpReadAloudService : BaseReadAloudService(),
             AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
             pauseReadAloud()
         } else {
-            deleteCurrentSpeakFile()
-            downloadAndPlayAudios()
+            if (exoPlayer.hasNextMediaItem()) {
+                exoPlayer.seekToNextMediaItem()
+                exoPlayer.playWhenReady = true
+                exoPlayer.prepare()
+            } else {
+                updateNextPos()
+            }
         }
-    }
-
-    private fun deleteCurrentSpeakFile() {
-        val mediaItem = exoPlayer.currentMediaItem ?: return
-        val filePath = mediaItem.localConfiguration!!.uri.path!!
-        File(filePath).delete()
     }
 
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
