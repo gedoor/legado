@@ -297,14 +297,12 @@ object ReadBook : CoroutineScope by MainScope() {
 
     fun recycleRecorders(beforeIndex: Int, afterIndex: Int) {
         executor.execute {
-            val textChapter = curTextChapter
-            if (textChapter != null) {
-                if (afterIndex > beforeIndex) {
-                    textChapter.getPage(afterIndex - 2)?.recycleRecorders()
-                }
-                if (afterIndex < beforeIndex) {
-                    textChapter.getPage(afterIndex + 3)?.recycleRecorders()
-                }
+            val textChapter = curTextChapter ?: return@execute
+            if (afterIndex > beforeIndex) {
+                textChapter.getPage(afterIndex - 2)?.recycleRecorders()
+            }
+            if (afterIndex < beforeIndex) {
+                textChapter.getPage(afterIndex + 3)?.recycleRecorders()
             }
         }
     }

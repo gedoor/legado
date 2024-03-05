@@ -314,8 +314,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                     pageIndex++
                     if (pageIndex < textChapter.pageSize) {
                         ReadBook.moveToNextPage()
+                        upTtsProgress(readAloudNumber + i.toInt())
                     }
-                    upTtsProgress(readAloudNumber + i.toInt())
                 }
                 delay(sleep)
             }
@@ -360,6 +360,9 @@ class HttpReadAloudService : BaseReadAloudService(),
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
+        if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
+            playErrorNo = 0
+        }
         updateNextPos()
         upPlayPos()
     }
@@ -371,11 +374,17 @@ class HttpReadAloudService : BaseReadAloudService(),
         if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})")
             AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
-            ReadAloud.pause(this)
+            pauseReadAloud()
         } else {
-            updateNextPos()
-            exoPlayer.seekToNextMediaItem()
+            deleteCurrentSpeakFile()
+            downloadAndPlayAudios()
         }
+    }
+
+    private fun deleteCurrentSpeakFile() {
+        val mediaItem = exoPlayer.currentMediaItem ?: return
+        val filePath = mediaItem.localConfiguration!!.uri.path!!
+        File(filePath).delete()
     }
 
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {

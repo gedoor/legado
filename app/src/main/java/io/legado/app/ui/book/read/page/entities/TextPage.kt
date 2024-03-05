@@ -194,7 +194,7 @@ data class TextPage(
         for (index in textLines.indices) {
             val textLine = textLines[index]
             val lineLength = textLine.text.length + if (textLine.isParagraphEnd) 1 else 0
-            if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + lineLength) {
+            if (aloudSpanStart >= lineStart && aloudSpanStart < lineStart + lineLength) {
                 for (i in index - 1 downTo 0) {
                     if (textLines[i].isParagraphEnd) {
                         break
