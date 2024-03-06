@@ -9,6 +9,8 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,18 +59,26 @@ public class PackageDocumentReader extends PackageDocumentBase {
 
         Document packageDocument = ResourceUtil.getAsDocument(packageResource);
         String packageHref = packageResource.getHref();
-        resources = fixHrefs(packageHref, resources);
+
+        URI packagePath;
+        try {
+            packagePath = new URI(packageHref);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        //resources = fixHrefs(packageHref, resources);
         readGuide(packageDocument, epubReader, book, resources);
 
         // Books sometimes use non-identifier ids. We map these here to legal ones
         Map<String, String> idMapping = new HashMap<>();
         String version = DOMUtil.getAttribute(packageDocument.getDocumentElement(), PREFIX_OPF, PackageDocumentBase.version);
 
-        resources = readManifest(packageDocument, packageHref, epubReader,
+        resources = readManifest(packageDocument, packageHref, packagePath, epubReader,
                 resources, idMapping);
         book.setResources(resources);
         book.setVersion(version);
-        readCover(packageDocument, book);
+        readCover(packageDocument, packagePath, book);
         book.setMetadata(
                 PackageDocumentMetadataReader.readMetadata(packageDocument));
         book.setSpine(readSpine(packageDocument, book.getResources(), idMapping));
@@ -136,6 +146,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
     @SuppressWarnings("unused")
     private static Resources readManifest(Document packageDocument,
                                           String packageHref,
+                                          URI packagePath,
                                           EpubReader epubReader, Resources resources,
                                           Map<String, String> idMapping) {
         Element manifestElement = DOMUtil
@@ -156,7 +167,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                     .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
 
             try {
-                href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
+                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -412,7 +423,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
      * @return all resources that have something to do with the coverpage and the cover image.
      */
     // package
-    static Set<String> findCoverHrefs(Document packageDocument) {
+    static Set<String> findCoverHrefs(Document packageDocument, URI packagePath) {
 
         Set<String> result = new HashSet<>();
 
@@ -428,10 +439,11 @@ public class PackageDocumentReader extends PackageDocumentBase {
                             OPFTags.item, OPFAttributes.id, coverResourceId,
                             OPFAttributes.href);
             if (StringUtil.isNotBlank(coverHref)) {
-                result.add(coverHref);
+                result.add(packagePath.resolve(coverHref).toString());
             } else {
+                String resolved = packagePath.resolve(coverResourceId).toString();
                 result.add(
-                        coverResourceId); // maybe there was a cover href put in the cover id attribute
+                        resolved); // maybe there was a cover href put in the cover id attribute
             }
         }
         // try and find a reference tag with type is 'cover' and reference is not blank
@@ -440,7 +452,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                         OPFTags.reference, OPFAttributes.type, OPFValues.reference_cover,
                         OPFAttributes.href);
         if (StringUtil.isNotBlank(coverHref)) {
-            result.add(coverHref);
+            result.add(packagePath.resolve(coverHref).toString());
         }
         return result;
     }
@@ -452,9 +464,9 @@ public class PackageDocumentReader extends PackageDocumentBase {
      * @param packageDocument s
      * @param book            x
      */
-    private static void readCover(Document packageDocument, EpubBook book) {
+    private static void readCover(Document packageDocument, URI packagePath, EpubBook book) {
 
-        Collection<String> coverHrefs = findCoverHrefs(packageDocument);
+        Collection<String> coverHrefs = findCoverHrefs(packageDocument, packagePath);
         for (String coverHref : coverHrefs) {
             Resource resource = book.getResources().getByHref(coverHref);
             if (resource == null) {
