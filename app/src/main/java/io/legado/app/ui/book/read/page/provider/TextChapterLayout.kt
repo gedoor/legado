@@ -662,7 +662,7 @@ class TextChapterLayout(
             val textSize = textPaint.textSize
             textLine.extraLetterSpacing = d / textSize
             LogUtils.d("TextChapterLayout") {
-                "words:$words"
+                "words:${words.joinToString("")}"
             }
             LogUtils.d("TextChapterLayout") {
                 "textWidths:$textWidths"
