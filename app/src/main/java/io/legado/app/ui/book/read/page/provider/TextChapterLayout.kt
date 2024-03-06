@@ -665,7 +665,7 @@ class TextChapterLayout(
                 "words:${words.joinToString("")}"
             }
             LogUtils.d("TextChapterLayout") {
-                "textWidths:$textWidths"
+                "textWidths(${textWidths.fastSum()}):$textWidths"
             }
             LogUtils.d("TextChapterLayout") {
                 "textSize:$textSize desiredWidth:$desiredWidth residualWidth:$residualWidth " +
