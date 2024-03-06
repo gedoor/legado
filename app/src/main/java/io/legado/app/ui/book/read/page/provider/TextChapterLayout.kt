@@ -780,16 +780,28 @@ class TextChapterLayout(
         }
         val widths = ArrayList<Float>(clusterCount)
         val stringList = ArrayList<String>(clusterCount)
-        var i = start
-        while (i < start + length) {
+        var i = 0
+        while (i < length) {
             val clusterBaseIndex = i++
-            widths.add(widthsArray[clusterBaseIndex])
-            while (i < length && widthsArray[i] == 0f) {
+            widths.add(widthsArray[start + clusterBaseIndex])
+            while (i < length && widthsArray[start + i] == 0f && !isZeroWidthChar(text[i])) {
                 i++
             }
-            stringList.add(text.substring(clusterBaseIndex - start, i - start))
+            stringList.add(text.substring(clusterBaseIndex, i))
         }
         return stringList to widths
+    }
+
+    private fun isZeroWidthChar(char: Char): Boolean {
+        return zeroWidthCodePoints.binarySearch(char.code) >= 0
+    }
+
+    companion object {
+        val zeroWidthCodePoints = intArrayOf(
+            173, 1564, 1807, 6158, 8203, 8204, 8205, 8206, 8207, 8234,
+            8235, 8236, 8237, 8238, 8288, 8289, 8290, 8291, 8292, 8294,
+            8295, 8296, 8297, 8299, 8300, 8301, 8302, 8303, 65279, 65529
+        )
     }
 
 }
