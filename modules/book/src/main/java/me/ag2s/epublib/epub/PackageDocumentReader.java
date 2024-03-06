@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -97,6 +98,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
      */
     private static ArrayList<Element> ensureImageInfo(Resources resources,
                                                       Element manifestElement,
+                                                      URI packagePath,
                                                       Document packageDocument) {
         ArrayList<Element> fixedElements = new ArrayList<>();
         HashSet<String> originItemHrefSet = new HashSet<>();
@@ -108,7 +110,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
             fixedElements.add(itemElement);
             String href = DOMUtil.getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
             try {
-                href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
+                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -118,17 +120,25 @@ public class PackageDocumentReader extends PackageDocumentBase {
         //如果有图片资源未定义在 originItemElements ，则加入该图片信息得到 fixedElements 中
         for (Resource resource : resources.getAll()) {
             MediaType currentMediaType = resource.getMediaType();
-            if (MediaTypes.isImage(currentMediaType)) {
-                String imageHref = resource.getHref();
-                //确保该图片信息 resource 在原 originItemHrefSet 集合中没有出现过
-                if (!originItemHrefSet.contains(imageHref)) {
-                    Element tempElement = packageDocument.createElement("item");
-                    tempElement.setAttribute("id", resource.getId());
-                    tempElement.setAttribute("href", imageHref);
-                    tempElement.setAttribute("media-type", currentMediaType.getName());
-                    fixedElements.add(tempElement);
-                }
+            if (!MediaTypes.isImage(currentMediaType)) {
+                continue;
             }
+            String imageHref = resource.getHref();
+            //确保该图片信息 resource 在原 originItemHrefSet 集合中没有出现过
+            if (originItemHrefSet.contains(imageHref)) {
+                continue;
+            }
+            Element itemEl = packageDocument.createElement("item");
+            itemEl.setAttribute("id", resource.getId());
+            try {
+                imageHref = URLEncoder.encode(imageHref, Constants.CHARACTER_ENCODING);
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, e.getMessage());
+                continue;
+            }
+            itemEl.setAttribute("href", imageHref.replace("+", "%20"));
+            itemEl.setAttribute("media-type", currentMediaType.getName());
+            fixedElements.add(itemEl);
         }
         return fixedElements;
     }
@@ -158,7 +168,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                     "Package document does not contain element " + OPFTags.manifest);
             return result;
         }
-        List<Element> ensuredElements = ensureImageInfo(resources, manifestElement, packageDocument);
+        List<Element> ensuredElements = ensureImageInfo(resources, manifestElement, packagePath, packageDocument);
         for (Element itemElement : ensuredElements) {
 //            Element itemElement = ;
             String id = DOMUtil
