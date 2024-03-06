@@ -793,15 +793,8 @@ class TextChapterLayout(
     }
 
     private fun isZeroWidthChar(char: Char): Boolean {
-        return zeroWidthCodePoints.binarySearch(char.code) >= 0
-    }
-
-    companion object {
-        val zeroWidthCodePoints = intArrayOf(
-            173, 1564, 1807, 6158, 8203, 8204, 8205, 8206, 8207, 8234,
-            8235, 8236, 8237, 8238, 8288, 8289, 8290, 8291, 8292, 8294,
-            8295, 8296, 8297, 8299, 8300, 8301, 8302, 8303, 65279, 65529
-        )
+        val code = char.code
+        return code == 8203 || code == 8204 || code == 8288
     }
 
 }
