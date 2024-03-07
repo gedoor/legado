@@ -215,7 +215,9 @@ data class TextLine(
         if (exceed || !onlyTextColumn || textPage.isMsgPage) {
             return false
         }
-        if (!atLeastApi29 && wordSpacing != 0f) {
+        if (!atLeastApi26 && wordSpacing != 0f) {
+            return false
+        } else if (!wordSpacingWorking) {
             return false
         }
         return searchResultColumnCount == 0
@@ -234,9 +236,20 @@ data class TextLine(
         canvasRecorder.recycle()
     }
 
+    @SuppressLint("NewApi")
     companion object {
         val emptyTextLine = TextLine()
-        private val atLeastApi29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        private val atLeastApi26 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        private val wordSpacingWorking by lazy {
+            // issue 3785
+            val paint = PaintPool.obtain()
+            val text = "一二 三"
+            val width1 = paint.measureText(text)
+            paint.wordSpacing = 10f
+            val width2 = paint.measureText(text)
+            PaintPool.recycle(paint)
+            width2 - width1 == 10f
+        }
     }
 
 }

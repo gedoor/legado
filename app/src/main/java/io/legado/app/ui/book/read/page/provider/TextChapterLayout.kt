@@ -21,7 +21,6 @@ import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.column.ImageColumn
 import io.legado.app.ui.book.read.page.entities.column.ReviewColumn
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
-import io.legado.app.utils.LogUtils
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.fastSum
 import io.legado.app.utils.splitNotBlank
@@ -30,8 +29,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.LinkedList
 import java.util.Locale
 import kotlin.coroutines.coroutineContext
@@ -84,19 +81,13 @@ class TextChapterLayout(
 
     var channel = Channel<TextPage>(Int.MAX_VALUE)
 
-    companion object {
-        val lock = Mutex()
-    }
-
     init {
         job = Coroutine.async(scope) {
             launch {
                 val bookSource = book.getBookSource() ?: return@launch
                 BookHelp.saveImages(bookSource, book, bookChapter, bookContent.toString())
             }
-            lock.withLock {
-                getTextChapter(book, bookChapter, displayTitle, bookContent)
-            }
+            getTextChapter(book, bookChapter, displayTitle, bookContent)
         }.onError {
             exception = it
             onException(it)
@@ -659,20 +650,7 @@ class TextChapterLayout(
             val gapCount: Int = words.lastIndex
             val d = residualWidth / gapCount
             textLine.extraLetterSpacingOffsetX = -d / 2
-            val textSize = textPaint.textSize
-            textLine.extraLetterSpacing = d / textSize
-            LogUtils.d("TextChapterLayout") {
-                "words:${words.joinToString("")}"
-            }
-            LogUtils.d("TextChapterLayout") {
-                "textWidths(${textWidths.fastSum()}):$textWidths"
-            }
-            LogUtils.d("TextChapterLayout") {
-                "textSize:$textSize desiredWidth:$desiredWidth residualWidth:$residualWidth " +
-                        "gapCount:$gapCount d:$d " +
-                        "extraLetterSpacingOffsetX:${textLine.extraLetterSpacingOffsetX} " +
-                        "extraLetterSpacing:${textLine.extraLetterSpacing}"
-            }
+            textLine.extraLetterSpacing = d / textPaint.textSize
             var x = startX
             for (index in words.indices) {
                 val char = words[index]
