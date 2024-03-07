@@ -215,10 +215,10 @@ data class TextLine(
         if (exceed || !onlyTextColumn || textPage.isMsgPage) {
             return false
         }
-        if (!atLeastApi26 && wordSpacing != 0f) {
-            return false
-        } else if (!wordSpacingWorking) {
-            return false
+        if (wordSpacing != 0f) {
+            if (!atLeastApi26 || !wordSpacingWorking) {
+                return false
+            }
         }
         return searchResultColumnCount == 0
     }
