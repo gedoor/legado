@@ -21,6 +21,7 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.stackTraceStr
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
@@ -31,6 +32,7 @@ import java.util.regex.Pattern
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
+import kotlin.coroutines.CoroutineContext
 
 /**
  * 解析规则获取结果
@@ -65,6 +67,8 @@ class AnalyzeRule(
 
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
 
+    private var coroutineContext: CoroutineContext? = null
+
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("内容不可空（Content cannot be null）")
@@ -77,6 +81,11 @@ class AnalyzeRule(
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
+        return this
+    }
+
+    fun setCoroutineContext(context: CoroutineContext?): AnalyzeRule {
+        coroutineContext = context
         return this
     }
 
@@ -752,7 +761,7 @@ class AnalyzeRule(
         source?.getShareScope()?.let {
             scope.prototype = it
         }
-        return RhinoScriptEngine.eval(jsStr, scope)
+        return RhinoScriptEngine.eval(jsStr, scope, coroutineContext)
     }
 
     override fun getSource(): BaseSource? {
