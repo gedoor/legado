@@ -209,6 +209,6 @@ jobs:
         with:
           chat_id: ${{ secrets.CHANNEL_ID }}
           bot_token: ${{ secrets.BOT_TOKEN }}
-          context: "#阅读 #Beta ${{ needs.prepare.outputs.version }}"
+          context: "#阅读 #Legado #Beta ${{ needs.prepare.outputs.versionL }}"
           path: apk/*
           method: sendFile
