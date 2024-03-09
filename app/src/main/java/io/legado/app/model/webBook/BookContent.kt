@@ -57,6 +57,7 @@ object BookContent {
         val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body, baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
+        analyzeRule.setCoroutineContext(coroutineContext)
         analyzeRule.chapter = bookChapter
         analyzeRule.nextChapterUrl = mNextChapterUrl
         coroutineContext.ensureActive()
@@ -150,7 +151,7 @@ object BookContent {
     }
 
     @Throws(Exception::class)
-    private fun analyzeContent(
+    private suspend fun analyzeContent(
         book: Book,
         baseUrl: String,
         redirectUrl: String,
@@ -164,6 +165,7 @@ object BookContent {
     ): Pair<String, List<String>> {
         val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body, baseUrl)
+        analyzeRule.setCoroutineContext(coroutineContext)
         val rUrl = analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.nextChapterUrl = nextChapterUrl
         val nextUrlList = arrayListOf<String>()

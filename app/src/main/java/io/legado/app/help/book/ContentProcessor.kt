@@ -1,5 +1,6 @@
 package io.legado.app.help.book
 
+import android.os.Build
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.spaceRegex
 import io.legado.app.data.appDb
@@ -27,6 +28,7 @@ class ContentProcessor private constructor(
 
     companion object {
         private val processors = hashMapOf<String, WeakReference<ContentProcessor>>()
+        private val isAndroid8 = Build.VERSION.SDK_INT in 26..27
 
         fun get(book: Book) = get(book.name, book.origin)
 
@@ -181,6 +183,9 @@ class ContentProcessor private constructor(
                 getTitleReplaceRules(),
                 useReplace = useReplace && book.getUseReplaceRule()
             ) + "\n" + mContent
+        }
+        if (isAndroid8) {
+            mContent = mContent.replace('\u00A0', ' ')
         }
         val contents = arrayListOf<String>()
         mContent.split("\n").forEach { str ->

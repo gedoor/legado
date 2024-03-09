@@ -4,6 +4,7 @@
 package com.script
 
 import org.mozilla.javascript.Scriptable
+import kotlin.coroutines.CoroutineContext
 
 abstract class CompiledScript {
 
@@ -14,6 +15,9 @@ abstract class CompiledScript {
 
     @Throws(ScriptException::class)
     abstract fun eval(scope: Scriptable): Any?
+
+    @Throws(ScriptException::class)
+    abstract fun eval(scope: Scriptable, coroutineContext: CoroutineContext?): Any?
 
     @Throws(ScriptException::class)
     abstract suspend fun evalSuspend(scope: Scriptable): Any?

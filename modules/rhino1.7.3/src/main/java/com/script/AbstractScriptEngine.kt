@@ -6,6 +6,7 @@ package com.script
 import org.mozilla.javascript.Scriptable
 import java.io.Reader
 import java.io.StringReader
+import kotlin.coroutines.CoroutineContext
 
 abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngine {
 
@@ -62,6 +63,10 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
     @Throws(ScriptException::class)
     override fun eval(reader: Reader, context: ScriptContext): Any? {
         return this.eval(reader, getRuntimeScope(context))
+    }
+
+    override fun eval(script: String, scope: Scriptable, coroutineContext: CoroutineContext?): Any? {
+        return this.eval(StringReader(script), scope, coroutineContext)
     }
 
     @Throws(ScriptException::class)

@@ -69,7 +69,7 @@ object LogUtils {
             } else {
                 Level.OFF
             }
-        }
+        }.asynchronous()
     }
 
     private val consoleHandler by lazy {
@@ -85,7 +85,7 @@ object LogUtils {
             } else {
                 Level.OFF
             }
-        }
+        }.asynchronous()
     }
 
     fun upLevel() {

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.buildMainHandler
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withTimeoutOrNull
 import splitties.views.onLongClick
 import java.util.Collections
@@ -156,6 +157,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
                 } else {
                     DiffUtil.calculateDiff(callback)
                 }
+                ensureActive()
                 handler.post {
                     if (diffResult == null) {
                         setItems(items)

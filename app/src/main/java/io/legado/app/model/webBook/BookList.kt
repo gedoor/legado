@@ -45,6 +45,7 @@ object BookList {
         val analyzeRule = AnalyzeRule(ruleData, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
+        analyzeRule.setCoroutineContext(coroutineContext)
         if (isSearch) bookSource.bookUrlPattern?.let {
             coroutineContext.ensureActive()
             if (baseUrl.matches(it.toRegex())) {

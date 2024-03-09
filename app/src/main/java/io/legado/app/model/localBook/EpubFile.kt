@@ -16,7 +16,6 @@ import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
-import me.ag2s.epublib.util.StringUtil
 import me.ag2s.epublib.util.zip.AndroidZipFile
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -25,6 +24,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.Charset
 
@@ -245,11 +245,7 @@ class EpubFile(var book: Book) {
         }
         bodyElement.select("img").forEach {
             val src = it.attr("src")
-            val path = res.href.substringBeforeLast("/", "")
-            if (path.isNotEmpty()) {
-                val absSrc = StringUtil.collapsePathDots("$path/$src")
-                it.attr("src", absSrc)
-            }
+            it.attr("src", URI(res.href).resolve(src).toString())
         }
         return bodyElement
     }
