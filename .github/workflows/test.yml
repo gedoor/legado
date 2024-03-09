@@ -207,8 +207,8 @@ jobs:
       - name: Post to channel
         uses: xireiki/channel-post@v1
         with:
-          bot_token: ${{ secrets.CHANNEL_ID }}
-          chat_id: ${{ secrets.BOT_TOKEN }}
+          chat_id: ${{ secrets.CHANNEL_ID }}
+          bot_token: ${{ secrets.BOT_TOKEN }}
           context: "#阅读 #Beta ${{ needs.prepare.outputs.version }}"
           path: apk/*
           method: sendFile
