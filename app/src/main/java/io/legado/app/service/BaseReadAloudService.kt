@@ -36,6 +36,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.broadcastPendingIntent
 import io.legado.app.utils.getPrefBoolean
@@ -77,6 +78,8 @@ abstract class BaseReadAloudService : BaseService(),
             return isRun && !pause
         }
 
+        private const val TAG = "BaseReadAloudService"
+
     }
 
     private val useWakeLock = appCtx.getPrefBoolean(PreferKey.readAloudWakeLock, false)
@@ -88,9 +91,10 @@ abstract class BaseReadAloudService : BaseService(),
     }
     private val wifiLock by lazy {
         @Suppress("DEPRECATION")
-        wifiManager?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")?.apply {
-            setReferenceCounted(false)
-        }
+        wifiManager?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")
+            ?.apply {
+                setReferenceCounted(false)
+            }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
@@ -212,6 +216,13 @@ abstract class BaseReadAloudService : BaseService(),
                 }
             }
             nowSpeak = textChapter.getParagraphNum(readAloudNumber + 1, readAloudByPage) - 1
+            if (nowSpeak < 0) {
+                LogUtils.d(TAG) {
+                    "nowSpeak:$nowSpeak readAloudNumber:$readAloudNumber isCompleted:${textChapter.isCompleted} " +
+                            "pageSize:${textChapter.pageSize} \np1:${textChapter.paragraphsInternal}\n" +
+                            "p2:${textChapter.pageParagraphsInternal}"
+                }
+            }
             if (!readAloudByPage && startPos == 0 && !toLast) {
                 pos = page.lines.first().chapterPosition -
                         textChapter.paragraphs[nowSpeak].chapterPosition

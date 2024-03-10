@@ -201,6 +201,7 @@ object ReadBook : CoroutineScope by MainScope() {
             val nextPagePos = it.getNextPageLength(durChapterPos)
             if (nextPagePos >= 0) {
                 hasNextPage = true
+                curTextChapter?.getPage(durPageIndex)?.removePageAloudSpan()
                 durChapterPos = nextPagePos
                 callBack?.upContent()
                 saveRead(true)
