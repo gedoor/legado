@@ -77,6 +77,8 @@ abstract class BaseReadAloudService : BaseService(),
             return isRun && !pause
         }
 
+        private const val TAG = "BaseReadAloudService"
+
     }
 
     private val useWakeLock = appCtx.getPrefBoolean(PreferKey.readAloudWakeLock, false)
@@ -88,9 +90,10 @@ abstract class BaseReadAloudService : BaseService(),
     }
     private val wifiLock by lazy {
         @Suppress("DEPRECATION")
-        wifiManager?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")?.apply {
-            setReferenceCounted(false)
-        }
+        wifiManager?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")
+            ?.apply {
+                setReferenceCounted(false)
+            }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
         MediaHelp.buildAudioFocusRequestCompat(this)
@@ -108,7 +111,6 @@ abstract class BaseReadAloudService : BaseService(),
     private var cover: Bitmap =
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
     var pageChanged = false
-    private var ttsProgress = 0
     private var toLast = false
     var paragraphStartPos = 0
     private var readAloudByPage = false
@@ -182,7 +184,6 @@ abstract class BaseReadAloudService : BaseService(),
             IntentAction.pause -> pauseReadAloud()
             IntentAction.resume -> resumeReadAloud()
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
-            IntentAction.upTtsProgress -> upTtsProgress(ttsProgress)
             IntentAction.prevParagraph -> prevP()
             IntentAction.nextParagraph -> nextP()
             IntentAction.addTimer -> addTimer()
@@ -197,6 +198,9 @@ abstract class BaseReadAloudService : BaseService(),
             this@BaseReadAloudService.pageIndex = pageIndex
             textChapter = ReadBook.curTextChapter
             val textChapter = textChapter ?: return@execute
+            if (!textChapter.isCompleted) {
+                return@execute
+            }
             readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
             readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
             contentList = textChapter.getNeedReadAloud(0, readAloudByPage, 0)
@@ -278,7 +282,6 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun upSpeechRate(reset: Boolean = false)
 
     fun upTtsProgress(progress: Int) {
-        ttsProgress = progress
         postEvent(EventBus.TTS_PROGRESS, progress)
     }
 
@@ -289,11 +292,7 @@ abstract class BaseReadAloudService : BaseService(),
             readAloudNumber -= contentList[nowSpeak].length + 1 + paragraphStartPos
             paragraphStartPos = 0
             textChapter?.let {
-                val paragraphs = if (readAloudByPage) {
-                    it.pageParagraphs
-                } else {
-                    it.paragraphs
-                }
+                val paragraphs = it.getParagraphs(readAloudByPage)
                 if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber++
                 if (readAloudNumber < it.getReadLength(pageIndex)) {
                     pageIndex--
@@ -314,6 +313,14 @@ abstract class BaseReadAloudService : BaseService(),
             readAloudNumber += contentList[nowSpeak].length.plus(1) - paragraphStartPos
             paragraphStartPos = 0
             nowSpeak++
+            textChapter?.let {
+                val paragraphs = it.getParagraphs(readAloudByPage)
+                if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber--
+                if (readAloudNumber >= it.getReadLength(pageIndex + 1)) {
+                    pageIndex++
+                    ReadBook.moveToNextPage()
+                }
+            }
             upTtsProgress(readAloudNumber + 1)
             play()
         } else {

@@ -68,9 +68,11 @@ data class TextChapter(
     val paragraphsInternal: ArrayList<TextParagraph>
         get() {
             val paragraphs = arrayListOf<TextParagraph>()
-            pages.forEach {
-                it.lines.forEach loop@{ line ->
-                    if (line.paragraphNum <= 0) return@loop
+            for (i in pages.indices) {
+                val lines = pages[i].lines
+                for (a in lines.indices) {
+                    val line = lines[a]
+                    if (line.paragraphNum <= 0) continue
                     if (paragraphs.lastIndex < line.paragraphNum - 1) {
                         paragraphs.add(TextParagraph(line.paragraphNum))
                     }
@@ -81,12 +83,15 @@ data class TextChapter(
         }
 
     val pageParagraphsInternal: List<TextParagraph>
-        get() = pages.map {
-            it.paragraphs
-        }.flatten().also {
-            it.forEachIndexed { index, textParagraph ->
-                textParagraph.num = index + 1
+        get() {
+            val paragraphs = arrayListOf<TextParagraph>()
+            for (i in pages.indices) {
+                paragraphs.addAll(pages[i].paragraphs)
             }
+            for (i in paragraphs.indices) {
+                paragraphs[i].num = i + 1
+            }
+            return paragraphs
         }
 
     /**
@@ -189,17 +194,21 @@ data class TextChapter(
         position: Int,
         pageSplit: Boolean,
     ): Int {
-        val paragraphs = if (pageSplit) {
-            if (isCompleted) pageParagraphs else pageParagraphsInternal
-        } else {
-            if (isCompleted) paragraphs else pageParagraphsInternal
-        }
+        val paragraphs = getParagraphs(pageSplit)
         paragraphs.forEach { paragraph ->
             if (position in paragraph.chapterIndices) {
                 return paragraph.num
             }
         }
         return -1
+    }
+
+    fun getParagraphs(pageSplit: Boolean): List<TextParagraph> {
+        return if (pageSplit) {
+            if (isCompleted) pageParagraphs else pageParagraphsInternal
+        } else {
+            if (isCompleted) paragraphs else paragraphsInternal
+        }
     }
 
     fun getLastParagraphPosition(): Int {
