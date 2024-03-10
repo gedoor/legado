@@ -276,7 +276,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         Looper.myQueue().addIdleHandler {
-            viewModel.initData(intent) { upMenu() }
+            viewModel.initData(intent)
             false
         }
     }
@@ -902,6 +902,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun upMenuView() {
         handler.post {
+            upMenu()
             binding.readMenu.upBookView()
         }
     }
@@ -918,9 +919,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (intent.getBooleanExtra("readAloud", false)) {
             intent.removeExtra("readAloud")
             ReadBook.readAloud()
-        }
-        if (BaseReadAloudService.isRun) {
-            ReadAloud.upTtsProgress(this)
         }
         loadStates = true
     }

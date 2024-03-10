@@ -125,14 +125,6 @@ object ReadAloud {
         }
     }
 
-    fun upTtsProgress(context: Context) {
-        if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, aloudClass)
-            intent.action = IntentAction.upTtsProgress
-            ContextCompat.startForegroundService(context, intent)
-        }
-    }
-
     fun setTimer(context: Context, minute: Int) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)

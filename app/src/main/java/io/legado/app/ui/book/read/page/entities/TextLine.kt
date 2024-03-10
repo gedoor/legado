@@ -48,7 +48,7 @@ data class TextLine(
 ) {
 
     val columns: List<BaseColumn> get() = textColumns
-    val charSize: Int get() = textColumns.size
+    val charSize: Int get() = text.length
     val lineStart: Float get() = textColumns.firstOrNull()?.start ?: 0f
     val lineEnd: Float get() = textColumns.lastOrNull()?.end ?: 0f
     val chapterIndices: IntRange get() = chapterPosition..chapterPosition + charSize

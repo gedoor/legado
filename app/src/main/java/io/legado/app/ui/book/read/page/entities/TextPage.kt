@@ -250,7 +250,14 @@ data class TextPage(
                 length++
             }
         }
-        return length + columnIndex
+        val columns = textLines[maxIndex].columns
+        for (index in 0 until columnIndex) {
+            val column = columns[index]
+            if (column is TextColumn) {
+                length += column.charData.length
+            }
+        }
+        return length
     }
 
     /**

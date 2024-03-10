@@ -381,6 +381,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             } else {
+                exoPlayer.clearMediaItems()
                 updateNextPos()
             }
         }
