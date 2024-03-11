@@ -178,4 +178,4 @@ room = { id = "androidx.room", version.ref = "room" }
 
 protobuf = { id = "com.google.protobuf", version = "0.9.4" }
 
-download = { id = "de.undercouch.download", version = "5.5.0" }
+download = { id = "de.undercouch.download", version = "5.6.0" }
