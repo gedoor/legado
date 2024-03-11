@@ -1,10 +1,17 @@
 plugins {
-    id "com.android.application"
-    id 'org.jetbrains.kotlin.android'
-    id 'kotlin-parcelize'
-    //id 'kotlin-kapt'
-    id 'com.google.devtools.ksp'
-    id "com.google.gms.google-services"
+//    id "com.android.application"
+//    id 'org.jetbrains.kotlin.android'
+//    id 'kotlin-parcelize'
+//    //id 'kotlin-kapt'
+//    id 'com.google.devtools.ksp'
+//    id "com.google.gms.google-services"
+
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.kotlin.parcelize
+    alias libs.plugins.room
+    alias libs.plugins.ksp
+    alias libs.plugins.google.services
 }
 apply from: 'download.gradle'
 
@@ -102,11 +109,16 @@ android {
         }
     }
 
+
+    room {
+        schemaDirectory "$projectDir/schemas"
+    }
     // 设定Room的KSP参数
     ksp {
         arg("room.incremental", "true")
         arg("room.expandProjection", "true")
-        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.generateKotlin", "false")
+        //arg("room.schemaLocation", "$projectDir/schemas")
 
     }
 
@@ -136,133 +148,129 @@ android {
 }
 
 dependencies {
-    compileOnly "com.android.tools.build:gradle:$agp_version"
+    //compileOnly "com.android.tools.build:gradle:$agp_version"
     //noinspection GradleDependency,GradlePackageUpdate
-    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.4')
-    testImplementation('junit:junit:4.13.2')
-    androidTestImplementation('androidx.test:runner:1.5.2')
-    androidTestImplementation('androidx.test.ext:junit:1.1.5')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1')
+    //coreLibraryDesugaring('com.android.tools:desugar_jdk_libs_nio:2.0.4')
+    coreLibraryDesugaring(libs.desugar)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.bundles.androidTest)
     //kotlin
     //noinspection GradleDependency,DifferentStdlibGradleVersion
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    implementation(libs.kotlin.stdlib)
     //Kotlin反射
     //noinspection GradleDependency,DifferentStdlibGradleVersion
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    implementation(libs.kotlin.reflect)
+
+
     //协程
-    def coroutines_version = '1.7.3'
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
+    //def coroutines_version = '1.7.3'
+    implementation(libs.bundles.coroutines)
+
 
     //图像处理库Toolkit
-    implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
+    implementation(libs.renderscript.intrinsics.replacement.toolkit)
 
     //androidX
-    implementation('androidx.core:core-ktx:1.12.0')
-    implementation('androidx.appcompat:appcompat:1.6.1')
-    implementation('androidx.activity:activity-ktx:1.8.1')
-    implementation('androidx.fragment:fragment-ktx:1.6.2')
-    implementation('androidx.preference:preference-ktx:1.2.1')
-    implementation('androidx.constraintlayout:constraintlayout:2.1.4')
-    implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
-    implementation('androidx.viewpager2:viewpager2:1.0.0')
-    implementation('androidx.webkit:webkit:1.9.0')
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat.appcompat)
+    implementation(libs.activity.ktx)
+    implementation(libs.fragment.ktx)
+    implementation(libs.preference.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.webkit)
 
     //google
-    implementation('com.google.android.material:material:1.10.0')
-    implementation('com.google.android.flexbox:flexbox:3.0.0')
-    implementation('com.google.code.gson:gson:2.10.1')
+    implementation(libs.material)
+    implementation(libs.flexbox)
+    implementation(libs.gson)
 
     //lifecycle
-    def lifecycle_version = '2.7.0'
-    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
+    implementation(libs.lifecycle.common.java8)
+    implementation(libs.lifecycle.service)
 
     //media
-    implementation("androidx.media:media:1.7.0")
+    implementation(libs.media.media)
     // For media playback using ExoPlayer
-    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    implementation(libs.media3.exoplayer)
     // For loading data using the OkHttp network stack
-    implementation "androidx.media3:media3-datasource-okhttp:$media3_version"
+    implementation(libs.media3.datasource.okhttp)
     // For exposing and controlling media sessions
     //implementation "androidx.media3:media3-session:$media3_version"
 
     //Splitties
-    implementation("com.louiscad.splitties:splitties-appctx:$splitties_version")
-    implementation("com.louiscad.splitties:splitties-systemservices:$splitties_version")
-    implementation("com.louiscad.splitties:splitties-views:$splitties_version")
+    implementation(libs.splitties.appctx)
+    implementation(libs.splitties.systemservices)
+    implementation(libs.splitties.views)
 
     //room sql语句不高亮解决方法https://issuetracker.google.com/issues/234612964#comment6
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     //kapt("androidx.room:room-compiler:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    androidTestImplementation("androidx.room:room-testing:$room_version")
+    ksp(libs.room.compiler)
+    androidTestImplementation(libs.room.testing)
 
     //liveEventBus
-    implementation('com.github.michaellee123:LiveEventBus:1.8.14')
+    implementation(libs.liveeventbus)
 
     //规则相关
-    implementation('org.jsoup:jsoup:1.16.2')
-    implementation('com.jayway.jsonpath:json-path:2.9.0')
-    implementation('cn.wanghaomiao:JsoupXpath:2.5.3')
+    implementation(libs.jsoup)
+    implementation(libs.json.path)
+    implementation(libs.jsoupxpath)
     implementation(project(path: ':modules:book'))
 
     //JS rhino
     implementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
-    implementation('com.squareup.okhttp3:okhttp:4.12.0')
+    implementation(libs.okhttp)
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    implementation 'com.google.protobuf:protobuf-javalite:3.25.3'
+    implementation(libs.protobuf.javalite)
 
     //Glide
-    def glideVersion = "4.16.0"
-    implementation("com.github.bumptech.glide:glide:$glideVersion")
-    //kapt("com.github.bumptech.glide:compiler:$glideVersion")
-    ksp("com.github.bumptech.glide:ksp:$glideVersion")
+    implementation(libs.glide.glide)
+    ksp(libs.glide.ksp)
 
     //Svg
-    implementation("com.caverock:androidsvg-aar:1.4")
+    implementation(libs.androidsvg)
     //Glide svg plugin
-    implementation("com.github.qoqa:glide-svg:4.0.2")
+    implementation(libs.glide.svg)
 
     //webServer
-    def nanoHttpdVersion = "2.3.1"
-    implementation("org.nanohttpd:nanohttpd:$nanoHttpdVersion")
-    implementation("org.nanohttpd:nanohttpd-websocket:$nanoHttpdVersion")
+    implementation(libs.nanohttpd.nanohttpd)
+    implementation(libs.nanohttpd.websocket)
 
     //二维码
     //noinspection GradleDependency
-    implementation('com.github.jenly1314:zxing-lite:3.0.1')
+    implementation(libs.zxing.lite)
 
     //颜色选择
-    implementation('com.jaredrummler:colorpicker:1.1.0')
+    implementation(libs.colorpicker)
 
     //压缩解压
-    implementation 'me.zhanghai.android.libarchive:library:1.0.3'
+    implementation libs.libarchive
 
     //apache
-    implementation('org.apache.commons:commons-text:1.11.0')
+    implementation(libs.commons.text)
 
     //MarkDown
-    def markwonVersion = "4.6.2"
-    implementation("io.noties.markwon:core:$markwonVersion")
-    implementation("io.noties.markwon:image-glide:$markwonVersion")
-    implementation("io.noties.markwon:ext-tables:$markwonVersion")
-    implementation("io.noties.markwon:html:$markwonVersion")
+    implementation(libs.markwon.core)
+    implementation(libs.markwon.image.glide)
+    implementation(libs.markwon.ext.tables)
+    implementation(libs.markwon.html)
 
     //转换繁体
-    implementation('com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.13')
+    implementation(libs.quick.chinese.transfer.core)
 
     //加解密类库,有些书源使用
     //noinspection GradleDependency,GradlePackageUpdate
-    implementation('cn.hutool:hutool-crypto:5.8.22')
+    implementation(libs.hutool.crypto)
 
     //firebase, 崩溃统计和性能统计
-    implementation platform('com.google.firebase:firebase-bom:32.5.0')
-    implementation 'com.google.firebase:firebase-analytics:21.5.0'
-    implementation 'com.google.firebase:firebase-perf:20.5.1'
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.analytics
+    implementation libs.firebase.perf
 
     //LeakCanary, 内存泄露检测
     //debugImplementation('com.squareup.leakcanary:leakcanary-android:2.7')
