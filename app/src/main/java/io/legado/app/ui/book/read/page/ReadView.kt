@@ -668,6 +668,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
         curPage.submitRenderTask()
     }
 
+    fun isLongScreenShot(): Boolean {
+        return curPage.isLongScreenShot()
+    }
+
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {
         upProgressThrottle.invoke()
     }

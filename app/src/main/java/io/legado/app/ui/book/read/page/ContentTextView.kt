@@ -47,7 +47,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     var textPage: TextPage = TextPage()
         private set
     var isMainView = false
-    private var longScreenshot = false
+    var longScreenshot = false
     var reverseStartCursor = false
     var reverseEndCursor = false
 

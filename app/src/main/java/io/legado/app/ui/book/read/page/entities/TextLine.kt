@@ -60,6 +60,9 @@ data class TextLine(
             if (field != value) {
                 invalidate()
             }
+            if (value) {
+                textPage.hasReadAloudSpan = true
+            }
             field = value
         }
     var textPage: TextPage = emptyTextPage

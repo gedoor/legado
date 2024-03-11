@@ -50,6 +50,7 @@ data class TextPage(
     var doublePage = false
     var paddingTop = ChapterProvider.paddingTop
     var isCompleted = false
+    var hasReadAloudSpan = false
 
     @JvmField
     var textChapter = emptyTextChapter
@@ -178,6 +179,10 @@ data class TextPage(
      * 移除朗读标志
      */
     fun removePageAloudSpan(): TextPage {
+        if (!hasReadAloudSpan) {
+            return this
+        }
+        hasReadAloudSpan = false
         for (i in textLines.indices) {
             textLines[i].isReadAloud = false
         }
