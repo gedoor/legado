@@ -78,7 +78,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         //多点触控时即最后按下的手指产生的事件点
         val pointX = event.getX(event.pointerCount - 1)
         val pointY = event.getY(event.pointerCount - 1)
-        if (isMoved) {
+        if (isMoved || readView.isLongScreenShot()) {
             readView.setTouchPoint(pointX, pointY, false)
         }
         if (!isMoved) {

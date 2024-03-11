@@ -451,6 +451,10 @@ class PageView(context: Context) : FrameLayout(context) {
         return binding.contentTextView.reverseEndCursor
     }
 
+    fun isLongScreenShot(): Boolean {
+        return binding.contentTextView.longScreenshot
+    }
+
     fun resetReverseCursor() {
         binding.contentTextView.resetReverseCursor()
     }
