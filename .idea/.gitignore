@@ -12,3 +12,5 @@
 /modules/
 /libraries/
 /*.xml
+# GitHub Copilot persisted chat sessions
+/copilot/chatSessions

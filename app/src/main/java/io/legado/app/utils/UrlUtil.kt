@@ -155,6 +155,7 @@ object UrlUtil {
         val suffix = CustomUrl(str).getUrl()
             .substringAfterLast(".", "")
             .substringBefore("?")
+            .substringBefore("/")
         //检查截取的后缀字符是否合法 [a-zA-Z0-9]
         return if (suffix.length > 5 || !suffix.matches(fileSuffixRegex)) {
             AppLog.put("Cannot find legal suffix:\n target: $str\n suffix: $suffix")

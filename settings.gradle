@@ -1,8 +1,14 @@
 pluginManagement {
     repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         //原仓库
         gradlePluginPortal()
-        google()
         mavenCentral()
         //镜像仓库,无法连接源仓库自行启用镜像仓库,不要提交修改
         //maven { url "https://maven-central-asia.storage-download.googleapis.com/maven2/" }
@@ -17,9 +23,21 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         //原仓库
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        maven {
+            url 'https://jitpack.io'
+            content {
+                includeGroupByRegex("com\\.github.*")
+            }
+        }
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+
         //镜像仓库,无法连接源仓库自行启用镜像仓库,不要提交修改
         //maven { url "https://maven-central-asia.storage-download.googleapis.com/maven2/" }
         //maven { url 'https://maven.aliyun.com/repository/google' }
