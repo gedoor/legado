@@ -2,7 +2,6 @@ package io.legado.app.utils
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Semaphore
+import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
 inline fun <T> Flow<T>.onEachParallel(
@@ -35,7 +35,7 @@ inline fun <T> Flow<T>.onEachParallelSafe(
         try {
             action(value)
         } catch (e: Throwable) {
-            currentCoroutineContext().ensureActive()
+            coroutineContext.ensureActive()
         }
         emit(value)
     }
@@ -57,7 +57,7 @@ inline fun <T, R> Flow<T>.mapParallelSafe(
         try {
             emit(transform(value))
         } catch (e: Throwable) {
-            currentCoroutineContext().ensureActive()
+            coroutineContext.ensureActive()
         }
     }
 }.buffer(0)
@@ -71,7 +71,7 @@ inline fun <T, R> Flow<T>.transformParallelSafe(
         try {
             transform(value)
         } catch (e: Throwable) {
-            currentCoroutineContext().ensureActive()
+            coroutineContext.ensureActive()
         }
     }
 }.buffer(0)

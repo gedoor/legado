@@ -17,7 +17,6 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapAsync
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.flow
 import org.apache.commons.text.StringEscapeUtils
@@ -125,7 +124,7 @@ object BookContent {
                     printLog = false
                 ).first
             }.collect {
-                currentCoroutineContext().ensureActive()
+                coroutineContext.ensureActive()
                 contentList.add(it)
             }
         }
