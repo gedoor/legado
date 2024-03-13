@@ -36,6 +36,10 @@ data class FileDoc(
         return uri.readBytes(appCtx)
     }
 
+    fun readText(): String {
+        return uri.readText(appCtx)
+    }
+
     fun asDocumentFile(): DocumentFile? {
         if (isContentScheme) {
             return if (isDir) {

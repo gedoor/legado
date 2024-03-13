@@ -31,6 +31,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.FileDoc
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.MD5Utils
@@ -38,13 +39,13 @@ import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.createFolderIfNotExist
+import io.legado.app.utils.find
 import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.list
 import io.legado.app.utils.mapAsync
 import io.legado.app.utils.mapAsyncIndexed
 import io.legado.app.utils.outputStream
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.readBytes
-import io.legado.app.utils.readText
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
@@ -461,7 +462,7 @@ class ExportBookService : BaseService() {
         //set cover
         setCover(book, epubBook)
         //set css
-        val contentModel = setAssets(book, epubBook)
+        val contentModel = setAssets(file, book, epubBook)
 
         val bookPath = FileUtils.getPath(file, filename)
         val bookFile = FileUtils.createFileWithReplace(bookPath)
@@ -477,81 +478,88 @@ class ExportBookService : BaseService() {
     }
 
     private fun setAssets(doc: DocumentFile, book: Book, epubBook: EpubBook): String {
-        var contentModel = ""
-        DocumentUtils.getDirDocument(doc, "Asset").let { customPath ->
-            if (customPath == null) {//使用内置模板
-                contentModel = setAssets(book, epubBook)
-            } else {//外部模板
-                customPath.listFiles().forEach { folder ->
-                    if (folder.isDirectory && folder.name == "Text") {
-                        folder.listFiles().sortedWith { o1, o2 ->
-                            val name1 = o1.name ?: ""
-                            val name2 = o2.name ?: ""
-                            name1.cnCompare(name2)
-                        }.forEach { file ->
-                            if (file.isFile) {
-                                when {
-                                    //正文模板
-                                    file.name.equals("chapter.html", true)
-                                            || file.name.equals("chapter.xhtml", true) -> {
-                                        contentModel = file.readText(this)
-                                    }
-                                    //封面等其他模板
-                                    true == file.name?.endsWith("html", true) -> {
-                                        epubBook.addSection(
-                                            FileUtils.getNameExcludeExtension(
-                                                file.name ?: "Cover.html"
-                                            ),
-                                            ResourceUtil.createPublicResource(
-                                                book.name,
-                                                book.getRealAuthor(),
-                                                book.getDisplayIntro(),
-                                                book.kind,
-                                                book.wordCount,
-                                                file.readText(this),
-                                                "${folder.name}/${file.name}"
-                                            )
-                                        )
-                                    }
+        return setAssets(FileDoc.fromDocumentFile(doc), book, epubBook)
+    }
 
-                                    else -> {
-                                        //其他格式文件当做资源文件
-                                        folder.listFiles().forEach {
-                                            if (it.isFile)
-                                                epubBook.resources.add(
-                                                    Resource(
-                                                        it.readBytes(this),
-                                                        "${folder.name}/${it.name}"
-                                                    )
-                                                )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else if (folder.isDirectory) {
-                        //资源文件
-                        folder.listFiles().forEach {
-                            if (it.isFile)
-                                epubBook.resources.add(
-                                    Resource(
-                                        it.readBytes(this),
-                                        "${folder.name}/${it.name}"
-                                    )
-                                )
-                        }
-                    } else {//Asset下面的资源文件
-                        epubBook.resources.add(
-                            Resource(
-                                folder.readBytes(this),
-                                "${folder.name}"
-                            )
-                        )
-                    }
-                }
-            }
+    private fun setAssets(file: File, book: Book, epubBook: EpubBook): String {
+        return setAssets(FileDoc.fromFile(file), book, epubBook)
+    }
+
+    private fun setAssets(doc: FileDoc, book: Book, epubBook: EpubBook): String {
+        val customPath = doc.find("Asset")
+        val contentModel = if (customPath == null) {//使用内置模板
+            setAssets(book, epubBook)
+        } else {//外部模板
+            setAssetsExternal(customPath, book, epubBook)
         }
 
+        return contentModel
+    }
+
+    private fun setAssetsExternal(doc: FileDoc, book: Book, epubBook: EpubBook): String {
+        var contentModel = ""
+        doc.list()!!.forEach { folder ->
+            if (folder.isDir && folder.name == "Text") {
+                folder.list()!!.sortedWith { o1, o2 ->
+                    o1.name.cnCompare(o2.name)
+                }.forEach loop@{ file ->
+                    if (file.isDir) {
+                        return@loop
+                    }
+                    when {
+                        //正文模板
+                        file.name.equals("chapter.html", true)
+                                || file.name.equals("chapter.xhtml", true) -> {
+                            contentModel = file.readText()
+                        }
+                        //封面等其他模板
+                        file.name.endsWith("html", true) -> {
+                            epubBook.addSection(
+                                FileUtils.getNameExcludeExtension(file.name),
+                                ResourceUtil.createPublicResource(
+                                    book.name,
+                                    book.getRealAuthor(),
+                                    book.getDisplayIntro(),
+                                    book.kind,
+                                    book.wordCount,
+                                    file.readText(),
+                                    "${folder.name}/${file.name}"
+                                )
+                            )
+                        }
+                        //其他格式文件当做资源文件
+                        else -> {
+                            epubBook.resources.add(
+                                Resource(
+                                    file.readBytes(),
+                                    "${folder.name}/${file.name}"
+                                )
+                            )
+                        }
+                    }
+                }
+            } else if (folder.isDir) {
+                //资源文件
+                folder.list()!!.forEach loop2@{
+                    if (it.isDir) {
+                        return@loop2
+                    }
+                    epubBook.resources.add(
+                        Resource(
+                            it.readBytes(),
+                            "${folder.name}/${it.name}"
+                        )
+                    )
+                }
+            } else {//Asset下面的资源文件
+                epubBook.resources.add(
+                    Resource(
+                        folder.readBytes(),
+                        folder.name
+                    )
+                )
+            }
+        }
         return contentModel
     }
 
