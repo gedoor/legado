@@ -109,12 +109,17 @@ val okHttpClient: OkHttpClient by lazy {
     builder.addInterceptor { chain ->
         val request = chain.request()
         val requestBuilder = request.newBuilder()
-        requestBuilder.header("Accept-Encoding", "gzip")
+
+        var transparentGzip = false
+        if (request.header("Accept-Encoding") == null && request.header("Range") == null) {
+            transparentGzip = true
+            requestBuilder.header("Accept-Encoding", "gzip")
+        }
 
         val response = chain.proceed(requestBuilder.build())
 
         val responseBody = response.body
-        if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)
+        if (transparentGzip && "gzip".equals(response.header("Content-Encoding"), ignoreCase = true)
             && response.promisesBody() && responseBody != null
         ) {
             val responseBuilder = response.newBuilder()
