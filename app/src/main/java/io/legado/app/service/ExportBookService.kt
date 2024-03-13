@@ -64,6 +64,7 @@ import me.ag2s.epublib.domain.FileResourceProvider
 import me.ag2s.epublib.domain.LazyResource
 import me.ag2s.epublib.domain.Metadata
 import me.ag2s.epublib.domain.Resource
+import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubWriter
 import me.ag2s.epublib.epub.EpubWriterProcessor
 import me.ag2s.epublib.util.ResourceUtil
@@ -630,6 +631,7 @@ class ExportBookService : BaseService() {
         } else {
             1
         }
+        var parentSection: TOCReference? = null
         flow {
             appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
                 emit(chapter)
@@ -667,19 +669,27 @@ class ExportBookService : BaseService() {
                 contentModel,
                 "Text/chapter_${index}.html"
             )
-            ExportChapter(title, chapterResource, resources)
+            ExportChapter(title, chapterResource, resources, chapter)
         }.collectIndexed { index, exportChapter ->
             postEvent(EventBus.EXPORT_BOOK, book.bookUrl)
             exportProgress[book.bookUrl] = index
-            epubBook.resources.addAll(exportChapter.resources)
-            epubBook.addSection(exportChapter.title, exportChapter.chapterResource)
+            val (title, chapterResource, resources, chapter) = exportChapter
+            epubBook.resources.addAll(resources)
+            if (chapter.isVolume) {
+                parentSection = epubBook.addSection(title, chapterResource)
+            } else if (parentSection == null) {
+                epubBook.addSection(title, chapterResource)
+            } else {
+                epubBook.addSection(parentSection, title, chapterResource)
+            }
         }
     }
 
     data class ExportChapter(
         val title: String,
         val chapterResource: Resource,
-        val resources: ArrayList<Resource>
+        val resources: ArrayList<Resource>,
+        val chapter: BookChapter
     )
 
     private fun fixPic(
