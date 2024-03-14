@@ -193,9 +193,6 @@ jobs:
     needs: [ prepare, build ]
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
     runs-on: ubuntu-latest
-    env:
-      CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
-      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -208,7 +205,10 @@ jobs:
           done
           rm -rf */
       - name: Post to channel
-        run: |
-          pip install pyTelegramBotAPI
-          path="$GITHUB_WORKSPACE/apk/"
-          python3 $GITHUB_WORKSPACE/.github/scripts/tg_bot.py "$BOT_TOKEN" "$CHANNEL_ID" "$path"
+        uses: xireiki/channel-post@v1
+        with:
+          chat_id: ${{ secrets.CHANNEL_ID }}
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          context: "#阅读 #Legado #Beta ${{ needs.prepare.outputs.versionL }}"
+          path: apk/*
+          method: sendFile
