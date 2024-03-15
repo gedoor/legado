@@ -109,7 +109,7 @@ room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 
 glide-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
-glide-compose = { module = "com.github.bumptech.glide:compose", version = "1.0.0-beta01" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version = "4.14.0" }
 glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
 glide-avif = { module = "com.github.bumptech.glide:avif-integration", version.ref = "glide" }
 avif = { module = "org.aomedia.avif.android:avif", version = "1.0.1.262e11d" }
