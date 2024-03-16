@@ -119,8 +119,9 @@ jobs:
           path: ${{ github.workspace }}/mapping/missing_rules.txt
 
       - name: Check Build production
+      - working-directory: apk/
         run: |
-          if [ ! -e "${{ github.workspace }}/apk/legado_*.apk" ]; then
+          if [ ! -e legado_*.apk ]; then
             echo "Build production not found! Check gradle logs."
             exit 1
           fi
