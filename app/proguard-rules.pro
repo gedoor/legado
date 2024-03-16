@@ -403,6 +403,10 @@
 -dontwarn org.chromium.base.FeatureList
 -dontwarn org.chromium.base.FeatureMap
 
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn org.jspecify.annotations.NullMarked
+
 #-------------------Cronet------------------------------------
 
 # Class.forName调用

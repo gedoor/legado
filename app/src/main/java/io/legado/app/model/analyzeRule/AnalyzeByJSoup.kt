@@ -375,11 +375,12 @@ class AnalyzeByJSoup(doc: Any) {
              * 根据索引集合筛选元素
              * */
             if (split == '!') { //排除
-
+                /*
                 for (pcInt in indexSet) elements[pcInt] = null
 
                 elements.removeAll(nullSet) //测试过，这样就行
-
+                */
+                for (pcInt in indexSet) elements[pcInt].remove()
             } else if (split == '.') { //选择
 
                 val es = Elements()
