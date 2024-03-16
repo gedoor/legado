@@ -292,8 +292,10 @@ abstract class BaseReadAloudService : BaseService(),
             readAloudNumber -= contentList[nowSpeak].length + 1 + paragraphStartPos
             paragraphStartPos = 0
             textChapter?.let {
-                val paragraphs = it.getParagraphs(readAloudByPage)
-                if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber++
+                if (readAloudByPage) {
+                    val paragraphs = it.getParagraphs(true)
+                    if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber++
+                }
                 if (readAloudNumber < it.getReadLength(pageIndex)) {
                     pageIndex--
                     ReadBook.moveToPrevPage()
@@ -314,8 +316,10 @@ abstract class BaseReadAloudService : BaseService(),
             paragraphStartPos = 0
             nowSpeak++
             textChapter?.let {
-                val paragraphs = it.getParagraphs(readAloudByPage)
-                if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber--
+                if (readAloudByPage) {
+                    val paragraphs = it.getParagraphs(true)
+                    if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber--
+                }
                 if (readAloudNumber >= it.getReadLength(pageIndex + 1)) {
                     pageIndex++
                     ReadBook.moveToNextPage()
