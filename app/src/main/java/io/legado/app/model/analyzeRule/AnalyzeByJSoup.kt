@@ -380,7 +380,7 @@ class AnalyzeByJSoup(doc: Any) {
 
                 elements.removeAll(nullSet) //测试过，这样就行
                 */
-                for (pcInt in indexSet) elements[pcInt].remove()
+                for (pcInt in indexSet) elements.removeAt(pcInt)
             } else if (split == '.') { //选择
 
                 val es = Elements()
