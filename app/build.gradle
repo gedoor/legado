@@ -90,7 +90,7 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix 'debug'
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'cronet_proguard_rules.pro'
         }
     }
     //noinspection GrDeprecatedAPIUsage

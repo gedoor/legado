@@ -53,6 +53,25 @@ function write_github_env_variable() {
     echo "$1=$2" >> $GITHUB_ENV
 }
 
+function sync_proguard_rules() {
+    local raw_github_git="https://raw.githubusercontent.com/chromium/chromium/$lastest_cronet_version"
+    local proguard_paths=(
+      base/android/proguard/chromium_code.flags
+      components/cronet/android/cronet_impl_common_proguard.cfg
+      components/cronet/android/cronet_impl_native_proguard.cfg
+      components/cronet/android/cronet_impl_platform_proguard.cfg
+      components/cronet/android/cronet_shared_proguard.cfg
+    )
+
+    local proguard_rules_path="$GITHUB_WORKSPACE/app/cronet_proguard_rules.pro"
+    rm -f proguard_rules_path
+    echo "fetch cronet proguard rules from upstream $raw_github_git"
+    for path in ${proguard_paths[@]}
+    do
+        echo "fetching $path ..."
+        curl "$raw_github_git/$path" >> proguard_rules_path
+    done
+}
 ##########
 # 获取本地cronet版本
 path=$GITHUB_WORKSPACE/gradle.properties
@@ -66,6 +85,8 @@ if version_compare $current_cronet_version $lastest_cronet_version; then
     # 更新gradle.properties
     sed -i s/CronetVersion=.*/CronetVersion=$lastest_cronet_version/ $path
     sed -i s/CronetMainVersion=.*/CronetMainVersion=$lastest_cronet_main_version/ $path
+    # 更新cronet_proguard_rules.pro
+    sync_proguard_rules
     # 添加更新日志
     sed "15a* 更新cronet: $lastest_cronet_version" -i $GITHUB_WORKSPACE/app/src/main/assets/updateLog.md
     # 生成pull request信息

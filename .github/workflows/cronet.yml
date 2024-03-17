@@ -50,3 +50,4 @@ jobs:
             *cronet.json
             *updateLog.md
             gradle.properties
+            cronet_proguard_rules.pro
