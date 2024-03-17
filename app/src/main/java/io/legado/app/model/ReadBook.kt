@@ -26,10 +26,12 @@ import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -64,7 +66,7 @@ object ReadBook : CoroutineScope by MainScope() {
     /* web端阅读进度记录 */
     var webBookProgress: BookProgress? = null
 
-    var preDownloadTask: Coroutine<*>? = null
+    var preDownloadTask: Job? = null
     val downloadedChapters = hashSetOf<Int>()
     val downloadFailChapters = hashMapOf<Int, Int>()
     var contentProcessor: ContentProcessor? = null
@@ -169,9 +171,10 @@ object ReadBook : CoroutineScope by MainScope() {
 
     fun uploadProgress() {
         book?.let {
-            Coroutine.async {
+            launch(IO) {
                 AppWebDav.uploadBookProgress(it)
-                it.save()
+                ensureActive()
+                it.update()
             }
         }
     }
@@ -651,7 +654,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 return@execute
             }
             preDownloadTask?.cancel()
-            preDownloadTask = Coroutine.async(executeContext = IO) {
+            preDownloadTask = launch(IO) {
                 //预下载
                 launch {
                     val maxChapterIndex =

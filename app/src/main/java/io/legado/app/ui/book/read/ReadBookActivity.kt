@@ -122,6 +122,7 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -1439,7 +1440,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             delay(300000)
             ReadBook.book?.let {
                 AppWebDav.uploadBookProgress(it)
-                it.save()
+                ensureActive()
+                it.update()
                 Backup.autoBack(this@ReadBookActivity)
             }
         }

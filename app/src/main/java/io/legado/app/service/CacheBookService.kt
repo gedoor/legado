@@ -119,7 +119,7 @@ class CacheBookService : BaseService() {
                     WebBook.getChapterListAwait(cacheBook.bookSource, book).onFailure {
                         if (book.totalChapterNum > 0) {
                             book.totalChapterNum = 0
-                            book.save()
+                            book.update()
                         }
                         val msg = "《$name》目录为空且加载目录失败\n${it.localizedMessage}"
                         AppLog.put(msg, it, true)
@@ -127,7 +127,7 @@ class CacheBookService : BaseService() {
                     }.getOrNull()?.let { toc ->
                         appDb.bookChapterDao.insert(*toc.toTypedArray())
                     }
-                    book.save()
+                    book.update()
                 }
             }
             val end2 = if (end < 0) {

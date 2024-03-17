@@ -171,7 +171,7 @@ object AudioPlay {
                         book.getUseReplaceRule()
                     )
                 }
-                book.save()
+                book.update()
             }
         }
     }
