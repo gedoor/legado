@@ -31,6 +31,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -214,6 +215,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 }
             }.onCompletion {
                 searchStateData.postValue(false)
+                ensureActive()
                 searchFinishCallback?.invoke(searchBooks.isEmpty())
             }.catch {
                 AppLog.put("换源搜索出错\n${it.localizedMessage}", it)

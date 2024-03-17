@@ -89,7 +89,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isNotEmpty()) {
                 lifecycleScope.launch {
-                    alert("搜索结果为空") {
+                    context?.alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         noButton()
                         yesButton {
@@ -126,6 +126,11 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
             dismissAllowingStateLoss()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.searchFinishCallback = null
     }
 
     private fun showTitle() {
