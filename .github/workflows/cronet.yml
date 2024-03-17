@@ -49,5 +49,5 @@ jobs:
             *cronet*jar
             *cronet.json
             *updateLog.md
-            gradle.properties
-            cronet_proguard_rules.pro
+            *gradle.properties
+            *cronet-proguard-rules.pro
