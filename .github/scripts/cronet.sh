@@ -56,13 +56,8 @@ function write_github_env_variable() {
 function sync_proguard_rules() {
     local raw_github_git="https://raw.githubusercontent.com/chromium/chromium/$lastest_cronet_version"
     local proguard_paths=(
-      base/android/proguard/chromium_code.flags
-      components/cronet/android/cronet_impl_common_proguard.cfg
-      components/cronet/android/cronet_impl_native_proguard.cfg
-      components/cronet/android/cronet_impl_platform_proguard.cfg
-      components/cronet/android/cronet_shared_proguard.cfg
+      components/cronet/android/cronet_combined_impl_native_proguard_golden.cfg
     )
-
     local proguard_rules_path="$GITHUB_WORKSPACE/app/cronet_proguard_rules.pro"
     rm -f proguard_rules_path
     echo "fetch cronet proguard rules from upstream $raw_github_git"
