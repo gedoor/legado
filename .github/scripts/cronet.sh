@@ -59,12 +59,12 @@ function sync_proguard_rules() {
       components/cronet/android/cronet_combined_impl_native_proguard_golden.cfg
     )
     local proguard_rules_path="$GITHUB_WORKSPACE/app/cronet_proguard_rules.pro"
-    rm -f proguard_rules_path
+    rm -f $proguard_rules_path
     echo "fetch cronet proguard rules from upstream $raw_github_git"
     for path in ${proguard_paths[@]}
     do
         echo "fetching $path ..."
-        curl "$raw_github_git/$path" >> proguard_rules_path
+        curl "$raw_github_git/$path" >> $proguard_rules_path
     done
 }
 ##########
