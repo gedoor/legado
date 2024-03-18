@@ -53,7 +53,7 @@ class AnalyzeByJSoup(doc: Any) {
         if (list.isEmpty()) {
             return null
         }
-        if (list.size == 1){
+        if (list.size == 1) {
             return list.first()
         }
         return list.joinToString("\n")
@@ -375,12 +375,11 @@ class AnalyzeByJSoup(doc: Any) {
              * 根据索引集合筛选元素
              * */
             if (split == '!') { //排除
-                /*
+
                 for (pcInt in indexSet) elements[pcInt] = null
 
                 elements.removeAll(nullSet) //测试过，这样就行
-                */
-                for (pcInt in indexSet.toList().sortedDescending()) elements.removeAt(pcInt)
+
             } else if (split == '.') { //选择
 
                 val es = Elements()
