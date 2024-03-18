@@ -2,11 +2,12 @@ package io.legado.app.ui.book.read.page
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
+import io.legado.app.R
 import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
@@ -70,13 +71,14 @@ class PageView(context: Context) : FrameLayout(context) {
     fun upStyle() = binding.run {
         upTipStyle()
         ReadBookConfig.let {
+            val textColor = it.textColor
             val tipColor = with(ReadTipConfig) {
-                if (tipColor == 0) it.textColor else tipColor
+                if (tipColor == 0) textColor else tipColor
             }
             val tipDividerColor = with(ReadTipConfig) {
                 when (tipDividerColor) {
-                    -1 -> Color.parseColor("#66666666")
-                    0 -> tipColor
+                    -1 -> ContextCompat.getColor(context, R.color.divider)
+                    0 -> textColor
                     else -> tipDividerColor
                 }
             }
