@@ -121,6 +121,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 postUpBooksLiveData()
             }.onCompletion {
                 upTocJob = null
+                if (waitUpTocBooks.isNotEmpty()) {
+                    startUpTocJob()
+                }
                 if (it == null && cacheBookJob == null && !CacheBookService.isRun) {
                     //所有目录更新完再开始缓存章节
                     cacheBook()
