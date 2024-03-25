@@ -25,17 +25,13 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuPopupHelper
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.graphics.record
 import androidx.core.graphics.withTranslation
-import androidx.core.text.PrecomputedTextCompat
 import androidx.core.view.get
-import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.globalExecutor
 import io.legado.app.lib.theme.TintHelper
 import io.legado.app.utils.canvasrecorder.CanvasRecorder
 import io.legado.app.utils.canvasrecorder.record
@@ -229,17 +225,6 @@ fun TextView.setHtml(html: String) {
     } else {
         @Suppress("DEPRECATION")
         text = Html.fromHtml(html)
-    }
-}
-
-fun AppCompatTextView.setTextAsync(charSequence: CharSequence) {
-    globalExecutor.execute {
-        val precomputedText = PrecomputedTextCompat.create(
-            charSequence, TextViewCompat.getTextMetricsParams(this),
-        )
-        post {
-            setPrecomputedText(precomputedText)
-        }
     }
 }
 
