@@ -283,8 +283,9 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 }
                 upGroupMenuName()
                 lifecycleScope.launch(IO) {
+                    viewModel.stopSearch()
                     if (viewModel.refresh()) {
-                        viewModel.startOrStopSearch()
+                        viewModel.startSearch()
                     }
                 }
             }

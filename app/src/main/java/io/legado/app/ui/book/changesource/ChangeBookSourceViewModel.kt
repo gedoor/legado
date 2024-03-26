@@ -167,8 +167,10 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     fun startSearch() {
         execute {
             stopSearch()
-            appDb.searchBookDao.clear(name, author)
-            searchBooks.clear()
+            if (searchBooks.isNotEmpty()) {
+                appDb.searchBookDao.delete(*searchBooks.toTypedArray())
+                searchBooks.clear()
+            }
             searchCallback?.upAdapter()
             bookSourceParts.clear()
             val searchGroup = AppConfig.searchGroup
