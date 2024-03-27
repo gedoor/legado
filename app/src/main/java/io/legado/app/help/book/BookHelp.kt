@@ -30,6 +30,7 @@ import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
@@ -43,6 +44,7 @@ import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 import java.util.zip.ZipFile
+import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -200,10 +202,9 @@ object BookHelp {
                 ).writeBytes(it)
             }
         } catch (e: Exception) {
-            AppLog.put(
-                "${book.name} ${chapter?.title} 图片 $src 下载失败\n${e.localizedMessage}",
-                e
-            )
+            coroutineContext.ensureActive()
+            val msg = "${book.name} ${chapter?.title} 图片 $src 下载失败\n${e.localizedMessage}"
+            AppLog.put(msg, e)
         } finally {
             downloadImages.remove(src)
         }
