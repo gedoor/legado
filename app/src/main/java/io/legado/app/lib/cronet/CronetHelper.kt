@@ -108,7 +108,7 @@ fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
 
 private fun disableCertificateVerify() {
     runCatching {
-        val sDefaultTrustManager = X509Util::class.java.getDeclaredField("sTestTrustManager")
+        val sDefaultTrustManager = X509Util::class.java.getDeclaredField("sDefaultTrustManager")
         sDefaultTrustManager.isAccessible = true
         sDefaultTrustManager.set(null, SSLHelper.unsafeTrustManagerExtensions)
     }
