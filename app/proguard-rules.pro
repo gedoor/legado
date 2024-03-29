@@ -257,8 +257,8 @@
 
 # Cronet
 -keep class org.chromium.net.X509Util {
-    private static sDefaultTrustManager;
-    private static sTestTrustManager;
+    private static X509TrustManagerExtensions sDefaultTrustManager;
+    private static X509TrustManagerExtensions sTestTrustManager;
 }
 
 # Class.forName调用
