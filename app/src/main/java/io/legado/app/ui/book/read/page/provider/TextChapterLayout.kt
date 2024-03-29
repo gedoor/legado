@@ -368,6 +368,7 @@ class TextChapterLayout(
                 }
             }
             val textLine = TextLine(isImage = true)
+            textLine.text = " "
             textLine.lineTop = durY + paddingTop
             durY += height
             textLine.lineBottom = durY + paddingTop

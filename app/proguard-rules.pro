@@ -255,6 +255,12 @@
 # 繁简转换
 -keep class com.github.liuyueyi.quick.transfer.** {*;}
 
+# Cronet
+-keep class org.chromium.net.X509Util {
+    private static sDefaultTrustManager;
+    private static sTestTrustManager;
+}
+
 # Class.forName调用
 -keep class io.legado.app.lib.cronet.CronetInterceptor{*;}
 -keep class io.legado.app.lib.cronet.CronetLoader{*;}
