@@ -256,9 +256,9 @@
 -keep class com.github.liuyueyi.quick.transfer.** {*;}
 
 # Cronet
--keep class org.chromium.net.X509Util {
-    private static X509TrustManagerExtensions sDefaultTrustManager;
-    private static X509TrustManagerExtensions sTestTrustManager;
+-keepclassmembers class org.chromium.net.X509Util {
+    *** sDefaultTrustManager;
+    *** sTestTrustManager;
 }
 
 # Class.forName调用
