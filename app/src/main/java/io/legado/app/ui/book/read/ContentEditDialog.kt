@@ -106,7 +106,7 @@ class ContentEditDialog : BaseDialogFragment(R.layout.dialog_content_edit) {
                 chapter.title = alertBinding.editView.text.toString()
                 lifecycleScope.launch {
                     withContext(IO) {
-                        appDb.bookChapterDao.upDate(chapter)
+                        appDb.bookChapterDao.update(chapter)
                     }
                     binding.toolBar.title = chapter.getDisplayTitle()
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
