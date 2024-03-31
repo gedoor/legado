@@ -218,10 +218,8 @@ data class TextLine(
         if (exceed || !onlyTextColumn || textPage.isMsgPage) {
             return false
         }
-        if (wordSpacing != 0f) {
-            if (!atLeastApi26 || !wordSpacingWorking) {
-                return false
-            }
+        if (wordSpacing != 0f && (!atLeastApi26 || !wordSpacingWorking)) {
+            return false
         }
         return searchResultColumnCount == 0
     }
@@ -244,14 +242,19 @@ data class TextLine(
         val emptyTextLine = TextLine()
         private val atLeastApi26 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         private val wordSpacingWorking by lazy {
-            // issue 3785
+            // issue 3785 3846
             val paint = PaintPool.obtain()
             val text = "一二 三"
             val width1 = paint.measureText(text)
-            paint.wordSpacing = 10f
-            val width2 = paint.measureText(text)
-            PaintPool.recycle(paint)
-            width2 - width1 == 10f
+            try {
+                paint.wordSpacing = 10f
+                val width2 = paint.measureText(text)
+                width2 - width1 == 10f
+            } catch (e: NoSuchMethodError) {
+                false
+            } finally {
+                PaintPool.recycle(paint)
+            }
         }
     }
 
