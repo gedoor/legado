@@ -4,7 +4,7 @@ import { Link } from "@element-plus/icons-vue";
 <template>
   <el-link
     :icon="Link"
-    href="https://alanskycn.gitee.io/teachme/"
+    href="./pages/source/rules.html"
     target="_blank"
     >书源制作教程</el-link
   ><br />
