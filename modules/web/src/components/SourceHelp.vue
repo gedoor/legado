@@ -2,16 +2,13 @@
 import { Link } from "@element-plus/icons-vue";
 </script>
 <template>
-  <el-link
-    :icon="Link"
-    href="/src/rules.html"
-    target="_blank"
+  <el-link :icon="Link" href="/help/#appHelp" target="_blank"
+    >APP帮助文档</el-link
+  ><br />
+  <el-link :icon="Link" href="/help/#ruleHelp" target="_blank"
     >书源制作教程</el-link
   ><br />
-  <el-link
-    :icon="Link"
-    href="/help#markdown"
-    target="_blank"
+  <el-link :icon="Link" href="/help/#xpathHelp" target="_blank"
     >xpath语法教程</el-link
   ><br />
   <el-link

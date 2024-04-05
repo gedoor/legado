@@ -27,7 +27,7 @@ require(['markdownit', 'highlight'], (mdit, hljs) => {
         },
     });
 
-    const path = '../md/';
+    const path = '/help/md/';
     const file = location.hash.slice(1).trim();
     if (!file) return;
     fetch(`${path}${file}.md`)
