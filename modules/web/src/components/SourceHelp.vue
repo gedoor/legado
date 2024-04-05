@@ -10,15 +10,9 @@ import { Link } from "@element-plus/icons-vue";
   ><br />
   <el-link
     :icon="Link"
-    href="https://zhuanlan.zhihu.com/p/29436838"
+    href="/help#markdown"
     target="_blank"
-    >xpath基础教程</el-link
-  ><br />
-  <el-link
-    :icon="Link"
-    href="https://zhuanlan.zhihu.com/p/32187820"
-    target="_blank"
-    >xpath高级教程</el-link
+    >xpath语法教程</el-link
   ><br />
   <el-link
     :icon="Link"
