@@ -23,7 +23,7 @@ require(['marked', 'markedHighlight', 'highlight'], (marked, mdhl, hljs) => {
         mdhl.markedHighlight({
             langPrefix: 'theme-vs2015-min hljs language-',
             highlight(code, lang) {
-                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                const language = hljs.getLanguage(lang) ? lang : 'txt';
                 const result = hljs.highlight(code, {language});
                 return result.value;
             },
