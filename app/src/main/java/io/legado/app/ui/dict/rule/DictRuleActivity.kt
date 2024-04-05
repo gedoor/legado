@@ -237,7 +237,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     }
 
     private fun showDictRuleHelp() {
-        val text = String(assets.open("help/dictRuleHelp.md").readBytes())
+        val text = String(assets.open("web/help/md/dictRuleHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 }

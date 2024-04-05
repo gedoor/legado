@@ -198,7 +198,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     }
 
     private fun showTxtTocRuleHelp() {
-        val text = String(requireContext().assets.open("help/txtTocRuleHelp.md").readBytes())
+        val text = String(requireContext().assets.open("web/help/md/txtTocRuleHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

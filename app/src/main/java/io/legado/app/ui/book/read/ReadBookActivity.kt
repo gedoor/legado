@@ -1023,7 +1023,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun showReadMenuHelp() {
-        val text = String(assets.open("help/readMenuHelp.md").readBytes())
+        val text = String(assets.open("web/help/md/readMenuHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

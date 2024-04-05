@@ -355,7 +355,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     }
 
     private fun showHelp() {
-        val text = String(assets.open("help/SourceMRssHelp.md").readBytes())
+        val text = String(assets.open("web/help/md/SourceMRssHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

@@ -325,7 +325,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     }
 
     private fun showHelp() {
-        val text = String(assets.open("help/replaceRuleHelp.md").readBytes())
+        val text = String(assets.open("web/help/md/replaceRuleHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 
