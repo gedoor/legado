@@ -12,6 +12,7 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
+import io.legado.app.ui.widget.dialog.TextDialog
 
 inline fun <reified T : DialogFragment> AppCompatActivity.showDialogFragment(
     arguments: Bundle.() -> Unit = {}
@@ -201,3 +202,9 @@ val Activity.navigationBarGravity: Int
         val gravity = (navigationBar?.layoutParams as? FrameLayout.LayoutParams)?.gravity
         return gravity ?: Gravity.BOTTOM
     }
+
+fun AppCompatActivity.showHelp(fileName: String) {
+    //显示目录help下的帮助文档
+    val mdText = String(assets.open("web/help/md/${fileName}.md").readBytes())
+    showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
+}
