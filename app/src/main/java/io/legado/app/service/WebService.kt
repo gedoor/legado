@@ -61,7 +61,6 @@ class WebService : BaseService() {
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
     private var notificationList = mutableListOf(appCtx.getString(R.string.service_starting))
-    private var notificationContent = appCtx.getString(R.string.service_starting)
     private val networkChangedListener by lazy {
         NetworkChangedListener(this)
     }
