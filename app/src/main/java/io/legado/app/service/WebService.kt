@@ -76,13 +76,14 @@ class WebService : BaseService() {
         upTile(true)
         networkChangedListener.register()
         networkChangedListener.onNetworkChanged = {
-            val address = NetworkUtils.getLocalIPAddress()
-            if (address == null) {
-                hostAddress = getString(R.string.network_connection_unavailable)
-                notificationContent = hostAddress
+            val addressList = NetworkUtils.getLocalIPAddress()
+            if (addressList.any()) {
+                val hostList = addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) }
+                hostAddress = hostList.first()
+                notificationContent = hostList.joinToString(separator = "\n")
                 startForegroundNotification()
             } else {
-                hostAddress = getString(R.string.http_ip, address.hostAddress, getPort())
+                hostAddress = getString(R.string.network_connection_unavailable)
                 notificationContent = hostAddress
                 startForegroundNotification()
             }
@@ -130,18 +131,19 @@ class WebService : BaseService() {
         if (webSocketServer?.isAlive == true) {
             webSocketServer?.stop()
         }
-        val address = NetworkUtils.getLocalIPAddress()
-        if (address != null) {
+        val addressList = NetworkUtils.getLocalIPAddress()
+        if (addressList.any()) {
             val port = getPort()
             httpServer = HttpServer(port)
             webSocketServer = WebSocketServer(port + 1)
             try {
                 httpServer?.start()
                 webSocketServer?.start(1000 * 30) // 通信超时设置
-                hostAddress = getString(R.string.http_ip, address.hostAddress, port)
+                val hostList = addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) }
+                hostAddress = hostList.first()
+                notificationContent = hostList.joinToString(separator = "\n")
                 isRun = true
                 postEvent(EventBus.WEB_SERVICE, hostAddress)
-                notificationContent = hostAddress
                 startForegroundNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
