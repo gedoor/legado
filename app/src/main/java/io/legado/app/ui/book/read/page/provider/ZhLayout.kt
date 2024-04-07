@@ -16,7 +16,8 @@ class ZhLayout(
     text: CharSequence,
     textPaint: TextPaint,
     width: Int,
-    widthsArray: FloatArray
+    words: List<String>,
+    widths: List<Float>
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
     companion object {
         private val postPanc = hashSetOf(
@@ -50,12 +51,6 @@ class ZhLayout(
 
     init {
         var line = 0
-        curPaint.getTextWidths(text as String, widthsArray)
-        val (words, widths) = ChapterProvider.getStringArrayAndTextWidths(
-            text,
-            widthsArray.asList(),
-            curPaint
-        )
         var lineW = 0f
         var cwPre = 0f
         var length = 0

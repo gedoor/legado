@@ -40,6 +40,7 @@ object BookInfo {
         val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
+        analyzeRule.setCoroutineContext(coroutineContext)
         analyzeBookInfo(book, body, analyzeRule, bookSource, baseUrl, redirectUrl, canReName)
     }
 

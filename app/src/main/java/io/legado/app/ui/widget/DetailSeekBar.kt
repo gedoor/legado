@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.SeekBar
+import androidx.appcompat.widget.TooltipCompat
 import io.legado.app.R
 import io.legado.app.databinding.ViewDetailSeekBarBinding
 import io.legado.app.lib.theme.bottomBackground
@@ -30,6 +31,7 @@ class DetailSeekBar @JvmOverloads constructor(
         get() = binding.seekBar.progress
         set(value) {
             binding.seekBar.progress = value
+            upValue()
         }
     var max: Int
         get() = binding.seekBar.max
@@ -41,7 +43,11 @@ class DetailSeekBar @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.DetailSeekBar)
         isBottomBackground =
             typedArray.getBoolean(R.styleable.DetailSeekBar_isBottomBackground, false)
-        binding.tvSeekTitle.text = typedArray.getText(R.styleable.DetailSeekBar_title)
+        val title = typedArray.getText(R.styleable.DetailSeekBar_title)
+        binding.tvSeekTitle.apply {
+            text = title
+            TooltipCompat.setTooltipText(this, title)
+        }
         binding.seekBar.max = typedArray.getInteger(R.styleable.DetailSeekBar_max, 0)
         typedArray.recycle()
         if (isBottomBackground && !isInEditMode) {

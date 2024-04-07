@@ -4,7 +4,6 @@ import io.legado.app.constant.AppConst
 import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieManager.cookieJarHeader
-import io.legado.app.utils.GzipSourceCompat
 import io.legado.app.utils.NetworkUtils
 import okhttp3.ConnectionSpec
 import okhttp3.Cookie
@@ -16,12 +15,14 @@ import okhttp3.OkHttpClient
 import okhttp3.internal.http.RealResponseBody
 import okhttp3.internal.http.promisesBody
 import okio.buffer
+import okio.source
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import java.util.zip.GZIPInputStream
 
 private val proxyClientCache: ConcurrentHashMap<String, OkHttpClient> by lazy {
     ConcurrentHashMap()
@@ -109,16 +110,21 @@ val okHttpClient: OkHttpClient by lazy {
     builder.addInterceptor { chain ->
         val request = chain.request()
         val requestBuilder = request.newBuilder()
-        requestBuilder.header("Accept-Encoding", "gzip")
+
+        var transparentGzip = false
+        if (request.header("Accept-Encoding") == null && request.header("Range") == null) {
+            transparentGzip = true
+            requestBuilder.header("Accept-Encoding", "gzip")
+        }
 
         val response = chain.proceed(requestBuilder.build())
 
         val responseBody = response.body
-        if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)
+        if (transparentGzip && "gzip".equals(response.header("Content-Encoding"), ignoreCase = true)
             && response.promisesBody() && responseBody != null
         ) {
             val responseBuilder = response.newBuilder()
-            val gzipSource = GzipSourceCompat(responseBody.source())
+            val gzipSource = GZIPInputStream(responseBody.byteStream()).source()
             val strippedHeaders = response.headers.newBuilder()
                 .removeAll("Content-Encoding")
                 .removeAll("Content-Length")

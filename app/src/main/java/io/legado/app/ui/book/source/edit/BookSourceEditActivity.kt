@@ -35,7 +35,6 @@ import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
-import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.UrlOptionDialog
 import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
@@ -48,6 +47,7 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.share
 import io.legado.app.utils.shareWithQr
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.showHelp
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -619,12 +619,6 @@ class BookSourceEditActivity :
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
         }
-    }
-
-    private fun showHelp(fileName: String) {
-        //显示目录help下的帮助文档
-        val mdText = String(assets.open("help/${fileName}.md").readBytes())
-        showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
     }
 
     private fun setSourceVariable() {

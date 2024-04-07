@@ -104,7 +104,8 @@ const subJustify = computed(() =>
         height: 112px;
         margin-left: 20px;
         flex: 1;
-
+        overflow: hidden;
+        
         .name {
           width: fit-content;
           font-size: 16px;

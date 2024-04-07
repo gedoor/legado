@@ -271,9 +271,7 @@ public class Resources implements Serializable {
      */
     public void addAll(Collection<Resource> resources) {
         for (Resource resource : resources) {
-            fixResourceHref(resource);
-            this.resources.put(resource.getHref(), resource);
-            resourcesById.put(resource.getId(), resource);
+            add(resource);
         }
     }
 

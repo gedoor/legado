@@ -60,7 +60,7 @@ class WebService : BaseService() {
     }
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
-    private var notificationContent = appCtx.getString(R.string.service_starting)
+    private var notificationList = mutableListOf(appCtx.getString(R.string.service_starting))
     private val networkChangedListener by lazy {
         NetworkChangedListener(this)
     }
@@ -76,14 +76,15 @@ class WebService : BaseService() {
         upTile(true)
         networkChangedListener.register()
         networkChangedListener.onNetworkChanged = {
-            val address = NetworkUtils.getLocalIPAddress()
-            if (address == null) {
-                hostAddress = getString(R.string.network_connection_unavailable)
-                notificationContent = hostAddress
+            val addressList = NetworkUtils.getLocalIPAddress()
+            notificationList.clear()
+            if (addressList.any()) {
+                notificationList.addAll(addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) })
+                hostAddress = notificationList.first()
                 startForegroundNotification()
             } else {
-                hostAddress = getString(R.string.http_ip, address.hostAddress, getPort())
-                notificationContent = hostAddress
+                hostAddress = getString(R.string.network_connection_unavailable)
+                notificationList.add(hostAddress)
                 startForegroundNotification()
             }
             postEvent(EventBus.WEB_SERVICE, hostAddress)
@@ -130,18 +131,19 @@ class WebService : BaseService() {
         if (webSocketServer?.isAlive == true) {
             webSocketServer?.stop()
         }
-        val address = NetworkUtils.getLocalIPAddress()
-        if (address != null) {
+        val addressList = NetworkUtils.getLocalIPAddress()
+        if (addressList.any()) {
             val port = getPort()
             httpServer = HttpServer(port)
             webSocketServer = WebSocketServer(port + 1)
             try {
                 httpServer?.start()
                 webSocketServer?.start(1000 * 30) // 通信超时设置
-                hostAddress = getString(R.string.http_ip, address.hostAddress, port)
+                notificationList.clear()
+                notificationList.addAll(addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) })
+                hostAddress = notificationList.first()
                 isRun = true
                 postEvent(EventBus.WEB_SERVICE, hostAddress)
-                notificationContent = hostAddress
                 startForegroundNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
@@ -170,7 +172,7 @@ class WebService : BaseService() {
             .setSmallIcon(R.drawable.ic_web_service_noti)
             .setOngoing(true)
             .setContentTitle(getString(R.string.web_service))
-            .setContentText(notificationContent)
+            .setContentText(notificationList.joinToString("\n"))
             .setContentIntent(
                 servicePendingIntent<WebService>("copyHostAddress")
             )

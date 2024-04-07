@@ -7,6 +7,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Picture
 import android.os.Build
 import android.text.Html
 import android.view.MotionEvent
@@ -25,11 +26,15 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.graphics.record
+import androidx.core.graphics.withTranslation
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.TintHelper
+import io.legado.app.utils.canvasrecorder.CanvasRecorder
+import io.legado.app.utils.canvasrecorder.record
 import splitties.systemservices.inputMethodManager
 import java.lang.reflect.Field
 
@@ -163,6 +168,26 @@ fun View.screenshot(bitmap: Bitmap? = null, canvas: Canvas? = null): Bitmap? {
     }
 }
 
+fun View.screenshot(picture: Picture) {
+    if (width > 0 && height > 0) {
+        picture.record(width, height) {
+            withTranslation(-scrollX.toFloat(), -scrollY.toFloat()) {
+                draw(this)
+            }
+        }
+    }
+}
+
+fun View.screenshot(canvasRecorder: CanvasRecorder) {
+    if (width > 0 && height > 0) {
+        canvasRecorder.record(width, height) {
+            withTranslation(-scrollX.toFloat(), -scrollY.toFloat()) {
+                draw(this)
+            }
+        }
+    }
+}
+
 fun View.setPaddingBottom(bottom: Int) {
     setPadding(paddingLeft, paddingTop, paddingRight, bottom)
 }
@@ -200,6 +225,12 @@ fun TextView.setHtml(html: String) {
     } else {
         @Suppress("DEPRECATION")
         text = Html.fromHtml(html)
+    }
+}
+
+fun TextView.setTextIfNotEqual(charSequence: CharSequence?) {
+    if (text != charSequence) {
+        text = charSequence
     }
 }
 

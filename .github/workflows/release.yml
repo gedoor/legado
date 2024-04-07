@@ -54,6 +54,7 @@ jobs:
         run: |
           # not use this output
           # echo "KeyStore=yes" >> $GITHUB_OUTPUT
+          echo -e "\n" >> gradle.properties
           echo RELEASE_KEY_ALIAS='${{ secrets.RELEASE_KEY_ALIAS }}' >> gradle.properties
           echo RELEASE_KEY_PASSWORD='${{ secrets.RELEASE_KEY_PASSWORD }}' >> gradle.properties
           echo RELEASE_STORE_PASSWORD='${{ secrets.RELEASE_STORE_PASSWORD }}' >> gradle.properties
@@ -87,7 +88,7 @@ jobs:
 
       - name: Release
         if: ${{ env.product == 'app' }}
-        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
+        uses: softprops/action-gh-release@v2
         with:
           name: legado_app_${{ env.VERSION }}
           tag_name: ${{ env.VERSION }}

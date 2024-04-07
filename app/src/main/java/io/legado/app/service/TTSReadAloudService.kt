@@ -14,7 +14,11 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.ensureActive
 
 /**
@@ -26,6 +30,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     private var ttsInitFinish = false
     private val ttsUtteranceListener = TTSUtteranceListener()
     private var speakJob: Coroutine<*>? = null
+    private val TAG = "TTSReadAloudService"
 
     override fun onCreate() {
         super.onCreate()
@@ -41,6 +46,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     private fun initTts() {
         ttsInitFinish = false
         val engine = GSON.fromJsonObject<SelectItem<String>>(ReadAloud.ttsEngine).getOrNull()?.value
+        LogUtils.d(TAG, "initTts engine:$engine")
         textToSpeech = if (engine.isNullOrBlank()) {
             TextToSpeech(this, this)
         } else {
@@ -84,6 +90,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         MediaHelp.playSilentSound(this@TTSReadAloudService)
         speakJob?.cancel()
         speakJob = execute {
+            LogUtils.d(TAG, "朗读列表大小 ${contentList.size}")
+            LogUtils.d(TAG, "朗读页数 ${textChapter?.pageSize}")
             val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
             var result = tts.runCatching {
                 speak("", TextToSpeech.QUEUE_FLUSH, null, null)
@@ -92,6 +100,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 TextToSpeech.ERROR
             }
             if (result == TextToSpeech.ERROR) {
+                AppLog.put("tts出错 尝试重新初始化")
                 clearTTS()
                 initTts()
                 return@execute
@@ -116,6 +125,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     AppLog.put("tts朗读出错:$text")
                 }
             }
+            LogUtils.d(TAG, "朗读内容添加完成")
         }.onError {
             AppLog.put("tts朗读出错\n${it.localizedMessage}", it, true)
         }
@@ -166,7 +176,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
      */
     private inner class TTSUtteranceListener : UtteranceProgressListener() {
 
+        private val TAG = "TTSUtteranceListener"
+
         override fun onStart(s: String) {
+            LogUtils.d(TAG, "onStart nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$s")
             textChapter?.let {
                 if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
@@ -177,6 +190,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         }
 
         override fun onDone(s: String) {
+            LogUtils.d(TAG, "onDone utteranceId:$s")
             //跳过全标点段落
             do {
                 readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
@@ -191,6 +205,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
         override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
             super.onRangeStart(utteranceId, start, end, frame)
+            val msg =
+                "$TAG onRangeStart nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$utteranceId start:$start end:$end frame:$frame"
+            LogUtils.d(TAG, msg)
             textChapter?.let {
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
@@ -198,6 +215,13 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     upTtsProgress(readAloudNumber + start)
                 }
             }
+        }
+
+        override fun onError(utteranceId: String?, errorCode: Int) {
+            LogUtils.d(
+                TAG,
+                "onError nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$utteranceId errorCode:$errorCode"
+            )
         }
 
         @Deprecated("Deprecated in Java")

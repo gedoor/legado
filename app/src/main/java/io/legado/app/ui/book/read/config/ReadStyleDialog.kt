@@ -108,10 +108,10 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     private fun initViewEvent() = binding.run {
         chineseConverter.onChanged {
             ChineseUtils.unLoad(*TransType.entries.toTypedArray())
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(5))
         }
         textFontWeightConverter.onChanged {
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(8, 9, 6))
         }
         tvTextFont.setOnClickListener {
             showDialogFragment<FontSelectDialog>()
@@ -122,7 +122,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
                 ReadBookConfig.paragraphIndent = "　".repeat(index)
-                postEvent(EventBus.UP_CONFIG, true)
+                postEvent(EventBus.UP_CONFIG, arrayListOf(5))
             }
         }
         tvPadding.setOnClickListener {
@@ -141,40 +141,40 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         cbShareLayout.onCheckedChangeListener = { _, isChecked ->
             ReadBookConfig.shareLayout = isChecked
             upView()
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
         }
         dsbTextSize.onChanged = {
             ReadBookConfig.textSize = it + 5
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
         }
         dsbTextLetterSpacing.onChanged = {
             ReadBookConfig.letterSpacing = (it - 50) / 100f
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
         }
         dsbLineSize.onChanged = {
             ReadBookConfig.lineSpacingExtra = it
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
         }
         dsbParagraphSpacing.onChanged = {
             ReadBookConfig.paragraphSpacing = it
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
         }
     }
 
-    private fun changeBg(index: Int) {
+    private fun changeBgTextConfig(index: Int) {
         val oldIndex = ReadBookConfig.styleSelect
         if (index != oldIndex) {
             ReadBookConfig.styleSelect = index
             upView()
             styleAdapter.notifyItemChanged(oldIndex)
             styleAdapter.notifyItemChanged(index)
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
         }
     }
 
     private fun showBgTextConfig(index: Int): Boolean {
         dismissAllowingStateLoss()
-        changeBg(index)
+        changeBgTextConfig(index)
         callBack?.showBgTextConfig()
         return true
     }
@@ -200,7 +200,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     override fun selectFont(path: String) {
         if (path != ReadBookConfig.textFont) {
             ReadBookConfig.textFont = path
-            postEvent(EventBus.UP_CONFIG, true)
+            postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
         }
     }
 
@@ -235,7 +235,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             binding.apply {
                 ivStyle.setOnClickListener {
                     if (ivStyle.isInView) {
-                        changeBg(holder.layoutPosition)
+                        changeBgTextConfig(holder.layoutPosition)
                     }
                 }
                 ivStyle.onLongClick(ivStyle.isInView) {

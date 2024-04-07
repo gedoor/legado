@@ -101,7 +101,11 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 map["MODEL"] = Build.MODEL
                 map["SDK_INT"] = Build.VERSION.SDK_INT.toString()
                 map["RELEASE"] = Build.VERSION.RELEASE
-                map["WebViewUserAgent"] = WebSettings.getDefaultUserAgent(appCtx)
+                map["WebViewUserAgent"] = try {
+                    WebSettings.getDefaultUserAgent(appCtx)
+                } catch (e: Throwable) {
+                    e.localizedMessage ?: "null"
+                }
                 //获取app版本信息
                 AppConst.appInfo.let {
                     map["versionName"] = it.versionName

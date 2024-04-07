@@ -18,7 +18,13 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.searchContent.SearchResult
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.activity
+import io.legado.app.utils.invisible
+import io.legado.app.utils.loadAnimation
+import io.legado.app.utils.navigationBarGravity
+import io.legado.app.utils.navigationBarHeight
+import io.legado.app.utils.visible
 import splitties.views.bottomPadding
 import splitties.views.leftPadding
 import splitties.views.padding
@@ -235,6 +241,8 @@ class SearchMenu @JvmOverloads constructor(
         fun exitSearchMenu()
         fun showMenuBar()
         fun navigateToSearch(searchResult: SearchResult, index: Int)
+        fun onMenuShow()
+        fun onMenuHide()
     }
 
 }

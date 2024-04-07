@@ -245,7 +245,7 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     }
 
     private fun showTxtTocRuleHelp() {
-        val text = String(assets.open("help/txtTocRuleHelp.md").readBytes())
+        val text = String(assets.open("web/help/md/txtTocRuleHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

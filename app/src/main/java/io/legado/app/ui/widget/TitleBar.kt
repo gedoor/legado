@@ -36,13 +36,17 @@ class TitleBar @JvmOverloads constructor(
     var title: CharSequence?
         get() = toolbar.title
         set(title) {
-            toolbar.title = title
+            if (toolbar.title != title) {
+                toolbar.title = title
+            }
         }
 
     var subtitle: CharSequence?
         get() = toolbar.subtitle
         set(subtitle) {
-            toolbar.subtitle = subtitle
+            if (toolbar.subtitle != subtitle) {
+                toolbar.subtitle = subtitle
+            }
         }
 
     private val displayHomeAsUp: Boolean
@@ -198,7 +202,7 @@ class TitleBar @JvmOverloads constructor(
         toolbar.setSubtitleTextAppearance(context, resId)
     }
 
-    fun setTextColor(@ColorInt color: Int){
+    fun setTextColor(@ColorInt color: Int) {
         setTitleTextColor(color)
         setSubTitleTextColor(color)
     }

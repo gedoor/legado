@@ -13,9 +13,21 @@ import io.legado.app.constant.Theme
 import io.legado.app.help.DefaultData
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.BookCover
-import io.legado.app.utils.*
+import io.legado.app.utils.BitmapUtils
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.hexString
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.stackBlur
 import splitties.init.appCtx
-
 import java.io.File
 
 @Keep
@@ -61,10 +73,12 @@ object ThemeConfig {
                 context.getPrefString(PreferKey.bgImage),
                 context.getPrefInt(PreferKey.bgImageBlurring, 0)
             )
+
             Theme.Dark -> Pair(
                 context.getPrefString(PreferKey.bgImageN),
                 context.getPrefInt(PreferKey.bgImageNBlurring, 0)
             )
+
             else -> null
         } ?: return null
         if (bgCfg.first.isNullOrBlank()) return null
@@ -205,6 +219,7 @@ object ThemeConfig {
                     .bottomBackground(Color.WHITE)
                     .apply()
             }
+
             AppConfig.isNightTheme -> {
                 val primary =
                     getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
@@ -225,6 +240,7 @@ object ThemeConfig {
                     .bottomBackground(ColorUtils.withAlpha(bBackground, 1f))
                     .apply()
             }
+
             else -> {
                 val primary =
                     getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))

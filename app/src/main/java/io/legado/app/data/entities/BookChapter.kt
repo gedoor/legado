@@ -1,5 +1,6 @@
 package io.legado.app.data.entities
 
+import android.annotation.SuppressLint
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -64,11 +65,9 @@ data class BookChapter(
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
-    @delegate:Ignore
+    @Ignore
     @IgnoredOnParcel
-    private val titleMD5: String by lazy {
-        MD5Utils.md5Encode16(title)
-    }
+    var titleMD5: String? = null
 
     override fun putVariable(key: String, value: String?): Boolean {
         if (super.putVariable(key, value)) {
@@ -158,12 +157,24 @@ data class BookChapter(
         }
     }
 
-    @Suppress("unused")
-    fun getFileName(suffix: String = "nb"): String =
-        String.format("%05d-%s.%s", index, titleMD5, suffix)
+    private fun ensureTitleMD5Init() {
+        if (titleMD5 == null) {
+            titleMD5 = MD5Utils.md5Encode16(title)
+        }
+    }
 
-
+    @SuppressLint("DefaultLocale")
     @Suppress("unused")
-    fun getFontName(): String = String.format("%05d-%s.ttf", index, titleMD5)
+    fun getFileName(suffix: String = "nb"): String {
+        ensureTitleMD5Init()
+        return String.format("%05d-%s.%s", index, titleMD5, suffix)
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Suppress("unused")
+    fun getFontName(): String {
+        ensureTitleMD5Init()
+        return String.format("%05d-%s.ttf", index, titleMD5)
+    }
 }
 

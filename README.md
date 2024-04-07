@@ -71,9 +71,9 @@ https://www.yuque.com/legado/wiki/community
 https://gedoor.github.io/Disclaimer
 
 ##### 阅读3.0
-* [书源规则](https://alanskycn.gitee.io/teachme)
+* [书源规则](https://mgz0227.github.io/The-tutorial-of-Legado/)
 * [更新日志](/app/src/main/assets/updateLog.md)
-* [帮助文档](/app/src/main/assets/help/appHelp.md)
+* [帮助文档](/app/src/main/assets/web/help/md/appHelp.md)
 * [web端书架](https://github.com/gedoor/legado_web_bookshelf)
 * [web端源编辑](https://github.com/gedoor/legado_web_source_editor)
 

@@ -63,6 +63,7 @@ inline fun <reified T : Service> Context.stopService() {
 @SuppressLint("UnspecifiedImmutableFlag")
 inline fun <reified T : Service> Context.servicePendingIntent(
     action: String,
+    requestCode: Int = 0,
     configIntent: Intent.() -> Unit = {}
 ): PendingIntent? {
     val intent = Intent(this, T::class.java)
@@ -73,7 +74,7 @@ inline fun <reified T : Service> Context.servicePendingIntent(
     } else {
         FLAG_UPDATE_CURRENT
     }
-    return getService(this, 0, intent, flags)
+    return getService(this, requestCode, intent, flags)
 }
 
 @SuppressLint("UnspecifiedImmutableFlag")

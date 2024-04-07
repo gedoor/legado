@@ -4,6 +4,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import androidx.annotation.Keep
+import io.legado.app.ui.book.read.page.ContentTextView
+import io.legado.app.ui.book.read.page.entities.TextLine
+import io.legado.app.ui.book.read.page.entities.TextLine.Companion.emptyTextLine
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
 /**
@@ -15,6 +18,16 @@ data class ReviewColumn(
     override var end: Float,
     val count: Int = 0
 ) : BaseColumn {
+
+    override var textLine: TextLine = emptyTextLine
+    override fun draw(view: ContentTextView, canvas: Canvas) {
+        val textPaint = if (textLine.isTitle) {
+            ChapterProvider.titlePaint
+        } else {
+            ChapterProvider.contentPaint
+        }
+        drawToCanvas(canvas, textLine.lineBase, textPaint.textSize)
+    }
 
     val countText by lazy {
         if (count > 999) {

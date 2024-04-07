@@ -26,6 +26,10 @@ object ReadTipConfig {
     )
     val tipNames get() = appCtx.resources.getStringArray(R.array.read_tip).toList()
 
+    val tipColorNames get() = appCtx.resources.getStringArray(R.array.tip_color).toList()
+    val tipDividerColorNames
+        get() = appCtx.resources.getStringArray(R.array.tip_divider_color).toList()
+
     var tipHeaderLeft: Int
         get() = ReadBookConfig.config.tipHeaderLeft
         set(value) {

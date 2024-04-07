@@ -229,7 +229,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
         LocalConfig.versionCode = appInfo.versionCode
         if (LocalConfig.isFirstOpenApp) {
-            val help = String(assets.open("help/appHelp.md").readBytes())
+            val help = String(assets.open("web/help/md/appHelp.md").readBytes())
             val dialog = TextDialog(getString(R.string.help), help, TextDialog.Mode.MD)
             dialog.setOnDismissListener {
                 block.resume(null)

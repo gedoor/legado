@@ -45,6 +45,7 @@ import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -89,7 +90,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isNotEmpty()) {
                 lifecycleScope.launch {
-                    alert("搜索结果为空") {
+                    context?.alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         noButton()
                         yesButton {
@@ -126,6 +127,11 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
             dismissAllowingStateLoss()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.searchFinishCallback = null
     }
 
     private fun showTitle() {
@@ -277,8 +283,12 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 } else {
                     AppConfig.searchGroup = item.title.toString()
                 }
-                viewModel.startOrStopSearch()
-                viewModel.refresh()
+                lifecycleScope.launch(IO) {
+                    viewModel.stopSearch()
+                    if (viewModel.refresh()) {
+                        viewModel.startSearch()
+                    }
+                }
             }
         }
         return false

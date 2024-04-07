@@ -172,7 +172,7 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     private fun showHelp() {
-        val text = String(requireContext().assets.open("help/webDavHelp.md").readBytes())
+        val text = String(requireContext().assets.open("web/help/md/webDavHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

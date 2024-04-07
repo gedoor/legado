@@ -107,39 +107,48 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.readBodyToLh -> activity?.recreate()
                 PreferKey.hideStatusBar -> {
                     ReadBookConfig.hideStatusBar = getPrefBoolean(PreferKey.hideStatusBar)
-                    postEvent(EventBus.UP_CONFIG, true)
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(0))
                 }
+
                 PreferKey.hideNavigationBar -> {
                     ReadBookConfig.hideNavigationBar = getPrefBoolean(PreferKey.hideNavigationBar)
-                    postEvent(EventBus.UP_CONFIG, true)
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(0))
                 }
+
                 PreferKey.keepLight -> postEvent(key, true)
                 PreferKey.textSelectAble -> postEvent(key, getPrefBoolean(key))
                 PreferKey.screenOrientation -> {
                     (activity as? ReadBookActivity)?.setOrientation()
                 }
+
                 PreferKey.textFullJustify,
                 PreferKey.textBottomJustify,
                 PreferKey.useZhLayout -> {
-                    postEvent(EventBus.UP_CONFIG, true)
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(5))
                 }
+
                 PreferKey.showBrightnessView -> {
                     postEvent(PreferKey.showBrightnessView, "")
                 }
+
                 PreferKey.expandTextMenu -> {
                     (activity as? ReadBookActivity)?.textActionMenu?.upMenu()
                 }
+
                 PreferKey.doublePageHorizontal -> {
                     ChapterProvider.upLayout()
                     ReadBook.loadContent(false)
                 }
+
                 PreferKey.showReadTitleAddition,
                 PreferKey.readBarStyleFollowPage -> {
                     postEvent(EventBus.UPDATE_READ_ACTION_BAR, true)
                 }
+
                 PreferKey.progressBarBehavior -> {
                     postEvent(EventBus.UP_SEEK_BAR, true)
                 }
+
                 PreferKey.noAnimScrollPage -> {
                     ReadBook.callBack?.upPageAnim()
                 }
@@ -152,6 +161,7 @@ class MoreConfigDialog : DialogFragment() {
                 "clickRegionalConfig" -> {
                     (activity as? ReadBookActivity)?.showClickRegionalConfig()
                 }
+
                 PreferKey.pageTouchSlop -> {
                     NumberPickerDialog(requireContext())
                         .setTitle(getString(R.string.page_touch_slop_dialog_title))
@@ -160,7 +170,7 @@ class MoreConfigDialog : DialogFragment() {
                         .setValue(AppConfig.pageTouchSlop)
                         .show {
                             AppConfig.pageTouchSlop = it
-                            postEvent(EventBus.UP_CONFIG, false)
+                            postEvent(EventBus.UP_CONFIG, arrayListOf(4))
                         }
                 }
             }

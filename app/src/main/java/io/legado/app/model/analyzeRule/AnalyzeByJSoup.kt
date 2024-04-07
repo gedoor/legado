@@ -53,7 +53,7 @@ class AnalyzeByJSoup(doc: Any) {
         if (list.isEmpty()) {
             return null
         }
-        if (list.size == 1){
+        if (list.size == 1) {
             return list.first()
         }
         return list.joinToString("\n")

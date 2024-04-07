@@ -52,4 +52,6 @@ object AppPattern {
     val spaceRegex = "\\s+".toRegex()
 
     val regexCharRegex = "[{}()\\[\\].+*?^$\\\\|]".toRegex()
+
+    val LFRegex = "\n".toRegex()
 }

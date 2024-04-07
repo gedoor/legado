@@ -1,13 +1,21 @@
 package io.legado.app.ui.book.read.page.entities
 
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.text.Layout
 import android.text.StaticLayout
 import androidx.annotation.Keep
+import androidx.core.graphics.withTranslation
 import io.legado.app.R
+import io.legado.app.help.PaintPool
 import io.legado.app.help.config.ReadBookConfig
-import io.legado.app.model.ReadBook
+import io.legado.app.ui.book.read.page.ContentTextView
+import io.legado.app.ui.book.read.page.entities.TextChapter.Companion.emptyTextChapter
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
+import io.legado.app.utils.canvasrecorder.recordIfNeeded
+import io.legado.app.utils.dpToPx
 import splitties.init.appCtx
 import java.text.DecimalFormat
 import kotlin.math.min
@@ -22,7 +30,6 @@ data class TextPage(
     var text: String = appCtx.getString(R.string.data_loading),
     var title: String = appCtx.getString(R.string.data_loading),
     private val textLines: ArrayList<TextLine> = arrayListOf(),
-    var pageSize: Int = 0,
     var chapterSize: Int = 0,
     var chapterIndex: Int = 0,
     var height: Float = 0f,
@@ -31,6 +38,7 @@ data class TextPage(
 
     companion object {
         val readProgressFormatter = DecimalFormat("0.0%")
+        val emptyTextPage = TextPage()
     }
 
     val lines: List<TextLine> get() = textLines
@@ -38,25 +46,36 @@ data class TextPage(
     val charSize: Int get() = text.length.coerceAtLeast(1)
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
+    var canvasRecorder = CanvasRecorderFactory.create(true)
+    var doublePage = false
+    var paddingTop = ChapterProvider.paddingTop
+    var isCompleted = false
+    var hasReadAloudSpan = false
+
+    @JvmField
+    var textChapter = emptyTextChapter
+    val pageSize get() = textChapter.pageSize
 
     val paragraphs by lazy {
         paragraphsInternal
     }
 
-    val paragraphsInternal: ArrayList<TextParagraph> get() {
-        val paragraphs = arrayListOf<TextParagraph>()
-        val lines = textLines.filter { it.paragraphNum > 0 }
-        val offset = lines.first().paragraphNum - 1
-        lines.forEach { line ->
-            if (paragraphs.lastIndex < line.paragraphNum - offset - 1) {
-                paragraphs.add(TextParagraph(0))
+    val paragraphsInternal: ArrayList<TextParagraph>
+        get() {
+            val paragraphs = arrayListOf<TextParagraph>()
+            val lines = textLines.filter { it.paragraphNum > 0 }
+            val offset = lines.first().paragraphNum - 1
+            lines.forEach { line ->
+                if (paragraphs.lastIndex < line.paragraphNum - offset - 1) {
+                    paragraphs.add(TextParagraph(0))
+                }
+                paragraphs[line.paragraphNum - offset - 1].textLines.add(line)
             }
-            paragraphs[line.paragraphNum - offset - 1].textLines.add(line)
+            return paragraphs
         }
-        return paragraphs
-    }
 
     fun addLine(line: TextLine) {
+        line.textPage = this
         textLines.add(line)
     }
 
@@ -147,9 +166,11 @@ data class TextPage(
                     )
                     x = x1
                 }
-                textLines.add(textLine)
+                addLine(textLine)
             }
             height = ChapterProvider.visibleHeight.toFloat()
+            invalidate()
+            isCompleted = true
         }
         return this
     }
@@ -158,8 +179,12 @@ data class TextPage(
      * 移除朗读标志
      */
     fun removePageAloudSpan(): TextPage {
-        textLines.forEach { textLine ->
-            textLine.isReadAloud = false
+        if (!hasReadAloudSpan) {
+            return this
+        }
+        hasReadAloudSpan = false
+        for (i in textLines.indices) {
+            textLines[i].isReadAloud = false
         }
         return this
     }
@@ -171,9 +196,10 @@ data class TextPage(
     fun upPageAloudSpan(aloudSpanStart: Int) {
         removePageAloudSpan()
         var lineStart = 0
-        for ((index, textLine) in textLines.withIndex()) {
+        for (index in textLines.indices) {
+            val textLine = textLines[index]
             val lineLength = textLine.text.length + if (textLine.isParagraphEnd) 1 else 0
-            if (aloudSpanStart > lineStart && aloudSpanStart < lineStart + lineLength) {
+            if (aloudSpanStart >= lineStart && aloudSpanStart < lineStart + lineLength) {
                 for (i in index - 1 downTo 0) {
                     if (textLines[i].isParagraphEnd) {
                         break
@@ -229,29 +255,90 @@ data class TextPage(
                 length++
             }
         }
-        return length + columnIndex
+        val columns = textLines[maxIndex].columns
+        for (index in 0 until columnIndex) {
+            val column = columns[index]
+            if (column is TextColumn) {
+                length += column.charData.length
+            }
+        }
+        return length
     }
 
     /**
      * @return 页面所在章节
      */
-    fun getTextChapter(): TextChapter? {
-        ReadBook.curTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
+    fun getTextChapter(): TextChapter {
+        return textChapter
+    }
+
+    /**
+     * 判断章节字符位置是否在这一页中
+     *
+     * @param chapterPos 章节字符位置
+     * @return
+     */
+    fun containPos(chapterPos: Int): Boolean {
+        val line = lines.first()
+        val startPos = line.chapterPosition
+        val endPos = startPos + charSize
+        return chapterPos in startPos..<endPos
+    }
+
+    fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
+        render(view)
+        canvas.withTranslation(0f, relativeOffset + paddingTop) {
+            canvasRecorder.draw(this)
+        }
+    }
+
+    private fun drawDebugInfo(canvas: Canvas) {
+        ChapterProvider.run {
+            val paint = PaintPool.obtain()
+            paint.style = Paint.Style.STROKE
+            canvas.drawRect(
+                paddingLeft.toFloat(),
+                0f,
+                (paddingLeft + visibleWidth).toFloat(),
+                height - 1.dpToPx(),
+                paint
+            )
+            PaintPool.recycle(paint)
+        }
+    }
+
+    private fun drawPage(view: ContentTextView, canvas: Canvas) {
+        for (i in lines.indices) {
+            val line = lines[i]
+            canvas.withTranslation(0f, line.lineTop - paddingTop) {
+                line.draw(view, this)
             }
         }
-        ReadBook.nextTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
+    }
+
+    fun render(view: ContentTextView): Boolean {
+        if (!isCompleted) return false
+        return canvasRecorder.recordIfNeeded(view.width, height.toInt()) {
+            drawPage(view, this)
         }
-        ReadBook.prevTextChapter?.let {
-            if (it.position == chapterIndex) {
-                return it
-            }
+    }
+
+    fun invalidate() {
+        canvasRecorder.invalidate()
+    }
+
+    fun invalidateAll() {
+        for (i in lines.indices) {
+            lines[i].invalidateSelf()
         }
-        return null
+        invalidate()
+    }
+
+    fun recycleRecorders() {
+        canvasRecorder.recycle()
+        for (i in lines.indices) {
+            lines[i].recycleRecorder()
+        }
     }
 
     fun hasImageOrEmpty(): Boolean {

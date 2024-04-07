@@ -1,6 +1,7 @@
 package io.legado.app
 
 import android.app.Application
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -9,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Build
 import com.github.liuyueyi.quick.transfer.constants.TransType
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.jeremyliao.liveeventbus.logger.DefaultLogger
 import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
@@ -39,6 +41,7 @@ import splitties.init.appCtx
 import splitties.systemservices.notificationManager
 import java.net.URL
 import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class App : Application() {
 
@@ -56,6 +59,7 @@ class App : Application() {
             .lifecycleObserverAlwaysActive(true)
             .autoClear(false)
             .enableLogger(BuildConfig.DEBUG || AppConfig.recordLog)
+            .setLogger(EventLogger())
         applyDayNight(this)
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
@@ -142,7 +146,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
-            importance = NotificationManager.IMPORTANCE_LOW
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
 
         val readAloudChannel = NotificationChannel(
@@ -153,7 +157,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
-            importance = NotificationManager.IMPORTANCE_LOW
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
 
         val webChannel = NotificationChannel(
@@ -164,7 +168,7 @@ class App : Application() {
             enableLights(false)
             enableVibration(false)
             setSound(null, null)
-            importance = NotificationManager.IMPORTANCE_LOW
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
 
         //向notification manager 提交channel
@@ -175,6 +179,23 @@ class App : Application() {
                 webChannel
             )
         )
+    }
+
+    class EventLogger : DefaultLogger() {
+
+        override fun log(level: Level, msg: String) {
+            super.log(level, msg)
+            LogUtils.d(TAG, msg)
+        }
+
+        override fun log(level: Level, msg: String, th: Throwable?) {
+            super.log(level, msg, th)
+            LogUtils.d(TAG, "$msg\n${th?.stackTraceToString()}")
+        }
+
+        companion object {
+            private const val TAG = "[LiveEventBus]"
+        }
     }
 
 }

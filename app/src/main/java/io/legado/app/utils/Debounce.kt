@@ -119,3 +119,11 @@ open class Debounce<T>(
     }
 
 }
+
+fun <T> debounce(
+    wait: Long = 0L,
+    maxWait: Long = -1L,
+    leading: Boolean = false,
+    trailing: Boolean = true,
+    func: () -> T
+) = Debounce(wait, maxWait, leading, trailing, func)

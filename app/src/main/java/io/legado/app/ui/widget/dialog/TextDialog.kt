@@ -75,6 +75,7 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
                         .build()
                         .setMarkdown(binding.textView, content)
                 }
+
                 Mode.HTML.name -> binding.textView.setHtml(content)
                 else -> binding.textView.text = content
             }

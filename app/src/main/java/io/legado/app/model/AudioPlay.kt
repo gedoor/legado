@@ -171,7 +171,7 @@ object AudioPlay {
                         book.getUseReplaceRule()
                     )
                 }
-                book.save()
+                book.update()
             }
         }
     }
@@ -183,7 +183,7 @@ object AudioPlay {
         Coroutine.async {
             durChapter?.let {
                 it.end = audioSize
-                appDb.bookChapterDao.upDate(it)
+                appDb.bookChapterDao.update(it)
             }
         }
     }

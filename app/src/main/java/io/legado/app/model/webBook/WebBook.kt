@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
 @Suppress("MemberVisibilityCanBePrivate")
 object WebBook {
@@ -196,12 +197,14 @@ object WebBook {
         }
     }
 
-    fun runPreUpdateJs(bookSource: BookSource, book: Book): Result<Boolean> {
+    suspend fun runPreUpdateJs(bookSource: BookSource, book: Book): Result<Boolean> {
         return kotlin.runCatching {
             val preUpdateJs = bookSource.ruleToc?.preUpdateJs
             if (!preUpdateJs.isNullOrBlank()) {
                 kotlin.runCatching {
-                    AnalyzeRule(book, bookSource).evalJS(preUpdateJs)
+                    AnalyzeRule(book, bookSource)
+                        .setCoroutineContext(coroutineContext)
+                        .evalJS(preUpdateJs)
                 }.onFailure {
                     AppLog.put("执行preUpdateJs规则失败 书源:${bookSource.bookSourceName}", it)
                     throw it
