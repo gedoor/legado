@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.view.*
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -510,9 +511,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
 
             R.id.menu_cover_progress -> ReadBook.book?.let {
-                ReadBook.uploadProgress(
-                    { toastOnUi(R.string.upload_book_success) },
-                    { toastOnUi(R.string.upload_book_fail)})
+                ReadBook.uploadProgress({ toastOnUi(R.string.upload_book_success) })
             }
 
             R.id.menu_same_title_removed -> {

@@ -169,12 +169,13 @@ object ReadBook : CoroutineScope by MainScope() {
         nextTextChapter = null
     }
 
-    fun uploadProgress() {
+    fun uploadProgress(successAction: (() -> Unit)? = null) {
         book?.let {
             launch(IO) {
                 AppWebDav.uploadBookProgress(it)
                 ensureActive()
                 it.update()
+                successAction?.invoke()
             }
         }
     }
