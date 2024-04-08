@@ -116,7 +116,7 @@ object AudioPlay {
         Coroutine.async {
             book?.let { book ->
                 if (book.durChapterIndex > 0) {
-                    book.durChapterIndex = book.durChapterIndex - 1
+                    book.durChapterIndex -= 1
                     book.durChapterPos = 0
                     durChapter = null
                     saveRead()
@@ -131,7 +131,7 @@ object AudioPlay {
     fun next(context: Context) {
         book?.let { book ->
             if (book.durChapterIndex + 1 < book.totalChapterNum) {
-                book.durChapterIndex = book.durChapterIndex + 1
+                book.durChapterIndex += 1
                 book.durChapterPos = 0
                 durChapter = null
                 saveRead()

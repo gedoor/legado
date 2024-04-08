@@ -20,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media.AudioFocusRequestCompat
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -59,7 +58,6 @@ import splitties.systemservices.notificationManager
 import splitties.systemservices.powerManager
 import splitties.systemservices.wifiManager
 
-@UnstableApi
 /**
  * 音频播放服务
  */
@@ -136,6 +134,7 @@ class AudioPlayService : BaseService(),
                 .get()
         }.onSuccess {
             cover = it
+            upMediaMetadata()
             upAudioPlayNotification()
         }
     }
@@ -321,11 +320,7 @@ class AudioPlayService : BaseService(),
                     postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
                 }
                 postEvent(EventBus.AUDIO_SIZE, exoPlayer.duration)
-                mediaSessionCompat?.setMetadata(
-                    MediaMetadataCompat.Builder()
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.duration)
-                        .build()
-                )
+                upMediaMetadata()
                 upPlayProgress()
                 AudioPlay.saveDurChapter(exoPlayer.duration)
             }
@@ -337,6 +332,17 @@ class AudioPlayService : BaseService(),
             }
         }
         upAudioPlayNotification()
+    }
+
+    private fun upMediaMetadata() {
+        val metadata = MediaMetadataCompat.Builder()
+            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, cover)
+            .putText(MediaMetadataCompat.METADATA_KEY_TITLE, AudioPlay.durChapter?.title ?: "null")
+            .putText(MediaMetadataCompat.METADATA_KEY_ARTIST, AudioPlay.book?.name ?: "null")
+            .putText(MediaMetadataCompat.METADATA_KEY_ALBUM, AudioPlay.book?.author ?: "null")
+            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.duration)
+            .build()
+        mediaSessionCompat?.setMetadata(metadata)
     }
 
     /**
