@@ -471,11 +471,12 @@ abstract class BaseReadAloudService : BaseService(),
 
     private fun upReadAloudNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            notificationManager.notify(NotificationId.ReadAloudService, it.build())
-        }.onError {
-            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
+            try {
+                val notification = createNotification()
+                notificationManager.notify(NotificationId.ReadAloudService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
+            }
         }
     }
 
@@ -542,13 +543,14 @@ abstract class BaseReadAloudService : BaseService(),
      */
     override fun startForegroundNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            startForeground(NotificationId.ReadAloudService, it.build())
-        }.onError {
-            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
-            //创建通知出错不结束服务就会崩溃,服务必须绑定通知
-            stopSelf()
+            try {
+                val notification = createNotification()
+                startForeground(NotificationId.ReadAloudService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
+                //创建通知出错不结束服务就会崩溃,服务必须绑定通知
+                stopSelf()
+            }
         }
     }
 
