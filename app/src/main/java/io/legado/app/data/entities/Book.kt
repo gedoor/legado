@@ -288,14 +288,6 @@ data class Book(
         return appDb.bookSourceDao.getBookSource(origin)
     }
 
-    fun getChapter(index: Int): BookChapter? {
-        return appDb.bookChapterDao.getChapter(bookUrl, index)
-    }
-
-    fun getDurChapter(): BookChapter? {
-        return getChapter(durChapterIndex)
-    }
-
     fun isLocalModified(): Boolean {
         return isLocal && LocalBook.getLastModified(this).getOrDefault(0L) > latestChapterTime
     }

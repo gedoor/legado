@@ -84,7 +84,7 @@ object AudioPlay {
      * 更新当前章节
      */
     fun upDurChapter(book: Book) {
-        durChapter = book.getDurChapter()
+        durChapter = appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)
         postEvent(EventBus.AUDIO_SUB_TITLE, durChapter?.title ?: "")
         postEvent(EventBus.AUDIO_SIZE, durChapter?.end?.toInt() ?: 0)
         postEvent(EventBus.AUDIO_PROGRESS, book.durChapterPos)
