@@ -27,9 +27,25 @@ object AudioPlay {
     var inBookshelf = false
     var bookSource: BookSource? = null
     val loadingChapters = arrayListOf<Int>()
+    var durChapterIndex = 0
 
-    fun headers(hasLoginHeader: Boolean): Map<String, String>? {
-        return bookSource?.getHeaderMap(hasLoginHeader)
+    fun upData(context: Context, book: Book) {
+        AudioPlay.book = book
+        upDurChapter(book)
+        if (durChapterIndex != book.durChapterIndex) {
+            durChapterIndex = book.durChapterIndex
+            playNew(context)
+        }
+    }
+
+    fun resetData(context: Context, book: Book) {
+        stop(context)
+        AudioPlay.book = book
+        titleData.postValue(book.name)
+        coverData.postValue(book.getDisplayCover())
+        bookSource = book.getBookSource()
+        durChapterIndex = book.durChapterIndex
+        upDurChapter(book)
     }
 
     /**
@@ -49,10 +65,26 @@ object AudioPlay {
     }
 
     /**
+     * 从头播放新章节
+     */
+    fun playNew(context: Context) {
+        book?.let {
+            if (durChapter == null) {
+                upDurChapter(it)
+            }
+            durChapter?.let {
+                context.startService<AudioPlayService> {
+                    action = IntentAction.playNew
+                }
+            }
+        }
+    }
+
+    /**
      * 更新当前章节
      */
     fun upDurChapter(book: Book) {
-        durChapter = appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)
+        durChapter = book.getDurChapter()
         postEvent(EventBus.AUDIO_SUB_TITLE, durChapter?.title ?: "")
         postEvent(EventBus.AUDIO_SIZE, durChapter?.end?.toInt() ?: 0)
         postEvent(EventBus.AUDIO_PROGRESS, book.durChapterPos)
@@ -105,9 +137,10 @@ object AudioPlay {
             book?.let { book ->
                 book.durChapterIndex = index
                 book.durChapterPos = 0
+                durChapterIndex = book.durChapterIndex
                 durChapter = null
                 saveRead()
-                play(context)
+                playNew(context)
             }
         }
     }
@@ -118,6 +151,7 @@ object AudioPlay {
                 if (book.durChapterIndex > 0) {
                     book.durChapterIndex -= 1
                     book.durChapterPos = 0
+                    durChapterIndex = book.durChapterIndex
                     durChapter = null
                     saveRead()
                     play(context)
@@ -133,6 +167,7 @@ object AudioPlay {
             if (book.durChapterIndex + 1 < book.totalChapterNum) {
                 book.durChapterIndex += 1
                 book.durChapterPos = 0
+                durChapterIndex = book.durChapterIndex
                 durChapter = null
                 saveRead()
                 play(context)

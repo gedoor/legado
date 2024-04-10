@@ -144,8 +144,17 @@ class AudioPlayService : BaseService(),
             when (action) {
                 IntentAction.play -> {
                     exoPlayer.stop()
+                    upPlayProgressJob?.cancel()
                     pause = false
                     position = AudioPlay.book?.durChapterPos ?: 0
+                    loadContent()
+                }
+
+                IntentAction.playNew -> {
+                    exoPlayer.stop()
+                    upPlayProgressJob?.cancel()
+                    pause = false
+                    position = 0
                     loadContent()
                 }
 
@@ -160,7 +169,7 @@ class AudioPlayService : BaseService(),
                     adjustProgress(intent.getIntExtra("position", position))
                 }
 
-                else -> stopSelf()
+                IntentAction.stop -> stopSelf()
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -204,7 +213,6 @@ class AudioPlayService : BaseService(),
                 source = AudioPlay.bookSource,
                 ruleData = AudioPlay.book,
                 chapter = AudioPlay.durChapter,
-                headerMapF = AudioPlay.headers(true),
             )
             exoPlayer.setMediaItem(analyzeUrl.getMediaItem())
             exoPlayer.playWhenReady = true
