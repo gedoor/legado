@@ -174,6 +174,7 @@ class OtherConfigFragment : PreferenceFragment(),
 
             PreferKey.recordLog -> {
                 LogUtils.upLevel()
+                LogUtils.logDeviceInfo()
                 LiveEventBus.config().enableLogger(AppConfig.recordLog)
             }
 

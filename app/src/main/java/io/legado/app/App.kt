@@ -50,6 +50,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         LogUtils.d("App", "onCreate")
+        LogUtils.logDeviceInfo()
         oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so

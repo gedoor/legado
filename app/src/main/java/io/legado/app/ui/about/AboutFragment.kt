@@ -30,6 +30,8 @@ import io.legado.app.utils.sendMail
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import java.io.File
 
@@ -125,31 +127,8 @@ class AboutFragment : PreferenceFragmentCompat() {
                 return@async
             }
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
-            val files = FileDoc.fromFile(File(appCtx.externalCacheDir, "logs")).list()
-            if (!files.isNullOrEmpty()) {
-                doc.find("logs")?.delete()
-                val logsDoc = doc.createFolderIfNotExist("logs")
-                files.forEach { file ->
-                    file.openInputStream().getOrNull()?.use { input ->
-                        logsDoc.createFileIfNotExist(file.name).openOutputStream().getOrNull()
-                            ?.use {
-                                input.copyTo(it)
-                            }
-                    }
-                }
-            }
-            val heapFile = FileDoc.fromFile(File(appCtx.externalCacheDir, "heapDump")).list()
-                ?.firstOrNull()
-            if (heapFile != null) {
-                doc.find("heapDump")?.delete()
-                val heapDumpDoc = doc.createFolderIfNotExist("heapDump")
-                heapFile.openInputStream().getOrNull()?.use { input ->
-                    heapDumpDoc.createFileIfNotExist(heapFile.name).openOutputStream().getOrNull()
-                        ?.use {
-                            input.copyTo(it)
-                        }
-                }
-            }
+            copyLogs(doc)
+            copyHeapDump(doc)
             appCtx.toastOnUi("已保存至备份目录")
         }.onError {
             AppLog.put("保存日志出错\n${it.localizedMessage}", it, true)
@@ -165,24 +144,48 @@ class AboutFragment : PreferenceFragmentCompat() {
             appCtx.toastOnUi("开始创建堆转储")
             System.gc()
             CrashHandler.doHeapDump()
-            val heapFile = FileDoc.fromFile(File(appCtx.externalCacheDir, "heapDump")).list()
-                ?.firstOrNull() ?: let {
-                appCtx.toastOnUi("未找到堆转储文件")
-                return@async
-            }
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
-            doc.find("heapDump")?.delete()
-            val heapDumpDoc = doc.createFolderIfNotExist("heapDump")
-            heapFile.openInputStream().getOrNull()?.use { input ->
-                heapDumpDoc.createFileIfNotExist(heapFile.name).openOutputStream().getOrNull()
-                    ?.use {
-                        input.copyTo(it)
-                    }
+            if (!copyHeapDump(doc)) {
+                appCtx.toastOnUi("未找到堆转储文件")
+            } else {
+                appCtx.toastOnUi("已保存至备份目录")
             }
-            appCtx.toastOnUi("已保存至备份目录")
         }.onError {
             AppLog.put("保存堆转储失败\n${it.localizedMessage}", it)
         }
+    }
+
+    private suspend fun copyLogs(doc: FileDoc) = coroutineScope {
+        val files = FileDoc.fromFile(File(appCtx.externalCacheDir, "logs")).list()
+        if (files.isNullOrEmpty()) {
+            return@coroutineScope
+        }
+        doc.find("logs")?.delete()
+        val logsDoc = doc.createFolderIfNotExist("logs")
+        files.forEach { file ->
+            launch {
+                file.openInputStream().getOrNull()?.use { input ->
+                    logsDoc.createFileIfNotExist(file.name).openOutputStream().getOrNull()
+                        ?.use {
+                            input.copyTo(it)
+                        }
+                }
+            }
+        }
+    }
+
+    private fun copyHeapDump(doc: FileDoc): Boolean {
+        val heapFile = FileDoc.fromFile(File(appCtx.externalCacheDir, "heapDump")).list()
+            ?.firstOrNull() ?: return false
+        doc.find("heapDump")?.delete()
+        val heapDumpDoc = doc.createFolderIfNotExist("heapDump")
+        heapFile.openInputStream().getOrNull()?.use { input ->
+            heapDumpDoc.createFileIfNotExist(heapFile.name).openOutputStream().getOrNull()
+                ?.use {
+                    input.copyTo(it)
+                }
+        }
+        return true
     }
 
 }

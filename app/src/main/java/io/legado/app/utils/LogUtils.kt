@@ -3,7 +3,10 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
+import android.os.Build
+import android.webkit.WebSettings
 import io.legado.app.BuildConfig
+import io.legado.app.constant.AppConst
 import io.legado.app.help.config.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
@@ -107,6 +110,33 @@ object LogUtils {
         val sdf = SimpleDateFormat(pattern)
         return sdf.format(date)
     }
+
+    fun logDeviceInfo() {
+        d("DeviceInfo") {
+            buildString {
+                kotlin.runCatching {
+                    //获取系统信息
+                    append("MANUFACTURER=").append(Build.MANUFACTURER).append("\n")
+                    append("BRAND=").append(Build.BRAND).append("\n")
+                    append("MODEL=").append(Build.MODEL).append("\n")
+                    append("SDK_INT=").append(Build.VERSION.SDK_INT).append("\n")
+                    append("RELEASE=").append(Build.VERSION.RELEASE).append("\n")
+                    val userAgent = try {
+                        WebSettings.getDefaultUserAgent(appCtx)
+                    } catch (e: Throwable) {
+                        e.localizedMessage ?: "null"
+                    }
+                    append("WebViewUserAgent=").append(userAgent).append("\n")
+                    //获取app版本信息
+                    AppConst.appInfo.let {
+                        append("versionName=").append(it.versionName).append("\n")
+                        append("versionCode=").append(it.versionCode).append("\n")
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 fun Throwable.printOnDebug() {
