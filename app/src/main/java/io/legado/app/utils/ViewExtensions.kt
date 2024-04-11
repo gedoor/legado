@@ -181,9 +181,7 @@ fun View.screenshot(picture: Picture) {
 fun View.screenshot(canvasRecorder: CanvasRecorder) {
     if (width > 0 && height > 0) {
         canvasRecorder.record(width, height) {
-            withTranslation(-scrollX.toFloat(), -scrollY.toFloat()) {
-                draw(this)
-            }
+            draw(this)
         }
     }
 }
