@@ -13,6 +13,7 @@ import android.text.style.LineHeightSpan
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
 import io.legado.app.utils.canvasrecorder.recordIfNeededThenDraw
 import io.legado.app.utils.dpToPx
@@ -80,10 +81,16 @@ class BatteryView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvasRecorder.recordIfNeededThenDraw(canvas, width, height) {
-            super.onDraw(this)
-            if (!isBattery) return@recordIfNeededThenDraw
-            drawBattery(this)
+        if (AppConfig.optimizeRender) {
+            canvasRecorder.recordIfNeededThenDraw(canvas, width, height) {
+                super.onDraw(this)
+                if (!isBattery) return@recordIfNeededThenDraw
+                drawBattery(this)
+            }
+        } else {
+            super.onDraw(canvas)
+            if (!isBattery) return
+            drawBattery(canvas)
         }
     }
 

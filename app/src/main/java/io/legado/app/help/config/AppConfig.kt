@@ -37,6 +37,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var clickActionBR = appCtx.getPrefInt(PreferKey.clickActionBR, 1)
     var themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
     var useDefaultCover = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
+    var optimizeRender = appCtx.getPrefBoolean(PreferKey.optimizeRender, false)
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
@@ -84,6 +85,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
             PreferKey.useDefaultCover -> useDefaultCover =
                 appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
+
+            PreferKey.optimizeRender -> optimizeRender =
+                appCtx.getPrefBoolean(PreferKey.optimizeRender, false)
 
         }
     }

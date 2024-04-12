@@ -1149,4 +1149,5 @@
     <string name="record_heap_dump_t">Capture heap dump</string>
     <string name="font_weight_text">N/B/L</string>
     <string name="keep_swipe_tip">Keep swiping to load the next chapter…</string>
+    <string name="enable_optimize_render">启用绘制优化</string>
 </resources>

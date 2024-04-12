@@ -4,7 +4,12 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewConfiguration
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
@@ -151,6 +156,13 @@ class MoreConfigDialog : DialogFragment() {
 
                 PreferKey.noAnimScrollPage -> {
                     ReadBook.callBack?.upPageAnim()
+                }
+
+                PreferKey.optimizeRender -> {
+                    ReadBook.callBack?.run {
+                        upPageAnim(true)
+                        upContent(resetPageOffset = false)
+                    }
                 }
             }
         }

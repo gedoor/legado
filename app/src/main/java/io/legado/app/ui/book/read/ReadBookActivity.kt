@@ -942,9 +942,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    override fun upPageAnim() {
+    override fun upPageAnim(upRecorder: Boolean) {
         lifecycleScope.launch {
-            binding.readView.upPageAnim()
+            binding.readView.upPageAnim(upRecorder)
         }
     }
 

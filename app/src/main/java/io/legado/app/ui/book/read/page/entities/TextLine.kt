@@ -8,6 +8,7 @@ import androidx.annotation.Keep
 import androidx.core.graphics.withTranslation
 import io.legado.app.help.PaintPool
 import io.legado.app.help.book.isImage
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.ReadBook
@@ -143,8 +144,12 @@ data class TextLine(
     }
 
     fun draw(view: ContentTextView, canvas: Canvas) {
-        canvasRecorder.recordIfNeededThenDraw(canvas, view.width, height.toInt()) {
-            drawTextLine(view, this)
+        if (AppConfig.optimizeRender) {
+            canvasRecorder.recordIfNeededThenDraw(canvas, view.width, height.toInt()) {
+                drawTextLine(view, this)
+            }
+        } else {
+            drawTextLine(view, canvas)
         }
     }
 
@@ -215,7 +220,7 @@ data class TextLine(
     }
 
     fun checkFastDraw(): Boolean {
-        if (exceed || !onlyTextColumn || textPage.isMsgPage) {
+        if (!AppConfig.optimizeRender || exceed || !onlyTextColumn || textPage.isMsgPage) {
             return false
         }
         if (wordSpacing != 0f && (!atLeastApi26 || !wordSpacingWorking)) {

@@ -717,7 +717,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
         fun contentLoadFinish()
 
-        fun upPageAnim()
+        fun upPageAnim(upRecorder: Boolean = false)
 
         fun notifyBookChanged()
     }

@@ -1148,4 +1148,5 @@
     <string name="record_heap_dump_t">记录堆转储</string>
     <string name="font_weight_text">中/粗/细</string>
     <string name="keep_swipe_tip">继续滑动以加载下一章…</string>
+    <string name="enable_optimize_render">启用绘制优化</string>
 </resources>
