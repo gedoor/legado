@@ -159,10 +159,8 @@ class MoreConfigDialog : DialogFragment() {
                 }
 
                 PreferKey.optimizeRender -> {
-                    ReadBook.callBack?.run {
-                        upPageAnim(true)
-                        upContent(resetPageOffset = false)
-                    }
+                    ReadBook.callBack?.upPageAnim(true)
+                    ReadBook.loadContent(false)
                 }
             }
         }
