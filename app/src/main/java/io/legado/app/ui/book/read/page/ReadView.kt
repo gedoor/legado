@@ -673,10 +673,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun submitRenderTask() {
         if (!AppConfig.optimizeRender) {
-            curPage.invalidateContentView()
-        } else {
-            curPage.submitRenderTask()
+            return
         }
+        curPage.submitRenderTask()
     }
 
     fun isLongScreenShot(): Boolean {
