@@ -178,6 +178,9 @@ data class TextLine(
         } else {
             ReadBookConfig.textColor
         }
+        if (textPaint.color != textColor) {
+            textPaint.color = textColor
+        }
         val paint = PaintPool.obtain()
         paint.set(textPaint)
         if (extraLetterSpacing != 0f) {
@@ -185,9 +188,6 @@ data class TextLine(
         }
         if (wordSpacing != 0f) {
             paint.wordSpacing = wordSpacing
-        }
-        if (paint.color != textColor) {
-            paint.color = textColor
         }
         if (extraLetterSpacingOffsetX != 0f) {
             canvas.withTranslation(extraLetterSpacingOffsetX) {

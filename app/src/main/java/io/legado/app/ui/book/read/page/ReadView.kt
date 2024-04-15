@@ -647,6 +647,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
 
     fun invalidateTextPage() {
+        if (!AppConfig.optimizeRender) {
+            return
+        }
         pageFactory.run {
             prevPage.invalidateAll()
             curPage.invalidateAll()
@@ -670,9 +673,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
 
     fun submitRenderTask() {
         if (!AppConfig.optimizeRender) {
-            return
+            curPage.invalidateContentView()
+        } else {
+            curPage.submitRenderTask()
         }
-        curPage.submitRenderTask()
     }
 
     fun isLongScreenShot(): Boolean {
