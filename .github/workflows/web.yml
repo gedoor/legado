@@ -58,7 +58,7 @@ jobs:
 
       - name: push changes
         if: ${{ github.event_name != 'pull_request' && github.repository == env.UPSTREAM_REPOSITORY }}
-        uses: stefanzweifel/git-auto-commit-action@v5.0.0
+        uses: stefanzweifel/git-auto-commit-action@v5.0.1
         with:
           commit_message: Bump web ${{ env.APP_VER}}
           file_pattern: app/src/main/assets/web/vue/
