@@ -75,9 +75,6 @@ class RefreshProgressBar @JvmOverloads constructor(
 
         if (secondDurProgress > 0 && secondMaxProgress > 0) {
             var secondDur = secondDurProgress
-            if (secondDur < 0) {
-                secondDur = 0
-            }
             if (secondDur > secondMaxProgress) {
                 secondDur = secondMaxProgress
             }

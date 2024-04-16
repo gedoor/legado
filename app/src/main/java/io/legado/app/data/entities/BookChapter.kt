@@ -1,11 +1,11 @@
 package io.legado.app.data.entities
 
+import android.annotation.SuppressLint
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
-import com.github.liuyueyi.quick.transfer.ChineseUtils
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
@@ -15,7 +15,13 @@ import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleDataInterface
-import io.legado.app.utils.*
+import io.legado.app.utils.ChineseUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.replace
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -59,11 +65,9 @@ data class BookChapter(
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
     }
 
-    @delegate:Ignore
+    @Ignore
     @IgnoredOnParcel
-    private val titleMD5: String by lazy {
-        MD5Utils.md5Encode16(title)
-    }
+    var titleMD5: String? = null
 
     override fun putVariable(key: String, value: String?): Boolean {
         if (super.putVariable(key, value)) {
@@ -111,7 +115,7 @@ data class BookChapter(
                     try {
                         val mDisplayTitle = if (item.isRegex) {
                             displayTitle.replace(
-                                item.pattern.toRegex(),
+                                item.regex,
                                 item.replacement,
                                 item.getValidTimeoutMillisecond()
                             )
@@ -153,12 +157,24 @@ data class BookChapter(
         }
     }
 
-    @Suppress("unused")
-    fun getFileName(suffix: String = "nb"): String =
-        String.format("%05d-%s.%s", index, titleMD5, suffix)
+    private fun ensureTitleMD5Init() {
+        if (titleMD5 == null) {
+            titleMD5 = MD5Utils.md5Encode16(title)
+        }
+    }
 
-
+    @SuppressLint("DefaultLocale")
     @Suppress("unused")
-    fun getFontName(): String = String.format("%05d-%s.ttf", index, titleMD5)
+    fun getFileName(suffix: String = "nb"): String {
+        ensureTitleMD5Init()
+        return String.format("%05d-%s.%s", index, titleMD5, suffix)
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Suppress("unused")
+    fun getFontName(): String {
+        ensureTitleMD5Init()
+        return String.format("%05d-%s.ttf", index, titleMD5)
+    }
 }
 

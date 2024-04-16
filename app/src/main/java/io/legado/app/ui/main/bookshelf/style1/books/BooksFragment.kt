@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +16,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -26,13 +28,20 @@ import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
-import io.legado.app.utils.*
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**
@@ -52,12 +61,10 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     private val binding by viewBinding(FragmentBooksBinding::bind)
     private val activityViewModel by activityViewModels<MainViewModel>()
-    private val bookshelfLayout by lazy {
-        getPrefInt(PreferKey.bookshelfLayout)
-    }
+    private val bookshelfLayout by lazy { AppConfig.bookshelfLayout }
     private val booksAdapter: BaseBooksAdapter<*> by lazy {
         if (bookshelfLayout == 0) {
-            BooksAdapterList(requireContext(), this)
+            BooksAdapterList(requireContext(), this, viewLifecycleOwner.lifecycle)
         } else {
             BooksAdapterGrid(requireContext(), this)
         }
@@ -72,6 +79,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         private set
     private var upLastUpdateTimeJob: Job? = null
     private var defaultScrollBarSize = 0
+    private var enableRefresh = true
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         this.savedInstanceState = savedInstanceState
@@ -79,7 +87,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
             bookSort = it.getInt("bookSort", 0)
-            binding.refreshLayout.isEnabled = it.getBoolean("enableRefresh", true)
+            enableRefresh = it.getBoolean("enableRefresh", true)
+            binding.refreshLayout.isEnabled = enableRefresh
         }
         initRecyclerView()
         upRecyclerData()
@@ -138,8 +147,9 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    fun setEnableRefresh(enableRefresh: Boolean) {
-        binding.refreshLayout.isEnabled = enableRefresh
+    fun setEnableRefresh(enable: Boolean) {
+        enableRefresh = enable
+        binding.refreshLayout.isEnabled = enable
     }
 
     /**
@@ -147,7 +157,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
      */
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
-        booksFlowJob = lifecycleScope.launch {
+        booksFlowJob = viewLifecycleOwner.lifecycleScope.launch {
             appDb.bookDao.flowByGroup(groupId).map { list ->
                 //排序
                 when (bookSort) {
@@ -165,11 +175,11 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
                     else -> list.sortedByDescending { it.durChapterTime }
                 }
-            }.flowOn(Dispatchers.Default).catch {
+            }.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED).catch {
                 AppLog.put("书架更新出错", it)
-            }.conflate().collect { list ->
+            }.conflate().flowOn(Dispatchers.Default).collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
-                binding.refreshLayout.isEnabled = list.isNotEmpty()
+                binding.refreshLayout.isEnabled = enableRefresh && list.isNotEmpty()
                 booksAdapter.setItems(list)
                 recoverPositionState()
                 delay(100)
@@ -190,29 +200,17 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        upLastUpdateTimeJob?.cancel()
-        booksFlowJob?.cancel()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startLastUpdateTimeJob()
-        upRecyclerData()
-    }
-
     private fun startLastUpdateTimeJob() {
         upLastUpdateTimeJob?.cancel()
         if (!AppConfig.showLastUpdateTime) {
             return
         }
         upLastUpdateTimeJob = lifecycleScope.launch {
-            while (isActive) {
-                if (SystemUtils.isScreenOn()) {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (isActive) {
                     booksAdapter.upLastUpdateTime()
+                    delay(30 * 1000)
                 }
-                delay(30 * 1000)
             }
         }
     }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.database.StandaloneDatabaseProvider
-import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.FileDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.datasource.cache.Cache
@@ -16,9 +15,6 @@ import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.offline.DefaultDownloaderFactory
-import androidx.media3.exoplayer.offline.DownloadRequest
-import androidx.media3.exoplayer.offline.DownloaderFactory
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.google.gson.reflect.TypeToken
 import io.legado.app.help.http.okHttpClient
@@ -26,7 +22,6 @@ import io.legado.app.utils.GSON
 import okhttp3.CacheControl
 import splitties.init.appCtx
 import java.io.File
-import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 
@@ -37,8 +32,7 @@ object ExoPlayerHelper {
     private const val SPLIT_TAG = "\uD83D\uDEA7"
 
     private val mapType by lazy {
-        val type: Type = object : TypeToken<Map<String?, String?>?>() {}.type
-        type
+        object : TypeToken<Map<String, String>>() {}.type
     }
 
     fun createMediaItem(url: String, headers: Map<String, String>): MediaItem {
@@ -62,34 +56,7 @@ object ExoPlayerHelper {
         ).build()
     }
 
-    /**
-     * 预下载
-     * @param uri 音频资源uri
-     * @param defaultRequestProperties 请求头
-     * @param progressCallBack 下载进度回调
-     */
-    fun preDownload(
-        uri: Uri,
-        defaultRequestProperties: Map<String, String>,
-        progressCallBack: (contentLength: Long, bytesDownloaded: Long, percentDownloaded: Float) -> Unit = { _: Long, _: Long, _: Float -> }
-    ) {
-        val request = DownloadRequest.Builder(uri.toString(), uri).build()
-        cacheDataSourceFactory.setDefaultRequestProperties(defaultRequestProperties)
-        okHttpClient.dispatcher.executorService.submit {
-            downloaderFactory.createDownloader(request)
-                .download { contentLength, bytesDownloaded, percentDownloaded ->
-                    progressCallBack(contentLength, bytesDownloaded, percentDownloaded)
 
-                }
-
-        }
-
-    }
-
-
-    private val downloaderFactory: DownloaderFactory by lazy {
-        DefaultDownloaderFactory(cacheDataSourceFactory, okHttpClient.dispatcher.executorService)
-    }
 
 
     private val resolvingDataSource: ResolvingDataSource.Factory by lazy {
@@ -102,7 +69,7 @@ object ExoPlayerHelper {
                 res = res.withUri(Uri.parse(url))
                 try {
                     val headers: Map<String, String> = GSON.fromJson(urls[1], mapType)
-                    res = res.withAdditionalHeaders(headers)
+                    okhttpDataFactory.setDefaultRequestProperties(headers)
                 } catch (_: Exception) {
                 }
             }
@@ -133,7 +100,10 @@ object ExoPlayerHelper {
      * Okhttp DataSource.Factory
      */
     private val okhttpDataFactory by lazy {
-        OkHttpDataSource.Factory(okHttpClient)
+        val client = okHttpClient.newBuilder()
+            .callTimeout(0, TimeUnit.SECONDS)
+            .build()
+        OkHttpDataSource.Factory(client)
             .setCacheControl(CacheControl.Builder().maxAge(1, TimeUnit.DAYS).build())
     }
 
@@ -158,14 +128,14 @@ object ExoPlayerHelper {
      * @param headers
      * @return
      */
-    private fun CacheDataSource.Factory.setDefaultRequestProperties(headers: Map<String, String> = mapOf()): CacheDataSource.Factory {
-        val declaredField = this.javaClass.getDeclaredField("upstreamDataSourceFactory")
-        declaredField.isAccessible = true
-        val df = declaredField[this] as DataSource.Factory
-        if (df is OkHttpDataSource.Factory) {
-            df.setDefaultRequestProperties(headers)
-        }
-        return this
-    }
+//    private fun CacheDataSource.Factory.setDefaultRequestProperties(headers: Map<String, String> = mapOf()): CacheDataSource.Factory {
+//        val declaredField = this.javaClass.getDeclaredField("upstreamDataSourceFactory")
+//        declaredField.isAccessible = true
+//        val df = declaredField[this] as DataSource.Factory
+//        if (df is OkHttpDataSource.Factory) {
+//            df.setDefaultRequestProperties(headers)
+//        }
+//        return this
+//    }
 
 }

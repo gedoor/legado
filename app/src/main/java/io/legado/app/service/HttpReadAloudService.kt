@@ -12,7 +12,6 @@ import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.HttpTTS
-import io.legado.app.exception.ConcurrentException
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -91,7 +90,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         playIndexJob?.cancel()
     }
 
-    private fun playNext() {
+    private fun updateNextPos() {
         readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
         paragraphStartPos = 0
         if (nowSpeak < contentList.lastIndex) {
@@ -167,7 +166,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                     speakText = speakText,
                     speakSpeed = speechRate,
                     source = httpTts,
-                    headerMapF = httpTts.getHeaderMap(true)
+                    headerMapF = httpTts.getHeaderMap(true),
+                    readTimeout = 300 * 1000L
                 )
                 var response = analyzeUrl.getResponseAwait()
                 coroutineContext.ensureActive()
@@ -193,7 +193,6 @@ class HttpReadAloudService : BaseReadAloudService(),
             } catch (e: Exception) {
                 when (e) {
                     is CancellationException -> throw e
-                    is ConcurrentException -> delay(e.waitTime.toLong())
                     is ScriptException, is WrappedException -> {
                         AppLog.put("js错误\n${e.localizedMessage}", e, true)
                         e.printOnDebug()
@@ -315,8 +314,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                     pageIndex++
                     if (pageIndex < textChapter.pageSize) {
                         ReadBook.moveToNextPage()
+                        upTtsProgress(readAloudNumber + i.toInt())
                     }
-                    upTtsProgress(readAloudNumber + i.toInt())
                 }
                 delay(sleep)
             }
@@ -354,14 +353,17 @@ class HttpReadAloudService : BaseReadAloudService(),
             Player.STATE_ENDED -> {
                 // 结束
                 playErrorNo = 0
-                playNext()
+                updateNextPos()
             }
         }
     }
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
-        playNext()
+        if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
+            playErrorNo = 0
+        }
+        updateNextPos()
         upPlayPos()
     }
 
@@ -372,9 +374,16 @@ class HttpReadAloudService : BaseReadAloudService(),
         if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})")
             AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
-            ReadAloud.pause(this)
+            pauseReadAloud()
         } else {
-            playNext()
+            if (exoPlayer.hasNextMediaItem()) {
+                exoPlayer.seekToNextMediaItem()
+                exoPlayer.playWhenReady = true
+                exoPlayer.prepare()
+            } else {
+                exoPlayer.clearMediaItems()
+                updateNextPos()
+            }
         }
     }
 

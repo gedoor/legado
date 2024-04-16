@@ -116,7 +116,7 @@ onUnmounted(() => {
 p {
   display: block;
   word-wrap: break-word;
-  word-break: break-all;
+  // word-break: break-all;
 
   letter-spacing: calc(v-bind("props.spacing.letter") * 1em);
   line-height: calc(1 + v-bind("props.spacing.line"));

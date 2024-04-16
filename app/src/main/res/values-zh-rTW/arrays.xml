@@ -35,8 +35,8 @@
     <string-array name="screen_time_out">
         <item>預設</item>
         <item>1分鐘</item>
-        <item>2分鐘</item>
-        <item>3分鐘</item>
+        <item>5分鐘</item>
+        <item>10分鐘</item>
         <item>常亮</item>
     </string-array>
 

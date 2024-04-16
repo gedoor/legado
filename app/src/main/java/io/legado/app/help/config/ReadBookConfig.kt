@@ -39,6 +39,7 @@ import java.io.File
 /**
  * 阅读界面配置
  */
+@Suppress("ConstPropertyName")
 @Keep
 object ReadBookConfig {
     const val configFileName = "readConfig.json"
@@ -87,6 +88,9 @@ object ReadBookConfig {
         (configs ?: DefaultData.readConfigs).let {
             configList.clear()
             configList.addAll(it)
+        }
+        for (i in configList.indices) {
+            configList[i].initColorInt()
         }
     }
 
@@ -536,20 +540,40 @@ object ReadBookConfig {
         var footerMode: Int = 0
     ) {
 
+        private var textColorIntEInk = -1
+        private var textColorIntNight = -1
+        private var textColorInt = -1
+
+        fun initColorInt() {
+            textColorIntEInk = Color.parseColor(textColorEInk)
+            textColorIntNight = Color.parseColor(textColorNight)
+            textColorInt = Color.parseColor(textColor)
+        }
+
         fun setCurTextColor(color: Int) {
             when {
-                AppConfig.isEInkMode -> textColorEInk = "#${color.hexString}"
-                AppConfig.isNightTheme -> textColorNight = "#${color.hexString}"
-                else -> textColor = "#${color.hexString}"
+                AppConfig.isEInkMode -> {
+                    textColorEInk = "#${color.hexString}"
+                    textColorIntEInk = color
+                }
+
+                AppConfig.isNightTheme -> {
+                    textColorNight = "#${color.hexString}"
+                    textColorIntNight = color
+                }
+
+                else -> {
+                    textColor = "#${color.hexString}"
+                    textColorInt = color
+                }
             }
-            ChapterProvider.upStyle()
         }
 
         fun curTextColor(): Int {
             return when {
-                AppConfig.isEInkMode -> Color.parseColor(textColorEInk)
-                AppConfig.isNightTheme -> Color.parseColor(textColorNight)
-                else -> Color.parseColor(textColor)
+                AppConfig.isEInkMode -> textColorIntEInk
+                AppConfig.isNightTheme -> textColorIntNight
+                else -> textColorInt
             }
         }
 

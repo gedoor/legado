@@ -18,12 +18,12 @@ jobs:
 
       - name: Set up JDK 17
         if: ${{ env.cronet == 'ok' }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/actions/setup-gradle@v3
         if: ${{ env.cronet == 'ok' }}
 
       - name: Download Cronet
@@ -34,7 +34,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ env.cronet == 'ok' }}
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         continue-on-error: true
         with:
           token: ${{ secrets.ACTIONS_TOKEN }}
@@ -49,4 +49,5 @@ jobs:
             *cronet*jar
             *cronet.json
             *updateLog.md
-            gradle.properties
+            *gradle.properties
+            *cronet-proguard-rules.pro

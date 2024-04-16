@@ -87,6 +87,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
             val group = groupName?.trim()
             val keepName = AppConfig.importKeepName
             val keepGroup = AppConfig.importKeepGroup
+            val keepEnable = AppConfig.importKeepEnable
             val selectSource = arrayListOf<BookSource>()
             selectStatus.forEachIndexed { index, b ->
                 if (b) {
@@ -97,6 +98,10 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
                         }
                         if (keepGroup) {
                             source.bookSourceGroup = it.bookSourceGroup
+                        }
+                        if (keepEnable) {
+                            source.enabled = it.enabled
+                            source.enabledExplore = it.enabledExplore
                         }
                         source.customOrder = it.customOrder
                     }

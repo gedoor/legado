@@ -9,7 +9,7 @@ body:
       options:
         - label: 搜索现有issues，不存在相似或相关的issue / No similar or related issues
           required: true
-        - label: 最新[测试版](https://kunfei.lanzoui.com/b0f810h4b)依然存在此问题 / Latest beta app does not work
+        - label: 最新[测试版](https://github.com/gedoor/legado/actions/workflows/test.yml)依然存在此问题 / Latest beta app does not work
           required: true
         - label: 此问题和Xposed、Lsposed、Magisk、手机主题、浏览器插件等无关 / Make sure your machine is not touched by hook frameworks, plugins etc
           required: true

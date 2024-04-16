@@ -26,9 +26,12 @@ public class Resources implements Serializable {
     private static final long serialVersionUID = 2450876953383871451L;
     private static final String IMAGE_PREFIX = "image_";
     private static final String ITEM_PREFIX = "item_";
+    private static final Pattern dataUriRegex = Pattern.compile("data:([\\w/\\-\\.]+);base64,(.*)");
     private int lastId = 1;
 
     private Map<String, Resource> resources = new HashMap<>();
+
+    private final Map<String, Resource> resourcesById = new HashMap<>();
 
     /**
      * Adds a resource to the resources.
@@ -42,6 +45,7 @@ public class Resources implements Serializable {
         fixResourceHref(resource);
         fixResourceId(resource);
         this.resources.put(resource.getHref(), resource);
+        resourcesById.put(resource.getId(), resource);
         return resource;
     }
 
@@ -128,12 +132,7 @@ public class Resources implements Serializable {
         if (StringUtil.isBlank(id)) {
             return false;
         }
-        for (Resource resource : resources.values()) {
-            if (id.equals(resource.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return resourcesById.containsKey(id);
     }
 
     /**
@@ -146,12 +145,7 @@ public class Resources implements Serializable {
         if (StringUtil.isBlank(id)) {
             return null;
         }
-        for (Resource resource : resources.values()) {
-            if (id.equals(resource.getId())) {
-                return resource;
-            }
-        }
-        return null;
+        return resourcesById.get(id);
     }
 
     public Resource getByProperties(String properties) {
@@ -266,6 +260,7 @@ public class Resources implements Serializable {
      */
     public void set(Collection<Resource> resources) {
         this.resources.clear();
+        resourcesById.clear();
         addAll(resources);
     }
 
@@ -276,8 +271,7 @@ public class Resources implements Serializable {
      */
     public void addAll(Collection<Resource> resources) {
         for (Resource resource : resources) {
-            fixResourceHref(resource);
-            this.resources.put(resource.getHref(), resource);
+            add(resource);
         }
     }
 
@@ -288,6 +282,10 @@ public class Resources implements Serializable {
      */
     public void set(Map<String, Resource> resources) {
         this.resources = new HashMap<>(resources);
+        resourcesById.clear();
+        for (Resource resource : resources.values()) {
+            resourcesById.put(resource.getId(), resource);
+        }
     }
 
 
@@ -320,7 +318,10 @@ public class Resources implements Serializable {
         }
         href = StringUtil.substringBefore(href, Constants.FRAGMENT_SEPARATOR_CHAR);
 
-        Pattern dataUriRegex = Pattern.compile("data:([\\w/\\-\\.]+);base64,(.*)");
+        if (!StringUtil.startsWithIgnoreCase(href, "data")) {
+            return resources.get(href);
+        }
+
         Matcher dataUriMatcher = dataUriRegex.matcher(href);
         if (dataUriMatcher.find()) {
             String dataUriMediaTypeString = dataUriMatcher.group(1);

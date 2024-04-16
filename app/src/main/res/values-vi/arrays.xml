@@ -36,8 +36,8 @@
     <string-array name="screen_time_out">
         <item>Mặc định</item>
         <item>1 phút</item>
-        <item>2 phút</item>
-        <item>3 phút</item>
+        <item>5 phút</item>
+        <item>10 phút</item>
         <item>Thường Sáng</item>
     </string-array>
 

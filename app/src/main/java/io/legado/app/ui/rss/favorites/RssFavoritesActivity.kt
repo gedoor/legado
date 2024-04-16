@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.base.BaseActivity
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssStar
 import io.legado.app.databinding.ActivityRssFavoritesBinding
@@ -12,10 +13,15 @@ import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-
+/**
+ * 收藏夹
+ */
 class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
     RssFavoritesAdapter.CallBack {
 
@@ -38,7 +44,9 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.rssStarDao.liveAll().conflate().collect {
+            appDb.rssStarDao.liveAll().catch {
+                AppLog.put("订阅收藏夹界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
                 adapter.setItems(it)
             }
         }

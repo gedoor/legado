@@ -15,13 +15,14 @@ import io.legado.app.model.webBook.SearchModel
 import io.legado.app.utils.ConflateLiveData
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
-import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(application: Application) : BaseViewModel(application) {
     val handler = Handler(Looper.getMainLooper())
-    val bookshelf: MutableSet<String> = Collections.synchronizedSet(hashSetOf<String>())
+    val bookshelf: MutableSet<String> = ConcurrentHashMap.newKeySet()
     val upAdapterLiveData = MutableLiveData<String>()
     var searchBookLiveData = ConflateLiveData<List<SearchBook>>(1000)
     val searchScope: SearchScope = SearchScope(AppConfig.searchScope)
@@ -39,7 +40,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             isSearchLiveData.postValue(true)
         }
 
-        override fun onSearchSuccess(searchBooks: ArrayList<SearchBook>) {
+        override fun onSearchSuccess(searchBooks: List<SearchBook>) {
             searchBookLiveData.postValue(searchBooks)
         }
 
@@ -48,7 +49,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchFinishLiveData.postValue(isEmpty)
         }
 
-        override fun onSearchCancel(exception: Exception?) {
+        override fun onSearchCancel(exception: Throwable?) {
             isSearchLiveData.postValue(false)
             exception?.let {
                 context.toastOnUi(it.localizedMessage)
@@ -60,7 +61,14 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     init {
         execute {
             appDb.bookDao.flowAll().mapLatest { books ->
-                books.map { "${it.name}-${it.author}" }
+                val keys = arrayListOf<String>()
+                books.forEach {
+                    keys.add("${it.name}-${it.author}")
+                    keys.add(it.name)
+                }
+                keys
+            }.catch {
+                AppLog.put("搜索界面获取书籍列表失败\n${it.localizedMessage}", it)
             }.collect {
                 bookshelf.clear()
                 bookshelf.addAll(it)
@@ -71,19 +79,30 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun isInBookShelf(name: String, author: String): Boolean {
+        return if (author.isNotBlank()) {
+            bookshelf.contains("$name-$author")
+        } else {
+            bookshelf.contains(name)
+        }
+    }
+
     /**
      * 开始搜索
      */
     fun search(key: String) {
-        if ((searchKey == key) || key.isNotEmpty()) {
-            searchModel.cancelSearch()
-            searchID = System.currentTimeMillis()
-            searchKey = key
+        execute {
+            if ((searchKey == key) || key.isNotEmpty()) {
+                searchModel.cancelSearch()
+                searchID = System.currentTimeMillis()
+                searchBookLiveData.postValue(emptyList())
+                searchKey = key
+            }
+            if (searchKey.isEmpty()) {
+                return@execute
+            }
+            searchModel.search(searchID, searchKey)
         }
-        if (searchKey.isEmpty()) {
-            return
-        }
-        searchModel.search(searchID, searchKey)
     }
 
     /**
@@ -99,7 +118,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     fun saveSearchKey(key: String) {
         execute {
             appDb.searchKeywordDao.get(key)?.let {
-                it.usage = it.usage + 1
+                it.usage += 1
                 it.lastUseTime = System.currentTimeMillis()
                 appDb.searchKeywordDao.update(it)
             } ?: appDb.searchKeywordDao.insert(SearchKeyword(key, 1))
@@ -116,7 +135,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun deleteHistory(searchKeyword: SearchKeyword) {
-        appDb.searchKeywordDao.delete(searchKeyword)
+        execute {
+            appDb.searchKeywordDao.delete(searchKeyword)
+        }
     }
 
     override fun onCleared() {

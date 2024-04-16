@@ -2,7 +2,6 @@ package io.legado.app.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.legado.app.utils.GSON
 
 
 @Entity(tableName = "txtTocRules")

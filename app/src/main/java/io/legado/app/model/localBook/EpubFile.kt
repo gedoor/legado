@@ -16,7 +16,6 @@ import me.ag2s.epublib.domain.EpubBook
 import me.ag2s.epublib.domain.Resource
 import me.ag2s.epublib.domain.TOCReference
 import me.ag2s.epublib.epub.EpubReader
-import me.ag2s.epublib.util.StringUtil
 import me.ag2s.epublib.util.zip.AndroidZipFile
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -25,6 +24,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.Charset
 
@@ -66,6 +66,10 @@ class EpubFile(var book: Book) {
         @Synchronized
         override fun upBookInfo(book: Book) {
             return getEFile(book).upBookInfo()
+        }
+
+        fun clear() {
+            eFile = null
         }
     }
 
@@ -134,16 +138,6 @@ class EpubFile(var book: Book) {
     }
 
     private fun getContent(chapter: BookChapter): String? {
-        /**
-         * <image width="1038" height="670" xlink:href="..."/>
-         * ...titlepage.xhtml
-         * 大多数epub文件的封面页都会带有cover，可以一定程度上解决封面读取问题
-         */
-        if (chapter.url.contains("titlepage.xhtml") ||
-            chapter.url.contains("cover")
-        ) {
-            return "<img src=\"cover.jpeg\" />"
-        }
         /*获取当前章节文本*/
         val contents = epubBookContents ?: return null
         val nextChapterFirstResourceHref = chapter.getVariable("nextUrl").substringBeforeLast("#")
@@ -182,25 +176,29 @@ class EpubFile(var book: Book) {
         }
         //title标签中的内容不需要显示在正文中，去除
         elements.select("title").remove()
-        elements.select("img").forEach {
-            val src = it.attr("src")
-            val path = chapter.url.substringBeforeLast("/", "")
-            val absSrc = if (path.isEmpty()) {
-                src
-            } else {
-                StringUtil.collapsePathDots("$path/$src")
-            }
-            it.attr("src", absSrc)
+        elements.select("img[src=\"cover.jpeg\"]").forEachIndexed { i, it ->
+            if (i > 0) it.remove()
         }
-        var html = elements.outerHtml()
         val tag = Book.rubyTag
         if (book.getDelTag(tag)) {
-            html = html.replace("<ruby>\\s?([\\u4e00-\\u9fa5])\\s?.*?</ruby>".toRegex(), "$1")
+            elements.select("rp, rt").remove()
         }
+        val html = elements.outerHtml()
         return HtmlFormatter.formatKeepImg(html)
     }
 
     private fun getBody(res: Resource, startFragmentId: String?, endFragmentId: String?): Element {
+        /**
+         * <image width="1038" height="670" xlink:href="..."/>
+         * ...titlepage.xhtml
+         * 大多数epub文件的封面页都会带有cover，可以一定程度上解决封面读取问题
+         */
+        if (res.href.contains("titlepage.xhtml") ||
+            res.href.contains("cover")
+        ) {
+            return Jsoup.parseBodyFragment("<img src=\"cover.jpeg\" />")
+        }
+
         // Jsoup可能会修复不规范的xhtml文件 解析处理后再获取
         var bodyElement = Jsoup.parse(String(res.data, mCharset)).body()
         bodyElement.children().run {
@@ -241,21 +239,20 @@ class EpubFile(var book: Book) {
         val tag = Book.hTag
         if (book.getDelTag(tag)) {
             bodyElement.run {
-                getElementsByTag("h1").remove()
-                getElementsByTag("h2").remove()
-                getElementsByTag("h3").remove()
-                getElementsByTag("h4").remove()
-                getElementsByTag("h5").remove()
-                getElementsByTag("h6").remove()
+                select("h1, h2, h3, h4, h5, h6").remove()
                 //getElementsMatchingOwnText(chapter.title)?.remove()
             }
+        }
+        bodyElement.select("img").forEach {
+            val src = it.attr("src")
+            it.attr("src", URI(res.href).resolve(src).toString())
         }
         return bodyElement
     }
 
     private fun getImage(href: String): InputStream? {
         if (href == "cover.jpeg") return epubBook?.coverImage?.inputStream
-        val abHref = URLDecoder.decode(href.replace("../", ""), "UTF-8")
+        val abHref = URLDecoder.decode(href, "UTF-8")
         return epubBook?.resources?.getByHref(abHref)?.inputStream
     }
 
@@ -348,7 +345,10 @@ class EpubFile(var book: Book) {
         durIndex = 0
         while (i < contents.size) {
             val content = contents[i]
-            if (!content.mediaType.toString().contains("htm")) continue
+            if (!content.mediaType.toString().contains("htm")) {
+                i++
+                continue
+            }
             /**
              * 检索到第一章href停止
              * completeHref可能有fragment(#id) 必须去除

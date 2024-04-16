@@ -11,14 +11,14 @@ import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.isTrue
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
+import io.legado.app.utils.mapAsync
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flow
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
 
@@ -86,25 +86,23 @@ object BookChapterList {
                     bookSource.bookSourceUrl,
                     "◇并发解析目录,总页数:${chapterData.second.size}"
                 )
-                withContext(IO) {
-                    val asyncArray = Array(chapterData.second.size) {
-                        async(IO) {
-                            val urlStr = chapterData.second[it]
-                            val res = AnalyzeUrl(
-                                mUrl = urlStr,
-                                source = bookSource,
-                                ruleData = book,
-                                headerMapF = bookSource.getHeaderMap()
-                            ).getStrResponseAwait() //控制并发访问
-                            analyzeChapterList(
-                                book, urlStr, res.url,
-                                res.body!!, tocRule, listRule, bookSource, false
-                            ).first
-                        }
+                flow {
+                    for (urlStr in chapterData.second) {
+                        emit(urlStr)
                     }
-                    asyncArray.forEach { coroutine ->
-                        chapterList.addAll(coroutine.await())
-                    }
+                }.mapAsync(AppConfig.threadCount) { urlStr ->
+                    val res = AnalyzeUrl(
+                        mUrl = urlStr,
+                        source = bookSource,
+                        ruleData = book,
+                        headerMapF = bookSource.getHeaderMap()
+                    ).getStrResponseAwait() //控制并发访问
+                    analyzeChapterList(
+                        book, urlStr, res.url,
+                        res.body!!, tocRule, listRule, bookSource, false
+                    ).first
+                }.collect {
+                    chapterList.addAll(it)
                 }
             }
         }
@@ -142,9 +140,10 @@ object BookChapterList {
             }
         }
         val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-        book.latestChapterTitle = list.last().getDisplayTitle(replaceRules)
+        book.latestChapterTitle =
+            list.last().getDisplayTitle(replaceRules, book.getUseReplaceRule())
         book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
-            .getDisplayTitle(replaceRules)
+            .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         if (book.totalChapterNum < list.size) {
             book.lastCheckCount = list.size - book.totalChapterNum
             book.latestChapterTime = System.currentTimeMillis()
@@ -169,6 +168,7 @@ object BookChapterList {
         val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
+        analyzeRule.setCoroutineContext(coroutineContext)
         //获取目录列表
         val chapterList = arrayListOf<BookChapter>()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录列表", log)

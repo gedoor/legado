@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -44,10 +45,13 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import kotlin.math.abs
 
 class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
     BookAdapter.CallBack,
@@ -232,7 +236,20 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1)) {
-                    scrollToBottom()
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                    if (lastPosition == RecyclerView.NO_POSITION) {
+                        return
+                    }
+                    val lastView = layoutManager.findViewByPosition(lastPosition)
+                    if (lastView == null) {
+                        scrollToBottom()
+                        return
+                    }
+                    val bottom = abs(lastView.bottom - recyclerView.height)
+                    if (bottom <= 1) {
+                        scrollToBottom()
+                    }
                 }
             }
         })
@@ -347,7 +364,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             when {
                 key.isNullOrBlank() -> appDb.searchKeywordDao.flowByTime()
                 else -> appDb.searchKeywordDao.flowSearch(key)
-            }.conflate().collect {
+            }.catch {
+                AppLog.put("搜索界面获取搜索历史数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
                 historyKeyAdapter.setItems(it)
                 if (it.isEmpty()) {
                     binding.tvClearHistory.invisible()
@@ -362,6 +381,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 开始搜索
      */
     private fun startSearch() {
+        binding.refreshProgressBar.visible()
         binding.refreshProgressBar.isAutoLoading = true
         binding.fbStop.visible()
     }
@@ -371,6 +391,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      */
     private fun searchFinally() {
         binding.refreshProgressBar.isAutoLoading = false
+        binding.refreshProgressBar.gone()
         binding.fbStop.invisible()
     }
 
@@ -416,11 +437,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 是否已经加入书架
      */
     override fun isInBookshelf(name: String, author: String): Boolean {
-        return if (author.isNotBlank()) {
-            viewModel.bookshelf.contains("$name-$author")
-        } else {
-            viewModel.bookshelf.any { it.startsWith("$name-") }
-        }
+        return viewModel.isInBookShelf(name, author)
     }
 
     /**

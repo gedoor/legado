@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="12dp"
+        android:importantForAutofill="no"
         app:layout_constraintTop_toBottomOf="@+id/tool_bar"
         app:layout_constraintBottom_toBottomOf="parent" />
 

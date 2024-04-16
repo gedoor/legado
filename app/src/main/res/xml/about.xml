@@ -15,6 +15,13 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false" />
 
+    <io.legado.app.lib.prefs.Preference
+        android:key="check_update"
+        android:title="@string/check_update"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.prefs.PreferenceCategory
         android:title="@string/other"
         app:allowDividerAbove="true"
@@ -25,6 +32,16 @@
         <io.legado.app.lib.prefs.Preference
             android:key="crashLog"
             android:title="@string/crash_log"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="saveLog"
+            android:title="@string/save_log"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="createHeapDump"
+            android:title="@string/create_heap_dump"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference

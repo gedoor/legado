@@ -6,7 +6,6 @@ import android.util.Size
 import androidx.collection.LruCache
 import io.legado.app.R
 import io.legado.app.constant.AppLog.putDebug
-import io.legado.app.constant.PageAnim
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
@@ -14,7 +13,6 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isPdf
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.PdfFile
 import io.legado.app.utils.BitmapUtils
@@ -22,7 +20,6 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.SvgUtils
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
@@ -46,7 +43,6 @@ object ImageProvider {
             }
             return AppConfig.bitmapCacheSize * M
         }
-    var triggerRecycled = false
     val bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
 
         override fun sizeOf(filePath: String, bitmap: Bitmap): Int {
@@ -62,7 +58,6 @@ object ImageProvider {
             //错误图片不能释放,占位用,防止一直重复获取图片
             if (oldBitmap != errorBitmap) {
                 oldBitmap.recycle()
-                triggerRecycled = true
                 //putDebug("ImageProvider: trigger bitmap recycle. URI: $filePath")
                 //putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
             }
@@ -129,14 +124,14 @@ object ImageProvider {
         bookSource: BookSource?
     ): Size {
         val file = cacheImage(book, src, bookSource)
-        //svg size
-        val size = SvgUtils.getSize(file.absolutePath)
-        if (size != null) return size
         val op = BitmapFactory.Options()
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
         if (op.outWidth < 1 && op.outHeight < 1) {
+            //svg size
+            val size = SvgUtils.getSize(file.absolutePath)
+            if (size != null) return size
             putDebug("ImageProvider: $src Unsupported image type")
             //file.delete() 重复下载
             return Size(errorBitmap.width, errorBitmap.height)
@@ -151,9 +146,8 @@ object ImageProvider {
         book: Book,
         src: String,
         width: Int,
-        height: Int? = null,
-        block: (() -> Unit)? = null
-    ): Bitmap? {
+        height: Int? = null
+    ): Bitmap {
         //src为空白时 可能被净化替换掉了 或者规则失效
         if (book.getUseReplaceRule() && src.isBlank()) {
             book.setUseReplaceRule(false)
@@ -165,22 +159,6 @@ object ImageProvider {
         //bitmapLruCache的key同一改成缓存文件的路径
         val cacheBitmap = getNotRecycled(vFile.absolutePath)
         if (cacheBitmap != null) return cacheBitmap
-        if (height != null && AppConfig.asyncLoadImage && ReadBook.pageAnim() == PageAnim.scrollPageAnim) {
-            Coroutine.async {
-                val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
-                    ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
-                    ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
-                withContext(Main) {
-                    bitmapLruCache.put(vFile.absolutePath, bitmap)
-                }
-            }.onError {
-                //错误图片占位,防止重复获取
-                bitmapLruCache.put(vFile.absolutePath, errorBitmap)
-            }.onFinally {
-                block?.invoke()
-            }
-            return null
-        }
         return kotlin.runCatching {
             val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
                 ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
@@ -193,17 +171,8 @@ object ImageProvider {
         }.getOrDefault(errorBitmap)
     }
 
-    fun isImageAlive(book: Book, src: String): Boolean {
-        val vFile = BookHelp.getImage(book, src)
-        if (!vFile.exists()) return true // 使用 errorBitmap
-        val cacheBitmap = bitmapLruCache.get(vFile.absolutePath)
-        return cacheBitmap != null
-    }
-
-    fun isTriggerRecycled(): Boolean {
-        val tmp = triggerRecycled
-        triggerRecycled = false
-        return tmp
+    fun clear() {
+        bitmapLruCache.evictAll()
     }
 
 }

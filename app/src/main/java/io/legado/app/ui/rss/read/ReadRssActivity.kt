@@ -6,8 +6,19 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
-import android.view.*
-import android.webkit.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
+import android.webkit.JavascriptInterface
+import android.webkit.SslErrorHandler
+import android.webkit.URLUtil
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.size
@@ -29,13 +40,29 @@ import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.get
+import io.legado.app.utils.gone
+import io.legado.app.utils.invisible
+import io.legado.app.utils.isTrue
+import io.legado.app.utils.longSnackbar
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.setDarkeningAllowed
+import io.legado.app.utils.setTintMutate
+import io.legado.app.utils.share
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.textArray
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
+import java.util.regex.PatternSyntaxException
 
 /**
  * rss阅读界面
@@ -145,7 +172,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     @JavascriptInterface
     fun isNightTheme(): Boolean {
-        return AppConfig.isNightTheme(this)
+        return AppConfig.isNightTheme
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -346,24 +373,32 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             request: WebResourceRequest
         ): WebResourceResponse? {
             val url = request.url.toString()
-            viewModel.rssSource?.let { source ->
-                val blacklist = source.contentBlacklist?.splitNotBlank(",")
-                if (!blacklist.isNullOrEmpty()) {
-                    blacklist.forEach {
+            val source = viewModel.rssSource ?: return super.shouldInterceptRequest(view, request)
+            val blacklist = source.contentBlacklist?.splitNotBlank(",")
+            if (!blacklist.isNullOrEmpty()) {
+                blacklist.forEach {
+                    try {
                         if (url.startsWith(it) || url.matches(it.toRegex())) {
                             return createEmptyResource()
                         }
+                    } catch (e: PatternSyntaxException) {
+                        AppLog.put("黑名单规则正则语法错误 源名称:${source.sourceName} 正则:$it", e)
                     }
-                } else {
-                    val whitelist = source.contentWhitelist?.splitNotBlank(",")
-                    if (!whitelist.isNullOrEmpty()) {
-                        whitelist.forEach {
+                }
+            } else {
+                val whitelist = source.contentWhitelist?.splitNotBlank(",")
+                if (!whitelist.isNullOrEmpty()) {
+                    whitelist.forEach {
+                        try {
                             if (url.startsWith(it) || url.matches(it.toRegex())) {
                                 return super.shouldInterceptRequest(view, request)
                             }
+                        } catch (e: PatternSyntaxException) {
+                            val msg = "白名单规则正则语法错误 源名称:${source.sourceName} 正则:$it"
+                            AppLog.put(msg, e)
                         }
-                        return createEmptyResource()
                     }
+                    return createEmptyResource()
                 }
             }
             return super.shouldInterceptRequest(view, request)

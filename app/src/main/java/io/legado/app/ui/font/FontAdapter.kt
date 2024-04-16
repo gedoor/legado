@@ -6,6 +6,7 @@ import android.os.Build
 import android.view.ViewGroup
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ItemFontBinding
 import io.legado.app.utils.*
 import java.io.File
@@ -45,7 +46,7 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
                 tvFont.typeface = typeface
             }.onFailure {
                 it.printOnDebug()
-                context.toastOnUi("Read ${item.name} Error: ${it.localizedMessage}")
+                AppLog.put("读取字体 ${item.name} 出错\n${it.localizedMessage}", it, true)
             }
             tvFont.text = item.name
             root.setOnClickListener { callBack.onFontSelect(item) }

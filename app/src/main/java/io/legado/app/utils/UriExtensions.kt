@@ -1,6 +1,8 @@
 package io.legado.app.utils
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import androidx.appcompat.app.AppCompatActivity
@@ -63,7 +65,7 @@ fun AppCompatActivity.readUri(
         }
     } catch (e: Exception) {
         e.printOnDebug()
-        toastOnUi(e.localizedMessage ?: "read uri error")
+        toastOnUi("读取Uri出错\n${e.localizedMessage}")
         if (e is SecurityException) {
             throw e
         }
@@ -104,7 +106,7 @@ fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputSt
         }
     } catch (e: Exception) {
         e.printOnDebug()
-        toastOnUi(e.localizedMessage ?: "read uri error")
+        toastOnUi("读取Uri出错\n${e.localizedMessage}")
     }
 }
 
@@ -311,4 +313,11 @@ fun Uri.toRequestBody(contentType: MediaType? = null): RequestBody {
             }
         }
     }
+}
+
+fun Uri.canRead(): Boolean {
+    return appCtx.checkSelfUriPermission(
+        this,
+        Intent.FLAG_GRANT_READ_URI_PERMISSION
+    ) == PackageManager.PERMISSION_GRANTED
 }

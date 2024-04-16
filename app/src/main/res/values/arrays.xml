@@ -63,8 +63,8 @@
 	<string-array name="screen_time_out">
 		<item>Default</item>
 		<item>1 min</item>
-		<item>2 min</item>
-		<item>3 min</item>
+		<item>5 min</item>
+		<item>10 min</item>
 		<item>Always</item>
 	</string-array>
 
@@ -73,19 +73,19 @@
 		<item>@string/screen_portrait</item>
 		<item>@string/screen_landscape</item>
 		<item>@string/screen_sensor</item>
-		<item>反向竖屏</item>
+		<item>@string/screen_portrait_reversed</item>
 	</string-array>
 
 	<string-array name="double_page_title">
-		<item>全局单页</item>
-		<item>全局双页</item>
-		<item>横屏双页</item>
-		<item>平板/横屏双页</item>
+		<item>Single page</item>
+		<item>Double page</item>
+		<item>Double page in landscape</item>
+		<item>Double page on tablet or landscape</item>
 	</string-array>
 
 	<string-array name="progress_bar_behavior_title">
-		<item>调整本章页数</item>
-		<item>调整章节位置</item>
+		<item>@string/adjust_chapter_page</item>
+		<item>@string/adjust_chapter_index</item>
 	</string-array>
 
 	<string-array name="icon_names" tools:ignore="Typos">
@@ -156,6 +156,17 @@
 		<item>explore</item>
 		<item>rss</item>
 		<item>my</item>
+	</string-array>
+
+	<string-array name="tip_color">
+		<item>Same color as content</item>
+		<item>Customize</item>
+	</string-array>
+
+	<string-array name="tip_divider_color">
+		<item>Default</item>
+		<item>Same color as content</item>
+		<item>Customize</item>
 	</string-array>
 
 </resources>

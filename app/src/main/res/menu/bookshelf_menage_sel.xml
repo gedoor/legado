@@ -22,6 +22,10 @@
         android:title="@string/change_source_batch" />
 
     <item
+        android:id="@+id/menu_clear_cache"
+        android:title="@string/clear_cache" />
+
+    <item
         android:id="@+id/menu_check_selected_interval"
         android:title="@string/check_selected_interval" />
 

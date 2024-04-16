@@ -3,6 +3,7 @@ package io.legado.app.service
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
@@ -19,6 +20,7 @@ import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
 import splitties.init.appCtx
 import splitties.systemservices.powerManager
+import splitties.systemservices.wifiManager
 import java.io.IOException
 
 class WebService : BaseService() {
@@ -49,39 +51,56 @@ class WebService : BaseService() {
                 setReferenceCounted(false)
             }
     }
+    private val wifiLock by lazy {
+        @Suppress("DEPRECATION")
+        wifiManager?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")
+            ?.apply {
+                setReferenceCounted(false)
+            }
+    }
     private var httpServer: HttpServer? = null
     private var webSocketServer: WebSocketServer? = null
-    private var notificationContent = appCtx.getString(R.string.service_starting)
+    private var notificationList = mutableListOf(appCtx.getString(R.string.service_starting))
     private val networkChangedListener by lazy {
         NetworkChangedListener(this)
     }
 
+    @SuppressLint("WakelockTimeout")
     override fun onCreate() {
         super.onCreate()
-        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (useWakeLock) {
+            wakeLock.acquire()
+            wifiLock?.acquire()
+        }
         isRun = true
         upTile(true)
         networkChangedListener.register()
         networkChangedListener.onNetworkChanged = {
-            val address = NetworkUtils.getLocalIPAddress()
-            if (address == null) {
-                hostAddress = getString(R.string.network_connection_unavailable)
-                notificationContent = hostAddress
-                upNotification()
+            val addressList = NetworkUtils.getLocalIPAddress()
+            notificationList.clear()
+            if (addressList.any()) {
+                notificationList.addAll(addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) })
+                hostAddress = notificationList.first()
+                startForegroundNotification()
             } else {
-                hostAddress = getString(R.string.http_ip, address.hostAddress, getPort())
-                notificationContent = hostAddress
-                upNotification()
+                hostAddress = getString(R.string.network_connection_unavailable)
+                notificationList.add(hostAddress)
+                startForegroundNotification()
             }
             postEvent(EventBus.WEB_SERVICE, hostAddress)
         }
     }
 
+    @SuppressLint("WakelockTimeout")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             IntentAction.stop -> stopSelf()
             "copyHostAddress" -> sendToClip(hostAddress)
-            "serve" -> if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+            "serve" -> if (useWakeLock) {
+                wakeLock.acquire()
+                wifiLock?.acquire()
+            }
+
             else -> upWebServer()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -89,7 +108,10 @@ class WebService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         networkChangedListener.unRegister()
         isRun = false
         if (httpServer?.isAlive == true) {
@@ -109,19 +131,20 @@ class WebService : BaseService() {
         if (webSocketServer?.isAlive == true) {
             webSocketServer?.stop()
         }
-        val address = NetworkUtils.getLocalIPAddress()
-        if (address != null) {
+        val addressList = NetworkUtils.getLocalIPAddress()
+        if (addressList.any()) {
             val port = getPort()
             httpServer = HttpServer(port)
             webSocketServer = WebSocketServer(port + 1)
             try {
                 httpServer?.start()
                 webSocketServer?.start(1000 * 30) // 通信超时设置
-                hostAddress = getString(R.string.http_ip, address.hostAddress, port)
+                notificationList.clear()
+                notificationList.addAll(addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) })
+                hostAddress = notificationList.first()
                 isRun = true
                 postEvent(EventBus.WEB_SERVICE, hostAddress)
-                notificationContent = hostAddress
-                upNotification()
+                startForegroundNotification()
             } catch (e: IOException) {
                 toastOnUi(e.localizedMessage ?: "")
                 e.printOnDebug()
@@ -144,12 +167,12 @@ class WebService : BaseService() {
     /**
      * 更新通知
      */
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdWeb)
             .setSmallIcon(R.drawable.ic_web_service_noti)
             .setOngoing(true)
             .setContentTitle(getString(R.string.web_service))
-            .setContentText(notificationContent)
+            .setContentText(notificationList.joinToString("\n"))
             .setContentIntent(
                 servicePendingIntent<WebService>("copyHostAddress")
             )

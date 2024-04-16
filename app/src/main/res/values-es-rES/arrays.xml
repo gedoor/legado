@@ -49,8 +49,8 @@
 	<string-array name="screen_time_out">
 		<item>Predeterminado</item>
 		<item>1 min</item>
-		<item>2 min</item>
-		<item>3 min</item>
+		<item>5 min</item>
+		<item>10 min</item>
 		<item>Siempre</item>
 	</string-array>
 
@@ -59,7 +59,7 @@
 		<item>@string/screen_portrait</item>
 		<item>@string/screen_landscape</item>
 		<item>@string/screen_sensor</item>
-		<item>反向竖屏</item>
+		<item>@string/screen_portrait_reversed</item>
 	</string-array>
 
 	<string-array name="icon_names">

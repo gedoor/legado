@@ -1,11 +1,18 @@
 package io.legado.app.data.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.splitNotBlank
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 
@@ -97,11 +104,11 @@ interface ReplaceRuleDao {
         }
     }
 
-    fun allGroups(): List<String> =dealGroups(allGroupsUnProcessed)
+    fun allGroups(): List<String> = dealGroups(allGroupsUnProcessed)
 
     fun flowGroups(): Flow<List<String>> {
         return flowGroupsUnProcessed().map { list ->
             dealGroups(list)
-        }
+        }.flowOn(IO)
     }
 }

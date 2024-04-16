@@ -72,14 +72,15 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     private val adapter by lazy { ChangeBookSourceAdapter(requireContext(), viewModel, this) }
     private val editSourceResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
-            viewModel.startSearch()
+            val origin = it.data?.getStringExtra("origin") ?: return@registerForActivityResult
+            viewModel.startSearch(origin)
         }
     private val searchFinishCallback: (isEmpty: Boolean) -> Unit = {
         if (it) {
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isNotEmpty()) {
                 lifecycleScope.launch {
-                    alert("搜索结果为空") {
+                    context?.alert("搜索结果为空") {
                         setMessage("${searchGroup}分组搜索结果为空,是否切换到全部分组")
                         cancelButton()
                         okButton {
@@ -109,6 +110,11 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         initBottomBar()
         initLiveData()
         viewModel.searchFinishCallback = searchFinishCallback
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.searchFinishCallback = null
     }
 
     private fun showTitle() {
@@ -277,8 +283,9 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 }
                 upGroupMenuName()
                 lifecycleScope.launch(IO) {
+                    viewModel.stopSearch()
                     if (viewModel.refresh()) {
-                        viewModel.startOrStopSearch()
+                        viewModel.startSearch()
                     }
                 }
             }

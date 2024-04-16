@@ -148,13 +148,15 @@ object UrlUtil {
         }
     }
 
+    private val fileSuffixRegex = Regex("^[a-z\\d]+$", RegexOption.IGNORE_CASE)
+
     /* 获取合法的文件后缀 */
     fun getSuffix(str: String, default: String? = null): String {
         val suffix = CustomUrl(str).getUrl()
             .substringAfterLast(".", "")
             .substringBefore("?")
+            .substringBefore("/")
         //检查截取的后缀字符是否合法 [a-zA-Z0-9]
-        val fileSuffixRegex = Regex("^[a-z\\d]+$", RegexOption.IGNORE_CASE)
         return if (suffix.length > 5 || !suffix.matches(fileSuffixRegex)) {
             AppLog.put("Cannot find legal suffix:\n target: $str\n suffix: $suffix")
             default ?: "ext"

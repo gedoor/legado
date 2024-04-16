@@ -4,17 +4,16 @@ import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import cn.hutool.core.lang.Validator
 import io.legado.app.constant.AppLog
 import okhttp3.internal.publicsuffix.PublicSuffixDatabase
 import splitties.systemservices.connectivityManager
-
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
 import java.net.URL
-import java.util.*
-
-import cn.hutool.core.lang.Validator
+import java.util.BitSet
+import java.util.Enumeration
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
@@ -179,32 +178,40 @@ object NetworkUtils {
         }.getOrDefault(baseUrl)
     }
 
+    fun getDomain(url: String): String {
+        val baseUrl = getBaseUrl(url) ?: return url
+        return kotlin.runCatching {
+            URL(baseUrl).host
+        }.getOrDefault(baseUrl)
+    }
+
     /**
      * Get local Ip address.
      */
-    fun getLocalIPAddress(): InetAddress? {
-        var enumeration: Enumeration<NetworkInterface>? = null
+    fun getLocalIPAddress(): List<InetAddress> {
+        val enumeration: Enumeration<NetworkInterface>
         try {
             enumeration = NetworkInterface.getNetworkInterfaces()
         } catch (e: SocketException) {
             e.printOnDebug()
+            return mutableListOf()
         }
 
-        if (enumeration != null) {
-            while (enumeration.hasMoreElements()) {
-                val nif = enumeration.nextElement()
-                val addresses = nif.inetAddresses
-                if (addresses != null) {
-                    while (addresses.hasMoreElements()) {
-                        val address = addresses.nextElement()
-                        if (!address.isLoopbackAddress && isIPv4Address(address.hostAddress)) {
-                            return address
-                        }
+        var fallbackAddress: MutableList<InetAddress> = mutableListOf()
+
+        while (enumeration.hasMoreElements()) {
+            val nif = enumeration.nextElement()
+            val addresses = nif.inetAddresses ?: continue
+            while (addresses.hasMoreElements()) {
+                val address = addresses.nextElement()
+                if (!address.isLoopbackAddress && isIPv4Address(address.hostAddress)) {
+                    if (nif.name?.startsWith("wlan") == true) {
+                        fallbackAddress.add(address)
                     }
                 }
             }
         }
-        return null
+        return fallbackAddress
     }
 
     /**

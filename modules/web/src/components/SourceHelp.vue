@@ -2,29 +2,35 @@
 import { Link } from "@element-plus/icons-vue";
 </script>
 <template>
-  <el-link
-    :icon="Link"
-    href="https://alanskycn.gitee.io/teachme/"
-    target="_blank"
+  <el-link :icon="Link" href="/help/#appHelp" target="_blank"
+    >APP帮助文档</el-link
+  ><br />
+  <el-link :icon="Link" href="/help/#ruleHelp" target="_blank"
     >书源制作教程</el-link
   ><br />
-  <el-link
-    :icon="Link"
-    href="https://zhuanlan.zhihu.com/p/29436838"
-    target="_blank"
-    >xpath基础教程</el-link
+  <el-link :icon="Link" href="/help/#jsHelp" target="_blank"
+    >js变量和函数</el-link
   ><br />
-  <el-link
-    :icon="Link"
-    href="https://zhuanlan.zhihu.com/p/32187820"
-    target="_blank"
-    >xpath高级教程</el-link
+  <el-link :icon="Link" href="/help/#xpathHelp" target="_blank"
+    >xpath语法教程</el-link
   ><br />
-  <el-link
-    :icon="Link"
-    href="https://www.w3cschool.cn/regex_rmjc"
-    target="_blank"
+  <el-link :icon="Link" href="/help/#regexHelp" target="_blank"
     >正则表达式教程</el-link
+  ><br />
+  <el-link :icon="Link" href="/help/#txtTocRuleHelp" target="_blank"
+    >txt目录正则说明</el-link
+  ><br />
+  <el-link :icon="Link" href="/help/#debugHelp" target="_blank"
+    >书源调试说明</el-link
+  ><br />
+  <el-link :icon="Link" href="/help/#httpTTSHelp" target="_blank"
+    >在线朗读规则</el-link
+  ><br />
+  <el-link :icon="Link" href="/help/#webDavBookHelp" target="_blank"
+    > WebDav书籍简明使用教程</el-link
+  ><br />
+  <el-link :icon="Link" href="/help/#webDavHelp" target="_blank"
+    > WebDav备份教程</el-link
   ><br />
   <el-link :icon="Link" href="https://regexr-cn.com/" target="_blank"
     >正则表达式在线验证工具</el-link

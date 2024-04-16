@@ -10,8 +10,8 @@ import io.legado.app.data.entities.Book
 abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
     DiffRecyclerAdapter<Book, VB>(context) {
 
-    override val diffItemCallback: DiffUtil.ItemCallback<Book>
-        get() = object : DiffUtil.ItemCallback<Book>() {
+    override val diffItemCallback: DiffUtil.ItemCallback<Book> =
+        object : DiffUtil.ItemCallback<Book>() {
 
             override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
                 return oldItem.name == newItem.name
@@ -56,6 +56,9 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
                 ) {
                     bundle.putBoolean("refresh", true)
                 }
+                if (oldItem.latestChapterTime != newItem.latestChapterTime) {
+                    bundle.putBoolean("lastUpdateTime", true)
+                }
                 if (bundle.isEmpty) return null
                 return bundle
             }
@@ -63,12 +66,10 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
         }
 
     fun notification(bookUrl: String) {
-        for (i in 0 until itemCount) {
-            getItem(i)?.let {
-                if (it.bookUrl == bookUrl) {
-                    notifyItemChanged(i, bundleOf(Pair("refresh", null), Pair("lastUpdateTime", null)))
-                    return
-                }
+        getItems().forEachIndexed { i, it ->
+            if (it.bookUrl == bookUrl) {
+                notifyItemChanged(i, bundleOf(Pair("refresh", null), Pair("lastUpdateTime", null)))
+                return
             }
         }
     }

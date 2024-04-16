@@ -9,7 +9,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
-@Suppress("UnnecessaryVariable")
 class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     // 滑动追踪的时间
@@ -22,6 +21,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     var noAnim: Boolean = false
 
     override fun onAnimStart(animationSpeed: Int) {
+        readView.onScrollAnimStart()
         //惯性滚动
         fling(
             0, touchY.toInt(), 0, mVelocity.yVelocity.toInt(),
@@ -30,7 +30,7 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     }
 
     override fun onAnimStop() {
-        // nothing
+        readView.onScrollAnimStop()
     }
 
     override fun onTouch(event: MotionEvent) {
@@ -78,8 +78,8 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         //多点触控时即最后按下的手指产生的事件点
         val pointX = event.getX(event.pointerCount - 1)
         val pointY = event.getY(event.pointerCount - 1)
-        if (isMoved) {
-            readView.setTouchPoint(pointX, pointY)
+        if (isMoved || readView.isLongScreenShot()) {
+            readView.setTouchPoint(pointX, pointY, false)
         }
         if (!isMoved) {
             val deltaX = (pointX - startX).toInt()
@@ -95,12 +95,22 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         }
     }
 
+    override fun computeScroll() {
+        if (scroller.computeScrollOffset()) {
+            readView.setTouchPoint(scroller.currX.toFloat(), scroller.currY.toFloat(), false)
+        } else if (isStarted) {
+            onAnimStop()
+            stopScroll()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mVelocity.recycle()
     }
 
     override fun abortAnim() {
+        readView.onScrollAnimStop()
         isStarted = false
         isMoved = false
         isRunning = false

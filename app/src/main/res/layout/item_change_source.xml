@@ -82,7 +82,7 @@
         tools:text="word count"
         android:textColor="@color/secondaryText"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
         app:layout_constraintTop_toBottomOf="@+id/tv_last" />
 
     <TextView
@@ -96,7 +96,7 @@
         android:textColor="@color/secondaryText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
         app:layout_constraintTop_toBottomOf="@+id/tv_current_chapter_word_count" />
 
     <androidx.appcompat.widget.AppCompatImageView

@@ -13,6 +13,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.StringUtils
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -53,6 +54,7 @@ object ReadAloud {
         intent.putExtra("play", play)
         intent.putExtra("pageIndex", pageIndex)
         intent.putExtra("startPos", startPos)
+        LogUtils.d("ReadAloud", intent.toString())
         try {
             ContextCompat.startForegroundService(context, intent)
         } catch (e: Exception) {
@@ -119,14 +121,6 @@ object ReadAloud {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.upTtsSpeechRate
-            ContextCompat.startForegroundService(context, intent)
-        }
-    }
-
-    fun upTtsProgress(context: Context) {
-        if (BaseReadAloudService.isRun) {
-            val intent = Intent(context, aloudClass)
-            intent.action = IntentAction.upTtsProgress
             ContextCompat.startForegroundService(context, intent)
         }
     }

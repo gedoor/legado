@@ -17,17 +17,19 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
-        android:enableOnBackInvokedCallback="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <!-- 主入口 -->
         <activity
@@ -177,7 +179,7 @@
         <!-- 配置界面 -->
         <activity
             android:name=".ui.config.ConfigActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="standard" />
         <!-- 搜索界面 -->
         <activity
             android:name=".ui.book.search.SearchActivity"
@@ -365,6 +367,7 @@
                 <data android:mimeType="application/epub+zip" />
                 <!-- pdf -->
                 <data android:mimeType="application/pdf" />
+                <data android:mimeType="application/octet-stream" />
             </intent-filter>
             <!-- Works when an app doesn't know the media type, e.g. Dropbox -->
             <intent-filter>
@@ -411,13 +414,22 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.CheckSourceService" />
-        <service android:name=".service.CacheBookService" />
-        <service android:name=".service.ExportBookService" />
-        <service android:name=".service.WebService" />
+        <service
+            android:name=".service.CheckSourceService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".service.CacheBookService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".service.ExportBookService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".service.WebService"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".service.WebTileService"
             android:exported="true"
+            android:foregroundServiceType="dataSync"
             android:icon="@drawable/ic_web_service_noti"
             android:label="legado Web Service"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -425,10 +437,18 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-        <service android:name=".service.TTSReadAloudService" />
-        <service android:name=".service.HttpReadAloudService" />
-        <service android:name=".service.AudioPlayService" />
-        <service android:name=".service.DownloadService" />
+        <service
+            android:name=".service.TTSReadAloudService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
+            android:name=".service.HttpReadAloudService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
+            android:name=".service.AudioPlayService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
+            android:name=".service.DownloadService"
+            android:foregroundServiceType="dataSync" />
 
         <receiver
             android:name=".receiver.MediaButtonReceiver"
@@ -452,6 +472,15 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
+        </provider>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                tools:node="remove" />
         </provider>
 
         <meta-data

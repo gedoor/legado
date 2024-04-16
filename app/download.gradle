@@ -34,6 +34,7 @@ tasks.register('downloadJar', Download) {
             BASE_PATH + "cronet_impl_common_java.jar",
             BASE_PATH + "cronet_impl_native_java.jar",
             BASE_PATH + "cronet_impl_platform_java.jar",
+            BASE_PATH + "cronet_shared_java.jar"
     ])
     dest libPath
     overwrite true

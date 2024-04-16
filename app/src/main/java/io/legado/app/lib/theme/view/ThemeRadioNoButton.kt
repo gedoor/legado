@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatRadioButton
+import androidx.appcompat.widget.TooltipCompat
 import io.legado.app.R
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.accentColor
@@ -24,6 +25,7 @@ class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
             typedArray.getBoolean(R.styleable.ThemeRadioNoButton_isBottomBackground, false)
         typedArray.recycle()
         initTheme()
+        TooltipCompat.setTooltipText(this, text)
     }
 
     private fun initTheme() {

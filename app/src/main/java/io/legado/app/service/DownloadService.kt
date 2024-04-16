@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Environment
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -45,9 +46,11 @@ class DownloadService : BaseService() {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate() {
         super.onCreate()
-        registerReceiver(
+        ContextCompat.registerReceiver(
+            this,
             downloadReceiver,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+            ContextCompat.RECEIVER_EXPORTED
         )
     }
 
@@ -197,7 +200,8 @@ class DownloadService : BaseService() {
                             downloadInfo.notificationId,
                             "${downloadInfo.fileName} $status",
                             max,
-                            progress
+                            progress,
+                            downloadInfo.startTime
                         )
                     }
                 } while (cursor.moveToNext())
@@ -219,7 +223,7 @@ class DownloadService : BaseService() {
         }
     }
 
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setSubText(getString(R.string.action_download))
@@ -238,33 +242,37 @@ class DownloadService : BaseService() {
         notificationId: Int,
         content: String,
         max: Int,
-        progress: Int
+        progress: Int,
+        startTime: Long
     ) {
-        val notification = NotificationCompat.Builder(this, AppConst.channelIdDownload)
+        val notificationBuilder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setSubText(getString(R.string.action_download))
             .setContentTitle(content)
             .setContentIntent(
-                servicePendingIntent<DownloadService>(IntentAction.play) {
+                servicePendingIntent<DownloadService>(IntentAction.play, downloadId.toInt()) {
                     putExtra("downloadId", downloadId)
                 }
             )
             .setDeleteIntent(
-                servicePendingIntent<DownloadService>(IntentAction.stop) {
+                servicePendingIntent<DownloadService>(IntentAction.stop, downloadId.toInt()) {
                     putExtra("downloadId", downloadId)
                 }
             )
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setProgress(max, progress, false)
             .setGroup(groupKey)
-            .build()
-        notificationManager.notify(notificationId, notification)
+            .setWhen(startTime)
+        if (progress < max) {
+            notificationBuilder.setProgress(max, progress, false)
+        }
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 
     private data class DownloadInfo(
         val url: String,
         val fileName: String,
-        val notificationId: Int
+        val notificationId: Int,
+        val startTime: Long = System.currentTimeMillis()
     )
 
 }

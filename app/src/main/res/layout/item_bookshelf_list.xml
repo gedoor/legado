@@ -8,6 +8,7 @@
     android:background="@drawable/bg_item_focused_on_tv"
     android:clickable="true"
     android:focusable="true"
+    android:scrollbars="none"
     tools:ignore="UnusedAttribute">
 
     <io.legado.app.ui.widget.image.CoverImageView
@@ -41,6 +42,7 @@
             android:layout_gravity="right"
             android:layout_margin="5dp"
             android:includeFontPadding="false"
+            android:scrollbars="none"
             tools:ignore="RtlHardcoded" />
 
         <io.legado.app.ui.widget.anima.RotateLoading
@@ -62,6 +64,7 @@
         android:includeFontPadding="false"
         android:paddingLeft="2dp"
         android:paddingBottom="4dp"
+        android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/book_name"
         android:textColor="@color/primaryText"
@@ -79,6 +82,7 @@
         android:contentDescription="@string/author"
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
+        android:scrollbars="none"
         android:src="@drawable/ic_author"
         app:layout_constraintBottom_toBottomOf="@+id/tv_author"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
@@ -93,6 +97,7 @@
         android:includeFontPadding="false"
         android:maxLines="1"
         android:paddingEnd="6dp"
+        android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/author"
         android:textColor="@color/tv_text_summary"
@@ -110,6 +115,7 @@
         android:includeFontPadding="false"
         android:maxLines="1"
         android:paddingEnd="6dp"
+        android:scrollbars="none"
         android:singleLine="true"
         android:text=""
         android:textColor="@color/tv_text_summary"
@@ -128,6 +134,7 @@
         android:contentDescription="@string/read_dur_progress"
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
+        android:scrollbars="none"
         android:src="@drawable/ic_history"
         app:layout_constraintBottom_toBottomOf="@+id/tv_read"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
@@ -140,6 +147,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
+        android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/read_dur_progress"
         android:textColor="@color/tv_text_summary"
@@ -157,6 +165,7 @@
         android:contentDescription="@string/lasted_show"
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
+        android:scrollbars="none"
         android:src="@drawable/ic_book_last"
         app:layout_constraintBottom_toBottomOf="@+id/tv_last"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
@@ -169,6 +178,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/lasted_show"
         android:textColor="@color/tv_text_summary"
@@ -184,6 +194,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?android:attr/selectableItemBackground"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"

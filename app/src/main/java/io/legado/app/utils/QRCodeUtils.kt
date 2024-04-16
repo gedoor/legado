@@ -24,7 +24,6 @@ import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.king.zxing.DecodeFormatManager
-import com.king.zxing.util.LogUtils
 import java.util.EnumMap
 import kotlin.math.max
 
@@ -103,7 +102,7 @@ object QRCodeUtils {
             }
             return bitmap
         } catch (e: WriterException) {
-            LogUtils.w(e.message)
+            e.printOnDebug()
         }
         return null
     }
@@ -161,7 +160,7 @@ object QRCodeUtils {
             canvas.restore()
         } catch (e: Exception) {
             bitmap = null
-            LogUtils.w(e.message)
+            e.printOnDebug()
         }
         return bitmap
     }
@@ -222,7 +221,7 @@ object QRCodeUtils {
                 }
             }
         } catch (e: java.lang.Exception) {
-            LogUtils.w(e.message)
+            e.printOnDebug()
         } finally {
             reader.reset()
         }
@@ -295,7 +294,7 @@ object QRCodeUtils {
                 result = decodeInternal(reader, source.rotateCounterClockwise())
             }
         } catch (e: Exception) {
-            LogUtils.w(e.message)
+            e.printOnDebug()
         } finally {
             reader.reset()
         }
@@ -416,7 +415,7 @@ object QRCodeUtils {
                 addCode(bitmap, content, textSize, codeColor, textSize / 2)
             } else bitmap
         } catch (e: WriterException) {
-            LogUtils.w(e.message)
+            e.printOnDebug()
         }
         return null
     }
@@ -471,7 +470,7 @@ object QRCodeUtils {
             canvas.restore()
         } catch (e: Exception) {
             bitmap = null
-            LogUtils.w(e.message)
+            e.printOnDebug()
         }
         return bitmap
     }

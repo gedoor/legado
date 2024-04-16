@@ -36,10 +36,21 @@ data class FileDoc(
         return uri.readBytes(appCtx)
     }
 
+    fun readText(): String {
+        return uri.readText(appCtx)
+    }
+
     fun asDocumentFile(): DocumentFile? {
         if (isContentScheme) {
             return if (isDir) {
-                DocumentFile.fromTreeUri(appCtx, uri)
+                Class.forName("androidx.documentfile.provider.TreeDocumentFile")
+                    .getDeclaredConstructor(
+                        DocumentFile::class.java,
+                        Context::class.java,
+                        Uri::class.java
+                    ).apply {
+                        isAccessible = true
+                    }.newInstance(null, appCtx, uri) as DocumentFile
             } else {
                 DocumentFile.fromSingleUri(appCtx, uri)
             }
@@ -205,7 +216,7 @@ fun FileDoc.createFileIfNotExist(
     vararg subDirs: String
 ): FileDoc {
     return if (uri.isContentScheme()) {
-        val documentFile = DocumentFile.fromTreeUri(appCtx, uri)!!
+        val documentFile = asDocumentFile()!!
         val tmp = DocumentUtils.createFileIfNotExist(documentFile, fileName, *subDirs)!!
         FileDoc.fromDocumentFile(tmp)
     } else {
@@ -219,7 +230,7 @@ fun FileDoc.createFolderIfNotExist(
     vararg subDirs: String
 ): FileDoc {
     return if (uri.isContentScheme()) {
-        val documentFile = DocumentFile.fromTreeUri(appCtx, uri)!!
+        val documentFile = asDocumentFile()!!
         val tmp = DocumentUtils.createFolderIfNotExist(documentFile, *subDirs)!!
         FileDoc.fromDocumentFile(tmp)
     } else {
@@ -250,7 +261,7 @@ fun FileDoc.exists(
     vararg subDirs: String
 ): Boolean {
     return if (uri.isContentScheme()) {
-        DocumentUtils.exists(DocumentFile.fromTreeUri(appCtx, uri)!!, fileName, *subDirs)
+        DocumentUtils.exists(asDocumentFile()!!, fileName, *subDirs)
     } else {
         val path = FileUtils.getPath(uri.path!!, *subDirs) + File.separator + fileName
         FileUtils.exist(path)
@@ -259,7 +270,7 @@ fun FileDoc.exists(
 
 fun FileDoc.exists(): Boolean {
     return if (uri.isContentScheme()) {
-        DocumentFile.fromTreeUri(appCtx, uri)!!.exists()
+        asDocumentFile()!!.exists()
     } else {
         FileUtils.exist(uri.path!!)
     }
@@ -278,6 +289,16 @@ fun FileDoc.delete() {
         FileUtils.delete(it, true)
     }
     asDocumentFile()?.delete()
+}
+
+fun FileDoc.checkWrite(): Boolean? {
+    if (!isDir) {
+        throw NoStackTraceException("只能检查目录")
+    }
+    asFile()?.let {
+        return it.checkWrite()
+    }
+    return asDocumentFile()?.checkWrite()
 }
 
 /**

@@ -115,12 +115,12 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
         }
         ivTtsSpeechReduce.setOnClickListener {
             seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate - 1
-            AppConfig.ttsSpeechRate = AppConfig.ttsSpeechRate - 1
+            AppConfig.ttsSpeechRate -= 1
             upTtsSpeechRate()
         }
         ivTtsSpeechAdd.setOnClickListener {
             seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate + 1
-            AppConfig.ttsSpeechRate = AppConfig.ttsSpeechRate + 1
+            AppConfig.ttsSpeechRate += 1
             upTtsSpeechRate()
         }
         ivTimer.setOnClickListener {

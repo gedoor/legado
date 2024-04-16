@@ -163,7 +163,22 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
             .apply()
     }
 
-    companion object {
+    companion object : SharedPreferences.OnSharedPreferenceChangeListener {
+
+        init {
+            prefs(appCtx).registerOnSharedPreferenceChangeListener(this)
+        }
+
+        var accentColor = accentColor()
+
+        override fun onSharedPreferenceChanged(
+            sharedPreferences: SharedPreferences?,
+            key: String?
+        ) {
+            when (key) {
+                ThemeStorePrefKeys.KEY_ACCENT_COLOR -> accentColor = accentColor()
+            }
+        }
 
         fun editTheme(context: Context): ThemeStore {
             return ThemeStore(context)

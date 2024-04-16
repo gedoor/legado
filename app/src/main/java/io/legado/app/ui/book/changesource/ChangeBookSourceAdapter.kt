@@ -14,6 +14,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
@@ -36,6 +37,8 @@ class ChangeBookSourceAdapter(
         override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
             return oldItem.originName == newItem.originName
                     && oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle()
+                    && oldItem.chapterWordCountText == newItem.chapterWordCountText
+                    && oldItem.respondTime == newItem.respondTime
         }
 
     }
@@ -80,8 +83,14 @@ class ChangeBookSourceAdapter(
             if (score > 0) {
                 binding.ivBad.gone()
                 binding.ivGood.visible()
-                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_A200))
-                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
+                DrawableCompat.setTint(
+                    binding.ivGood.drawable,
+                    appCtx.getCompatColor(R.color.md_red_A200)
+                )
+                DrawableCompat.setTint(
+                    binding.ivBad.drawable,
+                    appCtx.getCompatColor(R.color.md_blue_100)
+                )
             } else if (score < 0) {
                 binding.ivGood.gone()
                 binding.ivBad.visible()
@@ -123,13 +132,19 @@ class ChangeBookSourceAdapter(
     override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
         binding.ivGood.setOnClickListener {
             if (binding.ivBad.isVisible) {
-                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_A200))
+                DrawableCompat.setTint(
+                    binding.ivGood.drawable,
+                    appCtx.getCompatColor(R.color.md_red_A200)
+                )
                 binding.ivBad.gone()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, 1)
                 }
             } else {
-                DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
+                DrawableCompat.setTint(
+                    binding.ivGood.drawable,
+                    appCtx.getCompatColor(R.color.md_red_100)
+                )
                 binding.ivBad.visible()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, 0)
@@ -138,13 +153,19 @@ class ChangeBookSourceAdapter(
         }
         binding.ivBad.setOnClickListener {
             if (binding.ivGood.isVisible) {
-                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_A200))
+                DrawableCompat.setTint(
+                    binding.ivBad.drawable,
+                    appCtx.getCompatColor(R.color.md_blue_A200)
+                )
                 binding.ivGood.gone()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, -1)
                 }
             } else {
-                DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
+                DrawableCompat.setTint(
+                    binding.ivBad.drawable,
+                    appCtx.getCompatColor(R.color.md_blue_100)
+                )
                 binding.ivGood.visible()
                 getItem(holder.layoutPosition)?.let {
                     callBack.setBookScore(it, 0)
@@ -172,18 +193,26 @@ class ChangeBookSourceAdapter(
                 R.id.menu_top_source -> {
                     callBack.topSource(searchBook)
                 }
+
                 R.id.menu_bottom_source -> {
                     callBack.bottomSource(searchBook)
                 }
+
                 R.id.menu_edit_source -> {
                     callBack.editSource(searchBook)
                 }
+
                 R.id.menu_disable_source -> {
                     callBack.disableSource(searchBook)
                 }
-                R.id.menu_delete_source -> {
-                    callBack.deleteSource(searchBook)
-                    updateItems(0, itemCount, listOf<Int>())
+
+                R.id.menu_delete_source -> context.alert(R.string.draw) {
+                    setMessage(context.getString(R.string.sure_del) + "\n" + searchBook.originName)
+                    noButton()
+                    yesButton {
+                        callBack.deleteSource(searchBook)
+                        updateItems(0, itemCount, listOf<Int>())
+                    }
                 }
             }
             true

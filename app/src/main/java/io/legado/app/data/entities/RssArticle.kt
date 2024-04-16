@@ -48,6 +48,7 @@ data class RssArticle(
         pubDate = pubDate,
         description = description,
         content = content,
-        image = image
+        image = image,
+        variable = variable
     )
 }

@@ -42,8 +42,8 @@
     <string-array name="screen_time_out">
         <item>默认</item>
         <item>1分钟</item>
-        <item>2分钟</item>
-        <item>3分钟</item>
+        <item>5分钟</item>
+        <item>10分钟</item>
         <item>常亮</item>
     </string-array>
 
@@ -101,6 +101,17 @@
         <item>书源</item>
         <item>订阅源</item>
         <item>替换规则</item>
+    </string-array>
+
+    <string-array name="tip_color">
+        <item>跟随内容</item>
+        <item>自定义</item>
+    </string-array>
+
+    <string-array name="tip_divider_color">
+        <item>默认</item>
+        <item>跟随内容</item>
+        <item>自定义</item>
     </string-array>
 
 </resources>

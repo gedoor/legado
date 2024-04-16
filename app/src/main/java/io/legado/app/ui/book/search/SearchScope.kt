@@ -101,21 +101,21 @@ data class SearchScope(private var scope: String) {
     /**
      * 搜索范围书源
      */
-    fun getBookSources(): List<BookSource> {
-        val list = hashSetOf<BookSource>()
+    fun getBookSourceParts(): List<BookSourcePart> {
+        val list = hashSetOf<BookSourcePart>()
         if (scope.isEmpty()) {
-            list.addAll(appDb.bookSourceDao.allEnabled)
+            list.addAll(appDb.bookSourceDao.allEnabledPart)
         } else {
             if (scope.contains("::")) {
                 scope.substringAfter("::").let {
-                    appDb.bookSourceDao.getBookSource(it)?.let { source ->
+                    appDb.bookSourceDao.getBookSourcePart(it)?.let { source ->
                         list.add(source)
                     }
                 }
             } else {
                 val oldScope = scope.splitNotBlank(",")
                 val newScope = oldScope.filter {
-                    val bookSources = appDb.bookSourceDao.getEnabledByGroup(it)
+                    val bookSources = appDb.bookSourceDao.getEnabledPartByGroup(it)
                     list.addAll(bookSources)
                     bookSources.isNotEmpty()
                 }
@@ -126,7 +126,7 @@ data class SearchScope(private var scope: String) {
             }
             if (list.isEmpty()) {
                 scope = ""
-                appDb.bookSourceDao.allEnabled.let {
+                appDb.bookSourceDao.allEnabledPart.let {
                     if (it.isNotEmpty()) {
                         stateLiveData.postValue(scope)
                         list.addAll(it)
@@ -143,9 +143,9 @@ data class SearchScope(private var scope: String) {
 
     fun save() {
         AppConfig.searchScope = scope
-        if (isAll()) {
+        if (isAll() || isSource() || scope.contains(",")) {
             AppConfig.searchGroup = ""
-        } else if (!isSource() && !scope.contains(",")) {
+        } else {
             AppConfig.searchGroup = scope
         }
     }

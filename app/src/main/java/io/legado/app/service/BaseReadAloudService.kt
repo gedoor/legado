@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
@@ -20,7 +21,13 @@ import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
-import io.legado.app.constant.*
+import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
+import io.legado.app.constant.EventBus
+import io.legado.app.constant.IntentAction
+import io.legado.app.constant.NotificationId
+import io.legado.app.constant.PreferKey
+import io.legado.app.constant.Status
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
@@ -29,14 +36,23 @@ import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
-import io.legado.app.utils.*
-import kotlinx.coroutines.*
+import io.legado.app.utils.activityPendingIntent
+import io.legado.app.utils.broadcastPendingIntent
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.notificationManager
 import splitties.systemservices.powerManager
+import splitties.systemservices.wifiManager
 
 /**
  * 朗读服务
@@ -61,6 +77,8 @@ abstract class BaseReadAloudService : BaseService(),
             return isRun && !pause
         }
 
+        private const val TAG = "BaseReadAloudService"
+
     }
 
     private val useWakeLock = appCtx.getPrefBoolean(PreferKey.readAloudWakeLock, false)
@@ -68,6 +86,13 @@ abstract class BaseReadAloudService : BaseService(),
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "legado:ReadAloudService")
             .apply {
                 this.setReferenceCounted(false)
+            }
+    }
+    private val wifiLock by lazy {
+        @Suppress("DEPRECATION")
+        wifiManager?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "legado:AudioPlayService")
+            ?.apply {
+                setReferenceCounted(false)
             }
     }
     private val mFocusRequest: AudioFocusRequestCompat by lazy {
@@ -86,7 +111,6 @@ abstract class BaseReadAloudService : BaseService(),
     private var cover: Bitmap =
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
     var pageChanged = false
-    private var ttsProgress = 0
     private var toLast = false
     var paragraphStartPos = 0
     private var readAloudByPage = false
@@ -135,7 +159,10 @@ abstract class BaseReadAloudService : BaseService(),
 
     override fun onDestroy() {
         super.onDestroy()
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         isRun = false
         pause = true
         abandonFocus()
@@ -157,7 +184,6 @@ abstract class BaseReadAloudService : BaseService(),
             IntentAction.pause -> pauseReadAloud()
             IntentAction.resume -> resumeReadAloud()
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
-            IntentAction.upTtsProgress -> upTtsProgress(ttsProgress)
             IntentAction.prevParagraph -> prevP()
             IntentAction.nextParagraph -> nextP()
             IntentAction.addTimer -> addTimer()
@@ -172,6 +198,9 @@ abstract class BaseReadAloudService : BaseService(),
             this@BaseReadAloudService.pageIndex = pageIndex
             textChapter = ReadBook.curTextChapter
             val textChapter = textChapter ?: return@execute
+            if (!textChapter.isCompleted) {
+                return@execute
+            }
             readAloudNumber = textChapter.getReadLength(pageIndex) + startPos
             readAloudByPage = getPrefBoolean(PreferKey.readAloudByPage)
             contentList = textChapter.getNeedReadAloud(0, readAloudByPage, 0)
@@ -209,8 +238,12 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
+    @SuppressLint("WakelockTimeout")
     open fun play() {
-        if (useWakeLock) wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (useWakeLock) {
+            wakeLock.acquire()
+            wifiLock?.acquire()
+        }
         isRun = true
         pause = false
         needResumeOnAudioFocusGain = false
@@ -222,7 +255,10 @@ abstract class BaseReadAloudService : BaseService(),
 
     @CallSuper
     open fun pauseReadAloud(abandonFocus: Boolean = true) {
-        if (useWakeLock) wakeLock.release()
+        if (useWakeLock) {
+            wakeLock.release()
+            wifiLock?.release()
+        }
         pause = true
         if (abandonFocus) {
             abandonFocus()
@@ -246,7 +282,6 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun upSpeechRate(reset: Boolean = false)
 
     fun upTtsProgress(progress: Int) {
-        ttsProgress = progress
         postEvent(EventBus.TTS_PROGRESS, progress)
     }
 
@@ -257,12 +292,10 @@ abstract class BaseReadAloudService : BaseService(),
             readAloudNumber -= contentList[nowSpeak].length + 1 + paragraphStartPos
             paragraphStartPos = 0
             textChapter?.let {
-                val paragraphs = if (readAloudByPage) {
-                    it.pageParagraphs
-                } else {
-                    it.paragraphs
+                if (readAloudByPage) {
+                    val paragraphs = it.getParagraphs(true)
+                    if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber++
                 }
-                if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber++
                 if (readAloudNumber < it.getReadLength(pageIndex)) {
                     pageIndex--
                     ReadBook.moveToPrevPage()
@@ -282,6 +315,16 @@ abstract class BaseReadAloudService : BaseService(),
             readAloudNumber += contentList[nowSpeak].length.plus(1) - paragraphStartPos
             paragraphStartPos = 0
             nowSpeak++
+            textChapter?.let {
+                if (readAloudByPage) {
+                    val paragraphs = it.getParagraphs(true)
+                    if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber--
+                }
+                if (readAloudNumber >= it.getReadLength(pageIndex + 1)) {
+                    pageIndex++
+                    ReadBook.moveToNextPage()
+                }
+            }
             upTtsProgress(readAloudNumber + 1)
             play()
         } else {
@@ -428,11 +471,12 @@ abstract class BaseReadAloudService : BaseService(),
 
     private fun upReadAloudNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            notificationManager.notify(NotificationId.ReadAloudService, it.build())
-        }.onError {
-            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
+            try {
+                val notification = createNotification()
+                notificationManager.notify(NotificationId.ReadAloudService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
+            }
         }
     }
 
@@ -497,15 +541,16 @@ abstract class BaseReadAloudService : BaseService(),
     /**
      * 更新通知
      */
-    override fun upNotification() {
+    override fun startForegroundNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            startForeground(NotificationId.ReadAloudService, it.build())
-        }.onError {
-            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
-            //创建通知出错不结束服务就会崩溃,服务必须绑定通知
-            stopSelf()
+            try {
+                val notification = createNotification()
+                startForeground(NotificationId.ReadAloudService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
+                //创建通知出错不结束服务就会崩溃,服务必须绑定通知
+                stopSelf()
+            }
         }
     }
 

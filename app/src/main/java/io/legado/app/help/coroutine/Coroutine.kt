@@ -19,6 +19,7 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * 链式协程
+ * 注意：如果协程太快完成，回调会不执行
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class Coroutine<T>(
@@ -138,7 +139,7 @@ class Coroutine<T>(
             job.cancel(cause)
         }
         cancel?.let {
-            MainScope().launch(executeContext) {
+            DEFAULT.launch(executeContext) {
                 if (null == it.context) {
                     it.block.invoke(scope)
                 } else {

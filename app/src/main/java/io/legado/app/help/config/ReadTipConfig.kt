@@ -4,6 +4,7 @@ import android.content.Context
 import io.legado.app.R
 import splitties.init.appCtx
 
+@Suppress("ConstPropertyName")
 object ReadTipConfig {
 
     const val none = 0
@@ -24,6 +25,10 @@ object ReadTipConfig {
         totalProgress, totalProgress1, pageAndTotal, timeBattery, timeBatteryPercentage
     )
     val tipNames get() = appCtx.resources.getStringArray(R.array.read_tip).toList()
+
+    val tipColorNames get() = appCtx.resources.getStringArray(R.array.tip_color).toList()
+    val tipDividerColorNames
+        get() = appCtx.resources.getStringArray(R.array.tip_divider_color).toList()
 
     var tipHeaderLeft: Int
         get() = ReadBookConfig.config.tipHeaderLeft

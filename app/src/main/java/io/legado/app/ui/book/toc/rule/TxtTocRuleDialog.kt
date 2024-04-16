@@ -17,6 +17,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.DialogEditTextBinding
@@ -31,9 +32,19 @@ import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.launch
+import io.legado.app.utils.readText
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 /**
@@ -108,7 +119,9 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.txtTocRuleDao.observeAll().conflate().collect { tocRules ->
+            appDb.txtTocRuleDao.observeAll().catch {
+                AppLog.put("TXT目录规则对话框获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect { tocRules ->
                 initSelectedName(tocRules)
                 adapter.setItems(tocRules, adapter.diffItemCallBack)
             }
@@ -185,7 +198,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     }
 
     private fun showTxtTocRuleHelp() {
-        val text = String(requireContext().assets.open("help/txtTocRuleHelp.md").readBytes())
+        val text = String(requireContext().assets.open("web/help/md/txtTocRuleHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

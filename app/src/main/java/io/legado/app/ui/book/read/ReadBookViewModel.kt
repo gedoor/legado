@@ -31,8 +31,22 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.searchContent.SearchResult
-import io.legado.app.utils.*
+import io.legado.app.utils.DocumentUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.mapParallelSafe
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.toStringArray
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.take
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -95,21 +109,14 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 loadChapterList(book)
             }
-        } else if (book.isLocal
-            && LocalBook.getLastModified(book).getOrDefault(0L) > book.latestChapterTime
-        ) {
+        } else if (book.isLocalModified()) {
             loadChapterList(book)
         } else if (isSameBook) {
-            if (ReadBook.curTextChapter != null) {
-                ReadBook.callBack?.upContent(resetPageOffset = false)
-            } else {
-                ReadBook.loadContent(resetPageOffset = true)
-            }
+            ReadBook.loadOrUpContent()
+            checkLocalBookFileExist(book)
         } else {
-            if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
-                ReadBook.durChapterIndex = ReadBook.chapterSize - 1
-            }
             ReadBook.loadContent(resetPageOffset = false)
+            checkLocalBookFileExist(book)
         }
         if (ReadBook.chapterChanged) {
             // 有章节跳转不同步阅读进度
@@ -120,6 +127,18 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (!book.isLocal && ReadBook.bookSource == null) {
             autoChangeSource(book.name, book.author)
             return
+        }
+    }
+
+    private fun checkLocalBookFileExist(book: Book) {
+        if (book.isLocal) {
+            execute {
+                LocalBook.getBookInputStream(book)
+            }.onError {
+                if (it is FileNotFoundException) {
+                    permissionDenialLiveData.postValue(0)
+                }
+            }
         }
     }
 
@@ -203,7 +222,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             AppWebDav.getBookProgress(book)
                 ?: throw NoStackTraceException("没有进度")
         }.onError {
-            AppLog.put("拉取阅读进度失败", it)
+            AppLog.put("拉取阅读进度失败《${book.name}》\n${it.localizedMessage}", it)
         }.onSuccess { progress ->
             if (progress.durChapterIndex < book.durChapterIndex ||
                 (progress.durChapterIndex == book.durChapterIndex
@@ -212,7 +231,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                 alertSync?.invoke(progress)
             } else {
                 ReadBook.setProgress(progress)
-                AppLog.put("自动同步阅读进度成功")
+                AppLog.put("自动同步阅读进度成功《${book.name}》 ${progress.durChapterTitle}")
             }
         }
 
@@ -247,53 +266,49 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     private fun autoChangeSource(name: String, author: String) {
         if (!AppConfig.autoChangeSource) return
         execute {
-            val sources = appDb.bookSourceDao.allTextEnabled
-            sources.forEach { source ->
-                WebBook.preciseSearchAwait(this, source, name, author).getOrNull()?.let { book ->
-                    if (book.tocUrl.isEmpty()) {
-                        WebBook.getBookInfoAwait(source, book)
-                    }
-                    val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
-                    val chapter = toc.getOrElse(book.durChapterIndex) {
-                        toc.last()
-                    }
-                    val nextChapter = toc.getOrElse(chapter.index) {
-                        toc.first()
-                    }
-                    kotlin.runCatching {
-                        WebBook.getContentAwait(
-                            bookSource = source,
-                            book = book,
-                            bookChapter = chapter,
-                            nextChapterUrl = nextChapter.url
-                        )
-                        changeTo(book, toc)
-                        return@execute
+            val sources = appDb.bookSourceDao.allTextEnabledPart
+            flow {
+                for (source in sources) {
+                    source.getBookSource()?.let {
+                        emit(it)
                     }
                 }
-            }
-            throw NoStackTraceException("没有合适书源")
-        }.onStart {
-            ReadBook.upMsg(context.getString(R.string.source_auto_changing))
-        }.onError {
-            AppLog.put("自动换源失败\n${it.localizedMessage}", it)
-            context.toastOnUi("自动换源失败\n${it.localizedMessage}")
-        }.onFinally {
-            ReadBook.upMsg(null)
+            }.onStart {
+                ReadBook.upMsg(context.getString(R.string.source_auto_changing))
+            }.mapParallelSafe(AppConfig.threadCount) { source ->
+                val book = WebBook.preciseSearchAwait(this, source, name, author).getOrThrow()
+                if (book.tocUrl.isEmpty()) {
+                    WebBook.getBookInfoAwait(source, book)
+                }
+                val toc = WebBook.getChapterListAwait(source, book).getOrThrow()
+                val chapter = toc.getOrElse(book.durChapterIndex) {
+                    toc.last()
+                }
+                val nextChapter = toc.getOrElse(chapter.index) {
+                    toc.first()
+                }
+                WebBook.getContentAwait(
+                    bookSource = source,
+                    book = book,
+                    bookChapter = chapter,
+                    nextChapterUrl = nextChapter.url
+                )
+                book to toc
+            }.take(1).onEach { (book, toc) ->
+                changeTo(book, toc)
+            }.onEmpty {
+                throw NoStackTraceException("没有合适书源")
+            }.onCompletion {
+                ReadBook.upMsg(null)
+            }.catch {
+                AppLog.put("自动换源失败\n${it.localizedMessage}", it)
+                context.toastOnUi("自动换源失败\n${it.localizedMessage}")
+            }.collect()
         }
     }
 
     fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
-        if (index < ReadBook.chapterSize) {
-            ReadBook.clearTextChapter()
-            ReadBook.callBack?.upContent()
-            ReadBook.durChapterIndex = index
-            ReadBook.durChapterPos = durChapterPos
-            ReadBook.saveRead()
-            ReadBook.loadContent(resetPageOffset = true) {
-                success?.invoke()
-            }
-        }
+        ReadBook.openChapter(index, durChapterPos, success)
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {
@@ -407,7 +422,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         var curLine = curTextLines[lineIndex]
         length = length - currentPage.text.length + curLine.text.length
         if (curLine.isParagraphEnd) length++
-        while (length < contentPosition && lineIndex + 1 < curTextLines.size) {
+        while (length <= contentPosition && lineIndex + 1 < curTextLines.size) {
             lineIndex += 1
             curLine = curTextLines[lineIndex]
             length += curLine.text.length

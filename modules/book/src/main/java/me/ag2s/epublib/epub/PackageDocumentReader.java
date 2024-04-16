@@ -9,7 +9,10 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import me.ag2s.epublib.Constants;
 import me.ag2s.epublib.domain.EpubBook;
@@ -42,26 +46,40 @@ public class PackageDocumentReader extends PackageDocumentBase {
     private static final String TAG = PackageDocumentReader.class.getName();
     private static final String[] POSSIBLE_NCX_ITEM_IDS = new String[]{"toc",
             "ncx", "ncxtoc", "htmltoc"};
+    private static final Pattern namespaceRegex = Pattern.compile(" s?mlns=\"");
 
 
     public static void read(
             Resource packageResource, EpubReader epubReader, EpubBook book,
             Resources resources)
             throws SAXException, IOException {
+        /*掌上书苑有很多自制书OPF的nameSpace格式不标准，强制修复成正确的格式*/
+        String string = namespaceRegex.matcher(new String(packageResource.getData()))
+                .replaceAll(" xmlns=\"");
+        packageResource.setData(string.getBytes());
+
         Document packageDocument = ResourceUtil.getAsDocument(packageResource);
         String packageHref = packageResource.getHref();
-        resources = fixHrefs(packageHref, resources);
+
+        URI packagePath;
+        try {
+            packagePath = new URI(packageHref);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        //resources = fixHrefs(packageHref, resources);
         readGuide(packageDocument, epubReader, book, resources);
 
         // Books sometimes use non-identifier ids. We map these here to legal ones
         Map<String, String> idMapping = new HashMap<>();
         String version = DOMUtil.getAttribute(packageDocument.getDocumentElement(), PREFIX_OPF, PackageDocumentBase.version);
 
-        resources = readManifest(packageDocument, packageHref, epubReader,
+        resources = readManifest(packageDocument, packageHref, packagePath, epubReader,
                 resources, idMapping);
         book.setResources(resources);
         book.setVersion(version);
-        readCover(packageDocument, book);
+        readCover(packageDocument, packagePath, book);
         book.setMetadata(
                 PackageDocumentMetadataReader.readMetadata(packageDocument));
         book.setSpine(readSpine(packageDocument, book.getResources(), idMapping));
@@ -75,54 +93,52 @@ public class PackageDocumentReader extends PackageDocumentBase {
     /**
      * 修复一些非标准epub格式由于 opf 文件内容不全而读取不到图片的问题
      *
-     * @return ，修复图片路径后的一个Element列表
+     * @return 修复图片路径后的一个Element列表
      * @author qianfanguojin
      */
     private static ArrayList<Element> ensureImageInfo(Resources resources,
-                                                      Element manifestElement) {
+                                                      Element manifestElement,
+                                                      URI packagePath,
+                                                      Document packageDocument) {
         ArrayList<Element> fixedElements = new ArrayList<>();
-        //加入当前所有的 item 标签
+        HashSet<String> originItemHrefSet = new HashSet<>();
+        //加入当前所有的 item 标签 并将 href 保存到集合中
         NodeList originItemElements = manifestElement
                 .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.item);
         for (int i = 0; i < originItemElements.getLength(); i++) {
-            fixedElements.add((Element) originItemElements.item(i));
+            Element itemElement = (Element) originItemElements.item(i);
+            fixedElements.add(itemElement);
+            String href = DOMUtil.getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
+            try {
+                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, e.getMessage());
+            }
+            originItemHrefSet.add(href);
         }
 
         //如果有图片资源未定义在 originItemElements ，则加入该图片信息得到 fixedElements 中
         for (Resource resource : resources.getAll()) {
             MediaType currentMediaType = resource.getMediaType();
-            if (currentMediaType == MediaTypes.JPG || currentMediaType == MediaTypes.PNG) {
-                String imageHref = resource.getHref();
-                //确保该图片信息 resource 在原 originItemElements 列表中没有出现过
-                boolean flag = false;
-                int i;
-                for (i = 0; i < originItemElements.getLength(); i++) {
-                    Element itemElement = (Element) originItemElements.item(i);
-                    String href = DOMUtil
-                            .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
-                    try {
-                        href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
-                    } catch (UnsupportedEncodingException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                    if (href.equals(imageHref)) {
-                        break;
-                    }
-                }
-                if (i == originItemElements.getLength()) {
-                    flag = true;
-                }
-                if (flag) {
-                    //由于暂时无法实例化一个Element，则选择克隆一个已存在的节点来修改以达到新增 Element 的效果，作为临时解决方案
-                    Element tempElement = (Element) manifestElement.getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.item).item(0).cloneNode(true);
-                    tempElement.setAttribute("id", imageHref.replace("/", ""));
-                    tempElement.setAttribute("href", imageHref);
-                    tempElement.setAttribute("media-type", currentMediaType.getName());
-                    fixedElements.add(tempElement);
-                }
+            if (!MediaTypes.isImage(currentMediaType)) {
+                continue;
             }
-
-
+            String imageHref = resource.getHref();
+            //确保该图片信息 resource 在原 originItemHrefSet 集合中没有出现过
+            if (originItemHrefSet.contains(imageHref)) {
+                continue;
+            }
+            Element itemEl = packageDocument.createElement("item");
+            itemEl.setAttribute("id", resource.getId());
+            try {
+                imageHref = URLEncoder.encode(imageHref, Constants.CHARACTER_ENCODING);
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, e.getMessage());
+                continue;
+            }
+            itemEl.setAttribute("href", imageHref.replace("+", "%20"));
+            itemEl.setAttribute("media-type", currentMediaType.getName());
+            fixedElements.add(itemEl);
         }
         return fixedElements;
     }
@@ -140,6 +156,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
     @SuppressWarnings("unused")
     private static Resources readManifest(Document packageDocument,
                                           String packageHref,
+                                          URI packagePath,
                                           EpubReader epubReader, Resources resources,
                                           Map<String, String> idMapping) {
         Element manifestElement = DOMUtil
@@ -151,7 +168,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                     "Package document does not contain element " + OPFTags.manifest);
             return result;
         }
-        List<Element> ensuredElements = ensureImageInfo(resources, manifestElement);
+        List<Element> ensuredElements = ensureImageInfo(resources, manifestElement, packagePath, packageDocument);
         for (Element itemElement : ensuredElements) {
 //            Element itemElement = ;
             String id = DOMUtil
@@ -160,7 +177,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                     .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
 
             try {
-                href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
+                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -416,7 +433,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
      * @return all resources that have something to do with the coverpage and the cover image.
      */
     // package
-    static Set<String> findCoverHrefs(Document packageDocument) {
+    static Set<String> findCoverHrefs(Document packageDocument, URI packagePath) {
 
         Set<String> result = new HashSet<>();
 
@@ -432,10 +449,11 @@ public class PackageDocumentReader extends PackageDocumentBase {
                             OPFTags.item, OPFAttributes.id, coverResourceId,
                             OPFAttributes.href);
             if (StringUtil.isNotBlank(coverHref)) {
-                result.add(coverHref);
+                result.add(packagePath.resolve(coverHref).toString());
             } else {
+                String resolved = packagePath.resolve(coverResourceId).toString();
                 result.add(
-                        coverResourceId); // maybe there was a cover href put in the cover id attribute
+                        resolved); // maybe there was a cover href put in the cover id attribute
             }
         }
         // try and find a reference tag with type is 'cover' and reference is not blank
@@ -444,7 +462,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                         OPFTags.reference, OPFAttributes.type, OPFValues.reference_cover,
                         OPFAttributes.href);
         if (StringUtil.isNotBlank(coverHref)) {
-            result.add(coverHref);
+            result.add(packagePath.resolve(coverHref).toString());
         }
         return result;
     }
@@ -456,9 +474,9 @@ public class PackageDocumentReader extends PackageDocumentBase {
      * @param packageDocument s
      * @param book            x
      */
-    private static void readCover(Document packageDocument, EpubBook book) {
+    private static void readCover(Document packageDocument, URI packagePath, EpubBook book) {
 
-        Collection<String> coverHrefs = findCoverHrefs(packageDocument);
+        Collection<String> coverHrefs = findCoverHrefs(packageDocument, packagePath);
         for (String coverHref : coverHrefs) {
             Resource resource = book.getResources().getByHref(coverHref);
             if (resource == null) {

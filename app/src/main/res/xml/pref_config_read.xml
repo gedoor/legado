@@ -101,6 +101,13 @@
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="keyPageOnLongPress"
+        android:title="@string/key_page_on_long_press"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
     <io.legado.app.lib.prefs.Preference
         android:key="pageTouchSlop"
         android:summary="@string/page_touch_slop_summary"
@@ -131,15 +138,22 @@
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:key="asyncLoadImage"
-        android:title="@string/async_load_image"
+        android:key="noAnimScrollPage"
+        android:title="@string/no_anim_scroll_page"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:key="noAnimScrollPage"
-        android:title="@string/no_anim_scroll_page"
+        android:key="previewImageByClick"
+        android:title="@string/preview_image_by_click"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="optimizeRender"
+        android:title="@string/enable_optimize_render"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 

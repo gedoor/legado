@@ -190,7 +190,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     }
 
     private fun showHelp() {
-        val text = String(assets.open("help/debugHelp.md").readBytes())
+        val text = String(assets.open("web/help/md/debugHelp.md").readBytes())
         showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 

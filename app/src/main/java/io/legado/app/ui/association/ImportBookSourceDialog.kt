@@ -142,6 +142,8 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
             ?.isChecked = AppConfig.importKeepName
         binding.toolBar.menu.findItem(R.id.menu_keep_group)
             ?.isChecked = AppConfig.importKeepGroup
+        binding.toolBar.menu.findItem(R.id.menu_keep_enable)
+            ?.isChecked = AppConfig.importKeepEnable
     }
 
     @SuppressLint("InflateParams", "NotifyDataSetChanged")
@@ -178,6 +180,11 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
             R.id.menu_keep_group -> {
                 item.isChecked = !item.isChecked
                 putPrefBoolean(PreferKey.importKeepGroup, item.isChecked)
+            }
+
+            R.id.menu_keep_enable -> {
+                item.isChecked = !item.isChecked
+                AppConfig.importKeepEnable = item.isChecked
             }
         }
         return false

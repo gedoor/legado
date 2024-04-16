@@ -10,6 +10,7 @@ import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
+import io.legado.app.utils.LogUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,8 @@ import kotlinx.coroutines.isActive
 import kotlin.coroutines.CoroutineContext
 
 abstract class BaseService : LifecycleService() {
+
+    private val simpleName = this::class.simpleName.toString()
 
     fun <T> execute(
         scope: CoroutineScope = lifecycleScope,
@@ -31,11 +34,20 @@ abstract class BaseService : LifecycleService() {
         super.onCreate()
         LifecycleHelp.onServiceCreate(this)
         checkNotificationPermission()
-        upNotification()
+    }
+
+    @CallSuper
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        LogUtils.d(simpleName) {
+            "onStartCommand $intent ${intent?.toUri(0)}"
+        }
+        startForegroundNotification()
+        return super.onStartCommand(intent, flags, startId)
     }
 
     @CallSuper
     override fun onTaskRemoved(rootIntent: Intent?) {
+        LogUtils.d(simpleName, "onTaskRemoved")
         super.onTaskRemoved(rootIntent)
         stopSelf()
     }
@@ -52,9 +64,9 @@ abstract class BaseService : LifecycleService() {
     }
 
     /**
-     * 更新通知
+     * 开启前台服务并发送通知
      */
-    open fun upNotification() {
+    open fun startForegroundNotification() {
 
     }
 
@@ -67,7 +79,7 @@ abstract class BaseService : LifecycleService() {
             .rationale(R.string.notification_permission_rationale)
             .onGranted {
                 if (lifecycleScope.isActive) {
-                    upNotification()
+                    startForegroundNotification()
                 }
             }
             .request()

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -53,9 +52,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
     }
 
     private val binding by viewBinding(FragmentBookshelf2Binding::bind)
-    private val bookshelfLayout by lazy {
-        getPrefInt(PreferKey.bookshelfLayout)
-    }
+    private val bookshelfLayout by lazy { AppConfig.bookshelfLayout }
     private val booksAdapter: BaseBooksAdapter<*> by lazy {
         if (bookshelfLayout == 0) {
             BooksAdapterList(requireContext(), this)
@@ -123,8 +120,10 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
     @SuppressLint("NotifyDataSetChanged")
     private fun initBooksData() {
         if (groupId == -100L) {
-            binding.titleBar.title = getString(R.string.bookshelf)
-            binding.refreshLayout.isEnabled = true
+            if (isAdded) {
+                binding.titleBar.title = getString(R.string.bookshelf)
+                binding.refreshLayout.isEnabled = true
+            }
         } else {
             bookGroups.firstOrNull {
                 groupId == it.groupId
@@ -156,10 +155,12 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
             }.flowOn(Dispatchers.Default).catch {
                 AppLog.put("书架更新出错", it)
             }.conflate().collect { list ->
-                books = list
-                booksAdapter.notifyDataSetChanged()
-                binding.tvEmptyMsg.isGone = getItemCount() > 0
-                delay(100)
+                if (isAdded) {
+                    books = list
+                    booksAdapter.notifyDataSetChanged()
+                    binding.tvEmptyMsg.isGone = getItemCount() > 0
+                    delay(100)
+                }
             }
         }
     }

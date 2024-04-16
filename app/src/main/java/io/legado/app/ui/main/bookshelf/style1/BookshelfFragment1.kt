@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.google.android.material.tabs.TabLayout
 import io.legado.app.R
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -126,7 +125,7 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
     override fun onTabUnselected(tab: TabLayout.Tab) = Unit
 
     override fun onTabSelected(tab: TabLayout.Tab) {
-        putPrefInt(PreferKey.saveTabPosition, tab.position)
+        AppConfig.saveTabPosition = tab.position
     }
 
     override fun gotoTop() {

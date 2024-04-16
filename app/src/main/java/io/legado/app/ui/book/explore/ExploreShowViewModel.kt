@@ -15,13 +15,14 @@ import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
-import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
-    val bookshelf: MutableSet<String> = Collections.synchronizedSet(hashSetOf<String>())
+    val bookshelf: MutableSet<String> = ConcurrentHashMap.newKeySet()
     val upAdapterLiveData = MutableLiveData<String>()
     val booksData = MutableLiveData<List<SearchBook>>()
     val errorLiveData = MutableLiveData<String>()
@@ -32,7 +33,14 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
     init {
         execute {
             appDb.bookDao.flowAll().mapLatest { books ->
-                books.map { "${it.name}-${it.author}" }
+                val keys = arrayListOf<String>()
+                books.forEach {
+                    keys.add("${it.name}-${it.author}")
+                    keys.add(it.name)
+                }
+                keys
+            }.catch {
+                AppLog.put("发现列表界面获取书籍数据失败\n${it.localizedMessage}", it)
             }.collect {
                 bookshelf.clear()
                 bookshelf.addAll(it)
@@ -70,18 +78,12 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
             }
     }
 
-    suspend fun loadExploreBooks(start: Int, end: Int): List<SearchBook> {
-        val source = bookSource
-        val url = exploreUrl
-        if (source == null || url == null) return emptyList()
-        val searchBooks = arrayListOf<SearchBook>()
-        for (page in start..end) {
-            val books = WebBook.exploreBookAwait(source, url, page)
-            if (books.isEmpty()) break
-            searchBooks.addAll(books)
+    fun isInBookShelf(name: String, author: String): Boolean {
+        return if (author.isNotBlank()) {
+            bookshelf.contains("$name-$author")
+        } else {
+            bookshelf.contains(name)
         }
-        searchBooks.reverse()
-        return searchBooks
     }
 
 }

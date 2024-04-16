@@ -1,6 +1,8 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    //d 'com.android.library'
+    //id 'org.jetbrains.kotlin.android'
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
 }
 
 android {
@@ -13,7 +15,7 @@ android {
     }
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 34
 
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -25,11 +27,18 @@ android {
     lint {
         checkDependencies true
     }
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:deprecation"
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.compilerArgs << "-Xlint:deprecation"
+        }
     }
 }
 
 dependencies {
     api(fileTree(dir: 'lib', include: ['rhino-1.7.13-2.jar']))
+
+    implementation(libs.kotlinx.coroutines.core)
+
+//    def coroutines_version = '1.7.3'
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
 }

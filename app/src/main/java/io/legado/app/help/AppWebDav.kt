@@ -66,7 +66,7 @@ object AppWebDav {
             defaultBookWebDav = null
             val account = appCtx.getPrefString(PreferKey.webDavAccount)
             val password = appCtx.getPrefString(PreferKey.webDavPassword)
-            if (!account.isNullOrBlank() && !password.isNullOrBlank()) {
+            if (!account.isNullOrEmpty() && !password.isNullOrEmpty()) {
                 val mAuthorization = Authorization(account, password)
                 checkAuthorization(mAuthorization)
                 WebDav(rootWebDavUrl, mAuthorization).makeAsDir()
@@ -199,6 +199,7 @@ object AppWebDav {
             .toSet()
     }
 
+    @Suppress("unused")
     suspend fun exportWebDav(byteArray: ByteArray, fileName: String) {
         if (!NetworkUtils.isAvailable()) return
         try {

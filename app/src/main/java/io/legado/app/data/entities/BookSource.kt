@@ -2,10 +2,20 @@ package io.legado.app.data.entities
 
 import android.os.Parcelable
 import android.text.TextUtils
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookSourceType
-import io.legado.app.data.entities.rule.*
+import io.legado.app.data.entities.rule.BookInfoRule
+import io.legado.app.data.entities.rule.ContentRule
+import io.legado.app.data.entities.rule.ExploreRule
+import io.legado.app.data.entities.rule.ReviewRule
+import io.legado.app.data.entities.rule.SearchRule
+import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.splitNotBlank
@@ -181,6 +191,29 @@ data class BookSource(
         removeGroup(getInvalidGroupNames())
     }
 
+    fun removeErrorComment() {
+        bookSourceComment = bookSourceComment
+            ?.split("\n\n")
+            ?.filterNot {
+                it.startsWith("// Error: ")
+            }?.joinToString("\n")
+    }
+
+    fun addErrorComment(e: Throwable) {
+        bookSourceComment =
+            "// Error: ${e.localizedMessage}" + if (bookSourceComment.isNullOrBlank())
+                "" else "\n\n${bookSourceComment}"
+    }
+
+    fun getCheckKeyword(default: String): String {
+        ruleSearch?.checkKeyWord?.let {
+            if (it.isNotBlank()) {
+                return it
+            }
+        }
+        return default
+    }
+
     fun getInvalidGroupNames(): String {
         return bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.filter {
             "失效" in it || it == "校验超时"
@@ -206,7 +239,9 @@ data class BookSource(
                 && enabled == source.enabled
                 && enabledExplore == source.enabledExplore
                 && enabledCookieJar == source.enabledCookieJar
+                && equal(variableComment, source.variableComment)
                 && equal(concurrentRate, source.concurrentRate)
+                && equal(jsLib, source.jsLib)
                 && equal(header, source.header)
                 && equal(loginUrl, source.loginUrl)
                 && equal(loginUi, source.loginUi)
@@ -266,12 +301,10 @@ data class BookSource(
             GSON.fromJsonObject<ContentRule>(json).getOrNull()
 
         @TypeConverter
-        fun stringToReviewRule(json: String?) =
-            GSON.fromJsonObject<ReviewRule>(json).getOrNull()
+        fun stringToReviewRule(json: String?): ReviewRule? = null
 
         @TypeConverter
-        fun reviewRuleToString(reviewRule: ReviewRule?): String =
-            GSON.toJson(reviewRule)
+        fun reviewRuleToString(reviewRule: ReviewRule?): String = "null"
 
     }
 }

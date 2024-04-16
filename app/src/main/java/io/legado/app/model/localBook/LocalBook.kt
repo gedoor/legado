@@ -24,7 +24,6 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.*
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.text.StringEscapeUtils
-import org.jsoup.nodes.Entities
 import splitties.init.appCtx
 import java.io.*
 import java.util.regex.Pattern
@@ -77,13 +76,13 @@ object LocalBook {
             }
             val file = File(uri.path!!)
             if (file.exists()) {
-                return@runCatching File(uri.path!!).lastModified()
+                return@runCatching file.lastModified()
             }
             throw FileNotFoundException("${uri.path} 文件不存在")
         }
     }
 
-    @Throws(Exception::class)
+    @Throws(TocEmptyException::class)
     fun getChapterList(book: Book): ArrayList<BookChapter> {
         val chapters = when {
             book.isEpub -> {
@@ -138,8 +137,11 @@ object LocalBook {
             "获取本地书籍内容失败\n${e.localizedMessage}"
         }
         if (book.isEpub) {
-            content = content?.replace("&lt;img", "&lt; img", true) ?: return null
-            return StringEscapeUtils.unescapeHtml4(content)
+            content ?: return null
+            if (content.indexOf('&') > -1) {
+                content = content.replace("&lt;img", "&lt; img", true)
+                return StringEscapeUtils.unescapeHtml4(content)
+            }
         }
         return content
     }
@@ -187,7 +189,6 @@ object LocalBook {
                 name = nameAuthor.first,
                 author = nameAuthor.second,
                 originName = fileName,
-                coverUrl = getCoverPath(bookUrl),
                 latestChapterTime = updateTime,
                 order = appDb.bookDao.minOrder - 1
             )

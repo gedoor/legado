@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/menu_download"
-        android:title="@string/action_download"
         android:icon="@drawable/ic_play_24dp"
+        android:title="@string/action_download"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_book_group"
-        android:title="@string/group"
         android:icon="@drawable/ic_groups"
+        android:title="@string/group"
         app:showAsAction="always">
 
         <menu />
@@ -27,39 +27,39 @@
 
     <item
         android:id="@+id/menu_enable_replace"
-        android:title="@string/replace_purify"
         android:checkable="true"
+        android:title="@string/replace_purify"
         app:showAsAction="never" />
 
     <!--自定义导出章节 选择菜单-->
     <item
         android:id="@+id/menu_enable_custom_export"
-        android:title="@string/custom_export_section"
         android:checkable="true"
+        android:title="@string/custom_export_section"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_export_web_dav"
-        android:title="@string/export_to_web_dav"
         android:checkable="true"
+        android:title="@string/export_to_web_dav"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_export_no_chapter_name"
-        android:title="@string/export_no_chapter_name"
         android:checkable="true"
+        android:title="@string/export_no_chapter_name"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_export_pics_file"
-        android:title="@string/export_pics_file"
         android:checkable="true"
+        android:title="@string/export_pics_file"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_parallel_export"
-        android:title="@string/parallel_export_book"
         android:checkable="true"
+        android:title="@string/parallel_export_book"
         app:showAsAction="never" />
 
     <item

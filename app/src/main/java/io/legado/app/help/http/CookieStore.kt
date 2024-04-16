@@ -74,7 +74,7 @@ object CookieStore : CookieManagerInterface {
         appDb.cookieDao.delete(domain)
         CacheManager.deleteMemory("${domain}_cookie")
         CacheManager.deleteMemory("${domain}_session_cookie")
-        android.webkit.CookieManager.getInstance().removeCookie(domain)
+        android.webkit.CookieManager.getInstance().removeCookie(url)
     }
 
     override fun cookieToMap(cookie: String): MutableMap<String, String> {
@@ -84,8 +84,8 @@ object CookieStore : CookieManagerInterface {
         }
         val pairArray = cookie.split(semicolonRegex).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (pair in pairArray) {
-            val pairs = pair.split(equalsRegex).dropLastWhile { it.isEmpty() }.toTypedArray()
-            if (pairs.size == 1) {
+            val pairs = pair.split(equalsRegex, 2).dropLastWhile { it.isEmpty() }.toTypedArray()
+            if (pairs.size <= 1) {
                 continue
             }
             val key = pairs[0].trim { it <= ' ' }

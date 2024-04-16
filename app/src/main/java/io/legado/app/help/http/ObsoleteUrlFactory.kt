@@ -1,5 +1,7 @@
 package io.legado.app.help.http
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.SSLHelper.unsafeTrustManager
 import okhttp3.Call
@@ -20,6 +22,7 @@ import okhttp3.internal.notifyAll
 import okhttp3.internal.wait
 import okio.Buffer
 import okio.BufferedSink
+import okio.ByteString.Companion.encode
 import okio.Pipe
 import okio.Timeout
 import okio.buffer
@@ -210,7 +213,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 val headers = headers
                 if (position < 0 || position >= headers.size) null else headers.value(
                     position
-                )
+                ).encode().string(Charsets.ISO_8859_1)
             } catch (e: IOException) {
                 null
             }
@@ -797,6 +800,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
 
         // Should only be invoked on Java 8+ or Android API 24+.
+        @RequiresApi(Build.VERSION_CODES.N)
         override fun getContentLengthLong(): Long {
             return delegate.contentLengthLong
         }
@@ -846,6 +850,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
 
         // Should only be invoked on Java 8+ or Android API 24+.
+        @RequiresApi(Build.VERSION_CODES.N)
         override fun getHeaderFieldLong(field: String, defaultValue: Long): Long {
             return delegate.getHeaderFieldLong(field, defaultValue)
         }

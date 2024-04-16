@@ -45,6 +45,7 @@ object BookList {
         val analyzeRule = AnalyzeRule(ruleData, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
+        analyzeRule.setCoroutineContext(coroutineContext)
         if (isSearch) bookSource.bookUrlPattern?.let {
             coroutineContext.ensureActive()
             if (baseUrl.matches(it.toRegex())) {
@@ -125,6 +126,7 @@ object BookList {
                 bookList.reverse()
             }
         }
+        Debug.log(bookSource.bookSourceUrl, "◇书籍总数:${bookList.size}")
         return bookList
     }
 
@@ -138,7 +140,7 @@ object BookList {
         variable: String?
     ): SearchBook? {
         val book = Book(variable = variable)
-        book.bookUrl = analyzeUrl.ruleUrl
+        book.bookUrl = NetworkUtils.getAbsoluteURL(analyzeUrl.url, analyzeUrl.ruleUrl)
         book.origin = bookSource.bookSourceUrl
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
@@ -196,7 +198,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "┌获取分类", log)
             try {
                 searchBook.kind = analyzeRule.getStringList(ruleKind)?.joinToString(",")
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind}", log)
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind ?: ""}", log)
             } catch (e: Exception) {
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
@@ -232,7 +234,7 @@ object BookList {
                         searchBook.coverUrl = NetworkUtils.getAbsoluteURL(baseUrl, it)
                     }
                 }
-                Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl}", log)
+                Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl ?: ""}", log)
             } catch (e: java.lang.Exception) {
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }

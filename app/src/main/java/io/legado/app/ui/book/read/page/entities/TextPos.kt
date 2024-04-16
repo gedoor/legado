@@ -60,4 +60,17 @@ data class TextPos(
             else -> 0
         }
     }
+
+    fun reset() {
+        relativePagePos = 0
+        lineIndex = -1
+        columnIndex = -1
+        isTouch = true
+        isLast = false
+    }
+
+    fun isSelected(): Boolean {
+        return lineIndex >= 0 && columnIndex >= 0
+    }
+
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogTextViewBinding
+import io.legado.app.help.IntentData
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setHtml
@@ -35,7 +36,7 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
     ) : this() {
         arguments = Bundle().apply {
             putString("title", title)
-            putString("content", content)
+            putString("content", IntentData.put(content))
             putString("mode", mode.name)
             putLong("time", time)
         }
@@ -64,7 +65,7 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
         }
         arguments?.let {
             binding.toolBar.title = it.getString("title")
-            val content = it.getString("content") ?: ""
+            val content = IntentData.get(it.getString("content")) ?: ""
             when (it.getString("mode")) {
                 Mode.MD.name -> binding.textView.post {
                     Markwon.builder(requireContext())
@@ -74,6 +75,7 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
                         .build()
                         .setMarkdown(binding.textView, content)
                 }
+
                 Mode.HTML.name -> binding.textView.setHtml(content)
                 else -> binding.textView.text = content
             }

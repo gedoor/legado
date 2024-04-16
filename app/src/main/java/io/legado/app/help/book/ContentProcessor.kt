@@ -1,6 +1,6 @@
 package io.legado.app.help.book
 
-import com.github.liuyueyi.quick.transfer.ChineseUtils
+import android.os.Build
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.spaceRegex
 import io.legado.app.data.appDb
@@ -10,6 +10,7 @@ import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.utils.ChineseUtils
 import io.legado.app.utils.escapeRegex
 import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr
@@ -27,6 +28,7 @@ class ContentProcessor private constructor(
 
     companion object {
         private val processors = hashMapOf<String, WeakReference<ContentProcessor>>()
+        private val isAndroid8 = Build.VERSION.SDK_INT in 26..27
 
         fun get(book: Book) = get(book.name, book.origin)
 
@@ -152,7 +154,7 @@ class ContentProcessor private constructor(
                     try {
                         val tmp = if (item.isRegex) {
                             mContent.replace(
-                                item.pattern.toRegex(),
+                                item.regex,
                                 item.replacement,
                                 item.getValidTimeoutMillisecond()
                             )
@@ -181,6 +183,9 @@ class ContentProcessor private constructor(
                 getTitleReplaceRules(),
                 useReplace = useReplace && book.getUseReplaceRule()
             ) + "\n" + mContent
+        }
+        if (isAndroid8) {
+            mContent = mContent.replace('\u00A0', ' ')
         }
         val contents = arrayListOf<String>()
         mContent.split("\n").forEach { str ->

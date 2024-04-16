@@ -57,7 +57,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
@@ -75,9 +75,10 @@ jobs:
           sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
 
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build With Gradle
+        continue-on-error: true
         run: |
           if [ ${{ env.type }} == 'release' ]; then
             typeName="原包名"
@@ -91,16 +92,53 @@ jobs:
           echo "开始${{ env.product }}$typeName构建"
           chmod +x gradlew
           ./gradlew assemble${{ env.product }}release --build-cache --parallel --daemon --warning-mode all
-          echo "修改文件名"
+          echo "修改APK文件名"
           mkdir -p ${{ github.workspace }}/apk/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
             mv "$file" ${{ github.workspace }}/apk/legado_${{ env.product }}_${{ env.VERSIONL }}_$typeName.apk
           done
+          echo "移动mapping文件"
+          mkdir -p ${{ github.workspace }}/mapping/
+          for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/mapping.txt`; do
+            mv "$file" ${{ github.workspace }}/mapping/mapping.txt
+          done
+
+      - name: Move Missing Rules Files
+        run: |
+          echo "移动missing_rules.txt文件"
+          mkdir -p ${{ github.workspace }}/mapping/
+          for file in `ls ${{ github.workspace }}/app/build/outputs/mapping/*/missing_rules.txt`; do
+            mv "$file" ${{ github.workspace }}/mapping/missing_rules.txt
+          done
+
+      - name: Upload Missing Rules File To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legado.${{ env.product }}.${{ env.type }}.mapping.missing_rules
+          if-no-files-found: ignore
+          path: ${{ github.workspace }}/mapping/missing_rules.txt
+
+      - name: Check Build production
+        run: |
+          cd ${{ github.workspace }}/apk/
+          if [ ! -e legado_*.apk ]; then
+            echo "Build production not found! Check gradle logs."
+            exit 1
+          fi
+
       - name: Upload App To Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: legado.${{ env.product }}.${{ env.type }}
+          if-no-files-found: ignore
           path: ${{ github.workspace }}/apk/*.apk
+
+      - name: Upload Mapping File To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legado.${{ env.product }}.${{ env.type }}.mapping
+          if-no-files-found: ignore
+          path: ${{ github.workspace }}/mapping/mapping.txt
 
   lanzou:
     needs: [ prepare, build ]
@@ -111,10 +149,12 @@ jobs:
       ylogin: ${{ secrets.LANZOU_ID }}
       phpdisk_info: ${{ secrets.LANZOU_PSD }}
       # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
-      LANZOU_FOLDER_ID: '2670621'
+      LANZOU_FOLDER_ID: ${{ secrets.LANZOU_FOLDER_ID }}
+      #蓝奏云分享链接
+      LANZOU_URL: ${{ secrets.LANZOU_URL }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: apk/
       - working-directory: apk/
@@ -124,7 +164,7 @@ jobs:
         run: |
           path="$GITHUB_WORKSPACE/apk/"
           python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
-          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: https://kunfei.lanzoux.com/b0f810h4b"
+          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: $LANZOU_URL"
 
   test_Branch:
     needs: [ prepare, build ]
@@ -132,7 +172,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: apk/
       - working-directory: apk/
@@ -153,12 +193,9 @@ jobs:
     needs: [ prepare, build ]
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
     runs-on: ubuntu-latest
-    env:
-      CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
-      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: apk/
       - working-directory: apk/
@@ -168,7 +205,10 @@ jobs:
           done
           rm -rf */
       - name: Post to channel
-        run: |
-          pip install pyTelegramBotAPI
-          path="$GITHUB_WORKSPACE/apk/"
-          python3 $GITHUB_WORKSPACE/.github/scripts/tg_bot.py "$BOT_TOKEN" "$CHANNEL_ID" "$path"
+        uses: xireiki/channel-post@v1
+        with:
+          chat_id: ${{ secrets.CHANNEL_ID }}
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          context: "#阅读 #Legado #Beta ${{ needs.prepare.outputs.versionL }}"
+          path: apk/*
+          method: sendFile
