@@ -27,8 +27,12 @@ package com.script.rhino
 import com.script.Bindings
 import com.script.ScriptContext
 import com.script.SimpleScriptContext
-import org.mozilla.javascript.*
+import org.mozilla.javascript.Context
 import org.mozilla.javascript.Function
+import org.mozilla.javascript.ImporterTopLevel
+import org.mozilla.javascript.Scriptable
+import org.mozilla.javascript.Synchronizer
+import org.mozilla.javascript.Wrapper
 import java.security.AccessControlContext
 
 /**
@@ -44,10 +48,10 @@ class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
     ImporterTopLevel(cx, System.getSecurityManager() != null) {
 
     init {
-        LazilyLoadedCtor(this, "JSAdapter", "com.script.rhino.JSAdapter", false)
-        JavaAdapter.init(cx, this, false)
-        val names = arrayOf("bindings", "scope", "sync")
-        defineFunctionProperties(names, RhinoTopLevel::class.java, 2)
+//        LazilyLoadedCtor(this, "JSAdapter", "com.script.rhino.JSAdapter", false)
+//        JavaAdapter.init(cx, this, false)
+//        val names = arrayOf("bindings", "scope", "sync")
+//        defineFunctionProperties(names, RhinoTopLevel::class.java, 2)
     }
 
     val accessContext: AccessControlContext?

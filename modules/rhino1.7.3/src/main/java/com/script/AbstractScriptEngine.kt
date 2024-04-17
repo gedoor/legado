@@ -3,6 +3,8 @@
  */
 package com.script
 
+import com.script.ScriptContext.Companion.ENGINE_SCOPE
+import com.script.ScriptContext.Companion.GLOBAL_SCOPE
 import org.mozilla.javascript.Scriptable
 import java.io.Reader
 import java.io.StringReader
@@ -14,28 +16,28 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
 
     init {
         bindings?.let {
-            context.setBindings(bindings, 100)
+            context.setBindings(bindings, ENGINE_SCOPE)
         }
     }
 
     override fun getBindings(scope: Int): Bindings? {
-        if (scope == 200) {
-            return context.getBindings(200)
+        if (scope == GLOBAL_SCOPE) {
+            return context.getBindings(GLOBAL_SCOPE)
         }
-        if (scope == 100) {
-            return context.getBindings(100)
+        if (scope == ENGINE_SCOPE) {
+            return context.getBindings(ENGINE_SCOPE)
         }
         throw IllegalArgumentException("Invalid scope value.")
     }
 
     override fun setBindings(bindings: Bindings?, scope: Int) {
         when (scope) {
-            200 -> {
-                context.setBindings(bindings, 200)
+            GLOBAL_SCOPE -> {
+                context.setBindings(bindings, GLOBAL_SCOPE)
             }
 
-            100 -> {
-                context.setBindings(bindings, 100)
+            ENGINE_SCOPE -> {
+                context.setBindings(bindings, ENGINE_SCOPE)
             }
 
             else -> {
@@ -45,11 +47,11 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
     }
 
     override fun put(key: String, value: Any?) {
-        getBindings(100)?.put(key, value)
+        getBindings(ENGINE_SCOPE)?.put(key, value)
     }
 
     override fun get(key: String): Any? {
-        return getBindings(100)?.get(key)
+        return getBindings(ENGINE_SCOPE)?.get(key)
     }
 
     override suspend fun evalSuspend(script: String, scope: Scriptable): Any? {
@@ -96,9 +98,9 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
 
     override fun getScriptContext(bindings: Bindings): ScriptContext {
         val ctx = SimpleScriptContext(bindings, context.errorWriter, context.reader, context.writer)
-        val gs = getBindings(200)
+        val gs = getBindings(GLOBAL_SCOPE)
         if (gs != null) {
-            ctx.setBindings(gs, 200)
+            ctx.setBindings(gs, GLOBAL_SCOPE)
         }
         return ctx
     }

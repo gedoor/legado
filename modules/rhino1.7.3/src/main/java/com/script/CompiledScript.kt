@@ -3,6 +3,8 @@
  */
 package com.script
 
+import com.script.ScriptContext.Companion.ENGINE_SCOPE
+import com.script.ScriptContext.Companion.GLOBAL_SCOPE
 import org.mozilla.javascript.Scriptable
 import kotlin.coroutines.CoroutineContext
 
@@ -27,8 +29,8 @@ abstract class CompiledScript {
         var ctxt = getEngine().context
         if (bindings != null) {
             val tempContext = SimpleScriptContext()
-            tempContext.setBindings(bindings, 100)
-            tempContext.setBindings(ctxt.getBindings(200), 200)
+            tempContext.setBindings(bindings, ENGINE_SCOPE)
+            tempContext.setBindings(ctxt.getBindings(GLOBAL_SCOPE), GLOBAL_SCOPE)
             tempContext.writer = ctxt.writer
             tempContext.reader = ctxt.reader
             tempContext.errorWriter = ctxt.errorWriter

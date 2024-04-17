@@ -239,8 +239,13 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     override fun getRuntimeScope(context: ScriptContext): Scriptable {
         val newScope: Scriptable = ExternalScriptable(context, indexedProps)
-        newScope.prototype = topLevel
-        newScope.put("context", newScope, context)
+        val cx = Context.enter()
+        try {
+            newScope.prototype = RhinoTopLevel(cx, this)
+        } finally {
+            Context.exit()
+        }
+        //newScope.put("context", newScope, context)
         return newScope
     }
 
@@ -298,6 +303,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 cx.setClassShutter(RhinoClassShutter)
                 cx.wrapFactory = RhinoWrapFactory
                 cx.instructionObserverThreshold = 10000
+                cx.maximumInterpreterStackDepth = 1000
                 return cx
             }
 
