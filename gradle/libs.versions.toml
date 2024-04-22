@@ -38,7 +38,7 @@ quickChineseTransfer = "0.2.13"
 room = "2.6.1"
 splitties = "3.0.0"
 
-activity = "1.8.2"
+activity = "1.9.0"
 kotlinxSerialization = "1.6.3"
 swiperefreshlayout = "1.1.0"
 viewpager2 = "1.0.0"
