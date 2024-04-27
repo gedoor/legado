@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"FieldCanBeLocal", "StatementWithEmptyBody", "unused"})
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class QueryTTF {
     private static class Header {
         public int majorVersion;
@@ -222,7 +222,7 @@ public class QueryTTF {
     private final MaxpLayout maxp = new MaxpLayout();
     private final List<Integer> loca = new LinkedList<>();
     private final CmapLayout Cmap = new CmapLayout();
-    private final List<GlyfLayout> glyf = new LinkedList<>();
+    private final List<String> glyf = new LinkedList<>();
     @SuppressWarnings("unchecked")
     private final Pair<Integer, Integer>[] pps = new Pair[]{
             Pair.of(3, 10),
@@ -233,10 +233,9 @@ public class QueryTTF {
             Pair.of(0, 1)
     };
 
-    public final Map<Integer, String> codeToGlyph = new HashMap<>();
-    public final Map<String, Integer> glyphToCode = new HashMap<>();
-    private int limitMix = Integer.MAX_VALUE;
-    private int limitMax = 0;
+    public final Map<Integer, String> unicodeToGlyph = new HashMap<>();
+    public final Map<String, Integer> glyphToUnicode = new HashMap<>();
+    public final Map<Integer, Integer> unicodeToGlyphIndex = new HashMap<>();
 
     /**
      * 构造函数
@@ -406,83 +405,42 @@ public class QueryTTF {
                 }
             }
         }
-        // 解析表 glyf (字体轮廓数据表)
+        // 读取表 glyf (字体轮廓数据表)
         for (Directory Temp : directorys) {
             if (Temp.tag.equals("glyf")) {
-                fontReader.index = Temp.offset;
-                for (int i = 0; i < maxp.numGlyphs; ++i) {
+                int glyfCount = maxp.numGlyphs;
+                for (int i = 0; i < glyfCount; ) {
                     fontReader.index = Temp.offset + loca.get(i);
+                    ++i;
+                    int glyfNextIndex = i < glyfCount ? loca.get(i) : Temp.length;
 
+                    byte[] glyph;
                     short numberOfContours = fontReader.ReadInt16();
                     if (numberOfContours > 0) {
-                        GlyfLayout g = new GlyfLayout();
-                        g.numberOfContours = numberOfContours;
-                        g.xMin = fontReader.ReadInt16();
-                        g.yMin = fontReader.ReadInt16();
-                        g.xMax = fontReader.ReadInt16();
-                        g.yMax = fontReader.ReadInt16();
-                        g.endPtsOfContours = fontReader.GetUInt16Array(numberOfContours);
-                        g.instructionLength = fontReader.ReadUInt16();
-                        g.instructions = fontReader.GetBytes(g.instructionLength);
-                        int flagLength = g.endPtsOfContours[g.endPtsOfContours.length - 1] + 1;
-                        // 获取轮廓点描述标志
-                        g.flags = new byte[flagLength];
-                        for (int n = 0; n < flagLength; ++n) {
-                            g.flags[n] = fontReader.GetByte();
-                            if ((g.flags[n] & 0x08) != 0x00) {
-                                for (int m = fontReader.ReadUInt8(); m > 0; --m) {
-                                    g.flags[++n] = g.flags[n - 1];
-                                }
-                            }
-                        }
-                        // 获取轮廓点描述x轴相对值
-                        g.xCoordinates = new short[flagLength];
-                        for (int n = 0; n < flagLength; ++n) {
-                            short same = (short) ((g.flags[n] & 0x10) != 0 ? 1 : -1);
-                            if ((g.flags[n] & 0x02) != 0) {
-                                g.xCoordinates[n] = (short) (same * fontReader.ReadUInt8());
-                            } else {
-                                g.xCoordinates[n] = same == 1 ? (short) 0 : fontReader.ReadInt16();
-                            }
-                        }
-                        // 获取轮廓点描述y轴相对值
-                        g.yCoordinates = new short[flagLength];
-                        for (int n = 0; n < flagLength; ++n) {
-                            short same = (short) ((g.flags[n] & 0x20) != 0 ? 1 : -1);
-                            if ((g.flags[n] & 0x04) != 0) {
-                                g.yCoordinates[n] = (short) (same * fontReader.ReadUInt8());
-                            } else {
-                                g.yCoordinates[n] = same == 1 ? (short) 0 : fontReader.ReadInt16();
-                            }
-                        }
-                        /* 相对坐标转绝对坐标
-                        for (int n = 1; n < flagLength; ++n) {
-                            xCoordinates[n] += xCoordinates[n - 1];
-                            yCoordinates[n] += yCoordinates[n - 1];
-                        }*/
-                        glyf.add(g);
+                        short g_xMin = fontReader.ReadInt16();
+                        short g_yMin = fontReader.ReadInt16();
+                        short g_xMax = fontReader.ReadInt16();
+                        short g_yMax = fontReader.ReadInt16();
+                        int[] endPtsOfContours = fontReader.GetUInt16Array(numberOfContours);
+                        glyph = fontReader.GetBytes(glyfNextIndex - (fontReader.index - Temp.offset));
                     } else {
-                        // 复合字体暂未使用
+                        glyph = fontReader.GetBytes(glyfNextIndex - (fontReader.index - 2));
                     }
+                    glyf.add(getHexFromBytes(glyph));
                 }
             }
         }
 
         // 建立Unicode&Glyph双向表
         for (int key = 0; key < 130000; ++key) {
-            if (key == 0xFF) key = 0x3400;
-            int gid = getGlyfIndex(key);
-            if (gid == 0 || gid >= glyf.size()) continue;
-            StringBuilder sb = new StringBuilder();
-            // 字型数据转String，方便存HashMap
-            for (short b : glyf.get(gid).xCoordinates) sb.append(b);
-            for (short b : glyf.get(gid).yCoordinates) sb.append(b);
-            String val = sb.toString();
-            if (limitMix > key) limitMix = key;
-            if (limitMax < key) limitMax = key;
-            codeToGlyph.put(key, val);
-            if (glyphToCode.containsKey(val)) continue;
-            glyphToCode.put(val, key);
+//            if (key == 0xFF) key = 0x3400;
+            int gid = queryGlyfIndex(key);
+            if (gid >= glyf.size()) continue;
+            unicodeToGlyphIndex.put(key, gid);
+            var val = glyf.get(gid);
+            unicodeToGlyph.put(key, val);
+            if (glyphToUnicode.containsKey(val)) continue;
+            glyphToUnicode.put(val, key);
         }
     }
 
@@ -509,11 +467,11 @@ public class QueryTTF {
     /**
      * 使用Unicode值查找轮廓索引
      *
-     * @param code 传入Unicode十进制值
+     * @param unicode 传入Unicode值
      * @return 返回十进制轮廓索引
      */
-    private int getGlyfIndex(int code) {
-        if (code == 0) return 0;
+    public int queryGlyfIndex(int unicode) {
+        if (unicode == 0) return 0;
         int fmtKey = 0;
         for (Pair<Integer, Integer> item : pps) {
             for (CmapRecord record : Cmap.records) {
@@ -531,34 +489,33 @@ public class QueryTTF {
         assert table != null;
         int fmt = table.format;
         if (fmt == 0) {
-            if (code < table.glyphIdArray.length) glyfID = table.glyphIdArray[code] & 0xFF;
+            if (unicode < table.glyphIdArray.length) glyfID = table.glyphIdArray[unicode] & 0xFF;
         } else if (fmt == 4) {
             CmapFormat4 tab = (CmapFormat4) table;
-            if (code > tab.endCode[tab.endCode.length - 1]) return 0;
+            if (unicode > tab.endCode[tab.endCode.length - 1]) return 0;
             // 二分法查找数值索引
             int start = 0, middle, end = tab.endCode.length - 1;
             while (start + 1 < end) {
                 middle = (start + end) / 2;
-                if (tab.endCode[middle] <= code) start = middle;
+                if (tab.endCode[middle] <= unicode) start = middle;
                 else end = middle;
             }
-            if (tab.endCode[start] < code) ++start;
-            if (code < tab.startCode[start]) return 0;
+            if (tab.endCode[start] < unicode) ++start;
+            if (unicode < tab.startCode[start]) return 0;
             if (tab.idRangeOffset[start] != 0) {
-                glyfID = tab.glyphIdArray[code - tab.startCode[start] + (tab.idRangeOffset[start] >> 1) - (tab.idRangeOffset.length - start)];
-            } else glyfID = code + tab.idDelta[start];
+                glyfID = tab.glyphIdArray[unicode - tab.startCode[start] + (tab.idRangeOffset[start] >> 1) - (tab.idRangeOffset.length - start)];
+            } else glyfID = unicode + tab.idDelta[start];
             glyfID &= 0xFFFF;
         } else if (fmt == 6) {
             CmapFormat6 tab = (CmapFormat6) table;
-            int index = code - tab.firstCode;
-            if (index < 0 || index >= tab.glyphIdArray.length) glyfID = 0;
-            else glyfID = tab.glyphIdArray[index];
+            int index = unicode - tab.firstCode;
+            if (0 <= index && index < tab.glyphIdArray.length) glyfID = tab.glyphIdArray[index];
         } else if (fmt == 12) {
             CmapFormat12 tab = (CmapFormat12) table;
-            if (code > tab.groups.get(tab.numGroups - 1).getMiddle()) return 0;
+            if (unicode > tab.groups.get(tab.numGroups - 1).getMiddle()) return 0;
             for (int i = 0; i < tab.numGroups; i++) {
-                if (tab.groups.get(i).getLeft() <= code && code <= tab.groups.get(i).getMiddle()) {
-                    glyfID = tab.groups.get(i).getRight() + code - tab.groups.get(i).getLeft();
+                if (tab.groups.get(i).getLeft() <= unicode && unicode <= tab.groups.get(i).getMiddle()) {
+                    glyfID = tab.groups.get(i).getRight() + unicode - tab.groups.get(i).getLeft();
                     break;
                 }
             }
@@ -567,33 +524,54 @@ public class QueryTTF {
     }
 
     /**
-     * 判断Unicode值是否在字体范围内
+     * 使用Unicode值获取轮廓索引
      *
-     * @param code 传入Unicode十进制值
-     * @return 返回bool查询结果
+     * @param unicode 传入Unicode值
+     * @return 返回十进制轮廓索引
      */
-    public boolean inLimit(int code) {
-        return (limitMix <= code) && (code <= limitMax);
+    public int getGlyfIndex(int unicode) {
+        var glyfIndex = unicodeToGlyphIndex.get(unicode);
+        if (glyfIndex == null) return 0;
+        return glyfIndex;
     }
 
     /**
      * 使用Unicode值获取轮廓数据
      *
-     * @param key 传入Unicode十进制值
+     * @param unicode 传入Unicode值
      * @return 返回轮廓数组的String值
      */
-    public String getGlyfByCode(int key) {
-        return codeToGlyph.getOrDefault(key, "");
+    public String getGlyfByCode(int unicode) {
+        return unicodeToGlyph.getOrDefault(unicode, "");
     }
 
     /**
      * 使用轮廓数据获取Unicode值
      *
-     * @param val 传入轮廓数组的String值
+     * @param glyph 传入轮廓数组的String值
      * @return 返回Unicode十进制值
      */
-    public int getCodeByGlyf(String val) {
+    public int getCodeByGlyf(String glyph) {
         //noinspection ConstantConditions
-        return glyphToCode.getOrDefault(val, 0);
+        return glyphToUnicode.getOrDefault(glyph, 0);
+    }
+
+    /**
+     * 字体轮廓数据转Hex字符串
+     *
+     * @param glyph 字体轮廓数据
+     * @return 返回轮廓数组的String值
+     */
+    public String getHexFromBytes(byte[] glyph) {
+        if (glyph == null) return "";
+        StringBuilder sb = new StringBuilder();
+        for (byte b : glyph) {
+            String hex = Integer.toHexString(b);
+            if (hex.length() == 1) {
+                sb.append("0");//当16进制为个位数时，在前面补0
+            }
+            sb.append(hex);//将16进制加入字符串
+        }
+        return sb.toString().toUpperCase();
     }
 }

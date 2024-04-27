@@ -178,7 +178,8 @@ let options = {
   if(b64){
     var f1 = java.queryBase64TTF(b64[1]);
     var f2 = java.queryTTF("https://alanskycn.gitee.io/teachme/assets/font/Source Han Sans CN Regular.ttf");
-    return java.replaceFont(result, f1, f2);
+    // return java.replaceFont(result, f1, f2);
+    return java.replaceFont(result, f1, f2, true); // 过滤掉f1中不存在的字形
   }
   return result;
 })()
