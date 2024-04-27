@@ -264,7 +264,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 } else {
                     bundle.keySet().map {
                         when (it) {
-                            "upNmae" -> rbRegexName.text = item.name
+                            "upName" -> rbRegexName.text = item.name
                             "upExample" -> titleExample.text = item.example
                             "enabled" -> swtEnabled.isChecked = item.enable
                             "upSelect" -> rbRegexName.isChecked = item.name == selectedName
