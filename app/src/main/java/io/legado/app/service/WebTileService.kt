@@ -1,10 +1,12 @@
 package io.legado.app.service
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
+import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.utils.printOnDebug
 
@@ -49,7 +51,16 @@ class WebTileService : TileService() {
         if (WebService.isRun) {
             WebService.stop(this)
         } else {
-            WebService.start(this)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                val dialog = Dialog(this, R.style.AppTheme_Transparent)
+                dialog.setOnShowListener {
+                    WebService.startForeground(this)
+                    dialog.dismiss()
+                }
+                showDialog(dialog)
+            } else {
+                WebService.start(this)
+            }
         }
     }
 

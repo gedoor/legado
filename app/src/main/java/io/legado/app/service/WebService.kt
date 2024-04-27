@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -15,7 +16,16 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.constant.NotificationId
 import io.legado.app.constant.PreferKey
 import io.legado.app.receiver.NetworkChangedListener
-import io.legado.app.utils.*
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.startService
+import io.legado.app.utils.stopService
+import io.legado.app.utils.toastOnUi
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
 import splitties.init.appCtx
@@ -31,6 +41,11 @@ class WebService : BaseService() {
 
         fun start(context: Context) {
             context.startService<WebService>()
+        }
+
+        fun startForeground(context: Context) {
+            val intent = Intent(context, WebService::class.java)
+            ContextCompat.startForegroundService(context, intent)
         }
 
         fun stop(context: Context) {

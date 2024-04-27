@@ -6,7 +6,6 @@ import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,6 +28,7 @@ import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.cnCompare
+import io.legado.app.utils.flowWithLifecycleFirst
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
@@ -175,7 +175,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
                     else -> list.sortedByDescending { it.durChapterTime }
                 }
-            }.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED).catch {
+            }.flowWithLifecycleFirst(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED).catch {
                 AppLog.put("书架更新出错", it)
             }.conflate().flowOn(Dispatchers.Default).collect { list ->
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
