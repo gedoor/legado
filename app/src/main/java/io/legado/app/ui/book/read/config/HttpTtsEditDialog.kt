@@ -17,8 +17,14 @@ import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.code.addJsPattern
 import io.legado.app.ui.widget.code.addJsonPattern
 import io.legado.app.ui.widget.code.addLegadoPattern
-import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.showHelp
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, true),
@@ -111,7 +117,7 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
                 initView(it)
             }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
-            R.id.menu_help -> help()
+            R.id.menu_help -> showHelp("httpTTSHelp")
         }
         return true
     }
@@ -128,13 +134,6 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
             loginCheckJs = binding.tvLoginCheckJs.text?.toString(),
             header = binding.tvHeaders.text?.toString()
         )
-    }
-
-    private fun help() {
-        val helpStr = String(
-            requireContext().assets.open("web/help/md/httpTTSHelp.md").readBytes()
-        )
-        showDialogFragment(TextDialog(getString(R.string.help), helpStr, TextDialog.Mode.MD))
     }
 
 }
