@@ -10,7 +10,6 @@ import android.view.WindowManager.BadTokenException
 import androidx.annotation.RequiresApi
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
-import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.printOnDebug
 
 
@@ -19,8 +18,6 @@ import io.legado.app.utils.printOnDebug
  */
 @RequiresApi(Build.VERSION_CODES.N)
 class WebTileService : TileService() {
-
-    private val handler by lazy { buildMainHandler() }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         try {
