@@ -514,6 +514,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         (pageDelegate as? ScrollPageDelegate)?.noAnim = AppConfig.noAnimScrollPage
         if (upRecorder) {
             (pageDelegate as? HorizontalPageDelegate)?.upRecorder()
+            autoPager.upRecorder()
         }
         pageDelegate?.setViewSize(width, height)
         if (isScroll) {
