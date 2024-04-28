@@ -5,9 +5,12 @@ import android.content.Intent
 import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import android.view.WindowManager.BadTokenException
 import androidx.annotation.RequiresApi
+import androidx.core.os.postDelayed
 import io.legado.app.R
 import io.legado.app.constant.IntentAction
+import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.printOnDebug
 
 
@@ -17,6 +20,8 @@ import io.legado.app.utils.printOnDebug
 @RequiresApi(Build.VERSION_CODES.N)
 class WebTileService : TileService() {
 
+    private val handler by lazy { buildMainHandler() }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         try {
             when (intent?.action) {
@@ -24,6 +29,7 @@ class WebTileService : TileService() {
                     state = Tile.STATE_ACTIVE
                     updateTile()
                 }
+
                 IntentAction.stop -> qsTile?.run {
                     state = Tile.STATE_INACTIVE
                     updateTile()
@@ -55,9 +61,15 @@ class WebTileService : TileService() {
                 val dialog = Dialog(this, R.style.AppTheme_Transparent)
                 dialog.setOnShowListener {
                     WebService.startForeground(this)
-                    dialog.dismiss()
+                    handler.postDelayed(1000) {
+                        dialog.dismiss()
+                    }
                 }
-                showDialog(dialog)
+                try {
+                    showDialog(dialog)
+                } catch (e: BadTokenException) {
+                    e.printStackTrace()
+                }
             } else {
                 WebService.start(this)
             }
