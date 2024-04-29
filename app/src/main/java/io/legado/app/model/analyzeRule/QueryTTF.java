@@ -133,7 +133,7 @@ public class QueryTTF {
     }
 
     private static class GlyfLayout {
-        public short numberOfContours;      // 非负值为简单字型,负值为符合字型
+        public short numberOfContours;      // 非负值为简单字型,负值为复合字型
         public short xMin;
         public short yMin;
         public short xMax;

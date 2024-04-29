@@ -88,7 +88,7 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
                 bundle.keySet().map {
                     when (it) {
                         "selected" -> cbSource.isChecked = selected.contains(item)
-                        "upNmae" -> cbSource.text = item.name
+                        "upName" -> cbSource.text = item.name
                         "upExample" -> titleExample.text = item.example
                         "enabled" -> swtEnabled.isChecked = item.enable
                     }

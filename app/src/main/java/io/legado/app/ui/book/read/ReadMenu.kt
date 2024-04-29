@@ -150,7 +150,7 @@ class ReadMenu @JvmOverloads constructor(
             }
             callBack.upSystemUiVisibility()
             if (!LocalConfig.readMenuHelpVersionIsLast) {
-                callBack.showReadMenuHelp()
+                callBack.showHelp()
             }
         }
 
@@ -580,7 +580,7 @@ class ReadMenu @JvmOverloads constructor(
         fun showReadAloudDialog()
         fun upSystemUiVisibility()
         fun onClickReadAloud()
-        fun showReadMenuHelp()
+        fun showHelp()
         fun showLogin()
         fun payAction()
         fun disableSource()

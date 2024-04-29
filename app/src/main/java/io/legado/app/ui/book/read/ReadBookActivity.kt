@@ -93,7 +93,6 @@ import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.PopupAction
 import io.legado.app.ui.widget.dialog.PhotoDialog
-import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.ACache
 import io.legado.app.utils.Debounce
 import io.legado.app.utils.LogUtils
@@ -114,6 +113,7 @@ import io.legado.app.utils.observeEvent
 import io.legado.app.utils.observeEventSticky
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.showHelp
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.sysScreenOffTime
 import io.legado.app.utils.throttle
@@ -553,7 +553,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             R.id.menu_effective_replaces -> showDialogFragment<EffectiveReplacesDialog>()
 
-            R.id.menu_help -> showReadMenuHelp()
+            R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -1022,11 +1022,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    override fun showReadMenuHelp() {
-        val text = String(assets.open("web/help/md/readMenuHelp.md").readBytes())
-        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
-    }
-
     /**
      * 显示朗读菜单
      */
@@ -1253,6 +1248,10 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             else -> ReadAloud.pause(this)
         }
+    }
+
+    override fun showHelp() {
+        showHelp("readMenuHelp")
     }
 
     /**
