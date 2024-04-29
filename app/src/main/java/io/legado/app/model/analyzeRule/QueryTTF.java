@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@SuppressWarnings({"FieldCanBeLocal", "StatementWithEmptyBody", "unused"})
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class QueryTTF {
     private static class Header {
         public int majorVersion;
@@ -389,8 +389,8 @@ public class QueryTTF {
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (int i = 0; i < glyfCount; i++) {
             final int index = i;
+            final var reader = new ByteArrayReader(buffer, dataTable.offset + loca.get(index));
             executor.submit(() -> {
-                var reader = new ByteArrayReader(buffer, dataTable.offset + loca.get(index));
                 int glyfNextIndex = index + 1 < glyfCount ? (dataTable.offset + loca.get(index + 1)) : (dataTable.offset + dataTable.length);
                 byte[] glyph;
                 short numberOfContours = reader.ReadInt16();
@@ -450,6 +450,28 @@ public class QueryTTF {
         }
     }
 
+    private void makeHashTable() {
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        for (int i = 0; i < 130000; ++i) {
+            final int key = i;
+            executor.submit(() -> {
+                Integer gid = queryGlyfIndex(key);
+                if (gid < glyf.size()) {
+                    unicodeToGlyphIndex.put(key, gid);
+                    var val = glyf.get(gid);
+                    unicodeToGlyph.put(key, val);
+                    if (!glyphToUnicode.containsKey(val)) glyphToUnicode.put(val, key);
+                }
+            });
+        }
+        executor.shutdown();
+        try {
+            boolean b = executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e("queryTTF", "建立Unicode&Glyph映射表出错: " + e);
+        }
+    }
+
     /**
      * 构造函数
      *
@@ -457,7 +479,7 @@ public class QueryTTF {
      */
     public QueryTTF(byte[] buffer) {
         var fontReader = new ByteArrayReader(buffer, 0);
-        Log.i("[queryTTF]", "读文件头");
+        Log.i("queryTTF", "读文件头");
         // 获取文件头
         fileHeader.majorVersion = fontReader.ReadUInt16();
         fileHeader.minorVersion = fontReader.ReadUInt16();
@@ -475,30 +497,21 @@ public class QueryTTF {
             directorys.put(d.tag, d);
         }
 
-        Log.i("[queryTTF]", "解析表 name"); // 字体信息,包含版权、名称、作者等...
+        Log.i("queryTTF", "解析表 name"); // 字体信息,包含版权、名称、作者等...
         readNameTable(buffer);
-        Log.i("[queryTTF]", "解析表 head"); // 获取 head.indexToLocFormat
+        Log.i("queryTTF", "解析表 head"); // 获取 head.indexToLocFormat
         readHeadTable(buffer);
-        Log.i("[queryTTF]", "解析表 cmap"); // Unicode编码->轮廓索引 对照表
+        Log.i("queryTTF", "解析表 cmap"); // Unicode编码->轮廓索引 对照表
         readCmapTable(buffer);
-        Log.i("[queryTTF]", "解析表 loca"); // 轮廓数据偏移地址表
+        Log.i("queryTTF", "解析表 loca"); // 轮廓数据偏移地址表
         readLocaTable(buffer);
-        Log.i("[queryTTF]", "解析表 maxp"); // 获取 maxp.numGlyphs 字体轮廓数量
+        Log.i("queryTTF", "解析表 maxp"); // 获取 maxp.numGlyphs 字体轮廓数量
         readMaxpTable(buffer);
-        Log.i("[queryTTF]", "解析表 glyf"); // 字体轮廓数据表,需要解析loca,maxp表后计算
+        Log.i("queryTTF", "解析表 glyf"); // 字体轮廓数据表,需要解析loca,maxp表后计算
         readGlyfTable(buffer);
-
-        Log.i("[queryTTF]", "创建Unicode&Glyph映射表");
-        for (int key = 0; key < 130000; ++key) {
-            Integer gid = queryGlyfIndex(key);
-            if (gid >= glyf.size()) continue;
-            unicodeToGlyphIndex.put(key, gid);
-            var val = glyf.get(gid);
-            unicodeToGlyph.put(key, val);
-            if (glyphToUnicode.containsKey(val)) continue;
-            glyphToUnicode.put(val, key);
-        }
-        Log.i("[queryTTF]", "字体处理完成");
+        Log.i("queryTTF", "建立Unicode&Glyph映射表");
+        makeHashTable();
+        Log.i("queryTTF", "字体处理完成");
     }
 
 //    /**
