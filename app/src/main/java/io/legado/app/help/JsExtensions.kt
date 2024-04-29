@@ -768,15 +768,7 @@ interface JsExtensions : JsEncodeUtils {
             var qTTF = CacheManager.getQueryTTF(key)
             if (qTTF != null) return qTTF
             val font: ByteArray? = when {
-                str.isAbsUrl() -> {
-                    var x = CacheManager.getByteArray(key)
-                    if (x == null) {
-                        x = AnalyzeUrl(str, source = getSource()).getByteArray()
-                        CacheManager.put(key, x)
-                    }
-                    x
-                }
-
+                str.isAbsUrl() -> AnalyzeUrl(str, source = getSource()).getByteArray()
                 str.isContentScheme() -> Uri.parse(str).readBytes(appCtx)
                 str.startsWith("/storage") -> File(str).readBytes()
                 else -> base64DecodeToByteArray(str)
