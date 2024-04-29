@@ -148,6 +148,11 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
                     3 -> list.sortedBy {
                         it.order
                     }
+
+                    4 -> list.sortedByDescending {
+                        max(it.latestChapterTime, it.durChapterTime)
+                    }
+
                     else -> list.sortedByDescending {
                         it.durChapterTime
                     }

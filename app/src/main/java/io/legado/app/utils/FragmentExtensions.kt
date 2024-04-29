@@ -12,6 +12,8 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import io.legado.app.R
+import io.legado.app.ui.widget.dialog.TextDialog
 
 inline fun <reified T : DialogFragment> Fragment.showDialogFragment(
     arguments: Bundle.() -> Unit = {}
@@ -76,4 +78,9 @@ inline fun <reified T : Activity> Fragment.startActivity(
     configIntent: Intent.() -> Unit = {}
 ) {
     startActivity(Intent(requireContext(), T::class.java).apply(configIntent))
+}
+
+fun Fragment.showHelp(fileName: String) {
+    val mdText = String(requireContext().assets.open("web/help/md/${fileName}.md").readBytes())
+    showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
 }
