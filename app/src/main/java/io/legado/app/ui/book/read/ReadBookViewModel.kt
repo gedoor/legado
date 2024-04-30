@@ -390,6 +390,22 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     /**
+     * unicode解码
+     */
+    fun unicodeDecode(book: Book) {
+        execute {
+            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+                ?: return@execute
+            val content = BookHelp.getContent(book, chapter) ?: return@execute
+            val decodeString = content.replace("\\\\u[0-9A-Fa-f]{4}".toRegex()) {
+                it.value.substring(2).toInt(16).toChar().toString()
+            }
+            BookHelp.saveText(book, chapter, decodeString)
+            ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
+        }
+    }
+
+    /**
      * 内容搜索跳转
      */
     fun searchResultPositions(

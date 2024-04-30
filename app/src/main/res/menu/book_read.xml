@@ -71,6 +71,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_unicode_decode"
+        android:title="@string/unicode_decode"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_enable_replace"
         android:checkable="true"
         android:checked="true"

@@ -516,6 +516,10 @@ class ReadBookActivity : BaseReadBookActivity(),
                 viewModel.reverseContent(it)
             }
 
+            R.id.menu_unicode_decode -> ReadBook.book?.let {
+                viewModel.unicodeDecode(it)
+            }
+
             R.id.menu_set_charset -> showCharsetConfig()
             R.id.menu_image_style -> {
                 val imgStyles =
