@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.nio.charset.StandardCharsets;
@@ -97,9 +98,9 @@ public class QueryTTF {
     }
 
     private static class CmapRecord {
-        public int platformID;
-        public int encodingID;
-        public int offset;
+        public int platformID;          // UInt16
+        public int platformSpecificID;  // UInt16
+        public int offset;              // UInt32
     }
 
     private static class CmapFormat {
@@ -150,12 +151,10 @@ public class QueryTTF {
         public short[] yCoordinates;        // length = flags.length
     }
 
-    private static class ByteArrayReader {
-        private final byte[] buffer;
-        public final ByteBuffer byteBuffer;
+    private static class BufferReader {
+        private final ByteBuffer byteBuffer;
 
-        public ByteArrayReader(byte[] buffer, int index) {
-            this.buffer = buffer;
+        public BufferReader(byte[] buffer, int index) {
             this.byteBuffer = ByteBuffer.wrap(buffer);
             this.byteBuffer.order(ByteOrder.BIG_ENDIAN); // 设置为大端模式
             this.byteBuffer.position(index); // 设置起始索引
@@ -199,21 +198,21 @@ public class QueryTTF {
         }
 
         public byte[] ReadByteArray(int len) {
-            if (len < 0) throw new IllegalArgumentException("Length must not be negative");
+            if (len < 0) return null;
             byte[] result = new byte[len];
             byteBuffer.get(result);
             return result;
         }
 
         public short[] ReadInt16Array(int len) {
-            if (len < 0) throw new IllegalArgumentException("Length must not be negative");
+            if (len < 0) return null;
             var result = new short[len];
             for (int i = 0; i < len; ++i) result[i] = byteBuffer.getShort();
             return result;
         }
 
         public int[] ReadUInt16Array(int len) {
-            if (len < 0) throw new IllegalArgumentException("Length must not be negative");
+            if (len < 0) return null;
             var result = new int[len];
             for (int i = 0; i < len; ++i) result[i] = byteBuffer.getShort() & 0xFFFF;
             return result;
@@ -227,23 +226,12 @@ public class QueryTTF {
     private final MaxpLayout maxp = new MaxpLayout();
     private final List<Integer> loca = new LinkedList<>();
     private final CmapLayout Cmap = new CmapLayout();
-    private final ConcurrentHashMap<Integer, String> glyf = new ConcurrentHashMap<>();
-    private final int[][] pps = new int[][]{
-            {3, 10},
-            {0, 4},
-            {3, 1},
-            {1, 0},
-            {0, 3},
-            {0, 1}
-    };
-
-    public final Map<Integer, String> unicodeToGlyph = new HashMap<>();
-    public final Map<String, Integer> glyphToUnicode = new HashMap<>();
-    public final Map<Integer, Integer> unicodeToGlyphIndex = new HashMap<>();
+    private String[] glyf;
+    private final int[][] pps = new int[][]{{3, 10}, {0, 4}, {3, 1}, {1, 0}, {0, 3}, {0, 1}};
 
     private void readNameTable(byte[] buffer) {
         var dataTable = Objects.requireNonNull(directorys.get("name"));
-        var reader = new ByteArrayReader(buffer, dataTable.offset);
+        var reader = new BufferReader(buffer, dataTable.offset);
         name.format = reader.ReadUInt16();
         name.count = reader.ReadUInt16();
         name.stringOffset = reader.ReadUInt16();
@@ -261,7 +249,7 @@ public class QueryTTF {
 
     private void readHeadTable(byte[] buffer) {
         var dataTable = Objects.requireNonNull(directorys.get("head"));
-        var reader = new ByteArrayReader(buffer, dataTable.offset);
+        var reader = new BufferReader(buffer, dataTable.offset);
         head.majorVersion = reader.ReadUInt16();
         head.minorVersion = reader.ReadUInt16();
         head.fontRevision = reader.ReadUInt32();
@@ -284,13 +272,13 @@ public class QueryTTF {
 
     private void readCmapTable(byte[] buffer) {
         var dataTable = Objects.requireNonNull(directorys.get("cmap"));
-        var reader = new ByteArrayReader(buffer, dataTable.offset);
+        var reader = new BufferReader(buffer, dataTable.offset);
         Cmap.version = reader.ReadUInt16();
         Cmap.numTables = reader.ReadUInt16();
         for (int i = 0; i < Cmap.numTables; ++i) {
             CmapRecord record = new CmapRecord();
             record.platformID = reader.ReadUInt16();
-            record.encodingID = reader.ReadUInt16();
+            record.platformSpecificID = reader.ReadUInt16();
             record.offset = reader.ReadUInt32();
             Cmap.records.add(record);
         }
@@ -352,7 +340,7 @@ public class QueryTTF {
 
     private void readLocaTable(byte[] buffer) {
         var dataTable = Objects.requireNonNull(directorys.get("loca"));
-        var reader = new ByteArrayReader(buffer, dataTable.offset);
+        var reader = new BufferReader(buffer, dataTable.offset);
         var locaTableSize = dataTable.length;
         if (head.indexToLocFormat == 0) {
             for (long i = 0; i < locaTableSize; i += 2) loca.add(reader.ReadUInt16());
@@ -363,7 +351,7 @@ public class QueryTTF {
 
     private void readMaxpTable(byte[] buffer) {
         var dataTable = Objects.requireNonNull(directorys.get("maxp"));
-        var reader = new ByteArrayReader(buffer, dataTable.offset);
+        var reader = new BufferReader(buffer, dataTable.offset);
         maxp.majorVersion = reader.ReadUInt16();
         maxp.minorVersion = reader.ReadUInt16();
         maxp.numGlyphs = reader.ReadUInt16();
@@ -385,90 +373,76 @@ public class QueryTTF {
     private void readGlyfTable(byte[] buffer) {
         var dataTable = Objects.requireNonNull(directorys.get("glyf"));
         int glyfCount = maxp.numGlyphs;
+        glyf = new String[glyfCount];
 
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        for (int i = 0; i < glyfCount; i++) {
-            final int index = i;
-            final var reader = new ByteArrayReader(buffer, dataTable.offset + loca.get(index));
+        int coreCount = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(coreCount);
+        int sliceSize = (coreCount < glyfCount) ? (glyfCount / coreCount) : glyfCount;
+        for (int blockOffset = 0; blockOffset < glyfCount; blockOffset += sliceSize) {
+            final int inclusive = blockOffset;
+            final int exclusive = Math.min(blockOffset + sliceSize, glyfCount);
             executor.submit(() -> {
-                int glyfNextIndex = index + 1 < glyfCount ? (dataTable.offset + loca.get(index + 1)) : (dataTable.offset + dataTable.length);
-                byte[] glyph;
-                short numberOfContours = reader.ReadInt16();
-                if (numberOfContours > 0) {
-                    short g_xMin = reader.ReadInt16();
-                    short g_yMin = reader.ReadInt16();
-                    short g_xMax = reader.ReadInt16();
-                    short g_yMax = reader.ReadInt16();
-                    int[] endPtsOfContours = reader.ReadUInt16Array(numberOfContours);
-                    int instructionLength = reader.ReadUInt16();
-                    var instructions = reader.ReadByteArray(instructionLength);
-                    int flagLength = endPtsOfContours[endPtsOfContours.length - 1] + 1;
-                    // 获取轮廓点描述标志
-                    var flags = new byte[flagLength];
-                    for (int n = 0; n < flagLength; ++n) {
-                        flags[n] = reader.ReadInt8();
-                        if ((flags[n] & 0x08) != 0x00) {
-                            for (int m = reader.ReadUInt8(); m > 0; --m) {
-                                flags[++n] = flags[n - 1];
+                var reader = new BufferReader(buffer, 0);
+                for (int index = inclusive; index < exclusive; index++) {
+                    int offset = dataTable.offset + loca.get(index);
+                    int glyfLength = (index + 1 < glyfCount ? loca.get(index + 1) : dataTable.offset + dataTable.length) - loca.get(index);
+                    reader.position(offset);
+                    byte[] glyph;
+                    short numberOfContours = reader.ReadInt16();
+                    if (numberOfContours > 0) {
+                        short g_xMin = reader.ReadInt16();
+                        short g_yMin = reader.ReadInt16();
+                        short g_xMax = reader.ReadInt16();
+                        short g_yMax = reader.ReadInt16();
+                        int[] endPtsOfContours = reader.ReadUInt16Array(numberOfContours);
+                        int instructionLength = reader.ReadUInt16();
+                        var instructions = reader.ReadByteArray(instructionLength);
+                        int flagLength = endPtsOfContours[endPtsOfContours.length - 1] + 1;
+                        // 获取轮廓点描述标志
+                        var flags = new byte[flagLength];
+                        for (int n = 0; n < flagLength; ++n) {
+                            flags[n] = reader.ReadInt8();
+                            if ((flags[n] & 0x08) != 0x00) {
+                                for (int m = reader.ReadUInt8(); m > 0; --m) {
+                                    flags[++n] = flags[n - 1];
+                                }
                             }
                         }
-                    }
-                    // 获取轮廓点描述x,y相对值
-                    ByteBuffer xyCoordinatesBuffer = ByteBuffer.allocate(flagLength * 4);
-                    // 获取轮廓点描述x轴相对值
-                    for (int n = 0; n < flagLength; ++n) {
-                        short same = (short) ((flags[n] & 0x10) != 0 ? 1 : -1);
-                        if ((flags[n] & 0x02) != 0) {
-                            xyCoordinatesBuffer.putShort((short) (same * reader.ReadUInt8()));
-                        } else {
-                            xyCoordinatesBuffer.putShort(same == 1 ? (short) 0 : reader.ReadInt16());
+                        // 获取轮廓点描述x,y相对值
+                        ByteBuffer xyCoordinatesBuffer = ByteBuffer.allocate(flagLength * 4);
+                        // 获取轮廓点描述x轴相对值
+                        for (int n = 0; n < flagLength; ++n) {
+                            short same = (short) ((flags[n] & 0x10) != 0 ? 1 : -1);
+                            if ((flags[n] & 0x02) != 0) {
+                                xyCoordinatesBuffer.putShort((short) (same * reader.ReadUInt8()));
+                            } else {
+                                xyCoordinatesBuffer.putShort(same == 1 ? (short) 0 : reader.ReadInt16());
+                            }
                         }
-                    }
-                    // 获取轮廓点描述y轴相对值
-                    for (int n = 0; n < flagLength; ++n) {
-                        short same = (short) ((flags[n] & 0x20) != 0 ? 1 : -1);
-                        if ((flags[n] & 0x04) != 0) {
-                            xyCoordinatesBuffer.putShort((short) (same * reader.ReadUInt8()));
-                        } else {
-                            xyCoordinatesBuffer.putShort(same == 1 ? (short) 0 : reader.ReadInt16());
+                        // 获取轮廓点描述y轴相对值
+                        for (int n = 0; n < flagLength; ++n) {
+                            short same = (short) ((flags[n] & 0x20) != 0 ? 1 : -1);
+                            if ((flags[n] & 0x04) != 0) {
+                                xyCoordinatesBuffer.putShort((short) (same * reader.ReadUInt8()));
+                            } else {
+                                xyCoordinatesBuffer.putShort(same == 1 ? (short) 0 : reader.ReadInt16());
+                            }
                         }
+                        // 保存轮廓点描述x,y相对值ByteArray
+                        glyph = xyCoordinatesBuffer.array();
+                    } else {
+                        // TODO: 处理复合字形
+                        glyph = reader.ReadByteArray(glyfLength - 2);
                     }
-                    // 保存轮廓点描述x,y相对值ByteArray
-                    glyph = xyCoordinatesBuffer.array();
-                } else {
-                    // 复合字体未做详细处理
-                    glyph = reader.ReadByteArray(glyfNextIndex - (reader.position() - 2));
+                    glyf[index] = getHexFromBytes(glyph);
                 }
-                glyf.put(index, getHexFromBytes(glyph));
             });
         }
         executor.shutdown();
         try {
-            boolean b = executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+            boolean b = executor.awaitTermination(60, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Log.e("queryTTF", "glyf表解析出错: " + e);
-        }
-    }
-
-    private void makeHashTable() {
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        for (int i = 0; i < 130000; ++i) {
-            final int key = i;
-            executor.submit(() -> {
-                Integer gid = queryGlyfIndex(key);
-                if (gid < glyf.size()) {
-                    unicodeToGlyphIndex.put(key, gid);
-                    var val = glyf.get(gid);
-                    unicodeToGlyph.put(key, val);
-                    if (!glyphToUnicode.containsKey(val)) glyphToUnicode.put(val, key);
-                }
-            });
-        }
-        executor.shutdown();
-        try {
-            boolean b = executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Log.e("queryTTF", "建立Unicode&Glyph映射表出错: " + e);
         }
     }
 
@@ -477,8 +451,8 @@ public class QueryTTF {
      *
      * @param buffer 传入TTF字体二进制数组
      */
-    public QueryTTF(byte[] buffer) {
-        var fontReader = new ByteArrayReader(buffer, 0);
+    public QueryTTF(final byte[] buffer) {
+        var fontReader = new BufferReader(buffer, 0);
         Log.i("queryTTF", "读文件头");
         // 获取文件头
         fileHeader.majorVersion = fontReader.ReadUInt16();
@@ -514,6 +488,38 @@ public class QueryTTF {
         Log.i("queryTTF", "字体处理完成");
     }
 
+    public final ConcurrentHashMap<Integer, String> unicodeToGlyph = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, Integer> glyphToUnicode = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, Integer> unicodeToGlyphIndex = new ConcurrentHashMap<>();
+
+    private void makeHashTable() {
+        int coreCount = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(coreCount);
+        int unicodeCount = 0xFFFF;
+        int sliceSize = (coreCount < unicodeCount) ? (unicodeCount / coreCount) : unicodeCount;
+        for (int blockOffset = 0; blockOffset < unicodeCount; blockOffset += sliceSize) {
+            final int inclusive = blockOffset;
+            final int exclusive = Math.min(blockOffset + sliceSize, unicodeCount);
+            executor.submit(() -> {
+                for (int index = inclusive; index < exclusive; index++) {
+                    int gid = queryGlyfIndex(index);
+                    if (gid < glyf.length) {
+                        unicodeToGlyphIndex.put(index, gid);
+                        var val = glyf[gid];
+                        unicodeToGlyph.put(index, val);
+                        if (!glyphToUnicode.containsKey(val)) glyphToUnicode.put(val, index);
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        try {
+            boolean b = executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e("queryTTF", "建立Unicode&Glyph映射表出错: " + e);
+        }
+    }
+
 //    /**
 //     * 获取字体信息 (1=字体名称)
 //     *
@@ -530,6 +536,10 @@ public class QueryTTF {
 //        return "error";
 //    }
 
+    public String getGlyfById(int gid) {
+        return glyf[gid];
+    }
+
     /**
      * 使用Unicode值查找轮廓索引
      *
@@ -542,7 +552,7 @@ public class QueryTTF {
         int fmtKey = 0;
         for (var item : pps) {
             for (CmapRecord record : Cmap.records) {
-                if ((item[0] == record.platformID) && (item[1] == record.encodingID)) {
+                if ((item[0] == record.platformID) && (item[1] == record.platformSpecificID)) {
                     fmtKey = record.offset;
                     break;
                 }

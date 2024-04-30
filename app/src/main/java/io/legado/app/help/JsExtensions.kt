@@ -803,7 +803,7 @@ interface JsExtensions : JsEncodeUtils {
             if (code != 0) {
                 contentArray[index] = code.toChar().toString()
             }
-            if (glyf == "" && filter) {
+            if (glyf.equals("") && filter) {
                 // 删除轮廓数据为空的字符
                 contentArray[index] = ""
             }
