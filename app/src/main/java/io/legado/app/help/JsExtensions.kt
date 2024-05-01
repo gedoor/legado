@@ -775,7 +775,7 @@ interface JsExtensions : JsEncodeUtils {
             }
             font ?: return null
             qTTF = QueryTTF(font)
-            CacheManager.put(key, qTTF)
+            CacheManager.put(key, qTTF) // debug注释掉
             return qTTF
         } catch (e: Exception) {
             AppLog.put("获取字体处理类出错", e)
@@ -798,14 +798,20 @@ interface JsExtensions : JsEncodeUtils {
         val contentArray = text.toStringArray() //这里不能用toCharArray,因为有些文字占多个字节
         contentArray.forEachIndexed { index, s ->
             val oldCode = s.codePointAt(0)
-            val glyf = errorQueryTTF.getGlyfByCode(oldCode)
-            val code = correctQueryTTF.getCodeByGlyf(glyf)
+            // 忽略正常的空白字符
+            if (errorQueryTTF.isBlankUnicode(oldCode)) {
+                return@forEachIndexed
+            }
+            val glyf = errorQueryTTF.getGlyfByUnicode(oldCode)
+            // 删除轮廓数据不存在的字符
+            if (filter && (glyf == null)) {
+                contentArray[index] = ""
+                return@forEachIndexed
+            }
+            // 使用轮廓数据反查Unicode
+            val code = correctQueryTTF.getUnicodeByGlyf(glyf)
             if (code != 0) {
                 contentArray[index] = code.toChar().toString()
-            }
-            if (glyf.equals("") && filter) {
-                // 删除轮廓数据为空的字符
-                contentArray[index] = ""
             }
         }
         return contentArray.joinToString("")

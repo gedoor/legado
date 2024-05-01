@@ -1,44 +1,68 @@
 package io.legado.app.model.analyzeRule;
 
-import android.util.Log;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class QueryTTF {
+    /**
+     * 文件头
+     *
+     * @url <a href="https://learn.microsoft.com/zh-cn/typography/opentype/spec/otff">Microsoft opentype 字体文档</a>
+     */
     private static class Header {
-        public int majorVersion;
-        public int minorVersion;
-        public int numOfTables;
+        /**
+         * uint32   字体版本 0x00010000 (ttf)
+         */
+        public long sfntVersion;
+        /**
+         * uint16   Number of tables.
+         */
+        public int numTables;
+        /**
+         * uint16
+         */
         public int searchRange;
+        /**
+         * uint16
+         */
         public int entrySelector;
+        /**
+         * uint16
+         */
         public int rangeShift;
     }
 
+    /**
+     * 数据表目录
+     */
     private static class Directory {
-        public String tag;          // table name
-        public int checkSum;       // Check sum
-        public int offset;         // Offset from beginning of file
-        public int length;         // length of the table in bytes
+        /**
+         * uint32 (表标识符)
+         */
+        public String tableTag;
+        /**
+         * uint32 (该表的校验和)
+         */
+        public int checkSum;
+        /**
+         * uint32 (TTF文件 Bytes 数据索引 0 开始的偏移地址)
+         */
+        public int offset;
+        /**
+         * uint32 (该表的长度)
+         */
+        public int length;
     }
 
     private static class NameLayout {
         public int format;
         public int count;
         public int stringOffset;
-        public List<NameRecord> records = new LinkedList<>();
+        public LinkedList<NameRecord> records = new LinkedList<>();
     }
 
     private static class NameRecord {
@@ -50,105 +74,433 @@ public class QueryTTF {
         public int offset;               // 名称字符串相对于stringOffset的字节偏移量
     }
 
+    /**
+     * Font Header Table
+     */
     private static class HeadLayout {
+        /**
+         * uint16
+         */
         public int majorVersion;
+        /**
+         * uint16
+         */
         public int minorVersion;
+        /**
+         * uint16
+         */
         public int fontRevision;
+        /**
+         * uint32
+         */
         public int checkSumAdjustment;
+        /**
+         * uint32
+         */
         public int magicNumber;
+        /**
+         * uint16
+         */
         public int flags;
+        /**
+         * uint16
+         */
         public int unitsPerEm;
+        /**
+         * long
+         */
         public long created;
+        /**
+         * long
+         */
         public long modified;
+        /**
+         * int16
+         */
         public short xMin;
+        /**
+         * int16
+         */
         public short yMin;
+        /**
+         * int16
+         */
         public short xMax;
+        /**
+         * int16
+         */
         public short yMax;
+        /**
+         * uint16
+         */
         public int macStyle;
+        /**
+         * uint16
+         */
         public int lowestRecPPEM;
+        /**
+         * int16
+         */
         public short fontDirectionHint;
-        public short indexToLocFormat;      // <0:loca是2字节数组, 1:loca是4字节数组>
+        /**
+         * int16
+         * <p> 0 表示短偏移 (Offset16)，1 表示长偏移 (Offset32)。
+         */
+        public short indexToLocFormat;
+        /**
+         * int16
+         */
         public short glyphDataFormat;
     }
 
+    /**
+     * Maximum Profile
+     */
     private static class MaxpLayout {
-        public int majorVersion;
-        public int minorVersion;
-        public int numGlyphs;                // 字体中的字形数量
+        /**
+         * uint32   高16位表示整数，低16位表示小数
+         */
+        public int version;
+        /**
+         * uint16   字体中的字形数量
+         */
+        public int numGlyphs;
+        /**
+         * uint16   非复合字形中包含的最大点数。点是构成字形轮廓的基本单位。
+         */
         public int maxPoints;
+        /**
+         * uint16   非复合字形中包含的最大轮廓数。轮廓是由一系列点连接形成的封闭曲线。
+         */
         public int maxContours;
+        /**
+         * uint16   复合字形中包含的最大点数。复合字形是由多个简单字形组合而成的。
+         */
         public int maxCompositePoints;
+        /**
+         * uint16   复合字形中包含的最大轮廓数。
+         */
         public int maxCompositeContours;
+        /**
+         * uint16
+         */
         public int maxZones;
+        /**
+         * uint16
+         */
         public int maxTwilightPoints;
+        /**
+         * uint16
+         */
         public int maxStorage;
+        /**
+         * uint16
+         */
         public int maxFunctionDefs;
+        /**
+         * uint16
+         */
         public int maxInstructionDefs;
+        /**
+         * uint16
+         */
         public int maxStackElements;
+        /**
+         * uint16
+         */
         public int maxSizeOfInstructions;
+        /**
+         * uint16   任何复合字形在“顶层”引用的最大组件数。
+         */
         public int maxComponentElements;
+        /**
+         * uint16   递归的最大层数；简单组件为1。
+         */
         public int maxComponentDepth;
     }
 
+    /**
+     * 字符到字形索引映射表
+     */
     private static class CmapLayout {
+        /**
+         * uint16
+         */
         public int version;
+        /**
+         * uint16   后面的编码表的数量
+         */
         public int numTables;
-        public List<CmapRecord> records = new LinkedList<>();
-        public Map<Integer, CmapFormat> tables = new HashMap<>();
+        public LinkedList<CmapRecord> records = new LinkedList<>();
+        public HashMap<Integer, CmapFormat> tables = new HashMap<>();
     }
 
+    /**
+     * Encoding records and encodings
+     */
     private static class CmapRecord {
-        public int platformID;          // UInt16
-        public int platformSpecificID;  // UInt16
-        public int offset;              // UInt32
+        /**
+         * uint16   Platform ID.
+         * <p> 0、Unicode
+         * <p> 1、Macintosh
+         * <p> 2、ISO
+         * <p> 3、Windows
+         * <p> 4、Custom
+         */
+        public int platformID;
+        /**
+         * uint16   Platform-specific encoding ID.
+         * <p> platform ID = 3
+         * <p>  0、Symbol
+         * <p>  1、Unicode BMP
+         * <p>  2、ShiftJIS
+         * <p>  3、PRC
+         * <p>  4、Big5
+         * <p>  5、Wansung
+         * <p>  6、Johab
+         * <p>  7、Reserved
+         * <p>  8、Reserved
+         * <p>  9、Reserved
+         * <p> 10、Unicode full repertoire
+         */
+        public int encodingID;
+        /**
+         * uint32   从 cmap 表开头到子表的字节偏移量
+         */
+        public int offset;
     }
 
     private static class CmapFormat {
+        /**
+         * uint16
+         * <p> cmapFormat 子表的格式类型
+         */
         public int format;
+        /**
+         * uint16
+         * <p> 这个 Format 表的长度（以字节为单位）
+         */
         public int length;
+        /**
+         * uint16
+         * <p> 仅 platformID=1 时有效
+         */
         public int language;
-        public byte[] glyphIdArray;
-    }
-
-    private static class CmapFormat4 extends CmapFormat {
+        /**
+         * uint16[256]
+         * <p> 仅 Format=2
+         * <p> 将高字节映射到 subHeaders 的数组：值为 subHeader 索引x8
+         */
+        public int[] subHeaderKeys;
+        /**
+         * uint16[]
+         * <p> 仅 Format=2
+         * <p> subHeader 子标头的可变长度数组
+         * <p> 其结构为 uint16[][4]{ {uint16,uint16,int16,uint16}, ... }
+         */
+        public int[] subHeaders;
+        /**
+         * uint16   segCount x2
+         * <p> 仅 Format=4
+         * <p> seg段计数乘以 2。这是因为每个段用两个字节表示，所以这个值是实际段数的两倍。
+         */
         public int segCountX2;
+        /**
+         * uint16
+         * <p> 仅 Format=4
+         * <p> 小于或等于段数的最大二次幂，再乘以 2。这是为二分查找优化搜索过程。
+         */
         public int searchRange;
+        /**
+         * uint16
+         * <p> 仅 Format=4
+         * <p> 等于 log2(searchRange/2)，这是最大二次幂的对数。
+         */
         public int entrySelector;
+        /**
+         * uint16
+         * <p> 仅 Format=4
+         * <p> segCount * 2 - searchRange 用于调整搜索范围的偏移。
+         */
         public int rangeShift;
+        /**
+         * uint16[segCount]
+         * <p> 仅 Format=4
+         * <p> 每个段的结束字符码，最后一个是 0xFFFF，表示 Unicode 范围的结束。
+         */
         public int[] endCode;
+        /**
+         * uint16
+         * <p> 仅 Format=4
+         * <p> 固定设置为 0，用于填充保留位以保持数据对齐。
+         */
         public int reservedPad;
+        /**
+         * uint16[segCount]
+         * <p> 仅 Format=4
+         * <p> 每个段的起始字符码。
+         */
         public int[] startCode;
-        public short[] idDelta;
-        public int[] idRangeOffset;
-        public int[] glyphIdArray;
-    }
-
-    private static class CmapFormat6 extends CmapFormat {
+        /**
+         * int16[segCount]
+         * <p> 仅 Format=4
+         * <p> 用于计算字形索引的偏移值。该值被加到从 startCode 到 endCode 的所有字符码上，得到相应的字形索引。
+         */
+        public int[] idDelta;
+        /**
+         * uint16[segCount]
+         * <p> 仅 Format=4
+         * <p> 偏移到 glyphIdArray 中的起始位置，如果没有额外的字形索引映射，则为 0。
+         */
+        public int[] idRangeOffsets;
+        /**
+         * uint16
+         * <p> 仅 Format=6
+         * <p> 子范围的第一个字符代码。这是连续字符代码范围的起始点。
+         */
         public int firstCode;
+        /**
+         * uint16
+         * <p> 仅 Format=6
+         * <p> 子范围中字符代码的数量。这表示从 firstCode 开始，连续多少个字符代码被包含
+         */
         public int entryCount;
+        /**
+         * 字形索引数组
+         * <p> Format=0 为 bye[256]数组
+         * <p> Format>0 为 uint16[] 数组
+         * <p> Format>12 为 uint32[] 数组
+         * <p> @url <a href="https://learn.microsoft.com/zh-cn/typography/opentype/spec/cmap#language">Microsoft cmap文档</a>
+         */
         public int[] glyphIdArray;
     }
 
-    private static class CmapFormat12 extends CmapFormat {
-        public int reserved;
-        public int length;
-        public int language;
-        public int numGroups;
-        public List<int[]> groups;
+    /**
+     * 字形轮廓数据表
+     */
+    private static class GlyfLayout {
+        /**
+         * int16    非负值为简单字形的轮廓数,负值表示为复合字形
+         */
+        public short numberOfContours;
+        /**
+         * int16    Minimum x for coordinate data.
+         */
+        public short xMin;
+        /**
+         * int16    Minimum y for coordinate data.
+         */
+        public short yMin;
+        /**
+         * int16    Maximum x for coordinate data.
+         */
+        public short xMax;
+        /**
+         * int16    Maximum y for coordinate data.
+         */
+        public short yMax;
+        /**
+         * 简单字形数据
+         */
+        public GlyphTableBySimple glyphSimple;
+        /**
+         * 复合字形数据
+         */
+        public LinkedList<GlyphTableComponent> glyphComponent;
     }
 
-    private static class GlyfLayout {
-        public short numberOfContours;      // 非负值为简单字型,负值为复合字型
-        public short xMin;
-        public short yMin;
-        public short xMax;
-        public short yMax;
-        public int[] endPtsOfContours;   // length=numberOfContours
-        public int instructionLength;
-        public byte[] instructions;         // length=instructionLength
-        public byte[] flags;
-        public short[] xCoordinates;        // length = flags.length
-        public short[] yCoordinates;        // length = flags.length
+    /**
+     * 简单字形数据表
+     */
+    private static class GlyphTableBySimple {
+        /**
+         * uint16[numberOfContours]
+         */
+        int[] endPtsOfContours;
+        /**
+         * uint16
+         */
+        int instructionLength;
+        /**
+         * uint8[instructionLength]
+         */
+        int[] instructions;
+        /**
+         * uint8[variable]
+         * <p> bit0: 该点位于曲线上
+         * <p> bit1: < 1:xCoordinate为uint8 >
+         * <p> bit2: < 1:yCoordinate为uint8 >
+         * <p> bit3: < 1:下一个uint8为此条目之后插入的附加逻辑标志条目的数量 >
+         * <p> bit4: < bit1=1时表示符号[1.正,0.负]; bit1=0时[1.x坐标重复一次,0.x坐标读为int16] >
+         * <p> bit5: < bit2=1时表示符号[1.正,0.负]; bit2=0时[1.y坐标重复一次,0.y坐标读为int16] >
+         * <p> bit6: 字形描述中的轮廓可能会重叠
+         * <p> bit7: 保留位,无意义
+         */
+        int[] flags;
+        /**
+         * uint8[]  when(flags&0x02==0x02)
+         * int16[]  when(flags&0x12==0x00)
+         */
+        int[] xCoordinates;
+        /**
+         * uint8[]  when(flags&0x04==0x02)
+         * int16[]  when(flags&0x24==0x00)
+         */
+        int[] yCoordinates;
+    }
+
+    /**
+     * 复合字形数据表
+     */
+    private static class GlyphTableComponent {
+        /**
+         * uint16
+         * <p> bit0: < 1:argument是16bit，0:argument是8bit >
+         * <p> bit1: < 1:argument是有符号值，0:argument是无符号值 >
+         * <p> bit3: 该组件有一个缩放比例，否则比例为1.0
+         * <p> bit5: 表示在此字形之后还有字形
+         */
+        int flags;
+        /**
+         * uint16
+         */
+        int glyphIndex;
+        /**
+         * x-offset
+         * <p>  uint8 when flags&0x03==0
+         * <p>   int8 when flags&0x03==1
+         * <p> uint16 when flags&0x03==2
+         * <p>  int16 when flags&0x03==3
+         */
+        int argument1;
+        /**
+         * y-offset
+         * <p>  uint8 when flags&0x03==0
+         * <p>   int8 when flags&0x03==1
+         * <p> uint16 when flags&0x03==2
+         * <p>  int16 when flags&0x03==3
+         */
+        int argument2;
+        /**
+         * uint16
+         * <p> 值类型为 F2DOT14 的组件缩放X比例值
+         */
+        float xScale;
+        /**
+         * uint16
+         * <p> 值类型为 F2DOT14 的2x2变换矩阵01值
+         */
+        float scale01;
+        /**
+         * uint16
+         * <p> 值类型为 F2DOT14 的2x2变换矩阵10值
+         */
+        float scale10;
+        /**
+         * uint16
+         * <p> 值类型为 F2DOT14 的组件缩放Y比例值
+         */
+        float yScale;
     }
 
     private static class BufferReader {
@@ -167,7 +519,6 @@ public class QueryTTF {
         public int position() {
             return byteBuffer.position();
         }
-
 
         public long ReadUInt64() {
             return byteBuffer.getLong();
@@ -198,39 +549,52 @@ public class QueryTTF {
         }
 
         public byte[] ReadByteArray(int len) {
-            if (len < 0) return null;
+            assert len >= 0;
             byte[] result = new byte[len];
             byteBuffer.get(result);
             return result;
         }
 
-        public short[] ReadInt16Array(int len) {
-            if (len < 0) return null;
-            var result = new short[len];
+        public int[] ReadUInt8Array(int len) {
+            assert len >= 0;
+            var result = new int[len];
+            for (int i = 0; i < len; ++i) result[i] = byteBuffer.get() & 0xFF;
+            return result;
+        }
+
+        public int[] ReadInt16Array(int len) {
+            assert len >= 0;
+            var result = new int[len];
             for (int i = 0; i < len; ++i) result[i] = byteBuffer.getShort();
             return result;
         }
 
         public int[] ReadUInt16Array(int len) {
-            if (len < 0) return null;
+            assert len >= 0;
             var result = new int[len];
             for (int i = 0; i < len; ++i) result[i] = byteBuffer.getShort() & 0xFFFF;
+            return result;
+        }
+
+        public int[] ReadInt32Array(int len) {
+            assert len >= 0;
+            var result = new int[len];
+            for (int i = 0; i < len; ++i) result[i] = byteBuffer.getInt();
             return result;
         }
     }
 
     private final Header fileHeader = new Header();
-    private final Map<String, Directory> directorys = new HashMap<>();
+    private final HashMap<String, Directory> directorys = new HashMap<>();
     private final NameLayout name = new NameLayout();
     private final HeadLayout head = new HeadLayout();
     private final MaxpLayout maxp = new MaxpLayout();
-    private final List<Integer> loca = new LinkedList<>();
     private final CmapLayout Cmap = new CmapLayout();
-    private String[] glyf;
     private final int[][] pps = new int[][]{{3, 10}, {0, 4}, {3, 1}, {1, 0}, {0, 3}, {0, 1}};
 
     private void readNameTable(byte[] buffer) {
-        var dataTable = Objects.requireNonNull(directorys.get("name"));
+        var dataTable = directorys.get("name");
+        assert dataTable != null;
         var reader = new BufferReader(buffer, dataTable.offset);
         name.format = reader.ReadUInt16();
         name.count = reader.ReadUInt16();
@@ -248,7 +612,8 @@ public class QueryTTF {
     }
 
     private void readHeadTable(byte[] buffer) {
-        var dataTable = Objects.requireNonNull(directorys.get("head"));
+        var dataTable = directorys.get("head");
+        assert dataTable != null;
         var reader = new BufferReader(buffer, dataTable.offset);
         head.majorVersion = reader.ReadUInt16();
         head.minorVersion = reader.ReadUInt16();
@@ -270,90 +635,117 @@ public class QueryTTF {
         head.glyphDataFormat = reader.ReadInt16();
     }
 
+    /**
+     * glyfId到glyphData的索引
+     * <p> 根据定义，索引零指向“丢失的字符”。
+     * <p> loca.length = maxp.numGlyphs + 1;
+     */
+    private int[] loca;
+
+    private void readLocaTable(byte[] buffer) {
+        var dataTable = directorys.get("loca");
+        assert dataTable != null;
+        var reader = new BufferReader(buffer, dataTable.offset);
+        if (head.indexToLocFormat == 0) {
+            loca = reader.ReadUInt16Array(dataTable.length / 2);
+        } else {
+            loca = reader.ReadInt32Array(dataTable.length / 4);
+        }
+    }
+
     private void readCmapTable(byte[] buffer) {
-        var dataTable = Objects.requireNonNull(directorys.get("cmap"));
+        var dataTable = directorys.get("cmap");
+        assert dataTable != null;
         var reader = new BufferReader(buffer, dataTable.offset);
         Cmap.version = reader.ReadUInt16();
         Cmap.numTables = reader.ReadUInt16();
         for (int i = 0; i < Cmap.numTables; ++i) {
             CmapRecord record = new CmapRecord();
             record.platformID = reader.ReadUInt16();
-            record.platformSpecificID = reader.ReadUInt16();
+            record.encodingID = reader.ReadUInt16();
             record.offset = reader.ReadUInt32();
             Cmap.records.add(record);
         }
-        for (int i = 0; i < Cmap.numTables; ++i) {
-            int fmtOffset = Cmap.records.get(i).offset;
-            reader.position(dataTable.offset + fmtOffset);
-            int EndIndex = reader.position();
 
-            int format = reader.ReadUInt16();
+        for (var formatTable : Cmap.records) {
+            int fmtOffset = formatTable.offset;
             if (Cmap.tables.containsKey(fmtOffset)) continue;
-            if (format == 0) {
-                CmapFormat f = new CmapFormat();
-                f.format = format;
-                f.length = reader.ReadUInt16();
-                f.language = reader.ReadUInt16();
-                f.glyphIdArray = reader.ReadByteArray(f.length - 6);
-                Cmap.tables.put(fmtOffset, f);
-            } else if (format == 4) {
-                CmapFormat4 f = new CmapFormat4();
-                f.format = format;
-                f.length = reader.ReadUInt16();
-                f.language = reader.ReadUInt16();
-                f.segCountX2 = reader.ReadUInt16();
-                int segCount = f.segCountX2 >> 1;
-                f.searchRange = reader.ReadUInt16();
-                f.entrySelector = reader.ReadUInt16();
-                f.rangeShift = reader.ReadUInt16();
-                f.endCode = reader.ReadUInt16Array(segCount);
-                f.reservedPad = reader.ReadUInt16();
-                f.startCode = reader.ReadUInt16Array(segCount);
-                f.idDelta = reader.ReadInt16Array(segCount);
-                f.idRangeOffset = reader.ReadUInt16Array(segCount);
-                f.glyphIdArray = reader.ReadUInt16Array((EndIndex + f.length - reader.position()) >> 1);
-                Cmap.tables.put(fmtOffset, f);
-            } else if (format == 6) {
-                CmapFormat6 f = new CmapFormat6();
-                f.format = format;
-                f.length = reader.ReadUInt16();
-                f.language = reader.ReadUInt16();
-                f.firstCode = reader.ReadUInt16();
-                f.entryCount = reader.ReadUInt16();
-                f.glyphIdArray = reader.ReadUInt16Array(f.entryCount);
-                Cmap.tables.put(fmtOffset, f);
-            } else if (format == 12) {
-                CmapFormat12 f = new CmapFormat12();
-                f.format = format;
-                f.reserved = reader.ReadUInt16();
-                f.length = reader.ReadUInt32();
-                f.language = reader.ReadUInt32();
-                f.numGroups = reader.ReadUInt32();
-                f.groups = new LinkedList<>();
-                for (int n = 0; n < f.numGroups; ++n) {
-                    f.groups.add(new int[]{reader.ReadUInt32(), reader.ReadUInt32(), reader.ReadUInt32()});
-                }
-                Cmap.tables.put(fmtOffset, f);
-            }
-        }
-    }
+            reader.position(dataTable.offset + fmtOffset);
 
-    private void readLocaTable(byte[] buffer) {
-        var dataTable = Objects.requireNonNull(directorys.get("loca"));
-        var reader = new BufferReader(buffer, dataTable.offset);
-        var locaTableSize = dataTable.length;
-        if (head.indexToLocFormat == 0) {
-            for (long i = 0; i < locaTableSize; i += 2) loca.add(reader.ReadUInt16());
-        } else {
-            for (long i = 0; i < locaTableSize; i += 4) loca.add(reader.ReadUInt32());
+            CmapFormat f = new CmapFormat();
+            f.format = reader.ReadUInt16();
+            f.length = reader.ReadUInt16();
+            f.language = reader.ReadUInt16();
+            switch (f.format) {
+                case 0: {
+                    f.glyphIdArray = reader.ReadUInt8Array(f.length - 6);
+                    // 记录 unicode->glyphId 映射表
+                    int unicodeInclusive = 0;
+                    int unicodeExclusive = f.glyphIdArray.length;
+                    for (; unicodeInclusive < unicodeExclusive; unicodeInclusive++) {
+                        unicodeToGlyphId.put(unicodeInclusive, f.glyphIdArray[unicodeInclusive]);
+                    }
+                    break;
+                }
+                case 4: {
+                    f.segCountX2 = reader.ReadUInt16();
+                    int segCount = f.segCountX2 / 2;
+                    f.searchRange = reader.ReadUInt16();
+                    f.entrySelector = reader.ReadUInt16();
+                    f.rangeShift = reader.ReadUInt16();
+                    f.endCode = reader.ReadUInt16Array(segCount);
+                    f.reservedPad = reader.ReadUInt16();
+                    f.startCode = reader.ReadUInt16Array(segCount);
+                    f.idDelta = reader.ReadInt16Array(segCount);
+                    f.idRangeOffsets = reader.ReadUInt16Array(segCount);
+                    // 一个包含字形索引的数组，其长度是任意的，取决于映射的复杂性和字体中的字符数量。
+                    int glyphIdArrayLength = (f.length - 16 - (segCount * 8)) / 2;
+                    f.glyphIdArray = reader.ReadUInt16Array(glyphIdArrayLength);
+
+                    // 记录 unicode->glyphId 映射表
+                    for (int segmentIndex = 0; segmentIndex < segCount; segmentIndex++) {
+                        int unicodeInclusive = f.startCode[segmentIndex];
+                        int unicodeExclusive = f.endCode[segmentIndex];
+                        int idDelta = f.idDelta[segmentIndex];
+                        int idRangeOffset = f.idRangeOffsets[segmentIndex];
+                        for (int unicode = unicodeInclusive; unicode <= unicodeExclusive; unicode++) {
+                            if (idRangeOffset == 0) {
+                                unicodeToGlyphId.put(unicode, (unicode + idDelta) & 0xFFFF);
+                            } else {
+                                int gIndex = (idRangeOffset / 2) + unicode - unicodeInclusive + segmentIndex;
+                                unicodeToGlyphId.put(unicode, gIndex < glyphIdArrayLength ? f.glyphIdArray[gIndex] + idDelta : 0);
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 6: {
+                    f.firstCode = reader.ReadUInt16();
+                    f.entryCount = reader.ReadUInt16();
+                    // 范围内字符代码的字形索引值数组。
+                    f.glyphIdArray = reader.ReadUInt16Array(f.entryCount);
+
+                    // 记录 unicode->glyphId 映射表
+                    int unicodeIndex = f.firstCode;
+                    int unicodeCount = f.entryCount;
+                    for (int gIndex = 0; gIndex < unicodeCount; gIndex++) {
+                        unicodeToGlyphId.put(unicodeIndex, f.glyphIdArray[gIndex]);
+                        unicodeIndex++;
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            Cmap.tables.put(fmtOffset, f);
         }
     }
 
     private void readMaxpTable(byte[] buffer) {
-        var dataTable = Objects.requireNonNull(directorys.get("maxp"));
+        var dataTable = directorys.get("maxp");
+        assert dataTable != null;
         var reader = new BufferReader(buffer, dataTable.offset);
-        maxp.majorVersion = reader.ReadUInt16();
-        maxp.minorVersion = reader.ReadUInt16();
+        maxp.version = reader.ReadUInt32();
         maxp.numGlyphs = reader.ReadUInt16();
         maxp.maxPoints = reader.ReadUInt16();
         maxp.maxContours = reader.ReadUInt16();
@@ -370,80 +762,163 @@ public class QueryTTF {
         maxp.maxComponentDepth = reader.ReadUInt16();
     }
 
-    private void readGlyfTable(byte[] buffer) {
-        var dataTable = Objects.requireNonNull(directorys.get("glyf"));
-        int glyfCount = maxp.numGlyphs;
-        glyf = new String[glyfCount];
+    /**
+     * 字形轮廓表 数组
+     */
+    private GlyfLayout[] glyfArray;
 
-        int coreCount = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(coreCount);
-        int sliceSize = (coreCount < glyfCount) ? (glyfCount / coreCount) : glyfCount;
-        for (int blockOffset = 0; blockOffset < glyfCount; blockOffset += sliceSize) {
-            final int inclusive = blockOffset;
-            final int exclusive = Math.min(blockOffset + sliceSize, glyfCount);
-            executor.submit(() -> {
-                var reader = new BufferReader(buffer, 0);
-                for (int index = inclusive; index < exclusive; index++) {
-                    int offset = dataTable.offset + loca.get(index);
-                    int glyfLength = (index + 1 < glyfCount ? loca.get(index + 1) : dataTable.offset + dataTable.length) - loca.get(index);
-                    reader.position(offset);
-                    byte[] glyph;
-                    short numberOfContours = reader.ReadInt16();
-                    if (numberOfContours > 0) {
-                        short g_xMin = reader.ReadInt16();
-                        short g_yMin = reader.ReadInt16();
-                        short g_xMax = reader.ReadInt16();
-                        short g_yMax = reader.ReadInt16();
-                        int[] endPtsOfContours = reader.ReadUInt16Array(numberOfContours);
-                        int instructionLength = reader.ReadUInt16();
-                        var instructions = reader.ReadByteArray(instructionLength);
-                        int flagLength = endPtsOfContours[endPtsOfContours.length - 1] + 1;
-                        // 获取轮廓点描述标志
-                        var flags = new byte[flagLength];
-                        for (int n = 0; n < flagLength; ++n) {
-                            flags[n] = reader.ReadInt8();
-                            if ((flags[n] & 0x08) != 0x00) {
-                                for (int m = reader.ReadUInt8(); m > 0; --m) {
-                                    flags[++n] = flags[n - 1];
-                                }
-                            }
+    private void readGlyfTable(byte[] buffer) {
+        var dataTable = directorys.get("glyf");
+        assert dataTable != null;
+        int glyfCount = maxp.numGlyphs;
+        glyfArray = new GlyfLayout[glyfCount + 1];  // 创建容器时，多创建一个作为保留区
+
+        var reader = new BufferReader(buffer, 0);
+        for (int index = 1; index <= glyfCount; index++) {
+            if (loca[index - 1] == loca[index]) continue;   // 当前loca与下一个loca相同，表示这个字形不存在
+            int offset = dataTable.offset + loca[index - 1];
+            // 读GlyphHeaders
+            var glyph = new GlyfLayout();
+            reader.position(offset);
+            glyph.numberOfContours = reader.ReadInt16();
+            glyph.xMin = reader.ReadInt16();
+            glyph.yMin = reader.ReadInt16();
+            glyph.xMax = reader.ReadInt16();
+            glyph.yMax = reader.ReadInt16();
+
+            // 读Glyph轮廓数据
+            if (glyph.numberOfContours > 0) {
+                // 简单轮廓
+                glyph.glyphSimple = new GlyphTableBySimple();
+                glyph.glyphSimple.endPtsOfContours = reader.ReadUInt16Array(glyph.numberOfContours);
+                glyph.glyphSimple.instructionLength = reader.ReadUInt16();
+                glyph.glyphSimple.instructions = reader.ReadUInt8Array(glyph.glyphSimple.instructionLength);
+                int flagLength = glyph.glyphSimple.endPtsOfContours[glyph.glyphSimple.endPtsOfContours.length - 1] + 1;
+                // 获取轮廓点描述标志
+                glyph.glyphSimple.flags = new int[flagLength];
+                for (int n = 0; n < flagLength; ++n) {
+                    var glyphSimpleFlag = reader.ReadUInt8();
+                    glyph.glyphSimple.flags[n] = glyphSimpleFlag;
+                    if ((glyphSimpleFlag & 0x08) == 0x08) {
+                        for (int m = reader.ReadUInt8(); m > 0; --m) {
+                            glyph.glyphSimple.flags[++n] = glyphSimpleFlag;
                         }
-                        // 获取轮廓点描述x,y相对值
-                        ByteBuffer xyCoordinatesBuffer = ByteBuffer.allocate(flagLength * 4);
-                        // 获取轮廓点描述x轴相对值
-                        for (int n = 0; n < flagLength; ++n) {
-                            short same = (short) ((flags[n] & 0x10) != 0 ? 1 : -1);
-                            if ((flags[n] & 0x02) != 0) {
-                                xyCoordinatesBuffer.putShort((short) (same * reader.ReadUInt8()));
-                            } else {
-                                xyCoordinatesBuffer.putShort(same == 1 ? (short) 0 : reader.ReadInt16());
-                            }
-                        }
-                        // 获取轮廓点描述y轴相对值
-                        for (int n = 0; n < flagLength; ++n) {
-                            short same = (short) ((flags[n] & 0x20) != 0 ? 1 : -1);
-                            if ((flags[n] & 0x04) != 0) {
-                                xyCoordinatesBuffer.putShort((short) (same * reader.ReadUInt8()));
-                            } else {
-                                xyCoordinatesBuffer.putShort(same == 1 ? (short) 0 : reader.ReadInt16());
-                            }
-                        }
-                        // 保存轮廓点描述x,y相对值ByteArray
-                        glyph = xyCoordinatesBuffer.array();
-                    } else {
-                        // TODO: 处理复合字形
-                        glyph = reader.ReadByteArray(glyfLength - 2);
                     }
-                    glyf[index] = getHexFromBytes(glyph);
                 }
-            });
+                // 获取轮廓点描述x轴相对值
+                glyph.glyphSimple.xCoordinates = new int[flagLength];
+                for (int n = 0; n < flagLength; ++n) {
+                    switch (glyph.glyphSimple.flags[n] & 0x12) {
+                        case 0x02:
+                            glyph.glyphSimple.xCoordinates[n] = -1 * reader.ReadUInt8();
+                            break;
+                        case 0x12:
+                            glyph.glyphSimple.xCoordinates[n] = reader.ReadUInt8();
+                            break;
+                        case 0x10:
+                            glyph.glyphSimple.xCoordinates[n] = 0;  // 点位数据重复上一次数据，那么相对数据变化量就是0
+                            break;
+                        case 0x00:
+                            glyph.glyphSimple.xCoordinates[n] = reader.ReadInt16();
+                            break;
+                    }
+                }
+                // 获取轮廓点描述y轴相对值
+                glyph.glyphSimple.yCoordinates = new int[flagLength];
+                for (int n = 0; n < flagLength; ++n) {
+                    switch (glyph.glyphSimple.flags[n] & 0x24) {
+                        case 0x04:
+                            glyph.glyphSimple.yCoordinates[n] = -1 * reader.ReadUInt8();
+                            break;
+                        case 0x24:
+                            glyph.glyphSimple.yCoordinates[n] = reader.ReadUInt8();
+                            break;
+                        case 0x20:
+                            glyph.glyphSimple.yCoordinates[n] = 0;  // 点位数据重复上一次数据，那么相对数据变化量就是0
+                            break;
+                        case 0x00:
+                            glyph.glyphSimple.yCoordinates[n] = reader.ReadInt16();
+                            break;
+                    }
+                }
+            } else {
+                // 复合轮廓
+                glyph.glyphComponent = new LinkedList<>();
+                while (true) {
+                    var glyphTableComponent = new GlyphTableComponent();
+                    glyphTableComponent.flags = reader.ReadUInt16();
+                    glyphTableComponent.glyphIndex = reader.ReadUInt16();
+                    switch (glyphTableComponent.flags & 0b11) {
+                        case 0b00:
+                            glyphTableComponent.argument1 = reader.ReadUInt8();
+                            glyphTableComponent.argument2 = reader.ReadUInt8();
+                            break;
+                        case 0b10:
+                            glyphTableComponent.argument1 = reader.ReadInt8();
+                            glyphTableComponent.argument2 = reader.ReadInt8();
+                            break;
+                        case 0b01:
+                            glyphTableComponent.argument1 = reader.ReadUInt16();
+                            glyphTableComponent.argument2 = reader.ReadUInt16();
+                            break;
+                        case 0b11:
+                            glyphTableComponent.argument1 = reader.ReadInt16();
+                            glyphTableComponent.argument2 = reader.ReadInt16();
+                            break;
+                    }
+                    switch (glyphTableComponent.flags & 0b11001000) {
+                        case 0b00001000:
+                            // 有单一比例
+                            glyphTableComponent.yScale = glyphTableComponent.xScale = ((float) reader.ReadUInt16()) / 16384.0f;
+                            break;
+                        case 0b01000000:
+                            // 有X和Y的独立比例
+                            glyphTableComponent.xScale = ((float) reader.ReadUInt16()) / 16384.0f;
+                            glyphTableComponent.yScale = ((float) reader.ReadUInt16()) / 16384.0f;
+                            break;
+                        case 0b10000000:
+                            // 有2x2变换矩阵
+                            glyphTableComponent.xScale = ((float) reader.ReadUInt16()) / 16384.0f;
+                            glyphTableComponent.scale01 = ((float) reader.ReadUInt16()) / 16384.0f;
+                            glyphTableComponent.scale10 = ((float) reader.ReadUInt16()) / 16384.0f;
+                            glyphTableComponent.yScale = ((float) reader.ReadUInt16()) / 16384.0f;
+                            break;
+                    }
+                    glyph.glyphComponent.add(glyphTableComponent);
+                    if ((glyphTableComponent.flags & 0x20) == 0) break;
+                }
+            }
+            glyfArray[index] = glyph;   // 根据文档 glyfId=0 作为保留区使用，这里赋值从索引1开始
         }
-        executor.shutdown();
-        try {
-            boolean b = executor.awaitTermination(60, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Log.e("queryTTF", "glyf表解析出错: " + e);
+    }
+
+    /**
+     * 使用轮廓索引值获取轮廓数据
+     *
+     * @param glyfId 轮廓索引
+     * @return 轮廓数据
+     */
+    public String getGlyfById(int glyfId) {
+        var glyph = glyfArray[glyfId];
+        if (glyph == null) return null;    // 过滤不存在的字体轮廓
+        String glyphString;
+        if (glyph.numberOfContours >= 0) {
+            // 简单字形
+            int dataCount = glyph.glyphSimple.flags.length;
+            String[] coordinateArray = new String[dataCount];
+            for (int i = 0; i < dataCount; i++) {
+                coordinateArray[i] = glyph.glyphSimple.xCoordinates[i] + "," + glyph.glyphSimple.yCoordinates[i];
+            }
+            glyphString = String.join("|", coordinateArray);
+        } else {
+            // 复合字形
+            LinkedList<String> glyphIdList = new LinkedList<>();
+            for (var g : glyph.glyphComponent) {
+                glyphIdList.add(String.valueOf(g.glyphIndex));
+            }
+            glyphString = "[" + String.join(",", glyphIdList) + "]";
         }
+        return glyphString;
     }
 
     /**
@@ -453,196 +928,107 @@ public class QueryTTF {
      */
     public QueryTTF(final byte[] buffer) {
         var fontReader = new BufferReader(buffer, 0);
-        Log.i("queryTTF", "读文件头");
-        // 获取文件头
-        fileHeader.majorVersion = fontReader.ReadUInt16();
-        fileHeader.minorVersion = fontReader.ReadUInt16();
-        fileHeader.numOfTables = fontReader.ReadUInt16();
+//        Log.i("QueryTTF", "读文件头"); // 获取文件头
+        fileHeader.sfntVersion = fontReader.ReadUInt32();
+        fileHeader.numTables = fontReader.ReadUInt16();
         fileHeader.searchRange = fontReader.ReadUInt16();
         fileHeader.entrySelector = fontReader.ReadUInt16();
         fileHeader.rangeShift = fontReader.ReadUInt16();
         // 获取目录
-        for (int i = 0; i < fileHeader.numOfTables; ++i) {
+        for (int i = 0; i < fileHeader.numTables; ++i) {
             Directory d = new Directory();
-            d.tag = new String(fontReader.ReadByteArray(4), StandardCharsets.US_ASCII);
+            d.tableTag = new String(fontReader.ReadByteArray(4), StandardCharsets.US_ASCII);
             d.checkSum = fontReader.ReadUInt32();
             d.offset = fontReader.ReadUInt32();
             d.length = fontReader.ReadUInt32();
-            directorys.put(d.tag, d);
+            directorys.put(d.tableTag, d);
         }
 
-        Log.i("queryTTF", "解析表 name"); // 字体信息,包含版权、名称、作者等...
+//        Log.i("QueryTTF", "解析表 name"); // 字体信息,包含版权、名称、作者等...
         readNameTable(buffer);
-        Log.i("queryTTF", "解析表 head"); // 获取 head.indexToLocFormat
+//        Log.i("QueryTTF", "解析表 head"); // 获取 head.indexToLocFormat
         readHeadTable(buffer);
-        Log.i("queryTTF", "解析表 cmap"); // Unicode编码->轮廓索引 对照表
+//        Log.i("QueryTTF", "解析表 cmap"); // Unicode编码->轮廓索引 对照表
         readCmapTable(buffer);
-        Log.i("queryTTF", "解析表 loca"); // 轮廓数据偏移地址表
+//        Log.i("QueryTTF", "解析表 loca"); // 轮廓数据偏移地址表
         readLocaTable(buffer);
-        Log.i("queryTTF", "解析表 maxp"); // 获取 maxp.numGlyphs 字体轮廓数量
+//        Log.i("QueryTTF", "解析表 maxp"); // 获取 maxp.numGlyphs 字体轮廓数量
         readMaxpTable(buffer);
-        Log.i("queryTTF", "解析表 glyf"); // 字体轮廓数据表,需要解析loca,maxp表后计算
+//        Log.i("QueryTTF", "解析表 glyf"); // 字体轮廓数据表,需要解析loca,maxp表后计算
         readGlyfTable(buffer);
-        Log.i("queryTTF", "建立Unicode&Glyph映射表");
-        makeHashTable();
-        Log.i("queryTTF", "字体处理完成");
-    }
-
-    public final ConcurrentHashMap<Integer, String> unicodeToGlyph = new ConcurrentHashMap<>();
-    public final ConcurrentHashMap<String, Integer> glyphToUnicode = new ConcurrentHashMap<>();
-    public final ConcurrentHashMap<Integer, Integer> unicodeToGlyphIndex = new ConcurrentHashMap<>();
-
-    private void makeHashTable() {
-        int coreCount = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(coreCount);
-        int unicodeCount = 0xFFFF;
-        int sliceSize = (coreCount < unicodeCount) ? (unicodeCount / coreCount) : unicodeCount;
-        for (int blockOffset = 0; blockOffset < unicodeCount; blockOffset += sliceSize) {
-            final int inclusive = blockOffset;
-            final int exclusive = Math.min(blockOffset + sliceSize, unicodeCount);
-            executor.submit(() -> {
-                for (int index = inclusive; index < exclusive; index++) {
-                    int gid = queryGlyfIndex(index);
-                    if (gid < glyf.length) {
-                        unicodeToGlyphIndex.put(index, gid);
-                        var val = glyf[gid];
-                        unicodeToGlyph.put(index, val);
-                        if (!glyphToUnicode.containsKey(val)) glyphToUnicode.put(val, index);
-                    }
-                }
-            });
+//        Log.i("QueryTTF", "建立Unicode&Glyph映射表");
+        int glyfArrayLength = glyfArray.length;
+        for (var item : unicodeToGlyphId.entrySet()) {
+            int key = item.getKey();
+            int val = item.getValue() + 1;  // glyphArray已根据TTF文档将索引0作为保留位，这里从1开始索引
+            if (val >= glyfArrayLength) continue;
+            String glyfString = getGlyfById(val);
+            unicodeToGlyph.put(key, glyfString);
+            glyphToUnicode.put(glyfString, key);
         }
-        executor.shutdown();
-        try {
-            boolean b = executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Log.e("queryTTF", "建立Unicode&Glyph映射表出错: " + e);
-        }
+//        Log.i("QueryTTF", "字体处理完成");
     }
 
-//    /**
-//     * 获取字体信息 (1=字体名称)
-//     *
-//     * @param nameId 传入十进制字体信息索引
-//     * @return 返回查询结果字符串
-//     */
-//    public String getNameById(int nameId) {
-//        fontReader.index = Objects.requireNonNull(directorys.get("name")).offset;
-//        for (NameRecord record : name.records) {
-//            if (record.nameID != nameId) continue;
-//            fontReader.index += name.stringOffset + record.offset;
-//            return fontReader.ReadStrings(record.length, record.platformID == 1 ? StandardCharsets.UTF_8 : StandardCharsets.UTF_16BE);
-//        }
-//        return "error";
-//    }
+    public final HashMap<Integer, String> unicodeToGlyph = new HashMap<>();
+    public final HashMap<String, Integer> glyphToUnicode = new HashMap<>();
+    public final HashMap<Integer, Integer> unicodeToGlyphId = new HashMap<>();
 
-    public String getGlyfById(int gid) {
-        return glyf[gid];
+    /**
+     * 使用 Unicode 值获查询廓索引
+     *
+     * @param unicode 传入 Unicode 值
+     * @return 轮廓索引
+     */
+    public int getGlyfIdByUnicode(int unicode) {
+        var result = unicodeToGlyphId.get(unicode);
+        if (result == null) return 0;
+        return result + 1; // 根据TTF文档，轮廓索引的定义从1开始
     }
 
     /**
-     * 使用Unicode值查找轮廓索引
+     * 使用 Unicode 值查询轮廓数据
      *
-     * @param unicode 传入Unicode值
-     * @return 返回十进制轮廓索引
+     * @param unicode 传入 Unicode 值
+     * @return 轮廓数据
      */
-    public int queryGlyfIndex(int unicode) {
-        if (unicode == 0) return 0;
-
-        int fmtKey = 0;
-        for (var item : pps) {
-            for (CmapRecord record : Cmap.records) {
-                if ((item[0] == record.platformID) && (item[1] == record.platformSpecificID)) {
-                    fmtKey = record.offset;
-                    break;
-                }
-            }
-            if (fmtKey > 0) break;
-        }
-        if (fmtKey == 0) return 0;
-
-        int glyfID = 0;
-        CmapFormat table = Cmap.tables.get(fmtKey);
-        assert table != null;
-        int fmt = table.format;
-        if (fmt == 0) {
-            if (unicode < table.glyphIdArray.length) glyfID = table.glyphIdArray[unicode] & 0xFF;
-        } else if (fmt == 4) {
-            CmapFormat4 tab = (CmapFormat4) table;
-            if (unicode > tab.endCode[tab.endCode.length - 1]) return 0;
-            // 二分法查找数值索引
-            int start = 0, middle, end = tab.endCode.length - 1;
-            while (start + 1 < end) {
-                middle = (start + end) / 2;
-                if (tab.endCode[middle] <= unicode) start = middle;
-                else end = middle;
-            }
-            if (tab.endCode[start] < unicode) ++start;
-            if (unicode < tab.startCode[start]) return 0;
-            if (tab.idRangeOffset[start] != 0) {
-                glyfID = tab.glyphIdArray[unicode - tab.startCode[start] + (tab.idRangeOffset[start] >> 1) - (tab.idRangeOffset.length - start)];
-            } else glyfID = unicode + tab.idDelta[start];
-            glyfID &= 0xFFFF;
-        } else if (fmt == 6) {
-            CmapFormat6 tab = (CmapFormat6) table;
-            int index = unicode - tab.firstCode;
-            if (0 <= index && index < tab.glyphIdArray.length) glyfID = tab.glyphIdArray[index];
-        } else if (fmt == 12) {
-            CmapFormat12 tab = (CmapFormat12) table;
-            if (unicode > tab.groups.get(tab.numGroups - 1)[1]) return 0;
-            for (int i = 0; i < tab.numGroups; i++) {
-                if (tab.groups.get(i)[0] <= unicode && unicode <= tab.groups.get(i)[1]) {
-                    glyfID = tab.groups.get(i)[2] + unicode - tab.groups.get(i)[0];
-                    break;
-                }
-            }
-        }
-        return glyfID;
+    public String getGlyfByUnicode(int unicode) {
+        return unicodeToGlyph.get(unicode);
     }
 
     /**
-     * 使用Unicode值获取轮廓索引
+     * 使用轮廓数据反查 Unicode 值
      *
-     * @param unicode 传入Unicode值
-     * @return 返回十进制轮廓索引
+     * @param glyph 传入轮廓数据
+     * @return Unicode
      */
-    public int getGlyfIndex(int unicode) {
-        var glyfIndex = unicodeToGlyphIndex.get(unicode);
-        if (glyfIndex == null) return 0;
-        return glyfIndex;
+    public int getUnicodeByGlyf(String glyph) {
+        var result = glyphToUnicode.get(glyph);
+        if (result == null) return 0;
+        return result;
     }
 
     /**
-     * 使用Unicode值获取轮廓数据
+     * Unicode 空白字符判断
      *
-     * @param unicode 传入Unicode值
-     * @return 返回轮廓数组的String值
+     * @param unicode 字符的 Unicode 值
+     * @return true:是空白字符; false:非空白字符
      */
-    public String getGlyfByCode(int unicode) {
-        return unicodeToGlyph.getOrDefault(unicode, "");
-    }
-
-    /**
-     * 使用轮廓数据获取Unicode值
-     *
-     * @param glyph 传入轮廓数组的String值
-     * @return 返回Unicode十进制值
-     */
-    public int getCodeByGlyf(String glyph) {
-        //noinspection ConstantConditions
-        return glyphToUnicode.getOrDefault(glyph, 0);
-    }
-
-    /**
-     * 字体轮廓数据转Hex字符串
-     *
-     * @param glyph 字体轮廓数据
-     * @return 返回轮廓数组的String值
-     */
-    public String getHexFromBytes(byte[] glyph) {
-        if (glyph == null) return "";
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : glyph) hexString.append(String.format("%02X", b));
-        return hexString.toString();
+    public boolean isBlankUnicode(int unicode) {
+        return switch (unicode) {
+            case 0x0009,    // 水平制表符 (Horizontal Tab)
+                    0x0020,    // 空格 (Space)
+                    0x00A0,    // 不中断空格 (No-Break Space)
+                    0x2002,    // En空格 (En Space)
+                    0x2003,    // Em空格 (Em Space)
+                    0x2007,    // 刚性空格 (Figure Space)
+                    0x200A,    // 发音修饰字母的连字符 (Hair Space)
+                    0x200B,    // 零宽空格 (Zero Width Space)
+                    0x200C,    // 零宽不连字 (Zero Width Non-Joiner)
+                    0x200D,    // 零宽连字 (Zero Width Joiner)
+                    0x202F,    // 狭窄不中断空格 (Narrow No-Break Space)
+                    0x205F     // 中等数学空格 (Medium Mathematical Space)
+                    -> true;
+            default -> false;
+        };
     }
 }
