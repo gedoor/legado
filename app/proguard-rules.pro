@@ -223,6 +223,9 @@
 -keep class com.sun.script.javascript.** { *; }
 -keep class org.mozilla.** { *; }
 -dontwarn org.mozilla.javascript.engine.RhinoScriptEngineFactory
+### 以下内容是更新rhino1.7.14.jar后IDE提示添加的
+-dontwarn java.beans.**
+-dontwarn javax.script.**
 
 ## EPUB
 -dontwarn nl.siegmann.epublib.**
@@ -270,20 +273,3 @@
 -keep class * extends java.lang.Exception
 -keep class * extends java.lang.Error
 -keep class **Exception
-
-# 不知道以下内容是啥，AndroidStudio让加的
--dontwarn java.beans.BeanDescriptor
--dontwarn java.beans.BeanInfo
--dontwarn java.beans.IntrospectionException
--dontwarn java.beans.Introspector
--dontwarn java.beans.PropertyDescriptor
--dontwarn javax.script.AbstractScriptEngine
--dontwarn javax.script.Bindings
--dontwarn javax.script.Compilable
--dontwarn javax.script.CompiledScript
--dontwarn javax.script.Invocable
--dontwarn javax.script.ScriptContext
--dontwarn javax.script.ScriptEngine
--dontwarn javax.script.ScriptEngineFactory
--dontwarn javax.script.ScriptException
--dontwarn javax.script.SimpleBindings
