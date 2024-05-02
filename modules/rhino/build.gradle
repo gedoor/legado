@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    api(fileTree(dir: 'lib', include: ['rhino-1.7.13-2.jar']))
+    api(fileTree(dir: 'lib', include: ['rhino-1.7.14.jar']))
 
     implementation(libs.kotlinx.coroutines.core)
 

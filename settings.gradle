@@ -49,4 +49,4 @@ rootProject.name = 'legado'
 
 include ':app'
 include ':modules:book'
-include ':modules:rhino1.7.3'
+include ':modules:rhino'

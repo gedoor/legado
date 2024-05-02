@@ -219,9 +219,9 @@ dependencies {
     implementation(libs.json.path)
     implementation(libs.jsoupxpath)
     implementation(project(path: ':modules:book'))
+    implementation implementation(project(path: ':modules:rhino'))
 
     //JS rhino
-    implementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
     implementation(libs.okhttp)
