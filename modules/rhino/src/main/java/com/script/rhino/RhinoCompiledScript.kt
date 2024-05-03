@@ -53,114 +53,74 @@ internal class RhinoCompiledScript(
 
     @Throws(ScriptException::class)
     override fun eval(context: ScriptContext): Any? {
-        val cx = Context.enter()
-        val result: Any?
-        try {
-            val scope = engine.getRuntimeScope(context)
-            val ret = script.exec(cx, scope)
-            result = engine.unwrapReturnValue(ret)
-        } catch (re: RhinoException) {
-            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-            val msg: String = if (re is JavaScriptException) {
-                re.value.toString()
-            } else {
-                re.toString()
-            }
-            val se = ScriptException(msg, re.sourceName(), line)
-            se.initCause(re)
-            throw se
-        } finally {
-            Context.exit()
+        return Context.use {
+            val cx = it.enter()
+            cx.runCatching {
+                val scope = engine.getRuntimeScope(context)
+                val ret = script.exec(cx, scope)
+                engine.unwrapReturnValue(ret)
+            }.onFailure {
+                throw ScriptException.fromException(it)
+            }.getOrThrow()
         }
-        return result
     }
 
     override fun eval(scope: Scriptable): Any? {
-        val cx = Context.enter()
-        val result: Any?
-        try {
-            val ret = script.exec(cx, scope)
-            result = engine.unwrapReturnValue(ret)
-        } catch (re: RhinoException) {
-            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-            val msg: String = if (re is JavaScriptException) {
-                re.value.toString()
-            } else {
-                re.toString()
-            }
-            val se = ScriptException(msg, re.sourceName(), line)
-            se.initCause(re)
-            throw se
-        } finally {
-            Context.exit()
+        return Context.use {
+            val cx = it.enter()
+            cx.runCatching {
+                val ret = script.exec(cx, scope)
+                engine.unwrapReturnValue(ret)
+            }.onFailure {
+                throw ScriptException.fromException(it)
+            }.getOrThrow()
         }
-        return result
     }
 
     override fun eval(scope: Scriptable, coroutineContext: CoroutineContext?): Any? {
-        val cx = Context.enter()
-        if (cx is RhinoContext) {
-            cx.coroutineContext = coroutineContext
+        return Context.use {
+            val cx = it.enter()
+            cx.runCatching {
+                if (cx is RhinoContext) {
+                    cx.coroutineContext = coroutineContext
+                }
+                val ret = script.exec(cx, scope)
+                engine.unwrapReturnValue(ret)
+            }.onFailure {
+                throw ScriptException.fromException(it)
+            }.getOrThrow()
         }
-        val result: Any?
-        try {
-            val ret = script.exec(cx, scope)
-            result = engine.unwrapReturnValue(ret)
-        } catch (re: RhinoException) {
-            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-            val msg: String = if (re is JavaScriptException) {
-                re.value.toString()
-            } else {
-                re.toString()
-            }
-            val se = ScriptException(msg, re.sourceName(), line)
-            se.initCause(re)
-            throw se
-        } finally {
-            Context.exit()
-        }
-        return result
     }
 
     override suspend fun evalSuspend(scope: Scriptable): Any? {
-        val cx = Context.enter()
         var ret: Any?
         withContext(VMBridgeReflect.contextLocal.asContextElement()) {
-            try {
-                try {
-                    ret = cx.executeScriptWithContinuations(script, scope)
-                } catch (e: ContinuationPending) {
-                    var pending = e
-                    while (true) {
-                        try {
-                            @Suppress("UNCHECKED_CAST")
-                            val suspendFunction =
-                                pending.applicationState as Function1<Continuation<Any?>, Any?>
-                            val functionResult = suspendCoroutineUninterceptedOrReturn { cout ->
-                                suspendFunction.invoke(cout)
+            Context.use {
+                val cx = it.enter()
+                cx.runCatching {
+                    try {
+                        ret = cx.executeScriptWithContinuations(script, scope)
+                    } catch (e: ContinuationPending) {
+                        var pending = e
+                        while (true) {
+                            try {
+                                @Suppress("UNCHECKED_CAST")
+                                val suspendFunction =
+                                    pending.applicationState as Function1<Continuation<Any?>, Any?>
+                                val functionResult = suspendCoroutineUninterceptedOrReturn { cout ->
+                                    suspendFunction.invoke(cout)
+                                }
+                                val continuation = pending.continuation
+                                ret = cx.resumeContinuation(continuation, scope, functionResult)
+                                break
+                            } catch (e: ContinuationPending) {
+                                pending = e
                             }
-                            val continuation = pending.continuation
-                            ret = cx.resumeContinuation(continuation, scope, functionResult)
-                            break
-                        } catch (e: ContinuationPending) {
-                            pending = e
                         }
                     }
-                }
-            } catch (re: RhinoException) {
-                val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-                val msg: String = if (re is JavaScriptException) {
-                    re.value.toString()
-                } else {
-                    re.toString()
-                }
-                val se = ScriptException(msg, re.sourceName(), line)
-                se.initCause(re)
-                throw se
-            } catch (var14: IOException) {
-                throw ScriptException(var14)
-            } finally {
-                Context.exit()
+                }.onFailure {
+                    throw ScriptException.fromException(it)
+                }.getOrThrow()
             }
         }
         return engine.unwrapReturnValue(ret)

@@ -221,11 +221,10 @@ internal class ExternalScriptable @JvmOverloads constructor(
             var v = ScriptableObject.getProperty(this, methodName)
             if (v is Function) {
                 val function = v
-                val cx = Context.enter()
-                v = try {
-                    function.call(cx, function.parentScope, this, args)
-                } finally {
-                    Context.exit()
+                v = Context.use {
+                    function.call(
+                        it.enter(), function.parentScope, this, args
+                    )
                 }
                 if (v != null) {
                     if (v !is Scriptable) {

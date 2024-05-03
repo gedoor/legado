@@ -2,8 +2,31 @@
  * Decompiled with CFR 0.152.
  */
 package com.script
+import org.mozilla.javascript.JavaScriptException
+import org.mozilla.javascript.RhinoException
 
 class ScriptException : Exception {
+
+    companion object {
+        fun fromException(re: Exception): ScriptException {
+            return when (re) {
+                is RhinoException -> {
+                    val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
+                    val msg: String = if (re is JavaScriptException) {
+                        re.value.toString()
+                    } else {
+                        re.toString()
+                    }
+                    val se = ScriptException(msg, re.sourceName(), line, re.columnNumber())
+                    se.initCause(re)
+                    se
+                }
+                // is IOException -> ScriptException(exception)
+                else -> ScriptException(re)
+            }
+        }
+    }
+
     var columnNumber: Int
         private set
     var fileName: String?

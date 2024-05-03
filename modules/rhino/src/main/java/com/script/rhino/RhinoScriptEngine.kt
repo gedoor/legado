@@ -61,28 +61,18 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     @Throws(ScriptException::class)
     override fun eval(reader: Reader, scope: Scriptable): Any? {
-        val cx = Context.enter()
-        val ret: Any?
-        try {
-            var filename = this["javax.script.filename"] as? String
-            filename = filename ?: "<Unknown source>"
-            ret = cx.evaluateReader(scope, reader, filename, 1, null)
-        } catch (re: RhinoException) {
-            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-            val msg: String = if (re is JavaScriptException) {
-                re.value.toString()
-            } else {
-                re.toString()
-            }
-            val se = ScriptException(msg, re.sourceName(), line)
-            se.initCause(re)
-            throw se
-        } catch (var14: IOException) {
-            throw ScriptException(var14)
-        } finally {
-            Context.exit()
+        return Context.use {
+            val cx = it.enter()
+            cx.runCatching {
+                var filename = this["javax.script.filename"] as? String
+                filename = filename ?: "<Unknown source>"
+                val ret: Any?
+                ret = cx.evaluateReader(scope, reader, filename, 1, null)
+                unwrapReturnValue(ret)
+            }.onFailure {
+                throw ScriptException.fromException(it)
+            }.getOrThrow()
         }
-        return unwrapReturnValue(ret)
     }
 
     override fun eval(
@@ -90,76 +80,56 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         scope: Scriptable,
         coroutineContext: CoroutineContext?
     ): Any? {
-        val cx = Context.enter()
-        if (cx is RhinoContext) {
-            cx.coroutineContext = coroutineContext
+        return Context.use {
+                val cx = it.enter()
+                cx.runCatching {
+                if (cx is RhinoContext) {
+                    cx.coroutineContext = coroutineContext
+                }
+                val ret: Any?
+                var filename = this["javax.script.filename"] as? String
+                filename = filename ?: "<Unknown source>"
+                ret = cx.evaluateReader(scope, reader, filename, 1, null)
+                unwrapReturnValue(ret)
+            }.onFailure {
+                throw ScriptException.fromException(it)
+            }.getOrThrow()
         }
-        val ret: Any?
-        try {
-            var filename = this["javax.script.filename"] as? String
-            filename = filename ?: "<Unknown source>"
-            ret = cx.evaluateReader(scope, reader, filename, 1, null)
-        } catch (re: RhinoException) {
-            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-            val msg: String = if (re is JavaScriptException) {
-                re.value.toString()
-            } else {
-                re.toString()
-            }
-            val se = ScriptException(msg, re.sourceName(), line)
-            se.initCause(re)
-            throw se
-        } catch (var14: IOException) {
-            throw ScriptException(var14)
-        } finally {
-            Context.exit()
-        }
-        return unwrapReturnValue(ret)
     }
 
     @Throws(ContinuationPending::class)
     override suspend fun evalSuspend(reader: Reader, scope: Scriptable): Any? {
-        val cx = Context.enter()
         var ret: Any?
-        withContext(VMBridgeReflect.contextLocal.asContextElement()) {
-            try {
-                var filename = this@RhinoScriptEngine["javax.script.filename"] as? String
-                filename = filename ?: "<Unknown source>"
-                val script = cx.compileReader(reader, filename, 1, null)
-                try {
-                    ret = cx.executeScriptWithContinuations(script, scope)
-                } catch (e: ContinuationPending) {
-                    var pending = e
-                    while (true) {
-                        try {
-                            @Suppress("UNCHECKED_CAST")
-                            val suspendFunction =
-                                pending.applicationState as Function1<Continuation<Any?>, Any?>
-                            val functionResult = suspendCoroutineUninterceptedOrReturn { cout ->
-                                suspendFunction.invoke(cout)
+        Context.use {
+            val cx = it.enter()
+            withContext(VMBridgeReflect.contextLocal.asContextElement()) {
+                cx.runCatching {
+                    var filename = this@RhinoScriptEngine["javax.script.filename"] as? String
+                    filename = filename ?: "<Unknown source>"
+                    val script = cx.compileReader(reader, filename, 1, null)
+                    try {
+                        ret = cx.executeScriptWithContinuations(script, scope)
+                    } catch (e: ContinuationPending) {
+                        var pending = e
+                        while (true) {
+                            try {
+                                @Suppress("UNCHECKED_CAST")
+                                val suspendFunction =
+                                    pending.applicationState as Function1<Continuation<Any?>, Any?>
+                                val functionResult = suspendCoroutineUninterceptedOrReturn { cout ->
+                                    suspendFunction.invoke(cout)
+                                }
+                                val continuation = pending.continuation
+                                ret = cx.resumeContinuation(continuation, scope, functionResult)
+                                break
+                            } catch (e: ContinuationPending) {
+                                pending = e
                             }
-                            val continuation = pending.continuation
-                            ret = cx.resumeContinuation(continuation, scope, functionResult)
-                            break
-                        } catch (e: ContinuationPending) {
-                            pending = e
                         }
                     }
-                }
-            } catch (re: RhinoException) {
-                val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-                val msg: String = if (re is JavaScriptException) {
-                    re.value.toString()
-                } else {
-                    re.toString()
-                }
-                val se = ScriptException(msg, re.sourceName(), line)
-                se.initCause(re)
-                throw se
-            } catch (var14: IOException) {
-                throw ScriptException(var14)
-            } finally {
-                Context.exit()
+                }.onFailure {
+                    throw ScriptException.fromException(it)
+                }.getOrThrow()
             }
         }
         return unwrapReturnValue(ret)
@@ -187,34 +157,29 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     @Throws(ScriptException::class, NoSuchMethodException::class)
     private operator fun invoke(thiz: Any?, name: String?, vararg args: Any?): Any? {
         var thiz1 = thiz
-        val cx = Context.enter()
-        val var11: Any?
-        try {
-            if (name == null) {
-                throw NullPointerException("方法名为空")
-            }
-            if (thiz1 != null && thiz1 !is Scriptable) {
-                thiz1 = Context.toObject(thiz1, topLevel)
-            }
-            val engineScope = getRuntimeScope(context)
-            val localScope = if (thiz1 != null) thiz1 as Scriptable else engineScope
-            val obj = ScriptableObject.getProperty(localScope, name) as? Function
-                ?: throw NoSuchMethodException("no such method: $name")
-            var scope = obj.parentScope
-            if (scope == null) {
-                scope = engineScope
-            }
-            val result = obj.call(cx, scope, localScope, wrapArguments(args as? Array<Any?>))
-            var11 = unwrapReturnValue(result)
-        } catch (re: RhinoException) {
-            val line = if (re.lineNumber() == 0) -1 else re.lineNumber()
-            val se = ScriptException(re.toString(), re.sourceName(), line)
-            se.initCause(re)
-            throw se
-        } finally {
-            Context.exit()
+        return Context.use {
+            val cx = it.enter()
+            cx.runCatching {
+                if (name == null) {
+                    throw NullPointerException("方法名为空")
+                }
+                if (thiz1 != null && thiz1 !is Scriptable) {
+                    thiz1 = Context.toObject(thiz1, topLevel)
+                }
+                val engineScope = getRuntimeScope(context)
+                val localScope = if (thiz1 != null) thiz1 as Scriptable else engineScope
+                val obj = ScriptableObject.getProperty(localScope, name) as? Function
+                    ?: throw NoSuchMethodException("no such method: $name")
+                var scope = obj.parentScope
+                if (scope == null) {
+                    scope = engineScope
+                }
+                val result = obj.call(cx, scope, localScope, wrapArguments(args as? Array<Any?>))
+                unwrapReturnValue(result)
+            }.onFailure {
+                throw ScriptException.fromException(it)
+            }.getOrThrow()
         }
-        return var11
     }
 
     override fun <T> getInterface(clazz: Class<T>): T? {
@@ -239,14 +204,12 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     override fun getRuntimeScope(context: ScriptContext): Scriptable {
         val newScope: Scriptable = ExternalScriptable(context, indexedProps)
-        val cx = Context.enter()
-        try {
+        return Context.use {
+            val cx = it.enter()
             newScope.prototype = RhinoTopLevel(cx, this)
-        } finally {
-            Context.exit()
+            //newScope.put("context", newScope, context)
+            newScope
         }
-        //newScope.put("context", newScope, context)
-        return newScope
     }
 
     @Throws(ScriptException::class)
@@ -256,21 +219,19 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     @Throws(ScriptException::class)
     override fun compile(script: Reader): CompiledScript {
-        val cx = Context.enter()
-        val ret: RhinoCompiledScript
-        try {
-            var fileName = this["javax.script.filename"] as? String
-            if (fileName == null) {
-                fileName = "<Unknown Source>"
-            }
-            val scr = cx.compileReader(script, fileName, 1, null)
-            ret = RhinoCompiledScript(this, scr)
-        } catch (var9: Exception) {
-            throw ScriptException(var9)
-        } finally {
-            Context.exit()
+        return Context.use {
+            val cx = it.enter()
+            cx.runCatching {
+                var fileName = this["javax.script.filename"] as? String
+                if (fileName == null) {
+                    fileName = "<Unknown Source>"
+                }
+                val scr = cx.compileReader(script, fileName, 1, null)
+                RhinoCompiledScript(this, scr)
+            }.onFailure {
+                throw ScriptException.fromException(it)
+            }.getOrThrow()
         }
-        return ret
     }
 
     fun wrapArguments(args: Array<Any?>?): Array<Any?> {
@@ -369,11 +330,9 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 accessContext = AccessController.getContext()
             }
         }
-        val cx = Context.enter()
-        try {
+        Context.use {
+            val cx = it.enter()
             topLevel = RhinoTopLevel(cx, this)
-        } finally {
-            Context.exit()
         }
         indexedProps = HashMap()
         implementor = object : InterfaceImplementor(this) {
