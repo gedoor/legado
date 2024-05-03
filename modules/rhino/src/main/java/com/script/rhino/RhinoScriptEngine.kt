@@ -310,7 +310,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             override fun hasFeature(cx: Context, featureIndex: Int): Boolean {
                 @Suppress("UNUSED_EXPRESSION")
                 return when (featureIndex) {
-                    //Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true
+                    Context.FEATURE_ENABLE_JAVA_MAP_ACCESS -> true
                     else -> super.hasFeature(cx, featureIndex)
                 }
             }
