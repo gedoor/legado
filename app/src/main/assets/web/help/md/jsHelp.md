@@ -5,7 +5,7 @@
 
 |构造函数|函数|对象|调用类|简要说明|
 |------|-----|------|----|------|
-|JavaImporter|ImportClass ImportPackage| |[ImporterTopLevel](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/ImporterTopLevel.java#L147-L190)|导入Java类到JavaScript|
+|JavaImporter|importClass importPackage| |[ImporterTopLevel](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/ImporterTopLevel.java#L147-L190)|导入Java类到JavaScript|
 ||getClass|Packages java javax ...|[NativeJavaTopPackage](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/NativeJavaTopPackage.java#L66-L104)|默认导入JavaScript中的Java类|
 |JavaAdapter|||[JavaAdapter](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/JavaAdapter.java)|继承Java类|
 
