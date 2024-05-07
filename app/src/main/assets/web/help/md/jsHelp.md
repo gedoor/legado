@@ -184,7 +184,8 @@ java.get*ByteArrayContent(url: String, path: String): ByteArray?
 ```
 * URI编码
 ```js
-java.encodeURI(str: String, enc: String? "UTF-8"): String
+java.encodeURI(str: String) //默认enc="UTF-8"
+java.encodeURI(str: String, enc: String)
 ```
 * base64
 > flags参数可省略，默认Base64.NO_WRAP，查看[flags参数说明](https://blog.csdn.net/zcmain/article/details/97051870)
