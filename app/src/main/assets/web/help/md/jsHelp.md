@@ -47,7 +47,7 @@ java.searchBook(bookName: string)
 * 添加书架
 
 ```js
-java.addBook(bookUrl)
+java.addBook(bookUrl: String)
 ```
 
 ### [AnalyzeUrl](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeUrl.kt) 部分函数
