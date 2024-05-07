@@ -47,7 +47,7 @@ java.searchBook(bookName: string)
 * 添加书架
 
 ```js
-java.addBook(bookUrl)
+java.addBook(bookUrl: String)
 ```
 
 ### [AnalyzeUrl](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeUrl.kt) 部分函数
@@ -181,6 +181,11 @@ java.get*StringContent(url: String, path: String, charsetName: String): String
 
 java.get*ByteArrayContent(url: String, path: String): ByteArray?
 
+```
+* URI编码
+```js
+java.encodeURI(str: String) //默认enc="UTF-8"
+java.encodeURI(str: String, enc: String)
 ```
 * base64
 > flags参数可省略，默认Base64.NO_WRAP，查看[flags参数说明](https://blog.csdn.net/zcmain/article/details/97051870)
@@ -384,16 +389,23 @@ source.getVariable()
 
 * 登录头操作
 ```js
+获取登录头
 source.getLoginHeader()
+获取登录头某一键值
 source.getLoginHeaderMap().get(key: String)
+保存登录头
 source.putLoginHeader(header: String)
+清除登录头
 source.removeLoginHeader()
 ```
 * 用户登录信息操作
 > 使用`登录UI`规则，并成功登录，阅读自动加密保存登录UI规则中除type为button的信息
 ```js
+login函数获取登录信息
 source.getLoginInfo()
+login函数获取登录信息键值
 source.getLoginInfoMap().get(key: String)
+清除登录信息
 source.removeLoginInfo()
 ```
 ## cookie对象的部分可用函数
@@ -402,6 +414,10 @@ source.removeLoginInfo()
 cookie.getCookie(url)
 获取cookie某一键值
 cookie.getKey(url,key)
+设置cookie
+cookie.setCookie(url,cookie)
+替换cookie
+cookie.replaceCookie(url,cookie)
 删除cookie
 cookie.removeCookie(url)
 ```
