@@ -178,13 +178,14 @@ open class WebDav(
             //依然是优化支持 caddy 自建的 WebDav ，其目录后缀都为“/”, 所以删除“/”的判定，不然无法获取该目录项
             val href = element.findNS("href", ns)[0].text().replace("+", "%2B")
             val hrefDecode = URLDecoder.decode(href, "UTF-8")
-                .removeSuffix("/")
-            val fileName = hrefDecode.substringAfterLast("/")
             val webDavFile: WebDav
             try {
                 val urlName = hrefDecode.ifEmpty {
                     url.file.replace("/", "")
                 }
+                val displayName = element
+                    .findNS("displayname", ns)
+                    .firstOrNull()?.text().orEmpty()
                 val contentType = element
                     .findNS("getcontenttype", ns)
                     .firstOrNull()?.text().orEmpty()
@@ -206,7 +207,7 @@ open class WebDav(
                 webDavFile = WebDavFile(
                     fullURL,
                     authorization,
-                    displayName = fileName,
+                    displayName = displayName,
                     urlName = urlName,
                     size = size,
                     contentType = contentType,
