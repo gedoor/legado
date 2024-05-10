@@ -284,14 +284,6 @@ data class Book(
         }
     }
 
-    fun getBookSource(): BookSource? {
-        return appDb.bookSourceDao.getBookSource(origin)
-    }
-
-    fun isLocalModified(): Boolean {
-        return isLocal && LocalBook.getLastModified(this).getOrDefault(0L) > latestChapterTime
-    }
-
     fun toSearchBook() = SearchBook(
         name = name,
         author = author,
