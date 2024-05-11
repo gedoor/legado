@@ -96,12 +96,11 @@ class WebService : BaseService() {
             if (addressList.any()) {
                 notificationList.addAll(addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) })
                 hostAddress = notificationList.first()
-                startForegroundNotification()
             } else {
                 hostAddress = getString(R.string.network_connection_unavailable)
                 notificationList.add(hostAddress)
-                startForegroundNotification()
             }
+            startForegroundNotification()
             postEvent(EventBus.WEB_SERVICE, hostAddress)
         }
     }
@@ -184,6 +183,7 @@ class WebService : BaseService() {
      */
     override fun startForegroundNotification() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdWeb)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_web_service_noti)
             .setOngoing(true)
             .setContentTitle(getString(R.string.web_service))
@@ -196,7 +196,6 @@ class WebService : BaseService() {
             getString(R.string.cancel),
             servicePendingIntent<WebService>(IntentAction.stop)
         )
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(NotificationId.WebService, notification)
     }
