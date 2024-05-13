@@ -71,6 +71,8 @@ open class WebDav(
                   <resourcetype />
                </prop>
             </propfind>"""
+
+        private const val DEFAULT_CONTENT_TYPE = "application/octet-stream"
     }
 
 
@@ -304,18 +306,12 @@ open class WebDav(
      * 上传文件
      */
     @Throws(WebDavException::class)
-    suspend fun upload(
-        localPath: String,
-        contentType: String = "application/octet-stream"
-    ) {
+    suspend fun upload(localPath: String, contentType: String = DEFAULT_CONTENT_TYPE) {
         upload(File(localPath), contentType)
     }
 
     @Throws(WebDavException::class)
-    suspend fun upload(
-        file: File,
-        contentType: String = "application/octet-stream"
-    ) {
+    suspend fun upload(file: File, contentType: String = DEFAULT_CONTENT_TYPE) {
         kotlin.runCatching {
             withContext(IO) {
                 if (!file.exists()) throw WebDavException("文件不存在")
@@ -336,7 +332,7 @@ open class WebDav(
     }
 
     @Throws(WebDavException::class)
-    suspend fun upload(byteArray: ByteArray, contentType: String) {
+    suspend fun upload(byteArray: ByteArray, contentType: String = DEFAULT_CONTENT_TYPE) {
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         kotlin.runCatching {
             withContext(IO) {
@@ -356,7 +352,7 @@ open class WebDav(
     }
 
     @Throws(WebDavException::class)
-    suspend fun upload(uri: Uri, contentType: String) {
+    suspend fun upload(uri: Uri, contentType: String = DEFAULT_CONTENT_TYPE) {
         // 务必注意RequestBody不要嵌套，不然上传时内容可能会被追加多余的文件信息
         kotlin.runCatching {
             withContext(IO) {

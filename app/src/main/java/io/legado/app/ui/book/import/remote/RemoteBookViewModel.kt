@@ -20,7 +20,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import java.util.*
+import java.util.Collections
 
 class RemoteBookViewModel(application: Application) : BaseViewModel(application) {
     var sortKey = RemoteBookSort.Default
@@ -78,6 +78,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 }
                 return@sortedWith compare
             }
+
             else -> list.sortedWith { o1, o2 ->
                 val compare = -compareValues(o1.isDir, o2.isDir)
                 if (compare == 0) {
@@ -132,10 +133,8 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 val downloadBookUri = bookWebDav.downloadRemoteBook(remoteBook)
                 LocalBook.importFiles(downloadBookUri).forEach { book ->
                     book.origin = BookType.webDavTag + CustomUrl(remoteBook.path)
-                        .putAttribute(
-                            "serverID",
-                            bookWebDav.serverID
-                        ).toString()
+                        .putAttribute("serverID", bookWebDav.serverID)
+                        .toString()
                     book.save()
                 }
                 remoteBook.isOnBookShelf = true
@@ -152,7 +151,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun updateCallBackFlow(filterKey: String?) {
-       dataCallback?.screen(filterKey)
+        dataCallback?.screen(filterKey)
     }
 
     interface DataCallback {
