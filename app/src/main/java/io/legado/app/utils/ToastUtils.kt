@@ -4,17 +4,14 @@ package io.legado.app.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import io.legado.app.BuildConfig
-import io.legado.app.R
+import io.legado.app.databinding.ViewToastBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
-import splitties.views.inflate
+import splitties.systemservices.layoutInflater
 
 private var toast: Toast? = null
 
@@ -31,14 +28,13 @@ fun Context.toastOnUi(message: CharSequence?, duration: Int = Toast.LENGTH_SHORT
         kotlin.runCatching {
             toast?.cancel()
             toast = Toast(this)
-            val toastView: View = inflate(R.layout.view_toast)
-            toast?.view = toastView
-            val cardView = toastView.findViewById<CardView>(R.id.cv_content)
-            cardView.setCardBackgroundColor(bottomBackground)
             val isLight = ColorUtils.isColorLight(bottomBackground)
-            val textView = toastView.findViewById<TextView>(R.id.tv_text)
-            textView.setTextColor(getPrimaryTextColor(isLight))
-            textView.text = message
+            ViewToastBinding.inflate(layoutInflater).run {
+                toast?.view = root
+                cvToast.setCardBackgroundColor(bottomBackground)
+                tvText.setTextColor(getPrimaryTextColor(isLight))
+                tvText.text = message
+            }
             toast?.duration = duration
             toast?.show()
         }
