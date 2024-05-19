@@ -443,9 +443,13 @@ class ReadView(context: Context, attrs: AttributeSet) :
         curPage.selectText(x, y) { textPos ->
             val compare = initialTextPos.compare(textPos)
             when {
-                compare >= 0 -> {
+                compare > 0 -> {
                     curPage.selectStartMoveIndex(textPos)
-                    curPage.selectEndMoveIndex(initialTextPos)
+                    curPage.selectEndMoveIndex(
+                        initialTextPos.relativePagePos,
+                        initialTextPos.lineIndex,
+                        initialTextPos.columnIndex - 1
+                    )
                 }
 
                 else -> {

@@ -278,17 +278,18 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (textPos.compare(selectEnd) <= 0) {
                 selectStart.upData(pos = textPos)
                 upSelectedStart(
-                    if (textPos.isTouch) textColumn.start else textColumn.end,
+                    if (textPos.columnIndex < textLine.columns.lastIndex) textColumn.start else textColumn.end,
                     textLine.lineBottom + relativeOffset,
                     textLine.lineTop + relativeOffset
                 )
             } else {
                 reverseStartCursor = true
                 reverseEndCursor = false
+                selectEnd.columnIndex++
                 selectStartMoveIndex(selectEnd)
                 selectEnd.upData(textPos)
                 upSelectedEnd(
-                    if (selectEnd.isTouch || selectEnd.isLast) textColumn.end else textColumn.start,
+                    if (textPos.columnIndex > -1) textColumn.end else textColumn.start,
                     textLine.lineBottom + relativeOffset
                 )
             }
@@ -307,16 +308,17 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (textPos.compare(selectStart) >= 0) {
                 selectEnd.upData(textPos)
                 upSelectedEnd(
-                    if (selectEnd.isTouch || selectEnd.isLast) textColumn.end else textColumn.start,
+                    if (textPos.columnIndex > -1) textColumn.end else textColumn.start,
                     textLine.lineBottom + relativeOffset
                 )
             } else {
                 reverseEndCursor = true
                 reverseStartCursor = false
+                selectStart.columnIndex--
                 selectEndMoveIndex(selectStart)
                 selectStart.upData(textPos)
                 upSelectedStart(
-                    if (textPos.isTouch) textColumn.start else textColumn.end,
+                    if (textPos.columnIndex < textLine.columns.lastIndex) textColumn.start else textColumn.end,
                     textLine.lineBottom + relativeOffset,
                     textLine.lineTop + relativeOffset
                 )
@@ -418,11 +420,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         }
                     }
                     val isLast = columns.first().start < x
-                    val charIndex = if (isLast) columns.lastIndex else 0
+                    val charIndex = if (isLast) columns.lastIndex + 1 else -1
                     val textColumn = if (isLast) columns.last() else columns.first()
                     touched.invoke(
                         relativeOffset,
-                        TextPos(relativePos, lineIndex, charIndex, false, isLast),
+                        TextPos(relativePos, lineIndex, charIndex),
                         textPage, textLine, textColumn
                     )
                     return
@@ -489,18 +491,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         relativePagePos: Int,
         lineIndex: Int,
         charIndex: Int,
-        isTouch: Boolean,
-        isLast: Boolean = false
     ) {
         selectStart.relativePagePos = relativePagePos
         selectStart.lineIndex = lineIndex
         selectStart.columnIndex = charIndex
-        selectStart.isTouch = isTouch
-        selectStart.isLast = isLast
         val textLine = relativePage(relativePagePos).getLine(lineIndex)
         val textColumn = textLine.getColumn(charIndex)
         upSelectedStart(
-            textColumn.start,
+            if (charIndex < textLine.columns.lastIndex) textColumn.start else textColumn.end,
             textLine.lineBottom + relativeOffset(relativePagePos),
             textLine.lineTop + relativeOffset(relativePagePos)
         )
@@ -508,7 +506,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     fun selectStartMoveIndex(textPos: TextPos) = textPos.run {
-        selectStartMoveIndex(relativePagePos, lineIndex, columnIndex, isTouch, isLast)
+        selectStartMoveIndex(relativePagePos, lineIndex, columnIndex)
     }
 
     /**
@@ -518,22 +516,21 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         relativePage: Int,
         lineIndex: Int,
         charIndex: Int,
-        isTouch: Boolean,
-        isLast: Boolean = false
     ) {
         selectEnd.relativePagePos = relativePage
         selectEnd.lineIndex = lineIndex
         selectEnd.columnIndex = charIndex
-        selectEnd.isTouch = isTouch
-        selectEnd.isLast = isLast
         val textLine = relativePage(relativePage).getLine(lineIndex)
         val textColumn = textLine.getColumn(charIndex)
-        upSelectedEnd(textColumn.end, textLine.lineBottom + relativeOffset(relativePage))
+        upSelectedEnd(
+            if (charIndex > -1) textColumn.end else textColumn.start,
+            textLine.lineBottom + relativeOffset(relativePage)
+        )
         upSelectChars()
     }
 
     fun selectEndMoveIndex(textPos: TextPos) = textPos.run {
-        selectEndMoveIndex(relativePagePos, lineIndex, columnIndex, isTouch, isLast)
+        selectEndMoveIndex(relativePagePos, lineIndex, columnIndex)
     }
 
     private fun upSelectChars() {
@@ -553,8 +550,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         val compareStart = textPos.compare(selectStart)
                         val compareEnd = textPos.compare(selectEnd)
                         column.selected = when {
-                            compareStart == 0 -> selectStart.isTouch
-                            compareEnd == 0 -> selectEnd.isTouch || selectEnd.isLast
+                            compareStart == 0 -> true
+                            compareEnd == 0 -> true
                             compareStart > 0 && compareEnd < 0 -> true
                             else -> false
                         }
@@ -624,19 +621,19 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (column is TextColumn) {
                         when {
                             compareStart == 0 -> {
-                                if (selectStart.isTouch) {
+                                if (textPos.columnIndex < textLine.columns.lastIndex) {
                                     builder.append(column.charData)
                                 }
                                 if (
                                     textLine.isParagraphEnd
-                                    && charIndex == textLine.charSize - 1
+                                    && charIndex == textLine.columns.lastIndex
                                     && compareEnd != 0
                                 ) {
                                     builder.append("\n")
                                 }
                             }
 
-                            compareEnd == 0 -> if (selectEnd.isTouch || selectEnd.isLast) {
+                            compareEnd == 0 -> if (textPos.columnIndex > -1) {
                                 builder.append(column.charData)
                             }
 
@@ -644,7 +641,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                                 builder.append(column.charData)
                                 if (
                                     textLine.isParagraphEnd
-                                    && charIndex == textLine.charSize - 1
+                                    && charIndex == textLine.columns.lastIndex
                                 ) {
                                     builder.append("\n")
                                 }
