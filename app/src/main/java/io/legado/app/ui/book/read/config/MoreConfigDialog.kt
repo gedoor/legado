@@ -159,6 +159,7 @@ class MoreConfigDialog : DialogFragment() {
                 }
 
                 PreferKey.optimizeRender -> {
+                    ChapterProvider.upStyle()
                     ReadBook.callBack?.upPageAnim(true)
                     ReadBook.loadContent(false)
                 }

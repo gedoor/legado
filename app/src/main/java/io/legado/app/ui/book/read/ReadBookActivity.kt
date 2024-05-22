@@ -303,9 +303,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (bookChanged) {
             bookChanged = false
             ReadBook.callBack = this
-            viewModel.initData(intent) {
-                upMenu()
-            }
+            viewModel.initData(intent)
         } else {
             //web端阅读时，app处于阅读界面，本地记录会覆盖web保存的进度，在此处恢复
             ReadBook.webBookProgress?.let {

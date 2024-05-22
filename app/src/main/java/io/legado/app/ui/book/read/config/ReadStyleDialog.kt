@@ -200,7 +200,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     override fun selectFont(path: String) {
         if (path != ReadBookConfig.textFont) {
             ReadBookConfig.textFont = path
-            postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
+            postEvent(EventBus.UP_CONFIG, arrayListOf(2, 5))
         }
     }
 
