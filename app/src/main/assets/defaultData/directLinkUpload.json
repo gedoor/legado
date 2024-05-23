@@ -1,7 +1,7 @@
 [
   {
-    "uploadUrl": "https://sy.mgz6.cc/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
-    "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.mgz6.cc/shuyuan/' + result",
+    "uploadUrl": "https://sy.mgz6.com/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
+    "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.mgz6.com/shuyuan/' + result",
     "summary": "喵公子网盘①(有效期7天)",
     "compress": false
   },
