@@ -179,6 +179,14 @@ class EpubFile(var book: Book) {
         elements.select("img[src=\"cover.jpeg\"]").forEachIndexed { i, it ->
             if (i > 0) it.remove()
         }
+        elements.select("img").forEach {
+            if (it.attributesSize() <= 1) {
+                return@forEach
+            }
+            val src = it.attr("src")
+            it.clearAttributes()
+            it.attr("src", src)
+        }
         val tag = Book.rubyTag
         if (book.getDelTag(tag)) {
             elements.select("rp, rt").remove()

@@ -200,6 +200,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
             }
 
             MotionEvent.ACTION_MOVE -> {
+                if (!pressDown) return true
                 val absX = abs(startX - event.x)
                 val absY = abs(startY - event.y)
                 if (!isMove) {
