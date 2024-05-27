@@ -71,12 +71,15 @@ abstract class BaseService : LifecycleService() {
     }
 
     /**
-     * 检测通知权限
+     * 检测通知权限和后台权限
      */
     private fun checkNotificationPermission() {
         PermissionsCompat.Builder()
-            .addPermissions(Permissions.POST_NOTIFICATIONS)
-            .rationale(R.string.notification_permission_rationale)
+            .addPermissions(
+                Permissions.POST_NOTIFICATIONS,
+                Permissions.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            )
+            .rationale(R.string.service_permission_rationale)
             .onGranted {
                 if (lifecycleScope.isActive) {
                     startForegroundNotification()
