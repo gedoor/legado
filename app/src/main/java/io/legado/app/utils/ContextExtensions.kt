@@ -123,6 +123,14 @@ inline fun <reified T : BroadcastReceiver> Context.broadcastPendingIntent(
     return getBroadcast(this, 0, intent, flags)
 }
 
+fun Context.startForegroundServiceCompat(intent: Intent) {
+    try {
+        startService(intent)
+    } catch (e: IllegalStateException) {
+        ContextCompat.startForegroundService(this, intent)
+    }
+}
+
 val Context.defaultSharedPreferences: SharedPreferences
     get() = PreferenceManager.getDefaultSharedPreferences(this)
 
