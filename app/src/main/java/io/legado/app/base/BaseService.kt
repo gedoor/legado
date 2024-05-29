@@ -1,6 +1,7 @@
 package io.legado.app.base
 
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LifecycleService
@@ -83,9 +84,11 @@ abstract class BaseService : LifecycleService() {
                 }
             }
             .request()
-        PermissionsCompat.Builder()
-            .addPermissions(Permissions.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-            .rationale(R.string.ignore_battery_permission_rationale)
-            .request()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PermissionsCompat.Builder()
+                .addPermissions(Permissions.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                .rationale(R.string.ignore_battery_permission_rationale)
+                .request()
+        }
     }
 }
