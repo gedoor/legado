@@ -123,7 +123,10 @@ class ExportBookService : BaseService() {
                 toastOnUi(it.localizedMessage)
             }
 
-            IntentAction.stop -> stopSelf()
+            IntentAction.stop -> {
+                notificationManager.cancel(NotificationId.ExportBook)
+                stopSelf()
+            }
         }
         return super.onStartCommand(intent, flags, startId)
     }
