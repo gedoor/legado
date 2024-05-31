@@ -132,6 +132,9 @@ class ExportBookService : BaseService() {
         super.onDestroy()
         exportProgress.clear()
         exportMsg.clear()
+        waitExportBooks.keys.forEach {
+            postEvent(EventBus.EXPORT_BOOK, it)
+        }
     }
 
     @SuppressLint("MissingPermission")
