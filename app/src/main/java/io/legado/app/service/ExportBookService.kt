@@ -57,6 +57,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.ag2s.epublib.domain.Author
 import me.ag2s.epublib.domain.Date
@@ -168,7 +169,7 @@ class ExportBookService : BaseService() {
             return
         }
         exportJob = lifecycleScope.launch(IO) {
-            while (true) {
+            while (isActive) {
                 val (bookUrl, exportConfig) = waitExportBooks.entries.firstOrNull() ?: let {
                     notificationContentText = "导出完成"
                     upExportNotification(true)
@@ -200,6 +201,7 @@ class ExportBookService : BaseService() {
                     }
                     exportMsg[book.bookUrl] = getString(R.string.export_success)
                 } catch (e: Throwable) {
+                    ensureActive()
                     exportMsg[bookUrl] = e.localizedMessage ?: "ERROR"
                     AppLog.put("导出书籍<${book?.name ?: bookUrl}>出错", e)
                 } finally {
