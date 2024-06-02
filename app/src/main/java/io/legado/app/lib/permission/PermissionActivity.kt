@@ -81,6 +81,10 @@ class PermissionActivity : AppCompatActivity() {
                 kotlin.runCatching {
                     val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                     intent.setData(Uri.parse("package:$packageName"))
+                    intent.setClassName(
+                        "com.android.settings",
+                        "com.android.settings.fuelgauge.RequestIgnoreBatteryOptimizations"
+                    )
                     settingActivityResult.launch(intent)
                 }
             }
