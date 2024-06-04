@@ -278,7 +278,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (textPos.compare(selectEnd) <= 0) {
                 selectStart.upData(pos = textPos)
                 upSelectedStart(
-                    if (textPos.columnIndex < textLine.columns.lastIndex) textColumn.start else textColumn.end,
+                    if (textPos.columnIndex < textLine.columns.size) textColumn.start else textColumn.end,
                     textLine.lineBottom + relativeOffset,
                     textLine.lineTop + relativeOffset
                 )
@@ -318,7 +318,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 selectEndMoveIndex(selectStart)
                 selectStart.upData(textPos)
                 upSelectedStart(
-                    if (textPos.columnIndex < textLine.columns.lastIndex) textColumn.start else textColumn.end,
+                    if (textPos.columnIndex < textLine.columns.size) textColumn.start else textColumn.end,
                     textLine.lineBottom + relativeOffset,
                     textLine.lineTop + relativeOffset
                 )
@@ -534,7 +534,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     }
 
     private fun upSelectChars() {
-        if (!selectStart.isSelected() || !selectEnd.isSelected()) {
+        if (!selectStart.isSelected() && !selectEnd.isSelected()) {
             return
         }
         val last = if (callBack.isScroll) 2 else 0
@@ -621,7 +621,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     if (column is TextColumn) {
                         when {
                             compareStart == 0 -> {
-                                if (textPos.columnIndex < textLine.columns.lastIndex) {
+                                if (textPos.columnIndex < textLine.columns.size) {
                                     builder.append(column.charData)
                                 }
                                 if (
