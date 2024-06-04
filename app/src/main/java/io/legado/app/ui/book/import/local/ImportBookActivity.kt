@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
@@ -22,7 +23,14 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.book.import.BaseImportBookActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.SelectActionBar
-import io.legado.app.utils.*
+import io.legado.app.utils.ArchiveUtils
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.gone
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.isUri
+import io.legado.app.utils.launch
+import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -175,6 +183,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
                             selectFolder.launch()
                         }
                     }
+
                     else -> initRootPath(rootUri.path!!)
                 }
             }
@@ -291,7 +300,9 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
 
     override fun startRead(fileDoc: FileDoc) {
         if (!ArchiveUtils.isArchive(fileDoc.name)) {
-            startReadBook(fileDoc.toString())
+            appDb.bookDao.getBookByFileName(fileDoc.name)?.let {
+                startReadBook(it.bookUrl)
+            }
         } else {
             onArchiveFileClick(fileDoc)
         }
