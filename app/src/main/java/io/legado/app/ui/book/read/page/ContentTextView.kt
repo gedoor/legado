@@ -498,7 +498,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textLine = relativePage(relativePagePos).getLine(lineIndex)
         val textColumn = textLine.getColumn(charIndex)
         upSelectedStart(
-            if (charIndex < textLine.columns.lastIndex) textColumn.start else textColumn.end,
+            if (charIndex < textLine.columns.size) textColumn.start else textColumn.end,
             textLine.lineBottom + relativeOffset(relativePagePos),
             textLine.lineTop + relativeOffset(relativePagePos)
         )
