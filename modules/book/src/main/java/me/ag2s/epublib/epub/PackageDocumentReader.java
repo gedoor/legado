@@ -107,10 +107,12 @@ public class PackageDocumentReader extends PackageDocumentBase {
                 .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.item);
         for (int i = 0; i < originItemElements.getLength(); i++) {
             Element itemElement = (Element) originItemElements.item(i);
-            fixedElements.add(itemElement);
             String href = DOMUtil.getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
+            String resolvedHref = packagePath.resolve(href).toString();
+            itemElement.setAttribute("href", resolvedHref);
+            fixedElements.add(itemElement);
             try {
-                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
+                href = URLDecoder.decode(resolvedHref, Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -177,7 +179,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                     .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
 
             try {
-                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
+                href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage());
             }
