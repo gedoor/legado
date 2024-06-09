@@ -27,6 +27,15 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         return Coroutine.async(scope, context, start, executeContext, block)
     }
 
+    fun <T> executeLazy(
+        scope: CoroutineScope = viewModelScope,
+        context: CoroutineContext = Dispatchers.IO,
+        executeContext: CoroutineContext = Dispatchers.Main,
+        block: suspend CoroutineScope.() -> T
+    ): Coroutine<T> {
+        return Coroutine.async(scope, context, CoroutineStart.LAZY, executeContext, block)
+    }
+
     fun <R> submit(
         scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,

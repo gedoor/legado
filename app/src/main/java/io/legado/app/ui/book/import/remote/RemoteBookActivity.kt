@@ -170,7 +170,11 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
 
     private fun upPath() {
         binding.tvGoBack.isEnabled = viewModel.dirList.isNotEmpty()
-        var path = "books" + File.separator
+        var path = if (viewModel.isDefaultWebdav) {
+            "books" + File.separator
+        } else {
+            File.separator
+        }
         viewModel.dirList.forEach {
             path = path + it.filename + File.separator
         }
