@@ -188,6 +188,7 @@ class ContentProcessor private constructor(
             mContent = mContent.replace('\u00A0', ' ')
         }
         val contents = arrayListOf<String>()
+        val paragraphIndent = ReadBookConfig.paragraphIndent
         mContent.split("\n").forEach { str ->
             val paragraph = str.trim {
                 it.code <= 0x20 || it == '　'
@@ -196,9 +197,13 @@ class ContentProcessor private constructor(
                 if (contents.isEmpty() && includeTitle) {
                     contents.add(paragraph)
                 } else {
-                    contents.add("${ReadBookConfig.paragraphIndent}$paragraph")
+                    contents.add("$paragraphIndent$paragraph")
                 }
             }
+        }
+        if (contents.isEmpty()) {
+            contents.add("${paragraphIndent}加载正文失败")
+            contents.add("${paragraphIndent}内容处理后为空")
         }
         return BookContent(sameTitleRemoved, contents, effectiveReplaceRules)
     }
