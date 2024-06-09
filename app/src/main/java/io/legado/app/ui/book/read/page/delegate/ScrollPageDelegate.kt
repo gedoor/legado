@@ -154,8 +154,8 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
      */
     private fun calcNextPageOffset(): Int {
         val visibleHeight = ChapterProvider.visibleHeight
-        val book = ReadBook.book!!
-        if (book.isImage) {
+        val book = ReadBook.book
+        if (book == null || book.isImage) {
             return -visibleHeight
         }
         val visiblePage = readView.getCurVisiblePage()
@@ -170,8 +170,8 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     private fun calcPrevPageOffset(): Int {
         val visibleHeight = ChapterProvider.visibleHeight
-        val book = ReadBook.book!!
-        if (book.isImage) {
+        val book = ReadBook.book
+        if (book == null || book.isImage) {
             return visibleHeight
         }
         val visiblePage = readView.getCurVisiblePage()
