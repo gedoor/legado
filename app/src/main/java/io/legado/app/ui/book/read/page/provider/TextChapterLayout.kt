@@ -177,7 +177,7 @@ class TextChapterLayout(
         val contents = bookContent.textList
         var absStartX = paddingLeft
         var durY = 0f
-        if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume) {
+        if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume || contents.isEmpty()) {
             //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
                 setTypeText(

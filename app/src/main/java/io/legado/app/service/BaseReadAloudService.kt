@@ -218,7 +218,7 @@ abstract class BaseReadAloudService : BaseService(),
             }
             nowSpeak = textChapter.getParagraphNum(readAloudNumber + 1, readAloudByPage) - 1
             if (!readAloudByPage && startPos == 0 && !toLast) {
-                pos = page.lines.first().chapterPosition -
+                pos = page.chapterPosition -
                         textChapter.paragraphs[nowSpeak].chapterPosition
             }
             if (toLast) {
@@ -226,7 +226,7 @@ abstract class BaseReadAloudService : BaseService(),
                 readAloudNumber = textChapter.getLastParagraphPosition()
                 nowSpeak = contentList.lastIndex
                 if (page.paragraphs.size == 1) {
-                    pos = page.lines.first().chapterPosition -
+                    pos = page.chapterPosition -
                             textChapter.paragraphs[nowSpeak].chapterPosition
                 }
             }
