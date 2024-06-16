@@ -1,10 +1,13 @@
-import ajax from "./axios";
+import ajax, { baseUrl } from "./axios";
 import { ElMessage } from "element-plus/es";
 
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/api */
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/web */
 
-const { hostname, port } = new URL(import.meta.env.VITE_API || location.origin);
+const getUrl = () => {
+  const { hostname, port } = new URL(baseUrl());
+  return `${hostname}:${Number(port) + 1}`;
+};
 
 const isSourecEditor = /source/i.test(location.href);
 const APIExceptionHandler = (error) => {
@@ -29,7 +32,7 @@ const saveBookProgressWithBeacon = (bookProgress) => {
   if (!bookProgress) return;
   // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon
   navigator.sendBeacon(
-    `${import.meta.env.VITE_API || location.origin}/saveBookProgress`,
+    `${baseUrl()}/saveBookProgress`,
     JSON.stringify(bookProgress),
   );
 };
@@ -56,7 +59,7 @@ const search = (
   /** @type {() => void} */ onFinish,
 ) => {
   // webSocket
-  const url = `ws://${hostname}:${Number(port) + 1}/searchBook`;
+  const url = `ws://${getUrl()}/searchBook`;
   const socket = new WebSocket(url);
 
   socket.onopen = () => {
@@ -100,7 +103,7 @@ const debug = (
   /** @type {() => void} */ onFinish,
 ) => {
   // webSocket
-  const url = `ws://${hostname}:${Number(port) + 1}/${
+  const url = `ws://${getUrl()}/${
     isBookSource ? "bookSource" : "rssSource"
   }Debug`;
 
