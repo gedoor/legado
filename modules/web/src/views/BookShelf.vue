@@ -91,7 +91,7 @@ import githubUrl from "@/assets/imgs/github.png";
 import { useLoading } from "@/hooks/loading";
 import { Search } from "@element-plus/icons-vue";
 import API from "@api";
-import ajax from "@/api/axios.js";
+import { baseUrl, setRemoteIp } from "@/api/axios.js";
 
 const store = useBookStore();
 const { connectStatus, connectType, newConnect, shelf } = storeToRefs(store);
@@ -164,15 +164,15 @@ const searchBook = () => {
 };
 
 const ipInput = reactive({
-  ip: "",
+  ip: baseUrl(),
   disable: true,
 });
 const toggleIpConfig = () => {
-  ipInput.ip = localStorage.getItem("remoteIp");
+  ipInput.ip = baseUrl();
   ipInput.disable = !ipInput.disable;
 };
 const setIP = () => {
-  localStorage.setItem("remoteIp", ipInput.ip);
+  setRemoteIp(ipInput.ip);
   ipInput.disable = true;
   loadShelf();
 };
@@ -212,11 +212,6 @@ const toDetail = (bookUrl, bookName, bookAuthor, chapterIndex, chapterPos) => {
 onMounted(() => {
   //获取最近阅读书籍
   let readingRecentStr = localStorage.getItem("readingRecent");
-  ipInput.ip = localStorage.getItem("remoteIp");
-  ajax.interceptors.request.use((config) => {
-    config.baseURL = ipInput.ip;
-    return config;
-  });
   if (readingRecentStr != null) {
     readingRecent.value = JSON.parse(readingRecentStr);
     if (typeof readingRecent.value.chapterIndex == "undefined") {
