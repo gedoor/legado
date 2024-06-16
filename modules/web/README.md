@@ -12,9 +12,8 @@
 | Edge ≥ 79                                                              | Firefox ≥ 78                                                                      | Chrome ≥ 64                                                                    | Safari ≥ 12                                                                    |
 
 ## 开发
-> 需要阅读app提供后端服务，开发前修改环境变量`VITE_API`为阅读web服务地址
+> 需要阅读app提供后端服务
 
 ```bash
-echo "VITE_API=http://<ip>:<port>" > .env.development
 pnpm dev
 ```
