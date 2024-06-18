@@ -648,6 +648,8 @@ public class QueryTTF {
         var reader = new BufferReader(buffer, dataTable.offset);
         if (head.indexToLocFormat == 0) {
             loca = reader.ReadUInt16Array(dataTable.length / 2);
+            // 当loca表数据长度为Uint16时,需要翻倍
+            for (var i = 0; i < loca.length; i++) loca[i] *= 2;
         } else {
             loca = reader.ReadInt32Array(dataTable.length / 4);
         }
@@ -781,11 +783,14 @@ public class QueryTTF {
             var glyph = new GlyfLayout();
             reader.position(offset);
             glyph.numberOfContours = reader.ReadInt16();
+            if (glyph.numberOfContours > maxp.maxContours) continue; // 如果字形轮廓数大于非复合字形中包含的最大轮廓数，则说明该字形无效。
             glyph.xMin = reader.ReadInt16();
             glyph.yMin = reader.ReadInt16();
             glyph.xMax = reader.ReadInt16();
             glyph.yMax = reader.ReadInt16();
 
+            // 轮廓数为0时，不需要解析轮廓数据
+            if (glyph.numberOfContours == 0) continue;
             // 读Glyph轮廓数据
             if (glyph.numberOfContours > 0) {
                 // 简单轮廓
