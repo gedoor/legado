@@ -714,7 +714,7 @@ public class QueryTTF {
                             if (idRangeOffset == 0) {
                                 unicodeToGlyphId.put(unicode, (unicode + idDelta) & 0xFFFF);
                             } else {
-                                int gIndex = (idRangeOffset / 2) + unicode - unicodeInclusive + segmentIndex;
+                                int gIndex = (idRangeOffset / 2) + unicode - unicodeInclusive + segmentIndex - segCount;
                                 unicodeToGlyphId.put(unicode, gIndex < glyphIdArrayLength ? f.glyphIdArray[gIndex] + idDelta : 0);
                             }
                         }
