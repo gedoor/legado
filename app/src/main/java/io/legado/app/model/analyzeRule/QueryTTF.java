@@ -685,6 +685,7 @@ public class QueryTTF {
                     int unicodeInclusive = 0;
                     int unicodeExclusive = f.glyphIdArray.length;
                     for (; unicodeInclusive < unicodeExclusive; unicodeInclusive++) {
+                        if (f.glyphIdArray[unicodeInclusive] == 0) continue; // 排除轮廓索引为0的Unicode
                         unicodeToGlyphId.put(unicodeInclusive, f.glyphIdArray[unicodeInclusive]);
                     }
                     break;
@@ -711,12 +712,15 @@ public class QueryTTF {
                         int idDelta = f.idDelta[segmentIndex];
                         int idRangeOffset = f.idRangeOffsets[segmentIndex];
                         for (int unicode = unicodeInclusive; unicode <= unicodeExclusive; unicode++) {
+                            int glyphId = 0;
                             if (idRangeOffset == 0) {
-                                unicodeToGlyphId.put(unicode, (unicode + idDelta) & 0xFFFF);
+                                glyphId = (unicode + idDelta) & 0xFFFF;
                             } else {
                                 int gIndex = (idRangeOffset / 2) + unicode - unicodeInclusive + segmentIndex - segCount;
-                                unicodeToGlyphId.put(unicode, gIndex < glyphIdArrayLength ? f.glyphIdArray[gIndex] + idDelta : 0);
+                                if (gIndex < glyphIdArrayLength) glyphId = f.glyphIdArray[gIndex] + idDelta;
                             }
+                            if (glyphId == 0) continue; // 排除轮廓索引为0的Unicode
+                            unicodeToGlyphId.put(unicode, glyphId);
                         }
                     }
                     break;
@@ -975,7 +979,6 @@ public class QueryTTF {
             int key = item.getKey();
             int val = item.getValue();
             if (val >= glyfArrayLength) continue;
-            if (val == 0) continue; // 排除轮廓索引为0的Unicode
             String glyfString = getGlyfById(val);
             unicodeToGlyph.put(key, glyfString);
             if (glyfString == null) continue;   // null 不能用作hashmap的key
