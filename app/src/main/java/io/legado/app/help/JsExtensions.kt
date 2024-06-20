@@ -802,8 +802,9 @@ interface JsExtensions : JsEncodeUtils {
             if (errorQueryTTF.isBlankUnicode(oldCode)) {
                 return@forEachIndexed
             }
-            val glyf = errorQueryTTF.getGlyfByUnicode(oldCode)
             // 删除轮廓数据不存在的字符
+            var glyf = errorQueryTTF.getGlyfByUnicode(oldCode)  // 轮廓数据不存在
+            if (errorQueryTTF.getGlyfIdByUnicode(oldCode) == 0) glyf = null; // 轮廓数据指向保留索引0
             if (filter && (glyf == null)) {
                 contentArray[index] = ""
                 return@forEachIndexed
