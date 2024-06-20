@@ -975,6 +975,7 @@ public class QueryTTF {
             int key = item.getKey();
             int val = item.getValue();
             if (val >= glyfArrayLength) continue;
+            if (val == 0) continue; // 排除轮廓索引为0的Unicode
             String glyfString = getGlyfById(val);
             unicodeToGlyph.put(key, glyfString);
             if (glyfString == null) continue;   // null 不能用作hashmap的key
