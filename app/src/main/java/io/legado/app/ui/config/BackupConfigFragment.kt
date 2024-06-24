@@ -217,7 +217,7 @@ class BackupConfigFragment : PreferenceFragment(),
                 }
 
             PreferKey.webDavPassword ->
-                if (value.isNullOrBlank()) {
+                if (value.isNullOrEmpty()) {
                     preference.summary = getString(R.string.web_dav_pw_s)
                 } else {
                     preference.summary = "*".repeat(value.toString().length)
