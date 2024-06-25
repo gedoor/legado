@@ -5,9 +5,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import io.legado.app.R
+import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
-import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemDownloadBinding
 import io.legado.app.help.book.isLocal
@@ -16,7 +17,20 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
 class CacheAdapter(context: Context, private val callBack: CallBack) :
-    RecyclerAdapter<Book, ItemDownloadBinding>(context) {
+    DiffRecyclerAdapter<Book, ItemDownloadBinding>(context) {
+
+    override val diffItemCallback: DiffUtil.ItemCallback<Book>
+        get() = object : DiffUtil.ItemCallback<Book>() {
+            override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
+                return oldItem.bookUrl == newItem.bookUrl
+            }
+
+            override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
+                return oldItem.name == newItem.name
+                        && oldItem.author == newItem.author
+            }
+
+        }
 
     override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding {
         return ItemDownloadBinding.inflate(inflater, parent, false)

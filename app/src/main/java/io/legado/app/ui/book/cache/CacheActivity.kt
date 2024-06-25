@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
@@ -17,6 +16,7 @@ import io.legado.app.constant.AppConst.charsets
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
+import io.legado.app.data.AppDatabase
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -41,6 +41,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.checkWrite
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.enableCustomExport
+import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.parseToUri
@@ -221,7 +222,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
                     else -> booksDownload.sortedByDescending { it.durChapterTime }
                 }
-            }.flowWithLifecycle(lifecycle).catch {
+            }.flowWithLifecycleAndDatabaseChange(
+                lifecycle, table = AppDatabase.BOOK_TABLE_NAME
+            ).catch {
                 AppLog.put("缓存管理界面获取书籍列表失败\n${it.localizedMessage}", it)
             }.flowOn(IO).conflate().collect { books ->
                 adapter.setItems(books)

@@ -16,7 +16,6 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -25,6 +24,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
+import io.legado.app.data.AppDatabase
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.ActivityBookSourceBinding
@@ -52,7 +52,8 @@ import io.legado.app.utils.ACache
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.dpToPx
-import io.legado.app.utils.flowWithLifecycleFirst
+import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
+import io.legado.app.utils.flowWithLifecycleAndDatabaseChangeFirst
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.launch
@@ -376,7 +377,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         else -> data.reversed()
                     }
                 }
-            }.flowWithLifecycle(lifecycle).catch {
+            }.flowWithLifecycleAndDatabaseChange(
+                lifecycle,
+                table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+            ).catch {
                 AppLog.put("书源界面更新书源出错", it)
             }.flowOn(IO).conflate().collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback, !Debug.isChecking)
@@ -389,8 +393,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     private fun initLiveDataGroup() {
         lifecycleScope.launch {
             appDb.bookSourceDao.flowGroups()
-                .flowWithLifecycle(lifecycle)
-                .flowWithLifecycleFirst(groupMenuLifecycleOwner.lifecycle)
+                .flowWithLifecycleAndDatabaseChange(
+                    lifecycle,
+                    table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+                )
+                .flowWithLifecycleAndDatabaseChangeFirst(
+                    groupMenuLifecycleOwner.lifecycle,
+                    table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+                )
                 .conflate()
                 .distinctUntilChanged()
                 .collect {

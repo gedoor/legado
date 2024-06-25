@@ -40,6 +40,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
@@ -134,6 +135,7 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                     AppDatabase.BOOK_SOURCE_TABLE_NAME
                 )
                 .conflate()
+                .distinctUntilChanged()
                 .collect {
                     groups.clear()
                     groups.addAll(it)
