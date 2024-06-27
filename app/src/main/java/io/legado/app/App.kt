@@ -36,7 +36,9 @@ import io.legado.app.utils.ChineseUtils
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.isDebuggable
 import kotlinx.coroutines.launch
+import org.chromium.base.ThreadUtils
 import splitties.init.appCtx
 import splitties.systemservices.notificationManager
 import java.net.URL
@@ -51,6 +53,9 @@ class App : Application() {
         super.onCreate()
         LogUtils.d("App", "onCreate")
         LogUtils.logDeviceInfo()
+        if (isDebuggable) {
+            ThreadUtils.setThreadAssertsDisabledForTesting(true)
+        }
         oldConfig = Configuration(resources.configuration)
         CrashHandler(this)
         //预下载Cronet so
