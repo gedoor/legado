@@ -57,11 +57,19 @@ export const useBookStore = defineStore("book", {
     setConnectType(connectType) {
       this.connectType = connectType;
     },
+    resetConnect() {
+      this.connectStatus = "正在连接后端服务器……";
+      this.connectType = "";
+      this.clearBooks();
+    },
     setNewConnect(newConnect) {
       this.newConnect = newConnect;
     },
     addBooks(books) {
       this.shelf = books;
+    },
+    clearBooks() {
+      this.shelf = [];
     },
     setCatalog(catalog) {
       this.catalog = catalog;

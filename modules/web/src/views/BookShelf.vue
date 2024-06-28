@@ -40,14 +40,24 @@
         </div>
         <div class="setting-wrapper">
           <div class="setting-title">基本设定</div>
-          <div class="setting-item">
+          <div class="setting-ip">
+            <el-input
+              class="setting-input"
+              size="small"
+              :disabled="ipInput.disable"
+              v-model="ipInput.ip"
+              @keydown.enter="setIP"
+            />
             <el-tag
-              :type="connectType"
-              size="large"
-              class="setting-connect"
-              :class="{ 'no-point': newConnect }"
-              @click="setIP"
+              type="primary"
+              class="setting-toggle"
+              @click="toggleIpConfig"
             >
+              {{ ipInput.disable ? "修改" : "取消" }}
+            </el-tag>
+          </div>
+          <div class="setting-item">
+            <el-tag :type="connectType" size="large" class="setting-connect">
               {{ connectStatus }}
             </el-tag>
           </div>
@@ -81,6 +91,7 @@ import githubUrl from "@/assets/imgs/github.png";
 import { useLoading } from "@/hooks/loading";
 import { Search } from "@element-plus/icons-vue";
 import API from "@api";
+import { baseUrl, setRemoteIp } from "@/api/axios.js";
 
 const store = useBookStore();
 const { connectStatus, connectType, newConnect, shelf } = storeToRefs(store);
@@ -136,7 +147,7 @@ const searchBook = () => {
       }
       try {
         store.setSearchBooks(JSON.parse(data));
-        books.value = store.searchBooks
+        books.value = store.searchBooks;
         //store.searchBooks.forEach((item) => books.value.push(item));
       } catch (e) {
         ElMessage.error("后端数据错误");
@@ -152,7 +163,19 @@ const searchBook = () => {
   );
 };
 
-const setIP = () => {};
+const ipInput = reactive({
+  ip: baseUrl(),
+  disable: true,
+});
+const toggleIpConfig = () => {
+  ipInput.ip = baseUrl();
+  ipInput.disable = !ipInput.disable;
+};
+const setIP = () => {
+  setRemoteIp(ipInput.ip);
+  ipInput.disable = true;
+  loadShelf();
+};
 
 const router = useRouter();
 const handleBookClick = async (book) => {
@@ -195,13 +218,19 @@ onMounted(() => {
       readingRecent.value.chapterIndex = 0;
     }
   }
+  loadShelf();
+});
+
+const loadShelf = () => {
+  store.resetConnect();
   loadingWrapper(
     store
       .saveBookProgress()
       //确保各种网络情况下同步请求先完成
       .finally(fetchBookShelfData),
   );
-});
+};
+
 const fetchBookShelfData = () => {
   return API.getBookShelf()
     .then((response) => {
@@ -308,15 +337,31 @@ const fetchBookShelfData = () => {
         font-family: FZZCYSK;
       }
 
+      .setting-ip {
+        margin-top: 16px;
+        white-space: nowrap;
+      }
+
+      .setting-input {
+        width: 216px;
+        margin-right: 4px;
+      }
+
       .no-point {
         pointer-events: none;
       }
 
-      .setting-connect {
-        font-size: 8px;
-        margin-top: 16px;
-        // color: #6B7C87;
+      .setting-toggle {
+        font-size: 10px;
         cursor: pointer;
+        //margin-top: 4px;
+      }
+
+      .setting-connect {
+        font-size: 10px;
+        margin-top: 4px;
+        // color: #6B7C87;
+        //cursor: pointer;
       }
     }
 

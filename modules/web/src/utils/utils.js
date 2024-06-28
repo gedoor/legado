@@ -1,4 +1,5 @@
 import { formatDate } from "@vueuse/shared";
+import { baseUrl } from "@/api/axios.js";
 
 export const isLegadoUrl = (/** @type {string} */ url) =>
   /,\s*\{/.test(url) ||
@@ -12,7 +13,7 @@ export const isLegadoUrl = (/** @type {string} */ url) =>
  */
 export function getImageFromLegado(src) {
   return (
-    (import.meta.env.VITE_API || location.origin) +
+    baseUrl() +
     "/image?path=" +
     encodeURIComponent(src) +
     "&url=" +
