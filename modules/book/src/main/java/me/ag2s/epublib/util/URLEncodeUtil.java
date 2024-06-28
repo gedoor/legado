@@ -24,7 +24,11 @@ public class URLEncodeUtil {
         for (i = '0'; i <= '9'; i++) {
             dontNeedEncoding.set(i);
         }
-        String reversed = "+-_.$:()!*@&#,[]";
+        String mark = "-_.!~*'()";
+        for (i = 0; i < mark.length(); i++) {
+            dontNeedEncoding.set(mark.charAt(i));
+        }
+        String reversed = ";/?:@&=+$,#";
         for (i = 0; i < reversed.length(); i++) {
             dontNeedEncoding.set(reversed.charAt(i));
         }
