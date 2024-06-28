@@ -10,6 +10,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookHelp
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.encodeURI
 import io.legado.app.utils.isXml
 import io.legado.app.utils.printOnDebug
 import me.ag2s.epublib.domain.EpubBook
@@ -252,8 +253,10 @@ class EpubFile(var book: Book) {
             }
         }
         bodyElement.select("img").forEach {
-            val src = it.attr("src")
-            it.attr("src", URI(res.href).resolve(src).toString())
+            val src = it.attr("src").encodeURI()
+            val href = res.href.encodeURI()
+            val resolvedHref = URLDecoder.decode(URI(href).resolve(src).toString(), "UTF-8")
+            it.attr("src", resolvedHref)
         }
         return bodyElement
     }
