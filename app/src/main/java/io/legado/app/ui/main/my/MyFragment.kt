@@ -29,7 +29,6 @@ import io.legado.app.ui.dict.rule.DictRuleActivity
 import io.legado.app.ui.file.FileManageActivity
 import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.ui.replace.ReplaceRuleActivity
-import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.observeEventSticky
@@ -37,7 +36,7 @@ import io.legado.app.utils.openUrl
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setEdgeEffectColor
-import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.showHelp
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -68,10 +67,7 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
         when (item.itemId) {
-            R.id.menu_help -> {
-                val text = String(requireContext().assets.open("web/help/md/appHelp.md").readBytes())
-                showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
-            }
+            R.id.menu_help -> showHelp("appHelp")
         }
     }
 

@@ -8,9 +8,9 @@ import io.legado.app.utils.screenshot
 
 abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
-    protected val curRecorder = CanvasRecorderFactory.create()
-    protected val prevRecorder = CanvasRecorderFactory.create()
-    protected val nextRecorder = CanvasRecorderFactory.create()
+    protected var curRecorder = CanvasRecorderFactory.create()
+    protected var prevRecorder = CanvasRecorderFactory.create()
+    protected var nextRecorder = CanvasRecorderFactory.create()
     private val slopSquare get() = readView.pageSlopSquare2
 
     override fun setDirection(direction: PageDirection) {
@@ -32,6 +32,15 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
 
             else -> Unit
         }
+    }
+
+    fun upRecorder() {
+        curRecorder.recycle()
+        prevRecorder.recycle()
+        nextRecorder.recycle()
+        curRecorder = CanvasRecorderFactory.create()
+        prevRecorder = CanvasRecorderFactory.create()
+        nextRecorder = CanvasRecorderFactory.create()
     }
 
     override fun onTouch(event: MotionEvent) {

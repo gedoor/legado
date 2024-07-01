@@ -93,7 +93,7 @@ object ReadBook : CoroutineScope by MainScope() {
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         contentProcessor = ContentProcessor.get(book)
-        durChapterIndex = min(book.durChapterIndex, chapterSize - 1).coerceAtLeast(0)
+        durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
         isLocalBook = book.isLocal
         clearTextChapter()
@@ -335,6 +335,9 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun recycleRecorders(beforeIndex: Int, afterIndex: Int) {
+        if (!AppConfig.optimizeRender) {
+            return
+        }
         executor.execute {
             val textChapter = curTextChapter ?: return@execute
             if (afterIndex > beforeIndex) {
@@ -752,7 +755,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
         fun contentLoadFinish()
 
-        fun upPageAnim()
+        fun upPageAnim(upRecorder: Boolean = false)
 
         fun notifyBookChanged()
 

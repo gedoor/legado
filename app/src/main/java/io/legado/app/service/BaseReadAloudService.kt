@@ -168,6 +168,7 @@ abstract class BaseReadAloudService : BaseService(),
         abandonFocus()
         unregisterReceiver(broadcastReceiver)
         postEvent(EventBus.ALOUD_STATE, Status.STOP)
+        notificationManager.cancel(NotificationId.ReadAloudService)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         mediaSessionCompat.release()
         ReadBook.uploadProgress()
@@ -217,7 +218,7 @@ abstract class BaseReadAloudService : BaseService(),
             }
             nowSpeak = textChapter.getParagraphNum(readAloudNumber + 1, readAloudByPage) - 1
             if (!readAloudByPage && startPos == 0 && !toLast) {
-                pos = page.lines.first().chapterPosition -
+                pos = page.chapterPosition -
                         textChapter.paragraphs[nowSpeak].chapterPosition
             }
             if (toLast) {
@@ -225,7 +226,7 @@ abstract class BaseReadAloudService : BaseService(),
                 readAloudNumber = textChapter.getLastParagraphPosition()
                 nowSpeak = contentList.lastIndex
                 if (page.paragraphs.size == 1) {
-                    pos = page.lines.first().chapterPosition -
+                    pos = page.chapterPosition -
                             textChapter.paragraphs[nowSpeak].chapterPosition
                 }
             }
@@ -471,11 +472,12 @@ abstract class BaseReadAloudService : BaseService(),
 
     private fun upReadAloudNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            notificationManager.notify(NotificationId.ReadAloudService, it.build())
-        }.onError {
-            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
+            try {
+                val notification = createNotification()
+                notificationManager.notify(NotificationId.ReadAloudService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
+            }
         }
     }
 
@@ -495,6 +497,8 @@ abstract class BaseReadAloudService : BaseService(),
             nSubtitle = getString(R.string.read_aloud_s)
         val builder = NotificationCompat
             .Builder(this@BaseReadAloudService, AppConst.channelIdReadAloud)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .setSmallIcon(R.drawable.ic_volume_up)
             .setSubText(getString(R.string.read_aloud))
             .setOngoing(true)
@@ -534,7 +538,7 @@ abstract class BaseReadAloudService : BaseService(),
             androidx.media.app.NotificationCompat.MediaStyle()
                 .setShowActionsInCompactView(0, 1, 2)
         )
-        return builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        return builder
     }
 
     /**
@@ -542,13 +546,14 @@ abstract class BaseReadAloudService : BaseService(),
      */
     override fun startForegroundNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            startForeground(NotificationId.ReadAloudService, it.build())
-        }.onError {
-            AppLog.put("创建朗读通知出错,${it.localizedMessage}", it, true)
-            //创建通知出错不结束服务就会崩溃,服务必须绑定通知
-            stopSelf()
+            try {
+                val notification = createNotification()
+                startForeground(NotificationId.ReadAloudService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
+                //创建通知出错不结束服务就会崩溃,服务必须绑定通知
+                stopSelf()
+            }
         }
     }
 

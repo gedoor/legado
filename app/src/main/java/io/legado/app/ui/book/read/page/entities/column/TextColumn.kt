@@ -2,7 +2,6 @@ package io.legado.app.ui.book.read.page.entities.column
 
 import android.graphics.Canvas
 import androidx.annotation.Keep
-import io.legado.app.help.PaintPool
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.ui.book.read.page.ContentTextView
@@ -53,13 +52,10 @@ data class TextColumn(
         } else {
             ReadBookConfig.textColor
         }
-        val paint = PaintPool.obtain()
-        paint.set(textPaint)
-        if (paint.color != textColor) {
-            paint.color = textColor
+        if (textPaint.color != textColor) {
+            textPaint.color = textColor
         }
-        canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, paint)
-        PaintPool.recycle(paint)
+        canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, textPaint)
         if (selected) {
             canvas.drawRect(start, 0f, end, textLine.height, view.selectedPaint)
         }

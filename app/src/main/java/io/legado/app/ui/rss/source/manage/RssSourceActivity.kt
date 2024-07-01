@@ -28,7 +28,6 @@ import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.widget.SelectActionBar
-import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -44,6 +43,7 @@ import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.share
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.showHelp
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
@@ -163,7 +163,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_group_null -> {
                 searchView.setQuery(getString(R.string.no_group), true)
             }
-            R.id.menu_help -> showHelp()
+            R.id.menu_help -> showHelp("SourceMRssHelp")
             else -> if (item.groupId == R.id.source_group) {
                 searchView.setQuery("group:${item.title}", true)
             }
@@ -352,11 +352,6 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 delay(100)
             }
         }
-    }
-
-    private fun showHelp() {
-        val text = String(assets.open("web/help/md/SourceMRssHelp.md").readBytes())
-        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 
     override fun upCountView() {

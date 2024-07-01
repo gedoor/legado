@@ -43,6 +43,9 @@ object Permissions {
 
     const val ACCESS_MEDIA_LOCATION = "android.permission.ACCESS_MEDIA_LOCATION"
 
+    const val REQUEST_IGNORE_BATTERY_OPTIMIZATIONS =
+        "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+
     object Group {
         val STORAGE = if (isManageExternalStorage()) {
             arrayOf(MANAGE_EXTERNAL_STORAGE)

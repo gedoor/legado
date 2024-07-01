@@ -5,17 +5,26 @@ package io.legado.app.help.book
 import android.net.Uri
 import com.script.SimpleBindings
 import com.script.rhino.RhinoScriptEngine
-import io.legado.app.constant.*
+import io.legado.app.constant.AppLog
+import io.legado.app.constant.BookSourceType
+import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
-import io.legado.app.utils.*
+import io.legado.app.model.localBook.LocalBook
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.exists
+import io.legado.app.utils.find
+import io.legado.app.utils.inputStream
+import io.legado.app.utils.isUri
+import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.set
 
 
 val Book.isAudio: Boolean
@@ -221,6 +230,14 @@ fun Book.sync(oldBook: Book) {
     durChapterPos = curBook.durChapterPos
     durChapterTitle = curBook.durChapterTitle
     canUpdate = curBook.canUpdate
+}
+
+fun Book.getBookSource(): BookSource? {
+    return appDb.bookSourceDao.getBookSource(origin)
+}
+
+fun Book.isLocalModified(): Boolean {
+    return isLocal && LocalBook.getLastModified(this).getOrDefault(0L) > latestChapterTime
 }
 
 fun Book.isSameNameAuthor(other: Any?): Boolean {

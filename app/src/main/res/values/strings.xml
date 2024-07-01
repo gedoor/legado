@@ -1152,4 +1152,6 @@
     <string name="record_heap_dump_t">Capture heap dump</string>
     <string name="font_weight_text">N/B/L</string>
     <string name="keep_swipe_tip">Keep swiping to load the next chapter…</string>
+    <string name="enable_optimize_render">启用绘制优化</string>
+    <string name="ignore_battery_permission_rationale">阅读需要请求后台权限以保持服务正常运行</string>
 </resources>

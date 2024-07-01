@@ -8,6 +8,7 @@ import androidx.annotation.Keep
 import androidx.core.graphics.withTranslation
 import io.legado.app.R
 import io.legado.app.help.PaintPool
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.entities.TextChapter.Companion.emptyTextChapter
@@ -44,6 +45,7 @@ data class TextPage(
     val lines: List<TextLine> get() = textLines
     val lineSize: Int get() = textLines.size
     val charSize: Int get() = text.length.coerceAtLeast(1)
+    val chapterPosition: Int get() = textLines.first().chapterPosition
     val searchResult = hashSetOf<TextColumn>()
     var isMsgPage: Boolean = false
     var canvasRecorder = CanvasRecorderFactory.create(true)
@@ -286,9 +288,15 @@ data class TextPage(
     }
 
     fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
-        render(view)
-        canvas.withTranslation(0f, relativeOffset + paddingTop) {
-            canvasRecorder.draw(this)
+        if (AppConfig.optimizeRender) {
+            render(view)
+            canvas.withTranslation(0f, relativeOffset + paddingTop) {
+                canvasRecorder.draw(this)
+            }
+        } else {
+            canvas.withTranslation(0f, relativeOffset + paddingTop) {
+                drawPage(view, this)
+            }
         }
     }
 

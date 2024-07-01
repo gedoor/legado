@@ -404,17 +404,9 @@ class PageView(context: Context) : FrameLayout(context) {
     fun selectStartMoveIndex(
         relativePagePos: Int,
         lineIndex: Int,
-        charIndex: Int,
-        isTouch: Boolean = true,
-        isLast: Boolean = false
+        charIndex: Int
     ) {
-        binding.contentTextView.selectStartMoveIndex(
-            relativePagePos,
-            lineIndex,
-            charIndex,
-            isTouch,
-            isLast
-        )
+        binding.contentTextView.selectStartMoveIndex(relativePagePos, lineIndex, charIndex)
     }
 
     fun selectStartMoveIndex(textPos: TextPos) {
@@ -428,17 +420,9 @@ class PageView(context: Context) : FrameLayout(context) {
     fun selectEndMoveIndex(
         relativePagePos: Int,
         lineIndex: Int,
-        charIndex: Int,
-        isTouch: Boolean = true,
-        isLast: Boolean = false
+        charIndex: Int
     ) {
-        binding.contentTextView.selectEndMoveIndex(
-            relativePagePos,
-            lineIndex,
-            charIndex,
-            isTouch,
-            isLast
-        )
+        binding.contentTextView.selectEndMoveIndex(relativePagePos, lineIndex, charIndex)
     }
 
     fun selectEndMoveIndex(textPos: TextPos) {

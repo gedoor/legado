@@ -57,6 +57,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URLEncoder
 import java.nio.charset.Charset
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -748,47 +749,97 @@ interface JsExtensions : JsEncodeUtils {
 //******************文件操作************************//
 
     /**
-     * 解析字体,返回字体解析类
+     * 解析字体Base64数据,返回字体解析类
      */
-    fun queryBase64TTF(base64: String?): QueryTTF? {
-        base64DecodeToByteArray(base64)?.let {
-            return QueryTTF(it)
-        }
-        return null
+    fun queryBase64TTF(data: String?): QueryTTF? {
+        log("queryBase64TTF(String)方法已过时,并将在未来删除；请无脑使用queryTTF(Any)替代，新方法支持传入 url、本地文件、base64、ByteArray 自动判断&自动缓存，特殊情况需禁用缓存请传入第二可选参数false:Boolean")
+        return queryTTF(data)
     }
 
     /**
      * 返回字体解析类
-     * @param str 支持url,本地文件,base64,自动判断,自动缓存
+     * @param data 支持url,本地文件,base64,ByteArray,自动判断,自动缓存
+     * @param useCache 可选开关缓存,不传入该值默认开启缓存
      */
-    fun queryTTF(str: String?): QueryTTF? {
-        str ?: return null
+    @OptIn(ExperimentalStdlibApi::class)
+    fun queryTTF(data: Any?, useCache: Boolean): QueryTTF? {
         try {
-            val key = md5Encode16(str)
-            var qTTF = CacheManager.getQueryTTF(key)
-            if (qTTF != null) return qTTF
-            val font: ByteArray? = when {
-                str.isAbsUrl() -> {
-                    var x = CacheManager.getByteArray(key)
-                    if (x == null) {
-                        x = AnalyzeUrl(str, source = getSource()).getByteArray()
-                        CacheManager.put(key, x)
+            var key: String? = null
+            var qTTF: QueryTTF?
+            when (data) {
+                is String -> {
+                    if (useCache) {
+                        key = MessageDigest.getInstance("SHA-256").digest(data.toByteArray()).toHexString()
+                        qTTF = CacheManager.getQueryTTF(key)
+                        if (qTTF != null) return qTTF
                     }
-                    x
+                    val font: ByteArray? = when {
+                        data.isContentScheme() -> Uri.parse(data).readBytes(appCtx)
+                        data.startsWith("/storage") -> File(data).readBytes()
+                        data.isAbsUrl() -> AnalyzeUrl(data, source = getSource()).getByteArray()
+                        else -> base64DecodeToByteArray(data)
+                    }
+                    font ?: return null
+                    qTTF = QueryTTF(font)
                 }
 
-                str.isContentScheme() -> Uri.parse(str).readBytes(appCtx)
-                str.startsWith("/storage") -> File(str).readBytes()
-                else -> base64DecodeToByteArray(str)
+                is ByteArray -> {
+                    if (useCache) {
+                        key = MessageDigest.getInstance("SHA-256").digest(data).toHexString()
+                        qTTF = CacheManager.getQueryTTF(key)
+                        if (qTTF != null) return qTTF
+                    }
+                    qTTF = QueryTTF(data)
+                }
+
+                else -> return null
             }
-            font ?: return null
-            qTTF = QueryTTF(font)
-            CacheManager.put(key, qTTF)
+            if (key != null) CacheManager.put(key, qTTF)
             return qTTF
         } catch (e: Exception) {
-            AppLog.put("获取字体处理类出错", e)
+            AppLog.put("[queryTTF] 获取字体处理类出错", e)
             throw e
         }
+    }
+
+    fun queryTTF(data: Any?): QueryTTF? {
+        return queryTTF(data, true)
+    }
+
+    /**
+     * @param text 包含错误字体的内容
+     * @param errorQueryTTF 错误的字体
+     * @param correctQueryTTF 正确的字体
+     * @param filter 删除 errorQueryTTF 中不存在的字符
+     */
+    fun replaceFont(
+        text: String,
+        errorQueryTTF: QueryTTF?,
+        correctQueryTTF: QueryTTF?,
+        filter: Boolean
+    ): String {
+        if (errorQueryTTF == null || correctQueryTTF == null) return text
+        val contentArray = text.toStringArray() //这里不能用toCharArray,因为有些文字占多个字节
+        contentArray.forEachIndexed { index, s ->
+            val oldCode = s.codePointAt(0)
+            // 忽略正常的空白字符
+            if (errorQueryTTF.isBlankUnicode(oldCode)) {
+                return@forEachIndexed
+            }
+            // 删除轮廓数据不存在的字符
+            var glyf = errorQueryTTF.getGlyfByUnicode(oldCode)  // 轮廓数据不存在
+            if (errorQueryTTF.getGlyfIdByUnicode(oldCode) == 0) glyf = null // 轮廓数据指向保留索引0
+            if (filter && (glyf == null)) {
+                contentArray[index] = ""
+                return@forEachIndexed
+            }
+            // 使用轮廓数据反查Unicode
+            val code = correctQueryTTF.getUnicodeByGlyf(glyf)
+            if (code != 0) {
+                contentArray[index] = code.toChar().toString()
+            }
+        }
+        return contentArray.joinToString("")
     }
 
     /**
@@ -801,19 +852,7 @@ interface JsExtensions : JsEncodeUtils {
         errorQueryTTF: QueryTTF?,
         correctQueryTTF: QueryTTF?
     ): String {
-        if (errorQueryTTF == null || correctQueryTTF == null) return text
-        val contentArray = text.toStringArray() //这里不能用toCharArray,因为有些文字占多个字节
-        contentArray.forEachIndexed { index, s ->
-            val oldCode = s.codePointAt(0)
-            if (errorQueryTTF.inLimit(oldCode)) {
-                val glyf = errorQueryTTF.getGlyfByCode(oldCode)
-                val code = correctQueryTTF.getCodeByGlyf(glyf)
-                if (code != 0) {
-                    contentArray[index] = code.toChar().toString()
-                }
-            }
-        }
-        return contentArray.joinToString("")
+        return replaceFont(text, errorQueryTTF, correctQueryTTF, false)
     }
 
 

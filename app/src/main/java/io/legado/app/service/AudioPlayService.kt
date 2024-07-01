@@ -20,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media.AudioFocusRequestCompat
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import io.legado.app.R
 import io.legado.app.base.BaseService
@@ -59,7 +58,6 @@ import splitties.systemservices.notificationManager
 import splitties.systemservices.powerManager
 import splitties.systemservices.wifiManager
 
-@UnstableApi
 /**
  * 音频播放服务
  */
@@ -136,6 +134,7 @@ class AudioPlayService : BaseService(),
                 .get()
         }.onSuccess {
             cover = it
+            upMediaMetadata()
             upAudioPlayNotification()
         }
     }
@@ -145,8 +144,17 @@ class AudioPlayService : BaseService(),
             when (action) {
                 IntentAction.play -> {
                     exoPlayer.stop()
+                    upPlayProgressJob?.cancel()
                     pause = false
                     position = AudioPlay.book?.durChapterPos ?: 0
+                    loadContent()
+                }
+
+                IntentAction.playNew -> {
+                    exoPlayer.stop()
+                    upPlayProgressJob?.cancel()
+                    pause = false
+                    position = 0
                     loadContent()
                 }
 
@@ -161,7 +169,7 @@ class AudioPlayService : BaseService(),
                     adjustProgress(intent.getIntExtra("position", position))
                 }
 
-                else -> stopSelf()
+                IntentAction.stop -> stopSelf()
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -205,7 +213,6 @@ class AudioPlayService : BaseService(),
                 source = AudioPlay.bookSource,
                 ruleData = AudioPlay.book,
                 chapter = AudioPlay.durChapter,
-                headerMapF = AudioPlay.headers(true),
             )
             exoPlayer.setMediaItem(analyzeUrl.getMediaItem())
             exoPlayer.playWhenReady = true
@@ -321,11 +328,7 @@ class AudioPlayService : BaseService(),
                     postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
                 }
                 postEvent(EventBus.AUDIO_SIZE, exoPlayer.duration)
-                mediaSessionCompat?.setMetadata(
-                    MediaMetadataCompat.Builder()
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.duration)
-                        .build()
-                )
+                upMediaMetadata()
                 upPlayProgress()
                 AudioPlay.saveDurChapter(exoPlayer.duration)
             }
@@ -337,6 +340,17 @@ class AudioPlayService : BaseService(),
             }
         }
         upAudioPlayNotification()
+    }
+
+    private fun upMediaMetadata() {
+        val metadata = MediaMetadataCompat.Builder()
+            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, cover)
+            .putText(MediaMetadataCompat.METADATA_KEY_TITLE, AudioPlay.durChapter?.title ?: "null")
+            .putText(MediaMetadataCompat.METADATA_KEY_ARTIST, AudioPlay.book?.name ?: "null")
+            .putText(MediaMetadataCompat.METADATA_KEY_ALBUM, AudioPlay.book?.author ?: "null")
+            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.duration)
+            .build()
+        mediaSessionCompat?.setMetadata(metadata)
     }
 
     /**
@@ -584,7 +598,7 @@ class AudioPlayService : BaseService(),
         }
     }
 
-    private fun  createNotification(): NotificationCompat.Builder {
+    private fun createNotification(): NotificationCompat.Builder {
         var nTitle: String = when {
             pause -> getString(R.string.audio_pause)
             timeMinute in 1..60 -> getString(
@@ -642,11 +656,14 @@ class AudioPlayService : BaseService(),
         return builder
     }
 
-    private fun  upAudioPlayNotification() {
+    private fun upAudioPlayNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            notificationManager.notify(NotificationId.AudioPlayService, it.build())
+            try {
+                val notification = createNotification()
+                notificationManager.notify(NotificationId.AudioPlayService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建音频播放通知出错,${e.localizedMessage}", e, true)
+            }
         }
     }
 
@@ -655,9 +672,14 @@ class AudioPlayService : BaseService(),
      */
     override fun startForegroundNotification() {
         execute {
-            createNotification()
-        }.onSuccess {
-            startForeground(NotificationId.AudioPlayService, it.build())
+            try {
+                val notification = createNotification()
+                startForeground(NotificationId.AudioPlayService, notification.build())
+            } catch (e: Exception) {
+                AppLog.put("创建音频播放通知出错,${e.localizedMessage}", e, true)
+                //创建通知出错不结束服务就会崩溃,服务必须绑定通知
+                stopSelf()
+            }
         }
     }
 

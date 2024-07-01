@@ -11,7 +11,6 @@ import io.legado.app.constant.PageAnim
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.DefaultData
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON

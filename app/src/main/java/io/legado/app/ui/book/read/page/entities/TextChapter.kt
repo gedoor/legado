@@ -112,7 +112,7 @@ data class TextChapter(
      */
     fun getReadLength(pageIndex: Int): Int {
         if (pageIndex < 0) return 0
-        return pages[min(pageIndex, lastIndex)].lines.first().chapterPosition
+        return pages[min(pageIndex, lastIndex)].chapterPosition
         /*
         var length = 0
         val maxIndex = min(pageIndex, pages.size)
@@ -224,14 +224,13 @@ data class TextChapter(
             return -1
         }
         val bIndex = pages.fastBinarySearchBy(charIndex, 0, pageSize) {
-            it.lines.first().chapterPosition
+            it.chapterPosition
         }
         val index = abs(bIndex + 1) - 1
         // 判断是否已经排版到 charIndex ，没有则返回 -1
         if (!isCompleted && index == pageSize - 1) {
             val page = pages[index]
-            val line = page.lines.first()
-            val pageEndPos = line.chapterPosition + page.charSize
+            val pageEndPos = page.chapterPosition + page.charSize
             if (charIndex > pageEndPos) {
                 return -1
             }

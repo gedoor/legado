@@ -15,7 +15,17 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.constant.NotificationId
 import io.legado.app.constant.PreferKey
 import io.legado.app.receiver.NetworkChangedListener
-import io.legado.app.utils.*
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefInt
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.servicePendingIntent
+import io.legado.app.utils.startForegroundServiceCompat
+import io.legado.app.utils.startService
+import io.legado.app.utils.stopService
+import io.legado.app.utils.toastOnUi
 import io.legado.app.web.HttpServer
 import io.legado.app.web.WebSocketServer
 import splitties.init.appCtx
@@ -31,6 +41,11 @@ class WebService : BaseService() {
 
         fun start(context: Context) {
             context.startService<WebService>()
+        }
+
+        fun startForeground(context: Context) {
+            val intent = Intent(context, WebService::class.java)
+            context.startForegroundServiceCompat(intent)
         }
 
         fun stop(context: Context) {
@@ -79,14 +94,19 @@ class WebService : BaseService() {
             val addressList = NetworkUtils.getLocalIPAddress()
             notificationList.clear()
             if (addressList.any()) {
-                notificationList.addAll(addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) })
+                notificationList.addAll(addressList.map { address ->
+                    getString(
+                        R.string.http_ip,
+                        address.hostAddress,
+                        getPort()
+                    )
+                })
                 hostAddress = notificationList.first()
-                startForegroundNotification()
             } else {
                 hostAddress = getString(R.string.network_connection_unavailable)
                 notificationList.add(hostAddress)
-                startForegroundNotification()
             }
+            startForegroundNotification()
             postEvent(EventBus.WEB_SERVICE, hostAddress)
         }
     }
@@ -140,7 +160,13 @@ class WebService : BaseService() {
                 httpServer?.start()
                 webSocketServer?.start(1000 * 30) // 通信超时设置
                 notificationList.clear()
-                notificationList.addAll(addressList.map { address -> getString(R.string.http_ip, address.hostAddress, getPort()) })
+                notificationList.addAll(addressList.map { address ->
+                    getString(
+                        R.string.http_ip,
+                        address.hostAddress,
+                        getPort()
+                    )
+                })
                 hostAddress = notificationList.first()
                 isRun = true
                 postEvent(EventBus.WEB_SERVICE, hostAddress)
@@ -169,6 +195,7 @@ class WebService : BaseService() {
      */
     override fun startForegroundNotification() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdWeb)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_web_service_noti)
             .setOngoing(true)
             .setContentTitle(getString(R.string.web_service))
@@ -181,7 +208,6 @@ class WebService : BaseService() {
             getString(R.string.cancel),
             servicePendingIntent<WebService>(IntentAction.stop)
         )
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         val notification = builder.build()
         startForeground(NotificationId.WebService, notification)
     }

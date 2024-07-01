@@ -88,7 +88,7 @@ interface RssSourceDao {
     fun flowGroupsUnProcessed(): Flow<List<String>>
 
     @Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> '' and enabled = 1")
-    fun flowGroupEnabled(): Flow<List<String>>
+    fun flowEnabledGroupsUnProcessed(): Flow<List<String>>
 
     @get:Query("select distinct sourceGroup from rssSources where trim(sourceGroup) <> ''")
     val allGroupsUnProcessed: List<String>
@@ -142,4 +142,11 @@ interface RssSourceDao {
             dealGroups(list)
         }.flowOn(IO)
     }
+
+    fun flowEnabledGroups(): Flow<List<String>> {
+        return flowEnabledGroupsUnProcessed().map { list ->
+            dealGroups(list)
+        }.flowOn(IO)
+    }
+
 }

@@ -20,6 +20,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.isLocalModified
 import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -115,6 +116,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.loadOrUpContent()
             checkLocalBookFileExist(book)
         } else {
+            if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
+                ReadBook.durChapterIndex = ReadBook.chapterSize - 1
+            }
             ReadBook.loadContent(resetPageOffset = false)
             checkLocalBookFileExist(book)
         }
@@ -535,7 +539,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
-        if (BaseReadAloudService.pause) {
+        if (BaseReadAloudService.isRun && BaseReadAloudService.pause) {
             ReadAloud.stop(context)
         }
     }

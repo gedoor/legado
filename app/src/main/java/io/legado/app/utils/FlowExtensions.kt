@@ -1,17 +1,25 @@
 package io.legado.app.utils
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.room.invalidationTrackerFlow
+import io.legado.app.data.appDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.sync.Semaphore
 import kotlin.coroutines.coroutineContext
 
@@ -184,4 +192,56 @@ inline fun <T> Flow<T>.onEachAsyncIndexed(
             it.await()
         }.onEach { semaphore.release() }
     }.buffer(0)
+}
+
+fun <T> Flow<T>.flowWithLifecycleFirst(
+    lifecycle: Lifecycle,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED
+): Flow<T> = callbackFlow {
+    if (!lifecycle.currentState.isAtLeast(minActiveState)) {
+        send(first())
+    }
+    lifecycle.repeatOnLifecycle(minActiveState) {
+        this@flowWithLifecycleFirst.collect {
+            send(it)
+        }
+    }
+    close()
+}
+
+fun <T> Flow<T>.flowWithLifecycleAndDatabaseChange(
+    lifecycle: Lifecycle,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    table: String
+): Flow<T> = callbackFlow {
+    val channel = appDb.invalidationTrackerFlow(table)
+        .conflate()
+        .produceIn(this)
+    lifecycle.repeatOnLifecycle(minActiveState) {
+        channel.receive()
+        this@flowWithLifecycleAndDatabaseChange.collect {
+            send(it)
+        }
+    }
+    close()
+}
+
+fun <T> Flow<T>.flowWithLifecycleAndDatabaseChangeFirst(
+    lifecycle: Lifecycle,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    table: String
+): Flow<T> = callbackFlow {
+    if (!lifecycle.currentState.isAtLeast(minActiveState)) {
+        send(first())
+    }
+    val channel = appDb.invalidationTrackerFlow(table)
+        .conflate()
+        .produceIn(this)
+    lifecycle.repeatOnLifecycle(minActiveState) {
+        channel.receive()
+        this@flowWithLifecycleAndDatabaseChangeFirst.collect {
+            send(it)
+        }
+    }
+    close()
 }

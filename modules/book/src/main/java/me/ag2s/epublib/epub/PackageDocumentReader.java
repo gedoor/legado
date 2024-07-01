@@ -35,6 +35,7 @@ import me.ag2s.epublib.domain.Spine;
 import me.ag2s.epublib.domain.SpineReference;
 import me.ag2s.epublib.util.ResourceUtil;
 import me.ag2s.epublib.util.StringUtil;
+import me.ag2s.epublib.util.URLEncodeUtil;
 
 /**
  * Reads the opf package document as defined by namespace http://www.idpf.org/2007/opf
@@ -106,11 +107,14 @@ public class PackageDocumentReader extends PackageDocumentBase {
         NodeList originItemElements = manifestElement
                 .getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.item);
         for (int i = 0; i < originItemElements.getLength(); i++) {
-            Element itemElement = (Element) originItemElements.item(i);
-            fixedElements.add(itemElement);
+            Element itemElement = (Element) originItemElements.item(i).cloneNode(false);
             String href = DOMUtil.getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
+            href = URLEncodeUtil.encode(href);
+            String resolvedHref = packagePath.resolve(href).toString();
+            itemElement.setAttribute("href", resolvedHref);
+            fixedElements.add(itemElement);
             try {
-                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
+                href = URLDecoder.decode(resolvedHref, Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -177,7 +181,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
                     .getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
 
             try {
-                href = URLDecoder.decode(packagePath.resolve(href).toString(), Constants.CHARACTER_ENCODING);
+                href = URLDecoder.decode(href, Constants.CHARACTER_ENCODING);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -449,9 +453,9 @@ public class PackageDocumentReader extends PackageDocumentBase {
                             OPFTags.item, OPFAttributes.id, coverResourceId,
                             OPFAttributes.href);
             if (StringUtil.isNotBlank(coverHref)) {
-                result.add(packagePath.resolve(coverHref).toString());
+                result.add(resolvePath(packagePath, coverHref));
             } else {
-                String resolved = packagePath.resolve(coverResourceId).toString();
+                String resolved = resolvePath(packagePath, coverResourceId);
                 result.add(
                         resolved); // maybe there was a cover href put in the cover id attribute
             }
@@ -462,9 +466,19 @@ public class PackageDocumentReader extends PackageDocumentBase {
                         OPFTags.reference, OPFAttributes.type, OPFValues.reference_cover,
                         OPFAttributes.href);
         if (StringUtil.isNotBlank(coverHref)) {
-            result.add(packagePath.resolve(coverHref).toString());
+            result.add(resolvePath(packagePath, coverHref));
         }
         return result;
+    }
+
+    private static String resolvePath(URI parentPath, String href) {
+        href = URLEncodeUtil.encode(href);
+        String resolved = parentPath.resolve(href).toString();
+        try {
+            return URLDecoder.decode(resolved, Constants.CHARACTER_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

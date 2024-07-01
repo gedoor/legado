@@ -20,7 +20,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import java.util.*
+import java.util.Collections
 
 class RemoteBookViewModel(application: Application) : BaseViewModel(application) {
     var sortKey = RemoteBookSort.Default
@@ -78,6 +78,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 }
                 return@sortedWith compare
             }
+
             else -> list.sortedWith { o1, o2 ->
                 val compare = -compareValues(o1.isDir, o2.isDir)
                 if (compare == 0) {
@@ -89,14 +90,17 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     }.flowOn(Dispatchers.IO)
 
     private var remoteBookWebDav: RemoteBookWebDav? = null
+    var isDefaultWebdav = false
 
     fun initData(onSuccess: () -> Unit) {
         execute {
+            isDefaultWebdav = false
             appDb.serverDao.get(AppConfig.remoteServerId)?.getWebDavConfig()?.let {
                 val authorization = Authorization(it)
                 remoteBookWebDav = RemoteBookWebDav(it.url, authorization, AppConfig.remoteServerId)
                 return@execute
             }
+            isDefaultWebdav = true
             remoteBookWebDav = AppWebDav.defaultBookWebDav
                 ?: throw NoStackTraceException("webDav没有配置")
         }.onError {
@@ -107,7 +111,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun loadRemoteBookList(path: String?, loadCallback: (loading: Boolean) -> Unit) {
-        execute {
+        executeLazy {
             val bookWebDav = remoteBookWebDav
                 ?: throw NoStackTraceException("没有配置webDav")
             dataCallback?.clear()
@@ -121,7 +125,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
             loadCallback.invoke(true)
         }.onFinally {
             loadCallback.invoke(false)
-        }
+        }.start()
     }
 
     fun addToBookshelf(remoteBooks: HashSet<RemoteBook>, finally: () -> Unit) {
@@ -132,10 +136,8 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
                 val downloadBookUri = bookWebDav.downloadRemoteBook(remoteBook)
                 LocalBook.importFiles(downloadBookUri).forEach { book ->
                     book.origin = BookType.webDavTag + CustomUrl(remoteBook.path)
-                        .putAttribute(
-                            "serverID",
-                            bookWebDav.serverID
-                        ).toString()
+                        .putAttribute("serverID", bookWebDav.serverID)
+                        .toString()
                     book.save()
                 }
                 remoteBook.isOnBookShelf = true
@@ -152,7 +154,7 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun updateCallBackFlow(filterKey: String?) {
-       dataCallback?.screen(filterKey)
+        dataCallback?.screen(filterKey)
     }
 
     interface DataCallback {

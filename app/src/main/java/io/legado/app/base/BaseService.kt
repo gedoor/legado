@@ -1,6 +1,7 @@
 package io.legado.app.base
 
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LifecycleService
@@ -33,7 +34,7 @@ abstract class BaseService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
         LifecycleHelp.onServiceCreate(this)
-        checkNotificationPermission()
+        checkPermission()
     }
 
     @CallSuper
@@ -71,9 +72,9 @@ abstract class BaseService : LifecycleService() {
     }
 
     /**
-     * 检测通知权限
+     * 检测通知权限和后台权限
      */
-    private fun checkNotificationPermission() {
+    private fun checkPermission() {
         PermissionsCompat.Builder()
             .addPermissions(Permissions.POST_NOTIFICATIONS)
             .rationale(R.string.notification_permission_rationale)
@@ -83,5 +84,11 @@ abstract class BaseService : LifecycleService() {
                 }
             }
             .request()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PermissionsCompat.Builder()
+                .addPermissions(Permissions.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                .rationale(R.string.ignore_battery_permission_rationale)
+                .request()
+        }
     }
 }

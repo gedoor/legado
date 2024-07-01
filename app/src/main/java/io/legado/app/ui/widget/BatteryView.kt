@@ -6,13 +6,12 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.text.SpannableStringBuilder
-import android.text.Spanned
+import android.os.Build
 import android.text.StaticLayout
-import android.text.style.LineHeightSpan
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
 import io.legado.app.utils.canvasrecorder.recordIfNeededThenDraw
 import io.legado.app.utils.dpToPx
@@ -28,13 +27,6 @@ class BatteryView @JvmOverloads constructor(
     private val outFrame = Rect()
     private val polar = Rect()
     private val canvasRecorder = CanvasRecorderFactory.create()
-    private val batterySpan = LineHeightSpan { _, _, _, _, _, fm ->
-        fm.top = -22
-        fm.ascent = -28
-        fm.descent = 7
-        fm.bottom = 1
-        fm.leading = 0
-    }
     var isBattery = false
         set(value) {
             field = value
@@ -47,6 +39,9 @@ class BatteryView @JvmOverloads constructor(
 
     init {
         setPadding(4.dpToPx(), 3.dpToPx(), 6.dpToPx(), 3.dpToPx())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            isFallbackLineSpacing = false
+        }
         batteryPaint.strokeWidth = 1f.dpToPx()
         batteryPaint.isAntiAlias = true
         batteryPaint.color = paint.color
@@ -68,9 +63,9 @@ class BatteryView @JvmOverloads constructor(
     fun setBattery(battery: Int, text: String? = null) {
         this.battery = battery
         if (text.isNullOrEmpty()) {
-            setText(getBatteryText(battery.toString()))
+            setText(battery.toString())
         } else {
-            setText(getBatteryText("$text  $battery"))
+            setText("$text  $battery")
         }
     }
 
@@ -80,14 +75,19 @@ class BatteryView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvasRecorder.recordIfNeededThenDraw(canvas, width, height) {
-            super.onDraw(this)
-            if (!isBattery) return@recordIfNeededThenDraw
-            drawBattery(this)
+        if (AppConfig.optimizeRender) {
+            canvasRecorder.recordIfNeededThenDraw(canvas, width, height) {
+                super.onDraw(this)
+                drawBattery(this)
+            }
+        } else {
+            super.onDraw(canvas)
+            drawBattery(canvas)
         }
     }
 
     private fun drawBattery(canvas: Canvas) {
+        if (!isBattery) return
         layout.getLineBounds(0, outFrame)
         val batteryStart = layout
             .getPrimaryHorizontal(text.length - battery.toString().length)
@@ -113,22 +113,10 @@ class BatteryView @JvmOverloads constructor(
         canvas.drawRect(polar, batteryPaint)
     }
 
-    private fun getBatteryText(text: CharSequence?): SpannableStringBuilder? {
-        if (text == null) {
-            return null
-        }
-
-        return SpannableStringBuilder(text).apply {
-            setSpan(batterySpan, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-    }
-
-
+    @Suppress("UNNECESSARY_SAFE_CALL")
     override fun invalidate() {
         super.invalidate()
-        kotlin.runCatching {
-            canvasRecorder.invalidate()
-        }
+        canvasRecorder?.invalidate()
     }
 
 }

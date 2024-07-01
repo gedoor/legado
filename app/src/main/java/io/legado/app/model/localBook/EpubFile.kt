@@ -10,6 +10,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookHelp
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
+import io.legado.app.utils.encodeURI
 import io.legado.app.utils.isXml
 import io.legado.app.utils.printOnDebug
 import me.ag2s.epublib.domain.EpubBook
@@ -179,6 +180,14 @@ class EpubFile(var book: Book) {
         elements.select("img[src=\"cover.jpeg\"]").forEachIndexed { i, it ->
             if (i > 0) it.remove()
         }
+        elements.select("img").forEach {
+            if (it.attributesSize() <= 1) {
+                return@forEach
+            }
+            val src = it.attr("src")
+            it.clearAttributes()
+            it.attr("src", src)
+        }
         val tag = Book.rubyTag
         if (book.getDelTag(tag)) {
             elements.select("rp, rt").remove()
@@ -244,8 +253,10 @@ class EpubFile(var book: Book) {
             }
         }
         bodyElement.select("img").forEach {
-            val src = it.attr("src")
-            it.attr("src", URI(res.href).resolve(src).toString())
+            val src = it.attr("src").encodeURI()
+            val href = res.href.encodeURI()
+            val resolvedHref = URLDecoder.decode(URI(href).resolve(src).toString(), "UTF-8")
+            it.attr("src", resolvedHref)
         }
         return bodyElement
     }

@@ -14,7 +14,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -23,6 +24,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
+import io.legado.app.data.AppDatabase
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.ActivityBookSourceBinding
@@ -43,7 +45,6 @@ import io.legado.app.ui.config.CheckSourceConfig
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.qrcode.QrCodeResult
 import io.legado.app.ui.widget.SelectActionBar
-import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -51,6 +52,8 @@ import io.legado.app.utils.ACache
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.dpToPx
+import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
+import io.legado.app.utils.flowWithLifecycleAndDatabaseChangeFirst
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.launch
@@ -59,6 +62,7 @@ import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.share
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.showHelp
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
@@ -68,6 +72,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
@@ -98,7 +103,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     override var sortAscending = true
         private set
     private var snackBar: Snackbar? = null
-    private var isPaused = false
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         showDialogFragment(ImportBookSourceDialog(it))
@@ -125,6 +129,19 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
     }
+    private val groupMenuLifecycleOwner = object : LifecycleOwner {
+        private val registry = LifecycleRegistry(this)
+        override val lifecycle: Lifecycle get() = registry
+
+        fun onMenuOpened() {
+            registry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        }
+
+        fun onMenuClosed() {
+            registry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        }
+
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -134,7 +151,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         initSelectActionBar()
         resumeCheckSource()
         if (!LocalConfig.bookSourcesHelpVersionIsLast) {
-            showHelp()
+            showHelp("SourceMBookHelp")
         }
     }
 
@@ -248,7 +265,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 searchView.setQuery(getString(R.string.disabled_explore), true)
             }
 
-            R.id.menu_help -> showHelp()
+            R.id.menu_help -> showHelp("SourceMBookHelp")
         }
         if (item.groupId == R.id.source_group) {
             searchView.setQuery("group:${item.title}", true)
@@ -360,7 +377,10 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         else -> data.reversed()
                     }
                 }
-            }.flowWithLifecycle(lifecycle).catch {
+            }.flowWithLifecycleAndDatabaseChange(
+                lifecycle,
+                table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+            ).catch {
                 AppLog.put("书源界面更新书源出错", it)
             }.flowOn(IO).conflate().collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback, !Debug.isChecking)
@@ -370,19 +390,25 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
-    private fun showHelp() {
-        val text = String(assets.open("web/help/md/SourceMBookHelp.md").readBytes())
-        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
-    }
-
     private fun initLiveDataGroup() {
         lifecycleScope.launch {
-            appDb.bookSourceDao.flowGroups().conflate().collect {
-                groups.clear()
-                groups.addAll(it)
-                upGroupMenu()
-                delay(500)
-            }
+            appDb.bookSourceDao.flowGroups()
+                .flowWithLifecycleAndDatabaseChange(
+                    lifecycle,
+                    table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+                )
+                .flowWithLifecycleAndDatabaseChangeFirst(
+                    groupMenuLifecycleOwner.lifecycle,
+                    table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+                )
+                .conflate()
+                .distinctUntilChanged()
+                .collect {
+                    groups.clear()
+                    groups.addAll(it)
+                    upGroupMenu()
+                    delay(500)
+                }
         }
     }
 
@@ -402,6 +428,20 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             yesButton { viewModel.del(adapter.selection) }
             noButton()
+        }
+    }
+
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        if (menu === groupMenu) {
+            groupMenuLifecycleOwner.onMenuOpened()
+        }
+        return super.onMenuOpened(featureId, menu)
+    }
+
+    override fun onPanelClosed(featureId: Int, menu: Menu) {
+        super.onPanelClosed(featureId, menu)
+        if (menu === groupMenu) {
+            groupMenuLifecycleOwner.onMenuClosed()
         }
     }
 
@@ -640,16 +680,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        isPaused = true
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isPaused = false
     }
 
     override fun upCountView() {

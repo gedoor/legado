@@ -200,7 +200,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         binding.swUnderline.setOnCheckedChangeListener { _, isChecked ->
             underline = isChecked
-            postEvent(EventBus.UP_CONFIG, arrayListOf(9, 11))
+            postEvent(EventBus.UP_CONFIG, arrayListOf(6, 9, 11))
         }
         binding.tvTextColor.setOnClickListener {
             ColorPickerDialog.newBuilder()

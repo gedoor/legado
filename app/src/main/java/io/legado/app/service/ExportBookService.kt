@@ -27,6 +27,7 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.getExportFileName
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.isLocalModified
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.cache.CacheActivity
@@ -57,6 +58,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.ag2s.epublib.domain.Author
 import me.ag2s.epublib.domain.Date
@@ -121,7 +123,10 @@ class ExportBookService : BaseService() {
                 toastOnUi(it.localizedMessage)
             }
 
-            IntentAction.stop -> stopSelf()
+            IntentAction.stop -> {
+                notificationManager.cancel(NotificationId.ExportBook)
+                stopSelf()
+            }
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -130,6 +135,9 @@ class ExportBookService : BaseService() {
         super.onDestroy()
         exportProgress.clear()
         exportMsg.clear()
+        waitExportBooks.keys.forEach {
+            postEvent(EventBus.EXPORT_BOOK, it)
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -168,7 +176,7 @@ class ExportBookService : BaseService() {
             return
         }
         exportJob = lifecycleScope.launch(IO) {
-            while (true) {
+            while (isActive) {
                 val (bookUrl, exportConfig) = waitExportBooks.entries.firstOrNull() ?: let {
                     notificationContentText = "导出完成"
                     upExportNotification(true)
@@ -200,6 +208,7 @@ class ExportBookService : BaseService() {
                     }
                     exportMsg[book.bookUrl] = getString(R.string.export_success)
                 } catch (e: Throwable) {
+                    ensureActive()
                     exportMsg[bookUrl] = e.localizedMessage ?: "ERROR"
                     AppLog.put("导出书籍<${book?.name ?: bookUrl}>出错", e)
                 } finally {
@@ -211,10 +220,7 @@ class ExportBookService : BaseService() {
     }
 
     private fun refreshChapterList(book: Book) {
-        if (!book.isLocal) {
-            return
-        }
-        if (LocalBook.getLastModified(book).getOrDefault(0L) < book.latestChapterTime) {
+        if (!book.isLocal || !book.isLocalModified()) {
             return
         }
         kotlin.runCatching {

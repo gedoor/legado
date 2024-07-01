@@ -1,6 +1,7 @@
 package io.legado.app.utils.canvasrecorder
 
 import android.graphics.Canvas
+import android.view.View
 import androidx.core.graphics.withSave
 
 inline fun CanvasRecorder.recordIfNeeded(
@@ -10,6 +11,14 @@ inline fun CanvasRecorder.recordIfNeeded(
 ): Boolean {
     if (!needRecord()) return false
     record(width, height, block)
+    return true
+}
+
+fun CanvasRecorder.recordIfNeeded(view: View): Boolean {
+    if (!needRecord()) return false
+    record(view.width, view.height) {
+        view.draw(this)
+    }
     return true
 }
 

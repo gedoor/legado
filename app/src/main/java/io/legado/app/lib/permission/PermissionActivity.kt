@@ -1,5 +1,6 @@
 package io.legado.app.lib.permission
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -24,6 +25,7 @@ class PermissionActivity : AppCompatActivity() {
             finish()
         }
 
+    @SuppressLint("BatteryLife")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val rationale = intent.getStringExtra(KEY_RATIONALE)
@@ -70,6 +72,20 @@ class PermissionActivity : AppCompatActivity() {
                     } else {
                         openSettingsActivity()
                     }
+                }
+            }
+
+            Request.TYPE_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> showSettingDialog(
+                permissions, rationale
+            ) {
+                kotlin.runCatching {
+                    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                    intent.setData(Uri.parse("package:$packageName"))
+                    intent.setClassName(
+                        "com.android.settings",
+                        "com.android.settings.fuelgauge.RequestIgnoreBatteryOptimizations"
+                    )
+                    settingActivityResult.launch(intent)
                 }
             }
         }

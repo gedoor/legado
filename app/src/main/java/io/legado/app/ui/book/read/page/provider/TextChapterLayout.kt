@@ -10,6 +10,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookContent
 import io.legado.app.help.book.BookHelp
+import io.legado.app.help.book.getBookSource
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -176,7 +177,7 @@ class TextChapterLayout(
         val contents = bookContent.textList
         var absStartX = paddingLeft
         var durY = 0f
-        if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume) {
+        if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume || contents.isEmpty()) {
             //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
                 setTypeText(

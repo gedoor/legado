@@ -97,10 +97,10 @@ data class ReplaceRule(
                 AppLog.put("正则语法错误或不支持：${ex.localizedMessage}", ex)
                 return false
             }
-        }
-        // Pattern.compile测试通过，但是部分情况下会替换超时，报错，一般发生在修改表达式时漏删了
-        if (pattern.endsWith('|') and !pattern.endsWith("\\|")) {
-            return false
+            // Pattern.compile测试通过，但是部分情况下会替换超时，报错，一般发生在修改表达式时漏删了
+            if (pattern.endsWith('|') && !pattern.endsWith("\\|")) {
+                return false
+            }
         }
         return true
     }

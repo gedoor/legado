@@ -4,6 +4,7 @@ package io.legado.app.constant
 object IntentAction {
     const val start = "start"
     const val play = "play"
+    const val playNew = "playNew"
     const val stop = "stop"
     const val resume = "resume"
     const val pause = "pause"

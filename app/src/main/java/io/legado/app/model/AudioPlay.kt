@@ -11,6 +11,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.getBookSource
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.AudioPlayService
 import io.legado.app.utils.postEvent
@@ -27,9 +28,25 @@ object AudioPlay {
     var inBookshelf = false
     var bookSource: BookSource? = null
     val loadingChapters = arrayListOf<Int>()
+    var durChapterIndex = 0
 
-    fun headers(hasLoginHeader: Boolean): Map<String, String>? {
-        return bookSource?.getHeaderMap(hasLoginHeader)
+    fun upData(context: Context, book: Book) {
+        AudioPlay.book = book
+        upDurChapter(book)
+        if (durChapterIndex != book.durChapterIndex) {
+            durChapterIndex = book.durChapterIndex
+            playNew(context)
+        }
+    }
+
+    fun resetData(context: Context, book: Book) {
+        stop(context)
+        AudioPlay.book = book
+        titleData.postValue(book.name)
+        coverData.postValue(book.getDisplayCover())
+        bookSource = book.getBookSource()
+        durChapterIndex = book.durChapterIndex
+        upDurChapter(book)
     }
 
     /**
@@ -43,6 +60,22 @@ object AudioPlay {
             durChapter?.let {
                 context.startService<AudioPlayService> {
                     action = IntentAction.play
+                }
+            }
+        }
+    }
+
+    /**
+     * 从头播放新章节
+     */
+    fun playNew(context: Context) {
+        book?.let {
+            if (durChapter == null) {
+                upDurChapter(it)
+            }
+            durChapter?.let {
+                context.startService<AudioPlayService> {
+                    action = IntentAction.playNew
                 }
             }
         }
@@ -105,9 +138,10 @@ object AudioPlay {
             book?.let { book ->
                 book.durChapterIndex = index
                 book.durChapterPos = 0
+                durChapterIndex = book.durChapterIndex
                 durChapter = null
                 saveRead()
-                play(context)
+                playNew(context)
             }
         }
     }
@@ -116,8 +150,9 @@ object AudioPlay {
         Coroutine.async {
             book?.let { book ->
                 if (book.durChapterIndex > 0) {
-                    book.durChapterIndex = book.durChapterIndex - 1
+                    book.durChapterIndex -= 1
                     book.durChapterPos = 0
+                    durChapterIndex = book.durChapterIndex
                     durChapter = null
                     saveRead()
                     play(context)
@@ -131,8 +166,9 @@ object AudioPlay {
     fun next(context: Context) {
         book?.let { book ->
             if (book.durChapterIndex + 1 < book.totalChapterNum) {
-                book.durChapterIndex = book.durChapterIndex + 1
+                book.durChapterIndex += 1
                 book.durChapterPos = 0
+                durChapterIndex = book.durChapterIndex
                 durChapter = null
                 saveRead()
                 play(context)

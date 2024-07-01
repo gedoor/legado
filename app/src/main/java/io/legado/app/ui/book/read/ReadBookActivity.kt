@@ -264,9 +264,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (bookChanged) {
             bookChanged = false
             ReadBook.callBack = this
-            viewModel.initData(intent) {
-                upMenu()
-            }
+            viewModel.initData(intent)
             justInitData = true
         } else {
             //web端阅读时，app处于阅读界面，本地记录会覆盖web保存的进度，在此处恢复
@@ -532,7 +530,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             R.id.menu_effective_replaces -> showDialogFragment<EffectiveReplacesDialog>()
 
-            R.id.menu_help -> showReadMenuHelp()
+            R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -921,9 +919,9 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
-    override fun upPageAnim() {
+    override fun upPageAnim(upRecorder: Boolean) {
         lifecycleScope.launch {
-            binding.readView.upPageAnim()
+            binding.readView.upPageAnim(upRecorder)
         }
     }
 
@@ -999,11 +997,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             isShowingSearchResult -> binding.searchMenu.runMenuIn()
             else -> binding.readMenu.runMenuIn()
         }
-    }
-
-    override fun showReadMenuHelp() {
-        val text = String(assets.open("web/help/md/readMenuHelp.md").readBytes())
-        showDialogFragment(TextDialog(getString(R.string.help), text, TextDialog.Mode.MD))
     }
 
     /**
@@ -1234,6 +1227,10 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
+    override fun showHelp() {
+        showHelp("readMenuHelp")
+    }
+
     /**
      * 长按图片
      */
@@ -1284,7 +1281,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         when (dialogId) {
             TEXT_COLOR -> {
                 setCurTextColor(color)
-                postEvent(EventBus.UP_CONFIG, arrayListOf(2, 9, 11))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(2, 6, 9, 11))
             }
 
             BG_COLOR -> {
@@ -1425,16 +1422,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
     }
-    override fun sureNewProgress(progress: BookProgress) {
-        alert(R.string.get_book_progress) {
-            setMessage(R.string.cloud_progress_exceeds_current)
-            okButton {
-                ReadBook.setProgress(progress)
-                ReadBook.saveRead()
-            }
-            noButton()
-        }
-    }
 
     override fun finish() {
         val book = ReadBook.book ?: return super.finish()
@@ -1490,9 +1477,9 @@ class ReadBookActivity : BaseReadBookActivity(),
                     5 -> if (isInitFinish) ReadBook.loadContent(resetPageOffset = false)
                     6 -> readView.upContent(resetPageOffset = false)
                     8 -> ChapterProvider.upStyle()
-                    9 -> binding.readView.invalidateTextPage()
+                    9 -> readView.invalidateTextPage()
                     10 -> ChapterProvider.upLayout()
-                    11 -> binding.readView.submitRenderTask()
+                    11 -> readView.submitRenderTask()
                 }
             }
         }
@@ -1533,10 +1520,10 @@ class ReadBookActivity : BaseReadBookActivity(),
             viewModel.searchResultList = it
         }
         observeEvent<Boolean>(EventBus.UPDATE_READ_ACTION_BAR) {
-            binding.readMenu.reset()
+            readMenu.reset()
         }
         observeEvent<Boolean>(EventBus.UP_SEEK_BAR) {
-            binding.readMenu.upSeekBar()
+            readMenu.upSeekBar()
         }
     }
 
