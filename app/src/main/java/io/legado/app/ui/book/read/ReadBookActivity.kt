@@ -1423,6 +1423,17 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
+    override fun sureNewProgress(progress: BookProgress) {
+        alert(R.string.get_book_progress) {
+            setMessage(R.string.cloud_progress_exceeds_current)
+            okButton {
+                ReadBook.setProgress(progress)
+                ReadBook.saveRead()
+            }
+            noButton()
+        }
+    }
+
     override fun finish() {
         val book = ReadBook.book ?: return super.finish()
 
