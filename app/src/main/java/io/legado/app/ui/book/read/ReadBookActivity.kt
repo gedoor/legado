@@ -1205,7 +1205,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                         ReadBook.book?.let {
                             ReadBook.curTextChapter = null
                             BookHelp.delContent(book, chapter)
-                            viewModel.loadChapterList(book)
+                            loadChapterList(book)
                         }
                     }
                 }.onError {
