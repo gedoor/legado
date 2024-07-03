@@ -282,6 +282,11 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        viewModel.initData(intent ?: return)
+    }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         upSystemUiVisibility()
