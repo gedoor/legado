@@ -2,10 +2,11 @@ package io.legado.app.model.localBook
 
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.utils.*
+import io.legado.app.utils.DebugLog
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.printOnDebug
 import me.ag2s.umdlib.domain.UmdBook
 import me.ag2s.umdlib.umd.UmdReader
-import java.io.File
 import java.io.InputStream
 
 class UmdFile(var book: Book) {
@@ -57,25 +58,22 @@ class UmdFile(var book: Book) {
             return field
         }
 
+    private fun readUmd(): UmdBook? {
+        val input = LocalBook.getBookInputStream(book)
+        return UmdReader().read(input)
+    }
 
-    init {
+    private fun upBookCover() {
         try {
             umdBook?.let {
                 if (book.coverUrl.isNullOrEmpty()) {
                     book.coverUrl = LocalBook.getCoverPath(book)
                 }
-                if (!File(book.coverUrl!!).exists()) {
-                    FileUtils.writeBytes(book.coverUrl!!, it.cover.coverData)
-                }
+                FileUtils.writeBytes(book.coverUrl!!, it.cover.coverData)
             }
         } catch (e: Exception) {
             e.printOnDebug()
         }
-    }
-
-    private fun readUmd(): UmdBook? {
-        val input = LocalBook.getBookInputStream(book)
-        return UmdReader().read(input)
     }
 
     private fun upBookInfo() {
@@ -83,6 +81,7 @@ class UmdFile(var book: Book) {
             uFile = null
             book.intro = "书籍导入异常"
         } else {
+            upBookCover()
             val hd = umdBook!!.header
             book.name = hd.title
             book.author = hd.author

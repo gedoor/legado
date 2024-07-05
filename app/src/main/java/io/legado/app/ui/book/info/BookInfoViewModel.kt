@@ -165,6 +165,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         scope: CoroutineScope = viewModelScope
     ) {
         if (book.isLocal) {
+            LocalBook.upBookInfo(book)
+            bookData.postValue(book)
             loadChapter(book, scope)
         } else {
             val bookSource = bookSource ?: let {
