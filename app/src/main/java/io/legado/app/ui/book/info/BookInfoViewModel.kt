@@ -424,6 +424,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun addToBookshelf(success: (() -> Unit)?) {
         execute {
             bookData.value?.let { book ->
+                book.removeType(BookType.notShelf)
                 if (book.order == 0) {
                     book.order = appDb.bookDao.minOrder - 1
                 }

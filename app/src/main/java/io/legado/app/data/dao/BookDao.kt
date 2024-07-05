@@ -148,4 +148,7 @@ interface BookDao {
 
     @Query("update books set `group` = `group` - :group where `group` & :group > 0")
     fun removeGroup(group: Long)
+
+    @Query("delete from books where type & ${BookType.notShelf} > 0")
+    fun deleteNotShelfBook()
 }

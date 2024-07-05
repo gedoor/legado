@@ -43,9 +43,14 @@ object BookType {
      */
     const val archive = 0b1000000000
 
+    /**
+     * 1024 未正式加入到书架的临时阅读书籍
+     */
+    const val notShelf = 0b100_0000_0000
+
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(text, updateError, audio, image, webFile, local, archive)
+    @IntDef(text, updateError, audio, image, webFile, local, archive, notShelf)
     annotation class Type
 
 

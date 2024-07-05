@@ -22,6 +22,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
@@ -97,6 +98,7 @@ object ReadBook : CoroutineScope by MainScope() {
         durChapterPos = book.durChapterPos
         isLocalBook = book.isLocal
         clearTextChapter()
+        callBack?.upContent()
         callBack?.upMenuView()
         callBack?.upPageAnim()
         upWebBook(book)
