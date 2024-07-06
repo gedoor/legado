@@ -13,10 +13,14 @@ fun Context?.getEnterCount(): Int {
     return enterCountField.get(this) as Int
 }
 
-fun checkRhinoRecursiveCall(): Boolean {
-    return Context.getCurrentContext().getEnterCount() > 1
+fun checkRhinoRecursiveCall() {
+    check(Context.getCurrentContext().getEnterCount() <= 1) {
+        "Rhino recursive call detected."
+    }
 }
 
-fun checkRhinoCall(): Boolean {
-    return Context.getCurrentContext() != null
+fun checkRhinoCall() {
+    check(Context.getCurrentContext() == null) {
+        "Rhino call detected."
+    }
 }
