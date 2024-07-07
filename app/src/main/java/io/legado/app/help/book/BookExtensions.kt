@@ -244,6 +244,11 @@ fun Book.isLocalModified(): Boolean {
     return isLocal && LocalBook.getLastModified(this).getOrDefault(0L) > latestChapterTime
 }
 
+fun Book.releaseHtmlData() {
+    infoHtml = null
+    tocHtml = null
+}
+
 fun Book.isSameNameAuthor(other: Any?): Boolean {
     if (other is BaseBook) {
         return name == other.name && author == other.author

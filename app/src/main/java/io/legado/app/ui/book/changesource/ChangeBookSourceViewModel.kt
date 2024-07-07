@@ -18,10 +18,12 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.releaseHtmlData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.utils.internString
 import io.legado.app.utils.mapParallelSafe
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
@@ -87,6 +89,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         searchCallback = object : SourceCallback {
 
             override fun searchSuccess(searchBook: SearchBook) {
+                searchBook.releaseHtmlData()
                 appDb.searchBookDao.insert(searchBook)
                 when {
                     screenKey.isEmpty() -> searchBooks.add(searchBook)
@@ -227,13 +230,15 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private suspend fun search(source: BookSource) {
         val resultBooks = WebBook.searchBookAwait(source, name)
-        resultBooks.forEach { searchBook ->
+        resultBooks.filter { searchBook ->
             if (searchBook.name != name) {
-                return@forEach
+                return@filter false
             }
             if (AppConfig.changeSourceCheckAuthor && !searchBook.author.contains(author)) {
-                return@forEach
+                return@filter false
             }
+            true
+        }.forEach { searchBook ->
             when {
                 AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc || AppConfig.changeSourceLoadWordCount -> {
                     loadBookInfo(source, searchBook.toBook())
@@ -261,8 +266,12 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     private suspend fun loadBookToc(source: BookSource, book: Book) {
         val chapters = WebBook.getChapterListAwait(source, book).getOrThrow()
+        for (chapter in chapters) {
+            chapter.internString()
+        }
         tocMap[book.bookUrl] = chapters
         bookMap[book.bookUrl] = book
+        book.releaseHtmlData()
         if (AppConfig.changeSourceLoadWordCount) {
             loadBookWordCount(source, book, chapters)
         } else {
