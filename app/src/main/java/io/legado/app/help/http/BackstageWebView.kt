@@ -18,6 +18,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
 import splitties.init.appCtx
 import java.lang.ref.WeakReference
@@ -42,28 +43,30 @@ class BackstageWebView(
     private var callback: Callback? = null
     private var mWebView: WebView? = null
 
-    suspend fun getStrResponse(): StrResponse = suspendCancellableCoroutine { block ->
-        block.invokeOnCancellation {
-            runOnUI {
-                destroy()
+    suspend fun getStrResponse(): StrResponse = withTimeout(60000L) {
+        suspendCancellableCoroutine { block ->
+            block.invokeOnCancellation {
+                runOnUI {
+                    destroy()
+                }
             }
-        }
-        callback = object : Callback() {
-            override fun onResult(response: StrResponse) {
-                if (!block.isCompleted)
-                    block.resume(response)
-            }
+            callback = object : Callback() {
+                override fun onResult(response: StrResponse) {
+                    if (!block.isCompleted)
+                        block.resume(response)
+                }
 
-            override fun onError(error: Throwable) {
-                if (!block.isCompleted)
-                    block.resumeWithException(error)
+                override fun onError(error: Throwable) {
+                    if (!block.isCompleted)
+                        block.resumeWithException(error)
+                }
             }
-        }
-        runOnUI {
-            try {
-                load()
-            } catch (error: Throwable) {
-                block.resumeWithException(error)
+            runOnUI {
+                try {
+                    load()
+                } catch (error: Throwable) {
+                    block.resumeWithException(error)
+                }
             }
         }
     }
