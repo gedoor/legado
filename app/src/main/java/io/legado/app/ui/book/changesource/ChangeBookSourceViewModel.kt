@@ -64,6 +64,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var searchBookList = arrayListOf<SearchBook>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
+    private var tocMapChapterCount = 0
     private val contentProcessor by lazy {
         ContentProcessor.get(oldBook!!)
     }
@@ -176,6 +177,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             }
             searchCallback?.upAdapter()
             bookSourceParts.clear()
+            tocMap.clear()
+            bookMap.clear()
+            tocMapChapterCount = 0
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isBlank()) {
                 bookSourceParts.addAll(appDb.bookSourceDao.allEnabledPart)
@@ -197,6 +201,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         execute {
             stopSearch()
             bookSourceParts.clear()
+            tocMap.clear()
+            bookMap.clear()
+            tocMapChapterCount = 0
             bookSourceParts.add(appDb.bookSourceDao.getBookSourcePart(origin)!!)
             searchBooks.removeIf { it.origin == origin }
             initSearchPool()
@@ -269,7 +276,10 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         for (chapter in chapters) {
             chapter.internString()
         }
-        tocMap[book.bookUrl] = chapters
+        if (tocMapChapterCount < 30000) {
+            tocMapChapterCount += chapters.size
+            tocMap[book.bookUrl] = chapters
+        }
         bookMap[book.bookUrl] = book
         book.releaseHtmlData()
         if (AppConfig.changeSourceLoadWordCount) {
