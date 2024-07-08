@@ -50,6 +50,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_simulated_reading"
+        android:title="@string/simulated_reading"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_edit_content"
         android:title="@string/edit_content"
         app:showAsAction="never" />

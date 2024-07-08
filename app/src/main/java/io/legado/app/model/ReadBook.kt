@@ -229,7 +229,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun moveToNextChapter(upContent: Boolean, upContentInPlace: Boolean = true): Boolean {
-        if (durChapterIndex < chapterSize - 1) {
+        if (durChapterIndex < (book?.simulatedTotalChapterNum()?: chapterSize) - 1) {
             durChapterPos = 0
             durChapterIndex++
             prevTextChapter?.cancelLayout()
@@ -576,7 +576,7 @@ object ReadBook : CoroutineScope by MainScope() {
                     prevTextChapter?.cancelLayout()
                     prevTextChapter = textChapter
                     textChapter.layoutChannel.receiveAsFlow().collect()
-                    if (upContent) callBack?.upContent(offset, resetPageOffset)
+                    if (upContent) callBack?.upContent(offset, resetPageOffset) else TODO()
                 }
 
                 1 -> {
@@ -589,6 +589,8 @@ object ReadBook : CoroutineScope by MainScope() {
                         if (upContent) callBack?.upContent(offset, resetPageOffset)
                     }
                 }
+
+                else -> {TODO()}
             }
         }.onError {
             AppLog.put("ChapterProvider ERROR", it)

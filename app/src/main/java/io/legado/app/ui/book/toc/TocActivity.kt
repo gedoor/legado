@@ -192,7 +192,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
             ReadBook.book?.let { readBook ->
                 if (readBook == book) {
                     ReadBook.book = book
-                    ReadBook.chapterSize = book.totalChapterNum
+                    ReadBook.chapterSize = book.simulatedTotalChapterNum()
                     ReadBook.upMsg(null)
                     ReadBook.loadContent(resetPageOffset = true)
                 }

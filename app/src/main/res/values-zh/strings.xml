@@ -1150,4 +1150,8 @@
     <string name="keep_swipe_tip">继续滑动以加载下一章…</string>
     <string name="enable_optimize_render">启用绘制优化</string>
     <string name="ignore_battery_permission_rationale">阅读需要请求后台权限以保持服务正常运行</string>
+    <string name="simulated_reading">模拟追读</string>
+    <string name="switch_on">开关</string>
+    <string name="start_from">开始日期</string>
+    <string name="daily_chapters">日更章数</string>
 </resources>

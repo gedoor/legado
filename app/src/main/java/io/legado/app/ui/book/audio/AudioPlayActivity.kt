@@ -258,7 +258,7 @@ class AudioPlayActivity :
             binding.tvSubTitle.text = it
             AudioPlay.book?.let { book ->
                 binding.ivSkipPrevious.isEnabled = book.durChapterIndex > 0
-                binding.ivSkipNext.isEnabled = book.durChapterIndex < book.totalChapterNum - 1
+                binding.ivSkipNext.isEnabled = book.durChapterIndex < book.simulatedTotalChapterNum() - 1
             }
         }
         observeEventSticky<Int>(EventBus.AUDIO_SIZE) {

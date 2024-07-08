@@ -28,6 +28,9 @@ import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.nio.charset.Charset
+import java.time.LocalDate
+import java.time.Period.between
+import java.time.chrono.Chronology
 import kotlin.math.max
 import kotlin.math.min
 
@@ -160,9 +163,21 @@ data class Book(
     @IgnoredOnParcel
     val lastChapterIndex get() = totalChapterNum - 1
 
+    // 根据当前日期计算章节总数
+    fun simulatedTotalChapterNum(): Int {
+        if (config.readSimulating) {
+            val currentDate = LocalDate.now()
+            val daysPassed = between(this.config.startDate, currentDate).days + 1
+
+            // 计算当前应该解锁到哪一章
+            val chaptersToUnlock = (config.startChapter?:0) + (daysPassed * config.dailyChapters)
+            return min(this.totalChapterNum, chaptersToUnlock);
+        } else return this.totalChapterNum;
+    }
+
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 
-    fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
+    fun getUnreadChapterNum() = max(simulatedTotalChapterNum() - durChapterIndex - 1, 0)
 
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
 
@@ -255,6 +270,46 @@ data class Book(
 
     fun getSplitLongChapter(): Boolean {
         return config.splitLongChapter
+    }
+
+    // readSimulating 的 setter 和 getter
+    fun setReadSimulating(readSimulating: Boolean) {
+        config.readSimulating = readSimulating
+    }
+
+    fun getReadSimulating(): Boolean {
+        return config.readSimulating
+    }
+
+    // startDate 的 setter 和 getter
+    fun setStartDate(startDate: LocalDate?) {
+        config.startDate = startDate
+    }
+
+    fun getStartDate(): LocalDate? {
+        if (!config.readSimulating || config.startDate == null) {
+            return LocalDate.now()
+        }
+        return config.startDate
+    }
+
+    // startChapter 的 setter 和 getter
+    fun setStartChapter(startChapter: Int) {
+        config.startChapter = startChapter
+    }
+
+    fun getStartChapter(): Int {
+        if(config.readSimulating) return config.startChapter?:0
+        return this.durChapterIndex
+    }
+
+    // dailyChapters 的 setter 和 getter
+    fun setDailyChapters(dailyChapters: Int) {
+        config.dailyChapters = dailyChapters
+    }
+
+    fun getDailyChapters(): Int {
+        return config.dailyChapters
     }
 
     fun getDelTag(tag: Long): Boolean {
@@ -385,7 +440,11 @@ data class Book(
         var useReplaceRule: Boolean? = null,// 正文使用净化替换规则
         var delTag: Long = 0L,//去除标签
         var ttsEngine: String? = null,
-        var splitLongChapter: Boolean = true
+        var splitLongChapter: Boolean = true,
+        var readSimulating: Boolean = false,
+        var startDate: LocalDate? = null,
+        var startChapter: Int? = null,     // 用户设置的起始章节
+        var dailyChapters: Int = 3    // 用户设置的每日更新章节数
     ) : Parcelable
 
     class Converters {
