@@ -90,10 +90,9 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         scope: Scriptable,
         coroutineContext: CoroutineContext?
     ): Any? {
-        val cx = Context.enter()
-        if (cx is RhinoContext) {
-            cx.coroutineContext = coroutineContext
-        }
+        val cx = Context.enter() as RhinoContext
+        val previousCoroutineContext = cx.coroutineContext
+        cx.coroutineContext = coroutineContext
         val ret: Any?
         try {
             var filename = this["javax.script.filename"] as? String
@@ -112,6 +111,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         } catch (var14: IOException) {
             throw ScriptException(var14)
         } finally {
+            cx.coroutineContext = previousCoroutineContext
             Context.exit()
         }
         return unwrapReturnValue(ret)
@@ -355,6 +355,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 args: Array<Any>
             ): Any? {
                 try {
+                    (cx as RhinoContext).ensureActive()
                     return super.doTopCall(callable, cx, scope, thisObj, args)
                 } catch (e: RhinoInterruptError) {
                     throw e.cause

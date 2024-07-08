@@ -35,6 +35,9 @@ import java.io.InputStream
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import kotlin.coroutines.ContinuationInterceptor
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.max
 
 /**
@@ -55,6 +58,7 @@ class AnalyzeUrl(
     private val ruleData: RuleDataInterface? = null,
     private val chapter: BookChapter? = null,
     private val readTimeout: Long? = null,
+    private var coroutineContext: CoroutineContext = EmptyCoroutineContext,
     headerMapF: Map<String, String>? = null,
 ) : JsExtensions {
     companion object {
@@ -89,6 +93,7 @@ class AnalyzeUrl(
         private set
 
     init {
+        coroutineContext = coroutineContext.minusKey(ContinuationInterceptor)
         val urlMatcher = paramPattern.matcher(baseUrl)
         if (urlMatcher.find()) baseUrl = baseUrl.substring(0, urlMatcher.start())
         (headerMapF ?: source?.getHeaderMap(true))?.let {
@@ -278,7 +283,7 @@ class AnalyzeUrl(
         source?.getShareScope()?.let {
             scope.prototype = it
         }
-        return RhinoScriptEngine.eval(jsStr, scope)
+        return RhinoScriptEngine.eval(jsStr, scope, coroutineContext)
     }
 
     fun put(key: String, value: String): String {
@@ -476,7 +481,7 @@ class AnalyzeUrl(
         sourceRegex: String? = null,
         useWebView: Boolean = true,
     ): StrResponse {
-        return runBlocking {
+        return runBlocking(coroutineContext) {
             getStrResponseAwait(jsStr, sourceRegex, useWebView)
         }
     }
@@ -527,7 +532,7 @@ class AnalyzeUrl(
     }
 
     fun getResponse(): Response {
-        return runBlocking {
+        return runBlocking(coroutineContext) {
             getResponseAwait()
         }
     }
@@ -553,7 +558,7 @@ class AnalyzeUrl(
     }
 
     fun getByteArray(): ByteArray {
-        return runBlocking {
+        return runBlocking(coroutineContext) {
             getByteArrayAwait()
         }
     }
@@ -569,7 +574,7 @@ class AnalyzeUrl(
     }
 
     fun getInputStream(): InputStream {
-        return runBlocking {
+        return runBlocking(coroutineContext) {
             getInputStreamAwait()
         }
     }

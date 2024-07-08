@@ -61,6 +61,7 @@ object WebBook {
             headerMapF = bookSource.getHeaderMap(true),
             source = bookSource,
             ruleData = ruleData,
+            coroutineContext = coroutineContext
         )
         var res = analyzeUrl.getStrResponseAwait()
         //检测书源是否已登录
@@ -107,7 +108,8 @@ object WebBook {
             baseUrl = bookSource.bookSourceUrl,
             source = bookSource,
             ruleData = ruleData,
-            headerMapF = bookSource.getHeaderMap(true)
+            headerMapF = bookSource.getHeaderMap(true),
+            coroutineContext = coroutineContext
         )
         var res = analyzeUrl.getStrResponseAwait()
         //检测书源是否已登录
@@ -164,7 +166,8 @@ object WebBook {
                 baseUrl = bookSource.bookSourceUrl,
                 source = bookSource,
                 ruleData = book,
-                headerMapF = bookSource.getHeaderMap(true)
+                headerMapF = bookSource.getHeaderMap(true),
+                coroutineContext = coroutineContext
             )
             var res = analyzeUrl.getStrResponseAwait()
             //检测书源是否已登录
@@ -244,7 +247,8 @@ object WebBook {
                     baseUrl = book.bookUrl,
                     source = bookSource,
                     ruleData = book,
-                    headerMapF = bookSource.getHeaderMap(true)
+                    headerMapF = bookSource.getHeaderMap(true),
+                    coroutineContext = coroutineContext
                 )
                 var res = analyzeUrl.getStrResponseAwait()
                 //检测书源是否已登录
@@ -317,7 +321,8 @@ object WebBook {
                 source = bookSource,
                 ruleData = book,
                 chapter = bookChapter,
-                headerMapF = bookSource.getHeaderMap(true)
+                headerMapF = bookSource.getHeaderMap(true),
+                coroutineContext = coroutineContext
             )
             var res = analyzeUrl.getStrResponseAwait(
                 jsStr = bookSource.getContentRule().webJs,

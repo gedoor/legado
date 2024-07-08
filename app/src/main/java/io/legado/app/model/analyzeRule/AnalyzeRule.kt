@@ -32,7 +32,9 @@ import java.util.regex.Pattern
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
+import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * 解析规则获取结果
@@ -67,7 +69,7 @@ class AnalyzeRule(
 
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
 
-    private var coroutineContext: CoroutineContext? = null
+    private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
@@ -84,8 +86,8 @@ class AnalyzeRule(
         return this
     }
 
-    fun setCoroutineContext(context: CoroutineContext?): AnalyzeRule {
-        coroutineContext = context
+    fun setCoroutineContext(context: CoroutineContext): AnalyzeRule {
+        coroutineContext = context.minusKey(ContinuationInterceptor)
         return this
     }
 
@@ -777,9 +779,14 @@ class AnalyzeRule(
         } else {
             url.toString()
         }
-        return runBlocking {
+        val analyzeUrl = AnalyzeUrl(
+            urlStr,
+            source = source,
+            ruleData = book,
+            coroutineContext = coroutineContext
+        )
+        return runBlocking(coroutineContext) {
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr, source = source, ruleData = book)
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
@@ -797,7 +804,7 @@ class AnalyzeRule(
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
-        runBlocking {
+        runBlocking(coroutineContext) {
             withTimeout(1800000) {
                 WebBook.preciseSearchAwait(this, bookSource, book.name, book.author)
                     .getOrThrow().let {
@@ -818,7 +825,7 @@ class AnalyzeRule(
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
-        runBlocking {
+        runBlocking(coroutineContext) {
             withTimeout(1800000) {
                 WebBook.getBookInfoAwait(bookSource, book)
             }
@@ -832,7 +839,7 @@ class AnalyzeRule(
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
-        runBlocking {
+        runBlocking(coroutineContext) {
             withTimeout(1800000) {
                 WebBook.getBookInfoAwait(bookSource, book)
             }

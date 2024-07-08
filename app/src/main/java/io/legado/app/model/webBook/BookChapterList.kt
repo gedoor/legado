@@ -63,12 +63,14 @@ object BookChapterList {
                 var nextUrl = chapterData.second[0]
                 while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                     nextUrlList.add(nextUrl)
-                    val res = AnalyzeUrl(
+                    val analyzeUrl = AnalyzeUrl(
                         mUrl = nextUrl,
                         source = bookSource,
                         ruleData = book,
-                        headerMapF = bookSource.getHeaderMap()
-                    ).getStrResponseAwait() //控制并发访问
+                        headerMapF = bookSource.getHeaderMap(),
+                        coroutineContext = coroutineContext
+                    )
+                    val res = analyzeUrl.getStrResponseAwait() //控制并发访问
                     res.body?.let { nextBody ->
                         chapterData = analyzeChapterList(
                             book, nextUrl, nextUrl,
@@ -91,12 +93,14 @@ object BookChapterList {
                         emit(urlStr)
                     }
                 }.mapAsync(AppConfig.threadCount) { urlStr ->
-                    val res = AnalyzeUrl(
+                    val analyzeUrl = AnalyzeUrl(
                         mUrl = urlStr,
                         source = bookSource,
                         ruleData = book,
-                        headerMapF = bookSource.getHeaderMap()
-                    ).getStrResponseAwait() //控制并发访问
+                        headerMapF = bookSource.getHeaderMap(),
+                        coroutineContext = coroutineContext
+                    )
+                    val res = analyzeUrl.getStrResponseAwait() //控制并发访问
                     analyzeChapterList(
                         book, urlStr, res.url,
                         res.body!!, tocRule, listRule, bookSource, false
