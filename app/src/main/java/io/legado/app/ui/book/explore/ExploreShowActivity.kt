@@ -2,6 +2,7 @@ package io.legado.app.ui.book.explore
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -35,7 +36,7 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
             loadMoreView.error(it)
         }
         viewModel.upAdapterLiveData.observe(this) {
-            adapter.notifyItemRangeChanged(0, adapter.itemCount, it)
+            adapter.notifyItemRangeChanged(0, adapter.itemCount, bundleOf(it to null))
         }
     }
 
