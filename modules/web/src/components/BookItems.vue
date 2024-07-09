@@ -50,15 +50,14 @@
 </template>
 <script setup>
 import { dateFormat } from "../utils/utils";
+import { baseUrl } from "@/api/axios.js";
 const props = defineProps(["books", "isSearch"]);
 const emit = defineEmits(["bookClick"]);
 const handleClick = (book) => emit("bookClick", book);
 const getCover = (coverUrl) => {
   return /^data:/.test(coverUrl)
     ? coverUrl
-    : (import.meta.env.VITE_API || location.origin) +
-        "/cover?path=" +
-        encodeURIComponent(coverUrl);
+    : baseUrl() + "/cover?path=" + encodeURIComponent(coverUrl);
 };
 
 const subJustify = computed(() =>
@@ -105,7 +104,7 @@ const subJustify = computed(() =>
         margin-left: 20px;
         flex: 1;
         overflow: hidden;
-        
+
         .name {
           width: fit-content;
           font-size: 16px;
