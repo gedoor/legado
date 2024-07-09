@@ -165,7 +165,7 @@ object AudioPlay {
 
     fun next(context: Context) {
         book?.let { book ->
-            if (book.durChapterIndex + 1 < book.simulatedTotalChapterNum()) {
+            if (book.durChapterIndex + 1 < book.totalChapterNum) {
                 book.durChapterIndex += 1
                 book.durChapterPos = 0
                 durChapterIndex = book.durChapterIndex

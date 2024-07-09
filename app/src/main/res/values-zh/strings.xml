@@ -1154,4 +1154,5 @@
     <string name="switch_on">开关</string>
     <string name="start_from">开始日期</string>
     <string name="daily_chapters">日更章数</string>
+    <string name="start_chapter">起始章节</string>
 </resources>

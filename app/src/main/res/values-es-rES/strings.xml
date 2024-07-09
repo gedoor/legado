@@ -1152,4 +1152,5 @@
     <string name="switch_on">Enc/Apag</string>
     <string name="start_from">Comenzar</string>
     <string name="daily_chapters">Cap. al día</string>
+    <string name="start_chapter">Cap. inicio</string>
 </resources>

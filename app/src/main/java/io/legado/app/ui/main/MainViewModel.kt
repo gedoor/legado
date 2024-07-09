@@ -163,7 +163,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             if (book.isSameNameAuthor(ReadBook.book)) {
                 ReadBook.book = book
-                ReadBook.chapterSize = book.simulatedTotalChapterNum()
+                ReadBook.chapterSize = book.totalChapterNum
             }
             addDownload(source, book)
         }.onFailure {

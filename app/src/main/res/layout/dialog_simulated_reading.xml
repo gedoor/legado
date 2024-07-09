@@ -4,7 +4,6 @@
     android:id="@+id/ll_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
     android:gravity="center"
     android:padding="20dp"
     android:orientation="vertical">
@@ -12,7 +11,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/background"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="16dp">
@@ -59,7 +57,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:background="@color/background"
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="start|center_vertical">
@@ -116,20 +113,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="2dp"
-                android:text="@string/start"
+                android:text="@string/start_chapter"
                 android:textColor="@color/primaryText"
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="5dp"
-                android:text="@string/chapter"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp"
-                tools:ignore="RtlHardcoded" />
         </LinearLayout>
 
         <EditText

@@ -16,12 +16,10 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isImage
-import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isPdf
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
-import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
@@ -30,7 +28,6 @@ import kotlinx.parcelize.Parcelize
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.time.Period.between
-import java.time.chrono.Chronology
 import kotlin.math.max
 import kotlin.math.min
 
@@ -170,14 +167,14 @@ data class Book(
             val daysPassed = between(this.config.startDate, currentDate).days + 1
 
             // 计算当前应该解锁到哪一章
-            val chaptersToUnlock = (config.startChapter?:0) + (daysPassed * config.dailyChapters)
-            return min(this.totalChapterNum, chaptersToUnlock);
-        } else return this.totalChapterNum;
+            val chaptersToUnlock = (config.startChapter ?: 0) + (daysPassed * config.dailyChapters)
+            return chaptersToUnlock
+        } else return this.totalChapterNum
     }
 
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 
-    fun getUnreadChapterNum() = max(simulatedTotalChapterNum() - durChapterIndex - 1, 0)
+    fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
 
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
 
@@ -299,7 +296,7 @@ data class Book(
     }
 
     fun getStartChapter(): Int {
-        if(config.readSimulating) return config.startChapter?:0
+        if (config.readSimulating) return config.startChapter ?: 0
         return this.durChapterIndex
     }
 

@@ -251,7 +251,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                         appDb.bookChapterDao.insert(*it.toTypedArray())
                         if (book.isSameNameAuthor(ReadBook.book)) {
                             ReadBook.book = book
-                            ReadBook.chapterSize = book.simulatedTotalChapterNum()
+                            ReadBook.chapterSize = book.totalChapterNum
                         }
                     }
                     bookData.postValue(book)

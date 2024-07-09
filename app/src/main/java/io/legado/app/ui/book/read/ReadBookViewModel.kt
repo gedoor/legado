@@ -229,7 +229,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             AppLog.put("拉取阅读进度失败《${book.name}》\n${it.localizedMessage}", it)
         }.onSuccess { progress ->
             if (progress.durChapterIndex < book.durChapterIndex ||
-                progress.durChapterIndex >= book.simulatedTotalChapterNum() ||
                 (progress.durChapterIndex == book.durChapterIndex
                         && progress.durChapterPos < book.durChapterPos)
             ) {

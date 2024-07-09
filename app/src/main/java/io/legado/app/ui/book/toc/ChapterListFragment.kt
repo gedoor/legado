@@ -118,8 +118,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         lifecycleScope.launch {
             withContext(IO) {
                 when {
-                    searchKey.isNullOrBlank() -> appDb.bookChapterDao.getChapterList(
-                        viewModel.bookUrl).take(book?.simulatedTotalChapterNum()?: Int.MAX_VALUE)
+                    searchKey.isNullOrBlank() -> appDb.bookChapterDao.getChapterList(viewModel.bookUrl)
                     else -> appDb.bookChapterDao.search(viewModel.bookUrl, searchKey)
                 }
             }.let {

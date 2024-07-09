@@ -61,6 +61,8 @@ abstract class BaseReadBookActivity :
 
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
     override val viewModel by viewModels<ReadBookViewModel>()
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
     var bottomDialog = 0
         set(value) {
             if (field != value) {
@@ -309,7 +311,6 @@ abstract class BaseReadBookActivity :
     }
 
     fun showSimulatedReading() {
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         ReadBook.book?.let { book ->
             alert(titleResource = R.string.simulated_reading) {
                 val alertBinding = DialogSimulatedReadingBinding.inflate(layoutInflater).apply {
@@ -318,8 +319,8 @@ abstract class BaseReadBookActivity :
                     editStart.setText(book.getStartChapter().toString())
                     editNum.setText(book.getDailyChapters().toString())
                     startDate.setText(book.getStartDate()?.format(dateFormatter))
-                    startDate.isFocusable = false; // 设置为false，不允许获得焦点
-                    startDate.isCursorVisible = false; // 不显示光标
+                    startDate.isFocusable = false // 设置为false，不允许获得焦点
+                    startDate.isCursorVisible = false // 不显示光标
                     startDate.setOnClickListener {
                         // 获取当前日期
                         val localStartDate = LocalDate.parse(startDate.text)

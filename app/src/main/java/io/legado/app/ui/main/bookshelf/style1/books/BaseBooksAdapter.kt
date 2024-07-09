@@ -28,7 +28,6 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
                     oldItem.lastCheckCount != newItem.lastCheckCount -> false
                     oldItem.getDisplayCover() != newItem.getDisplayCover() -> false
                     oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum() -> false
-                    oldItem.getReadSimulating() -> false
                     else -> true
                 }
             }
