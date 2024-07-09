@@ -77,20 +77,22 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.run {
-            val bundle = payloads.getOrNull(0) as? Bundle
-            if (bundle == null) {
+            if (payloads.isEmpty()) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 cbSource.text = item.name
                 swtEnabled.isChecked = item.enable
                 cbSource.isChecked = selected.contains(item)
                 titleExample.text = item.example
             } else {
-                bundle.keySet().map {
-                    when (it) {
-                        "selected" -> cbSource.isChecked = selected.contains(item)
-                        "upName" -> cbSource.text = item.name
-                        "upExample" -> titleExample.text = item.example
-                        "enabled" -> swtEnabled.isChecked = item.enable
+                for (i in payloads.indices) {
+                    val bundle = payloads[i] as Bundle
+                    bundle.keySet().map {
+                        when (it) {
+                            "selected" -> cbSource.isChecked = selected.contains(item)
+                            "upName" -> cbSource.text = item.name
+                            "upExample" -> titleExample.text = item.example
+                            "enabled" -> swtEnabled.isChecked = item.enable
+                        }
                     }
                 }
             }

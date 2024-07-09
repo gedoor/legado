@@ -53,9 +53,8 @@ class ChangeBookSourceAdapter(
         item: SearchBook,
         payloads: MutableList<Any>
     ) {
-        val bundle = payloads.getOrNull(0) as? Bundle
         binding.apply {
-            if (bundle == null) {
+            if (payloads.isEmpty()) {
                 tvOrigin.text = item.originName
                 tvAuthor.text = item.author
                 tvLast.text = item.getDisplayLastChapterTitle()
@@ -67,14 +66,17 @@ class ChangeBookSourceAdapter(
                     ivChecked.invisible()
                 }
             } else {
-                bundle.keySet().map {
-                    when (it) {
-                        "name" -> tvOrigin.text = item.originName
-                        "latest" -> tvLast.text = item.getDisplayLastChapterTitle()
-                        "upCurSource" -> if (callBack.oldBookUrl == item.bookUrl) {
-                            ivChecked.visible()
-                        } else {
-                            ivChecked.invisible()
+                for (i in payloads.indices) {
+                    val bundle = payloads[i] as Bundle
+                    bundle.keySet().map {
+                        when (it) {
+                            "name" -> tvOrigin.text = item.originName
+                            "latest" -> tvLast.text = item.getDisplayLastChapterTitle()
+                            "upCurSource" -> if (callBack.oldBookUrl == item.bookUrl) {
+                                ivChecked.visible()
+                            } else {
+                                ivChecked.invisible()
+                            }
                         }
                     }
                 }

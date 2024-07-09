@@ -30,8 +30,7 @@ class BooksAdapterList(
         item: Book,
         payloads: MutableList<Any>
     ) = binding.run {
-        val bundle = payloads.getOrNull(0) as? Bundle
-        if (bundle == null) {
+        if (payloads.isEmpty()) {
             tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
@@ -40,23 +39,26 @@ class BooksAdapterList(
             upRefresh(binding, item)
             upLastUpdateTime(binding, item)
         } else {
-            bundle.keySet().forEach {
-                when (it) {
-                    "name" -> tvName.text = item.name
-                    "author" -> tvAuthor.text = item.author
-                    "dur" -> tvRead.text = item.durChapterTitle
-                    "last" -> tvLast.text = item.latestChapterTitle
-                    "cover" -> ivCover.load(
-                        item.getDisplayCover(),
-                        item.name,
-                        item.author,
-                        false,
-                        item.origin,
-                        lifecycle
-                    )
+            for (i in payloads.indices) {
+                val bundle = payloads[i] as Bundle
+                bundle.keySet().forEach {
+                    when (it) {
+                        "name" -> tvName.text = item.name
+                        "author" -> tvAuthor.text = item.author
+                        "dur" -> tvRead.text = item.durChapterTitle
+                        "last" -> tvLast.text = item.latestChapterTitle
+                        "cover" -> ivCover.load(
+                            item.getDisplayCover(),
+                            item.name,
+                            item.author,
+                            false,
+                            item.origin,
+                            lifecycle
+                        )
 
-                    "refresh" -> upRefresh(binding, item)
-                    "lastUpdateTime" -> upLastUpdateTime(binding, item)
+                        "refresh" -> upRefresh(binding, item)
+                        "lastUpdateTime" -> upLastUpdateTime(binding, item)
+                    }
                 }
             }
         }

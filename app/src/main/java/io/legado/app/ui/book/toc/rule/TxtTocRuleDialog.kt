@@ -249,20 +249,22 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             payloads: MutableList<Any>
         ) {
             binding.apply {
-                val bundle = payloads.getOrNull(0) as? Bundle
-                if (bundle == null) {
+                if (payloads.isEmpty()) {
                     root.setBackgroundColor(context.backgroundColor)
                     rbRegexName.text = item.name
                     titleExample.text = item.example
                     rbRegexName.isChecked = item.name == selectedName
                     swtEnabled.isChecked = item.enable
                 } else {
-                    bundle.keySet().map {
-                        when (it) {
-                            "upName" -> rbRegexName.text = item.name
-                            "upExample" -> titleExample.text = item.example
-                            "enabled" -> swtEnabled.isChecked = item.enable
-                            "upSelect" -> rbRegexName.isChecked = item.name == selectedName
+                    for (i in payloads.indices) {
+                        val bundle = payloads[i] as Bundle
+                        bundle.keySet().map {
+                            when (it) {
+                                "upName" -> rbRegexName.text = item.name
+                                "upExample" -> titleExample.text = item.example
+                                "enabled" -> swtEnabled.isChecked = item.enable
+                                "upSelect" -> rbRegexName.isChecked = item.name == selectedName
+                            }
                         }
                     }
                 }

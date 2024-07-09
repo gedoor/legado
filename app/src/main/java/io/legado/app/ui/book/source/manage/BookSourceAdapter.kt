@@ -89,8 +89,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.run {
-            val payload = payloads.getOrNull(0) as? Bundle
-            if (payload == null) {
+            if (payloads.isEmpty()) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 cbBookSource.text = item.getDisPlayNameGroup()
                 swtEnabled.isChecked = item.enabled
@@ -98,13 +97,16 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 upCheckSourceMessage(binding, item)
                 upShowExplore(ivExplore, item)
             } else {
-                payload.keySet().map {
-                    when (it) {
-                        "enabled" -> swtEnabled.isChecked = payload.getBoolean("enabled")
-                        "upName" -> cbBookSource.text = item.getDisPlayNameGroup()
-                        "upExplore" -> upShowExplore(ivExplore, item)
-                        "selected" -> cbBookSource.isChecked = selected.contains(item)
-                        "checkSourceMessage" -> upCheckSourceMessage(binding, item)
+                for (i in payloads.indices) {
+                    val bundle = payloads[i] as Bundle
+                    bundle.keySet().map {
+                        when (it) {
+                            "enabled" -> swtEnabled.isChecked = bundle.getBoolean("enabled")
+                            "upName" -> cbBookSource.text = item.getDisPlayNameGroup()
+                            "upExplore" -> upShowExplore(ivExplore, item)
+                            "selected" -> cbBookSource.isChecked = selected.contains(item)
+                            "checkSourceMessage" -> upCheckSourceMessage(binding, item)
+                        }
                     }
                 }
             }
