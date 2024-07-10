@@ -116,12 +116,14 @@ class AudioPlayActivity :
             R.id.menu_change_source -> AudioPlay.book?.let {
                 showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
             }
+
             R.id.menu_login -> AudioPlay.bookSource?.let {
                 startActivity<SourceLoginActivity> {
                     putExtra("type", "bookSource")
                     putExtra("key", it.bookSourceUrl)
                 }
             }
+
             R.id.menu_wake_lock -> AppConfig.audioPlayUseWakeLock = !AppConfig.audioPlayUseWakeLock
             R.id.menu_copy_audio_url -> sendToClip(AudioPlayService.url)
             R.id.menu_edit_source -> AudioPlay.bookSource?.let {
@@ -129,6 +131,7 @@ class AudioPlayActivity :
                     putExtra("sourceUrl", it.bookSourceUrl)
                 }
             }
+
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
@@ -266,7 +269,8 @@ class AudioPlayActivity :
             binding.tvSubTitle.text = it
             AudioPlay.book?.let { book ->
                 binding.ivSkipPrevious.isEnabled = book.durChapterIndex > 0
-                binding.ivSkipNext.isEnabled = book.durChapterIndex < book.totalChapterNum - 1
+                binding.ivSkipNext.isEnabled =
+                    book.durChapterIndex < book.simulatedTotalChapterNum() - 1
             }
         }
         observeEventSticky<Int>(EventBus.AUDIO_SIZE) {

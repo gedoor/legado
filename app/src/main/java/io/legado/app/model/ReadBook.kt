@@ -229,7 +229,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun moveToNextChapter(upContent: Boolean, upContentInPlace: Boolean = true): Boolean {
-        if (durChapterIndex < chapterSize - 1) {
+        if (durChapterIndex < (book?.simulatedTotalChapterNum()?: chapterSize) - 1) {
             durChapterPos = 0
             durChapterIndex++
             prevTextChapter?.cancelLayout()

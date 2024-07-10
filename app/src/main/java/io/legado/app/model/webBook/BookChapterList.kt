@@ -119,12 +119,10 @@ object BookChapterList {
         coroutineContext.ensureActive()
         //去重
         val lh = LinkedHashSet(chapterList)
-        val fullList = ArrayList(lh)
+        val list = ArrayList(lh)
         if (!book.getReverseToc()) {
-            fullList.reverse()
+            list.reverse()
         }
-        val list =
-            if (book.getReadSimulating()) fullList.take(book.simulatedTotalChapterNum()) else fullList
         Debug.log(book.origin, "◇目录总数:${list.size}")
         coroutineContext.ensureActive()
         val formatJs = tocRule.formatJs
@@ -147,7 +145,8 @@ object BookChapterList {
         }
         val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
         book.latestChapterTitle =
-            list.last().getDisplayTitle(replaceRules, book.getUseReplaceRule())
+            list.getOrElse(book.simulatedTotalChapterNum() - 1) {
+                list.last() }.getDisplayTitle(replaceRules, book.getUseReplaceRule())
         book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
             .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         if (book.totalChapterNum < list.size) {

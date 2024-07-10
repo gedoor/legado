@@ -165,16 +165,16 @@ data class Book(
         if (config.readSimulating) {
             val currentDate = LocalDate.now()
             val daysPassed = between(this.config.startDate, currentDate).days + 1
-
             // 计算当前应该解锁到哪一章
-            val chaptersToUnlock = (config.startChapter ?: 0) + (daysPassed * config.dailyChapters)
-            return chaptersToUnlock
+            val chaptersToUnlock =
+                max(0, (config.startChapter ?: 0) + (daysPassed * config.dailyChapters))
+            return min(this.totalChapterNum, chaptersToUnlock)
         } else return this.totalChapterNum
     }
 
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 
-    fun getUnreadChapterNum() = max(totalChapterNum - durChapterIndex - 1, 0)
+    fun getUnreadChapterNum() = max(simulatedTotalChapterNum() - durChapterIndex - 1, 0)
 
     fun getDisplayCover() = if (customCoverUrl.isNullOrEmpty()) coverUrl else customCoverUrl
 
