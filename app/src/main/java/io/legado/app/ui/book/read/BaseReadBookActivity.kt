@@ -61,7 +61,6 @@ abstract class BaseReadBookActivity :
 
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
     override val viewModel by viewModels<ReadBookViewModel>()
-    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     var bottomDialog = 0
         set(value) {
@@ -311,6 +310,7 @@ abstract class BaseReadBookActivity :
     }
 
     fun showSimulatedReading() {
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         ReadBook.book?.let { book ->
             alert(titleResource = R.string.simulated_reading) {
                 val alertBinding = DialogSimulatedReadingBinding.inflate(layoutInflater).apply {

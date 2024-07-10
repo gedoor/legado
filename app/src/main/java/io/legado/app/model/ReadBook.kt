@@ -591,8 +591,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 }
             }
 
-            // put a log to avoid Kotlin K2 compiler take "when" as a return statement
-            AppLog.putDebug("contentLoadFinish done")
+            return@async
         }.onError {
             AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.stackTraceStr}")
