@@ -25,6 +25,7 @@ import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.isWebFile
 import io.legado.app.help.book.removeType
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
 import io.legado.app.model.BookCover
@@ -251,7 +252,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                         appDb.bookChapterDao.insert(*it.toTypedArray())
                         if (book.isSameNameAuthor(ReadBook.book)) {
                             ReadBook.book = book
-                            ReadBook.chapterSize = book.simulatedTotalChapterNum()
+                            ReadBook.chapterSize = book.totalChapterNum
+                            ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
                         }
                     }
                     bookData.postValue(book)

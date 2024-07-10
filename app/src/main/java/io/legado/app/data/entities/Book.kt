@@ -17,6 +17,7 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isImage
 import io.legado.app.help.book.isPdf
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
@@ -27,7 +28,6 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.nio.charset.Charset
 import java.time.LocalDate
-import java.time.Period.between
 import kotlin.math.max
 import kotlin.math.min
 
@@ -159,18 +159,6 @@ data class Book(
     @get:Ignore
     @IgnoredOnParcel
     val lastChapterIndex get() = totalChapterNum - 1
-
-    // 根据当前日期计算章节总数
-    fun simulatedTotalChapterNum(): Int {
-        if (config.readSimulating) {
-            val currentDate = LocalDate.now()
-            val daysPassed = between(this.config.startDate, currentDate).days + 1
-            // 计算当前应该解锁到哪一章
-            val chaptersToUnlock =
-                max(0, (config.startChapter ?: 0) + (daysPassed * config.dailyChapters))
-            return min(this.totalChapterNum, chaptersToUnlock)
-        } else return this.totalChapterNum
-    }
 
     fun getRealAuthor() = author.replace(AppPattern.authorRegex, "")
 

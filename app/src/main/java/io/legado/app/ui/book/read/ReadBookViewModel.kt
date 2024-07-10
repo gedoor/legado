@@ -22,6 +22,7 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalModified
 import io.legado.app.help.book.removeType
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ImageProvider
@@ -116,8 +117,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.loadOrUpContent()
             checkLocalBookFileExist(book)
         } else {
-            if (ReadBook.durChapterIndex > ReadBook.chapterSize - 1) {
-                ReadBook.durChapterIndex = ReadBook.chapterSize - 1
+            if (ReadBook.durChapterIndex > ReadBook.simulatedChapterSize - 1) {
+                ReadBook.durChapterIndex = ReadBook.simulatedChapterSize - 1
             }
             ReadBook.loadContent(resetPageOffset = false)
             checkLocalBookFileExist(book)
@@ -176,6 +177,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     appDb.bookDao.update(book)
                     ReadBook.chapterSize = it.size
+                    ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
                     ReadBook.upMsg(null)
                     ReadBook.loadContent(resetPageOffset = true)
                 }
@@ -205,6 +207,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                         appDb.bookChapterDao.insert(*cList.toTypedArray())
                         ReadBook.chapterSize = cList.size
+                        ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
                         ReadBook.upMsg(null)
                         ReadBook.loadContent(resetPageOffset = true)
                     }.onError {

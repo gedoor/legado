@@ -12,6 +12,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -47,6 +48,7 @@ object ReadBook : CoroutineScope by MainScope() {
     var inBookshelf = false
     var tocChanged = false
     var chapterSize = 0
+    var simulatedChapterSize = 0
     var durChapterIndex = 0
     var durChapterPos = 0
     var isLocalBook = true
@@ -92,6 +94,11 @@ object ReadBook : CoroutineScope by MainScope() {
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
+        simulatedChapterSize = if (book.config.readSimulating) {
+            book.simulatedTotalChapterNum()
+        } else {
+            chapterSize
+        }
         contentProcessor = ContentProcessor.get(book)
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
@@ -112,6 +119,11 @@ object ReadBook : CoroutineScope by MainScope() {
     fun upData(book: Book) {
         ReadBook.book = book
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
+        simulatedChapterSize = if (book.config.readSimulating) {
+            book.simulatedTotalChapterNum()
+        } else {
+            chapterSize
+        }
         if (durChapterIndex != book.durChapterIndex || tocChanged) {
             durChapterIndex = book.durChapterIndex
             durChapterPos = book.durChapterPos
@@ -229,7 +241,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun moveToNextChapter(upContent: Boolean, upContentInPlace: Boolean = true): Boolean {
-        if (durChapterIndex < (book?.simulatedTotalChapterNum()?: chapterSize) - 1) {
+        if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
             prevTextChapter?.cancelLayout()
@@ -544,7 +556,7 @@ object ReadBook : CoroutineScope by MainScope() {
             val contents = contentProcessor
                 .getContent(book, chapter, content, includeTitle = false)
             val textChapter = ChapterProvider.getTextChapterAsync(
-                this@ReadBook, book, chapter, displayTitle, contents, chapterSize
+                this@ReadBook, book, chapter, displayTitle, contents, simulatedChapterSize
             )
             when (val offset = chapter.index - durChapterIndex) {
                 0 -> {

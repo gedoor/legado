@@ -19,6 +19,7 @@ import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.isUpError
 import io.legado.app.help.book.removeType
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.book.sync
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.CacheBook
@@ -163,7 +164,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             if (book.isSameNameAuthor(ReadBook.book)) {
                 ReadBook.book = book
-                ReadBook.chapterSize = book.simulatedTotalChapterNum()
+                ReadBook.chapterSize = book.totalChapterNum
+                ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
             }
             addDownload(source, book)
         }.onFailure {

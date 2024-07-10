@@ -18,6 +18,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ActivityChapterListBinding
 import io.legado.app.help.book.isLocalTxt
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
@@ -26,8 +27,12 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.toc.rule.TxtTocRuleDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.gone
+import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 /**
  * 目录
@@ -192,7 +197,8 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
             ReadBook.book?.let { readBook ->
                 if (readBook == book) {
                     ReadBook.book = book
-                    ReadBook.chapterSize = book.simulatedTotalChapterNum()
+                    ReadBook.chapterSize = book.totalChapterNum
+                    ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
                     ReadBook.upMsg(null)
                     ReadBook.loadContent(resetPageOffset = true)
                 }
