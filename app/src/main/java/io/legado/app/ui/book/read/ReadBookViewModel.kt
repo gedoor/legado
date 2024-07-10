@@ -138,6 +138,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             LocalBook.getBookInputStream(book)
             return true
         } catch (e: Throwable) {
+            ReadBook.upMsg("打开本地书籍出错: ${e.localizedMessage}")
             if (e is FileNotFoundException) {
                 permissionDenialLiveData.postValue(0)
             }
