@@ -71,6 +71,11 @@
         app:showAsAction="never" />
 
     <item
+            android:id="@+id/menu_simulated_reading"
+            android:title="@string/simulated_reading"
+            app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_enable_replace"
         android:checkable="true"
         android:checked="true"

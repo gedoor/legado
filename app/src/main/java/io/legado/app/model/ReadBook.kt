@@ -151,7 +151,7 @@ object ReadBook : CoroutineScope by MainScope() {
     fun setProgress(progress: BookProgress) {
         if (progress.durChapterIndex < chapterSize &&
             (durChapterIndex != progress.durChapterIndex
-                    || durChapterPos != progress.durChapterPos)
+                || durChapterPos != progress.durChapterPos)
         ) {
             durChapterIndex = progress.durChapterIndex
             durChapterPos = progress.durChapterPos
@@ -229,7 +229,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun moveToNextChapter(upContent: Boolean, upContentInPlace: Boolean = true): Boolean {
-        if (durChapterIndex < chapterSize - 1) {
+        if (durChapterIndex < (book?.simulatedTotalChapterNum()?: chapterSize) - 1) {
             durChapterPos = 0
             durChapterIndex++
             prevTextChapter?.cancelLayout()
@@ -590,6 +590,8 @@ object ReadBook : CoroutineScope by MainScope() {
                     }
                 }
             }
+
+            return@async
         }.onError {
             AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.stackTraceStr}")
