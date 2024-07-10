@@ -330,8 +330,7 @@ abstract class BaseReadBookActivity :
                             {  _, yy, mm, dayOfMonth ->
                                 // 使用Java 8的日期和时间API来格式化日期
                                 val date = LocalDate.of(yy, mm + 1, dayOfMonth) // Java 8的LocalDate，月份从1开始
-                                val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                                val formattedDate = date.format(formatter)
+                                val formattedDate = date.format(dateFormatter)
                                 startDate.setText(formattedDate)
                             }, localStartDate.year, localStartDate.monthValue - 1, localStartDate.dayOfMonth
                         )
