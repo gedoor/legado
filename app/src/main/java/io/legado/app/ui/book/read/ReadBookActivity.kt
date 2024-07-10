@@ -924,7 +924,9 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun loadChapterList(book: Book) {
         ReadBook.upMsg(getString(R.string.toc_updateing))
-        viewModel.loadChapterList(book)
+        lifecycleScope.launch(IO) {
+            viewModel.loadChapterList(book)
+        }
     }
 
     /**
