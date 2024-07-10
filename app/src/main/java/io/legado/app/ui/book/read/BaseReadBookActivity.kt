@@ -78,9 +78,7 @@ abstract class BaseReadBookActivity :
                 FileDoc.fromUri(uri, true).find(book.originName)?.let { doc ->
                     book.bookUrl = doc.uri.toString()
                     book.save()
-                    lifecycleScope.launch(IO) {
-                        viewModel.loadChapterList(book)
-                    }
+                    viewModel.loadChapterList(book)
                 } ?: ReadBook.upMsg("找不到文件")
             }
         } ?: ReadBook.upMsg("没有权限访问")

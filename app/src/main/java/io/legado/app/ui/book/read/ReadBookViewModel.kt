@@ -109,7 +109,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (book.isLocal && !checkLocalBookFileExist(book)) {
             return
         }
-        if ((ReadBook.chapterSize == 0 || book.isLocalModified()) && !loadChapterList(book)) {
+        if ((ReadBook.chapterSize == 0 || book.isLocalModified()) && !loadChapterListAwait(book)) {
             return
         }
         ReadBook.upMsg(null)
@@ -163,7 +163,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 加载目录
      */
-    suspend fun loadChapterList(book: Book): Boolean {
+    fun loadChapterList(book: Book) {
+        execute {
+            loadChapterListAwait(book)
+        }
+    }
+
+    private suspend fun loadChapterListAwait(book: Book): Boolean {
         if (book.isLocal) {
             kotlin.runCatching {
                 LocalBook.getChapterList(book).let {
