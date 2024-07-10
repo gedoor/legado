@@ -17,6 +17,7 @@ import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.help.AppFreezeMonitor
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.DefaultData
@@ -70,6 +71,7 @@ class App : Application() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         DefaultData.upVersion()
+        AppFreezeMonitor.init()
         Coroutine.async {
             URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }

@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.help.AppFreezeMonitor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
@@ -176,6 +177,7 @@ class OtherConfigFragment : PreferenceFragment(),
                 LogUtils.upLevel()
                 LogUtils.logDeviceInfo()
                 LiveEventBus.config().enableLogger(AppConfig.recordLog)
+                AppFreezeMonitor.init()
             }
 
             PreferKey.processText -> sharedPreferences?.let {
