@@ -165,7 +165,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      */
     fun loadChapterList(book: Book) {
         execute {
-            loadChapterListAwait(book)
+            if (loadChapterListAwait(book)) {
+                ReadBook.upMsg(null)
+                ReadBook.loadContent(resetPageOffset = true)
+            }
         }
     }
 
