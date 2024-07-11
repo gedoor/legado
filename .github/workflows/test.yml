@@ -6,13 +6,17 @@ on:
       - master
     paths:
       - '**'
-      - '!**/assets/**'
-      - '!**.md'
+      # - '!**/assets/**'
+      # - '!**.md'
       - '!**/ISSUE_TEMPLATE/**'
       - '!**/modules/web/**'
   pull_request:
     paths-ignore:
       - '**/modules/web/**'
+  workflow_run:
+    workflows: [Build Web]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
