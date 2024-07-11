@@ -9,7 +9,7 @@ const ajax = axios.create({
 });
 
 ajax.interceptors.request.use((config) => {
-  config.baseURL = remoteIp.value;
+  config.baseURL = baseUrl();
   return config;
 });
 
@@ -21,5 +21,5 @@ export const setRemoteIp = (ip) => {
 };
 
 export const baseUrl = () => {
-  return remoteIp.value;
+  return remoteIp.value || location.origin;
 };

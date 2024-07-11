@@ -79,22 +79,22 @@ const isBookSource = /bookSource/i.test(location.href);
 
 // Http
 const getSources = () =>
-  isBookSource ? ajax.get("getBookSources") : ajax.get("getRssSources");
+  isBookSource ? ajax.get("/getBookSources") : ajax.get("/getRssSources");
 
 const saveSource = (data) =>
   isBookSource
-    ? ajax.post("saveBookSource", data)
-    : ajax.post("saveRssSource", data);
+    ? ajax.post("/saveBookSource", data)
+    : ajax.post("/saveRssSource", data);
 
 const saveSources = (data) =>
   isBookSource
-    ? ajax.post("saveBookSources", data)
-    : ajax.post("saveRssSources", data);
+    ? ajax.post("/saveBookSources", data)
+    : ajax.post("/saveRssSources", data);
 
 const deleteSource = (data) =>
   isBookSource
-    ? ajax.post("deleteBookSources", data)
-    : ajax.post("deleteRssSources", data);
+    ? ajax.post("/deleteBookSources", data)
+    : ajax.post("/deleteRssSources", data);
 
 const debug = (
   /** @type {string} */ sourceUrl,
