@@ -219,7 +219,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     }
             }
         }
-        return false
+        return true
     }
 
     /**
