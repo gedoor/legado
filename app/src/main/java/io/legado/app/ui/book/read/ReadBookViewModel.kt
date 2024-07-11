@@ -150,7 +150,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
      * 加载详情页
      */
     private suspend fun loadBookInfo(book: Book): Boolean {
-        val source = ReadBook.bookSource ?: return false
+        val source = ReadBook.bookSource ?: return true
         try {
             WebBook.getBookInfoAwait(source, book, canReName = false)
             return true
