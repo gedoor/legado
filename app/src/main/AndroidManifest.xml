@@ -367,6 +367,13 @@
                 <data android:mimeType="application/epub+zip" />
                 <!-- pdf -->
                 <data android:mimeType="application/pdf" />
+                <!-- mobi -->
+                <data android:mimeType="application/mobi"/>
+                <data android:mimeType="application/x-mobipocket-ebook"/>
+                <!-- azw/azw3 -->
+                <data android:mimeType="application/azw"/>
+                <data android:mimeType="application/azw3"/>
+                <data android:mimeType="application/x-mobi8-ebook"/>
                 <data android:mimeType="application/octet-stream" />
             </intent-filter>
             <!-- Works when an app doesn't know the media type, e.g. Dropbox -->
@@ -399,6 +406,18 @@
                 <data android:pathAdvancedPattern=".*\\.[pP][dD][fF]" />
                 <data android:pathPattern=".*\\.pdf" />
                 <data android:pathPattern=".*\\.PDF" />
+                <!-- mobi -->
+                <data android:pathAdvancedPattern=".*\\.[mM][oO][bB][iI]" />
+                <data android:pathPattern=".*\\.mobi" />
+                <data android:pathPattern=".*\\.MOBI" />
+                <!-- azw -->
+                <data android:pathAdvancedPattern=".*\\.[aA][zZ][wW]" />
+                <data android:pathPattern=".*\\.azw" />
+                <data android:pathPattern=".*\\.AZW" />
+                <!-- azw3 -->
+                <data android:pathAdvancedPattern=".*\\.[aA][zZ][wW]3" />
+                <data android:pathPattern=".*\\.azw3" />
+                <data android:pathPattern=".*\\.AZW3" />
                 <!-- zip -->
                 <data android:pathAdvancedPattern=".*\\.[zZ][iI][pP]" />
                 <data android:pathPattern=".*\\.zip" />
