@@ -152,7 +152,6 @@ class KF8Book(
         val skel = section.skeleton
         val frags = section.frags
         val length = section.length
-        //val raw = getRaw(skel.offset, skel.offset + length)
         val raw = getRaw(skel.offset, length)
         val skeleton = ByteArray(raw.size)
         var leftBytes = raw.size
