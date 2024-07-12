@@ -45,6 +45,7 @@ import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalTxt
+import io.legado.app.help.book.isMobi
 import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
@@ -59,6 +60,7 @@ import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.localBook.EpubFile
+import io.legado.app.model.localBook.MobiFile
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
@@ -479,6 +481,9 @@ class ReadBookActivity : BaseReadBookActivity(),
                 if (it.isEpub) {
                     BookHelp.clearCache(it)
                     EpubFile.clear()
+                }
+                if (it.isMobi) {
+                    MobiFile.clear()
                 }
                 loadChapterList(it)
             }

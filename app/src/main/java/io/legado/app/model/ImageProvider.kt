@@ -11,9 +11,11 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isEpub
+import io.legado.app.help.book.isMobi
 import io.legado.app.help.book.isPdf
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.EpubFile
+import io.legado.app.model.localBook.MobiFile
 import io.legado.app.model.localBook.PdfFile
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.FileUtils
@@ -93,22 +95,20 @@ object ImageProvider {
         return withContext(IO) {
             val vFile = BookHelp.getImage(book, src)
             if (!vFile.exists()) {
-                if (book.isEpub) {
-                    EpubFile.getImage(book, src)?.use { input ->
-                        val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
-                        FileOutputStream(newFile).use { output ->
-                            input.copyTo(output)
-                        }
+                val inputStream = when {
+                    book.isEpub -> EpubFile.getImage(book, src)
+                    book.isPdf -> PdfFile.getImage(book, src)
+                    book.isMobi -> MobiFile.getImage(book, src)
+                    else -> {
+                        BookHelp.saveImage(bookSource, book, src)
+                        null
                     }
-                } else if (book.isPdf) {
-                    PdfFile.getImage(book, src)?.use { input ->
-                        val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
-                        FileOutputStream(newFile).use { output ->
-                            input.copyTo(output)
-                        }
+                }
+                inputStream?.use { input ->
+                    val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
+                    FileOutputStream(newFile).use { output ->
+                        input.copyTo(output)
                     }
-                } else {
-                    BookHelp.saveImage(bookSource, book, src)
                 }
             }
             return@withContext vFile
