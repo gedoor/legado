@@ -20,7 +20,7 @@ import kotlin.collections.set
 
 object SharedJsScope {
 
-    private val cacheFolder = File(appCtx.filesDir, "shareJs")
+    private val cacheFolder = File(appCtx.cacheDir, "shareJs")
     private val aCache = ACache.get(cacheFolder)
 
     private val scopeMap = hashMapOf<String, WeakReference<Scriptable>>()
