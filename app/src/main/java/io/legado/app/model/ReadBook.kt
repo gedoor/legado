@@ -12,6 +12,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
@@ -94,7 +95,7 @@ object ReadBook : CoroutineScope by MainScope() {
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
-        simulatedChapterSize = if (book.config.readSimulating) {
+        simulatedChapterSize = if (book.readSimulating()) {
             book.simulatedTotalChapterNum()
         } else {
             chapterSize
@@ -119,7 +120,7 @@ object ReadBook : CoroutineScope by MainScope() {
     fun upData(book: Book) {
         ReadBook.book = book
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
-        simulatedChapterSize = if (book.config.readSimulating) {
+        simulatedChapterSize = if (book.readSimulating()) {
             book.simulatedTotalChapterNum()
         } else {
             chapterSize

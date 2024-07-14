@@ -307,7 +307,7 @@ fun Book.getExportFileName(
 
 // 根据当前日期计算章节总数
 fun Book.simulatedTotalChapterNum(): Int {
-    return if (config.readSimulating) {
+    return if (readSimulating()) {
         val currentDate = LocalDate.now()
         val daysPassed = between(this.config.startDate, currentDate).days + 1
         // 计算当前应该解锁到哪一章
@@ -317,6 +317,10 @@ fun Book.simulatedTotalChapterNum(): Int {
     } else {
         totalChapterNum
     }
+}
+
+fun Book.readSimulating(): Boolean {
+    return config.readSimulating
 }
 
 fun tryParesExportFileName(jsStr: String): Boolean {
