@@ -11,7 +11,6 @@ import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.book.ContentProcessor
-import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.Debug
@@ -146,13 +145,6 @@ object BookChapterList {
             }
         }
         val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-        val lastChapter = if (book.readSimulating()) {
-            list.getOrElse(book.simulatedTotalChapterNum() - 1) { list.last() }
-        } else {
-            list.last()
-        }
-        book.latestChapterTitle =
-            lastChapter.getDisplayTitle(replaceRules, book.getUseReplaceRule())
         book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
             .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         if (book.totalChapterNum < list.size) {
@@ -161,6 +153,9 @@ object BookChapterList {
         }
         book.lastCheckTime = System.currentTimeMillis()
         book.totalChapterNum = list.size
+        book.latestChapterTitle =
+            list.getOrElse(book.simulatedTotalChapterNum() - 1) { list.last() }
+                .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         coroutineContext.ensureActive()
         return list
     }
