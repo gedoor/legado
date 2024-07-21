@@ -215,7 +215,7 @@ object LocalBook {
         when {
             book.isEpub -> EpubFile.upBookInfo(book)
             book.isUmd -> UmdFile.upBookInfo(book)
-            book.isPdf -> UmdFile.upBookInfo(book)
+            book.isPdf -> PdfFile.upBookInfo(book)
             book.isMobi -> MobiFile.upBookInfo(book)
         }
     }
