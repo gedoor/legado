@@ -104,7 +104,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 map["WebViewUserAgent"] = try {
                     WebSettings.getDefaultUserAgent(appCtx)
                 } catch (e: Throwable) {
-                    e.localizedMessage ?: "null"
+                    e.toString()
                 }
                 //获取app版本信息
                 AppConst.appInfo.let {
