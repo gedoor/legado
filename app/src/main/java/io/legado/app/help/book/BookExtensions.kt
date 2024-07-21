@@ -74,6 +74,9 @@ val Book.isUpError: Boolean
 val Book.isArchive: Boolean
     get() = isType(BookType.archive)
 
+val Book.isNotShelf: Boolean
+    get() = isType(BookType.notShelf)
+
 val Book.archiveName: String
     get() {
         if (!isArchive) throw NoStackTraceException("Book is not deCompressed from archive")
