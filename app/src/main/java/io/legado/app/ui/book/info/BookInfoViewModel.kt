@@ -124,7 +124,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun refreshBook(book: Book) {
-        execute(executeContext = IO) {
+        executeLazy(executeContext = IO) {
             if (book.isLocal) {
                 book.tocUrl = ""
                 book.getRemoteUrl()?.let {
@@ -140,7 +140,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
             } else {
-                val bs = bookSource ?: return@execute
+                val bs = bookSource ?: return@executeLazy
                 if (book.originName != bs.bookSourceName) {
                     book.originName = bs.bookSourceName
                 }
@@ -157,7 +157,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             }
         }.onFinally {
             loadBookInfo(book, false)
-        }
+        }.start()
     }
 
     fun loadBookInfo(
