@@ -10,7 +10,9 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.data.entities.BookSource
+import io.legado.app.help.book.isNotShelf
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Dao
 interface BookDao {
@@ -25,6 +27,8 @@ interface BookDao {
             BookGroup.IdLocalNone -> flowLocalNoGroup()
             BookGroup.IdError -> flowUpdateError()
             else -> flowByUserGroup(groupId)
+        }.map { list ->
+            list.filterNot { it.isNotShelf }
         }
     }
 

@@ -10,6 +10,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
+import io.legado.app.help.book.isNotShelf
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.stackTraceStr
@@ -29,15 +30,17 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
     private var bookSource: BookSource? = null
     private var exploreUrl: String? = null
     private var page = 1
+    private var books = arrayListOf<SearchBook>()
 
     init {
         execute {
             appDb.bookDao.flowAll().mapLatest { books ->
                 val keys = arrayListOf<String>()
-                books.forEach {
-                    keys.add("${it.name}-${it.author}")
-                    keys.add(it.name)
-                }
+                books.filterNot { it.isNotShelf }
+                    .forEach {
+                        keys.add("${it.name}-${it.author}")
+                        keys.add(it.name)
+                    }
                 keys
             }.catch {
                 AppLog.put("发现列表界面获取书籍数据失败\n${it.localizedMessage}", it)
@@ -69,7 +72,8 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         WebBook.exploreBook(viewModelScope, source, url, page)
             .timeout(if (BuildConfig.DEBUG) 0L else 30000L)
             .onSuccess(IO) { searchBooks ->
-                booksData.postValue(searchBooks)
+                books.addAll(searchBooks)
+                booksData.postValue(books)
                 appDb.searchBookDao.insert(*searchBooks.toTypedArray())
                 page++
             }.onError {
