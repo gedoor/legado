@@ -177,7 +177,7 @@ class OtherConfigFragment : PreferenceFragment(),
                 LogUtils.upLevel()
                 LogUtils.logDeviceInfo()
                 LiveEventBus.config().enableLogger(AppConfig.recordLog)
-                AppFreezeMonitor.init()
+                AppFreezeMonitor.init(appCtx)
             }
 
             PreferKey.processText -> sharedPreferences?.let {
