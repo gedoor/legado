@@ -28,6 +28,7 @@ import io.legado.app.service.WebService
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefString
@@ -174,6 +175,7 @@ class OtherConfigFragment : PreferenceFragment(),
             }
 
             PreferKey.recordLog -> {
+                AppConfig.recordLog = appCtx.getPrefBoolean(PreferKey.recordLog)
                 LogUtils.upLevel()
                 LogUtils.logDeviceInfo()
                 LiveEventBus.config().enableLogger(AppConfig.recordLog)
