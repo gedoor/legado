@@ -3,8 +3,9 @@
 package io.legado.app.help.http
 
 import android.text.TextUtils
-import io.legado.app.constant.AppPattern.semicolonRegex
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.equalsRegex
+import io.legado.app.constant.AppPattern.semicolonRegex
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cookie
 import io.legado.app.help.CacheManager
@@ -20,10 +21,14 @@ object CookieStore : CookieManagerInterface {
      *保存cookie到数据库，会自动识别url的二级域名
      */
     override fun setCookie(url: String, cookie: String?) {
-        val domain = NetworkUtils.getSubDomain(url)
-        CacheManager.putMemory("${domain}_cookie", cookie ?: "")
-        val cookieBean = Cookie(domain, cookie ?: "")
-        appDb.cookieDao.insert(cookieBean)
+        try {
+            val domain = NetworkUtils.getSubDomain(url)
+            CacheManager.putMemory("${domain}_cookie", cookie ?: "")
+            val cookieBean = Cookie(domain, cookie ?: "")
+            appDb.cookieDao.insert(cookieBean)
+        } catch (e: Exception) {
+            AppLog.put("保存Cookie失败\n$e", e)
+        }
     }
 
     override fun replaceCookie(url: String, cookie: String) {
