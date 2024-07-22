@@ -38,7 +38,9 @@ body:
   - type: textarea
     attributes:
       label: 日志提交 / Relevant log output
-      description: 阅读日志位于我的-关于-崩溃日志、书架-右上角-日志，或者自行使用log工具抓取日志
+      description: |
+        阅读日志位于我的-关于-崩溃日志、保存日志、书架-右上角-日志，或者自行使用log工具抓取日志
+        如果崩溃日志中包含`java.lang.OutOfMemoryError`，请安装最新测试版，在其他设置里打开记录堆转储，复现崩溃后去关于那里点保存日志，然后去备份目录里将heapDump文件夹里的文件打包压缩一下上传上来
       placeholder: "请用```将日志内容包裹"
 
   - type: input
