@@ -105,7 +105,7 @@ object LogUtils {
                     val userAgent = try {
                         WebSettings.getDefaultUserAgent(appCtx)
                     } catch (e: Throwable) {
-                        e.localizedMessage ?: "null"
+                        e.toString()
                     }
                     append("WebViewUserAgent=").append(userAgent).append("\n")
                     //获取app版本信息
