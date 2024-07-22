@@ -71,7 +71,7 @@ class App : Application() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         DefaultData.upVersion()
-        AppFreezeMonitor.init()
+        AppFreezeMonitor.init(this)
         Coroutine.async {
             URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }
