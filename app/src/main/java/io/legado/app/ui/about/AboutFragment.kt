@@ -18,6 +18,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.FileDoc
+import io.legado.app.utils.compress.ZipUtils
 import io.legado.app.utils.createFileIfNotExist
 import io.legado.app.utils.createFolderIfNotExist
 import io.legado.app.utils.delete
@@ -31,7 +32,6 @@ import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import java.io.File
 
@@ -156,21 +156,20 @@ class AboutFragment : PreferenceFragmentCompat() {
     }
 
     private suspend fun copyLogs(doc: FileDoc) = coroutineScope {
-        val files = FileDoc.fromFile(File(appCtx.externalCacheDir, "logs")).list()
+        val files = File(appCtx.externalCacheDir, "logs").listFiles()?.toList()
         if (files.isNullOrEmpty()) {
             return@coroutineScope
         }
-        doc.find("logs")?.delete()
-        val logsDoc = doc.createFolderIfNotExist("logs")
-        files.forEach { file ->
-            launch {
-                file.openInputStream().getOrNull()?.use { input ->
-                    logsDoc.createFileIfNotExist(file.name).openOutputStream().getOrNull()
-                        ?.use {
-                            input.copyTo(it)
-                        }
+        val zipFile = File(appCtx.externalCacheDir, "logs.zip")
+        ZipUtils.zipFiles(files.filter { it.name.endsWith(".txt") }, zipFile)
+
+        doc.find("logs.zip")?.delete()
+
+        zipFile.inputStream().use { input ->
+            doc.createFileIfNotExist("logs.zip").openOutputStream().getOrNull()
+                ?.use {
+                    input.copyTo(it)
                 }
-            }
         }
     }
 
