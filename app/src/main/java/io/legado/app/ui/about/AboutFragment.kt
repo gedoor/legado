@@ -171,6 +171,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                     input.copyTo(it)
                 }
         }
+        zipFile.delete()
     }
 
     private fun copyHeapDump(doc: FileDoc): Boolean {
