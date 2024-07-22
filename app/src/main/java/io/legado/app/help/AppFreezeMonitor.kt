@@ -23,14 +23,22 @@ object AppFreezeMonitor {
         ScreenStatusReceiver()
     }
 
+    private var registeredReceiver = false
+
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     fun init(context: Context) {
         if (!AppConfig.recordLog) {
-            context.unregisterReceiver(screenStatusReceiver)
+            if (registeredReceiver) {
+                registeredReceiver = false
+                context.unregisterReceiver(screenStatusReceiver)
+            }
             return
         }
 
-        context.registerReceiver(screenStatusReceiver, screenStatusReceiver.filter)
+        if (!registeredReceiver) {
+            registeredReceiver = true
+            context.registerReceiver(screenStatusReceiver, screenStatusReceiver.filter)
+        }
 
         var previous = SystemClock.uptimeMillis()
 
