@@ -64,11 +64,9 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     }
 
     private fun scrollToBottom() {
-        adapter.let {
-            if (loadMoreView.hasMore && !loadMoreView.isLoading) {
-                loadMoreView.startLoad()
-                viewModel.explore()
-            }
+        if (loadMoreView.hasMore && !loadMoreView.isLoading) {
+            loadMoreView.startLoad()
+            viewModel.explore()
         }
     }
 
@@ -76,14 +74,10 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         loadMoreView.stopLoad()
         if (books.isEmpty() && adapter.isEmpty()) {
             loadMoreView.noMore(getString(R.string.empty))
-        } else if (books.isEmpty()) {
-            loadMoreView.noMore()
-        } else if (adapter.getItems().contains(books.first()) && adapter.getItems()
-                .contains(books.last())
-        ) {
+        } else if (adapter.itemCount == books.size) {
             loadMoreView.noMore()
         } else {
-            adapter.addItems(books)
+            adapter.setItems(books)
         }
     }
 
