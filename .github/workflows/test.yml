@@ -19,7 +19,7 @@ on:
       - completed
   workflow_dispatch:
 
-concurrency: 
+concurrency:
   group: "test"
   cancel-in-progress: true
 
