@@ -23,6 +23,8 @@ object AppUpdate {
 
         fun check(scope: CoroutineScope): Coroutine<UpdateInfo>
 
+        fun checkBeta(scope: CoroutineScope): Coroutine<UpdateInfo>
+
     }
 
 }

@@ -47,5 +47,37 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
         }.timeout(10000)
     }
 
+    override fun checkBeta(scope: CoroutineScope): Coroutine<AppUpdate.UpdateInfo> {
+        return Coroutine.async(scope) {
+            val preReleaseUrl = "https://api.github.com/repos/gedoor/legado/releases/tags/beta"
+            val body = okHttpClient.newCallStrResponse {
+                url(preReleaseUrl)
+            }.body
+            if (body.isNullOrBlank()) {
+                throw NoStackTraceException("获取新版本出错")
+            }
+            val rootDoc = jsonPath.parse(body)
+            val path = "\$.assets[?(@.name =~ /legado_${appCtx.channel}_.*?apk\$/)]"
+            val assetsMap = rootDoc.read<List<Any>>(path)
+                .firstOrNull()
+                ?: throw NoStackTraceException("获取新版本出错")
+            val assets = jsonPath.parse(assetsMap)
+            val name = assets.readString("$.name")
+                ?: throw NoStackTraceException("获取新版本出错")
+            val tagName = name.replace("legado_${appCtx.channel}_|\\.apk".toRegex(), "")
+            if (tagName > AppConst.appInfo.versionName) {
+                val updateBody = rootDoc.readString("$.body")
+                    ?: throw NoStackTraceException("获取新版本出错")
+                val downloadUrl = assets.readString("$.browser_download_url")
+                    ?: throw NoStackTraceException("获取新版本出错")
+                val fileName = assets.readString("$.name")
+                    ?: throw NoStackTraceException("获取新版本出错")
+                return@async AppUpdate.UpdateInfo(tagName, updateBody, downloadUrl, fileName)
+            } else {
+                throw NoStackTraceException("已是最新版本")
+            }
+        }.timeout(10000)
+    }
+
 
 }

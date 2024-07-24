@@ -146,6 +146,12 @@
             android:summary="@string/show_add_to_shelf_alert_summary"
             android:title="@string/show_add_to_shelf_alert_title" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="updateToBeta"
+            android:summary="@string/update_to_bata_summary"
+            android:title="@string/update_to_bata_title" />
+
         <io.legado.app.lib.prefs.Preference
             android:key="webPort"
             android:title="@string/web_port_title"

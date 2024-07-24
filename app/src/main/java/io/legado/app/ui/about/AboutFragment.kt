@@ -88,16 +88,20 @@ class AboutFragment : PreferenceFragmentCompat() {
     private fun checkUpdate() {
         waitDialog.show()
         AppUpdate.gitHubUpdate?.run {
-            check(lifecycleScope)
-                .onSuccess {
-                    showDialogFragment(
-                        UpdateDialog(it)
-                    )
-                }.onError {
-                    appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
-                }.onFinally {
-                    waitDialog.dismiss()
-                }
+            val job = if (AppConfig.updateToBeta) {
+                checkBeta(lifecycleScope)
+            } else {
+                check(lifecycleScope)
+            }
+            job.onSuccess {
+                showDialogFragment(
+                    UpdateDialog(it)
+                )
+            }.onError {
+                appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
+            }.onFinally {
+                waitDialog.dismiss()
+            }
         }
     }
 

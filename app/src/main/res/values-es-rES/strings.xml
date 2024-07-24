@@ -1153,4 +1153,6 @@
     <string name="start_from">Comenzar</string>
     <string name="daily_chapters">Cap. al día</string>
     <string name="start_chapter">Cap. inicio</string>
+    <string name="update_to_bata_title">更新至测试版</string>
+    <string name="update_to_bata_summary">检查更新时查找最新的测试版本</string>
 </resources>
