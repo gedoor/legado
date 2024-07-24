@@ -15,6 +15,7 @@ on:
       - '**/modules/web/**'
   workflow_run:
     workflows: [Build Web]
+    branches: [master]
     types:
       - completed
   workflow_dispatch:
@@ -170,7 +171,7 @@ jobs:
           path: prerelease/
 
       - working-directory: prerelease/
-        run: mv */*.apk . ;rm -rf */
+        run: mv */*/*.apk . ;rm -rf */
 
       - name: Delete Pre-Release
         run: gh release delete beta -y --cleanup-tag
