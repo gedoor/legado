@@ -19,6 +19,10 @@ on:
       - completed
   workflow_dispatch:
 
+concurrency: 
+  group: "test"
+  cancel-in-progress: true
+
 jobs:
 
   prepare:
@@ -143,6 +147,15 @@ jobs:
           name: legado.${{ env.product }}.${{ env.type }}.mapping
           if-no-files-found: ignore
           path: ${{ github.workspace }}/mapping/mapping.txt
+
+      - name: Publish Pre-Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "beta"
+          prerelease: true
+          title: "Latest Beta Build"
+          files: ${{ github.workspace }}/apk/*.apk
 
   lanzou:
     needs: [ prepare, build ]
