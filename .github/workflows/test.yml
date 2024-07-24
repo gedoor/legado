@@ -150,13 +150,13 @@ jobs:
 
       - name: Publish Pre-Release
         if: env.type == 'release'
-        uses: softprops/action-gh-release@v2
+        uses: ncipollo/release-action@v1
         with:
-          name: "Latest Beta Build"
-          tag_name: "beta"
+          name: legado_${{ env.product }}_${{ env.VERSION }}
+          tag: "beta"
           body: "此版本为测试版，可能存在不稳定情况，升级前请务必备份好数据。"
           prerelease: true
-          files: ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk
+          artifacts: ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk
 
   lanzou:
     needs: [ prepare, build ]
