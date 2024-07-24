@@ -151,6 +151,8 @@ jobs:
       - name: Delete Pre-Release
         if: env.type == 'release'
         run: gh release delete beta -y --cleanup-tag
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Publish Pre-Release
         if: env.type == 'release'
