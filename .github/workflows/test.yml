@@ -150,12 +150,12 @@ jobs:
 
       - name: Publish Pre-Release
         if: env.type == 'release'
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: softprops/action-gh-release@v2
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "beta"
+          name: "Latest Beta Build"
+          tag_name: "beta"
+          body: "此版本为测试版，可能存在不稳定情况，升级前请务必备份好数据。"
           prerelease: true
-          title: "Latest Beta Build"
           files: ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk
 
   lanzou:
