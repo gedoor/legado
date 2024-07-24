@@ -58,14 +58,14 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
             }
             val rootDoc = jsonPath.parse(body)
             val path = "\$.assets[?(@.name =~ /legado_${appCtx.channel}_.*?apk\$/)]"
-            val assetsMap = rootDoc.read<List<Any>>(path)
-                .firstOrNull()
+            val name = rootDoc.readString("$.name")
                 ?: throw NoStackTraceException("获取新版本出错")
-            val assets = jsonPath.parse(assetsMap)
-            val name = assets.readString("$.name")
-                ?: throw NoStackTraceException("获取新版本出错")
-            val tagName = name.replace("legado_${appCtx.channel}_|\\.apk".toRegex(), "")
+            val tagName = name.replace("legado_${appCtx.channel}_", "")
             if (tagName > AppConst.appInfo.versionName) {
+                val assetsMap = rootDoc.read<List<Any>>(path)
+                    .firstOrNull()
+                    ?: throw NoStackTraceException("获取新版本出错")
+                val assets = jsonPath.parse(assetsMap)
                 val updateBody = rootDoc.readString("$.body")
                     ?: throw NoStackTraceException("获取新版本出错")
                 val downloadUrl = assets.readString("$.browser_download_url")

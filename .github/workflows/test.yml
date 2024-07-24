@@ -148,6 +148,10 @@ jobs:
           if-no-files-found: ignore
           path: ${{ github.workspace }}/mapping/mapping.txt
 
+      - name: Delete Pre-Release
+        if: env.type == 'release'
+        run: gh release delete beta -y --cleanup-tag
+
       - name: Publish Pre-Release
         if: env.type == 'release'
         uses: ncipollo/release-action@v1
@@ -156,8 +160,6 @@ jobs:
           tag: "beta"
           body: "此版本为测试版，可能存在不稳定情况，升级前请务必备份好数据。"
           prerelease: true
-          removeArtifacts: true
-          allowUpdates: true
           artifacts: ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk
 
   lanzou:
