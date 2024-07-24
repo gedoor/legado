@@ -167,7 +167,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: legado.prerelease
-          path: ${{ github.workspace }}/prerelease/
+          path: prerelease/
+
+      - working-directory: prerelease/
+        run: mv */*.apk . ;rm -rf */
 
       - name: Delete Pre-Release
         run: gh release delete beta -y --cleanup-tag
@@ -188,7 +191,7 @@ jobs:
           name: legado.prerelease
 
   lanzou:
-    needs: [ prepare, build ]
+    needs: [ prepare, build, prerelease ]
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.lanzou == 'yes' }}
     runs-on: ubuntu-latest
     env:
@@ -214,7 +217,7 @@ jobs:
           echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: $LANZOU_URL"
 
   test_Branch:
-    needs: [ prepare, build ]
+    needs: [ prepare, build, prerelease ]
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
@@ -237,7 +240,7 @@ jobs:
           git push -f -u origin test
 
   telegram:
-    needs: [ prepare, build ]
+    needs: [ prepare, build, prerelease ]
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
     runs-on: ubuntu-latest
     steps:
