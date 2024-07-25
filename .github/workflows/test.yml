@@ -206,7 +206,7 @@ jobs:
               core.endGroup();
             };
 
-            await createReleaseTag(client, {
+            await createReleaseTag(github.rest, {
               owner: context.repo.owner,
               ref: 'refs/tags/beta',
               repo: context.repo.repo,
