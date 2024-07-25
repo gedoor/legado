@@ -190,7 +190,7 @@ jobs:
 
               try {
                 await client.git.createRef(refInfo);
-              } catch (err: any) {
+              } catch (err) {
                 const existingTag = refInfo.ref.substring(5); // 'refs/tags/latest' => 'tags/latest'
                 core.info(
                   `Could not create new tag "${refInfo.ref}" (${err.message}) therefore updating existing tag "${existingTag}"`,
