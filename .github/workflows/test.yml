@@ -175,9 +175,43 @@ jobs:
           done
 
       - name: Delete Pre-Release
-        run: gh release delete beta -y --cleanup-tag
+        run: gh release delete beta -y
         env:
           GH_TOKEN: ${{ github.token }}
+      
+      - name: Create or update beta tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const createReleaseTag = async (client: github.GitHub, refInfo: Octokit.GitCreateRefParams) => {
+              core.startGroup('Generating release tag');
+              const friendlyTagName = refInfo.ref.substring(10); // 'refs/tags/latest' => 'latest'
+              core.info(`Attempting to create or update release tag "${friendlyTagName}"`);
+
+              try {
+                await client.git.createRef(refInfo);
+              } catch (err: any) {
+                const existingTag = refInfo.ref.substring(5); // 'refs/tags/latest' => 'tags/latest'
+                core.info(
+                  `Could not create new tag "${refInfo.ref}" (${err.message}) therefore updating existing tag "${existingTag}"`,
+                );
+                await client.git.updateRef({
+                  ...refInfo,
+                  ref: existingTag,
+                  force: true,
+                });
+              }
+
+              core.info(`Successfully created or updated the release tag "${friendlyTagName}"`);
+              core.endGroup();
+            };
+
+            await createReleaseTag(client, {
+              owner: context.repo.owner,
+              ref: 'refs/tags/beta',
+              repo: context.repo.repo,
+              sha: context.sha,
+            });
 
       - name: Publish Pre-Release
         uses: ncipollo/release-action@v1

@@ -1,7 +1,6 @@
 package io.legado.app.help
 
 import androidx.annotation.Keep
-import com.google.gson.Gson
 import io.legado.app.constant.AppConst
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
@@ -11,6 +10,7 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.AppReleaseInfo
 import io.legado.app.model.AppVariant
 import io.legado.app.model.GithubRelease
+import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.coroutines.CoroutineScope
 
@@ -38,7 +38,7 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
         if (body.isNullOrBlank()) {
             throw NoStackTraceException("获取新版本出错")
         }
-        return Gson().fromJsonObject<GithubRelease>(body)
+        return GSON.fromJsonObject<GithubRelease>(body)
             .getOrElse {
                 throw NoStackTraceException("获取新版本出错 " + it.localizedMessage)
             }
