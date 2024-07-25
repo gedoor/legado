@@ -176,8 +176,9 @@ jobs:
 
       - name: Delete Pre-Release
         run: |
-          gh release delete beta -y
-          exit 0
+          if gh release view beta &>/dev/null; then
+            gh release delete beta -y
+          fi
         env:
           GH_TOKEN: ${{ github.token }}
       
