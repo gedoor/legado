@@ -183,7 +183,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const createReleaseTag = async (client: github.GitHub, refInfo: Octokit.GitCreateRefParams) => {
+            const createReleaseTag = async (client, refInfo) => {
               core.startGroup('Generating release tag');
               const friendlyTagName = refInfo.ref.substring(10); // 'refs/tags/latest' => 'latest'
               core.info(`Attempting to create or update release tag "${friendlyTagName}"`);
