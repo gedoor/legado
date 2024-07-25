@@ -22,15 +22,16 @@ enum class AppVariant {
 }
 
 data class GithubRelease(
-    val assets: List<Asset>,
+    val assets: List<Asset>?,
     val body: String,
     @SerializedName("prerelease")
     val isPreRelease: Boolean,
 ) {
     fun gitReleaseToAppReleaseInfo(): List<AppReleaseInfo> {
         return assets
-            .filter { it.isValid }
-            .map { it.assetToAppReleaseInfo(isPreRelease, body) }
+            ?.filter { it.isValid }
+            ?.map { it.assetToAppReleaseInfo(isPreRelease, body) }
+            .orEmpty()
     }
 }
 
