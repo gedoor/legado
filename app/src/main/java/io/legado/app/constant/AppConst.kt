@@ -6,7 +6,7 @@ import android.provider.Settings
 import androidx.annotation.Keep
 import cn.hutool.crypto.digest.DigestUtil
 import io.legado.app.BuildConfig
-import io.legado.app.model.AppVariant
+import io.legado.app.help.update.AppVariant
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 

@@ -3,7 +3,7 @@ package io.legado.app
 import com.google.gson.Gson
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.okHttpClient
-import io.legado.app.model.GithubRelease
+import io.legado.app.help.update.GithubRelease
 import io.legado.app.utils.fromJsonObject
 import okhttp3.Request
 import org.junit.Assert.assertTrue

@@ -1,4 +1,4 @@
-package io.legado.app.model
+package io.legado.app.help.update
 
 import com.google.gson.annotations.SerializedName
 import java.time.Instant

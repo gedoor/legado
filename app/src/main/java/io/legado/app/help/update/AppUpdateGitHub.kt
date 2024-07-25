@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.update
 
 import androidx.annotation.Keep
 import io.legado.app.constant.AppConst
@@ -7,9 +7,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
-import io.legado.app.model.AppReleaseInfo
-import io.legado.app.model.AppVariant
-import io.legado.app.model.GithubRelease
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.coroutines.CoroutineScope

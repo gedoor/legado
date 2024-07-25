@@ -1,4 +1,4 @@
-package io.legado.app.help
+package io.legado.app.help.update
 
 import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.CoroutineScope
