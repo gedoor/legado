@@ -60,7 +60,7 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
             val path = "\$.assets[?(@.name =~ /legado_${appCtx.channel}_.*?apk\$/)]"
             val name = rootDoc.readString("$.name")
                 ?: throw NoStackTraceException("获取新版本出错")
-            val tagName = name.replace("legado_${appCtx.channel}_", "")
+            val tagName = name.replace("legado_app_", "")
             if (tagName > AppConst.appInfo.versionName) {
                 val assetsMap = rootDoc.read<List<Any>>(path)
                     .firstOrNull()
