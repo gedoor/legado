@@ -7,7 +7,7 @@ object AppUpdate {
 
     val gitHubUpdate by lazy {
         kotlin.runCatching {
-            Class.forName("io.legado.app.help.AppUpdateGitHub")
+            Class.forName("io.legado.app.help.update.AppUpdateGitHub")
                 .kotlin.objectInstance as AppUpdateInterface
         }.getOrNull()
     }
