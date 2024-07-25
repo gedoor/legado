@@ -25,12 +25,12 @@ data class GithubRelease(
     val assets: List<Asset>,
     val body: String,
     @SerializedName("prerelease")
-    val isPreLease: Boolean,
+    val isPreRelease: Boolean,
 ) {
     fun gitReleaseToAppReleaseInfo(): List<AppReleaseInfo> {
         return assets
             .filter { it.isValid }
-            .map { it.assetToAppReleaseInfo(isPreLease, body) }
+            .map { it.assetToAppReleaseInfo(isPreRelease, body) }
     }
 }
 
@@ -55,37 +55,12 @@ data class Asset(
         val instant = Instant.parse(createdAt)
         val timestamp: Long = instant.toEpochMilli()
 
-        return when {
-            preRelease && name.contains("releaseA") ->
-                AppReleaseInfo(
-                    AppVariant.BETA_RELEASEA,
-                    timestamp,
-                    note,
-                    name,
-                    apkUrl,
-                    url
-                )
-
-            preRelease && name.contains("release") ->
-                AppReleaseInfo(
-                    AppVariant.BETA_RELEASE,
-                    timestamp,
-                    note,
-                    name,
-                    apkUrl,
-                    url
-                )
-
-            else ->
-                AppReleaseInfo(
-                    AppVariant.OFFICIAL,
-                    timestamp,
-                    note,
-                    name,
-                    apkUrl,
-                    url
-                )
-
+        val appVariant = when {
+            preRelease && name.contains("releaseA") -> AppVariant.BETA_RELEASEA
+            preRelease && name.contains("release") -> AppVariant.BETA_RELEASE
+            else -> AppVariant.OFFICIAL
         }
+
+        return AppReleaseInfo(appVariant, timestamp, note, name, apkUrl, url)
     }
 }

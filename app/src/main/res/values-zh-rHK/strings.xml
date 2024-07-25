@@ -1153,8 +1153,8 @@
     <string name="start_from">起始日期</string>
     <string name="daily_chapters">日更章數</string>
     <string name="start_chapter">開始篇章</string>
-    <string name="update_to_bata_title">更新至测试版</string>
-    <string name="update_to_bata_summary">检查更新时查找最新的测试版本</string>
+    <string name="update_to_variant_title">检查更新查找版本</string>
+    <string name="update_to_variant_summary">检查更新时查找其他签名版本</string>
     <string name="default_version">当前</string>
     <string name="official_version">正式版</string>
     <string name="beta_release_version">测试版</string>

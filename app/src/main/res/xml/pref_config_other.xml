@@ -149,8 +149,8 @@
         <io.legado.app.lib.prefs.NameListPreference
             android:defaultValue="default_version"
             android:key="updateToVariant"
-            android:summary="@string/update_to_bata_summary"
-            android:title="@string/update_to_bata_title"
+            android:summary="@string/update_to_variant_summary"
+            android:title="@string/update_to_variant_title"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:entries="@array/default_app_variant"
