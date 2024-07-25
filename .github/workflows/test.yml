@@ -104,7 +104,7 @@ jobs:
           echo "修改APK文件名"
           mkdir -p ${{ github.workspace }}/apk/
           for file in `ls ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk`; do
-            cp "$file" ${{ github.workspace }}/apk/legado_${{ env.product }}_${{ env.VERSIONL }}_$typeName.apk
+            mv "$file" ${{ github.workspace }}/apk/legado_${{ env.product }}_${{ env.VERSIONL }}_$typeName.apk
           done
           echo "移动mapping文件"
           mkdir -p ${{ github.workspace }}/mapping/
@@ -142,14 +142,6 @@ jobs:
           if-no-files-found: ignore
           path: ${{ github.workspace }}/apk/*.apk
 
-      - name: Upload App To Artifact For Pre-Release
-        if: env.type == 'release'
-        uses: actions/upload-artifact@v4
-        with:
-          name: legado.prerelease
-          if-no-files-found: ignore
-          path: ${{ github.workspace }}/app/build/outputs/apk/*/*/*.apk
-
       - name: Upload Mapping File To Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -167,11 +159,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: legado.prerelease
-          path: prerelease/
+          path: apk/
 
-      - working-directory: prerelease/
-        run: mv */*/*.apk . ;rm -rf */
+      - working-directory: apk/
+        run: mv */*.apk . ;rm -rf */
 
       - name: Delete Pre-Release
         run: gh release delete beta -y --cleanup-tag
@@ -185,14 +176,10 @@ jobs:
           tag: "beta"
           body: "此版本为测试版，签名与正式版不同，可能存在不稳定情况，升级前请务必备份好数据。"
           prerelease: true
-          artifacts: ${{ github.workspace }}/prerelease/*.apk
-
-      - uses: geekyeggo/delete-artifact@v5
-        with:
-          name: legado.prerelease
+          artifacts: ${{ github.workspace }}/apk/*.apk
 
   lanzou:
-    needs: [ prepare, build, prerelease ]
+    needs: [ prepare, build ]
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.lanzou == 'yes' }}
     runs-on: ubuntu-latest
     env:
@@ -218,7 +205,7 @@ jobs:
           echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: $LANZOU_URL"
 
   test_Branch:
-    needs: [ prepare, build, prerelease ]
+    needs: [ prepare, build ]
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
@@ -241,7 +228,7 @@ jobs:
           git push -f -u origin test
 
   telegram:
-    needs: [ prepare, build, prerelease ]
+    needs: [ prepare, build ]
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
     runs-on: ubuntu-latest
     steps:
