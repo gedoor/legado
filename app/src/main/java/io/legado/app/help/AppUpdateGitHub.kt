@@ -4,33 +4,45 @@ import androidx.annotation.Keep
 import com.google.gson.Gson
 import io.legado.app.constant.AppConst
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.AppReleaseInfo
+import io.legado.app.model.AppVariant
 import io.legado.app.model.GithubRelease
-import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
 import kotlinx.coroutines.CoroutineScope
 
 @Keep
 @Suppress("unused")
 object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
 
-    // TODO:在关于->其他，添加其他版本选项，使用该函数
-    private suspend fun getRecentReleases(): List<AppReleaseInfo> {
-        val lastReleaseUrl =
-            "https://api.github.com/repos/gedoor/legado/releases?page=1?per_page=1"
+    private val checkVariant: AppVariant
+        get() = when (AppConfig.updateToVariant) {
+            "official_version" -> AppVariant.OFFICIAL
+            "beta_release_version" -> AppVariant.BETA_RELEASE
+            "beta_releaseA_version" -> AppVariant.BETA_RELEASEA
+            else -> AppConst.appInfo.appVariant
+        }
+
+    private suspend fun getLatestRelease(): List<AppReleaseInfo> {
+        val lastReleaseUrl = if (checkVariant.name.lowercase().contains("beta")) {
+            "https://api.github.com/repos/gedoor/legado/releases/tags/beta"
+        } else {
+            "https://api.github.com/repos/gedoor/legado/releases/latest"
+        }
         val body = okHttpClient.newCallStrResponse {
             url(lastReleaseUrl)
         }.body
         if (body.isNullOrBlank()) {
             throw NoStackTraceException("获取新版本出错")
         }
-        return Gson().fromJsonArray<GithubRelease>(body)
+        return Gson().fromJsonObject<GithubRelease>(body)
             .getOrElse {
                 throw NoStackTraceException("获取新版本出错 " + it.localizedMessage)
             }
-            .flatMap { it.gitReleaseToAppReleaseInfo() }
+            .gitReleaseToAppReleaseInfo()
             .sortedByDescending { it.createdAt }
     }
 
@@ -38,9 +50,8 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
         scope: CoroutineScope,
     ): Coroutine<AppUpdate.UpdateInfo> {
         return Coroutine.async(scope) {
-            val recentReleases = getRecentReleases()
-            recentReleases
-                .filter { it.appVariant == AppConst.appInfo.appVariant }
+            getLatestRelease()
+                .filter { it.appVariant == checkVariant }
                 .firstOrNull { it.versionName > AppConst.appInfo.versionName }
                 ?.let {
                     return@async AppUpdate.UpdateInfo(
@@ -49,41 +60,8 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
                         it.downloadUrl,
                         it.name
                     )
-                } ?: throw NoStackTraceException("已是最新版本")
+                }
+                ?: throw NoStackTraceException("已是最新版本")
         }.timeout(10000)
     }
-
-    override fun checkBeta(scope: CoroutineScope): Coroutine<AppUpdate.UpdateInfo> {
-        return Coroutine.async(scope) {
-            val preReleaseUrl = "https://api.github.com/repos/gedoor/legado/releases/tags/beta"
-            val body = okHttpClient.newCallStrResponse {
-                url(preReleaseUrl)
-            }.body
-            if (body.isNullOrBlank()) {
-                throw NoStackTraceException("获取新版本出错")
-            }
-            val rootDoc = jsonPath.parse(body)
-            val path = "\$.assets[?(@.name =~ /legado_${appCtx.channel}_.*?apk\$/)]"
-            val name = rootDoc.readString("$.name")
-                ?: throw NoStackTraceException("获取新版本出错")
-            val tagName = name.replace("legado_app_", "")
-            if (tagName > AppConst.appInfo.versionName) {
-                val assetsMap = rootDoc.read<List<Any>>(path)
-                    .firstOrNull()
-                    ?: throw NoStackTraceException("获取新版本出错")
-                val assets = jsonPath.parse(assetsMap)
-                val updateBody = rootDoc.readString("$.body")
-                    ?: throw NoStackTraceException("获取新版本出错")
-                val downloadUrl = assets.readString("$.browser_download_url")
-                    ?: throw NoStackTraceException("获取新版本出错")
-                val fileName = assets.readString("$.name")
-                    ?: throw NoStackTraceException("获取新版本出错")
-                return@async AppUpdate.UpdateInfo(tagName, updateBody, downloadUrl, fileName)
-            } else {
-                throw NoStackTraceException("已是最新版本")
-            }
-        }.timeout(10000)
-    }
-
-
 }

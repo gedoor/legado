@@ -61,7 +61,7 @@ object AppConst {
                 appInfo.versionName = it.versionName
                 // TODO: 增加测试版还是正式版的检查
                 if (it.packageName.contains("releaseA")) {
-                    appInfo.appVariant = AppVariant.COMPATIBLE
+                    appInfo.appVariant = AppVariant.BETA_RELEASEA
                 }
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {

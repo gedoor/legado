@@ -1158,4 +1158,8 @@
     <string name="start_chapter">Start Chapter</string>
     <string name="update_to_bata_title">更新至测试版</string>
     <string name="update_to_bata_summary">检查更新时查找最新的测试版本</string>
+    <string name="default_version">当前</string>
+    <string name="official_version">正式版</string>
+    <string name="beta_release_version">测试版</string>
+    <string name="beta_releaseA_version">共存版</string>
 </resources>

@@ -16,7 +16,7 @@ data class AppReleaseInfo(
 
 enum class AppVariant {
     OFFICIAL,
-    COMPATIBLE,
+    BETA_RELEASEA,
     BETA_RELEASE,
     UNKNOWN
 }
@@ -58,7 +58,7 @@ data class Asset(
         return when {
             preRelease && name.contains("releaseA") ->
                 AppReleaseInfo(
-                    AppVariant.COMPATIBLE,
+                    AppVariant.BETA_RELEASEA,
                     timestamp,
                     note,
                     name,
@@ -76,19 +76,9 @@ data class Asset(
                     url
                 )
 
-            !preRelease && name.contains("release") ->
-                AppReleaseInfo(
-                    AppVariant.OFFICIAL,
-                    timestamp,
-                    note,
-                    name,
-                    apkUrl,
-                    url
-                )
-
             else ->
                 AppReleaseInfo(
-                    AppVariant.UNKNOWN,
+                    AppVariant.OFFICIAL,
                     timestamp,
                     note,
                     name,

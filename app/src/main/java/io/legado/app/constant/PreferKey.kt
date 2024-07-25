@@ -145,7 +145,7 @@ object PreferKey {
     const val mouseWheelPage = "mouseWheelPage"
     const val recordHeapDump = "recordHeapDump"
     const val optimizeRender = "optimizeRender"
-    const val updateToBeta = "updateToBeta"
+    const val updateToVariant = "updateToVariant"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
