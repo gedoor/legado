@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.provider.Settings
 import androidx.annotation.Keep
 import io.legado.app.BuildConfig
+import io.legado.app.model.AppVariant
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 
@@ -58,6 +59,11 @@ object AppConst {
         appCtx.packageManager.getPackageInfo(appCtx.packageName, PackageManager.GET_ACTIVITIES)
             ?.let {
                 appInfo.versionName = it.versionName
+                // TODO: 增加测试版还是正式版的检查
+                if (it.packageName.contains("releaseA")) {
+                    appInfo.appVariant = AppVariant.COMPATIBLE
+                }
+
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
                     appInfo.versionCode = it.longVersionCode
                 } else {
@@ -74,7 +80,8 @@ object AppConst {
     @Keep
     data class AppInfo(
         var versionCode: Long = 0L,
-        var versionName: String = ""
+        var versionName: String = "",
+        var appVariant: AppVariant = AppVariant.UNKNOWN
     )
 
     /**
