@@ -162,7 +162,17 @@ jobs:
           path: apk/
 
       - working-directory: apk/
-        run: mv */*.apk . ;rm -rf */
+        run: |
+          mv */*.apk .
+          rm -rf */
+
+          for file in `ls *.apk`; do
+            if [[ "$file" == *原包名* ]]; then
+              mv "$file" $(echo $file | sed s/原包名/release/)
+            else
+              mv "$file" $(echo $file | sed s/共存/releaseA/)
+            fi
+          done
 
       - name: Delete Pre-Release
         run: gh release delete beta -y --cleanup-tag
