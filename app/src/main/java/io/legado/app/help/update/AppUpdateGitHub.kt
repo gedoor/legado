@@ -24,7 +24,7 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
         }
 
     private suspend fun getLatestRelease(): List<AppReleaseInfo> {
-        val lastReleaseUrl = if (checkVariant.name.lowercase().contains("beta")) {
+        val lastReleaseUrl = if (checkVariant.isBeta()) {
             "https://api.github.com/repos/gedoor/legado/releases/tags/beta"
         } else {
             "https://api.github.com/repos/gedoor/legado/releases/latest"

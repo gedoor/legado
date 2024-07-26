@@ -18,7 +18,12 @@ enum class AppVariant {
     OFFICIAL,
     BETA_RELEASEA,
     BETA_RELEASE,
-    UNKNOWN
+    UNKNOWN;
+
+    fun isBeta(): Boolean {
+        return this == BETA_RELEASE || this == BETA_RELEASEA
+    }
+
 }
 
 data class GithubRelease(
