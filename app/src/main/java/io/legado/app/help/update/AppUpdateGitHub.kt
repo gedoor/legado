@@ -5,8 +5,9 @@ import io.legado.app.constant.AppConst
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.http.newCallStrResponse
+import io.legado.app.help.http.newCallResponse
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.http.text
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.coroutines.CoroutineScope
@@ -29,9 +30,13 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
         } else {
             "https://api.github.com/repos/gedoor/legado/releases/latest"
         }
-        val body = okHttpClient.newCallStrResponse {
+        val res = okHttpClient.newCallResponse {
             url(lastReleaseUrl)
-        }.body
+        }
+        if (!res.isSuccessful) {
+            throw NoStackTraceException("获取新版本出错(${res.code})")
+        }
+        val body = res.body?.text()
         if (body.isNullOrBlank()) {
             throw NoStackTraceException("获取新版本出错")
         }
