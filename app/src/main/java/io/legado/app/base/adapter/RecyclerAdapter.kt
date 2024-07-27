@@ -114,6 +114,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     ) {
         kotlin.runCatching {
             val oldItems = this.items.toList()
+            val itemsSize = items?.size ?: 0
             val callback = object : DiffUtil.Callback() {
                 override fun getOldListSize(): Int {
                     return itemCount
@@ -153,9 +154,9 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
             diffJob?.cancel()
             diffJob = Coroutine.async {
                 val diffResult = if (skipDiff) withTimeoutOrNullAsync(500L) {
-                    DiffUtil.calculateDiff(callback)
+                    DiffUtil.calculateDiff(callback, itemsSize < 2000)
                 } else {
-                    DiffUtil.calculateDiff(callback)
+                    DiffUtil.calculateDiff(callback, itemsSize < 2000)
                 }
                 ensureActive()
                 handler.post {
