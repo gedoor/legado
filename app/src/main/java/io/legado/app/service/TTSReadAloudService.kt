@@ -231,7 +231,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
         @Deprecated("Deprecated in Java")
         override fun onError(s: String) {
-            //nothing
+            LogUtils.d(TAG, "onError s:$s pageIndex:$pageIndex")
+            nextParagraph()
         }
 
     }
