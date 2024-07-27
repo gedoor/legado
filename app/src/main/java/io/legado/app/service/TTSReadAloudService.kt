@@ -191,16 +191,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
         override fun onDone(s: String) {
             LogUtils.d(TAG, "onDone utteranceId:$s")
-            //跳过全标点段落
-            do {
-                readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
-                paragraphStartPos = 0
-                nowSpeak++
-                if (nowSpeak >= contentList.size) {
-                    nextChapter()
-                    return
-                }
-            } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
+            nextParagraph()
         }
 
         override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
@@ -222,6 +213,20 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 TAG,
                 "onError nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$utteranceId errorCode:$errorCode"
             )
+            nextParagraph()
+        }
+
+        private fun nextParagraph() {
+            //跳过全标点段落
+            do {
+                readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
+                paragraphStartPos = 0
+                nowSpeak++
+                if (nowSpeak >= contentList.size) {
+                    nextChapter()
+                    return
+                }
+            } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
         }
 
         @Deprecated("Deprecated in Java")
