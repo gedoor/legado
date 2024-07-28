@@ -1000,7 +1000,6 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun pageChanged() {
         pageChanged = true
         binding.readView.onPageChange()
-        binding.readView.cancelSelect()
         handler.post {
             upSeekBarProgress()
         }
