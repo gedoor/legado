@@ -16,6 +16,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.startService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
@@ -306,6 +307,31 @@ object CacheBook {
             }.onFinally {
                 onFinally()
             }.start()
+        }
+
+        suspend fun downloadAwait(chapter: BookChapter): String {
+            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
+            synchronized(this) {
+                onDownloadSet.add(chapter.index)
+                waitDownloadSet.remove(chapter.index)
+            }
+            try {
+                val content = WebBook.getContentAwait(bookSource, book, chapter)
+                onSuccess(chapter)
+                ReadBook.downloadedChapters.add(chapter.index)
+                ReadBook.downloadFailChapters.remove(chapter.index)
+                return content
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    onCancel(chapter.index)
+                }
+                onError(chapter, e)
+                ReadBook.downloadFailChapters[chapter.index] =
+                    (ReadBook.downloadFailChapters[chapter.index] ?: 0) + 1
+                return "获取正文失败\n${e.localizedMessage}"
+            } finally {
+                postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
+            }
         }
 
         @Synchronized

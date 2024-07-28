@@ -622,14 +622,14 @@ class ReadView(context: Context, attrs: AttributeSet) :
     /**
      * 从选择位置开始朗读
      */
-    fun aloudStartSelect() {
+    suspend fun aloudStartSelect() {
         val selectStartPos = curPage.selectStartPos
         var pagePos = selectStartPos.relativePagePos
         val line = selectStartPos.lineIndex
         val column = selectStartPos.columnIndex
         while (pagePos > 0) {
             if (!ReadBook.moveToNextPage()) {
-                ReadBook.moveToNextChapter(false)
+                ReadBook.moveToNextChapterAwait(false)
             }
             pagePos--
         }
