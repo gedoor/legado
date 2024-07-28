@@ -151,7 +151,7 @@ jobs:
 
   prerelease:
     needs: [ prepare, build ]
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.repository == 'gedoor/legado'
     runs-on: ubuntu-latest
     env: 
       VERSION: ${{ needs.prepare.outputs.version }}
