@@ -250,7 +250,7 @@ data class TextPage(
      */
     fun getPosByLineColumn(lineIndex: Int, columnIndex: Int): Int {
         var length = 0
-        val maxIndex = min(lineIndex, lineSize)
+        val maxIndex = min(lineIndex, lineSize - 1)
         for (index in 0 until maxIndex) {
             length += textLines[index].charSize
             if (textLines[index].isParagraphEnd) {
