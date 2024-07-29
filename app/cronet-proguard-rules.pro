@@ -1,23 +1,14 @@
-# -------- Config Path: base/android/proguard/chromium_code.flags --------
+# -------- Config Path: base/android/proguard/shared_with_cronet.flags --------
 # Copyright 2016 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# Contains flags that can be safely shared with Cronet, and thus would be
-# appropriate for third-party apps to include.
+# Contains flags that we want to apply not only to Chromium APKs, but also to
+# third-party apps that bundle the Cronet library.
 
-# Allow unused native methods to be removed, but prevent renaming on those that are kept.
--keepclasseswithmembernames,includedescriptorclasses,allowaccessmodification class !cr_allowunused,** {
-  native <methods>;
-}
-
-# Use assumevalues block instead of assumenosideeffects block because Google3 proguard cannot parse
-# assumenosideeffects blocks which overwrite return value.
-# chromium_code.flags rather than remove_logging.flags so that it's included
-# in cronet.
--assumevalues class org.chromium.base.Log {
-  static boolean isDebug() return false;
-}
+# WARNING: rules in this file are applied to entire third-party APKs, not just
+# Chromium code. They MUST be scoped appropriately to avoid side effects on app
+# code that we do not own.
 
 # Keep all CREATOR fields within Parcelable that are kept.
 -keepclassmembers class !cr_allowunused,org.chromium.** implements android.os.Parcelable {
@@ -37,21 +28,10 @@
     public static **[] values();
 }
 
-# -identifiernamestring doesn't keep the module impl around, we have to
-# explicitly keep it.
--if @org.chromium.components.module_installer.builder.ModuleInterface interface *
--keep,allowobfuscation,allowaccessmodification class !cr_allowunused,** extends <1> {
-  <init>();
-}
-
 # Required to remove fields until b/274802355 is resolved.
 -assumevalues class !cr_allowunused,** {
   final org.chromium.base.ThreadUtils$ThreadChecker * return _NONNULL_;
 }
-
-# TODO(agrieve): Remove once we start to use Android U SDK.
--dontwarn android.window.BackEvent
--dontwarn android.window.OnBackAnimationCallback
 # -------- Config Path: build/android/chromium_annotations.flags --------
 # Copyright 2022 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
@@ -112,6 +92,22 @@
 # Mark members annotated with IdentifierNameString as identifier name strings
 -identifiernamestring class * {
     @org.chromium.build.annotations.IdentifierNameString *;
+}
+
+# Mark fields with this to help R8 figure out that they cannot be null.
+# Use assumevalues in addition to assumenosideeffects block because Google3 proguard cannot parse
+# assumenosideeffects blocks which overwrite return value.
+-assumevalues class ** {
+  @org.chromium.build.annotations.AssumeNonNull *** *(...) return _NONNULL_;
+}
+-assumenosideeffects class ** {
+  @org.chromium.build.annotations.AssumeNonNull *** *(...);
+}
+-assumevalues class ** {
+  @org.chromium.build.annotations.AssumeNonNull *** * return _NONNULL_;
+}
+-assumenosideeffects class ** {
+  @org.chromium.build.annotations.AssumeNonNull *** *;
 }
 # -------- Config Path: components/cronet/android/cronet_impl_common_proguard.cfg --------
 # Proguard config for apps that depend on cronet_impl_common_java.jar.
@@ -226,4 +222,11 @@
 }
 -keepclasseswithmembers,includedescriptorclasses,allowaccessmodification class ** {
   @org.jni_zero.CalledByNativeUnchecked <methods>;
+}
+
+# Allow unused native methods to be removed, but prevent renaming on those that
+# are kept.
+# TODO(crbug.com/315973491): Restrict the broad scope of this rule.
+-keepclasseswithmembernames,includedescriptorclasses,allowaccessmodification class ** {
+  native <methods>;
 }
