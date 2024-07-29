@@ -20,7 +20,13 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.service.BaseReadAloudService
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.StringUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.showDialogFragment
 
 class ReadAloudConfigDialog : DialogFragment() {
     private val readAloudPreferTag = "readAloudPreferTag"
@@ -103,7 +109,7 @@ class ReadAloudConfigDialog : DialogFragment() {
             key: String?
         ) {
             when (key) {
-                PreferKey.readAloudByPage -> {
+                PreferKey.readAloudByPage, PreferKey.streamReadAloudAudio -> {
                     if (BaseReadAloudService.isRun) {
                         postEvent(EventBus.MEDIA_BUTTON, false)
                     }
@@ -117,6 +123,7 @@ class ReadAloudConfigDialog : DialogFragment() {
                     val index = preference.findIndexOfValue(value)
                     preference.summary = if (index >= 0) preference.entries[index] else null
                 }
+
                 else -> {
                     preference?.summary = value
                 }

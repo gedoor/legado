@@ -1162,4 +1162,6 @@
     <string name="official_version">正式版</string>
     <string name="beta_release_version">测试版</string>
     <string name="beta_releaseA_version">共存版</string>
+    <string name="stream_read_aloud_audio">流式播放音频</string>
+    <string name="stream_read_aloud_audio_summary">即边下边播，网络不好时播放会断断续续，仅TTS源有效</string>
 </resources>

@@ -35,6 +35,13 @@
             android:key="readAloudByPage"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:title="@string/stream_read_aloud_audio"
+            android:summary="@string/stream_read_aloud_audio_summary"
+            android:key="streamReadAloudAudio"
+            app:iconSpaceReserved="false" />
+
         <io.legado.app.lib.prefs.Preference
             android:title="@string/speak_engine"
             android:summary="TTS"

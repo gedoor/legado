@@ -177,10 +177,15 @@ data class TextChapter(
      * @param pageSplit 是否分页
      * @param startPos 从当前页什么地方开始朗读
      */
-    fun getNeedReadAloud(pageIndex: Int, pageSplit: Boolean, startPos: Int): String {
+    fun getNeedReadAloud(
+        pageIndex: Int,
+        pageSplit: Boolean,
+        startPos: Int,
+        pageEndIndex: Int = pages.lastIndex
+    ): String {
         val stringBuilder = StringBuilder()
         if (pages.isNotEmpty()) {
-            for (index in pageIndex..pages.lastIndex) {
+            for (index in pageIndex..min(pageEndIndex, pages.lastIndex)) {
                 stringBuilder.append(pages[index].text)
                 if (pageSplit && !stringBuilder.endsWith("\n")) {
                     stringBuilder.append("\n")
