@@ -11,7 +11,6 @@ import io.legado.app.help.config.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
@@ -58,7 +57,7 @@ object LogUtils {
         }
         val date = getCurrentDateStr(TIME_PATTERN)
         val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
-        FileHandler(logPath).apply {
+        AsyncFileHandler(logPath).apply {
             formatter = object : java.util.logging.Formatter() {
                 override fun format(record: LogRecord): String {
                     // 设置文件输出格式
@@ -70,7 +69,7 @@ object LogUtils {
             } else {
                 Level.OFF
             }
-        }.asynchronous()
+        }
     }
 
     fun upLevel() {
