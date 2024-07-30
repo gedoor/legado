@@ -8,6 +8,7 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.cache.CacheDataSink
@@ -75,7 +76,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     private val cache by lazy {
         SimpleCache(
             File(cacheDir, "httpTTS_cache"),
-            LeastRecentlyUsedCacheEvictor((50 * 1024 * 1024).toLong()),
+            LeastRecentlyUsedCacheEvictor(128 * 1024 * 1024),
             StandaloneDatabaseProvider(appCtx)
         )
     }
@@ -182,15 +183,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     val file = getSpeakFileAsMd5(fileName)
                     val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
                     launch(Main) {
-                        if (exoPlayer.playbackState == Player.STATE_ENDED) {
-                            exoPlayer.stop()
-                            exoPlayer.clearMediaItems()
-                        }
                         exoPlayer.addMediaItem(mediaItem)
-                        if (!exoPlayer.isPlaying) {
-                            exoPlayer.playWhenReady = !pause
-                            exoPlayer.prepare()
-                        }
                     }
                 }
                 preDownloadAudios(httpTts)
@@ -256,15 +249,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                     downloaderChannel.send(downloader)
                     val mediaSource = createMediaSource(dataSourceFactory, fileName)
                     launch(Main) {
-                        if (exoPlayer.playbackState == Player.STATE_ENDED) {
-                            exoPlayer.stop()
-                            exoPlayer.clearMediaItems()
-                        }
                         exoPlayer.addMediaSource(mediaSource)
-                        if (!exoPlayer.isPlaying) {
-                            exoPlayer.playWhenReady = !pause
-                            exoPlayer.prepare()
-                        }
                     }
                 }
                 preDownloadAudiosStream(httpTts, downloaderChannel)
@@ -540,7 +525,21 @@ class HttpReadAloudService : BaseReadAloudService(),
                 // 结束
                 playErrorNo = 0
                 updateNextPos()
+                exoPlayer.stop()
+                exoPlayer.clearMediaItems()
             }
+        }
+    }
+
+    override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+        when (reason) {
+            Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED -> {
+                if (!timeline.isEmpty && exoPlayer.playbackState == Player.STATE_IDLE) {
+                    exoPlayer.prepare()
+                }
+            }
+
+            else -> {}
         }
     }
 

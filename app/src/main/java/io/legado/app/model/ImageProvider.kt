@@ -94,7 +94,7 @@ object ImageProvider {
     ): File {
         return withContext(IO) {
             val vFile = BookHelp.getImage(book, src)
-            if (!vFile.exists()) {
+            if (!BookHelp.isImageExist(book, src)) {
                 val inputStream = when {
                     book.isEpub -> EpubFile.getImage(book, src)
                     book.isPdf -> PdfFile.getImage(book, src)

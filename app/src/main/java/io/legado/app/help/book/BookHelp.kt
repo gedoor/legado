@@ -21,6 +21,7 @@ import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StringUtils
 import io.legado.app.utils.SvgUtils
 import io.legado.app.utils.UrlUtil
+import io.legado.app.utils.createFileIfNotExist
 import io.legado.app.utils.exists
 import io.legado.app.utils.externalFiles
 import io.legado.app.utils.getFile
@@ -29,10 +30,10 @@ import io.legado.app.utils.onEachParallel
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
@@ -55,7 +56,7 @@ object BookHelp {
     private const val cacheFolderName = "book_cache"
     private const val cacheImageFolderName = "images"
     private const val cacheEpubFolderName = "epub"
-    private val downloadImages = ConcurrentHashMap.newKeySet<String>()
+    private val downloadImages = ConcurrentHashMap<String, Mutex>()
 
     val cachePath = FileUtils.getPath(downloadDir, cacheFolderName)
 
@@ -173,15 +174,18 @@ object BookHelp {
         src: String,
         chapter: BookChapter? = null
     ) {
-        while (downloadImages.contains(src)) {
-            delay(100)
-        }
-        if (getImage(book, src).exists()) {
+        if (isImageExist(book, src)) {
             return
         }
-        downloadImages.add(src)
-        val analyzeUrl = AnalyzeUrl(src, source = bookSource)
+        val mutex = synchronized(this) {
+            downloadImages.getOrPut(src) { Mutex() }
+        }
+        mutex.lock()
         try {
+            if (isImageExist(book, src)) {
+                return
+            }
+            val analyzeUrl = AnalyzeUrl(src, source = bookSource)
             val bytes = analyzeUrl.getByteArrayAwait()
             //某些图片被加密，需要进一步解密
             ImageUtils.decode(
@@ -193,13 +197,7 @@ object BookHelp {
                     // throw NoStackTraceException("数据异常")
                     AppLog.put("${book.name} ${chapter?.title} 图片 $src 下载错误 数据异常")
                 }
-                FileUtils.createFileIfNotExist(
-                    downloadDir,
-                    cacheFolderName,
-                    book.getFolderName(),
-                    cacheImageFolderName,
-                    "${MD5Utils.md5Encode16(src)}.${getImageSuffix(src)}"
-                ).writeBytes(it)
+                writeImage(book, src, it)
             }
         } catch (e: Exception) {
             coroutineContext.ensureActive()
@@ -207,6 +205,7 @@ object BookHelp {
             AppLog.put(msg, e)
         } finally {
             downloadImages.remove(src)
+            mutex.unlock()
         }
     }
 
@@ -217,6 +216,16 @@ object BookHelp {
             cacheImageFolderName,
             "${MD5Utils.md5Encode16(src)}.${getImageSuffix(src)}"
         )
+    }
+
+    @Synchronized
+    fun writeImage(book: Book, src: String, bytes: ByteArray) {
+        getImage(book, src).createFileIfNotExist().writeBytes(bytes)
+    }
+
+    @Synchronized
+    fun isImageExist(book: Book, src: String): Boolean {
+        return getImage(book, src).exists()
     }
 
     fun getImageSuffix(src: String): String {
