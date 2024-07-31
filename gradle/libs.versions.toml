@@ -37,6 +37,7 @@ protobufJavalite = "4.26.1"
 quickChineseTransfer = "0.2.13"
 room = "2.6.1"
 splitties = "3.0.0"
+rhino = "1.7.15"
 
 activity = "1.8.2"
 kotlinxSerialization = "1.6.3"
@@ -104,6 +105,7 @@ protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.
 
 quick-chinese-transfer-core = { module = "com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core", version.ref = "quickChineseTransfer" }
 
+
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -148,6 +150,9 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerialization" }
 liveeventbus = { module = "com.github.michaellee123:LiveEventBus", version.ref = "liveeventbus" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
+
+mozilla-rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
+
 renderscript-intrinsics-replacement-toolkit = { module = "com.github.android:renderscript-intrinsics-replacement-toolkit", version = "b6363490c3" }
 zxing-lite = { module = "com.github.jenly1314:zxing-lite", version.ref = "zxingLite" }
 

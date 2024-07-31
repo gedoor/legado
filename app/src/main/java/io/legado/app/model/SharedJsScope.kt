@@ -1,7 +1,7 @@
 package io.legado.app.model
 
 import com.google.gson.reflect.TypeToken
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallStrResponse
@@ -33,7 +33,7 @@ object SharedJsScope {
         var scope = scopeMap[key]?.get()
         if (scope == null) {
             scope = RhinoScriptEngine.run {
-                getRuntimeScope(getScriptContext(SimpleBindings()))
+                getRuntimeScope(ScriptBindings())
             }
             if (jsLib.isJsonObject()) {
                 val jsMap: Map<String, String> = GSON.fromJson(

@@ -1,7 +1,7 @@
 package io.legado.app.utils
 
 import androidx.core.os.postDelayed
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
@@ -32,7 +32,7 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): Stri
                     while (matcher.find()) {
                         if (isJs) {
                             val jsResult = RhinoScriptEngine.run {
-                                val bindings = SimpleBindings()
+                                val bindings = ScriptBindings()
                                 bindings["result"] = matcher.group()
                                 eval(replacement1, bindings)
                             }.toString()

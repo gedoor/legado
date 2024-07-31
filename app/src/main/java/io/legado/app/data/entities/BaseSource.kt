@@ -1,7 +1,7 @@
 package io.legado.app.data.entities
 
 import cn.hutool.crypto.symmetric.AES
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
@@ -231,16 +231,15 @@ interface BaseSource : JsExtensions {
      * 执行JS
      */
     @Throws(Exception::class)
-    fun evalJS(jsStr: String, bindingsConfig: SimpleBindings.() -> Unit = {}): Any? {
-        val bindings = SimpleBindings()
+    fun evalJS(jsStr: String, bindingsConfig: ScriptBindings.() -> Unit = {}): Any? {
+        val bindings = ScriptBindings()
         bindings.apply(bindingsConfig)
         bindings["java"] = this
         bindings["source"] = this
         bindings["baseUrl"] = getKey()
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
-        val context = RhinoScriptEngine.getScriptContext(bindings)
-        val scope = RhinoScriptEngine.getRuntimeScope(context)
+        val scope = RhinoScriptEngine.getRuntimeScope(bindings)
         getShareScope()?.let {
             scope.prototype = it
         }

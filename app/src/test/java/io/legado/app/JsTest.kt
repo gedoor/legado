@@ -1,6 +1,6 @@
 package io.legado.app
 
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.data.entities.BookChapter
 import org.intellij.lang.annotations.Language
@@ -28,7 +28,7 @@ class JsTest {
     @Test
     fun testMap() {
         val map = hashMapOf("id" to "3242532321")
-        val bindings = SimpleBindings()
+        val bindings = ScriptBindings()
         bindings["result"] = map
         @Language("js")
         val jsMap = "$=result;id=$.id;id"
@@ -43,7 +43,7 @@ class JsTest {
     @Test
     fun testFor() {
         val scope = RhinoScriptEngine.run {
-            val scope = getRuntimeScope(getScriptContext(SimpleBindings()))
+            val scope = getRuntimeScope(ScriptBindings())
             eval(printJs, scope)
             scope
         }
@@ -86,7 +86,7 @@ class JsTest {
             s[2].substr(0,n);
         """.trimIndent()
         val x = RhinoScriptEngine.run {
-            val bindings = SimpleBindings()
+            val bindings = ScriptBindings()
             bindings["result"] = "筳彩涫第七百一十四章 人头树鮺舦綸"
             eval(js, bindings)
         }
@@ -97,7 +97,7 @@ class JsTest {
     @Test
     fun chapterText() {
         val chapter = BookChapter(title = "xxxyyy")
-        val bindings = SimpleBindings()
+        val bindings = ScriptBindings()
         bindings["chapter"] = chapter
         @Language("js")
         val js = "chapter.title"
@@ -108,7 +108,7 @@ class JsTest {
     @Test
     fun javaListForEach() {
         val list = arrayListOf(1, 2, 3)
-        val bindings = SimpleBindings()
+        val bindings = ScriptBindings()
         bindings["list"] = list
         @Language("js")
         val js = """
@@ -118,6 +118,18 @@ class JsTest {
         """.trimIndent()
         val result = RhinoScriptEngine.eval(js, bindings)
         Assert.assertEquals(result, 6.0)
+    }
+
+    @Test
+    fun typeofString() {
+        val bindings = ScriptBindings()
+        @Language("js")
+        val js = """
+            s = "" + String()
+            typeof s
+        """.trimIndent()
+        val result = RhinoScriptEngine.eval(js, bindings)
+        Assert.assertEquals(result, "string")
     }
 
 }

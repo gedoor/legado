@@ -6,7 +6,7 @@ import androidx.annotation.Keep
 import androidx.media3.common.MediaItem
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern
@@ -266,7 +266,7 @@ class AnalyzeUrl(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = SimpleBindings()
+        val bindings = ScriptBindings()
         bindings["java"] = this
         bindings["baseUrl"] = baseUrl
         bindings["cookie"] = CookieStore
@@ -278,8 +278,7 @@ class AnalyzeUrl(
         bindings["book"] = ruleData as? Book
         bindings["source"] = source
         bindings["result"] = result
-        val context = RhinoScriptEngine.getScriptContext(bindings)
-        val scope = RhinoScriptEngine.getRuntimeScope(context)
+        val scope = RhinoScriptEngine.getRuntimeScope(bindings)
         source?.getShareScope()?.let {
             scope.prototype = it
         }

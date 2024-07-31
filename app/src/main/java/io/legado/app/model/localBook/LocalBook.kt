@@ -3,7 +3,7 @@ package io.legado.app.model.localBook
 import android.net.Uri
 import android.util.Base64
 import androidx.documentfile.provider.DocumentFile
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.constant.*
@@ -291,7 +291,7 @@ object LocalBook {
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})"
                 //在脚本中定义如何分解文件名成书名、作者名
                 val jsonStr = RhinoScriptEngine.run {
-                    val bindings = SimpleBindings()
+                    val bindings = ScriptBindings()
                     bindings["src"] = tempFileName
                     eval(js, bindings)
                 }.toString()

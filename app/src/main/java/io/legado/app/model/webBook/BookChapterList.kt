@@ -1,7 +1,7 @@
 package io.legado.app.model.webBook
 
 import android.text.TextUtils
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.data.entities.Book
@@ -127,7 +127,7 @@ object BookChapterList {
         Debug.log(book.origin, "◇目录总数:${list.size}")
         coroutineContext.ensureActive()
         val formatJs = tocRule.formatJs
-        val bindings = SimpleBindings()
+        val bindings = ScriptBindings()
         bindings["gInt"] = 0
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index

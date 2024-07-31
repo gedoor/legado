@@ -2,7 +2,7 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
@@ -21,7 +21,6 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.stackTraceStr
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
@@ -746,7 +745,7 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = SimpleBindings()
+        val bindings = ScriptBindings()
         bindings["java"] = this
         bindings["cookie"] = CookieStore
         bindings["cache"] = CacheManager
@@ -758,8 +757,7 @@ class AnalyzeRule(
         bindings["title"] = chapter?.title
         bindings["src"] = content
         bindings["nextChapterUrl"] = nextChapterUrl
-        val context = RhinoScriptEngine.getScriptContext(bindings)
-        val scope = RhinoScriptEngine.getRuntimeScope(context)
+        val scope = RhinoScriptEngine.getRuntimeScope(bindings)
         source?.getShareScope()?.let {
             scope.prototype = it
         }

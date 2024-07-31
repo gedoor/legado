@@ -3,7 +3,7 @@
 package io.legado.app.help.book
 
 import android.net.Uri
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookSourceType
@@ -273,7 +273,7 @@ fun Book.getExportFileName(suffix: String): String {
     if (jsStr.isNullOrBlank()) {
         return "$name 作者：${getRealAuthor()}.$suffix"
     }
-    val bindings = SimpleBindings()
+    val bindings = ScriptBindings()
     bindings["epubIndex"] = ""// 兼容老版本,修复可能存在的错误
     bindings["name"] = name
     bindings["author"] = getRealAuthor()
@@ -297,7 +297,7 @@ fun Book.getExportFileName(
     if (jsStr.isNullOrBlank()) {
         return default
     }
-    val bindings = SimpleBindings()
+    val bindings = ScriptBindings()
     bindings["name"] = name
     bindings["author"] = getRealAuthor()
     bindings["epubIndex"] = epubIndex
@@ -327,7 +327,7 @@ fun Book.readSimulating(): Boolean {
 }
 
 fun tryParesExportFileName(jsStr: String): Boolean {
-    val bindings = SimpleBindings()
+    val bindings = ScriptBindings()
     bindings["name"] = "name"
     bindings["author"] = "author"
     bindings["epubIndex"] = "epubIndex"
