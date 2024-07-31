@@ -105,7 +105,6 @@ protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.
 
 quick-chinese-transfer-core = { module = "com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core", version.ref = "quickChineseTransfer" }
 
-
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

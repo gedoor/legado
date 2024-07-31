@@ -20,6 +20,7 @@ import io.legado.app.utils.isTrue
 import io.legado.app.utils.mapAsync
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.flow
+import org.mozilla.javascript.Context
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
 
@@ -126,21 +127,25 @@ object BookChapterList {
         }
         Debug.log(book.origin, "◇目录总数:${list.size}")
         coroutineContext.ensureActive()
-        val formatJs = tocRule.formatJs
-        val bindings = ScriptBindings()
-        bindings["gInt"] = 0
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
-            if (!formatJs.isNullOrBlank()) {
-                bindings["index"] = index + 1
-                bindings["chapter"] = bookChapter
-                bindings["title"] = bookChapter.title
-                RhinoScriptEngine.runCatching {
-                    eval(formatJs, bindings)?.toString()?.let {
-                        bookChapter.title = it
+        }
+        val formatJs = tocRule.formatJs
+        if (!formatJs.isNullOrBlank()) {
+            Context.enter().use {
+                val bindings = ScriptBindings()
+                bindings["gInt"] = 0
+                list.forEachIndexed { index, bookChapter ->
+                    bindings["index"] = index + 1
+                    bindings["chapter"] = bookChapter
+                    bindings["title"] = bookChapter.title
+                    RhinoScriptEngine.runCatching {
+                        eval(formatJs, bindings)?.toString()?.let {
+                            bookChapter.title = it
+                        }
+                    }.onFailure {
+                        Debug.log(book.origin, "格式化标题出错, ${it.localizedMessage}")
                     }
-                }.onFailure {
-                    Debug.log(book.origin, "格式化标题出错, ${it.localizedMessage}")
                 }
             }
         }

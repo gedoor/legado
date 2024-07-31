@@ -3,6 +3,7 @@ package io.legado.app.model.analyzeRule
 import android.text.TextUtils
 import androidx.annotation.Keep
 import com.script.ScriptBindings
+import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
@@ -745,18 +746,19 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = ScriptBindings()
-        bindings["java"] = this
-        bindings["cookie"] = CookieStore
-        bindings["cache"] = CacheManager
-        bindings["source"] = source
-        bindings["book"] = book
-        bindings["result"] = result
-        bindings["baseUrl"] = baseUrl
-        bindings["chapter"] = chapter
-        bindings["title"] = chapter?.title
-        bindings["src"] = content
-        bindings["nextChapterUrl"] = nextChapterUrl
+        val bindings = buildScriptBindings { bindings ->
+            bindings["java"] = this
+            bindings["cookie"] = CookieStore
+            bindings["cache"] = CacheManager
+            bindings["source"] = source
+            bindings["book"] = book
+            bindings["result"] = result
+            bindings["baseUrl"] = baseUrl
+            bindings["chapter"] = chapter
+            bindings["title"] = chapter?.title
+            bindings["src"] = content
+            bindings["nextChapterUrl"] = nextChapterUrl
+        }
         val scope = RhinoScriptEngine.getRuntimeScope(bindings)
         source?.getShareScope()?.let {
             scope.prototype = it

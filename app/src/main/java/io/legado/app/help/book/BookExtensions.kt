@@ -3,7 +3,7 @@
 package io.legado.app.help.book
 
 import android.net.Uri
-import com.script.ScriptBindings
+import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.BookSourceType
@@ -273,10 +273,11 @@ fun Book.getExportFileName(suffix: String): String {
     if (jsStr.isNullOrBlank()) {
         return "$name 作者：${getRealAuthor()}.$suffix"
     }
-    val bindings = ScriptBindings()
-    bindings["epubIndex"] = ""// 兼容老版本,修复可能存在的错误
-    bindings["name"] = name
-    bindings["author"] = getRealAuthor()
+    val bindings = buildScriptBindings { bindings ->
+        bindings["epubIndex"] = ""// 兼容老版本,修复可能存在的错误
+        bindings["name"] = name
+        bindings["author"] = getRealAuthor()
+    }
     return kotlin.runCatching {
         RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
     }.onFailure {
@@ -297,10 +298,11 @@ fun Book.getExportFileName(
     if (jsStr.isNullOrBlank()) {
         return default
     }
-    val bindings = ScriptBindings()
-    bindings["name"] = name
-    bindings["author"] = getRealAuthor()
-    bindings["epubIndex"] = epubIndex
+    val bindings = buildScriptBindings { bindings ->
+        bindings["name"] = name
+        bindings["author"] = getRealAuthor()
+        bindings["epubIndex"] = epubIndex
+    }
     return kotlin.runCatching {
         RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
     }.onFailure {
@@ -327,10 +329,11 @@ fun Book.readSimulating(): Boolean {
 }
 
 fun tryParesExportFileName(jsStr: String): Boolean {
-    val bindings = ScriptBindings()
-    bindings["name"] = "name"
-    bindings["author"] = "author"
-    bindings["epubIndex"] = "epubIndex"
+    val bindings = buildScriptBindings { bindings ->
+        bindings["name"] = "name"
+        bindings["author"] = "author"
+        bindings["epubIndex"] = "epubIndex"
+    }
     return runCatching {
         RhinoScriptEngine.eval(jsStr, bindings)
         true

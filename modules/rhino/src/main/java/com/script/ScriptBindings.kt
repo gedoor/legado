@@ -39,4 +39,8 @@ class ScriptBindings : NativeObject() {
         }
     }
 
+    fun put(key: String, value: Any?) {
+        set(key, value)
+    }
+
 }

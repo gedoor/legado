@@ -2,6 +2,7 @@ package io.legado.app.data.entities
 
 import cn.hutool.crypto.symmetric.AES
 import com.script.ScriptBindings
+import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
@@ -232,13 +233,14 @@ interface BaseSource : JsExtensions {
      */
     @Throws(Exception::class)
     fun evalJS(jsStr: String, bindingsConfig: ScriptBindings.() -> Unit = {}): Any? {
-        val bindings = ScriptBindings()
-        bindings.apply(bindingsConfig)
-        bindings["java"] = this
-        bindings["source"] = this
-        bindings["baseUrl"] = getKey()
-        bindings["cookie"] = CookieStore
-        bindings["cache"] = CacheManager
+        val bindings = buildScriptBindings { bindings ->
+            bindings.apply(bindingsConfig)
+            bindings["java"] = this
+            bindings["source"] = this
+            bindings["baseUrl"] = getKey()
+            bindings["cookie"] = CookieStore
+            bindings["cache"] = CacheManager
+        }
         val scope = RhinoScriptEngine.getRuntimeScope(bindings)
         getShareScope()?.let {
             scope.prototype = it

@@ -55,7 +55,12 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
 
     fun eval(js: String, bindingsConfig: ScriptBindings.() -> Unit = {}): Any? {
         val bindings = ScriptBindings()
-        bindings.apply(bindingsConfig)
+        Context.enter()
+        try {
+            bindings.apply(bindingsConfig)
+        } finally {
+            Context.exit()
+        }
         return eval(js, bindings)
     }
 
@@ -249,7 +254,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         return newScope
     }
 
-    override fun getRuntimeScope(bindings: ScriptBindings): ScriptBindings {
+    override fun getRuntimeScope(bindings: ScriptBindings): Scriptable {
         val cx = Context.enter()
         try {
             bindings.prototype = cx.initStandardObjects()
