@@ -30,7 +30,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
     private var bookSource: BookSource? = null
     private var exploreUrl: String? = null
     private var page = 1
-    private var books = arrayListOf<SearchBook>()
+    private var books = linkedSetOf<SearchBook>()
 
     init {
         execute {
@@ -73,7 +73,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
             .timeout(if (BuildConfig.DEBUG) 0L else 30000L)
             .onSuccess(IO) { searchBooks ->
                 books.addAll(searchBooks)
-                booksData.postValue(books)
+                booksData.postValue(books.toList())
                 appDb.searchBookDao.insert(*searchBooks.toTypedArray())
                 page++
             }.onError {
