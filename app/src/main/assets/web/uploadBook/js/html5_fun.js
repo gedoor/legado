@@ -134,13 +134,13 @@
 		//正在上传
 		isUploading = true;
 		//设置上传的数据
-        var reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function (e) {
-            var data = e.target.result;
+//        var reader = new FileReader();
+//        reader.readAsDataURL(file);
+//        reader.onload = function (e) {
+//            var data = e.target.result;
             var fd = new FormData();
             fd.append("fileName", file.name);
-            fd.append("fileData", data);
+            fd.append("fileData", file);
             //设置当前的上传对象
             currUploadfile = file;
             if(XHR.readyState>0){
@@ -171,7 +171,7 @@
                     nextUpload()
                 }
             };
-		};
+//		};
 	}
 
 	//请求完成，无论失败或成功

@@ -26,6 +26,7 @@ import io.legado.app.utils.stackTraceStr
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
+import java.io.File
 
 object BookController {
 
@@ -48,6 +49,7 @@ object BookController {
                     2 -> books.sortedWith { o1, o2 ->
                         o1.name.cnCompare(o2.name)
                     }
+
                     3 -> books.sortedBy { it.order }
                     else -> books.sortedByDescending { it.durChapterTime }
                 }
@@ -256,14 +258,18 @@ object BookController {
     /**
      * 添加本地书籍
      */
-    fun addLocalBook(parameters: Map<String, List<String>>): ReturnData {
+    fun addLocalBook(
+        parameters: Map<String, List<String>>,
+        files: Map<String, String>
+    ): ReturnData {
         val returnData = ReturnData()
         val fileName = parameters["fileName"]?.firstOrNull()
             ?: return returnData.setErrorMsg("fileName 不能为空")
-        val fileData = parameters["fileData"]?.firstOrNull()
+        val fileData = files["fileData"]
             ?: return returnData.setErrorMsg("fileData 不能为空")
         kotlin.runCatching {
-            LocalBook.importFileOnLine(fileData, fileName)
+            val uri = LocalBook.saveBookFile(File(fileData).inputStream(), fileName)
+            LocalBook.importFile(uri)
         }.onFailure {
             return when (it) {
                 is SecurityException -> returnData.setErrorMsg("需重新设置书籍保存位置!")
