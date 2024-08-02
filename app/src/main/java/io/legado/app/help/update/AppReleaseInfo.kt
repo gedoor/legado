@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 import io.legado.app.exception.NoStackTraceException
 import java.time.Instant
 
-@Keep
 data class AppReleaseInfo(
     val appVariant: AppVariant,
     val createdAt: Long,
