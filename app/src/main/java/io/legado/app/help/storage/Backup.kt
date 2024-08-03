@@ -18,6 +18,8 @@ import io.legado.app.utils.*
 import io.legado.app.utils.compress.ZipUtils
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
@@ -37,6 +39,8 @@ object Backup {
         appCtx.filesDir.getFile("backup").createFolderIfNotExist().absolutePath
     }
     val zipFilePath = "${appCtx.externalFiles.absolutePath}${File.separator}tmp_backup.zip"
+
+    private val mutex = Mutex()
 
     private val backupFileNames by lazy {
         arrayOf(
@@ -74,15 +78,23 @@ object Backup {
         }
     }
 
-    fun autoBack(context: Context) {
+    private fun shouldBackup(): Boolean {
         val lastBackup = LocalConfig.lastBackup
-        if (lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()) {
+        return lastBackup + TimeUnit.DAYS.toMillis(1) < System.currentTimeMillis()
+    }
+
+    fun autoBack(context: Context) {
+        if (shouldBackup()) {
             Coroutine.async {
-                val backupZipFileName = getNowZipFileName()
-                if (!AppWebDav.hasBackUp(backupZipFileName)) {
-                    backup(context, context.getPrefString(PreferKey.backupPath))
-                } else {
-                    LocalConfig.lastBackup = System.currentTimeMillis()
+                mutex.withLock {
+                    if (shouldBackup()) {
+                        val backupZipFileName = getNowZipFileName()
+                        if (!AppWebDav.hasBackUp(backupZipFileName)) {
+                            backup(context, AppConfig.backupPath)
+                        } else {
+                            LocalConfig.lastBackup = System.currentTimeMillis()
+                        }
+                    }
                 }
             }.onError {
                 AppLog.put("自动备份失败\n${it.localizedMessage}")
