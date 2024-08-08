@@ -762,7 +762,9 @@ object ReadBook : CoroutineScope by MainScope() {
             if (book.bookUrl == ReadBook.book?.bookUrl
                 && cList.size > chapterSize
             ) {
+                appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
+                saveRead()
                 chapterSize = cList.size
                 nextTextChapter ?: loadContent(durChapterIndex + 1)
             }
