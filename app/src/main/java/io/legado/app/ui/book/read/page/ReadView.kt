@@ -170,7 +170,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 this.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.mandatorySystemGestures())
             val height = activity?.windowManager?.currentWindowMetrics?.bounds?.height()
             if (height != null) {
-                if (event.y > height.minus(insets.bottom)) {
+                if (event.y > height.minus(insets.bottom) && event.action != MotionEvent.ACTION_UP && event.action != MotionEvent.ACTION_CANCEL) {
                     return true
                 }
             }
