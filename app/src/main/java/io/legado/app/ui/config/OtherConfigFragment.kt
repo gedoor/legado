@@ -124,7 +124,7 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.bitmapCacheSize -> {
                 NumberPickerDialog(requireContext())
                     .setTitle(getString(R.string.bitmap_cache_size))
-                    .setMaxValue(9999)
+                    .setMaxValue(2047)
                     .setMinValue(1)
                     .setValue(AppConfig.bitmapCacheSize)
                     .show {

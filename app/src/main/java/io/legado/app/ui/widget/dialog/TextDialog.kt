@@ -77,7 +77,15 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
                 }
 
                 Mode.HTML.name -> binding.textView.setHtml(content)
-                else -> binding.textView.text = content
+                else -> {
+                    if (content.length >= 32 * 1024) {
+                        val truncatedContent =
+                            content.substring(0, 32 * 1024) + "\n\n数据太大，无法全部显示…"
+                        binding.textView.text = truncatedContent
+                    } else {
+                        binding.textView.text = content
+                    }
+                }
             }
             time = it.getLong("time", 0L)
         }

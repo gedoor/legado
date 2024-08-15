@@ -305,6 +305,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
 
     override fun changeTo(searchBook: SearchBook) {
         val oldBookType = callBack?.oldBook?.type?.and(BookType.updateError.inv())
+            ?.and(BookType.notShelf.inv())
         if (searchBook.type == oldBookType) {
             changeSource(searchBook) {
                 dismissAllowingStateLoss()
