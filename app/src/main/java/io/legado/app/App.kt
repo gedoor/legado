@@ -52,13 +52,13 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashHandler(this)
         LogUtils.d("App", "onCreate")
         LogUtils.logDeviceInfo()
         if (isDebuggable) {
             ThreadUtils.setThreadAssertsDisabledForTesting(true)
         }
         oldConfig = Configuration(resources.configuration)
-        CrashHandler(this)
         //预下载Cronet so
         Cronet.preDownload()
         createNotificationChannels()
