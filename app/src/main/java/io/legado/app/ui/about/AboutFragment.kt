@@ -11,10 +11,10 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.constant.AppLog
-import io.legado.app.help.update.AppUpdate
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.update.AppUpdate
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.FileDoc
@@ -31,7 +31,7 @@ import io.legado.app.utils.sendMail
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import splitties.init.appCtx
 import java.io.File
 
@@ -126,6 +126,10 @@ class AboutFragment : PreferenceFragmentCompat() {
                 appCtx.toastOnUi("未设置备份目录")
                 return@async
             }
+            if (!AppConfig.recordLog) {
+                appCtx.toastOnUi("未开启日志记录，请去其他设置里打开记录日志")
+                delay(3000)
+            }
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
             copyLogs(doc)
             copyHeapDump(doc)
@@ -141,6 +145,10 @@ class AboutFragment : PreferenceFragmentCompat() {
                 appCtx.toastOnUi("未设置备份目录")
                 return@async
             }
+            if (!AppConfig.recordHeapDump) {
+                appCtx.toastOnUi("未开启堆转储记录，请去其他设置里打开记录堆转储")
+                delay(3000)
+            }
             appCtx.toastOnUi("开始创建堆转储")
             System.gc()
             CrashHandler.doHeapDump()
@@ -155,10 +163,10 @@ class AboutFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private suspend fun copyLogs(doc: FileDoc) = coroutineScope {
+    private fun copyLogs(doc: FileDoc) {
         val files = File(appCtx.externalCacheDir, "logs").listFiles()?.toList()
         if (files.isNullOrEmpty()) {
-            return@coroutineScope
+            return
         }
         val zipFile = File(appCtx.externalCacheDir, "logs.zip")
         ZipUtils.zipFiles(files.filter { it.name.endsWith(".txt") }, zipFile)
