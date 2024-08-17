@@ -12,6 +12,7 @@ import android.view.View
 import androidx.core.view.MenuProvider
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -50,6 +51,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import kotlin.collections.set
@@ -77,25 +79,11 @@ class BackupConfigFragment : PreferenceFragment(),
         result.uri?.let { uri ->
             if (uri.isContentScheme()) {
                 AppConfig.backupPath = uri.toString()
-                Coroutine.async {
-                    Backup.backup(appCtx, uri.toString())
-                }.onSuccess {
-                    appCtx.toastOnUi(R.string.backup_success)
-                }.onError {
-                    AppLog.put("备份出错\n${it.localizedMessage}", it)
-                    appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
-                }
+                backup(uri.toString())
             } else {
                 uri.path?.let { path ->
                     AppConfig.backupPath = path
-                    Coroutine.async {
-                        Backup.backup(appCtx, path)
-                    }.onSuccess {
-                        appCtx.toastOnUi(R.string.backup_success)
-                    }.onError {
-                        AppLog.put("备份出错\n${it.localizedMessage}", it)
-                        appCtx.toastOnUi(getString(R.string.backup_fail, it.localizedMessage))
-                    }
+                    backup(path)
                 }
             }
         }
@@ -278,27 +266,7 @@ class BackupConfigFragment : PreferenceFragment(),
                 val uri = Uri.parse(backupPath)
                 val doc = DocumentFile.fromTreeUri(requireContext(), uri)
                 if (doc?.checkWrite() == true) {
-                    waitDialog.setText("备份中…")
-                    waitDialog.setOnCancelListener {
-                        backupJob?.cancel()
-                    }
-                    waitDialog.show()
-                    Coroutine.async {
-                        backupJob = coroutineContext[Job]
-                        Backup.backup(requireContext(), backupPath)
-                    }.onSuccess {
-                        appCtx.toastOnUi(R.string.backup_success)
-                    }.onError {
-                        AppLog.put("备份出错\n${it.localizedMessage}", it)
-                        appCtx.toastOnUi(
-                            appCtx.getString(
-                                R.string.backup_fail,
-                                it.localizedMessage
-                            )
-                        )
-                    }.onFinally(Main) {
-                        waitDialog.dismiss()
-                    }
+                    backup(backupPath)
                 } else {
                     backupDir.launch()
                 }
@@ -308,28 +276,39 @@ class BackupConfigFragment : PreferenceFragment(),
         }
     }
 
+    private fun backup(backupPath: String) {
+        waitDialog.setText("备份中…")
+        waitDialog.setOnCancelListener {
+            backupJob?.cancel()
+        }
+        waitDialog.show()
+        backupJob?.cancel()
+        backupJob = lifecycleScope.launch {
+            try {
+                Backup.backupLocked(requireContext(), backupPath)
+                appCtx.toastOnUi(R.string.backup_success)
+            } catch (e: Throwable) {
+                ensureActive()
+                AppLog.put("备份出错\n${e.localizedMessage}", e)
+                appCtx.toastOnUi(
+                    appCtx.getString(
+                        R.string.backup_fail,
+                        e.localizedMessage
+                    )
+                )
+            } finally {
+                ensureActive()
+                waitDialog.dismiss()
+            }
+        }
+    }
+
     private fun backupUsePermission(path: String) {
         PermissionsCompat.Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
-                waitDialog.setText("备份中…")
-                waitDialog.setOnCancelListener {
-                    backupJob?.cancel()
-                }
-                waitDialog.show()
-                Coroutine.async {
-                    backupJob = coroutineContext[Job]
-                    AppConfig.backupPath = path
-                    Backup.backup(requireContext(), path)
-                }.onSuccess {
-                    appCtx.toastOnUi(R.string.backup_success)
-                }.onError {
-                    AppLog.put("备份出错\n${it.localizedMessage}", it)
-                    appCtx.toastOnUi(appCtx.getString(R.string.backup_fail, it.localizedMessage))
-                }.onFinally {
-                    waitDialog.dismiss()
-                }
+                backup(path)
             }
             .request()
     }
