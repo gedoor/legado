@@ -216,10 +216,14 @@ object Backup {
         coroutineContext.ensureActive()
         withContext(IO) {
             if (list.isNotEmpty()) {
+                AppLog.put("阅读备份 $fileName 列表大小 ${list.size}")
                 val file = FileUtils.createFileIfNotExist(path + File.separator + fileName)
                 file.outputStream().buffered().use {
                     GSON.writeToOutputStream(it, list)
                 }
+                AppLog.put("阅读备份 $fileName 写入大小 ${file.length()}")
+            } else {
+                AppLog.put("阅读备份 $fileName 列表为空")
             }
         }
     }
