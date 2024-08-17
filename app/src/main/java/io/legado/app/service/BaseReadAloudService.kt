@@ -562,7 +562,7 @@ abstract class BaseReadAloudService : BaseService(),
             try {
                 val notification = createNotification()
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    Log.d(TAG, "FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK")
+                    //Log.d(TAG, "FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK")
                     startForeground(NotificationId.ReadAloudService, notification.build(),
                         ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
                 }else{
