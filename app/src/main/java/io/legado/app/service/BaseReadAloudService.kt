@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.lifecycleScope
@@ -482,6 +483,24 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
+    val isVivoDevice: Boolean by lazy {
+        android.os.Build.MANUFACTURER.equals(
+            "vivo",
+            ignoreCase = true
+        )
+    }
+
+    private fun ChoiceMediaStyle(): androidx.media.app.NotificationCompat.MediaStyle {
+        //Log.d(TAG, "isVivoDevice=$isVivoDevice")
+        val type = androidx.media.app.NotificationCompat.MediaStyle()
+            .setShowActionsInCompactView(0, 1, 2)
+        if (isVivoDevice) {
+            //fix #4090 android 14 can not show play control in lock screen
+            type.setMediaSession(mediaSessionCompat.sessionToken)
+        }
+        return type
+    }
+
     private fun createNotification(): NotificationCompat.Builder {
         var nTitle: String = when {
             pause -> getString(R.string.read_aloud_pause)
@@ -537,10 +556,7 @@ abstract class BaseReadAloudService : BaseService(),
             getString(R.string.set_timer),
             aloudServicePendingIntent(IntentAction.addTimer)
         )
-        builder.setStyle(
-            androidx.media.app.NotificationCompat.MediaStyle()
-                .setShowActionsInCompactView(0, 1, 2)
-        )
+        builder.setStyle(ChoiceMediaStyle())
         return builder
     }
 
