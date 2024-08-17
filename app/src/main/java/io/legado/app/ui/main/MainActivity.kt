@@ -2,14 +2,18 @@
 
 package io.legado.app.ui.main
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -57,6 +61,8 @@ import kotlin.coroutines.suspendCoroutine
 class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     BottomNavigationView.OnNavigationItemReselectedListener {
+
+    val TAG = "legado:MainActivity"
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
     override val viewModel by viewModels<MainViewModel>()
@@ -132,6 +138,52 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    //权限申请弹出， 非自定义框， 而是系统级统一申请框
+    private lateinit var permissionList: Array<String>
+    protected fun getPermissionsToRequest(): Array<String> {
+        return mutableListOf<String>().apply {
+            if (VersionUtils.hasT()) {
+                //安卓13以上才可以用新的方法请求通知权限
+                add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }.toTypedArray()
+    }
+
+    val PERMISSION_REQUEST = 100
+
+    //调用这个就会弹出通知申请框了
+    protected open fun requestPermissions() {
+        ActivityCompat.requestPermissions(this, permissionList, PERMISSION_REQUEST)
+    }
+
+    //检验是否有权限
+    protected fun hasPermissions(): Boolean {
+        for (permission in permissionList) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        }
+        return true
+    }
+
+    //申请入口， 获取=》判断=》弹出申请
+    protected fun callPermissionRequst() {
+        permissionList = getPermissionsToRequest()
+        val hadPermissions = hasPermissions()
+        if (!hadPermissions) {
+            Log.d(TAG, "申请通知权限")
+            // 如果禁止了权限，且选择不再弹出申请，那么即使没有权限，调用这个函数也不会弹出申请
+            requestPermissions();
+        } else {
+            Log.d(TAG, "已经有通知权限")
+        }
+    }
+
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         lifecycleScope.launch {
@@ -144,6 +196,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             notifyAppCrash()
             //备份同步
             backupSync()
+            //通知权限申请
+            callPermissionRequst()
+
             //自动更新书籍
             val isAutoRefreshedBook = savedInstanceState?.getBoolean("isAutoRefreshedBook") ?: false
             if (AppConfig.autoRefreshBook && !isAutoRefreshedBook) {
