@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.lifecycleScope
@@ -40,6 +39,7 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.broadcastPendingIntent
 import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.isVivoDevice
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
@@ -483,22 +483,14 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    val isVivoDevice: Boolean by lazy {
-        android.os.Build.MANUFACTURER.equals(
-            "vivo",
-            ignoreCase = true
-        )
-    }
-
-    private fun ChoiceMediaStyle(): androidx.media.app.NotificationCompat.MediaStyle {
-        //Log.d(TAG, "isVivoDevice=$isVivoDevice")
-        val type = androidx.media.app.NotificationCompat.MediaStyle()
+    private fun choiceMediaStyle(): androidx.media.app.NotificationCompat.MediaStyle {
+        val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
             .setShowActionsInCompactView(0, 1, 2)
         if (isVivoDevice) {
             //fix #4090 android 14 can not show play control in lock screen
-            type.setMediaSession(mediaSessionCompat.sessionToken)
+            mediaStyle.setMediaSession(mediaSessionCompat.sessionToken)
         }
-        return type
+        return mediaStyle
     }
 
     private fun createNotification(): NotificationCompat.Builder {
@@ -556,7 +548,7 @@ abstract class BaseReadAloudService : BaseService(),
             getString(R.string.set_timer),
             aloudServicePendingIntent(IntentAction.addTimer)
         )
-        builder.setStyle(ChoiceMediaStyle())
+        builder.setStyle(choiceMediaStyle())
         return builder
     }
 
