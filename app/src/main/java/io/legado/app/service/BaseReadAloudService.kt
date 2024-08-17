@@ -540,6 +540,8 @@ abstract class BaseReadAloudService : BaseService(),
         builder.setStyle(
             androidx.media.app.NotificationCompat.MediaStyle()
                 .setShowActionsInCompactView(0, 1, 2)
+                //fix #4090 android 14 can not show play control in lock screen
+                .setMediaSession(mediaSessionCompat.sessionToken)
         )
         return builder
     }
