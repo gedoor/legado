@@ -6,10 +6,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
@@ -567,7 +569,13 @@ abstract class BaseReadAloudService : BaseService(),
         execute {
             try {
                 val notification = createNotification()
-                startForeground(NotificationId.ReadAloudService, notification.build())
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    Log.d(TAG, "FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK")
+                    startForeground(NotificationId.ReadAloudService, notification.build(),
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+                }else{
+                    startForeground(NotificationId.ReadAloudService, notification.build())
+                }
             } catch (e: Exception) {
                 AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
                 //创建通知出错不结束服务就会崩溃,服务必须绑定通知
