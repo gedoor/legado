@@ -207,7 +207,11 @@ object Backup {
                     copyBackup(File(path), backupFileName)
                 }
             }
-            AppWebDav.backUpWebDav(zipFileName)
+            try {
+                AppWebDav.backUpWebDav(zipFileName)
+            } catch (e: Exception) {
+                AppLog.put("上传备份至webdav失败\n$e", e)
+            }
         }
         FileUtils.delete(backupPath)
         FileUtils.delete(zipFilePath)

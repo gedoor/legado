@@ -49,6 +49,8 @@ import io.legado.app.utils.openInputStream
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import java.io.File
@@ -58,6 +60,8 @@ import java.io.FileInputStream
  * 恢复
  */
 object Restore {
+
+    private val mutex = Mutex()
 
     private const val TAG = "Restore"
 
@@ -77,7 +81,7 @@ object Restore {
             return
         }
         kotlin.runCatching {
-            restore(Backup.backupPath)
+            restoreLocked(Backup.backupPath)
             LocalConfig.lastBackup = System.currentTimeMillis()
         }.onFailure {
             appCtx.toastOnUi("恢复备份出错\n${it.localizedMessage}")
@@ -85,7 +89,13 @@ object Restore {
         }
     }
 
-    suspend fun restore(path: String) {
+    suspend fun restoreLocked(path: String) {
+        mutex.withLock {
+            restore(path)
+        }
+    }
+
+    private suspend fun restore(path: String) {
         val aes = BackupAES()
         fileToListT<Book>(path, "bookshelf.json")?.let {
             it.forEach { book ->

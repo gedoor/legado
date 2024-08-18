@@ -3,9 +3,11 @@ package io.legado.app.utils
 import android.app.Dialog
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.filletBackground
 import splitties.systemservices.windowManager
 
@@ -23,6 +25,11 @@ fun AlertDialog.applyTint(): AlertDialog {
     }
     if (getButton(AlertDialog.BUTTON_NEUTRAL) != null) {
         getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(colorStateList)
+    }
+    window?.decorView?.post {
+        listView?.forEach {
+            it.applyTint(context.accentColor)
+        }
     }
     return this
 }
