@@ -24,7 +24,6 @@ import io.legado.app.data.entities.RuleSub
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.data.entities.Server
 import io.legado.app.data.entities.TxtTocRule
-import io.legado.app.help.AppWebDav
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.LauncherIconHelp
 import io.legado.app.help.book.isLocal
@@ -36,6 +35,7 @@ import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.ACache
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.compress.ZipUtils
 import io.legado.app.utils.defaultSharedPreferences
 import io.legado.app.utils.fromJsonArray
@@ -59,7 +59,10 @@ import java.io.FileInputStream
  */
 object Restore {
 
+    private const val TAG = "Restore"
+
     suspend fun restore(context: Context, uri: Uri) {
+        LogUtils.d(TAG, "开始恢复备份 uri:$uri")
         kotlin.runCatching {
             FileUtils.delete(Backup.backupPath)
             if (uri.isContentScheme()) {
@@ -212,7 +215,7 @@ object Restore {
                 AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
             }
         }
-        AppWebDav.downBgs()
+        //AppWebDav.downBgs()
         appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
             val edit = appCtx.defaultSharedPreferences.edit()
 
@@ -266,9 +269,14 @@ object Restore {
         try {
             val file = File(path, fileName)
             if (file.exists()) {
+                LogUtils.d(TAG, "阅读恢复备份 $fileName 文件大小 ${file.length()}")
                 FileInputStream(file).use {
-                    return GSON.fromJsonArray<T>(it).getOrThrow()
+                    return GSON.fromJsonArray<T>(it).getOrThrow().also { list ->
+                        LogUtils.d(TAG, "阅读恢复备份 $fileName 列表大小 ${list.size}")
+                    }
                 }
+            } else {
+                LogUtils.d(TAG, "阅读恢复备份 $fileName 文件不存在")
             }
         } catch (e: Exception) {
             AppLog.put("$fileName\n读取解析出错\n${e.localizedMessage}", e)

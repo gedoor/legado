@@ -2,6 +2,7 @@ package io.legado.app.lib.permission
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -11,9 +12,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.utils.registerForActivityResult
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.launch
 
 class PermissionActivity : AppCompatActivity() {
 
@@ -24,6 +28,10 @@ class PermissionActivity : AppCompatActivity() {
             RequestPlugins.sRequestCallback?.onSettingActivityResult()
             finish()
         }
+    private val settingActivityResultAwait =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+    private val requestPermissionResult =
+        registerForActivityResult(ActivityResultContracts.RequestPermission())
 
     @SuppressLint("BatteryLife")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,16 +69,23 @@ class PermissionActivity : AppCompatActivity() {
             }
 
             Request.TYPE_REQUEST_NOTIFICATIONS -> showSettingDialog(permissions, rationale) {
-                kotlin.runCatching {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        //这种方案适用于 API 26, 即8.0（含8.0）以上可以用
-                        val intent = Intent()
-                        intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-                        intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
-                        intent.putExtra(Settings.EXTRA_CHANNEL_ID, applicationInfo.uid)
-                        settingActivityResult.launch(intent)
-                    } else {
-                        openSettingsActivity()
+                lifecycleScope.launch {
+                    kotlin.runCatching {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && requestPermissionResult.launch(Permissions.POST_NOTIFICATIONS)
+                        ) {
+                            RequestPlugins.sRequestCallback?.onSettingActivityResult()
+                            finish()
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            //这种方案适用于 API 26, 即8.0（含8.0）以上可以用
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                            intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                            intent.putExtra(Settings.EXTRA_CHANNEL_ID, applicationInfo.uid)
+                            settingActivityResult.launch(intent)
+                        } else {
+                            openSettingsActivity()
+                        }
                     }
                 }
             }
@@ -78,14 +93,29 @@ class PermissionActivity : AppCompatActivity() {
             Request.TYPE_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> showSettingDialog(
                 permissions, rationale
             ) {
-                kotlin.runCatching {
-                    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                    intent.setData(Uri.parse("package:$packageName"))
-                    intent.setClassName(
-                        "com.android.settings",
-                        "com.android.settings.fuelgauge.RequestIgnoreBatteryOptimizations"
-                    )
-                    settingActivityResult.launch(intent)
+                lifecycleScope.launch {
+                    kotlin.runCatching {
+                        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                        intent.setData(Uri.parse("package:$packageName"))
+                        val className =
+                            "com.android.settings.fuelgauge.RequestIgnoreBatteryOptimizations"
+                        val activities = packageManager.queryIntentActivities(
+                            intent,
+                            PackageManager.MATCH_DEFAULT_ONLY
+                        )
+                        if (activities.indexOfFirst { it.activityInfo.name == className } > -1) {
+                            val component = intent.resolveActivity(packageManager)
+                            if (component.className != className) {
+                                intent.setClassName(
+                                    "com.android.settings",
+                                    className
+                                )
+                                settingActivityResultAwait.launch(intent)
+                            }
+                        }
+                        intent.component = null
+                        settingActivityResult.launch(intent)
+                    }
                 }
             }
         }
