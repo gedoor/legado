@@ -8,9 +8,11 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 fun <I, O> AppCompatActivity.registerForActivityResult(contract: ActivityResultContract<I, O>): ActivityResultLauncherAwait<I, O> {
-    var cout: CancellableContinuation<O>? = null
+    lateinit var cout: CancellableContinuation<O>
     val launcher = registerForActivityResult(contract) {
-        cout?.resume(it)
+        if (cout.isActive) {
+            cout.resume(it)
+        }
     }
     return object : ActivityResultLauncherAwait<I, O>() {
         override suspend fun launch(input: I, options: ActivityOptionsCompat?): O {
