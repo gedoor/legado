@@ -105,7 +105,6 @@ class SearchContentActivity :
         if (ev.action == MotionEvent.ACTION_DOWN) {
             currentFocus?.let {
                 if (it.shouldHideSoftInput(ev)) {
-                    searchView.clearFocus()
                     it.hideSoftInput()
                 }
             }
