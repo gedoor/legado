@@ -288,9 +288,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
-        searchView.onActionViewExpanded()
         searchView.queryHint = getString(R.string.search_book_source)
-        searchView.clearFocus()
         searchView.setOnQueryTextListener(this)
     }
 

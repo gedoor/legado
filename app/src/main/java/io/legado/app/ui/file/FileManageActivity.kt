@@ -68,9 +68,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
         searchView.queryHint = getString(R.string.screen) + " • " + getString(R.string.file_manage)
-        searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
-        searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false

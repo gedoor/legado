@@ -27,8 +27,16 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.invisible
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.shouldHideSoftInput
+import io.legado.app.utils.showSoftInput
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -63,7 +71,7 @@ class SearchContentActivity :
         val searchResultList = IntentData.get<List<SearchResult>>("searchResultList")
         val position = intent.getIntExtra("searchResultIndex", 0)
         val noSearchResult = searchResultList == null
-        initSearchView(!noSearchResult)
+        initSearchView(noSearchResult)
         initRecyclerView()
         initView()
         val bookUrl = intent.getStringExtra("bookUrl") ?: return
@@ -97,6 +105,7 @@ class SearchContentActivity :
         if (ev.action == MotionEvent.ACTION_DOWN) {
             currentFocus?.let {
                 if (it.shouldHideSoftInput(ev)) {
+                    searchView.clearFocus()
                     it.hideSoftInput()
                 }
             }
@@ -112,12 +121,11 @@ class SearchContentActivity :
         binding.recyclerView.scrollToPosition(position)
     }
 
-    private fun initSearchView(clearFocus: Boolean) {
+    private fun initSearchView(requestFocus: Boolean) {
         searchView.applyTint(primaryTextColor)
-        searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.search)
-        if (clearFocus) searchView.clearFocus()
+        if (requestFocus) searchView.isIconified = false
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 startContentSearch(query.trim())

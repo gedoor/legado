@@ -109,7 +109,6 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
 
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
-        searchView.setIconifiedByDefault(false)
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.rss)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
