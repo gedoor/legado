@@ -206,6 +206,10 @@ fun Book.removeType(@BookType.Type vararg types: Int) {
     }
 }
 
+fun Book.removeAllBookType() {
+    removeType(BookType.allBookType)
+}
+
 fun Book.clearType() {
     type = 0
 }
@@ -233,10 +237,6 @@ fun BookSource.getBookType(): Int {
         BookSourceType.audio -> BookType.audio
         else -> BookType.text
     }
-}
-
-fun BookSource.getAllBookType(): Int {
-    return BookType.text or BookType.image or BookType.audio or BookType.webFile
 }
 
 fun Book.sync(oldBook: Book) {

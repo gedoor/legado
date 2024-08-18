@@ -53,6 +53,10 @@ object BookType {
     @IntDef(text, updateError, audio, image, webFile, local, archive, notShelf)
     annotation class Type
 
+    /**
+     * 所有可以从书源转换的书籍类型
+     */
+    const val allBookType = text or image or audio or webFile
 
     /**
      * 本地书籍书源标志
