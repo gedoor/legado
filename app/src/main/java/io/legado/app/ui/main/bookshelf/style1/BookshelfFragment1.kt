@@ -22,7 +22,10 @@ import io.legado.app.ui.book.group.GroupEditDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.books.BooksFragment
-import io.legado.app.utils.*
+import io.legado.app.utils.isCreated
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.collections.set
 
@@ -168,8 +171,15 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as BooksFragment
+            var fragment = super.instantiateItem(container, position) as BooksFragment
             val group = bookGroups[position]
+            /**
+             * Activity recreate 会复用之前的 Fragment，不正确的需要需要重新创建
+             */
+            if (fragment.isCreated && getItemPosition(fragment) == POSITION_NONE) {
+                destroyItem(container, position, fragment)
+                fragment = super.instantiateItem(container, position) as BooksFragment
+            }
             fragmentMap[group.groupId] = fragment
             return fragment
         }

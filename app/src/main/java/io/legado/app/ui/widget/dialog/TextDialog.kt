@@ -17,8 +17,10 @@ import io.noties.markwon.Markwon
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.html.HtmlPlugin
 import io.noties.markwon.image.glide.GlideImagesPlugin
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
@@ -67,13 +69,15 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
             binding.toolBar.title = it.getString("title")
             val content = IntentData.get(it.getString("content")) ?: ""
             when (it.getString("mode")) {
-                Mode.MD.name -> binding.textView.post {
-                    Markwon.builder(requireContext())
-                        .usePlugin(GlideImagesPlugin.create(requireContext()))
-                        .usePlugin(HtmlPlugin.create())
-                        .usePlugin(TablePlugin.create(requireContext()))
-                        .build()
-                        .setMarkdown(binding.textView, content)
+                Mode.MD.name -> viewLifecycleOwner.lifecycleScope.launch {
+                    binding.textView.text = withContext(IO) {
+                        Markwon.builder(requireContext())
+                            .usePlugin(GlideImagesPlugin.create(requireContext()))
+                            .usePlugin(HtmlPlugin.create())
+                            .usePlugin(TablePlugin.create(requireContext()))
+                            .build()
+                            .toMarkdown(content)
+                    }
                 }
 
                 Mode.HTML.name -> binding.textView.setHtml(content)

@@ -43,11 +43,17 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.isCreated
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.collections.set
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -446,7 +452,11 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
+            var fragment = super.instantiateItem(container, position) as Fragment
+            if (fragment.isCreated && getItemPosition(fragment) == POSITION_NONE) {
+                destroyItem(container, position, fragment)
+                fragment = super.instantiateItem(container, position) as Fragment
+            }
             fragmentMap[getId(position)] = fragment
             return fragment
         }
