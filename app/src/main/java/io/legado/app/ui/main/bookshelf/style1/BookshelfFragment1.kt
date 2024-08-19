@@ -174,7 +174,7 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
             var fragment = super.instantiateItem(container, position) as BooksFragment
             val group = bookGroups[position]
             /**
-             * Activity recreate 会复用之前的 Fragment，不正确的需要需要重新创建
+             * Activity recreate 会复用之前的 Fragment，不正确的需要重新创建
              */
             if (fragment.isCreated && getItemPosition(fragment) == POSITION_NONE) {
                 destroyItem(container, position, fragment)
