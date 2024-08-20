@@ -487,7 +487,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     private fun choiceMediaStyle(): androidx.media.app.NotificationCompat.MediaStyle {
         val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(1, 2, 4);
+            .setShowActionsInCompactView(1, 2, 4)
         if (isVivoDevice) {
             //fix #4090 android 14 can not show play control in lock screen
             mediaStyle.setMediaSession(mediaSessionCompat.sessionToken)
@@ -527,7 +527,7 @@ abstract class BaseReadAloudService : BaseService(),
             .setSound(null)
             .setLights(0, 0, 0)
         builder.setLargeIcon(cover)
-        // 按钮定义 ：  停止， 上一章， 播放, 下一章， 定时
+        // 按钮定义：上一章、播放、停止、下一章、定时
         builder.addAction(
             R.drawable.ic_skip_previous,
             getString(R.string.previous_chapter),
@@ -585,7 +585,7 @@ abstract class BaseReadAloudService : BaseService(),
 
     open fun prevChapter() {
         toLast = false
-        ReadBook.moveToPrevChapter(true, false)
+        ReadBook.moveToPrevChapter(true, toLast = false)
     }
 
     open fun nextChapter() {
