@@ -64,6 +64,13 @@ abstract class BaseService : LifecycleService() {
         LifecycleHelp.onServiceDestroy(this)
     }
 
+    @CallSuper
+    override fun onTimeout(startId: Int) {
+        super.onTimeout(startId)
+        LogUtils.d(simpleName, "onTimeout startId:$startId")
+        stopSelf()
+    }
+
     /**
      * 开启前台服务并发送通知
      */
