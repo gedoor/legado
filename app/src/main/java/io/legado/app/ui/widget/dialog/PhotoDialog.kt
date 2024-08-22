@@ -3,6 +3,7 @@ package io.legado.app.ui.widget.dialog
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -32,7 +33,7 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(1f, 1f)
+        setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     @SuppressLint("CheckResult")
