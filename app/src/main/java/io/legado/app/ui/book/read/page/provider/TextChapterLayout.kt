@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import java.util.LinkedList
 import java.util.Locale
 import kotlin.coroutines.coroutineContext
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 class TextChapterLayout(
@@ -446,7 +447,7 @@ class TextChapterLayout(
             val textLine = TextLine(isTitle = isTitle)
             if (durY + textHeight > visibleHeight) {
                 val textPage = pendingTextPage
-                val height = textPage.lines.lastOrNull()?.lineBottom ?: 0f
+                val height = max(durY, textPage.lines.lastOrNull()?.lineBottom ?: 0f)
                 if (textPage.height < height) {
                     textPage.height = height
                 }
@@ -531,7 +532,7 @@ class TextChapterLayout(
             val textPage = pendingTextPage
             textPage.addLine(textLine)
             durY += textHeight * lineSpacingExtra
-            val height = textPage.lines.lastOrNull()?.lineBottom ?: 0f
+            val height = max(durY, textPage.lines.lastOrNull()?.lineBottom ?: 0f)
             if (textPage.height < height) {
                 textPage.height = height
             }
