@@ -326,7 +326,8 @@ data class TextPage(
 
     fun render(view: ContentTextView): Boolean {
         if (!isCompleted) return false
-        return canvasRecorder.recordIfNeeded(view.width, height.toInt() + paddingTop) {
+        val height = lines.lastOrNull()?.lineBottom?.toInt() ?: 0
+        return canvasRecorder.recordIfNeeded(view.width, height) {
             drawPage(view, this)
         }
     }
