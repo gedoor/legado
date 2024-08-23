@@ -170,6 +170,7 @@ abstract class BaseReadAloudService : BaseService(),
         }
         observeSharedPreferences { _, key ->
             when (key) {
+                PreferKey.ignoreAudioFocus,
                 PreferKey.pauseReadAloudWhilePhoneCalls -> {
                     initPhoneStateListener()
                 }
