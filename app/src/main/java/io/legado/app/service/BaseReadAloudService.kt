@@ -117,6 +117,7 @@ abstract class BaseReadAloudService : BaseService(),
     internal var textChapter: TextChapter? = null
     internal var pageIndex = 0
     private var needResumeOnAudioFocusGain = false
+    private var needResumeOnCallStateIdle = false
     private var registeredPhoneStateListener = false
     private var dsJob: Job? = null
     private var cover: Bitmap =
@@ -662,13 +663,22 @@ abstract class BaseReadAloudService : BaseService(),
             super.onCallStateChanged(state, phoneNumber)
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
-                    AppLog.put("来电结束,继续朗读")
-                    resumeReadAloud()
+                    if (needResumeOnCallStateIdle) {
+                        AppLog.put("来电结束,继续朗读")
+                        resumeReadAloud()
+                    } else {
+                        AppLog.put("来电结束")
+                    }
                 }
 
                 TelephonyManager.CALL_STATE_RINGING -> {
-                    AppLog.put("来电响铃,暂停朗读")
-                    pauseReadAloud()
+                    if (!pause) {
+                        AppLog.put("来电响铃,暂停朗读")
+                        needResumeOnCallStateIdle = true
+                        pauseReadAloud()
+                    } else {
+                        AppLog.put("来电响铃")
+                    }
                 }
 
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
