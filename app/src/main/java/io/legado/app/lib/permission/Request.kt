@@ -78,7 +78,7 @@ internal class Request : OnRequestPermissionsResultCallback {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     toIgnoreBatterySetting()
                 }
-            } else if (deniedPermissions.size > 1) {
+            } else if (deniedPermissions.isNotEmpty()) {
                 appCtx.startActivity<PermissionActivity> {
                     putExtra(PermissionActivity.KEY_RATIONALE, rationale)
                     putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_PERMISSION)

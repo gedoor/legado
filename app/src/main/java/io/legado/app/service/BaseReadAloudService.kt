@@ -14,6 +14,8 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.telephony.PhoneStateListener
+import android.telephony.TelephonyManager
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +33,8 @@ import io.legado.app.constant.Status
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.lib.permission.Permissions
+import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
@@ -41,6 +45,7 @@ import io.legado.app.utils.broadcastPendingIntent
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.isVivoDevice
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.observeSharedPreferences
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
@@ -53,6 +58,7 @@ import splitties.init.appCtx
 import splitties.systemservices.audioManager
 import splitties.systemservices.notificationManager
 import splitties.systemservices.powerManager
+import splitties.systemservices.telephonyManager
 import splitties.systemservices.wifiManager
 
 /**
@@ -102,12 +108,16 @@ abstract class BaseReadAloudService : BaseService(),
     private val mediaSessionCompat: MediaSessionCompat by lazy {
         MediaSessionCompat(this, "readAloud")
     }
+    private val phoneStateListener by lazy {
+        ReadAloudPhoneStateListener()
+    }
     internal var contentList = emptyList<String>()
     internal var nowSpeak: Int = 0
     internal var readAloudNumber: Int = 0
     internal var textChapter: TextChapter? = null
     internal var pageIndex = 0
     private var needResumeOnAudioFocusGain = false
+    private var registeredPhoneStateListener = false
     private var dsJob: Job? = null
     private var cover: Bitmap =
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
@@ -133,6 +143,7 @@ abstract class BaseReadAloudService : BaseService(),
         observeLiveBus()
         initMediaSession()
         initBroadcastReceiver()
+        initPhoneStateListener()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         setTimer(AppConfig.ttsTimer)
         if (AppConfig.ttsTimer > 0) {
@@ -157,6 +168,13 @@ abstract class BaseReadAloudService : BaseService(),
             val startPos = it.getInt("startPos")
             newReadAloud(play, pageIndex, startPos)
         }
+        observeSharedPreferences { _, key ->
+            when (key) {
+                PreferKey.pauseReadAloudWhilePhoneCalls -> {
+                    initPhoneStateListener()
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -174,6 +192,7 @@ abstract class BaseReadAloudService : BaseService(),
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         mediaSessionCompat.release()
         ReadBook.uploadProgress()
+        unregisterPhoneStateListener(phoneStateListener)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -593,6 +612,68 @@ abstract class BaseReadAloudService : BaseService(),
         AppLog.putDebug("${ReadBook.curTextChapter?.chapter?.title} 朗读结束跳转下一章并朗读")
         if (!ReadBook.moveToNextChapter(true)) {
             stopSelf()
+        }
+    }
+
+    private fun initPhoneStateListener() {
+        val needRegister = AppConfig.ignoreAudioFocus && AppConfig.pauseReadAloudWhilePhoneCalls
+        if (needRegister && registeredPhoneStateListener) {
+            return
+        }
+        if (needRegister) {
+            registerPhoneStateListener(phoneStateListener)
+        } else {
+            unregisterPhoneStateListener(phoneStateListener)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun unregisterPhoneStateListener(l: PhoneStateListener) {
+        if (registeredPhoneStateListener) {
+            registerPhoneStateListener(l, true)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun registerPhoneStateListener(l: PhoneStateListener, unregister: Boolean = false) {
+        try {
+            if (unregister) {
+                telephonyManager.listen(l, PhoneStateListener.LISTEN_NONE)
+                registeredPhoneStateListener = false
+            } else {
+                telephonyManager.listen(l, PhoneStateListener.LISTEN_CALL_STATE)
+                registeredPhoneStateListener = true
+            }
+        } catch (e: SecurityException) {
+            PermissionsCompat.Builder()
+                .addPermissions(Permissions.READ_PHONE_STATE)
+                .rationale(R.string.read_aloud_read_phone_state_permission_rationale)
+                .onGranted {
+                    registerPhoneStateListener(l, unregister)
+                }
+                .request()
+        }
+    }
+
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+    inner class ReadAloudPhoneStateListener : PhoneStateListener() {
+        override fun onCallStateChanged(state: Int, phoneNumber: String?) {
+            super.onCallStateChanged(state, phoneNumber)
+            when (state) {
+                TelephonyManager.CALL_STATE_IDLE -> {
+                    AppLog.put("来电结束,继续朗读")
+                    resumeReadAloud()
+                }
+
+                TelephonyManager.CALL_STATE_RINGING -> {
+                    AppLog.put("来电响铃,暂停朗读")
+                    pauseReadAloud()
+                }
+
+                TelephonyManager.CALL_STATE_OFFHOOK -> {
+                    AppLog.put("来电接听,不做处理")
+                }
+            }
         }
     }
 

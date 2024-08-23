@@ -53,7 +53,7 @@ object LogUtils {
             val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
             val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
             logFolder.listFiles()?.forEach {
-                if (it.lastModified() < expiredTime) {
+                if (it.lastModified() < expiredTime || it.name.endsWith(".lck")) {
                     it.delete()
                 }
             }

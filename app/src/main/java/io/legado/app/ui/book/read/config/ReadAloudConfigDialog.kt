@@ -14,7 +14,9 @@ import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
+import io.legado.app.lib.prefs.SwitchPreference
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
@@ -79,6 +81,9 @@ class ReadAloudConfigDialog : DialogFragment() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
             upSpeakEngineSummary()
+            findPreference<SwitchPreference>(PreferKey.pauseReadAloudWhilePhoneCalls)?.let {
+                it.isEnabled = AppConfig.ignoreAudioFocus
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -112,6 +117,12 @@ class ReadAloudConfigDialog : DialogFragment() {
                 PreferKey.readAloudByPage, PreferKey.streamReadAloudAudio -> {
                     if (BaseReadAloudService.isRun) {
                         postEvent(EventBus.MEDIA_BUTTON, false)
+                    }
+                }
+
+                PreferKey.ignoreAudioFocus -> {
+                    findPreference<SwitchPreference>(PreferKey.pauseReadAloudWhilePhoneCalls)?.let {
+                        it.isEnabled = AppConfig.ignoreAudioFocus
                     }
                 }
             }

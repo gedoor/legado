@@ -11,9 +11,9 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.registerForActivityResult
 import io.legado.app.utils.toastOnUi
@@ -25,13 +25,14 @@ class PermissionActivity : AppCompatActivity() {
 
     private val settingActivityResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            RequestPlugins.sRequestCallback?.onSettingActivityResult()
-            finish()
+            onRequestPermissionFinish()
         }
     private val settingActivityResultAwait =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
     private val requestPermissionResult =
         registerForActivityResult(ActivityResultContracts.RequestPermission())
+    private val requestPermissionsResult =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions())
 
     @SuppressLint("BatteryLife")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +43,20 @@ class PermissionActivity : AppCompatActivity() {
         when (intent.getIntExtra(KEY_INPUT_REQUEST_TYPE, Request.TYPE_REQUEST_PERMISSION)) {
             //权限请求
             Request.TYPE_REQUEST_PERMISSION -> showSettingDialog(permissions, rationale) {
-                ActivityCompat.requestPermissions(this, permissions, requestCode)
+                lifecycleScope.launch {
+                    try {
+                        val result = requestPermissionsResult.launch(permissions)
+                        if (result.values.all { it }) {
+                            onRequestPermissionFinish()
+                        } else {
+                            openSettingsActivity()
+                        }
+                    } catch (e: Exception) {
+                        AppLog.put("请求权限出错\n$e", e, true)
+                        RequestPlugins.sRequestCallback?.onError(e)
+                        finish()
+                    }
+                }
             }
             //跳转到设置界面
             Request.TYPE_REQUEST_SETTING -> showSettingDialog(permissions, rationale) {
@@ -62,7 +76,7 @@ class PermissionActivity : AppCompatActivity() {
                         throw NoStackTraceException("no MANAGE_ALL_FILES_ACCESS_PERMISSION")
                     }
                 } catch (e: Exception) {
-                    toastOnUi(e.localizedMessage)
+                    AppLog.put("请求所有文件的管理权限出错\n$e", e, true)
                     RequestPlugins.sRequestCallback?.onError(e)
                     finish()
                 }
@@ -70,12 +84,11 @@ class PermissionActivity : AppCompatActivity() {
 
             Request.TYPE_REQUEST_NOTIFICATIONS -> showSettingDialog(permissions, rationale) {
                 lifecycleScope.launch {
-                    kotlin.runCatching {
+                    try {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                             && requestPermissionResult.launch(Permissions.POST_NOTIFICATIONS)
                         ) {
-                            RequestPlugins.sRequestCallback?.onSettingActivityResult()
-                            finish()
+                            onRequestPermissionFinish()
                         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             //这种方案适用于 API 26, 即8.0（含8.0）以上可以用
                             val intent = Intent()
@@ -86,6 +99,10 @@ class PermissionActivity : AppCompatActivity() {
                         } else {
                             openSettingsActivity()
                         }
+                    } catch (e: Exception) {
+                        AppLog.put("请求通知权限出错\n$e", e, true)
+                        RequestPlugins.sRequestCallback?.onError(e)
+                        finish()
                     }
                 }
             }
@@ -94,7 +111,7 @@ class PermissionActivity : AppCompatActivity() {
                 permissions, rationale
             ) {
                 lifecycleScope.launch {
-                    kotlin.runCatching {
+                    try {
                         val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                         intent.setData(Uri.parse("package:$packageName"))
                         val className =
@@ -115,6 +132,10 @@ class PermissionActivity : AppCompatActivity() {
                         }
                         intent.component = null
                         settingActivityResult.launch(intent)
+                    } catch (e: Exception) {
+                        AppLog.put("请求后台权限出错\n$e", e, true)
+                        RequestPlugins.sRequestCallback?.onError(e)
+                        finish()
                     }
                 }
             }
@@ -122,6 +143,11 @@ class PermissionActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this) {
 
         }
+    }
+
+    private fun onRequestPermissionFinish() {
+        RequestPlugins.sRequestCallback?.onSettingActivityResult()
+        finish()
     }
 
     private fun openSettingsActivity() {

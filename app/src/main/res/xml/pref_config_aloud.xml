@@ -16,6 +16,12 @@
 
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
+            android:key="pauseReadAloudWhilePhoneCalls"
+            android:summary="@string/pause_read_aloud_while_phone_calls_summary"
+            android:title="@string/pause_read_aloud_while_phone_calls_title" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
             android:title="@string/read_aloud_wake_lock"
             android:summary="@string/read_aloud_wake_lock_summary"
             android:key="readAloudWakeLock"

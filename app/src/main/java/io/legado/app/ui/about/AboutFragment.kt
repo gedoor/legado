@@ -164,12 +164,11 @@ class AboutFragment : PreferenceFragmentCompat() {
     }
 
     private fun copyLogs(doc: FileDoc) {
-        val files = File(appCtx.externalCacheDir, "logs").listFiles()?.toList()
-        if (files.isNullOrEmpty()) {
-            return
-        }
+        val logFiles = File(appCtx.externalCacheDir, "logs")
+        val crashFiles = File(appCtx.externalCacheDir, "crash")
+
         val zipFile = File(appCtx.externalCacheDir, "logs.zip")
-        ZipUtils.zipFiles(files.filter { it.name.endsWith(".txt") }, zipFile)
+        ZipUtils.zipFiles(arrayListOf(logFiles, crashFiles), zipFile)
 
         doc.find("logs.zip")?.delete()
 
