@@ -265,7 +265,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.upMsg(null)
             ReadBook.loadContent(resetPageOffset = true)
         }.onError {
-            context.toastOnUi("换源失败\n${it.localizedMessage}")
+            AppLog.put("换源失败\n$it", it, true)
             ReadBook.upMsg(null)
         }.onFinally {
             postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
