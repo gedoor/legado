@@ -78,6 +78,7 @@ object AudioPlay : CoroutineScope by MainScope() {
         durPlayUrl = ""
         durAudioSize = 0
         upDurChapter()
+        postEvent(EventBus.AUDIO_BUFFER_PROGRESS, 0)
     }
 
     private fun addLoading(index: Int): Boolean {

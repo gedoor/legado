@@ -766,6 +766,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
                 saveRead()
                 chapterSize = cList.size
+                simulatedChapterSize = book.simulatedTotalChapterNum()
                 nextTextChapter ?: loadContent(durChapterIndex + 1)
             }
         }
