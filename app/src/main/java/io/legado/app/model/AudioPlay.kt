@@ -127,6 +127,7 @@ object AudioPlay : CoroutineScope by MainScope() {
                         }
                     }.onError {
                         AppLog.put("获取资源链接出错\n$it", it, true)
+                        upLoading(false)
                     }.onFinally {
                         removeLoading(index)
                     }

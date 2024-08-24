@@ -360,6 +360,7 @@ class AudioPlayService : BaseService(),
         super.onPlayerError(error)
         AudioPlay.status = Status.STOP
         postEvent(EventBus.AUDIO_STATE, Status.STOP)
+        AudioPlay.upLoading(false)
         val errorMsg = "音频播放出错\n${error.errorCodeName} ${error.errorCode}"
         AppLog.put(errorMsg, error)
         toastOnUi(errorMsg)
