@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -368,12 +369,12 @@
                 <!-- pdf -->
                 <data android:mimeType="application/pdf" />
                 <!-- mobi -->
-                <data android:mimeType="application/mobi"/>
-                <data android:mimeType="application/x-mobipocket-ebook"/>
+                <data android:mimeType="application/mobi" />
+                <data android:mimeType="application/x-mobipocket-ebook" />
                 <!-- azw/azw3 -->
-                <data android:mimeType="application/azw"/>
-                <data android:mimeType="application/azw3"/>
-                <data android:mimeType="application/x-mobi8-ebook"/>
+                <data android:mimeType="application/azw" />
+                <data android:mimeType="application/azw3" />
+                <data android:mimeType="application/x-mobi8-ebook" />
                 <data android:mimeType="application/octet-stream" />
             </intent-filter>
             <!-- Works when an app doesn't know the media type, e.g. Dropbox -->

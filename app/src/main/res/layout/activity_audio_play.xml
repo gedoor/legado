@@ -130,9 +130,9 @@
             android:id="@+id/iv_timer"
             android:layout_width="46dp"
             android:layout_height="46dp"
-            android:padding="5dp"
             android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/set_timer"
+            android:padding="5dp"
             android:src="@drawable/ic_timer_black_24dp"
             app:tint="@color/md_white_1000"
             tools:ignore="ImageContrastCheck" />
@@ -146,9 +146,9 @@
             android:id="@+id/iv_fast_rewind"
             android:layout_width="46dp"
             android:layout_height="46dp"
-            android:padding="5dp"
             android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_previous"
+            android:padding="5dp"
             android:src="@drawable/ic_fast_rewind"
             app:tint="@color/md_white_1000"
             tools:ignore="ImageContrastCheck" />
@@ -162,34 +162,56 @@
             android:id="@+id/iv_skip_previous"
             android:layout_width="46dp"
             android:layout_height="46dp"
-            android:padding="5dp"
             android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_previous"
+            android:padding="5dp"
             android:src="@drawable/ic_skip_previous"
             app:tint="@color/md_white_1000"
             tools:ignore="ImageContrastCheck" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_play_stop"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/audio_play"
-            android:src="@drawable/ic_play_24dp"
-            android:tint="@color/md_black_1000"
-            app:backgroundTint="@color/md_white_1000"
-            app:elevation="2dp"
-            app:fabSize="normal"
-            app:pressedTranslationZ="2dp"
-            tools:ignore="ImageContrastCheck" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_play_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/audio_play"
+                android:src="@drawable/ic_play_24dp"
+                android:tint="@color/md_black_1000"
+                app:backgroundTint="@color/md_white_1000"
+                app:elevation="2dp"
+                app:fabSize="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:pressedTranslationZ="2dp"
+                tools:ignore="ImageContrastCheck" />
+
+            <io.legado.app.lib.theme.view.ThemeProgressBar
+                android:id="@+id/progress_loading"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:layout_constraintWidth="parent"
+                app:layout_constraintHeight="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <io.legado.app.ui.widget.image.ImageButton
             android:id="@+id/iv_skip_next"
             android:layout_width="46dp"
             android:layout_height="46dp"
-            android:padding="5dp"
             android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_next"
+            android:padding="5dp"
             android:src="@drawable/ic_skip_next"
             app:tint="@color/md_white_1000"
             tools:ignore="ImageContrastCheck" />
@@ -203,9 +225,9 @@
             android:id="@+id/iv_fast_forward"
             android:layout_width="46dp"
             android:layout_height="46dp"
-            android:padding="5dp"
             android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/skip_next"
+            android:padding="5dp"
             android:src="@drawable/ic_fast_forward"
             app:tint="@color/md_white_1000"
             tools:ignore="ImageContrastCheck" />
@@ -219,9 +241,9 @@
             android:id="@+id/iv_chapter"
             android:layout_width="46dp"
             android:layout_height="46dp"
-            android:padding="5dp"
             android:background="@drawable/selector_circle_btn_bg"
             android:contentDescription="@string/chapter_list"
+            android:padding="5dp"
             android:src="@drawable/ic_chapter_list"
             app:tint="@color/md_white_1000"
             tools:ignore="ImageContrastCheck" />
