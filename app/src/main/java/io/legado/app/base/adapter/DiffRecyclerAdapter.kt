@@ -128,7 +128,6 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         position: Int,
         payloads: MutableList<Any>
     ) {
-        @Suppress("UNCHECKED_CAST")
         registerListener(holder, (holder.binding as VB))
         registerItemListener(holder)
         getItem(holder.layoutPosition)?.let {

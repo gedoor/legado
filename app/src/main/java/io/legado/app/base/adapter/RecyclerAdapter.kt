@@ -384,7 +384,6 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         payloads: MutableList<Any>
     ) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
-            @Suppress("UNCHECKED_CAST")
             registerListener(holder, (holder.binding as VB))
             registerItemListener(holder)
             getItemByLayoutPosition(holder.layoutPosition)?.let { item ->
