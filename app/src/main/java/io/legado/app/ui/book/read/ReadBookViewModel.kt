@@ -51,7 +51,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import kotlin.math.max
 
 /**
  * 阅读界面数据处理
@@ -114,8 +113,9 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             return
         }
         ReadBook.upMsg(null)
-        val maxChapterSize = max(0, ReadBook.simulatedChapterSize - 1)
-        if (ReadBook.durChapterIndex > maxChapterSize) {
+        val simulatedChapterSize = ReadBook.simulatedChapterSize
+        val maxChapterSize = simulatedChapterSize - 1
+        if (simulatedChapterSize > 0 && ReadBook.durChapterIndex > maxChapterSize) {
             ReadBook.durChapterIndex = maxChapterSize
         }
         if (!isSameBook) {
