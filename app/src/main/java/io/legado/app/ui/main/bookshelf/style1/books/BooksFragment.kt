@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf.style1.books
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -79,7 +80,6 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     var bookSort = 0
         private set
     private var upLastUpdateTimeJob: Job? = null
-    private var defaultScrollBarSize = 0
     private var enableRefresh = true
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,7 +97,6 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     private fun initRecyclerView() {
         binding.rvBookshelf.setEdgeEffectColor(primaryColor)
-        defaultScrollBarSize = binding.rvBookshelf.scrollBarSize
         upFastScrollerBar()
         binding.refreshLayout.setColorSchemeColors(accentColor)
         binding.refreshLayout.setOnRefreshListener {
@@ -108,6 +107,11 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             binding.rvBookshelf.layoutManager = LinearLayoutManager(context)
         } else {
             binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
+        }
+        if (bookshelfLayout == 0) {
+            binding.rvBookshelf.setRecycledViewPool(activityViewModel.booksListRecycledViewPool)
+        } else {
+            binding.rvBookshelf.setRecycledViewPool(activityViewModel.booksGridRecycledViewPool)
         }
         binding.rvBookshelf.adapter = booksAdapter
         booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -136,7 +140,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         if (showBookshelfFastScroller) {
             binding.rvBookshelf.scrollBarSize = 0
         } else {
-            binding.rvBookshelf.scrollBarSize = defaultScrollBarSize
+            binding.rvBookshelf.scrollBarSize =
+                ViewConfiguration.get(requireContext()).scaledScrollBarSize
         }
     }
 
@@ -256,6 +261,15 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 outState.putBoolean("needRecoverState", true)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        /**
+         * 将 RecyclerView 中的视图全部回收到 RecycledViewPool 中
+         */
+        binding.rvBookshelf.setItemViewCacheSize(0)
+        binding.rvBookshelf.adapter = null
     }
 
     override fun open(book: Book) {

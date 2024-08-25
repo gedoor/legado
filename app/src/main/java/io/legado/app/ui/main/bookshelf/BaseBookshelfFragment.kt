@@ -28,7 +28,15 @@ import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.main.MainFragmentInterface
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.checkByIndex
+import io.legado.app.utils.getCheckedIndex
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.postEvent
+import io.legado.app.utils.readText
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 
 abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId),
     MainFragmentInterface {
@@ -198,6 +206,11 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     }
                     if (bookshelfLayout != rgLayout.getCheckedIndex()) {
                         AppConfig.bookshelfLayout = rgLayout.getCheckedIndex()
+                        if (AppConfig.bookshelfLayout == 0) {
+                            activityViewModel.booksGridRecycledViewPool.clear()
+                        } else {
+                            activityViewModel.booksListRecycledViewPool.clear()
+                        }
                         postEvent(EventBus.RECREATE, "")
                     }
                 }
