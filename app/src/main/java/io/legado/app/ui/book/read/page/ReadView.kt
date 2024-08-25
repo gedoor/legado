@@ -254,9 +254,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
         return true
     }
 
-    fun cancelSelect() {
+    fun cancelSelect(clearSearchResult: Boolean = false) {
         if (isTextSelected) {
-            curPage.cancelSelect()
+            curPage.cancelSelect(clearSearchResult)
             isTextSelected = false
         }
     }
