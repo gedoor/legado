@@ -111,28 +111,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val holder = ItemViewHolder(getViewBinding(parent))
-
-        @Suppress("UNCHECKED_CAST")
-        registerListener(holder, (holder.binding as VB))
-
-        if (itemClickListener != null) {
-            holder.itemView.setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
-                    itemClickListener?.invoke(holder, it)
-                }
-            }
-        }
-
-        if (itemLongClickListener != null) {
-            holder.itemView.onLongClick {
-                getItem(holder.layoutPosition)?.let {
-                    itemLongClickListener?.invoke(holder, it)
-                }
-            }
-        }
-
-        return holder
+        return ItemViewHolder(getViewBinding(parent))
     }
 
     protected abstract fun getViewBinding(parent: ViewGroup): VB
@@ -149,8 +128,29 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         position: Int,
         payloads: MutableList<Any>
     ) {
+        @Suppress("UNCHECKED_CAST")
+        registerListener(holder, (holder.binding as VB))
+        registerItemListener(holder)
         getItem(holder.layoutPosition)?.let {
-            convert(holder, (holder.binding as VB), it, payloads)
+            convert(holder, holder.binding, it, payloads)
+        }
+    }
+
+    private fun registerItemListener(holder: ItemViewHolder) {
+        if (itemClickListener != null) {
+            holder.itemView.setOnClickListener {
+                getItem(holder.layoutPosition)?.let {
+                    itemClickListener?.invoke(holder, it)
+                }
+            }
+        }
+
+        if (itemLongClickListener != null) {
+            holder.itemView.onLongClick {
+                getItem(holder.layoutPosition)?.let {
+                    itemLongClickListener?.invoke(holder, it)
+                }
+            }
         }
     }
 

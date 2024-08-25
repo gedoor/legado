@@ -17,8 +17,7 @@ class BooksAdapterList(
     context: Context,
     private val callBack: CallBack,
     private val lifecycle: Lifecycle
-) :
-    BaseBooksAdapter<ItemBookshelfListBinding>(context) {
+) : BaseBooksAdapter<ItemBookshelfListBinding>(context) {
 
     override fun getViewBinding(parent: ViewGroup): ItemBookshelfListBinding {
         return ItemBookshelfListBinding.inflate(inflater, parent, false)

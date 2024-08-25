@@ -369,28 +369,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         }
 
         else -> {
-            val holder = ItemViewHolder(getViewBinding(parent))
-
-            @Suppress("UNCHECKED_CAST")
-            registerListener(holder, (holder.binding as VB))
-
-            if (itemClickListener != null) {
-                holder.itemView.setOnClickListener {
-                    getItemByLayoutPosition(holder.layoutPosition)?.let {
-                        itemClickListener?.invoke(holder, it)
-                    }
-                }
-            }
-
-            if (itemLongClickListener != null) {
-                holder.itemView.onLongClick {
-                    getItemByLayoutPosition(holder.layoutPosition)?.let {
-                        itemLongClickListener?.invoke(holder, it)
-                    }
-                }
-            }
-
-            holder
+            ItemViewHolder(getViewBinding(parent))
         }
     }
 
@@ -405,8 +384,29 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         payloads: MutableList<Any>
     ) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
-            getItemByLayoutPosition(holder.layoutPosition)?.let {
-                convert(holder, (holder.binding as VB), it, payloads)
+            @Suppress("UNCHECKED_CAST")
+            registerListener(holder, (holder.binding as VB))
+            registerItemListener(holder)
+            getItemByLayoutPosition(holder.layoutPosition)?.let { item ->
+                convert(holder, holder.binding, item, payloads)
+            }
+        }
+    }
+
+    private fun registerItemListener(holder: ItemViewHolder) {
+        if (itemClickListener != null) {
+            holder.itemView.setOnClickListener {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
+                    itemClickListener?.invoke(holder, it)
+                }
+            }
+        }
+
+        if (itemLongClickListener != null) {
+            holder.itemView.onLongClick {
+                getItemByLayoutPosition(holder.layoutPosition)?.let {
+                    itemLongClickListener?.invoke(holder, it)
+                }
             }
         }
     }
