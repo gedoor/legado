@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
@@ -16,6 +15,8 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -46,18 +47,13 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.loadAnimation
 import io.legado.app.utils.modifyBegin
-import io.legado.app.utils.navigationBarGravity
-import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
 import splitties.views.bottomPadding
-import splitties.views.leftPadding
 import splitties.views.onClick
 import splitties.views.onLongClick
-import splitties.views.padding
-import splitties.views.rightPadding
 
 /**
  * 阅读界面菜单
@@ -132,20 +128,20 @@ class ReadMenu @JvmOverloads constructor(
 
         @SuppressLint("RtlHardcoded")
         override fun onAnimationEnd(animation: Animation) {
-            val navigationBarHeight =
-                if (ReadBookConfig.hideNavigationBar) {
-                    activity?.navigationBarHeight ?: 0
-                } else {
-                    0
-                }
+//            val navigationBarHeight =
+//                if (ReadBookConfig.hideNavigationBar) {
+//                    activity?.navigationBarHeight ?: 0
+//                } else {
+//                    0
+//                }
             binding.run {
                 vwMenuBg.setOnClickListener { runMenuOut() }
-                root.padding = 0
-                when (activity?.navigationBarGravity) {
-                    Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
-                    Gravity.LEFT -> root.leftPadding = navigationBarHeight
-                    Gravity.RIGHT -> root.rightPadding = navigationBarHeight
-                }
+//                root.padding = 0
+//                when (activity?.navigationBarGravity) {
+//                    Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
+//                    Gravity.LEFT -> root.leftPadding = navigationBarHeight
+//                    Gravity.RIGHT -> root.rightPadding = navigationBarHeight
+//                }
             }
             callBack.upSystemUiVisibility()
             if (!LocalConfig.readMenuHelpVersionIsLast) {
@@ -236,6 +232,14 @@ class ReadMenu @JvmOverloads constructor(
             titleBarAddition.gone()
         }
         upBrightnessVwPos()
+        /**
+         * 确保视图不被导航栏遮挡
+         */
+        ViewCompat.setOnApplyWindowInsetsListener(this@ReadMenu) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            root.bottomPadding = insets.bottom
+            windowInsets
+        }
     }
 
     fun reset() {

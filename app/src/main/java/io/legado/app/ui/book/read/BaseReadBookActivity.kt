@@ -14,7 +14,6 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst.charsets
@@ -51,8 +50,6 @@ import io.legado.app.utils.setNavigationBarColorAuto
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -216,7 +213,7 @@ abstract class BaseReadBookActivity :
     }
 
     override fun upNavigationBarColor() {
-        upNavigationBar()
+//        upNavigationBar()
         when {
             binding.readMenu.isVisible -> super.upNavigationBarColor()
             bottomDialog > 0 -> super.upNavigationBarColor()
