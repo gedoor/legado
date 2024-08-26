@@ -21,6 +21,7 @@ import kotlin.coroutines.CoroutineContext
 abstract class BaseService : LifecycleService() {
 
     private val simpleName = this::class.simpleName.toString()
+    private var isForeground = false
 
     fun <T> execute(
         scope: CoroutineScope = lifecycleScope,
@@ -42,7 +43,10 @@ abstract class BaseService : LifecycleService() {
         LogUtils.d(simpleName) {
             "onStartCommand $intent ${intent?.toUri(0)}"
         }
-        startForegroundNotification()
+        if (!isForeground) {
+            startForegroundNotification()
+            isForeground = true
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
