@@ -113,10 +113,8 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             return
         }
         ReadBook.upMsg(null)
-        val simulatedChapterSize = ReadBook.simulatedChapterSize
-        val maxChapterSize = simulatedChapterSize - 1
-        if (simulatedChapterSize > 0 && ReadBook.durChapterIndex > maxChapterSize) {
-            ReadBook.durChapterIndex = maxChapterSize
+        if (ReadBook.simulatedChapterSize > 0 && ReadBook.durChapterIndex > ReadBook.simulatedChapterSize - 1) {
+            ReadBook.durChapterIndex = ReadBook.simulatedChapterSize - 1
         }
         if (!isSameBook) {
             ReadBook.loadContent(resetPageOffset = true)
