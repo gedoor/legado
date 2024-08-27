@@ -63,7 +63,7 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 core-core = { module = "androidx.core:core", version.ref = "core" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core" }
 
-androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version = "3.5.1" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version = "3.6.1" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
