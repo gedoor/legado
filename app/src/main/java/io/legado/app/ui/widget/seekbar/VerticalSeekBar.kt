@@ -59,6 +59,7 @@ class VerticalSeekBar @JvmOverloads constructor(context: Context, attrs: Attribu
         if (!isInEditMode) {
             applyTint(context.accentColor)
         }
+        @Suppress("DEPRECATION")
         ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR)
 
         if (attrs != null) {

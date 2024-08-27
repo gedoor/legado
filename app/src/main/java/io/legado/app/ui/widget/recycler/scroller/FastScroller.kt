@@ -288,6 +288,7 @@ class FastScroller : LinearLayout {
         visibility = if (enabled) View.VISIBLE else View.INVISIBLE
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {

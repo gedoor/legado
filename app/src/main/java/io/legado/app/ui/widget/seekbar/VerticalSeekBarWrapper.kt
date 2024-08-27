@@ -130,6 +130,7 @@ class VerticalSeekBarWrapper @JvmOverloads constructor(
         applyViewRotation(width, height)
     }
 
+    @Suppress("DEPRECATION")
     private fun applyViewRotation(w: Int, h: Int) {
         val seekBar = childSeekBar
 
