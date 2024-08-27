@@ -28,6 +28,7 @@ updates:
     schedule:
       interval: "weekly"
     registries: "*"
+    open-pull-requests-limit: 20
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
