@@ -42,7 +42,7 @@ rhino = "1.7.15"
 activity = "1.8.2"
 kotlinxSerialization = "1.7.1"
 swiperefreshlayout = "1.1.0"
-viewpager2 = "1.0.0"
+viewpager2 = "1.1.0"
 webkit = "1.11.0"
 zxingLite = "3.2.0"
 
