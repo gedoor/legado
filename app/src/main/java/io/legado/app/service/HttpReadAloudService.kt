@@ -17,6 +17,7 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.LoadControl.Parameters
 import androidx.media3.exoplayer.offline.DefaultDownloaderFactory
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.Downloader
@@ -596,22 +597,8 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     inner class CustomLoadControl : DefaultLoadControl() {
-        override fun shouldStartPlayback(
-            timeline: Timeline,
-            mediaPeriodId: MediaSource.MediaPeriodId,
-            bufferedDurationUs: Long,
-            playbackSpeed: Float,
-            rebuffering: Boolean,
-            targetLiveOffsetUs: Long
-        ): Boolean {
-            return super.shouldStartPlayback(
-                timeline,
-                mediaPeriodId,
-                bufferedDurationUs,
-                playbackSpeed,
-                rebuffering,
-                targetLiveOffsetUs
-            ) || bufferedPercentage == 100
+        override fun shouldStartPlayback(parameters: Parameters): Boolean {
+            return super.shouldStartPlayback(parameters) || bufferedPercentage == 100
         }
     }
 

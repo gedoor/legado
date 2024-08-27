@@ -8,7 +8,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 
-fun ActivityResultLauncher<*>.launch() {
+fun <T> ActivityResultLauncher<T?>.launch() {
     launch(null)
 }
 

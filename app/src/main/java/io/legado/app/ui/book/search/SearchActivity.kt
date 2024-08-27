@@ -93,9 +93,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         receiptIntent(intent)
     }
 
-    override fun onNewIntent(data: Intent?) {
-        super.onNewIntent(data)
-        receiptIntent(data)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        receiptIntent(intent)
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
