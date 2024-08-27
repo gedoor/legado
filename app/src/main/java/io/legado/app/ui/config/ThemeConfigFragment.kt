@@ -2,7 +2,6 @@ package io.legado.app.ui.config
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,15 +26,11 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.prefs.ColorPreference
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
-import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.lib.theme.ThemeUtils
-import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.FileUtils
-import io.legado.app.utils.LogUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.applyTint
@@ -105,20 +100,6 @@ class ThemeConfigFragment : PreferenceFragment(),
                 }
             }
         }
-        val defaultValue = ThemeUtils.resolveColor(
-            requireContext(),
-            androidx.appcompat.R.attr.colorAccent,
-            Color.parseColor("#263238")
-        )
-        LogUtils.d("ThemeStore", "-------------")
-        LogUtils.d("ThemeStore", "accentColor from context $context defaultValue $defaultValue")
-        LogUtils.d("ThemeStore", "accentColor from context $context value $accentColor")
-        val v = ThemeStore.accentColor()
-        LogUtils.d("ThemeStore", "accentColor from appCtx $appCtx value $v")
-        LogUtils.d("ThemeStore", "context.packageName ${context?.packageName}")
-        LogUtils.d("ThemeStore", "appCtx.packageName ${appCtx.packageName}")
-        LogUtils.d("ThemeStore", "context.packageName == appCtx.packageName ${context?.packageName == appCtx.packageName}")
-        LogUtils.d("ThemeStore", "-------------")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
