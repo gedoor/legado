@@ -3,7 +3,7 @@
 kotlin = "1.9.23"
 ksp = "1.9.23-1.0.20"
 agp = "8.3.2"
-appcompat = "1.6.1"
+appcompat = "1.7.0"
 colorpicker = "1.1.0"
 commonsText = "1.12.0"
 constraintlayout = "2.1.4"
