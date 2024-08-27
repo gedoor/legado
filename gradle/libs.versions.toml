@@ -74,7 +74,7 @@ fragment-fragment = { module = "androidx.fragment:fragment", version.ref = "frag
 fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
 fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "fragment" }
 
-androidx-junit = { module = "androidx.test.ext:junit", version = "1.1.5" }
+androidx-junit = { module = "androidx.test.ext:junit", version = "1.2.1" }
 
 hutool-crypto = { module = "cn.hutool:hutool-crypto", version.ref = "hutool" }
 
