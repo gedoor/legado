@@ -15,9 +15,7 @@ import androidx.media3.datasource.cache.CacheDataSink
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
-import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.LoadControl.Parameters
 import androidx.media3.exoplayer.offline.DefaultDownloaderFactory
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.Downloader
@@ -49,7 +47,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -70,9 +67,7 @@ import kotlin.coroutines.coroutineContext
 class HttpReadAloudService : BaseReadAloudService(),
     Player.Listener {
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayer.Builder(this)
-            .setLoadControl(CustomLoadControl())
-            .build()
+        ExoPlayer.Builder(this).build()
     }
     private val ttsFolderPath: String by lazy {
         cacheDir.absolutePath + File.separator + "httpTTS" + File.separator
@@ -97,24 +92,10 @@ class HttpReadAloudService : BaseReadAloudService(),
     private var downloadErrorNo: Int = 0
     private var playErrorNo = 0
     private val downloadTaskActiveLock = Mutex()
-    private var bufferedPercentage = 0
 
     override fun onCreate() {
         super.onCreate()
         exoPlayer.addListener(this)
-        initBufferedPercentageUpdate()
-    }
-
-    private fun initBufferedPercentageUpdate() {
-        lifecycleScope.launch {
-            while (isActive) {
-                bufferedPercentage = exoPlayer.bufferedPercentage
-                when (exoPlayer.playbackState) {
-                    Player.STATE_BUFFERING -> delay(10)
-                    else -> delay(1000)
-                }
-            }
-        }
     }
 
     override fun onDestroy() {
@@ -593,12 +574,6 @@ class HttpReadAloudService : BaseReadAloudService(),
     inner class CustomLoadErrorHandlingPolicy : DefaultLoadErrorHandlingPolicy(0) {
         override fun getRetryDelayMsFor(loadErrorInfo: LoadErrorHandlingPolicy.LoadErrorInfo): Long {
             return C.TIME_UNSET
-        }
-    }
-
-    inner class CustomLoadControl : DefaultLoadControl() {
-        override fun shouldStartPlayback(parameters: Parameters): Boolean {
-            return super.shouldStartPlayback(parameters) || bufferedPercentage == 100
         }
     }
 

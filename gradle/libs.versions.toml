@@ -38,6 +38,7 @@ quickChineseTransfer = "0.2.13"
 room = "2.6.1"
 splitties = "3.0.0"
 rhino = "1.7.15"
+desugar = "2.0.4"
 
 activity = "1.9.1"
 kotlinxSerialization = "1.7.1"
@@ -130,7 +131,7 @@ androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref =
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 colorpicker = { module = "com.jaredrummler:colorpicker", version.ref = "colorpicker" }
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
-desugar = { group = "com.android.tools", name = "desugar_jdk_libs_nio", version = "2.0.4" }
+desugar = { group = "com.android.tools", name = "desugar_jdk_libs_nio", version.ref = "desugar" }
 
 flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
