@@ -14,4 +14,5 @@ node_modules/
 /app/gradle.properties
 package-lock.json
 .idea/
-
+# Kotlin 2.0
+.kotlin/
