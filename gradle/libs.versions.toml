@@ -177,7 +177,7 @@ kotlin-sam = { id = "org.jetbrains.kotlin.plugin.sam.with.receiver", version.ref
 kotlin-lombok = { id = "org.jetbrains.kotlin.plugin.lombok", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 
-google-services = { id = "com.google.gms.google-services", version = "4.4.1" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
