@@ -29,6 +29,11 @@ updates:
       interval: "weekly"
     registries: "*"
     open-pull-requests-limit: 20
+    groups:
+      kotlin_KSP:
+        patterns:
+          - "org.jetbrains.kotlin:*"
+          - "com.google.devtools.ksp"
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
