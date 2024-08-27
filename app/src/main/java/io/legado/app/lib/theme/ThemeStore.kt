@@ -10,6 +10,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.LogUtils
 import splitties.init.appCtx
 
 /**
@@ -50,6 +51,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
     }
 
     override fun accentColor(@ColorInt color: Int): ThemeStore {
+        LogUtils.d("ThemeStore", "set accentColor $color")
         mEditor.putInt(ThemeStorePrefKeys.KEY_ACCENT_COLOR, color)
         return this
     }
@@ -161,6 +163,7 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
         mEditor.putLong(ThemeStorePrefKeys.VALUES_CHANGED, System.currentTimeMillis())
             .putBoolean(ThemeStorePrefKeys.IS_CONFIGURED_KEY, true)
             .apply()
+        LogUtils.d("ThemeStore", "sharedPreference apply")
     }
 
     companion object : SharedPreferences.OnSharedPreferenceChangeListener {
@@ -176,7 +179,10 @@ private constructor(private val mContext: Context) : ThemeStoreInterface {
             key: String?
         ) {
             when (key) {
-                ThemeStorePrefKeys.KEY_ACCENT_COLOR -> accentColor = accentColor()
+                ThemeStorePrefKeys.KEY_ACCENT_COLOR -> {
+                    accentColor = accentColor()
+                    LogUtils.d("ThemeStore", "onSharedPreferenceChanged accentColor $accentColor")
+                }
             }
         }
 
