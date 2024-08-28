@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         app:contentInsetStartWithNavigation="0dp"
         app:displayHomeAsUp="true"
-        app:fitStatusBar="false"
         app:title="@string/rss_source_edit" />
 
     <HorizontalScrollView

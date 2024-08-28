@@ -32,7 +32,7 @@ import splitties.init.appCtx
 import java.io.FileOutputStream
 
 class BookInfoEditActivity :
-    VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(fullScreen = false),
+    VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
     ChangeCoverDialog.CallBack {
 
     private val selectCover = registerForActivityResult(SelectImageContract()) {

@@ -23,7 +23,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  * 编辑替换规则
  */
 class ReplaceEditActivity :
-    VMBaseActivity<ActivityReplaceEditBinding, ReplaceEditViewModel>(false),
+    VMBaseActivity<ActivityReplaceEditBinding, ReplaceEditViewModel>(),
     KeyboardToolPop.CallBack {
 
     companion object {

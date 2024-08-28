@@ -67,7 +67,7 @@ import java.util.regex.PatternSyntaxException
 /**
  * rss阅读界面
  */
-class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(false) {
+class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>() {
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
     override val viewModel by viewModels<ReadRssViewModel>()

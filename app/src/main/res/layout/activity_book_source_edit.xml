@@ -10,7 +10,6 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:fitStatusBar="false"
         app:title="@string/edit_book_source" />
 
     <HorizontalScrollView
