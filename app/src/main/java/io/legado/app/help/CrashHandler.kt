@@ -141,6 +141,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
             printWriter.close()
             val result = writer.toString()
             sb.append(result)
+            val crashLog = sb.toString()
             val timestamp = System.currentTimeMillis()
             val time = format.format(Date())
             val fileName = "crash-$time-$timestamp.log"
@@ -150,19 +151,19 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 val uri = Uri.parse(backupPath)
                 val fileDoc = FileDoc.fromUri(uri, true)
                 fileDoc.createFileIfNotExist(fileName, "crash")
-                    .writeText(sb.toString())
-            } catch (e: Exception) {
+                    .writeText(crashLog)
+            } catch (_: Exception) {
+            }
+            kotlin.runCatching {
                 appCtx.externalCacheDir?.let { rootFile ->
+                    val exceedTimeMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
                     rootFile.getFile("crash").listFiles()?.forEach {
-                        if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
-                                7
-                            )
-                        ) {
+                        if (it.lastModified() < exceedTimeMillis) {
                             it.delete()
                         }
                     }
                     FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
-                        .writeText(sb.toString())
+                        .writeText(crashLog)
                 }
             }
         }
