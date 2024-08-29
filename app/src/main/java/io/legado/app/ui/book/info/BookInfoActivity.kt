@@ -10,6 +10,8 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -72,6 +74,7 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import splitties.views.bottomPadding
 
 class BookInfoActivity :
     VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
@@ -161,6 +164,11 @@ class BookInfoActivity :
         viewModel.waitDialogData.observe(this) { upWaitDialogStatus(it) }
         viewModel.initData(intent)
         initViewEvent()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.flAction) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            binding.flAction.bottomPadding = insets.bottom
+            windowInsets
+        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
