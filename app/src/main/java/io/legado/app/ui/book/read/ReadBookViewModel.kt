@@ -182,6 +182,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookDao.update(book)
                     ReadBook.chapterSize = it.size
                     ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
+                    ReadBook.clearTextChapter()
                 }
                 return true
             }.onFailure {
