@@ -277,6 +277,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.recycledViewPool.setMaxRecycledViews(0, 15)
         // When this page is opened, it is in selection mode
         val dragSelectTouchHelper =
             DragSelectTouchHelper(adapter.dragSelectCallback).setSlideArea(16, 50)
