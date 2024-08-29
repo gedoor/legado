@@ -112,7 +112,7 @@ class MoreConfigDialog : DialogFragment() {
                 PreferKey.readBodyToLh -> activity?.recreate()
                 PreferKey.hideStatusBar -> {
                     ReadBookConfig.hideStatusBar = getPrefBoolean(PreferKey.hideStatusBar)
-                    postEvent(EventBus.UP_CONFIG, arrayListOf(0))
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(0, 2))
                 }
 
                 PreferKey.hideNavigationBar -> {

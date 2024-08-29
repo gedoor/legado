@@ -279,10 +279,13 @@ abstract class BaseReadBookActivity :
      * 适配刘海
      */
     private fun upLayoutInDisplayCutoutMode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && ReadBookConfig.readBodyToLh) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes = window.attributes.apply {
-                layoutInDisplayCutoutMode =
+                layoutInDisplayCutoutMode = if (ReadBookConfig.readBodyToLh) {
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                } else {
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
+                }
             }
         }
     }
