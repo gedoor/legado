@@ -326,7 +326,7 @@ class AudioPlayService : BaseService(),
                     AudioPlay.status = Status.PAUSE
                     postEvent(EventBus.AUDIO_STATE, Status.PAUSE)
                 }
-                postEvent(EventBus.AUDIO_SIZE, exoPlayer.duration)
+                postEvent(EventBus.AUDIO_SIZE, exoPlayer.duration.toInt())
                 upMediaMetadata()
                 upPlayProgress()
                 AudioPlay.saveDurChapter(exoPlayer.duration)
