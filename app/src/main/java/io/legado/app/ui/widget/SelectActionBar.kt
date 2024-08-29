@@ -54,9 +54,10 @@ class SelectActionBar @JvmOverloads constructor(
             binding.btnRevertSelection.setOnClickListener { callBack?.revertSelection() }
             binding.btnSelectActionMain.setOnClickListener { callBack?.onClickSelectBarMainAction() }
             binding.ivMenuMore.setOnClickListener { selMenu?.show() }
+            val initialBottomPadding = binding.root.paddingBottom
             ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
                 val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
-                binding.root.bottomPadding = insets.bottom
+                binding.root.bottomPadding = initialBottomPadding + insets.bottom
                 windowInsets
             }
         }
