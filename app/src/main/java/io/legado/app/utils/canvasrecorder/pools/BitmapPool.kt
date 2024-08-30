@@ -82,7 +82,7 @@ object BitmapPool {
     /**
      * A helper function to return the byte usage per pixel of a bitmap based on its configuration.
      */
-    private fun getBytesPerPixel(config: Bitmap.Config): Int {
+    private fun getBytesPerPixel(config: Bitmap.Config?): Int {
         return when (config) {
             Bitmap.Config.ARGB_8888 -> 4
             Bitmap.Config.RGB_565, Bitmap.Config.ARGB_4444 -> 2

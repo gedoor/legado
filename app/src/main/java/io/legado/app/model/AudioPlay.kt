@@ -233,7 +233,7 @@ object AudioPlay : CoroutineScope by MainScope() {
 
     fun skipTo(index: Int) {
         Coroutine.async {
-            stop()
+            stopPlay()
             durChapterIndex = index
             durChapterPos = 0
             durPlayUrl = ""
@@ -244,7 +244,7 @@ object AudioPlay : CoroutineScope by MainScope() {
 
     fun prev() {
         Coroutine.async {
-            stop()
+            stopPlay()
             if (durChapterIndex > 0) {
                 durChapterIndex -= 1
                 durChapterPos = 0
@@ -256,7 +256,7 @@ object AudioPlay : CoroutineScope by MainScope() {
     }
 
     fun next() {
-        stop()
+        stopPlay()
         if (durChapterIndex + 1 < simulatedChapterSize) {
             durChapterIndex += 1
             durChapterPos = 0
@@ -282,6 +282,14 @@ object AudioPlay : CoroutineScope by MainScope() {
         val intent = Intent(context, AudioPlayService::class.java)
         intent.action = IntentAction.addTimer
         context.startService(intent)
+    }
+
+    fun stopPlay() {
+        if (AudioPlayService.isRun) {
+            context.startService<AudioPlayService> {
+                action = IntentAction.stopPlay
+            }
+        }
     }
 
     fun saveRead() {

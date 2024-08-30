@@ -49,7 +49,7 @@ android {
     defaultConfig {
         applicationId "io.legado.app"
         minSdk 21
-        targetSdk 34
+        targetSdk 35
         versionCode 10000 + gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

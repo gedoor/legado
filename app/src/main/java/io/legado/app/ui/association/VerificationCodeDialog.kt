@@ -103,7 +103,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
                     transition: Transition<in Bitmap>?
                 ) {
                     view ?: return
-                    val bitmap = resource.copy(resource.config, true)
+                    val bitmap = resource.copy(resource.config ?: Bitmap.Config.ARGB_8888, true)
                     ImageProvider.bitmapLruCache.put(url, bitmap)
                     binding.verificationCodeImageView.setImageBitmap(bitmap)
                 }

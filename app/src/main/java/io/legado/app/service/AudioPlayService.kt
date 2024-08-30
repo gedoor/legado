@@ -157,6 +157,13 @@ class AudioPlayService : BaseService(),
                     play()
                 }
 
+                IntentAction.stopPlay -> {
+                    exoPlayer.stop()
+                    upPlayProgressJob?.cancel()
+                    AudioPlay.status = Status.STOP
+                    postEvent(EventBus.AUDIO_STATE, Status.STOP)
+                }
+
                 IntentAction.pause -> pause()
                 IntentAction.resume -> resume()
                 IntentAction.prev -> AudioPlay.prev()
