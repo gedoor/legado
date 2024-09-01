@@ -5,8 +5,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import io.legado.app.R
@@ -23,11 +21,11 @@ import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.activity
+import io.legado.app.utils.applyStatusBarPadding
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
 import io.legado.app.utils.setTextIfNotEqual
 import splitties.views.backgroundColor
-import splitties.views.topPadding
 import java.util.Date
 
 /**
@@ -62,11 +60,7 @@ class PageView(context: Context) : FrameLayout(context) {
     init {
         if (!isInEditMode) {
             upStyle()
-            ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
-                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars())
-                binding.vwStatusBar.topPadding = insets.top
-                windowInsets
-            }
+            binding.vwStatusBar.applyStatusBarPadding()
         }
     }
 

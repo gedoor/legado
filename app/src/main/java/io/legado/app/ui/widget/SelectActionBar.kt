@@ -9,8 +9,6 @@ import android.widget.FrameLayout
 import androidx.annotation.MenuRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import io.legado.app.R
 import io.legado.app.databinding.ViewSelectActionBarBinding
 import io.legado.app.lib.theme.TintHelper
@@ -20,8 +18,8 @@ import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryDisabledTextColor
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.visible
-import splitties.views.bottomPadding
 
 
 @Suppress("unused")
@@ -54,12 +52,7 @@ class SelectActionBar @JvmOverloads constructor(
             binding.btnRevertSelection.setOnClickListener { callBack?.revertSelection() }
             binding.btnSelectActionMain.setOnClickListener { callBack?.onClickSelectBarMainAction() }
             binding.ivMenuMore.setOnClickListener { selMenu?.show() }
-            val initialBottomPadding = binding.root.paddingBottom
-            ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
-                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
-                binding.root.bottomPadding = initialBottomPadding + insets.bottom
-                windowInsets
-            }
+            applyNavigationBarPadding()
         }
     }
 

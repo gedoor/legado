@@ -10,8 +10,6 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -60,6 +58,7 @@ import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
 import io.legado.app.utils.longToastOnUi
@@ -74,7 +73,6 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import splitties.views.bottomPadding
 
 class BookInfoActivity :
     VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
@@ -157,6 +155,7 @@ class BookInfoActivity :
         binding.arcView.setBgColor(backgroundColor)
         binding.llInfo.setBackgroundColor(backgroundColor)
         binding.flAction.setBackgroundColor(bottomBackground)
+        binding.flAction.applyNavigationBarPadding()
         binding.tvShelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
         binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
         viewModel.bookData.observe(this) { showBook(it) }
@@ -164,11 +163,6 @@ class BookInfoActivity :
         viewModel.waitDialogData.observe(this) { upWaitDialogStatus(it) }
         viewModel.initData(intent)
         initViewEvent()
-        ViewCompat.setOnApplyWindowInsetsListener(binding.flAction) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            binding.flAction.bottomPadding = insets.bottom
-            windowInsets
-        }
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

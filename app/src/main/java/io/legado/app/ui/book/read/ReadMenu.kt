@@ -15,8 +15,6 @@ import android.view.animation.Animation
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -41,6 +39,7 @@ import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.ConstraintModify
 import io.legado.app.utils.activity
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.gone
@@ -51,7 +50,6 @@ import io.legado.app.utils.openUrl
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
-import splitties.views.bottomPadding
 import splitties.views.onClick
 import splitties.views.onLongClick
 
@@ -235,11 +233,7 @@ class ReadMenu @JvmOverloads constructor(
         /**
          * 确保视图不被导航栏遮挡
          */
-        ViewCompat.setOnApplyWindowInsetsListener(this@ReadMenu) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            root.bottomPadding = insets.bottom
-            windowInsets
-        }
+        applyNavigationBarPadding()
     }
 
     fun reset() {

@@ -28,6 +28,8 @@ import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.graphics.record
 import androidx.core.graphics.withTranslation
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -36,6 +38,8 @@ import io.legado.app.lib.theme.TintHelper
 import io.legado.app.utils.canvasrecorder.CanvasRecorder
 import io.legado.app.utils.canvasrecorder.record
 import splitties.systemservices.inputMethodManager
+import splitties.views.bottomPadding
+import splitties.views.topPadding
 import java.lang.reflect.Field
 
 
@@ -254,4 +258,22 @@ fun View.shouldHideSoftInput(event: MotionEvent): Boolean {
         return !(event.x > left && event.x < right && event.y > top && event.y < bottom)
     }
     return false
+}
+
+fun View.applyStatusBarPadding(withInitialPadding: Boolean = false) {
+    val initialPadding = if (withInitialPadding) topPadding else 0
+    ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars())
+        topPadding = initialPadding + insets.top
+        windowInsets
+    }
+}
+
+fun View.applyNavigationBarPadding(withInitialPadding: Boolean = false) {
+    val initialPadding = if (withInitialPadding) bottomPadding else 0
+    ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+        bottomPadding = initialPadding + insets.bottom
+        windowInsets
+    }
 }
