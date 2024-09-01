@@ -23,6 +23,7 @@ import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.activity
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
+import io.legado.app.utils.removeLastElement
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
@@ -118,9 +119,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
         return if (recycler.isEmpty()) {
             ItemFilletTextBinding.inflate(inflater, flexbox, false).root
         } else {
-            recycler.last().also {
-                recycler.removeLast()
-            } as TextView
+            recycler.removeLastElement() as TextView
         }
     }
 
@@ -174,11 +173,13 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                     putExtra("type", "bookSource")
                     putExtra("key", source.bookSourceUrl)
                 }
+
                 R.id.menu_refresh -> Coroutine.async(callBack.scope) {
                     source.clearExploreKindsCache()
                 }.onSuccess {
                     notifyItemChanged(position)
                 }
+
                 R.id.menu_del -> callBack.deleteSource(source)
             }
             true

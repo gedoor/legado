@@ -14,9 +14,16 @@ inline fun <T> List<T>.fastBinarySearch(
     comparison: (T) -> Int
 ): Int {
     when {
-        fromIndex > toIndex -> throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex).")
-        fromIndex < 0 -> throw IndexOutOfBoundsException("fromIndex ($fromIndex) is less than zero.")
-        toIndex > size -> throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
+        fromIndex > toIndex ->
+            throw IllegalArgumentException(
+                "fromIndex ($fromIndex) is greater than toIndex ($toIndex)."
+            )
+
+        fromIndex < 0 ->
+            throw IndexOutOfBoundsException("fromIndex ($fromIndex) is less than zero.")
+
+        toIndex > size ->
+            throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
     }
 
     var low = fromIndex
@@ -43,3 +50,11 @@ inline fun <T, K : Comparable<K>> List<T>.fastBinarySearchBy(
     toIndex: Int = size,
     crossinline selector: (T) -> K?
 ): Int = fastBinarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
+
+fun <T> MutableList<T>.removeLastElement(): T {
+    return if (isEmpty()) {
+        throw NoSuchElementException("List is empty.")
+    } else {
+        removeAt(lastIndex)
+    }
+}
