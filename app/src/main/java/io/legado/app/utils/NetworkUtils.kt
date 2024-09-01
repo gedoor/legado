@@ -66,7 +66,7 @@ object NetworkUtils {
         for (i in '0'.code..'9'.code) {
             bitSet.set(i)
         }
-        for (char in "+-_.$:()!*@&#,[]") {
+        for (char in "+-_.~$:()!*@&#,[]") {
             bitSet.set(char.code)
         }
         return@lazy bitSet
